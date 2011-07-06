@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>com.erudika</groupId>
+		<artifactId>scoold</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
+	<groupId>com.erudika</groupId>
+	<artifactId>scoold-search</artifactId>
+	<version>0.3-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>scoold-search</name>
+
+	<repositories>
+        <repository>
+            <id>java.net2</id>
+            <name>Repository hosting the jee6 artifacts</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>kungfu</id>
+            <url>http://maven.kungfuters.org/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>http://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>alfresco</id>
+            <url>http://maven.alfresco.com/nexus/content/repositories/thirdparty/</url>
+        </repository>
+        <repository>
+            <id>openid4java</id>
+            <url>https://oss.sonatype.org/content/repositories/openid4java-snapshots/</url>
+        </repository>
+    </repositories>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	 <dependency>
+	  <groupId>com.amazonaws</groupId>
+	  <artifactId>aws-java-sdk</artifactId>
+	  <version>1.2.2</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>commons-codec</groupId>
+	  <artifactId>commons-codec</artifactId>
+	  <version>1.4</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>org.codehaus.jackson</groupId>
+	  <artifactId>jackson-mapper-asl</artifactId>
+	  <version>1.8.2</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>org.elasticsearch</groupId>
+	  <artifactId>elasticsearch</artifactId>
+	  <version>0.16.2</version>
+	 </dependency>
+	</dependencies>
+</project>

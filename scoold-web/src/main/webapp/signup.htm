@@ -1,0 +1,33 @@
+
+<div class="centr p50 clearfix pam">
+	#if ($signupForm.error)
+		#getmessagebox("errorBox" $signupForm.error false)
+	#end
+	<div class="mbl center">
+		#if($isFacebookUser)
+			<span id="fb-picture" class="mrl"></span>
+		#end
+		<span class="megaText">$lang.get("hello")</span>
+	</div>
+	<form method="post" id="$signupForm.id" action="$signuplink">
+		<fieldset>
+			#renderSpecialFields($signupForm)
+			<div class="hide">Leave blank:</div>${signupForm.fields.additional}
+
+			#if(!$isFacebookUser)
+				#createformfield(${signupForm.fields.identifier} "openidbox nicebox p100 mbl")
+			#end
+
+			#createformfield(${signupForm.fields.fullname} "fb-name-box nicebox p100 mbl")
+			#createformfield(${signupForm.fields.email} "nicebox p100 mbl")
+			#createformfield(${signupForm.fields.type} "nicebox p100")
+
+			<div class="center mtl">
+				${signupForm.fields.signup}
+				<div class="smallText mtm">$lang.get("signup.form.termsofuse")</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+

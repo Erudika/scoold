@@ -1,0 +1,33 @@
+{
+  "name": "alexb-scoold",
+  "author": "alexb",
+  "description": "",
+  "license": "",
+  "project_page": "",
+  "source": "",
+  "summary": "",
+  "version": "0.0.1",
+  "checksums": {
+    "Modulefile": "35e6c38679586a59d5ef7965469e88a3",
+    "README": "719a09123e692406ade10284161c42cb",
+    "files/before.rules": "539cc2b9b49684760d5a4d8e9092eb6e",
+    "files/cassandra.conf": "6f45cda40bf1c6654367a2c6c497d6a1",
+    "files/cassandra.yaml": "ef7055bf2183039dbc8a47c42e5c84f4",
+    "files/domain.xml": "964dba16d3b7bc8d7466228672dde239",
+    "files/gfsec.sh": "f5891d0bbb880274e73adcd69da3a613",
+    "files/glassfish.conf": "d9ce29a9205bd8a861d85a2ea0906e88",
+    "files/tokencalc.sh": "aeab9a965fecf206cbd925ad7b80263b",
+    "files/userdata.sh": "1d2a1a101cb9f87fb308b78eb4835e97",
+    "files/web.rules": "06981293be71683a195547f36d6d272c",
+    "manifests/cassandra.pp": "af239e0fcd4b2428a8cc93ec03022f0f",
+    "manifests/glassfish.pp": "539fe192dd9b4df11c98de1c7e70f1be",
+    "manifests/init.pp": "1b99cf6b2ce5c8f2accf21acb5b3afdc",
+    "manifests/java.pp": "3cc9492f9924f9ea9d8742af45700b95",
+    "manifests/monit.pp": "168b105759b051f2db87f91eaec3873f",
+    "manifests/sudo.pp": "75f841ca8f0b62a4688e1452e0aa1832",
+    "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
+    "spec/spec_helper.rb": "ca19ec4f451ebc7fdb035b52eae6e909",
+    "tests/init.pp": "ad665126ffe4c75ce9d60872d08b8abd"
+  },
+  "dependencies": []
+}

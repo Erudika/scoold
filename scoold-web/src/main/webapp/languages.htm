@@ -1,0 +1,14 @@
+<div id="languages" >
+	<h2><span class="pictos">G</span> $lang.get("translate.select")</h2>
+	<hr/>
+	<div class="center">
+		#set($enLoc =  $allLocales.get("en"))
+		#langbox("en" $!enLoc.getDisplayName($enLoc) $langProgressMap.get("en"))
+
+		#foreach($entry in $allLocales.entrySet())
+			#if(!$entry.key.equals("en"))
+				#langbox($entry.key $!entry.value.getDisplayName($!entry.value) $langProgressMap.get($!entry.key))
+			#end
+		#end
+	</div>
+</div>

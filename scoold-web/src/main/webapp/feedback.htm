@@ -1,0 +1,34 @@
+<div class="line">
+	<div class="unit size3of4">
+		#if($request.getParameter("write"))
+			#newquestionform($fForm false "feedback")
+		#else
+			<a href="$feedbacklink/write" class="button-small rounded3 right" title="Write something">${lang.get('feedback.write')}</a>
+			#if($request.getParameter("tag"))
+				#set($showTag = $request.getParameter("tag"))
+				<h2>$lang.get("feedback.tagged") &ldquo;$!{showTag}&rdquo;</h2>
+			#elseif($request.getParameter("search"))
+				<h2><a href="$feedbacklink" title="Feedback">$lang.get("feedback.title")</a> / $lang.get("search.title") </h2>
+			#else
+				<h2>$lang.get("feedback.title") #showcount($itemcount.longValue())</h2>
+			#end
+			<hr />
+			
+			#set($sortarr = {'votes': "", 'newest': "", 'activity': ""} )
+			#setsortbyselection($sortarr 'newest')
+			<div class="mvm">
+				<a href="$feedbacklink" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
+				<a href="$feedbacklink/votes" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
+				<a href="$feedbacklink/updated" class="button-tiny rounded3 $sortarr.updated">$lang.get("posts.updated")</a>
+			</div>
+
+			#paginate($pagenum.longValue() "#questionspage($feedbacklist)" $itemcount.longValue() "" "pageless")
+		#end
+	</div>
+
+	<div class="unit size1of4 lastUnit r">
+		<img src="http://placehold.it/220x250" width="220" height="250" alt="ad"/>
+		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+	</div>
+</div>

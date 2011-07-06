@@ -1,0 +1,46 @@
+<div class="line">
+	<div class="unit size3of4">
+		#if($request.getParameter("create"))
+			<h2><a href="$schoolslink">$lang.get("schools.title")</a> / ${lang.get("school.create")}</h2>
+			<hr />
+			
+			<form method="post" id="$createSchoolForm.id" action="$schoolslink/create">
+				<fieldset>
+					${createSchoolForm.fields.form_name}
+					#createformfield(${createSchoolForm.fields.type} "nicebox p50")
+					#createformfield(${createSchoolForm.fields.name} "newschoolname nicebox p100")
+					#createformfield(${createSchoolForm.fields.location} "locationbox nicebox p100")
+					#createformfield(${createSchoolForm.fields.address} "addressbox nicebox p100")
+					<div id="map-canvas" class="gmap clearfix p100 mvl">Loading map...</div>
+
+					<div class="center">
+						${createSchoolForm.fields.createschool} &nbsp; 
+						<a href="$schoolslink">$lang.get("cancel")</a>
+					</div>
+				</fieldset>
+			</form>
+		#else
+			<a href="$schoolslink/create" class="button-small rounded3 right" title="Create school">${lang.get('school.create')}</a>
+			<h2>$lang.get("schools.title") #showcount($itemcount.longValue())</h2>
+			<hr />
+			
+			#set($sortarr = {'votes': "", 'newest': ""} )
+			#setsortbyselection($sortarr 'newest')
+			<div class="mvm">
+				<a href="$schoolslink" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
+				<a href="$schoolslink/votes" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
+			</div>
+			
+			#paginate($pagenum.longValue() "#schoolspage($schoollist)" $itemcount.longValue() "" "pageless")
+		#end
+	</div>
+	
+	<div class="unit size1of4 lastUnit r">
+		<img src="http://placehold.it/220x250" width="220" height="250" alt="ad"/>
+		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+	</div>
+</div>
+
+
+

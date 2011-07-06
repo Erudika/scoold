@@ -1,0 +1,31 @@
+<div id="messages">
+	
+	<a href="$messageslink/new" class="button-small right next-div-toggle rounded3" title="New message">$lang.get("sendmsg")</a>
+
+	<h2><span class="pictos">M</span> $lang.get("messages.title") #showcount($itemcount.longValue())
+		#if(!$messageslist.isEmpty())
+		<a href="$messageslink/delete/all" class="rusure red" title="Delete all">$lang.get("deleteall")</a>
+		#end
+	</h2>
+
+	#if($request.getParameter("newmessage"))
+		#set($hide = "")
+	#else
+		#set($hide = "hide")
+	#end
+
+	<div class="newmessage $hide">
+		#newmessageform($request.getParameterValues("touser") $request.getParameterValues("touuid"))
+	</div>
+	<hr/>
+	<div>
+		#if($messageslist.isEmpty())
+			<div>$lang.get("messages.nomessages")</div>
+		#else
+			#paginate($pagenum.longValue() "#messagespage($messageslist)" $itemcount.longValue() "" "pageless")
+		#end
+	</div>
+
+</div>
+
+<script type="text/javascript" src="contactsmap.js?id=$!authUser.id"></script>

@@ -1,0 +1,161 @@
+#if($showParam == "revisions")
+	#if($backtoid)
+		#set($backto = $backtoid)
+	#else
+		#set($backto = "$showPost.id/#stripstr($showPost.title)")
+	#end
+
+	#if($showPost.isBlackboard())
+		#set($backtoLink = $request.getHeader("Referer"))
+	#else
+		#set($backtoLink = "$questionlink/$!backto")
+	#end
+
+	#if($backtoLink && !$backtoLink.isEmpty())
+		<a href="$backtoLink" title="Go back">$lang.get("goback")</a>
+	#end
+	<h2>$lang.get("revisions.title") #showcount($itemcount.longValue())</h2>
+	<hr/>
+
+	#paginate($pagenum.longValue() "#revisionspage($revisionslist $canEdit $showPost)" $itemcount.longValue() "" "pageless-noajax")
+
+#else
+<div class="line">
+	<div class="unit size3of4">
+		<div id="question-head">
+			#if($showPost.isAnswer())
+				#set($actionlink = $questionlink)
+				#set($posttype = $lang.get("posts.answer"))
+			#elseif($showPost.isQuestion())
+				#set($actionlink = $questionlink)
+				#set($posttype = $lang.get("posts.question"))
+			#elseif($showPost.isFeedback())
+				#set($actionlink = $feedbacklink)
+				#set($posttype = "<a href='$feedbacklink' title='Feedback'>$lang.get('feedback.title')</a>")
+				#if(!$showPost.tagsString.isEmpty())
+					#set($posttype = "$posttype / $lang.get('feedback.$!{showPost.tagsString}')")
+				#end
+			#end
+			<div class="line mediumText lightgray">
+				<div class="unit size1of2">$!posttype</div>
+				<div class="unit size1of2 lastUnit r">
+					#if($showPost.deleteme)
+						<span class="pictos" title="$lang.get('posts.marked')">#</span> $lang.get("posts.marked")
+					#else
+						#if($showPost.answercount > 0)
+							$lang.get("posts.answered")
+							#if($showPost.answerid) + <span class="pictos" title="Approved answer">2</span> #end
+						#else
+							$lang.get("posts.unanswered")
+						#end
+					#end
+				</div>
+			</div>
+			#if($canEdit)
+				#set($editable = "editable")
+			#else
+				#set($editable = "")
+			#end
+
+			<div id="questiontitle" class="largeText inlineblock p99 $editable">$!{showPost.title}</div>
+		</div>
+
+		<hr/>
+		
+		<div id="question" class="clearfix mbl">
+			#postbox($showPost $showPost true)
+		</div>
+		
+		#if(!$showPost.isAnswer())
+			<div id="answers">
+				#if($answerslist && !$answerslist.isEmpty())
+					<span class="right">
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers" class="button-tiny rounded3">$lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers" class="button-tiny rounded3">$lang.get("newest")</a>
+					</span>
+					<h2>$lang.get("posts.answers") #showcount($itemcount.longValue())</h2>
+					<hr />
+				#end
+
+				#paginate($pagenum.longValue() "#answerspage($answerslist $showPost)" $itemcount.longValue() "" "pageless")
+
+				#if($request.getParameter("write") && $authenticated || !$aForm.isValid())
+					#set($hideForm = false)
+					#set($hideBtn = "hide")
+				#else
+					#set($hideForm = true)
+					#set($hideBtn = "")
+				#end
+
+				#if($authenticated && !$showPost.isClosed())
+					#newanswerform($aForm $showPost $hideForm)
+					#set($btnclass = "answerbtn")
+				#else
+					#set($btnclass = "")
+				#end
+
+				<div class="center mtm close-toggle $hideBtn">
+					#if($showPost.isClosed())
+						<h2>
+							<span class="pictos">(</span> $lang.get("posts.closed")
+							#if($request.isUserInRole("mod"))
+								#if($showPost.closerid == 0)
+									#set($closer = $APPNAME)
+								#else
+									#set($closer = "<a href='$profilelink/$!showPost.closerid' title='Go to profile'>user</a>")
+								#end
+								(by $closer)
+							#end
+						</h2>
+					#else
+						#if($showPost.isQuestion())
+							<a name="answer"></a>
+							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="button-large rounded3 $btnclass" title="Answer this question"><span class="pictos">p</span> $lang.get("posts.writeanswer")</a>
+						#elseif($showPost.isFeedback())
+							<a name="reply"></a>
+							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="button-large rounded3 $btnclass" title="Reply"><span class="pictos">p</span> $lang.get("feedback.reply")</a>
+						#end
+					#end
+				</div>
+			</div>
+		#end
+	</div>
+	<div class="unit size1of4 lastUnit">
+		<div class="mll centr">
+			<div class="qstatsbox-large mbl pas rounded5 center">
+				<div class="hugeText" title="$lang.get('votes')">$!votes</div>
+				<div>$lang.get('votes')</div>
+				<div class="line">
+					<div class="unit size1of2" title="$lang.get('posts.answers')">
+						<span class="mediumText">$!showPost.answercount</span> <br />
+						$lang.get('posts.answers')
+					</div>
+					<div class="unit size1of2 lastUnit" title="$lang.get('posts.views')">
+						<span class="mediumText">$!showPost.viewcount</span> <br />
+						$lang.get('posts.views')
+					</div>
+				</div>
+			</div>
+			<div class="center">
+				#if(!$showPost.isClosed())
+					<div class="mvm">
+						#if($showPost.isQuestion())
+							<a href="#answer" rel="nofollow" class="button-small rounded3" title="Answer this question"><span class="pictos">p</span> $lang.get("posts.writeanswer")</a>
+						#elseif($showPost.isFeedback())
+							<a href="#reply" rel="nofollow" class="button-small rounded3" title="Reply"><span class="pictos">p</span> $lang.get("feedback.reply")</a>
+						#end
+					</div>
+				#end
+			</div>
+		</div>
+		#if($similarquestions && !$similarquestions.isEmpty())
+			<div class="similar">
+				<h2>$lang.get("posts.similar")</h2>
+				#foreach($showSimilar in $similarquestions)
+					<div>$!showSimilar.title</div>
+				#end
+			</div>
+		#end
+	</div>
+</div>
+#end

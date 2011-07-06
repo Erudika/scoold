@@ -1,0 +1,26 @@
+#if($request.getParameter("delete"))
+
+	#set($confirmlink = "$adminlink?confirmdelete=$request.getParameter('delete')&amp;id=$request.getParameter('id')")
+
+	<div class="mvl center">
+		<div class="largeText">$lang.get("areyousure")</div>
+		<br/>
+
+		#if($request.getHeader("Referer"))
+			#set($ref = $request.getHeader("Referer"))
+		#else
+			#set($ref = $HOMEPAGE)
+		#end
+
+		<form action="$!{confirmlink}" method="post">
+			<fieldset>
+				<input type="submit" value="$lang.get('yes')" class="button rounded3"/>
+				<input type="hidden" name="returnto" value="$!{ref}"/>
+				<a class="button-small rounded3" href="$!{ref}" title="No">$lang.get("no")</a>
+			</fieldset>
+		</form>
+	</div>
+
+#elseif($request.getParameter("filldb"))
+	<h1 class="center">Done.</h1>
+#end

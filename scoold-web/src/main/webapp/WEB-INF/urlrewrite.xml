@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN" "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
+<urlrewrite>
+    <!--%{context-path}-->
+	<!-- ======== ERROR PAGES ========== -->
+	<rule>
+        <from>^/not-found$</from>
+        <to>/click/not-found.htm</to>
+    </rule>	
+	<rule>
+        <from>^/(\d+)$</from>
+        <to>/click/error.htm?e=$1</to>
+    </rule>
+    <!-- ======== GLOBAL RESOURCES PROTECTION (AKA 'GRP') ^_^ ========== -->
+	<rule>
+        <from>^/p/(.*)$</from>
+		<to type="redirect">%{context-path}/$1</to>
+    </rule>
+    <!-- ======== PUBLIC RESOURCES ========== -->
+    <rule>
+        <from>^/$</from>
+        <to>/questions.htm</to>
+    </rule>
+    <rule>
+        <from>^/index.htm$</from>
+        <to type="redirect">%{context-path}</to>
+    </rule>
+	<rule>
+        <from>^/signin(/?)$</from>
+        <to>/signin.htm</to>
+    </rule>
+	<rule>
+        <from>^/signout(/?)$</from>
+        <to>/signin.htm?signout=true</to>
+    </rule>
+	<rule>
+        <from>^/signup(/?)$</from>
+        <to>/signup.htm</to>
+    </rule>
+    <rule>
+        <from>^/checkemail(/?)$</from>
+        <to>/?checkemail=true</to>
+    </rule>
+	<rule>
+        <from>^/about(/?)$</from>
+        <to>/about.htm</to>
+    </rule>
+	<rule>
+        <from>^/terms(/?)$</from>
+        <to>/terms.htm</to>
+    </rule>
+	<rule>
+        <from>^/privacy(/?)$</from>
+        <to>/privacy.htm</to>
+    </rule>
+	<!-- ======== LANGUAGES ========== -->
+	<rule>
+        <from>^/languages(/?)$</from>
+        <to>/languages.htm</to>
+    </rule>
+	<rule>
+        <from>^/translate(/?)$</from>
+        <to>/translate.htm</to>
+    </rule>
+	<rule>
+        <from>^/translate/(\w+)(/?)$</from>
+        <to>/translate.htm?locale=$1</to>
+    </rule>
+	<rule>
+        <from>^/translate/(\w+)/(\d+)(/?)$</from>
+        <to>/translate.htm?locale=$1&amp;index=$2</to>
+    </rule>
+
+	<!-- ======== FEEDBACK ========== -->
+	<rule>
+        <from>^/feedback(/?)$</from>
+        <to>/feedback.htm</to>
+    </rule>	
+	<rule>
+        <from>^/feedback/write(/?)$</from>
+        <to>/feedback.htm?write=true</to>
+    </rule>
+	<rule>
+        <from>^/feedback/votes(/?)$</from>
+        <to>/feedback.htm?sortby=votes</to>
+    </rule>
+	<rule>
+        <from>^/feedback/updated(/?)$</from>
+        <to>/feedback.htm?sortby=activity</to>
+    </rule>
+	<rule>
+        <from>^/feedback/tag/([%\w\S][^/]+)(/?)$</from>
+        <to>/feedback.htm?tag=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/feedback/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1</to>
+    </rule>
+	<rule>
+        <from>^/feedback/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
+        <to>/question.htm?uuid=$1</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/delete(/?)$</from>
+        <to>/question.htm?id=$1&amp;delete=true</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/undelete(/?)$</from>
+        <to>/question.htm?id=$1&amp;undelete=true</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/restore/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;restore=true&amp;revisionid=$2</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/accept/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;accept=true&amp;answerid=$2</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/close((/?)(.*?))$</from>
+        <to>/question.htm?id=$1&amp;close=true</to>
+    </rule>
+	<rule>
+        <from>^/feedback/(\d+)/newest((/?)(.*?))$</from>
+        <to>/question.htm?id=$1&amp;sortby=newest</to>
+    </rule>
+
+	<!--SEO URLs-->
+	<rule>
+        <from>^/feedback/(\d+)/([^write][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^updated][^votes])*.*(/?)$</from>
+        <to>/question.htm?id=$1</to>
+    </rule>
+
+	<!-- PROTECTED -->
+	<rule>
+        <from>^/feedback/reply/(\d+)((/?)(.*?))$</from>
+        <to type="redirect">%{context-path}/feedback/$1/?write=true</to>
+    </rule>
+<!--	<rule>
+        <from>^/(signin|signup|connect|signin/exit)/xd_receiver.htm$</from>
+        <to>/xd_receiver.htm</to>
+    </rule>	-->
+
+	<!-- ======== REPORTS ========== -->
+	<rule>
+        <from>^/reports(/?)$</from>
+        <to>/reports.htm</to>
+    </rule>
+	<rule>
+        <from>^/reports/reports/(\w+)(/?)$</from>
+        <to>/reports.htm?show=reports&amp;classname=$1</to>
+    </rule>
+	<rule>
+        <from>^/reports/reports(/?)$</from>
+        <to>/reports.htm?show=reports</to>
+    </rule>
+	<rule>
+        <from>^/reports/close/(\d+)(/?)$</from>
+        <to>/reports.htm?close=true&amp;id=$1</to>
+    </rule>
+
+    <!-- ======== PROFILE PROTECTED RESOURCES ========== -->
+	<rule>
+        <from>^/admin(/?)$</from>
+        <to>/admin.htm</to>
+    </rule>
+	<rule>
+        <from>^/settings(/?)$</from>
+        <to>/settings.htm</to>
+    </rule>
+	<rule>
+        <from>^/messages(/?)$</from>
+        <to>/messages.htm</to>
+    </rule>
+	<rule>
+        <from>^/messages/new(/?)$</from>
+        <to>/messages.htm?newmessage=true</to>
+    </rule>
+	<rule>
+        <from>^/messages/delete/all(/?)$</from>
+        <to>/messages.htm?deleteall=true</to>
+    </rule>
+
+	<rule>
+        <from>^/message/(\d+)(/?)$</from>
+        <to>/message.htm?id=$1</to>
+    </rule>
+	<rule>
+        <from>^/media/(\d+)(/?)$</from>
+        <to>/media.htm?id=$1</to>
+    </rule>
+	<rule>
+        <from>^/comment/(\d+)(/?)$</from>
+        <to>/comment.htm?id=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/comment/(.[^/]+)(/?)$</from>
+        <to>/?show=comment&amp;uuid=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/delete/comment/(\d+)(/?)$</from>
+        <to>/?show=comment&amp;delete=$1</to>
+    </rule>
+	<rule>
+        <from>^/delete/photo/(\d+)(/?)$</from>
+        <to>/?show=photo&amp;delete=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/delete/video/(\d+)(/?)$</from>
+        <to>/?show=video&amp;delete=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/voteup/(\w+)/(.[^/]+)(/?)$</from>
+        <to>/?voteup=true&amp;classname=$1&amp;uuid=$2</to>
+    </rule>
+	<rule>
+        <from>^/votedown/(\w+)/(.[^/]+)(/?)$</from>
+        <to>/?votedown=true&amp;classname=$1&amp;uuid=$2</to>
+    </rule>
+
+	<!--
+	<rule>
+        <from>^/photo/(.[^/]+)(/?)$</from>
+        <to>/index.htm?show=photo&amp;uuid=$1</to>
+    </rule>
+	<rule>
+        <from>^/video/(.[^/]+)(/?)$</from>
+        <to>/index.htm?show=video&amp;uuid=$1</to>
+    </rule>-->
+
+
+    <!-- ======== PROFILE ========== -->
+    <rule>
+        <from>^/profile(/?)$</from>
+        <to>/profile.htm</to>
+    </rule>
+	<rule>
+        <from>^/profile/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
+        <to>/profile.htm?uuid=$1</to>
+    </rule>
+    <rule>
+        <from>^/profile/(\d+)(/?)$</from>
+		<to>/profile.htm?id=$1</to>
+    </rule>
+    <rule>
+        <from>^/profile/(\d+)/update(/?)$</from>
+        <to>/profile.htm?update=true&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/edit(/?)$</from>
+        <to>/profile.htm?edit=true&amp;id=$1</to>
+    </rule>
+    
+    <rule>
+        <from>^/profile/(\d+)/contacts((/?)(.*?))$</from>
+        <to>/profile.htm?show=contacts&amp;id=$1</to>
+    </rule>
+    <rule>
+        <from>^/profile/(\d+)/add(/?)$</from>
+        <to>/profile.htm?addcontact=true&amp;id=$1</to>
+    </rule>
+    <rule>
+        <from>^/profile/(\d+)/remove(/?)$</from>
+        <to>/profile.htm?removecontact=$1&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/questions((/?)(.*?))$</from>
+        <to>/profile.htm?show=questions&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/answers((/?)(.*?))$</from>
+        <to>/profile.htm?show=answers&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/photos((/?)(.*?))$</from>
+        <to>/profile.htm?show=photos&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/photos/(\d+)((/?)(.*?))$</from>
+        <to>/profile.htm?show=photos&amp;mid=$2&amp;userid=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/photos/([%\w\S][^/]+)((/?)(.*?))$</from>
+        <to>/profile.htm?show=photos&amp;label=$2&amp;id=$1</to>
+    </rule>
+	<rule>
+        <from>^/profile/(\d+)/photos/([%\w\S][^/]+)/(\d+)((/?)(.*?))$</from>
+        <to>/profile.htm?show=photos&amp;label=$2&amp;id=$1&amp;mid=$3</to>
+    </rule>
+
+	<rule>
+        <from>^/profile/(\d+)/drawer((/?)(.*?))$</from>
+        <to>/profile.htm?show=drawer&amp;id=$1</to>
+    </rule>
+
+	<!--SEO URLs-->
+	<rule>
+        <from>^/profile/(\d+)/([^drawer][^photos][^contacts][^questions][^answers][^edit])*.*(/?)$</from>
+        <to>/profile.htm?id=$1</to>
+    </rule>
+	
+	<!-- PROTECTED -->
+	<rule>
+        <from>^/profile/p/(\d+)(.*)$</from>
+		<to type="redirect">%{context-path}/profile/$1$2</to>
+    </rule>
+
+    <!-- ======== SCHOOLS ========== -->
+
+	<rule>
+        <from>^/school/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
+        <to>/school.htm?uuid=$1</to>
+    </rule>
+    <rule>
+        <from>^/school/(\d+)(/?)$</from>
+        <to>/school.htm?schoolid=$1</to>
+    </rule>
+    <rule>
+        <from>^/school/(\d+)/edit(/?)$</from>
+        <to>/school.htm?schoolid=$1&amp;edit=true</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/people((/?)(.*?))$</from>
+        <to>/school.htm?schoolid=$1&amp;show=people</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/classes((/?)(.*?))$</from>
+        <to>/school.htm?schoolid=$1&amp;show=classes</to>
+    </rule>	
+	<rule>
+        <from>^/school/(\d+)/photos((/?)(.*?))$</from>
+        <to>/school.htm?schoolid=$1&amp;show=photos</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/drawer((/?)(.*?))$</from>
+        <to>/school.htm?schoolid=$1&amp;show=drawer</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/ask((/?)(.*?))$</from>
+        <to>/questions.htm?schoolid=$1&amp;ask=true</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/join((/?)(.*?))$</from>
+        <to>/school.htm?join=true&amp;schoolid=$1</to>
+    </rule>
+    <rule>
+        <from>^/school/(\d+)/leave((/?)(.*?))$</from>
+        <to>/school.htm?leave=true&amp;schoolid=$1</to>
+    </rule>
+
+	<!--SEO URLs-->
+	<rule>
+        <from>^/school/(\d+)/([^edit][^ask][^drawer][^photos][^classes][^people][^join][^leave])*.*(/?)$</from>
+        <to>/school.htm?schoolid=$1</to>
+    </rule>
+
+	<!-- PROTECTED -->
+	<rule>
+        <from>^/school/p/(\d+)(.*)$</from>
+		<to type="redirect">%{context-path}/school/$1$2</to>
+    </rule>
+
+	<rule>
+        <from>^/school/(\d+)/photos((/?)(.*?))$</from>
+        <to>/school.htm?show=photos&amp;schoolid=$1</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/photos/(\d+)((/?)(.*?))$</from>
+        <to>/school.htm?show=photos&amp;mid=$2&amp;schoolid=$1</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/photos/([%\w\S][^/]+)((/?)(.*?))$</from>
+        <to>/school.htm?show=photos&amp;label=$2&amp;schoolid=$1</to>
+    </rule>
+	<rule>
+        <from>^/school/(\d+)/photos/([%\w\S][^/]+)/(\d+)((/?)(.*?))$</from>
+        <to>/school.htm?show=photos&amp;label=$2&amp;mid=$3&amp;schoolid=$1</to>
+    </rule>
+
+	<rule>
+        <from>^/schools(/?)$</from>
+        <to>/schools.htm</to>
+    </rule>
+	<rule>
+        <from>^/schools/votes(/?)$</from>
+        <to>/schools.htm?sortby=votes</to>
+    </rule>
+	<rule>
+        <from>^/schools/create(/?)$</from>
+        <to>/schools.htm?create=true</to>
+    </rule>
+
+	<!-- ======== CLASSES ========== -->
+	<rule>
+        <from>^/class/(\d+)(/?)$</from>
+        <to>/classunit.htm?classid=$1</to>
+    </rule>
+	<rule>
+        <from>^/class/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
+        <to>/classunit.htm?uuid=$1</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/addclassmates(/?)$</from>
+        <to>/classunit.htm?classid=$1&amp;addclassmates=true</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/chat((/?)(.*?))$</from>
+        <to>/classunit.htm?classid=$1&amp;show=chat</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/photos((/?)(.*?))$</from>
+        <to>/classunit.htm?classid=$1&amp;show=photos</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/photos/(\d+)((/?)(.*?))$</from>
+        <to>/classunit.htm?show=photos&amp;mid=$2&amp;classid=$1</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/photos/([%\w\S][^/]+)$</from>
+        <to>/classunit.htm?show=photos&amp;label=$2&amp;classid=$1</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/photos/([%\w\S][^/]+)/(\d+)((/?)(.*?))$</from>
+        <to>/classunit.htm?show=photos&amp;label=$2&amp;mid=$3&amp;classid=$1</to>
+    </rule>
+<!--	<rule>
+        <from>^/class/(\d+)/drawer((/?)(.*?))$</from>
+        <to>/classunit.htm?classid=$1&amp;show=drawer</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/questions((/?)(.*?))$</from>
+        <to>/classunit.htm?classid=$1&amp;show=questions</to>
+    </rule>-->
+	<rule>
+        <from>^/class/(\d+)/questions/ask((/?)(.*?))$</from>
+        <to>/questions.htm?classid=$1&amp;ask=true</to>
+    </rule>
+	<rule>
+        <from>^/class/(\d+)/join((/?)(.*?))$</from>
+        <to>/classunit.htm?join=true&amp;classid=$1</to>
+    </rule>
+    <rule>
+        <from>^/class/(\d+)/leave((/?)(.*?))$</from>
+        <to>/classunit.htm?leave=true&amp;classid=$1</to>
+    </rule>
+    <rule>
+        <from>^/class/(\d+)/invite((/?)(.*?))$</from>
+        <to>/classunit.htm?show=invite&amp;classid=$1</to>
+    </rule>
+    <rule>
+        <from>^/class/(\d+)/thisisme/(.*?)$</from>
+        <to>/classunit.htm?thisisme=$2&amp;classid=$1</to>
+    </rule>
+
+	<!-- SEO URLs -->
+	<rule>
+        <from>^/class/(\d+)/([^invite][^thisisme][^drawer][^photos][^chat][^addclassmates][^join][^leave])*.*(/?)$</from>
+        <to>/classunit.htm?classid=$1</to>
+    </rule>
+
+	<!-- PROTECTED -->
+	<rule>
+        <from>^/class/p/(\d+)(.*)$</from>
+		<to type="redirect">%{context-path}/class/$1$2</to>
+    </rule>
+
+	<rule>
+        <from>^/classes(/?)$</from>
+        <to>/classunits.htm</to>
+    </rule>
+	<rule>
+        <from>^/classes/create(/?)$</from>
+        <to>/classunits.htm?create=true</to>
+    </rule>
+
+	<!-- ======== PEOPLE ========== -->
+	<rule>
+        <from>^/people(/?)$</from>
+        <to>/people.htm</to>
+    </rule>
+	<rule>
+        <from>^/people/reputation(/?)$</from>
+        <to>/people.htm?sortby=rep</to>
+    </rule>	
+
+	<!-- ======== QUESTIONS ========== -->
+	<rule>
+        <from>^/questions(/?)$</from>
+        <to>/questions.htm</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1</to>
+    </rule>
+	<rule>
+        <from>^/question/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
+        <to>/question.htm?uuid=$1</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)/delete(/?)$</from>
+        <to>/question.htm?id=$1&amp;delete=true</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)/undelete(/?)$</from>
+        <to>/question.htm?id=$1&amp;undelete=true</to>
+    </rule>
+	<rule>
+        <from>^/post/(\d+)/revisions(/?)$</from>
+        <to>/question.htm?id=$1&amp;show=revisions</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)/restore/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;restore=true&amp;revisionid=$2</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)/accept/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;accept=true&amp;answerid=$2</to>
+    </rule>
+	<rule>
+        <from>^/question/(\d+)/close((/?)(.*?))$</from>
+        <to>/question.htm?id=$1&amp;close=true</to>
+    </rule>
+	<rule>
+        <from>^/questions/ask(/?)$</from>
+        <to>/questions.htm?ask=true</to>
+    </rule>
+
+	<rule>
+        <from>^/question/(\d+)/newest((/?)(.*?))$</from>
+        <to>/question.htm?id=$1&amp;sortby=newest</to>
+    </rule>
+	<rule>
+        <from>^/questions/updated(/?)$</from>
+        <to>/questions.htm?sortby=activity</to>
+    </rule>
+	<rule>
+        <from>^/questions/votes(/?)$</from>
+        <to>/questions.htm?sortby=votes</to>
+    </rule>
+	<rule>
+        <from>^/questions/unanswered(/?)$</from>
+        <to>/questions.htm?sortby=unanswered</to>
+    </rule>
+	<rule>
+        <from>^/questions/tag/([%\w\S][^/]+)(/?)$</from>
+        <to>/questions.htm?tag=$1</to>
+    </rule>
+	<!--SEO URLs-->
+	<rule>
+        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^ask][^selected][^votes][^updated][^unanswered])*.*(/?)$</from>
+        <to>/question.htm?id=$1</to>
+    </rule>
+
+	<!-- PROTECTED -->
+	<rule>
+        <from>^/question/answer/(\d+)((/?)(.*?))$</from>
+        <to type="redirect">%{context-path}/question/$1/?write=true</to>
+    </rule>
+
+
+	<!-- ======== SEARCH ========== -->
+	<rule>
+        <from>^/search(/?)$</from>
+        <to>/search.htm</to>
+    </rule>
+	<rule>
+        <from>^/search/schools/(.*)(/?)$</from>
+        <to last="true">/search.htm?q=$1&amp;show=schools</to>
+    </rule>
+	<rule>
+        <from>^/search/feedback/(.*)(/?)$</from>
+        <to last="true">/search.htm?q=$1&amp;show=feedback</to>
+    </rule>
+	<rule>
+        <from>^/search/questions/(.*)(/?)$</from>
+        <to last="true">/search.htm?q=$1&amp;show=questions</to>
+    </rule>
+	<rule>
+        <from>^/search/people/(.*)(/?)$</from>
+        <to last="true">/search.htm?q=$1&amp;show=people</to>
+    </rule>
+	<rule>
+        <from>^/search/classes/(.*)(/?)$</from>
+        <to last="true">/search.htm?q=$1&amp;show=classes</to>
+    </rule>
+	<rule>
+        <from>^/search/(.+)(/?)$</from>
+        <to>/search.htm?q=$1</to>
+    </rule>
+
+
+</urlrewrite>

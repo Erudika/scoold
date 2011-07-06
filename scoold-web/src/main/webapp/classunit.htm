@@ -1,0 +1,158 @@
+<div class="line">
+	<div class="unit size3of4">
+		<div id="class-head">
+			#set($showschool = $showClass.school)
+			
+			<div class="line lightgray">
+				<div class="unit size1of3 mediumText">${lang.get("class.title")}</div>
+				<div class="unit size2of3 lastUnit r">
+<!--					$lang.get("year") $!{showClass.gradyear}-->
+					<span class="pictos">j</span> 
+					<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)">$!{showschool.name}</a>
+				</div>
+			</div>
+
+			#if($request.isUserInRole("mod"))
+				<div id="classname" class="hugeText editable inlineblock p99">$!{showClass.identifier}</div>
+			#else
+				<div class="hugeText">$!{showClass.identifier}</div>
+			#end
+
+			<hr/>
+
+			<div class="mvm">
+				#if($isMine)
+					<a href="$classlink/$!showClass.id/invite/#stripstr($!showClass.identifier)" class="button-tiny rounded3"><span class="pictos">U</span> ${lang.get("invite")}</a>
+				#end
+				#if($authenticated)
+					#if($isLinkedToMe)
+						<a href="$classlink/$!showClass.id/leave/#stripstr($!showClass.identifier)/?left=true" class="rusure button-tiny rounded3"><span class="pictos">-</span> $lang.get("leave")</a>
+					#else
+						<a href="$classlink/$!showClass.id/join/#stripstr($!showClass.identifier)/?joined=true" class="button-tiny rounded3"><span class="pictos">+</span> $lang.get("join")</a>
+					#end
+				#end
+
+				#if($request.isUserInRole("mod"))
+				<a href="${reportslink}?merge=classunit&amp;id=$showClass.id" title="Merge classes" class="red button-tiny rounded3"><span class="pictos">|</span> $lang.get("merge")</a>
+				#end
+				
+				#if($request.isUserInRole("admin"))
+					<a href="${adminlink}?delete=classunit&amp;id=$showClass.id" title="Delete class" class="red button-tiny rounded3"><span class="pictos">*</span> $lang.get("delete")</a>
+				#end
+				
+				#getreportlink($showClass "$classlink/$!showClass.id" "button-tiny rounded3")
+			</div>
+		</div>
+
+		#if($showParam)
+			#if($showParam == "photos")
+				#showphotos($myphotoslink $canEdit)
+
+			#elseif($showParam == "drawer")
+				<h2>$lang.get("drawer.title")</h2>
+
+				#if($authenticated)
+					#oembedbox("addvideo")
+				#end
+
+				<div id="drawer-edit">
+					#if($itemcount.longValue() == 0)
+						<div class="mvl">$lang.get("class.novideos")</div>
+					#end
+					<div id="drawer">
+						#paginate($pagenum.longValue() "#drawerpage($medialist)" $itemcount.longValue() "" "pageless" )
+					</div>
+				</div>
+
+			#elseif($showParam == "chat" && $authenticated)
+				<h2>$lang.get("class.chat")</h2>
+
+				<div id="chat">
+					<span id="channel" class="hide">class$!{showClass.id}</span>
+					<span id="nickname" class="hide">$!authUser.fullname</span>
+					<span id="userid" class="hide">$!authUser.id</span>
+					<div id="chat-log" class="chatbox mbs"></div>
+
+					<form id="chat-form" action="$classlink/$showClass.id">
+						<fieldset>
+							<input type="text" name="message" value="" id="chat-message" class="p90 nicebox"/>
+							<a id="chat-send-msg" href="#" class="button-small rounded3 right"><span class="pictos">w</span></a>
+						</fieldset>
+					</form>
+					<h2>$lang.get("class.chat.whoshere")</h2>
+					<div id="chat-members"></div>
+				</div>
+
+			#elseif($showParam == "invite" && $isLinkedToMe && $isMine)
+
+				<h2>$lang.get("invite")</h2>
+				<fb:serverFbml>
+					<script type="text/fbml">
+						<fb:fbml>
+							#set($basehref = "$request.scheme://$request.serverName:$request.serverPort")
+							#set($invitetxt = "$lang.get('class.facebookinvite') <a href='http://scoold.com/class/$!showClass.id'>http://scoold.com/class/$!showClass.id/</a>")
+							<fb:request-form method="post" action="$basehref$classlink/$!showClass.id/addclassmates" content="$invitetxt" type="Scoold" invite="true" >
+								<fb:multi-friend-selector  actiontext="$lang.get('class.invitepeople')" showborder="false" cols="4" rows="3" email_invite="false" import_external_friends="false"/>
+							</fb:request-form>
+						</fb:fbml>
+					</script>
+				</fb:serverFbml>
+
+				<h2>$lang.get("class.simpleinvite")</h2>
+
+				<form method="post" action="$classlink/$showClass.id/addclassmates">
+					<fieldset>
+						<div>
+							<div class="right p50">
+								<label class="blocklabel">$lang.get("signup.form.email") ($lang.get("optional"))</label>
+								<input tabindex="2" type="text" class="nicebox p90" value="" name="email"/>
+							</div>
+							<div class="left p50">
+								<label class="blocklabel">$lang.get("name")</label>
+								<input tabindex="1" type="text" class="nicebox p90" value="" name="fullname"/>
+							</div>
+						</div>
+						<a href="#" id="add-more-classmates" title="Add more">$lang.get("addmore")</a>
+					</fieldset>
+					<div class="center">
+						<input id="addclassmates-btn" type="submit" value="$lang.get('add')" class="button rounded3"/>
+						<input type="button" value="$lang.get('close')" class="button rounded3"/>
+					</div>
+				</form>
+
+			#end
+		#else
+			<h2>$lang.get("blackboard.title")</h2>
+			#postbox($showPost $showPost true)
+
+			#set($inactivelist =  $showClass.getInactiveusersList())
+
+			#if(!$peoplelist.isEmpty() || !$inactivelist.isEmpty())
+				<h2>$lang.get("people.title") #showcount($itemcount.longValue())</h2>
+				#classmatespage($peoplelist)
+				
+				#foreach($iuser in $inactivelist)
+					#inactivepersonbox($iuser $showClass)
+				#end
+			#end
+		#end
+	</div>
+
+	<div class="unit size1of4 lastUnit">
+		<div id="class-nav" class="center mll">
+			<div class="center lightgray mediumText">$lang.get("year")</div>
+			<div class="megaText mbl">$!{showClass.gradyear}</div>
+			<ul class="sidebar">
+				<li class="rounded3"><a href="$classlink/$!showClass.id/#stripstr($!showClass.identifier)">${lang.get("class.classroom")}</a></li>
+				<li class="rounded3"><a href="$classlink/$!showClass.id/chat/#stripstr($!showClass.identifier)">${lang.get("class.chat")}</a></li>
+				<li class="rounded3"><a href="$classlink/$!showClass.id/photos/#stripstr($!showClass.identifier)">${lang.get("photos.title")}</a></li>
+				<li class="rounded3"><a href="$classlink/$!showClass.id/drawer/#stripstr($!showClass.identifier)">${lang.get("drawer.title")}</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var chat_channel = "$!showClass.id";
+	var contextpath = "$!context";
+</script>
