@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.prettyprint.cassandra.serializers.SerializerTypeInferer;
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
+import me.prettyprint.cassandra.service.ExhaustedPolicy;
 import me.prettyprint.cassandra.service.OperationType;
 import me.prettyprint.hector.api.ClockResolution;
 import me.prettyprint.hector.api.Cluster;
@@ -70,7 +71,12 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
 		config.setHosts(CasDAOFactory.CLUSTER_NODE1);
 		config.setPort(9160);
+//		config.setAutoDiscoverHosts(true);
+		config.setRetryDownedHosts(true);
 		config.setRetryDownedHostsDelayInSeconds(60);
+//		config.setMaxActive(100);
+		config.setMaxIdle(10);
+		config.setExhaustedPolicy(ExhaustedPolicy.WHEN_EXHAUSTED_GROW);
 		Cluster cluster = HFactory.getOrCreateCluster(CasDAOFactory.CLUSTER, config);
 		keyspace = HFactory.createKeyspace(CasDAOFactory.KEYSPACE, cluster,
 			new ConsistencyLevelPolicy() {

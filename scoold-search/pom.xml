@@ -9,7 +9,6 @@
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold-search</artifactId>
 	<version>0.3-SNAPSHOT</version>
-	<packaging>jar</packaging>
 
 	<name>scoold-search</name>
 
@@ -36,7 +35,7 @@
             <url>https://oss.sonatype.org/content/repositories/openid4java-snapshots/</url>
         </repository>
     </repositories>
-
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -69,4 +68,55 @@
 	  <version>0.16.2</version>
 	 </dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<copy todir="${project.build.directory}/lib">
+									<fileset dir="${basedir}/target/">
+										<include name="*.jar"/>
+									</fileset>
+									<flattenmapper/>
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>					
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/pack.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+    <packaging>jar</packaging>
 </project>
