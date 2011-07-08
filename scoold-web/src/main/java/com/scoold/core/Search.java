@@ -41,7 +41,7 @@ public final class Search{
     private static final Logger logger = Logger.getLogger(Search.class.getName());
 	private static Client searchClient;
 	private static Queue<String> queue;
-
+	
     public Search(Client client){
 		searchClient = client;
 	}

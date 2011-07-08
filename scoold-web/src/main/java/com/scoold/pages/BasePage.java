@@ -24,12 +24,16 @@ import com.scoold.core.User.Badge;
 import com.scoold.core.Votable;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.AbstractDAOFactory;
+import com.scoold.util.ScooldAppListener;
 import com.scoold.util.ScooldPrincipal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -147,7 +151,8 @@ public class BasePage extends Page {
 
 	public BasePage() {
 		seshun = getContext().getSession();
-		search = new Search((Client) getContext().getServletContext().getAttribute("searchClient"));
+		search = new Search((Client) getContext().getServletContext().
+				getAttribute(ScooldAppListener.SEARCH_CLIENT));
 		req = getContext().getRequest();
 		checkAuth();
 		initLanguage();
@@ -158,7 +163,8 @@ public class BasePage extends Page {
 		showParam = getParamValue("show");
 		pagenum = new MutableLong(NumberUtils.toLong(getParamValue("page"), 1));
 		if(pagenum.longValue() <= 0L) pagenum = new MutableLong(1);
-		showdownJS = getContext().getServletContext().getAttribute("showdownConverter");
+		showdownJS = getContext().getServletContext().
+				getAttribute(ScooldAppListener.SHOWDOWN_CONV);
 		canComment = authenticated && (authUser.hasBadge(Badge.FRESHMAN) || authUser.isModerator());
 		commentslist = new ArrayList<Comment> ();
 		addModel("isAjaxRequest", isAjaxRequest());

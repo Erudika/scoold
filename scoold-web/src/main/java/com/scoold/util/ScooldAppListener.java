@@ -30,6 +30,8 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 
 	private static final Logger logger = Logger.getLogger(ScooldAppListener.class.getName());
 	private static boolean ELASTICSEARCH_ON = true;
+	public static String SEARCH_CLIENT = "search-client";
+	public static String SHOWDOWN_CONV = "showdown-converter";
 	
 	public void contextInitialized(ServletContextEvent sce) {
 		//logger.info("initializing context.");
@@ -61,17 +63,17 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 //			nb.settings().put("discovery.zen.ping.multicast.enabled", true);
 //			nb.settings().put("discovery.zen.ping.multicast.address", "null");
 //			nb.settings().put("http.enabled", true);
-//			nb.settings().put("network.publish_host", "172.16.151.1");
+			nb.settings().put("network.publish_host", "127.0.0.1");
 			searchClient = nb.node().client();
+			sc.setAttribute(SEARCH_CLIENT, searchClient);
 		}
-		sc.setAttribute("searchClient", searchClient);
 	}
 
 	public void contextDestroyed(ServletContextEvent sce) {
 		//logger.info("context is destroyed.");
 		Client searchNode = (Client) sce.getServletContext().getAttribute("searchClient");
 		if(ELASTICSEARCH_ON && searchNode != null){
-			searchNode.close();
+			searchNode.close();			
 		}
 	}
 

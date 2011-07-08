@@ -13,12 +13,15 @@ import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import com.scoold.db.cassandra.CasDAOFactory.SCF;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.prettyprint.cassandra.serializers.SerializerTypeInferer;
@@ -61,12 +64,31 @@ import org.apache.commons.lang.mutable.MutableLong;
 public class CasDAOUtils extends AbstractDAOUtils {
 	
 	private static final Logger logger = Logger.getLogger(CasDAOUtils.class.getName());
-	private static final long TIMER_OFFSET = 1269182927663L;
+	private static final long TIMER_OFFSET = 1310084584692L;
 	private static Keyspace keyspace;
 	private Mutator<String> mutator;
-//	private CasDAOUtils INSTANCE = new CasDAOUtils();
 	private long voteLockAfter;
 
+	//////////  ID GEN VARS  ////////////// 
+	
+	public static final long workerIdBits = 5L;
+	public static final long dataCenterIdBits = 5L;
+	public static final long maxWorkerId = -1L ^ (-1L << workerIdBits);
+	public static final long maxDataCenterId = -1L ^ (-1L << dataCenterIdBits);
+	public static final long sequenceBits = 12L;
+
+	public static final long workerIdShift = sequenceBits;
+	public static final long dataCenterIdShift = sequenceBits + workerIdBits;
+	public static final long timestampLeftShift = sequenceBits + workerIdBits + dataCenterIdBits;
+	public static final long sequenceMask = -1L ^ (-1L << sequenceBits);
+
+	private long lastTimestamp = -1L;
+	private long dataCenterId = 0L;	// only one datacenter atm
+	private long workerId;
+	private long sequence = 0L;
+	
+	////////////////////////////////////
+	
 	static {
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
 		config.setHosts(CasDAOFactory.CLUSTER_NODE1);
@@ -86,12 +108,13 @@ public class CasDAOUtils extends AbstractDAOUtils {
 				public HConsistencyLevel get(OperationType arg0, String arg1) {
 					return HConsistencyLevel.QUORUM;
 				}
-			});
+			});		
 	}
 	
 	public CasDAOUtils() {
 		mutator = createMutator();
 		voteLockAfter = convertMsTimeToCasTime(keyspace, CasDAOFactory.VOTE_LOCK_AFTER);
+		initIdGen();
 	}
 
 	public Keyspace getKeyspace(){
@@ -809,8 +832,44 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public synchronized Long getNewId() {
-		return HFactory.createClockResolution(ClockResolution.MICROSECONDS_SYNC).
-				createClock() - TIMER_OFFSET;
+//		OLD simple version - only unique for this JVM
+//		return HFactory.createClockResolution(ClockResolution.MICROSECONDS_SYNC).
+//				createClock() - TIMER_OFFSET;
+		
+		
+//		NEW version - unique across JVMs as long as each has a different workerID
+		long timestamp = System.currentTimeMillis();
+
+		if (lastTimestamp == timestamp) {
+			sequence = (sequence + 1) & sequenceMask;
+			if (sequence == 0) {
+				timestamp = tilNextMillis(lastTimestamp);
+			}
+		} else {
+			sequence = 0;
+		}
+
+		if (timestamp < lastTimestamp) {
+			throw new IllegalStateException(String.format("Clock moved backwards.  "
+					+ "Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+		}
+
+		lastTimestamp = timestamp;
+		return	 ((timestamp - TIMER_OFFSET) << timestampLeftShift) | 
+								(dataCenterId << dataCenterIdShift) | 
+										(workerId << workerIdShift) | 
+														 (sequence) ;
+		
+	}
+	
+	protected long tilNextMillis(long lastTimestamp) {
+		long timestamp = System.currentTimeMillis();
+
+		while (timestamp <= lastTimestamp) {
+			timestamp = System.currentTimeMillis();
+		}
+
+		return timestamp;
 	}
 
 	public static java.util.UUID getTimeUUID() {
@@ -819,6 +878,26 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public static String getUUID() {
 		return new com.eaio.uuid.UUID().toString();
+	}
+	
+	private void initIdGen(){
+		try {
+			InetAddress addr = InetAddress.getLocalHost();
+			String hostname = addr.getHostName();
+			hostname = hostname.replaceAll("\\D", "");
+			workerId = NumberUtils.toLong(hostname, maxWorkerId + 1);
+		} catch (UnknownHostException ex) {
+			// this shouldn't happen
+			workerId = -1;
+		}
+		
+		if (workerId > maxWorkerId || workerId < 0) {
+			workerId = new Random().nextInt((int) maxWorkerId+1);
+		}
+
+//		if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+//			dataCenterId =  new Random().nextInt((int) maxDataCenterId+1);
+//		}
 	}
 
 	// add column to a CF with fixed size. Order by: LongType DESCENDING
