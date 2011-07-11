@@ -51,29 +51,42 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 			logger.log(Level.SEVERE, "could not create showdown converter", e);
 		}
 		sc.setAttribute("showdownConverter", showdownConverter);
-		
-		// elasticsearch init
-		Client searchClient = null;
+		 
+		// elasticsearch init   
 		if(ELASTICSEARCH_ON){
-			NodeBuilder nb = NodeBuilder.nodeBuilder().
-					clusterName(Search.INDEX_NAME).
-					client(true).
-					data(false);
+			NodeBuilder nb = NodeBuilder.nodeBuilder();
+			nb.loadConfigSettings(true);
+			nb.settings().put("node.river", "_none_"); 
+			nb.settings().put("client.transport.sniff", true);
 			
-//			nb.settings().put("discovery.zen.ping.multicast.enabled", true);
-//			nb.settings().put("discovery.zen.ping.multicast.address", "null");
-//			nb.settings().put("http.enabled", true);
-			nb.settings().put("network.publish_host", "127.0.0.1");
-			searchClient = nb.node().client();
-			sc.setAttribute(SEARCH_CLIENT, searchClient);
+//			nb.settings().put("network.host", "localhost"); 
+//			nb.settings().put("network.host", "_local_"); 
+//			nb.settings().put("network.tcp.keep_alive", true);
+//			
+//			nb.settings().put("gateway.type", "s3");
+//			nb.settings().put("gateway.s3.bucket", "com.scoold.elasticsearch");
+//			
+//			nb.settings().put("discovery.type", "ec2");
+//			nb.settings().put("discovery.ec2.groups", "elasticsearch");
+//			
+//			nb.settings().put("cloud.aws.region", "eu-west-1");
+//			nb.settings().put("cloud.aws.access_key", "AKIAI5WX2PJPYQEPWECQ");
+//			nb.settings().put("cloud.aws.secret_key", "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");
+//			nb.settings().put("cloud.aws.sqs.queue_url", "https://queue.amazonaws.com/374874639893/ScooldIndex");
+			
+			nb.clusterName(Search.INDEX_NAME);
+			nb.client(true);
+			nb.data(false);
+			
+			sc.setAttribute(SEARCH_CLIENT, nb.node().client());
 		}
 	}
 
 	public void contextDestroyed(ServletContextEvent sce) {
-		//logger.info("context is destroyed.");
-		Client searchNode = (Client) sce.getServletContext().getAttribute("searchClient");
-		if(ELASTICSEARCH_ON && searchNode != null){
-			searchNode.close();			
+		//logger.info("context is destroyed."); 
+		Client searchClient = (Client) sce.getServletContext().getAttribute(SEARCH_CLIENT);
+		if(ELASTICSEARCH_ON && searchClient != null){
+			searchClient.close();
 		}
 	}
 
@@ -135,8 +148,7 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 		// Set the time the user was last seen
 //		HttpSession seshun = se.getSession();
 //
-//		ScooldPrincipal<User> userPricipal = (ScooldPrincipal<User>)
-//				SimplePrincipal.getPrincipal(seshun);
+//		SimplePrincipal userPricipal = SimplePrincipal.getPrincipal(seshun);
 //		User authUser = null;
 //		if (userPricipal != null) {
 //			authUser = userPricipal.getUser();

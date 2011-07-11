@@ -3,9 +3,11 @@
 scoold-web/src/main/webapp/WEB-INF/lib/**
 *.class
 *.jar
+*.zip
 scoold-search/dist/
 scoold-search/build/
 scoold-search/nbproject/
 scoold-search/lib/
 scoold-search/target/
 scoold-web/target/
+

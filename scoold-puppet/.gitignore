@@ -1,0 +1,5 @@
+.DS_Store
+*.class
+*.jar
+commit.sh
+pom.xml

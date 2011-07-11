@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -583,7 +583,7 @@ public class School implements Votable<Long>, CanHasMedia,
 				}
 
 				iconurl = StringUtils.trim(iconurl);
-				boolean isImg = StringUtils.endsWithAny(iconurl,
+				boolean isImg = AbstractDAOUtils.endsWithAny(iconurl,
 						new String[]{"ico", "png", "gif", "jpg"});
 				if(!StringUtils.isBlank(iconurl) && isImg){
 					update();

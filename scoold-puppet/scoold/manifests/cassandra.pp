@@ -1,14 +1,13 @@
 class scoold::cassandra {
 	
-	#include scoold::java
-	
 	# ------------ EDIT HERE ---------------------#
 	$HEAP_SIZE = "7G"
 	$HEAP_NEW = "200M"
+	$ver = "0.8.1"
 	$nodeid = 0
 	$seedlist = "127.0.0.1,127.0.1.1"
 	$tokens = ["0", "56713727820156410577229101238628035242", "113427455640312821154458202477256070485"]
-	$caslink = "http://www.eu.apache.org/dist/cassandra/0.8.0/apache-cassandra-0.8.0-bin.tar.gz"
+	$caslink = "http://www.eu.apache.org/dist/cassandra/${ver}/apache-cassandra-${ver}-bin.tar.gz"
 	# --------------------------------------------#
 	
 	$cassandrausr = "cassandra"
@@ -17,6 +16,8 @@ class scoold::cassandra {
 	$casdir = "${cassandrahome}/cassandra"
 	$casconf = "${casdir}/conf/cassandra.yaml"	
 	$dontstart = "#do-not-start"	 	
+	$mhs = "MAX_HEAP_SIZE="
+	$hns = "HEAP_NEWSIZE="
 			 	
 	user { $cassandrausr:
 		home => $cassandrahome,
@@ -51,13 +52,16 @@ class scoold::cassandra {
 		before => Exec["start-cassandra"]
 	}
 	
-	if $scoold::inproduction {
-		$mhs = "MAX_HEAP_SIZE="
-		$hns = "HEAP_NEWSIZE="
+	if $scoold::inproduction {		
 		$cmd1 = "'1,/#${mhs}/ s/#${mhs}.*/${mhs}\"${HEAP_SIZE}\"/'"
 		$cmd2 = "'1,/#${hns}/ s/#${hns}.*/${hns}\"${HEAP_NEW}\"/'"
 		
-		exec { "set-env": command => "sed -e ${cmd1} -e ${cmd2} -i.bak ${casdir}/conf/cassandra-env.sh" }
+		exec { "set-env": 
+			command => "sed -e ${cmd1} -e ${cmd2} -i.bak ${casdir}/conf/cassandra-env.sh",
+			require => Exec["rename-cassandra"]
+		}
+	}else{
+		#auto calculated and set by cassandra env script
 	}
 	
 	if $nodeid == 0 {
@@ -85,11 +89,12 @@ class scoold::cassandra {
 		}
 	}
 			
-	file { ["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/run/cassandra",
-			"/var/lib/cassandra/commitlog", "/var/lib/cassandra/data", "/var/log/cassandra"]:
+	file { ["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/lib/cassandra/commitlog", 
+			"/var/lib/cassandra/data", "/var/run/cassandra", "/var/log/cassandra"]:
 		ensure => directory,
 	    owner => $cassandrausr,
 	    group => $cassandrausr,
+	    recurse => true,
 	    mode => 755,
 	    require => Exec["rename-cassandra"]
 	}

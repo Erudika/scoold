@@ -4,6 +4,7 @@
  */
 package com.scoold.util;
 
+import com.scoold.db.AbstractDAOUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -210,8 +211,8 @@ public class SecurityFilter implements Filter {
 	}
 
 	private boolean isBlocked(String host, String address, String useragent) {
-		return StringUtils.endsWithAny(useragent, blacklist_useragents) ||
-			StringUtils.endsWithAny(host, blacklist_hosts) ||
+		return AbstractDAOUtils.endsWithAny(useragent, blacklist_useragents) ||
+			AbstractDAOUtils.endsWithAny(host, blacklist_hosts) ||
 			blacklist_ips.containsKey(address);
 	}
 

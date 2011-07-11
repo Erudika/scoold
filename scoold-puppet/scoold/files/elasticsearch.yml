@@ -1,0 +1,55 @@
+# Cluster Settings
+cluster:
+  name: scoold
+  
+node:
+  river: amazonsqs
+  
+network:
+  host: _eth0:ipv4_
+  tcp:
+    keep_alive: true
+    
+index:
+  number_of_shards: 10
+  number_of_replicas: 1
+  
+# Path Settings
+path:
+  data: /var/lib/elasticsearch/data
+  work: /var/lib/elasticsearch/work
+  logs: /var/log/elasticsearch/
+
+# Gateway Settings
+# gateway:
+#   type: s3
+#   s3:
+#     bucket: com.scoold.elasticsearch
+#  recover_after_nodes: 1
+#  recover_after_time: 5m
+#  expected_nodes: 2
+
+
+# Force all memory to be locked, forcing JVM to never swap
+#  (make sure to set MIN and MAX mem to the same value)
+#bootstrap:
+#  mlockall: true
+
+# Unicast Discovery (disable multicast)
+# discovery:
+#   type: ec2
+#   ec2:
+#     groups: elasticsearch
+
+# discovery:
+#   zen:
+#     ping.multicast.enabled: false
+#     ping.unicast.hosts: ["192.168.0.10:9300", "192.168.0.10:9301", "192.168.0.10:9302"]
+
+cloud:
+  aws:
+    region: eu-west-1
+    access_key: AKIAI5WX2PJPYQEPWECQ
+    secret_key: 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
+    sqs:
+      queue_url: https://queue.amazonaws.com/374874639893/ScooldIndex

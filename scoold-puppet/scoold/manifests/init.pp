@@ -26,7 +26,8 @@ class scoold {
 	
 	include scoold::sudo
 	#include scoold::glassfish
-	include scoold::cassandra
+	#include scoold::cassandra
+	include scoold::elasticsearch
 	
 	#case $hostname {
     #    jack,jill:      { include hill    } # apply the hill class

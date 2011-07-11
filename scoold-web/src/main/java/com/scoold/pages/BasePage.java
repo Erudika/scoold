@@ -26,14 +26,11 @@ import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.util.ScooldAppListener;
 import com.scoold.util.ScooldPrincipal;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +50,7 @@ import org.apache.click.control.TextField;
 import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.client.Client;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -339,7 +336,7 @@ public class BasePage extends Page {
 					substring(image.getUrl().lastIndexOf(".") + 1);
 			ext = StringUtils.trim(ext);
 
-			if(StringUtils.endsWithAny(ext, new String[]{"jpg", "png", "gif", "jpeg"})){
+			if(AbstractDAOUtils.endsWithAny(ext, new String[]{"jpg", "png", "gif", "jpeg"})){
 				image.create();
 				addModel("lastMedia", image);
 				addModel("mediaBaseUrl", escapeUrl);

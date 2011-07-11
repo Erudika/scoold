@@ -78,9 +78,9 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
             SECRETKEY = XContentMapValues.nodeStringValue(sqsSettings.get("secretkey"), "null");
             QUEUE_URL = XContentMapValues.nodeStringValue(sqsSettings.get("queue_url"), "null");
         } else {
-            ACCESSKEY = "null";
-            SECRETKEY = "null";
-            QUEUE_URL = "null";
+            ACCESSKEY = settings.globalSettings().get("cloud.aws.access_key");
+            SECRETKEY = settings.globalSettings().get("cloud.aws.secret_key");
+            QUEUE_URL = settings.globalSettings().get("cloud.aws.sqs.queue_url");
         }
 		
 		if (settings.settings().containsKey("index")) {
@@ -89,7 +89,7 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
             MAX_MESSAGES = XContentMapValues.nodeIntegerValue(indexSettings.get("max_messages"), 10);
             TIMEOUT = XContentMapValues.nodeIntegerValue(indexSettings.get("timeout_seconds"), 10);
 		} else {
-			INDEX = "elasticsearch";
+			INDEX = settings.globalSettings().get("cluster.name");
 			MAX_MESSAGES = 10;
 			TIMEOUT = 10;
 		}
@@ -115,7 +115,8 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
     }
 
     private class Consumer implements Runnable {
-
+		private int idleCount = 0;
+		
 		public void run() {
 			String id = null;	// document id
 			String type = null;	// document type
@@ -129,9 +130,6 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
 				
 				// index
 				if (!isBlank(task)) {
-					int reqCount = 0;
-					final List<Long> deliveryTags = Lists.newArrayList();
-					
 					BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 					
 					try {
@@ -156,35 +154,41 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
 											setType(type).
 											setCreate(true).
 											setSource(data).request());
-									reqCount++;
 								} else if(op.equalsIgnoreCase("update")) {
 									bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
 											setId(id).
 											setType(type).
 											setSource(data).request());
-									reqCount++;
 								} else if(op.equalsIgnoreCase("delete")) {
 									bulkRequestBuilder.add(new DeleteRequestBuilder(client, INDEX).
 											setId(id).
 											setType(type).request());
-									reqCount++;
 								}else{
 									continue;
 								}
 							}
 
 							// sleep less when there are lots of messages in queue
-							if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
-								sleeptime = 100;
-							}
-
-							if(reqCount > 0){
+							// sleep more when idle
+							if(bulkRequestBuilder.numberOfActions() > 0){
 								BulkResponse response = bulkRequestBuilder.execute().actionGet();
 								if (response.hasFailures()) {
 									logger.warn("Bulk operation completed with errors: " + response.buildFailureMessage());
 								}
+								// many tasks in queue => throttle up
+								if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
+									sleeptime = 1000;
+								}else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
+									sleeptime = 100;
+								}
+								idleCount = 0;
+							}else{
+								idleCount++;
+								// no tasks in queue => throttle down
+								if(idleCount >= 3) {
+									sleeptime *= 10; 
+								}
 							}
-
 						}
 					} catch (Exception e) {
 						logger.error("Bulk index operation failed {0}", e);

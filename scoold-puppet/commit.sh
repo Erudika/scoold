@@ -1,11 +1,9 @@
 #!/bin/bash
-git add *
-git commit -am "$1"
+git add scoold/*
+git commit -am "puppet code - no msg"
 
-if [ -n "$2" ]; then
-  git remote rm srv1
-  git remote add srv1 git@$2:puppet.git
+if [ -n "$1" ]; then
+  git push git@$1:puppet.git master
 fi
 
-git push srv1 master
 #git push snow master

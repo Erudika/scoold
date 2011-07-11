@@ -57,7 +57,7 @@ public abstract class AbstractDAOUtils {
 	private static final char[] hexChars = {
 		'0', '1', '2', '3', '4', '5', '6', '7',
 		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
+	
 	public static enum DigestAlgorithm {
 		MD2("MD2"),
 		MD5("MD5"),
@@ -459,6 +459,17 @@ public abstract class AbstractDAOUtils {
 		return u;
 	}
 
+	public static boolean endsWithAny(String ext, String[] string) {
+		if(ext == null || ext.trim().isEmpty() || string == null) return false;
+		boolean res = false;
+		for (String string1 : string) {
+			if(ext.endsWith(string1)){
+				res = true;
+				break;
+			}
+		}		
+		return res;
+	}
 
 
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);

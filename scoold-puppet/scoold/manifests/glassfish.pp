@@ -1,14 +1,13 @@
 class scoold::glassfish {
-	
-	#include scoold::ufw::web
-	#include scoold::java
-				
+		
+	# ------------ EDIT HERE ---------------------#
 	$glassfishusr = "glassfish"
 	$glassfishhome = "/home/glassfish"	
 	$gfpath = "${glassfishhome}/gf.zip"
 	$gfdir3 = "${glassfishhome}/glassfish3"
 	$gfdir = "${glassfishhome}/glassfish"
 	$gflink = "http://download.java.net/glassfish/3.1/release/glassfish-3.1.zip"
+	# --------------------------------------------#
 	
 	$ufwconf = "/etc/ufw/ufw.conf"
 	$ufwrules = "/lib/ufw/user.rules"
