@@ -30,7 +30,6 @@ import java.io.IOException;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.common.collect.Lists;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
 import org.elasticsearch.common.xcontent.support.XContentMapValues;
@@ -191,7 +190,7 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
 							}
 						}
 					} catch (Exception e) {
-						logger.error("Bulk index operation failed {0}", e);
+						logger.error("Bulk index operation failed {}", e);
 						continue;
 					}
 				}
@@ -229,15 +228,15 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
 				} catch (AmazonServiceException ase) {
 					logException(ase);
 				} catch (AmazonClientException ace) {
-					logger.error("Could not reach SQS. {0}", ace.getMessage());
+					logger.error("Could not reach SQS. {}", ace.getMessage());
 				}
 			}
 			return task;
 		}
 
 		private void logException(AmazonServiceException ase){
-			logger.error("AmazonServiceException: error={0}, statuscode={1}, "
-				+ "awserrcode={2}, errtype={3}, reqid={4}", 
+			logger.error("AmazonServiceException: error={}, statuscode={}, "
+				+ "awserrcode={}, errtype={}, reqid={}", 
 				new Object[]{ase.getMessage(), ase.getStatusCode(), 
 					ase.getErrorCode(), ase.getErrorType(), ase.getRequestId()});
 		}

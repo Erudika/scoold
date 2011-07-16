@@ -43,9 +43,11 @@ public class School implements Votable<Long>, CanHasMedia,
     @Stored private String name;
 	@Indexed
     @Stored private String location;
+	@Indexed
     @Stored private String type;
     @Stored private Integer fromyear;
     @Stored private Integer toyear;
+	@Indexed
 	@Stored private String about;
 	@Stored private Long userid;
 	@Stored private Integer votes;

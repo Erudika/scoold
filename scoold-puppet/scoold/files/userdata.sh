@@ -45,7 +45,7 @@ sudo puppet apply -e 'include scoold'" >> $GIT_HOME/$GIT_REPO/hooks/post-receive
 
 # add hostname alias
 HOSTNAME=web1
-sudo hostname $HOSTNAME
-sudo echo "127.0.2.2	$HOSTNAME.localdomain	$HOSTNAME"
+hostname $HOSTNAME
+echo "127.0.2.2  $HOSTNAME.localdomain  $HOSTNAME" >> /etc/hosts
 
 

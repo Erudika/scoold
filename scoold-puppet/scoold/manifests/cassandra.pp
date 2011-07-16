@@ -18,6 +18,7 @@ class scoold::cassandra {
 	$dontstart = "#do-not-start"	 	
 	$mhs = "MAX_HEAP_SIZE="
 	$hns = "HEAP_NEWSIZE="
+	$cname = "cluster_name:"
 			 	
 	user { $cassandrausr:
 		home => $cassandrahome,
@@ -43,13 +44,19 @@ class scoold::cassandra {
 			require => Exec["download-cassandra"]					
 	}
 			
-	file { $casconf:
-		source => "puppet:///modules/scoold/cassandra.yaml",
-		mode => 700,
-		owner => $cassandrausr,
-		group => $cassandrausr,
-		require => Exec["rename-cassandra"],
-		before => Exec["start-cassandra"]
+#	file { $casconf:
+#		source => "puppet:///modules/scoold/cassandra.yaml",		
+#		mode => 700,
+#		owner => $cassandrausr,
+#		group => $cassandrausr,
+#		require => Exec["rename-cassandra"],
+#		before => Exec["start-cassandra"]
+#	}	
+	
+	$cnamecmd = "'1,/#${cname}/ s/#${cname}.*/${cname} ${CLUSTER_NAME}/'"
+	exec { "set-cluster-name": 
+		command => "sed -e ${cmd1} -i.bak ${casconf}",
+		require => Exec["rename-cassandra"]
 	}
 	
 	if $scoold::inproduction {		
@@ -107,13 +114,13 @@ class scoold::cassandra {
 		before => Exec["start-cassandra"]
 	}
 	
-	exec{ "stop-cassandra":
+	exec { "stop-cassandra":
 		command => "stop cassandra",
 		onlyif => ["test -e /var/run/cassandra/cassandra.pid"],
 		before => Exec["start-cassandra"]
 	}
 	
-	exec{ "start-cassandra":
+	exec { "start-cassandra":
 		command => "start cassandra",
 		unless => ["test -e /var/run/cassandra/cassandra.pid", "grep '${dontstart}' ${casconf} 2>/dev/null"]
 	}

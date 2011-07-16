@@ -25,13 +25,20 @@ public class Search extends BasePage{
 	public ArrayList<Post> questionlist;
 	public ArrayList<Post> feedbacklist;
 	public String url;
+	
 	public MutableLong questioncount;
 	public MutableLong feedbackcount;
 	public MutableLong usercount;
 	public MutableLong schoolcount;
 	public MutableLong classcount;
+	
+	public MutableLong questionpage;
+	public MutableLong feedbackpage;
+	public MutableLong userpage;
+	public MutableLong schoolpage;
+	public MutableLong classpage;
 
-	private int max = 5;
+	private int max = 10;
 
 	public Search() {
 		title = lang.get("search.title");
@@ -46,35 +53,40 @@ public class Search extends BasePage{
 		usercount = new MutableLong(0);
 		schoolcount = new MutableLong(0);
 		classcount = new MutableLong(0);
+		
+		questionpage = new MutableLong(0);
+		feedbackpage = new MutableLong(0);
+		userpage = new MutableLong(0);
+		schoolpage = new MutableLong(0);
+		classpage = new MutableLong(0);
 	} 
 
 	public void onGet(){
 		if(param("q")){
 			String q = getParamValue("q");
-			String qtype = Post.Question.class.getSimpleName();
-			String ftype = Post.Feedback.class.getSimpleName();
 
-			if ("questions".equals(showParam)) {
-				questionlist = search.findByKeyword(Post.class, qtype, pagenum, questioncount, q);
-			} else if("feedback".equals(showParam)) {
-				feedbacklist = search.findByKeyword(Post.class, ftype, pagenum, feedbackcount, q);
-			} else if("people".equals(showParam)) {
-				userlist = search.findByKeyword(User.class, pagenum, usercount, q);
-			} else if("schools".equals(showParam)) {
-				schoollist = search.findByKeyword(School.class, pagenum, schoolcount, q);
-			} else if("classes".equals(showParam)) {
-				classlist = search.findByKeyword(Classunit.class, pagenum, classcount, q);
-			} else {
-				questionlist = search.findByKeyword(Post.class, qtype, pagenum, questioncount, q, max);
-				feedbacklist = search.findByKeyword(Post.class, ftype, pagenum, feedbackcount, q, max);
-				userlist = search.findByKeyword(User.class, null, pagenum, usercount, q, max);
-				schoollist = search.findByKeyword(School.class, null, pagenum, schoolcount, q, max);
-				classlist = search.findByKeyword(Classunit.class, null, pagenum, classcount, q, max);
-
-				addModel("totalCount", (questioncount.longValue() + feedbackcount.longValue() +
-						usercount.longValue() + schoolcount.longValue() + classcount.longValue()));
+			if (showParam != null) {
+				if ("questions".equals(showParam)) {
+					questionlist = search.findByKeyword(Post.class, pagenum, questioncount, q);
+				} else if("feedback".equals(showParam)) {
+					feedbacklist = search.findByKeyword(Post.class, pagenum, feedbackcount, q);
+				} else if("people".equals(showParam)) {
+					userlist = search.findByKeyword(User.class, pagenum, usercount, q);
+				} else if("schools".equals(showParam)) {
+					schoollist = search.findByKeyword(School.class, pagenum, schoolcount, q);
+				} else if("classes".equals(showParam)) {
+					classlist = search.findByKeyword(Classunit.class, pagenum, classcount, q);
+				}
+			} else {				
+				questionlist = search.findByKeyword(Post.class, questionpage, questioncount, q, max);
+				feedbacklist = search.findByKeyword(Post.class, feedbackpage, feedbackcount, q, max);
+				userlist = search.findByKeyword(User.class, userpage, usercount, q, max);
+				schoollist = search.findByKeyword(School.class, schoolpage, schoolcount, q, max);
+				classlist = search.findByKeyword(Classunit.class, classpage, classcount, q, max);
 			}
-
+			
+			addModel("totalCount", (questioncount.longValue() + feedbackcount.longValue() +
+					usercount.longValue() + schoolcount.longValue() + classcount.longValue()));
 		}
 	}
 }

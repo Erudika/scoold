@@ -1,0 +1,62 @@
+{ 
+	"settings" : {
+        "index" : {
+            "number_of_shards" : 10,
+            "number_of_replicas" : 1,
+			"analysis" : {
+				"analyzer" : {					
+					"default" : {
+						"type" : "standard",
+		                "stopwords" : ["arabic", "armenian", "basque", "brazilian", "bulgarian", "catalan", "czech", "danish", "dutch", "english", "finnish", "french", "galician", "german", "greek", "hindi", "hungarian", "indonesian", "italian", "norwegian", "persian", "portuguese", "romanian", "russian", "spanish", "swedish", "turkish"]
+					}		                
+				}
+			}				
+        }
+    },
+	"mappings" : {
+		"post": {
+			"_source": { "enabled": false },
+			"properties": {
+				"parentuuid": { "type": "string", "store": "yes", "index": "not_analyzed"},
+				"parentpostid": { "type": "long", "store": "yes"},
+				"title": { "type": "string", "store": "yes"}
+			}
+		},
+		"feedback": {
+			"_source": { "enabled": false },
+			"properties": {
+				"parentuuid": { "type": "string", "store": "yes", "index": "not_analyzed"},
+				"parentpostid": { "type": "long", "store": "yes"},
+				"title": { "type": "string", "store": "yes"}
+			}
+		},
+		"tag": {
+			"_source": { "enabled": true },
+			"properties": {
+				"tag": { "type": "string", "store": "yes", "index": "not_analyzed" }
+			}
+		},
+		"classunit": {
+			"_source": { "enabled": false },
+			"properties": {		
+				"identifier": { "type": "string", "store": "yes"},
+				"gradyear": { "type": "integer", "store": "yes"}
+			}
+		},
+		"user": {
+			"_source": { "enabled": false },
+			"properties": {
+				"fullname": { "type": "string", "store": "yes"},
+				"location": { "type": "string", "store": "yes"},
+				"reputation": { "type": "long", "store": "yes"}
+			}
+		},
+		"school": {
+			"_source": { "enabled": false },
+			"properties": {
+				"name": { "type": "string", "store": "yes"},
+				"location": { "type": "string", "store": "yes"}
+			}
+		}
+	}
+}

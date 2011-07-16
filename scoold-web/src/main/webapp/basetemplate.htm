@@ -1292,7 +1292,7 @@
 ####################################
 #macro(answerspage $answers $parentpost)
 	#foreach($answer in $answers)
-		#postbox($answer $parentpost false)
+		#postbox($answer $parentpost)
 	#end
 #end
 ####################################
@@ -1323,7 +1323,7 @@
 	</div>
 #end
 ####################################
-#macro(postbox $showpost $parentpost $toppost)
+#macro(postbox $showpost $parentpost)
 	#if($showpost.isAnswer())	#set($boxclass = "whitebox") #else #set($boxclass = "" ) #end
 
 	#if($showpost.isQuestion() || $showpost.isAnswer())
@@ -2117,7 +2117,9 @@
 						#else
 							<span class="openid-icon-small" title="You are signed in with OpenID">&nbsp;</span>
 						#end
-						<a href="$profilelink/$authUser.id/#stripstr($authUser.fullname)" title="My profile">$!{authUser.fullname}</a>
+						#if($authUser.fullname)
+							<a href="$profilelink/$authUser.id/#stripstr($authUser.fullname)" title="My profile">$!{authUser.fullname}</a>
+						#end
 						|
 						#set($newMessageCount = $authUser.newmessages)
 						#if($newMessageCount > 0) <span class="green">$newMessageCount</span> #set($msgclass = "green") #else #set($msgclass = "gray") #end

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
@@ -84,7 +85,6 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 				id, newUser.getReputation(), newUser.getOldreputation(), mut);
 
 		cdu.addTimesortColumn(null, id, CasDAOFactory.USERS_BY_TIMESTAMP, id, null, mut);
-
 		mut.execute();
 
 		newUser.index();

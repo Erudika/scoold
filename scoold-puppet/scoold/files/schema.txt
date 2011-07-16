@@ -7,8 +7,8 @@ use scoold;
 create column family Users
     with comparator = AsciiType
 	and default_validation_class = AsciiType
-    and keys_cached = 10000
-    and rows_cached = 10000
+    and keys_cached = 20000
+    and rows_cached = 20000
     and gc_grace = 18000
     and key_cache_save_period = 3600
     and memtable_throughput = 64;
@@ -43,8 +43,7 @@ create column family Posts
 create column family Reports
     with comparator = AsciiType
 	and default_validation_class = AsciiType
-    and keys_cached = 5000
-    and rows_cached = 5000
+    and keys_cached = 1000
     and gc_grace = 18000
     and key_cache_save_period = 3600
     and memtable_throughput = 64;
@@ -60,8 +59,8 @@ create column family Revisions
 create column family Comments
     with comparator = AsciiType
 	and default_validation_class = AsciiType
-    and keys_cached = 10000
-    and rows_cached = 10000
+    and keys_cached = 100000
+    and rows_cached = 100000
     and gc_grace = 18000
     and key_cache_save_period = 3600
     and memtable_throughput = 64;
@@ -69,8 +68,7 @@ create column family Comments
 create column family Media
     with comparator = AsciiType
 	and default_validation_class = AsciiType
-    and keys_cached = 5000
-    and rows_cached = 5000
+    and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
     and memtable_throughput = 64;
@@ -175,7 +173,7 @@ create column family MessagesUuids
 
 create column family RevisionsParentUuids
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -183,7 +181,7 @@ create column family RevisionsParentUuids
 
 create column family CommentsParentUuids
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -191,7 +189,7 @@ create column family CommentsParentUuids
 
 create column family MediaParentUuids
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -199,7 +197,7 @@ create column family MediaParentUuids
 
 create column family MessagesParentUuids
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -254,7 +252,7 @@ create column family UsersByReputation
 
 create column family UsersByTimestamp
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -263,7 +261,7 @@ create column family UsersByTimestamp
 
 create column family Contacts
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 10000
     and gc_grace = 18000
@@ -272,7 +270,7 @@ create column family Contacts
 
 create column family UserSchools
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -280,7 +278,7 @@ create column family UserSchools
 
 create column family UserClasses
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -288,7 +286,7 @@ create column family UserClasses
 
 create column family UserQuestions
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -296,7 +294,7 @@ create column family UserQuestions
 
 create column family UserAnswers
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -304,7 +302,7 @@ create column family UserAnswers
 
 create column family NewMessages
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -312,7 +310,7 @@ create column family NewMessages
 
 create column family Photos
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -320,7 +318,7 @@ create column family Photos
 
 create column family Drawer
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -337,7 +335,7 @@ create column family Labels
 
 create column family LabelsMedia
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
@@ -345,7 +343,7 @@ create column family LabelsMedia
 
 create column family SchoolClasses
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and rows_cached = 10000
     and gc_grace = 18000
@@ -354,7 +352,7 @@ create column family SchoolClasses
 
 create column family SchoolUsers
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and rows_cached = 10000
     and gc_grace = 18000
@@ -363,7 +361,7 @@ create column family SchoolUsers
 
 create column family SchoolsByTimestamp
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -381,7 +379,7 @@ create column family SchoolsByVotes
 
 create column family ClassUsers
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 10000
     and rows_cached = 10000
     and gc_grace = 18000
@@ -390,7 +388,7 @@ create column family ClassUsers
 
 create column family ClassesByTimestamp
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -399,7 +397,7 @@ create column family ClassesByTimestamp
 
 create column family Questions
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -417,7 +415,7 @@ create column family QuestionsByVotes
 
 create column family QuestionsByActivity
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -426,7 +424,7 @@ create column family QuestionsByActivity
 
 create column family Answers
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -444,7 +442,7 @@ create column family AnswersByVotes
 
 create column family AllQuestions
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -462,7 +460,7 @@ create column family AllQuestionsByVotes
 
 create column family AllQuestionsByActivity
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -471,7 +469,7 @@ create column family AllQuestionsByActivity
 
 create column family Feedback
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -489,7 +487,7 @@ create column family FeedbackByVotes
 
 create column family FeedbackByActivity
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
@@ -498,7 +496,7 @@ create column family FeedbackByActivity
 
 create column family ReportsByTimestamp
     with comparator = LongType
-	and default_validation_class = LongType
+	and default_validation_class = AsciiType
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000

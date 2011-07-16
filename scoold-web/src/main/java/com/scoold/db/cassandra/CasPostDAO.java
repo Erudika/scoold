@@ -14,7 +14,6 @@ import com.scoold.db.AbstractPostDAO;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

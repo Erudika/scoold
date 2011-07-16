@@ -39,8 +39,7 @@ public class Feedback <P extends Post> extends BasePage{
 					tags, pagenum, itemcount);
 		} else if(param("search")){
 			feedbacklist = new ArrayList<Post> ();
-			feedbacklist.addAll(search.findByKeyword(Post.class,
-					PostType.FEEDBACK.name().toLowerCase(),
+			feedbacklist.addAll(search.findByKeyword(Post.Feedback.class,
 					pagenum, itemcount, getParamValue("search")));
 		} else {
 			String sortBy = "timestamp";

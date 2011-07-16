@@ -3,7 +3,10 @@ class scoold::elasticsearch {
 	# ------------ EDIT HERE ---------------------#
 	$HEAP_SIZE = "1200M"
 	$HEAP_DEV = "200M"
-	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.3.zip"
+	$PORT = 9200
+	$INDEX_NAME = "scoold"
+	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.4.zip"
+	$MASTER = true
 	# --------------------------------------------#
 	
 	$elasticsearchusr = "elasticsearch"
@@ -15,7 +18,7 @@ class scoold::elasticsearch {
 	$minmem = "ES_MIN_MEM="
 	$maxmem = "ES_MAX_MEM="
 		 	
-	package { "unzip": }
+	package { ["unzip", "curl"]: }
 	
 	user { $elasticsearchusr:
 		home => $elasticsearchhome,
@@ -82,16 +85,16 @@ class scoold::elasticsearch {
 		before => Exec["start-elasticsearch"]
 	}
 	
-	file { "${esdir}/config/default-mapping.json":
+	file { "${esdir}/config/index.json":
 		ensure => file,
-		source => "puppet:///modules/scoold/default-mapping.json",
+		source => "puppet:///modules/scoold/index.json",
 		owner => $elasticsearchusr,
 	    group => $elasticsearchusr,
 		mode => 700,
 		require => Exec["rename-elasticsearch"],
 		before => Exec["start-elasticsearch"]
 	}
-	
+		
 	file { "${esdir}/plugins/river-amazonsqs.zip":
 		ensure => file,
 		source => "puppet:///modules/scoold/river-amazonsqs.zip",
@@ -99,13 +102,21 @@ class scoold::elasticsearch {
 	    group => $elasticsearchusr,
 		mode => 700,
 		require => Exec["rename-elasticsearch"],
+		before => [Exec["start-elasticsearch"], Exec["install-river"]]
+	}
+	
+	exec { "install-river":
+		command => "sudo -u ${elasticsearchusr} unzip -qq -d ${esdir}/plugins/river-amazonsqs ${esdir}/plugins/river-amazonsqs.zip",
+		unless => "test -e ${esdir}/plugins/river-amazonsqs",
+		require => [Package["unzip"], Exec["rename-elasticsearch"]],
 		before => Exec["start-elasticsearch"]
 	}
 	
-	exec { "unzip-river":
-		command => "sudo -u ${elasticsearchusr} unzip -qq -d ${esdir}/plugins/river-amazonsqs ${esdir}/plugins/river-amazonsqs.zip",
-		unless => "test -e ${esdir}/plugins/river-amazonsqs",
-		require => [Package["unzip"], File["${esdir}/plugins/river-amazonsqs.zip"]]
+	exec { "install-cloud-plugin":
+		command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
+		unless => "test -e ${esdir}/plugins/cloud-aws",
+		require => [Exec["rename-elasticsearch"], Exec["install-river"]],
+		before => Exec["start-elasticsearch"]
 	}
 			
 	line { "limits.conf1":
@@ -120,14 +131,39 @@ class scoold::elasticsearch {
 		line => "${elasticsearchusr}    -       memlock         unlimited"
 	}
 	
-	exec{ "stop-elasticsearch":
+	exec { "stop-elasticsearch":
 		command => "stop elasticsearch",
 		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
 		before => Exec["start-elasticsearch"]
 	}
 	
-	exec{ "start-elasticsearch":
+	exec { "start-elasticsearch":
 		command => "start elasticsearch",
 		unless => "test -e /var/run/elasticsearch/elasticsearch.pid"
 	}		
+	
+	exec { "sleep":
+		command => "sleep 15",
+		require => [Exec["start-elasticsearch"], Package["curl"]],
+		before => Exec["create-river"]			
+	}
+		
+	exec { "create-river":
+		command => "curl -XPUT '${ipaddress}:${PORT}/_river/${INDEX_NAME}/_meta' -d '{ \"type\" : \"amazonsqs\" }' &> /dev/null",
+		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
+		require => [Exec["start-elasticsearch"], Package["curl"]],
+		before => Exec["create-index"]
+	}
+	
+	exec { "sleep2":
+		command => "sleep 5",
+		require => [Exec["create-river"], Package["curl"]],
+		before => Exec["create-index"]			
+	}
+	
+	exec { "create-index":
+		command => "curl -XPUT '${ipaddress}:${PORT}/${INDEX_NAME}' -d @${esdir}/config/index.json &> /dev/null",
+		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
+		require => [Exec["start-elasticsearch"], Package["curl"]]		
+	}	
 }

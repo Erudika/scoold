@@ -25,6 +25,7 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 	@Stored private Long timestamp;
 	@Stored private Long userid;
 	@Stored private Long blackboardid;
+	@Indexed
 	@Stored private String inactiveusers;
 
 	private transient School school;

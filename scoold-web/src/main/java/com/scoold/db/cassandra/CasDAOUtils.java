@@ -832,12 +832,12 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public synchronized Long getNewId() {
-//		OLD simple version - only unique for this JVM
+		// OLD simple version - only unique for this JVM
 //		return HFactory.createClockResolution(ClockResolution.MICROSECONDS_SYNC).
-//				createClock() - TIMER_OFFSET;
+//				createClock() - TIMER_OFFSET - 1000;
 		
-		
-//		NEW version - unique across JVMs as long as each has a different workerID
+		// NEW version - unique across JVMs as long as each has a different workerID
+		// based on Twitter's Snowflake algorithm
 		long timestamp = System.currentTimeMillis();
 
 		if (lastTimestamp == timestamp) {

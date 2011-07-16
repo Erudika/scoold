@@ -7,11 +7,11 @@ package com.scoold.core;
 
 import com.scoold.core.Post.PostType;
 import com.scoold.db.AbstractDAOFactory;
+import com.scoold.db.cassandra.CasDAOUtils;
 import com.scoold.util.Queue;
 import com.scoold.util.QueueFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -25,6 +25,7 @@ import org.elasticsearch.index.query.xcontent.FilterBuilders;
 import org.elasticsearch.index.query.xcontent.OrFilterBuilder;
 import org.elasticsearch.index.query.xcontent.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -39,11 +40,15 @@ public final class Search{
 	
 	private static final int MAX_ITEMS = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
     private static final Logger logger = Logger.getLogger(Search.class.getName());
-	private static Client searchClient;
+	private Client searchClient;
 	private static Queue<String> queue;
 	
     public Search(Client client){
 		searchClient = client;
+	}
+	
+	public Client getClient(){
+		return searchClient;
 	}
 
 	private static <E extends Serializable> Queue<E> getQueue(){
@@ -64,20 +69,22 @@ public final class Search{
 	}
 
 	public <T extends Searchable<?>> ArrayList<T> findByKeyword(Class<T> clazz,
-			String type, MutableLong page, MutableLong itemcount, String keywords, int max){
+			MutableLong page, MutableLong itemcount, String keywords, int max){
 
 		if(searchClient == null || StringUtils.isBlank(keywords))
 			return new ArrayList<T>(0);
 
-		int start = (page == null) ? 0 : (page.intValue() - 1) * max;
+		Long p = CasDAOUtils.toLong(page);
+		int start = (p == null) ? 0 : (p.intValue() - 1) * max;
 		// Types are used for posts: e.g. post of type answer, feedback, etc.
-		if(type == null) type = clazz.getSimpleName().toLowerCase();
+		String type = clazz.getSimpleName().toLowerCase();
+		
 		T so = null;
-
+		
 		ArrayList<T> list = new ArrayList<T>();
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
-				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setTypes(type)
+				.setSearchType(SearchType.DFS_QUERY_AND_FETCH).setTypes(type)
 				.setQuery(QueryBuilders.queryString(keywords).useDisMax(true))
 				.setFrom(start).setSize(max).setExplain(true).execute().actionGet();
 
@@ -87,9 +94,13 @@ public final class Search{
 
 			ArrayList<String> keys = new ArrayList<String>();
 			for (SearchHit hit : hits) {
-				Long qid = (Long) hit.getSource().get("parentpostid");
-				if(clazz.equals(Post.class) && qid != null){
-					keys.add(qid.toString());
+				if(clazz.equals(Post.class)){
+					SearchHitField qid = hit.field("parentpostid");
+					if(qid != null && qid.getValue() != null) {
+						keys.add(qid.getValue().toString());
+					} else {
+						keys.add(hit.getId());
+					}
 				}else{
 					keys.add(hit.getId());
 				}
@@ -106,12 +117,7 @@ public final class Search{
 
 	public <T extends Searchable<?>> ArrayList<T> findByKeyword(Class<T> clazz,	
 			MutableLong page, MutableLong itemcount, String keywords){
-		return findByKeyword(clazz, null, page, itemcount, keywords, MAX_ITEMS);
-	}
-
-	public <T extends Searchable<?>> ArrayList<T> findByKeyword(Class<T> clazz, 
-			String type, MutableLong page, MutableLong itemcount, String keywords){
-		return findByKeyword(clazz, type, page, itemcount, keywords, MAX_ITEMS);
+		return findByKeyword(clazz, page, itemcount, keywords, MAX_ITEMS);
 	}
 
 	public ArrayList<Tag> findTag(String keywords, int max){
@@ -129,8 +135,7 @@ public final class Search{
 			SearchHits hits = response.getHits();
 
 			for (SearchHit hit : hits) {
-				Map<String, Object> data = hit.getSource();
-				Tag tag = new Tag((String) data.get("tag"));
+				Tag tag = new Tag((String) hit.field("tag").getValue());
 				tag.setId(NumberUtils.toLong(hit.getId()));
 				tags.add(tag);
 			}
@@ -147,8 +152,10 @@ public final class Search{
 		if(searchClient == null || tags == null || tags.isEmpty())
 			return new ArrayList<Post>(0);
 
+		Long p = CasDAOUtils.toLong(page);
+		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
+		
 		ArrayList<String> keys = new ArrayList<String>();
-		int start = (page == null) ? 0 : (page.intValue() - 1) * MAX_ITEMS;
 		try {
 			OrFilterBuilder tagFilter = FilterBuilders.orFilter(
 					FilterBuilders.termFilter("tags", tags.remove(0)));
@@ -226,7 +233,9 @@ public final class Search{
 	public ArrayList<Post> findUnansweredQuestions(MutableLong page, MutableLong itemcount){
 		if(searchClient == null) return new ArrayList<Post>(0);
 
-		int start = (page == null) ? 0 : (page.intValue() - 1) * MAX_ITEMS;
+		Long p = CasDAOUtils.toLong(page);
+		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
+		
 		ArrayList<String> keys = new ArrayList<String>();
 
 		try {
@@ -268,9 +277,8 @@ public final class Search{
 			SearchHits hits = response.getHits();
 
 			for (SearchHit hit : hits) {
-				Map<String, Object> data = hit.getSource();
 				User user = new User(NumberUtils.toLong(hit.getId()));
-				user.setFullname((String) data.get("fullname"));
+				user.setFullname((String) hit.field("fullname").getValue());
 				users.add(user);
 			}
 		} catch (Exception e) {

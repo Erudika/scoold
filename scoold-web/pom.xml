@@ -157,11 +157,6 @@
             <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>0.16.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers</artifactId>
             <version>3.2.0</version>
@@ -339,8 +334,13 @@
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>0.16.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
-            <version>0.16.2</version>
+            <version>0.16.4</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

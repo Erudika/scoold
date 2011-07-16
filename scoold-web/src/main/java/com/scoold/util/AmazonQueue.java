@@ -45,7 +45,7 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	private ObjectMapper mapper;
 	
 	public AmazonQueue(String name){
-		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));
+		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
 		QUEUE_URL = SQS_URL.concat(SQS_ACCOUNT_ID).concat("/").concat(name);
 		mapper = new ObjectMapper();
 	}

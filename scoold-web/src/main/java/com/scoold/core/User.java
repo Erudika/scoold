@@ -1,6 +1,5 @@
 package com.scoold.core;
 
-
 import com.scoold.core.Media.MediaType;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractUserDAO;
@@ -31,15 +30,21 @@ public class User implements ScooldObject, Comparable<User>,
     @Stored private String type;
 	@Stored private Long locktill;
 	@Stored private String groups;
-    @Stored private String location;
+    @Indexed
+	@Stored private String location;
 	@Stored private Long dob;
+	@Indexed
     @Stored private String status;
+	@Indexed
     @Stored private String ilike;
+	@Indexed
     @Stored private String aboutme;
+	@Indexed
 	@Stored private String badges;
 	@Stored private Long upvotes;
 	@Stored private Long downvotes;
 	@Stored private Long comments;
+	@Indexed
 	@Stored private Long reputation;
 	@Stored private String contacts;
 	@Stored private String identifier;
