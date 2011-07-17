@@ -171,7 +171,7 @@ public class User implements ScooldObject, Comparable<User>,
 		this.comments = 0L;
 		this.reputation = 0L;
 		this.photos = 0L;
-		this.groups = getUserType().toGroupString();
+		this.groups = getUserType(this.type).toGroupString();
 	}
 
 	public User(String uuid) {
@@ -181,7 +181,7 @@ public class User implements ScooldObject, Comparable<User>,
 		this.comments = 0L;
 		this.reputation = 0L;
 		this.photos = 0L;
-		this.groups = getUserType().toGroupString();
+		this.groups = getUserType(this.type).toGroupString();
 	}
 
 	public User (Long id){
@@ -192,7 +192,7 @@ public class User implements ScooldObject, Comparable<User>,
 		this.comments = 0L;
 		this.reputation = 0L;
 		this.photos = 0L;
-		this.groups = getUserType().toGroupString();
+		this.groups = getUserType(this.type).toGroupString();
 	}
 
     public User (String email, Boolean active, UserType type,
@@ -202,7 +202,7 @@ public class User implements ScooldObject, Comparable<User>,
         this.email = email;
         this.active = active;
 		this.type =  type.toString();
-		this.groups = getUserType().toGroupString();
+		this.groups = getUserType(this.type).toGroupString();
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
@@ -303,7 +303,7 @@ public class User implements ScooldObject, Comparable<User>,
     }
     
 	public void setType(String type){
-		this.type = type;
+		this.type = getUserType(type).toString();
 	}
 
 	public String getGroups() {
@@ -736,26 +736,8 @@ public class User implements ScooldObject, Comparable<User>,
 	public void deleteAllMedia(){
 		Media.getMediaDao().deleteAllMediaForUUID(uuid);
 	}
-
-    public String getTypeString(){
-		if(this.type == null) return UserType.STUDENT.toString();
-        return UserType.valueOf(this.type.toUpperCase()).toString();
-    }
-
-    public void setTypeString(String type) {
-        try{
-            this.type = UserType.valueOf(type.trim().toUpperCase()).toString();
-        }catch(IllegalArgumentException e){
-            //oh shit!
-			this.type = UserType.STUDENT.toString();
-        }
-    }
-
-	public void setUserType(UserType type){
-		this.type = type.toString();
-	}
-
-	private UserType getUserType(){
+    
+	private UserType getUserType(String type){
 		if(type == null) return UserType.STUDENT;
 		try{
             return UserType.valueOf(type.trim().toUpperCase());

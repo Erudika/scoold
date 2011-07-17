@@ -1,7 +1,7 @@
 /*
  * Style sheet for scoold.com
  *
- * 2011 (CC) BY-SA
+ * 2011 (CC) BY-SA 
 */
 
 /* v1.0 | 20080212  Eric Mayer Reset */
@@ -169,6 +169,9 @@ h3 {font-size: 120%;}
 h4 {font-size: 110%;}
 h5 {font-size: 100%;}
 h6 {font-size: 90%;}
+
+tr { border-bottom: 5px solid transparent; }
+td { vertical-align: middle;}
 
 /* -- IMAGES -- */
 img { border: none; }

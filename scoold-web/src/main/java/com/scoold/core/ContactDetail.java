@@ -25,33 +25,16 @@ public class ContactDetail {
 		MSN, AIM, GTALK, QQ, YAHOO, ICQ, XFIRE, EBUDDY;
 
 		public String toString(){
-			switch(this){
-				case UNKNOWN: return "Unknown";
-				case ADDRESS: return "Address";
-				case XFIRE: return "Xfire";
-				case QQ: return "Tencent QQ";
-				case FACEBOOK: return "Facebook";
-				case TWITTER: return "Twitter";
-				case EBUDDY: return "eBuddy";
-				case WEBSITE: return "Website";
-				case SKYPE: return "Skype";
-				case MSN: return "Windows Live";
-				case AIM: return "AOL IM";
-				case YAHOO: return "Yahoo! Messenger";
-				case GTALK: return "Google Talk";
-				case ICQ: return "ICQ";
-				default: return UNKNOWN.toString();
-			}
+			return super.toString().toLowerCase();
 		}
 	};
 
-
 	public ContactDetail() {
-		this.value = "";
+		this(ContactDetailType.UNKNOWN.toString(), "");
     }
 
-	public ContactDetail(ContactDetailType type, String value) {
-		this.type = type.name();
+	public ContactDetail(String type, String value) {
+		this.type = getContactDetailType(type).toString();
 		this.value = value;
 	}
 
@@ -89,7 +72,7 @@ public class ContactDetail {
      * @param type new value of type
      */
     public void setType(String type) {
-        this.type = type;
+        this.type = getContactDetailType(type).name();
     }
 
 	public static ArrayList<ContactDetail> toContactsList(String details){
@@ -98,22 +81,19 @@ public class ContactDetail {
 		for (String detail : details.split(SEPARATOR)) {
 			String[] twoParts = detail.split(",");
 			if(twoParts.length != 2) continue;
-
-			ContactDetailType cdt;
-			try {
-				cdt = ContactDetailType.valueOf(twoParts[0]);
-			} catch (Exception e) {
-				cdt = ContactDetailType.UNKNOWN;
-			}
-
-			list.add(new ContactDetail(cdt, twoParts[1]));
+			list.add(new ContactDetail(twoParts[0], twoParts[1]));
 		}
 		return list;
 	}
 
-	public String getTypeString(){
-		if(type == null) return ContactDetailType.UNKNOWN.toString();
-		return ContactDetailType.valueOf(type.toUpperCase()).toString();
+	private ContactDetailType getContactDetailType(String type){
+		if(type == null) return ContactDetailType.UNKNOWN;
+		try{
+			return ContactDetailType.valueOf(type.toUpperCase());
+        }catch(IllegalArgumentException e){
+            //oh shit!
+			return ContactDetailType.UNKNOWN;
+        }
 	}
 
 	public String toString() {

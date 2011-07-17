@@ -89,7 +89,7 @@ public class Signup extends BasePage{
         radioGroup.add(new Radio(UserType.TEACHER.toString(), lang.get("teacher")));
         radioGroup.setValue(UserType.STUDENT.toString());
         radioGroup.setVerticalLayout(false);
-		radioGroup.setLabel(lang.get("signup.form.youare"));
+		radioGroup.setLabel(lang.get("signup.form.iama"));
         
 		signupForm.add(identifier);
         signupForm.add(fullname);
@@ -126,7 +126,7 @@ public class Signup extends BasePage{
 				newUser.setActive(true);
 				newUser.setEmail(getParamValue("email"));
 				newUser.setFullname(getParamValue("fullname"));
-				newUser.setTypeString(getParamValue("type"));				
+				newUser.setType(getParamValue("type"));				
 				newUser.setIdentifier(identString);
 
 				if (identString.contains(ADMIN_KEY) || identString.equals(ADMIN_FB_ID)){

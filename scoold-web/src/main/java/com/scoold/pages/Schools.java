@@ -27,7 +27,7 @@ public class Schools extends BasePage{
 
 	public Schools() {
 		if(param("create")){
-			title += " - " + lang.get("school.create");
+			title = lang.get("school.create");
 			addModel("includeGMapsScripts", true);
 		}else{
 			title = lang.get("schools.title");

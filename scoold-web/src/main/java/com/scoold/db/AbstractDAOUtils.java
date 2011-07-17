@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormatSymbols;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -206,6 +207,7 @@ public abstract class AbstractDAOUtils {
 	}
 
 	public static List<Toponym> readLocationForKeyword(String q, Style style) {
+		List<Toponym> list = new ArrayList<Toponym> ();
 		ToponymSearchResult locationSearchResult = null;
 		ToponymSearchCriteria searchLocation = new ToponymSearchCriteria();
 		searchLocation.setMaxRows(7);
@@ -214,10 +216,12 @@ public abstract class AbstractDAOUtils {
 		searchLocation.setQ(q);
 		try {
 			locationSearchResult = WebService.search(searchLocation);
+			if(locationSearchResult != null) 
+				list.addAll(locationSearchResult.getToponyms());
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, null, ex);
 		}
-		return locationSearchResult.getToponyms();
+		return list;
 	}
 
 	public static int round(float d) {
@@ -356,7 +360,8 @@ public abstract class AbstractDAOUtils {
 	}
 
 	public static ScooldObject getObject(Long id, String classname){
-		Class<? extends ScooldObject> clazz = getClassname(classname);
+		Class<? extends ScooldObject> clazz = 
+				(Class<? extends ScooldObject>) getClassname(classname);
 		ScooldObject sobject = null;
 
 		if(clazz != null){
@@ -367,7 +372,8 @@ public abstract class AbstractDAOUtils {
 	}
 
 	public static ScooldObject getObject(String uuid, String classname){
-		Class<? extends ScooldObject> clazz = getClassname(classname);
+		Class<? extends ScooldObject> clazz = 
+				(Class<? extends ScooldObject>) getClassname(classname);
 		ScooldObject sobject = null;
 
 		if(clazz != null){
@@ -377,13 +383,12 @@ public abstract class AbstractDAOUtils {
 		return sobject;
 	}
 
-	public static Class<? extends ScooldObject> getClassname(String classname){
-		if(classname == null) return null;
-		Class<? extends ScooldObject> clazz = null;
+	public static Class<?> getClassname(String classname){
+		if(StringUtils.isBlank(classname)) return null;
+		Class<?> clazz = null;
 		try {
-			clazz = (Class<? extends ScooldObject>)
-					Class.forName(ScooldObject.class.getPackage().getName()
-					+ "." + classname);
+			clazz = Class.forName(
+					ScooldObject.class.getPackage().getName().concat(".").concat(classname));
 		} catch (Exception ex) {
 			logger.severe(ex.toString());
 		}

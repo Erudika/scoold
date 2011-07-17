@@ -14,7 +14,6 @@ import com.scoold.core.School;
 import com.scoold.core.User.UserGroup;
 import com.scoold.core.User.UserType;
 import com.scoold.db.AbstractDAOUtils;
-import com.scoold.util.QueueFactory;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -169,9 +168,6 @@ public class Profile extends BasePage{
 					showUser.setFullname(newFname);
 					showUser.update();
 				}
-			}else if(param("type")){
-				showUser.setTypeString(getParamValue("type"));
-				showUser.update();
 			}else if(param("status")){
 				String status = StringUtils.abbreviate(getParamValue("status"), 160);
 				showUser.setStatus(status);

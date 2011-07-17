@@ -81,7 +81,7 @@ public class Admin extends BasePage{
 				line = line.trim();
 				
 				String[] starr = line.split("\\|");
-				s.setTypeString(starr[0]);
+				s.setType(starr[0]);
 				s.setName(starr[1]);
 				s.setLocation(starr[2]);
 				if(starr.length > 3) s.setContacts(starr[3]);
@@ -131,7 +131,7 @@ public class Admin extends BasePage{
 			School school = new School();
 			school.setName("New school " + k);
 			school.setLocation("Sofia, Bulgaria");
-			school.setTypeString(School.SchoolType.HIGHSCHOOL.toString());
+			school.setType(School.SchoolType.HIGHSCHOOL.toString());
 			Long id = school.create();
 
 //			generate questions for school

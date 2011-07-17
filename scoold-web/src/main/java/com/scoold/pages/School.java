@@ -105,6 +105,7 @@ public class School extends BasePage{
 			else if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
 
 			questionslist = showSchool.getQuestions(sortBy, pagenum, itemcount);
+			addModel("includeGMapsScripts", true);
 		}
     }
 

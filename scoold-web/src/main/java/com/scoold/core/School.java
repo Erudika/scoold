@@ -87,23 +87,20 @@ public class School implements Votable<Long>, CanHasMedia,
 	}
 
 	public School(String uuid) {
+		this();
 		this.uuid = uuid;
-		this.votes = 0;
 	}
 
 	public School() {
-        this.type = SchoolType.UNKNOWN.toString();
-        this.name = "";
-		this.location = "";
-		this.about = "";
-		this.votes = 0;
+		this("", SchoolType.UNKNOWN.toString(), "");
     }
 
-	public School(String name, String type, String location, String address){
+	public School(String name, String type, String location){
 		this.name = name;
 		this.location = location;
 		this.votes = 0;
-		setTypeString(type);
+		this.about = "";
+		this.type = getSchoolType(type).toString();
 	}
 
 	public School(Long id){
@@ -278,7 +275,7 @@ public class School implements Votable<Long>, CanHasMedia,
      * @param type new value of type
      */
     public void setType(String type) {
-        this.type = type;
+        this.type = getSchoolType(type).toString();
     }
 
     /**
@@ -371,20 +368,16 @@ public class School implements Votable<Long>, CanHasMedia,
     public void unlinkFromUser(Long userid){
         getSchoolDao().deleteUserSchoolLink(userid, this);
     }
-           
-    public final void setTypeString(String s){
+    
+	private SchoolType getSchoolType(String type){
+		if(type == null) return SchoolType.UNKNOWN;
 		try{			
-			type = SchoolType.valueOf(s.trim().toUpperCase()).toString();
+			return SchoolType.valueOf(type.trim().toUpperCase());
 		}catch(IllegalArgumentException e){
             //oh shit!
-			type = SchoolType.UNKNOWN.name();
+			return SchoolType.UNKNOWN;
         }
-    }
-     
-    public String getTypeString(){
-		if(type == null) return SchoolType.UNKNOWN.toString();
-        return SchoolType.valueOf(type.toUpperCase()).toString();
-    }
+	}
  
     public static  Map<String, String> getSchoolTypeMap(Map<String, String> lang){
         SchoolType[] starr = SchoolType.values();

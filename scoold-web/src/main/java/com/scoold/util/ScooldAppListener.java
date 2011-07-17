@@ -93,7 +93,6 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 	}
 
 	public void contextDestroyed(ServletContextEvent sce) {
-		//logger.info("context is destroyed."); 
 		Client searchClient = (Client) sce.getServletContext().getAttribute(SEARCH_CLIENT);
 		if(ELASTICSEARCH_ON && searchClient != null){
 			searchClient.close();
@@ -101,74 +100,6 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 	}
 
 	public void sessionCreated(HttpSessionEvent se) {
-
-//		File file = new File("/Users/alexb/Desktop/schools.txt");
-//		int i = 1;
-//		try {
-//			List<String> lines = FileUtils.readLines(file, "UTF-8");
-//			List<String> test = new ArrayList();
-//			HashMap<String, String> cities = new HashMap();
-//
-//			School s = new School();
-//			for (String line : lines) {
-//				line = line.trim();
-//				switch (i){
-//					case 1:	s.setName(line); break;
-//					case 2: s.setTypeString(line); break;
-//					case 3: s.setLocation(line);
-//
-//					if(cities.containsKey(line)){
-//						s.setLocation(cities.get(line));
-//					}else{
-//						List t = DAOUtils.readLocationForKeyword(line, Style.SHORT);
-//						if(t.isEmpty()){
-//							s.setLocation(line);
-//							cities.put(line, line);
-//						}else{
-//							Toponym top = (Toponym) t.get(0);
-//							String newloc = top.getName()+", Bulgaria";
-//							cities.put(line, newloc);
-//							test.add(s.getName()+" "+line+"="+newloc);
-//							Thread.sleep(1000);
-//							s.setLocation(newloc);
-//						}
-//
-//					}
-//
-//					break;
-//					case 4: s.setAddress(line); break;
-//				}
-//				i++;
-//				if(i == 5){
-//					i = 1;
-//					logger.info("adding "+s.getLocation());
-//					//schools.add(s);
-//					s.create();
-//					s = new School();
-//				}
-//			}
-//			se.getSession().setAttribute("testis", test);
-//		} catch (IOException ex) {
-//			logger.log(Level.SEVERE, null, ex);
-//		}
-//		catch (InterruptedException e) {
-//			logger.log(Level.SEVERE, null, e);
-//		}
-
-		// Set the time the user was last seen
-//		HttpSession seshun = se.getSession();
-//
-//		SimplePrincipal userPricipal = SimplePrincipal.getPrincipal(seshun);
-//		User authUser = null;
-//		if (userPricipal != null) {
-//			authUser = userPricipal.getUser();
-//			if(authUser != null){
-//				//update lastseen
-//				authUser.setLastSeen(new Timestamp(System.currentTimeMillis()));
-//				authUser.update();
-//			}
-//		}
-		
 	}
 
 	public void sessionDestroyed(HttpSessionEvent se) {

@@ -7,11 +7,13 @@ package com.scoold.core;
 
 import com.scoold.core.Post.PostType;
 import com.scoold.db.AbstractDAOFactory;
+import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOUtils;
 import com.scoold.util.Queue;
 import com.scoold.util.QueueFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -20,6 +22,7 @@ import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.xcontent.AndFilterBuilder;
 import org.elasticsearch.index.query.xcontent.FilterBuilders;
 import org.elasticsearch.index.query.xcontent.OrFilterBuilder;
@@ -110,6 +113,7 @@ public final class Search{
 			list = (ArrayList<T>) so.readAllForKeys(keys);
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 		
 		return list;
@@ -118,6 +122,12 @@ public final class Search{
 	public <T extends Searchable<?>> ArrayList<T> findByKeyword(Class<T> clazz,	
 			MutableLong page, MutableLong itemcount, String keywords){
 		return findByKeyword(clazz, page, itemcount, keywords, MAX_ITEMS);
+	}
+	
+	public <T extends Searchable<?>> ArrayList<T> findByKeyword(String type, 
+			String keywords, int max){
+		return findByKeyword((Class<T>) AbstractDAOUtils.getClassname(type), 
+				new MutableLong(0), new MutableLong(0), keywords, max);
 	}
 
 	public ArrayList<Tag> findTag(String keywords, int max){
@@ -141,6 +151,7 @@ public final class Search{
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 		
 		return tags;
@@ -193,6 +204,7 @@ public final class Search{
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 
 		return new Post().readAllForKeys(keys);
@@ -225,6 +237,7 @@ public final class Search{
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 
 		return new Post().readAllForKeys(keys);
@@ -255,6 +268,7 @@ public final class Search{
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 
 		return new Post().readAllForKeys(keys);
@@ -283,6 +297,7 @@ public final class Search{
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 		
 		return users;
@@ -301,9 +316,17 @@ public final class Search{
 				.execute().actionGet();
 		} catch (Exception e) {
 			logger.warning(e.toString());
+			refreshClient();
 		}
 		
 		return (response == null) ? 0L : response.getCount();
 	}
-
+	
+	private void refreshClient(){
+		try {
+			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet(); 
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to refresh search client: {0}", e.toString());			
+		}
+	}
 }

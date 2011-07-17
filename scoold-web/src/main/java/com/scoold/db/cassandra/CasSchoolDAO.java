@@ -44,17 +44,16 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
     public Long create(School newSchool) {
 		Mutator<String> mut = CasDAOUtils.createMutator();
 
-		Long id =  cdu.create(newSchool, CasDAOFactory.SCHOOLS, mut);
+		Long id =  cdu.create(newSchool, CasDAOFactory.SCHOOLS);
 		if(id == null) return null;
 
 		CasDAOUtils.addInsertion(new Column(newSchool.getUuid(),
 				CasDAOFactory.SCHOOLS_UUIDS, id.toString(), id.toString()), mut);
-		
-		cdu.addTimesortColumn(null, id, CasDAOFactory.SCHOOLS_BY_TIMESTAMP, id, null, mut);
-		cdu.addNumbersortColumn(null, CasDAOFactory.SCHOOLS_BY_VOTES,
-				id, newSchool.getVotes(), newSchool.getOldvotes(), mut);
-
 		mut.execute();
+		
+		cdu.addTimesortColumn(null, id, CasDAOFactory.SCHOOLS_BY_TIMESTAMP, id, null);
+		cdu.addNumbersortColumn(null, CasDAOFactory.SCHOOLS_BY_VOTES,
+				id, newSchool.getVotes(), newSchool.getOldvotes());
 
 		newSchool.index();
 

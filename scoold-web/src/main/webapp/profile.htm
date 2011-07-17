@@ -4,9 +4,9 @@
 			<div class="line mediumText lightgray">
 				<div class="unit size1of2">
 					#if($canEdit)
-						<div id="usertype" class="editable">${lang.get($showUser.typeString)}</div>
+						<div id="usertype">${lang.get($showUser.type)}</div>
 					#else
-						<div>${lang.get($showUser.typeString)}</div>
+						<div>${lang.get($showUser.type)}</div>
 					#end
 				</div>
 				<div class="unit size1of2 lastUnit r">
@@ -120,7 +120,7 @@
 				#if($canEdit)
 					<a href="$myprofilelink/$!showUser.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> ${lang.get("edit")}</a>
 				#end
-				<h2 >${lang.get("profile.about.title")}</h2>
+				<h2>${lang.get("profile.about.title")}</h2>
 				#if($request.getParameter("edit") && $authenticated)
 					#set($hideedit1 = "")
 					#set($hideview1 = "hide")
@@ -129,7 +129,7 @@
 					#set($hideview1 = "")
 				#end
 
-				<div class="$hideview1 viewbox">
+				<div class="viewbox $hideview1">
 					#showaboutview()
 				</div>
 				#if($canEdit)
@@ -139,7 +139,21 @@
 							<table class="p100">
 								<tbody>
 									<tr>
-										<td class="r p25">${lang.get("profile.about.dob")}</td>
+										<td class="r p25">${lang.get("profile.about.iama")}:</td>
+										<td class="pll p75">
+											<select name="type" class="nicebox">
+												#foreach($utype in ["alumnus", "student", "teacher"])
+													#if($utype == $showUser.type)
+														<option selected="selected" value="$utype">$!lang.get($!utype) &nbsp;</option>
+													#else
+														<option value="$utype">$!lang.get($!utype) &nbsp;</option>
+													#end
+												#end
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td class="r p25">${lang.get("profile.about.dob")}:</td>
 										<td class="pll p75">
 											#dayselect("nicebox" "dobDate" $showUser.getDobDay())
 											#monthselect("nicebox" "dobDate" $showUser.getDobMonth())
@@ -155,7 +169,6 @@
 									<tr>
 										<td class="r p25">${lang.get("profile.about.ilike")}:</td>
 										<td class="pll p75">
-											<div>${lang.get("profile.about.usecomma")}</div>
 											<textarea id="ilike" name="ilike" rows="3" cols="30" class="p90 nicebox">$!{showUser.ilike}</textarea>
 										</td>
 									</tr>
@@ -163,7 +176,7 @@
 										<td class="r p25">
 											<select id="detail-type" class="nicebox">
 												#foreach($mtype in $contactDetailTypes)
-													<option value="$mtype.name()">$mtype.toString()</option>
+													<option value="$mtype.name()">$mtype.toString() &nbsp;</option>
 												#end
 											</select>
 										</td>
@@ -181,7 +194,6 @@
 									<tr>
 										<td class="r p25">${lang.get("profile.about.aboutme")}:</td>
 										<td class="pll p75">
-											<div>$lang.get("profile.status.txt")</div>
 											<textarea id="aboutme" name="aboutme" rows="5" cols="30" class=" p90 nicebox">$!{showUser.aboutme}</textarea>
 										</td>
 									</tr>

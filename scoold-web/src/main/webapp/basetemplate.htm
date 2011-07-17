@@ -3,16 +3,16 @@
 #macro(dayselect $class $name $selectday)
 	<select class="$class" name="$name">
 		#if($selectday == 0)  
-		<option value="" selected="selected">${lang.get("day")}</option>
+			<option value="" selected="selected">${lang.get("day")} &nbsp;</option>
 		#else
-		<option value="">${lang.get("day")}</option>
+			<option value="">${lang.get("day")} &nbsp;</option>
 		#end
 
 		#foreach ($day in [1..31])
 			#if($selectday != 0 && $day == $selectday)
-			<option value="${day}" selected="selected">${day}</option>
+				<option value="${day}" selected="selected">${day}</option>
 			#else
-			<option value="${day}">${day}</option>
+				<option value="${day}">${day}</option>
 			#end
 		#end
 	</select>
@@ -21,17 +21,17 @@
 #macro(monthselect $class $name $selectmonth)
 	<select class="$class" name="$name">
 		#if($selectmonth == 0)
-		<option value="" selected="selected">${lang.get("month")}</option>
+			<option value="" selected="selected">${lang.get("month")} &nbsp;</option>
 		#else
-		<option value="">${lang.get("month")}</option>
+			<option value="">${lang.get("month")} &nbsp;</option>
 		#end
 
 		#foreach ($month in $daoutils.getMonths($currentLocale))
 			#if($velocityCount < 13)
 				#if($selectmonth != 0 && $velocityCount == $selectmonth)
-				<option value="$velocityCount"  selected="selected">${month}</option>
+					<option value="$velocityCount"  selected="selected">${month} &nbsp;</option>
 				#else
-				<option value="$velocityCount" >${month}</option>
+					<option value="$velocityCount" >${month} &nbsp;</option>
 				#end
 			#end
 		#end
@@ -44,9 +44,9 @@
 		#else	#set($first = $firstItem)	#end
 
 		#if($selectyear == 0)
-		<option value="" selected="selected">$first</option>
+			<option value="" selected="selected">$first &nbsp;</option>
 		#else
-		<option value="">${lang.get("year")}</option>
+			<option value="">${lang.get("year")} &nbsp;</option>
 		#end
 
 		#if($future)  #set($y1 = $daoutils.currentYear + 10) #set($y2 = $y1 - 80)
@@ -103,11 +103,11 @@
 		#set($hide = "" )
 	#end
 	#if($showdetail.type == "WEBSITE")
-		#set($showdetailstr = $lang.get("website") )
+		#set($showdetailstr = $!lang.get("website") )
 	#elseif($showdetail.type == "ADDRESS")
-		#set($showdetailstr = $lang.get("address") )
+		#set($showdetailstr = $!lang.get("address") )
 	#else
-		#set($showdetailstr = $!{detail.typeString})
+		#set($showdetailstr = $!lang.get(${detail.type}) )
 	#end
 
 	<tr class="detailbox $hide">
@@ -144,7 +144,7 @@
 			#if($showUser.contacts && !$showUser.contacts.isEmpty())
 				#foreach($contact in $showUser.getAllContactDetails())
 				<tr>
-					<td class="r p25">${contact.typeString}:</td>
+					<td class="r p25">$lang.get(${contact.type}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
@@ -233,7 +233,7 @@
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>
-					<td class="r p25">${contact.typeString}:</td>
+					<td class="r p25">$lang.get(${contact.type}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
@@ -774,7 +774,7 @@
 		</div>
 		<div class="bd">
 			<div class="line lightgray">
-				<div class="unit size1of2">$!lang.get("school.$showschool.typeString")</div>
+				<div class="unit size1of2">$!lang.get("school.${showschool.type}")</div>
 				<div class="unit size1of2 lastUnit r">
 					$!showschool.location</span>
 				</div>
@@ -886,7 +886,7 @@
 		</div>
 		<div class="bd">
 			<div class="line lightgray">
-				<div class="unit size1of2">$!{lang.get($showFriend.typeString)}</div>
+				<div class="unit size1of2">$!{lang.get($showFriend.type)}</div>
 				<div class="unit size1of2 lastUnit r">
 					#usertitlebadge($showFriend)					
 				</div>
@@ -1944,12 +1944,12 @@
             #end
 			#stop
         #elseif($request.getParameter("find") == "schools")
-            #foreach($showschool in $search.findByKeyword($q.trim()))
+            #foreach($showschool in $search.findByKeyword("school", $q.trim(), 7))
                 ${showschool.name}|${showschool.location}|${showschool.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "classes")
-            #foreach($showclass in $search.findByKeyword($q.trim()))
+            #foreach($showclass in $search.findByKeyword("classunit", $q.trim(), 7))
 				${showclass.identifier}|$lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |${showclass.id}
             #end
 			#stop
@@ -1968,7 +1968,7 @@
 
 		###elseif($request.getParameter("find") == "contacts")
         ##	#foreach($showfriend in $search.findByKeyword($authUser.id, $q.trim(), 7))
-		##		$!{showfriend.fullname}|$lang.get($!{showfriend.typeString})|$!{showfriend.id}
+		##		$!{showfriend.fullname}|$lang.get($!{showfriend.type})|$!{showfriend.id}
         ##    #end #stop
 	#end
     ################# SPECIAL AJAX REQUESTS #################
@@ -2238,7 +2238,7 @@
 		</script>
 		
 		#if($includeGMapsScripts && $includeGMapsScripts == true)
-			<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=3&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
+			<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
 		#end
        
     </body>

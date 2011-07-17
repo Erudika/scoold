@@ -10,73 +10,69 @@ $(function(){
 	var hideMsgBoxAfter = 10 * 1000; //10 sec
 
 	/**************************
-	 *    Google Maps API
+	 *  Google Maps API v3.3
 	 **************************/
 	var mapCanvas = $("div#map-canvas");
 	if(mapCanvas.length){
-		
-		var map;
-		var geocoder;
-		
-		map = new GMap2(mapCanvas.get(0));
-		map.setCenter(new GLatLng(42.6975, 23.3241), 3);
-		map.addControl(new GSmallMapControl());
-		map.addControl(new GMapTypeControl());
-		geocoder = new GClientGeocoder();
-
+		var geocoder = new google.maps.Geocoder();
+		var myLatlng = new google.maps.LatLng(42.6975, 23.3241);
+		var marker = new google.maps.Marker({});
 		var locbox = $("input.locationbox");
-		var adrbox = $("input.addressbox");
+		var locality = "";
+		var sublocality = "";
+		var country = "";
 		
-		GEvent.addListener(map, "click", function(overlay, latlng){
-			if (latlng !== null) {
-				address = latlng;
-				geocoder.getLocations(latlng, function(response){
-					map.clearOverlays();
-					if (!response || response.Status.code !== 200) {
-						//address not found
-						adrbox.val("");
-						locbox.val("");
-					} else {
-						place = response.Placemark[0];
-						point = new GLatLng(place.Point.coordinates[1],
-							place.Point.coordinates[0]);
-						marker = new GMarker(point);
-						adrbox.val(place.address);
-
-						var locality = "";
-						var country = "";
-
-						if(place.AddressDetails){
-							if(place.AddressDetails.Country){
-								if(place.AddressDetails.Country.AdministrativeArea){
-									if(place.AddressDetails.Country.AdministrativeArea.Locality){
-										if(place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName){
-											locality = place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName;
-										}
-									}else if(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName){
-										locality = place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName;
-									}
+		var map = new google.maps.Map(mapCanvas.get(0), {
+			zoom: 3,
+			center: myLatlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			mapTypeControl: false,
+			streetViewControl: false
+		});
+		
+		google.maps.event.addListener(map, 'click', function(event) {
+			map.setCenter(event.latLng);
+			marker.setPosition(event.latLng);
+			marker.setMap(map);
+			
+			geocoder.geocode({location: event.latLng}, function(results, status){
+				if (status !== google.maps.GeocoderStatus.OK) {
+					locbox.val("");
+				} else {
+					if(results.length && results.length > 0){
+						for (var h = 0; h < results.length; h++) {
+							var arr = results[h].address_components;
+							for (var i = 0; i < arr.length; i++) {
+								var type = $.trim(arr[i].types[0]);
+								var name = arr[i].long_name;
+								if(type === "country"){
+									country = name;
+								}else if(type === "locality"){
+									locality = name;
+								}else if(type === "sublocality"){
+									sublocality = name;
 								}
 							}
-						}
-
-						if(place.AddressDetails){
-							if(place.AddressDetails.Country){
-								if(place.AddressDetails.Country.CountryName){
-									country = place.AddressDetails.Country.CountryName;
-								}
+							if(country !== "" && locality !== "" && sublocality !== ""){
+								break;
 							}
-						}
-
-						if(locality !== ""){
-							locbox.val(locality + ", " + country);
-						}else{
-							locbox.val(country);
 						}
 					}
-				});
-			}
-		});		
+
+					var found = "";
+					
+					if(sublocality !== "" && country !== ""){
+						found = sublocality + ", " + country;
+					}else if(locality !== "" && country !== ""){
+						found = locality +  ", " + country;
+					}else{
+						found = country;
+					}
+					
+					locbox.val(found);
+				}
+			});
+		});
 	}
 
 	/****************************************************
@@ -527,6 +523,9 @@ $(function(){
 		if(!hdiv.length){
 			hdiv = that.parent().nextAll("div:first");
 		}
+		if(!hdiv.length){
+			hdiv = that.closest("div").find("div:first");
+		}
 		hdiv.slideToggle("fast").find("input[type=text]:first, textarea:first").focus();
 		return false;
 	});
@@ -648,15 +647,15 @@ $(function(){
 	editableBind("#classname.editable", "identifier");
 	editableBind("#questiontitle.editable", "title");
 
-	var editable_settings2 = {};
-	$.extend(true, editable_settings2, editable_settings,
-		{data: {"alumnus":lang.alumnus, "teacher":lang.teacher, "student":lang.student}, type: 'select'});
-
-	$("#usertype.editable").editable(function(value, settings){
-		var $that = $(this);
-		$.post(ajaxpath, {type: value});
-		return $that.text(lang[value.toLowerCase()]).text();}, editable_settings2
-	);
+//	var editable_settings2 = {};
+//	$.extend(true, editable_settings2, editable_settings,
+//		{data: {"alumnus":lang.alumnus, "teacher":lang.teacher, "student":lang.student}, type: 'select'});
+//
+//	$("#usertype.editable").editable(function(value, settings){
+//		var $that = $(this);
+//		$.post(ajaxpath, {type: value});
+//		return $that.text(lang[value.toLowerCase()]).text();}, editable_settings2
+//	);
 
 	var editable_settings3 = {};
 	$.extend(true, editable_settings3, editable_settings, {type: "textarea"});
