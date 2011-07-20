@@ -103,7 +103,7 @@ public class Classunit extends BasePage{
 		}else{
 			peoplelist = showClass.getAllUsers(pagenum, itemcount);
 			showPost = showClass.getBlackboard();
-			includeFBscripts = true;
+//			includeFBscripts = true;
 		}
 	}
 

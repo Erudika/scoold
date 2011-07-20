@@ -225,11 +225,18 @@
 #macro(schoolaboutview )
 	<table class="p100">
 		<tbody>
-			#if($showSchool.about && !$showSchool.about.trim().isEmpty())
+			##if($showSchool.about && !$showSchool.about.trim().isEmpty())
 			<tr>
-				<td class="p100" colspan="2">$!showSchool.about</td>
+				<td class="p100" colspan="2">
+					$showSchool.about
+					#if(!$showSchool.about || $showSchool.about.trim().isEmpty())
+						<a class="editlink info-placeholder largeText center inlineblock p100" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
+					#else
+						$!showSchool.about
+					#end
+				</td>
 			</tr>
-			#end
+			##end
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>
@@ -921,7 +928,7 @@
 #end
 ####################################
 #macro(smallpersonbox $showu)
-	<div class="userbox media pas inlineblock">
+	<div id="user-$!{showu.id}" class="userbox media pas inlineblock">
 		<div class="img mrm center">
 			<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" title="$!showu.fullname">
 				<img src="#profilepic($!showu true)" width="50" height="50" alt="Profile picture"/>
@@ -1332,7 +1339,14 @@
 		#set($actionlink = $feedbacklink)
 	#end
 	<div class="p100 postbox $boxclass">
-		<div class="mvm">
+		#if($showpost.isBlackboard())
+			<h2 class="inline">$lang.get("blackboard.title")</h2> &nbsp;
+			#set($divposclass = "right" )
+		#else
+			#set($divposclass = "mvm" )
+		#end
+		<div class="$!divposclass">
+			
 			#if($canEdit)
 				<a href="#" title="Edit" class="editlink button-tiny rounded3"><span class="pictos">W</span> $lang.get("edit")</a>
 			#end
@@ -1369,7 +1383,7 @@
 				#end
 			#end
 
-			#if($request.isUserInRole("admin"))
+			#if($request.isUserInRole("admin") && !$showpost.isBlackboard())
 				<a href="${adminlink}?delete=post&amp;id=$showpost.id" title="Delete" class="button-tiny rounded3 red"><span class="pictos">*</span> $lang.get("delete")</a>
 			#end
 
@@ -1402,28 +1416,30 @@
 			#set($bbclazz = "rounded3" )
 		#end
 		<div id="$postviewid" class="viewbox $bbclazz">
-			<div class="inlineblock mrl mls left">
-				#set($acceptedAnswer = $showpost.id.equals($parentpost.answerid) )
-				#if($acceptedAnswer)
-					#set($onclass = "green")
-					#set($picon = "2")
-				#else
-					#set($onclass = "")
-					#set($picon = "3")
-				#end
-				#if($authenticated && $showpost.isAnswer() && $parentpost.userid.equals($authUser.id))
-					<a href="$!actionlink/$parentpost.id/accept/$showpost.id" class="megaText pictos accept-answer nodecoration $!onclass" title="Accept answer">$picon</a>
-				#elseif($acceptedAnswer)
-					<span class="pictos megaText green">$picon</span>
-				#end
-			</div>
+			#if(!$showpost.isBlackboard())
+				<div class="inlineblock mrl mls left">
+					#set($acceptedAnswer = $showpost.id.equals($parentpost.answerid) )
+					#if($acceptedAnswer)
+						#set($onclass = "green")
+						#set($picon = "2")
+					#else
+						#set($onclass = "")
+						#set($picon = "3")
+					#end
+					#if($authenticated && $showpost.isAnswer() && $parentpost.userid.equals($authUser.id))
+						<a href="$!actionlink/$parentpost.id/accept/$showpost.id" class="megaText pictos accept-answer nodecoration $!onclass" title="Accept answer">$picon</a>
+					#elseif($acceptedAnswer)
+						<span class="pictos megaText green">$picon</span>
+					#end
+				</div>
+			#end
 
-			<div class="mbl">
+			<div class="mbl pas">
 				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body, $showdownJS))
 				$!{bodyHtml}
 
 				#if($showpost.isBlackboard() && (!$showpost.body || $showpost.body.trim().isEmpty()))
-					<div class="center">$lang.get("class.blankboard")</div>
+					<div class="center mtl mediumText">$lang.get("class.blankboard")</div>
 				#end
 				
 				#if($showpost.tags && !$showpost.tags.isEmpty())
@@ -2071,8 +2087,11 @@
 			/*<![CDATA[*/
 			var authenticated = $authenticated;
 			var sessiontimeout = $seshun.maxInactiveInterval + 1;
+			var contextpath = "$!context";
 			/*]]>*/
 		</script>
+		<script type="text/javascript" src="$scriptslink/head.min.js"></script>
+		
 		<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'></script>
 		<script type='text/javascript'>
 			GS_googleAddAdSenseService("ca-pub-9562225988804475");
@@ -2084,7 +2103,7 @@
 		<script type='text/javascript'>
 			GA_googleFetchAds();
 		</script>
-		<script type="text/javascript" src="$scriptslink/head.min.js"></script>
+		
 		
 	</head>
     <body>

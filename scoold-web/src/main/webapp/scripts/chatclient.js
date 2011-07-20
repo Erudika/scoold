@@ -11,15 +11,17 @@
 		chatTimeMsgClass: 'chat-time mrs',
 		chatNickMsgClass: 'chat-nick mrs bold',
 		chatTextMsgClass: 'chat-text',
-		profileLinkPrefix: 'profile/',
 		userJoinText: 'joined the room',
 		userLeaveText: 'left the room',
 		connectionErrorText: "Failed to connect!",
 		pollingErrorText: "Disconnected. Let's try again...",
-		reconnectErrorText: "OK, let's try to reconnect..."
+		reconnectErrorText: "OK, let's try to reconnect...",
+		tryReconnectAfter: 20 // sec
 	};
 	
 	$.fn.nodechat = function (nickname, channelname, userid, settings) {
+		
+		var $chatnode = $(this);
 		
 		$.extend(this, {			
 			pollingErrors: 0,
@@ -62,6 +64,7 @@
 					},
 					success: function(data) {
 						if (data) {
+//							console.log(data);
 							chatnode.handlePoll(data);
 						} else {
 							chatnode.handlePollError();
@@ -80,10 +83,11 @@
 				chatnode.pollingErrors = 0;
 				
 				if (data && data.messages) {
-					$.each(data.messages, function(i, message) {
+					for (i = 0; i < data.messages.length; i++) {
+						var message = data.messages[i];
 						chatnode.lastMessageId = Math.max(chatnode.lastMessageId, message.id);
-						$(chatnode).triggerHandler(message.type, message);
-					});
+						$chatnode.triggerHandler(message.type, message);
+					}
 				}
 				return chatnode.poll();
 			},
@@ -92,12 +96,11 @@
 				this.pollingErrors++;
 				var chatnode = this;
 
-				$(chatnode).triggerHandler("polling-error");
+				$chatnode.triggerHandler("polling-error");
 				
 				setTimeout(function(){
 					chatnode.poll();
-				}, 5*1000);
-
+				}, chatnode.tryReconnectAfter * 1000);
 
 				return this;
 			},
@@ -112,7 +115,7 @@
 					},
 					success: function(data) {
 						if (!data) {
-							$(chatnode).triggerHandler("connection-error");
+							$chatnode.triggerHandler("connection-error");
 						}
 
 						chatnode.since = data.since;
@@ -121,17 +124,19 @@
 						chatnode.messageCont.focus();
 					},
 					error: function(){
-						$(chatnode).triggerHandler("connection-error");
+						$chatnode.triggerHandler("connection-error");
 					}
 				});
-				
 			},
 
 			part: function() {
 				var chatnode = this;
 
 				return chatnode.request("/part", {
-					data: {userid: userid}
+					data: {
+						userid: userid,
+						nick: nickname
+					}
 				});
 			},
 
@@ -141,30 +146,18 @@
 				return chatnode.request("/send", {
 					data: {				
 						userid: userid,
+						nick: nickname,
 						text: msg
 					}
 				});
-			},
-
-			who: function() {
-				var chatnode = this;
-				
-				return chatnode.request("/who", {
-					success: function(data) {
-						var users = $(chatnode.usersContSel);
-						$.each(data.nicks, function(i, nick) {
-							users.append(nick);
-						});
-					}
-				});
-			}	
-			
-		});		
-				
+			}			
+		});	
+		
 		$.extend(this, defaults, settings);
 		
 		var chatnode = this;
-
+		var $membersbox = $(this.usersContSel);
+		
 		this.logCont = $(this.logContSel);
 		this.messageCont = $(this.messageContSel);
 		if(this.messageCont.length){
@@ -172,9 +165,9 @@
 		}
 		
 		// notify the chat server that we're leaving if we close the window
-		$(window).unload(function() {
+		window.onbeforeunload = function() {
 			chatnode.part();
-		});
+		};
 
 		function formatTime(timestamp) {
 			var date = new Date(timestamp),
@@ -185,7 +178,7 @@
 			if (hours < 10) {hours = "0" + hours;}
 			if (minutes < 10) {minutes = "0" + minutes;}
 			if (seconds < 10) {seconds = "0" + seconds;}
-			return "[" + hours + ":" + minutes + ":" + seconds + "]";
+			return "[" + hours + ":" + minutes + "]";
 		}
 
 		function getChatRow(timestamp, nick, msg, issystem){
@@ -204,18 +197,6 @@
 
 			return row;
 		}
-
-		function getUserLink(name, id){
-			$.get(contextpath+"/profile/"+id+"/?getsmallpersonbox=true", function(data){
-				$(chatnode.usersContSel).append(data);
-			});
-//			return $("<a/>", {
-//				href: chatnode.profileLinkPrefix + id,
-//				title: name,
-//				text: name,
-//				"class": "user-"+id
-//			});
-		}
 		
 		// handle sending a message
 		$(this.msgFormSel).submit(function() {
@@ -232,16 +213,16 @@
 		})
 		// user joined the channel
 		.bind("join", function(event, message) {
-//			var row = getChatRow(message.timestamp, message.nick, chatnode.userJoinText, true);
-//			row.appendTo(chatnode.logCont);
-			getUserLink(message.nick, message.userid);
-//			$(chatnode.usersContSel).append(getUserLink(message.nick, message.userid));
+			if(!$membersbox.data("user-"+message.userid)){
+				$.get(contextpath+"/profile/"+message.userid+"/?getsmallpersonbox=true", function(data){
+					$membersbox.append(data);					
+				});
+				$membersbox.data("user-"+message.userid, true);
+			}
 		})
 		// another user left the channel
 		.bind("part", function(event, message) {
-//			var row = getChatRow(message.timestamp, message.nick, chatnode.userLeaveText, true);
-//			row.appendTo(chatnode.logCont);
-			$(chatnode.usersContSel).find(".user-"+message.userid).remove();
+			$("#user-"+message.userid, $membersbox).remove();
 		})
 
 		// Auto scroll list to bottom
@@ -273,7 +254,6 @@
 		});
 				
 		chatnode.init();
-
 		return this;
 	};
 

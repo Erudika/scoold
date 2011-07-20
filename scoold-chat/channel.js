@@ -2,9 +2,9 @@ var EventEmitter = require("events").EventEmitter,
 	sys = require("sys"),
 	Session = require("./session").Session;
 
-var msgBufferLength = 50; //lines
-var longPollPeriod = 60000; //ms
-var maxMsgSize = 500;
+var msgBufferLength = 10; //lines in memory
+var longPollPeriod = 60 * 1000; //ms
+var maxMsgSize = 500;	// symbols
 
 function Channel(options) {
 	EventEmitter.call(this);
@@ -19,30 +19,35 @@ function Channel(options) {
 	
 	this.nextMessageId = 0;
 	this.messages = [];
+	this.systemMessages = [];
 	this.callbacks = [];
-	this.sessions = {};
+//	this.sessions = {};
 	
 	var channel = this;
 	setInterval(function() {
 		channel.flushCallbacks();
-		channel.expireOldSessions();
-	}, 1000);
+//		channel.expireOldSessions();
+	}, 5000);
 }
 sys.inherits(Channel, EventEmitter);
 
 extend(Channel.prototype, {
 	appendMessage: function(nick, userid, type, text) {
-		var shortTxt = shorten(text, maxMsgSize);
-		var id = ++this.nextMessageId,
-			message = {
-				id: id,
-				nick: nick,
-				userid: userid,
-				type: type,
-				text: shortTxt,
-				timestamp: (new Date()).getTime()
-			};
-		this.messages.push(message);
+		var id = ++this.nextMessageId;
+		
+		var message = {
+			id: id,
+			nick: nick,
+			userid: userid,
+			type: type,
+			text: shorten(text, maxMsgSize),
+			timestamp: (new Date()).getTime()
+		};
+		if (type === "msg") {
+			this.messages.push(message);
+		}else{
+			this.systemMessages.push(message);
+		}
 		this.emit(type, message);
 		
 		while (this.callbacks.length > 0) {
@@ -57,66 +62,41 @@ extend(Channel.prototype, {
 	},
 	
 	query: function(since, callback) {
-		var matching = [],
-			length = this.messages.length;
-		for (var i = 0; i < length; i++) {
+		var matching = [];
+		var systemMatching = [];
+		
+		for (var i = 0; i < this.messages.length; i++) {
 			if (this.messages[i].id > since) {
 				matching = this.messages.slice(i);
 				break;
 			}
 		}
+		for (var j = 0; j < this.systemMessages.length; j++) {
+			if (this.systemMessages[j].id > since) {
+				systemMatching = this.systemMessages.slice(j);
+				break;
+			}
+		}
 		
-		if (matching.length) {
-			callback(matching);
+		var all = matching.concat(systemMatching);
+		
+		if (all.length) {
+			// any new messages since last poll? yes -> return
+			callback(all);
 		} else {
+			// no new messages -> keep connection open till timeout
 			this.callbacks.push({
 				timestamp: new Date(),
 				callback: callback
 			});
 		}
+		this.systemMessages = [];
 	},
 	
 	flushCallbacks: function() {
 		var now = new Date();
 		while (this.callbacks.length && now - this.callbacks[0].timestamp > this.sessionTimeout * 0.75) {
 			this.callbacks.shift().callback([]);
-		}
-	},
-	
-	createSession: function(nick, id) {
-		var session = new Session(nick, id);
-		if (!session) {
-			return null;
-		}
-			
-		if(this.sessions[id]){
-			return this.sessions[id];
-		}
-		
-		this.sessions[session.userid] = session;
-		session.since = this.appendMessage(nick, id, "join");
-		
-		return session;
-	},
-	
-	destroySession: function(id) {
-		if (!id || !this.sessions[id]) {
-			return false;
-		}
-		var nick = this.sessions[id].nick;
-		var userid = this.sessions[id].userid;
-		
-		var eventId = this.appendMessage(nick, userid, "part");
-		delete this.sessions[id];
-		return eventId;
-	},
-	
-	expireOldSessions: function() {
-		var now = new Date();
-		for (var session in this.sessions) {
-			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
-				this.destroySession(session);
-			}
 		}
 	}
 });
@@ -125,7 +105,7 @@ exports.Channel = Channel;
 
 function shorten(txt, len){
 	if(txt && txt.length > len){
-		return txt.substr(0, len) + "...";
+		return txt.substr(0, len);
 	}
 	return txt;
 }

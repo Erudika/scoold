@@ -107,7 +107,7 @@ exports.getServer = function getServer(logger) {
     post(new RegExp('^/' + name + '$'), controller.create, format);
     put(new RegExp('^/' + name + '/([^/]+)$'), controller.update, format);
     del(new RegExp('^/' + name + '/([^/]+)$'), controller.destroy);
-  };
+  }
 
   function resourceController(name, data, on_change) {
     data = data || [];
@@ -157,7 +157,7 @@ exports.getServer = function getServer(logger) {
         res.simpleJson(200, "200 Destroyed");
       }
     };
-  };
+  }
 
   // Create the http server object
   var server = http.createServer(function (req, res) {
@@ -260,18 +260,16 @@ exports.getServer = function getServer(logger) {
                 res.simpleJson(200, result);
                 break;
             }
-
             return;
           }
         }
       }
-      
+	  
       notFound(req, res);
     }
+	
     doRoute();
-
   });
-
 
   function listen(port, host, callback) {
     port = port || 8080;
@@ -305,9 +303,6 @@ exports.getServer = function getServer(logger) {
     end: end
   };
 }
-
-
-
 
 exports.staticHandler = function (filename) {
   var body, headers;

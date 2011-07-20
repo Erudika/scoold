@@ -534,7 +534,7 @@ $(function(){
 		$(this).nextAll("span:first").toggle();
 		return false;
 	});
-
+	
 	/****************************************************
      *                    REPORTS
      ****************************************************/
@@ -759,24 +759,27 @@ $(function(){
      *						 CHAT
 	 ****************************************************/
 
-//	var chatServerHost = "http://localhost:8001/chat";
-	var chatServerHost = "http://a1x.no.de:8001/chat";
-	var channelname = $("#chat").children("#channel").text();
-	var nickname = $("#chat").children("#nickname").text();
-	var userid = $("#chat").children("#userid").text();
-
-	//node chat client init
-	$("#chat").nodechat(nickname, channelname, userid, {
-		serverUrl: chatServerHost,
-		userJoinText: lang["class.chat.userin"],
-		userLeaveText: lang["class.chat.userout"],
-		connectionErrorText: lang["class.chat.connection.error"],
-		pollingErrorText: lang["class.chat.polling.error"],
-		reconnectErrorText: lang["class.chat.reconnect.error"]
-	}).find("a#chat-send-msg").click(function(){
-		$(this).closest("form").submit();
-		return false;
-	});
+	var chatbox = $("#chat");
+	if (chatbox.length > 0) {
+		var chatServerHost = "http://localhost:8001/chat";
+	//	var chatServerHost = "http://a1x.no.de:8001/chat";
+		var channelname = chatbox.children("#channel").text();
+		var nickname = chatbox.children("#nickname").text();
+		var userid = chatbox.children("#userid").text();
+		
+		//node chat client init
+		chatbox.nodechat(nickname, channelname, userid, {
+			serverUrl: chatServerHost,
+			userJoinText: lang["class.chat.userin"],
+			userLeaveText: lang["class.chat.userout"],
+			connectionErrorText: lang["class.chat.connection.error"],
+			pollingErrorText: lang["class.chat.polling.error"],
+			reconnectErrorText: lang["class.chat.reconnect.error"]
+		}).find("a#chat-send-msg").click(function(){
+			$(this).closest("form").submit();
+			return false;
+		});
+	}
 
 	/****************************************************
      *                    MODAL DIALOGS
@@ -1161,7 +1164,7 @@ $(function(){
 					bool = data.url.match(/(jpg|png|gif|jpeg)$/i) !== null;
 				}
 
-				if(thumb && thumb.length !== null && bool){
+				if(thumb && thumb.length > 0 && bool){
 					container.html(thumb);
 					container.data("oembed-data", data);
 					errorbox.text("");
@@ -1509,7 +1512,7 @@ $(function(){
 	//OPENID VARS
 	var openid_input = $("#openid_identifier", $("fieldset"));
     
-	if(openid_input.length){
+	if(openid_input.length > 0){
 		var cookie_name1 = 'openid_provider',
 		cookie_name2 = 'openid_url',
 		openid_username = $("#openid-username"),

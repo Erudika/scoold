@@ -71,7 +71,7 @@
 					<span id="channel" class="hide">class$!{showClass.id}</span>
 					<span id="nickname" class="hide">$!authUser.fullname</span>
 					<span id="userid" class="hide">$!authUser.id</span>
-					<div id="chat-log" class="chatbox mbs"></div>
+					<div id="chat-log" class="chatbox mbs rounded3"></div>
 
 					<form id="chat-form" action="$classlink/$showClass.id">
 						<fieldset>
@@ -79,6 +79,7 @@
 							<a id="chat-send-msg" href="#" class="button-small rounded3 right"><span class="pictos">w</span></a>
 						</fieldset>
 					</form>
+					<br />
 					<h2>$lang.get("class.chat.whoshere")</h2>
 					<div id="chat-members"></div>
 				</div>
@@ -121,14 +122,13 @@
 				</form>
 
 			#end
-		#else
-			<h2>$lang.get("blackboard.title")</h2>
+		#else			
 			#postbox($showPost $showPost)
 
 			#set($inactivelist =  $showClass.getInactiveusersList())
 
 			#if(!$peoplelist.isEmpty() || !$inactivelist.isEmpty())
-				<h2>$lang.get("people.title") #showcount($itemcount.longValue())</h2>
+				<h2>$lang.get("class.classmates") #showcount($itemcount.longValue())</h2>
 				#classmatespage($peoplelist)
 				
 				#foreach($iuser in $inactivelist)
@@ -151,8 +151,3 @@
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-	var chat_channel = "$!showClass.id";
-	var contextpath = "$!context";
-</script>

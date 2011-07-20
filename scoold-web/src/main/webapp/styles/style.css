@@ -372,6 +372,7 @@ p{ margin-bottom: 1em;}
 a.pictos:hover{text-decoration: none; color: #55AADD;}
 a.accept-answer, a.approve-translation{ color: #777777;}
 a.accept-answer:hover, a.approve-translation:hover{ color: #88AF12;}
+a.info-placeholder{ border: 4px #CCCCCC dashed; color: #CCCCCC; padding: 85px 0; text-decoration: none; }
 pre, code, .chat-msg{
 	font-family: Monaco, Consolas,Menlo,"Lucida Console","Liberation Mono",
 		"DejaVu Sans Mono","Bitstream Vera Sans Mono","Courier New",monospace,serif;
@@ -496,9 +497,6 @@ pre, code, .chat-msg{
 .reputationbox{
 	background-color: #777777;
 	color: white;
-}
-.sidebar li:hover{
-	background: none repeat scroll 0 0 #CCCCCC;
 }
 .sidebar li{
     margin: 7px;

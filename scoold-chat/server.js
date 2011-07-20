@@ -2,126 +2,18 @@ var router = require("./node-router"),
 	url = require("url"),
 	qs = require("querystring"),
 	sys = require("sys"),
-	fs = require("fs"),
-	Channel = require("./channel").Channel;
+	fs = require("fs");
 
-var servers = [];
-var basepath = "/chat";
+var basePath = "/chat";
+var msgBufferLength = 10; //lines in memory
+var longPollPeriod = 60 * 1000; //ms
+var maxMsgSize = 500;	// symbols
+var maxChannelSize = 100;
 
 function Server() {
 	this.httpServer = router.getServer();
 	this.channels = [];
-	this.basePath = basepath;
 }
-
-extend(Server.prototype, {
-	listen: function(port, host) {
-		this.httpServer.listen(port, host);
-	},
-	
-	get: function(path, handler) {
-		this.httpServer.get(path, handler);
-	},
-	
-	// server static web files
-	serveFiles: function(localDir, webDir) {
-		var server = this;
-		fs.readdirSync(localDir).forEach(function(file) {
-			var local = localDir + "/" + file,
-				web = webDir + "/" + file;
-
-			if (fs.statSync(local).isDirectory()) {
-				server.serveFiles(local, web);
-			} else {
-				server.get(web, router.staticHandler(local));
-			}
-		});
-	},
-
-	// Handlers
-	
-	who: {path: "/who", handler: function(channel, request, response, query) {
-		var nicks = [];
-		var userids = [];
-		for (var id in channel.sessions) {
-			nicks.push(channel.sessions[id].nick);
-			userids.push(channel.sessions[id].userid);
-		}
-		sys.puts(nicks);
-		response.simpleJsonp(200, {nicks: nicks, userids: userids}, query.callback);
-	}},
-
-	join: {path: "/join", handler: function(channel, request, response, query) {
-		var nick = query.nick;
-		var userid = query.userid;
-
-		if (!nick || !userid) {
-			response.simpleJsonp(400, {error: "bad nick or id."}, query.callback);
-			return;
-		}
-		var session = channel.createSession(nick, userid);
-
-		if (!session) {
-			response.simpleJsonp(400, {error: "nick in use."}, query.callback);
-			return;
-		}
-		response.simpleJsonp(200, {id: session.since, nick: nick, userid: userid, since: session.since}, query.callback);
-	}},
-
-	part: {path: "/part", handler: function(channel, request, response, query) {
-		var userid = query.userid;
-		var	session = channel.sessions[userid];
-
-		if (!session) {
-			response.simpleJsonp(400, {error: "No such session id."}, query.callback);
-			return;
-		}
-
-		var eventId = channel.destroySession(userid);
-		response.simpleJsonp(200, {id: eventId, userid: userid}, query.callback);
-	}},
-
-	recv: {path: "/recv", handler: function(channel, request, response, query) {
-		var since = parseInt(query.since, 10);
-		var	session = channel.sessions[query.userid];
-
-		if (!session) {
-			response.simpleJsonp(400, {error: "No such session id."}, query.callback);
-			return;
-		}
-
-		if (isNaN(since)) {
-			response.simpleJsonp(400, {error: "Must supply since parameter."}, query.callback);
-			return;
-		}
-
-		session.poke();
-		channel.query(since, function(messages) {
-			session.poke();
-			response.simpleJsonp(200, {messages: messages}, query.callback);
-		});
-	}},
-
-	send: {path: "/send", handler: function(channel, request, response, query) {
-		var text = query.text,
-			session = channel.sessions[query.userid];
-
-		if (!session) {
-			response.simpleJsonp(400, {error: "No such session id."}, query.callback);
-			return;
-		}
-
-		if (!text || !text.length) {
-			response.simpleJsonp(400, {error: "Must supply text parameter."}, query.callback);
-			return;
-		}
-
-		session.poke();
-		var id = channel.appendMessage(session.nick, session.userid, "msg", text);
-		response.simpleJsonp(200, {id: id}, query.callback);
-	}}
-});
-
 
 function createServer() {
 	var server = new Server();
@@ -131,30 +23,192 @@ function createServer() {
 		if(/^[a-zA-Z0-9]+$/.test(match)){
 			var chan = server.channels[match];
 			if(!chan){
-				chan = new Channel({basePath: match});
-				server.channels[match] = chan;
+				chan = server.channels[match] = {
+					name: match, 
+					messages: [], 
+					sysmessages: [], 
+					callbacks: [],
+					size: 1,
+					lastid: 0, 
+					server: server
+				};
+				setInterval(function() {
+					server.flushCallbacks(chan);
+				}, 5000);
 			}
-			return handler.handler(chan, req, res, query); //"hello "+ match;
+			
+			return handler(chan, req, res, query); //"hello "+ match;
 		}else{
 			return res.simpleText(400, "Bad request");
 		}
 	}
 	
-	server.get(new RegExp(server.basePath + "/(.+[^/])" + server.who.path),
-		function(req, res, match){handle(req, res, match, server.who)} );
-	server.get(new RegExp(server.basePath + "/(.+[^/])" + server.join.path),
-		function(req, res, match){handle(req, res, match, server.join);});
-	server.get(new RegExp(server.basePath + "/(.+[^/])" + server.part.path),
-		function(req, res, match){handle(req, res, match, server.part);});
-	server.get(new RegExp(server.basePath + "/(.+[^/])" + server.send.path),
-		function(req, res, match){handle(req, res, match, server.send);});
-	server.get(new RegExp(server.basePath + "/(.+[^/])" + server.recv.path),
-		function(req, res, match){handle(req, res, match, server.recv);});
-	
-	servers.push(server);
+//	server.get(new RegExp(basePath + "/(.+[^/])/who"), function(req, res, match){
+//		handle(req, res, match, server.who, "who");
+//	});
+	server.get(new RegExp(basePath + "/(.+[^/])/join"), function(req, res, match){
+		handle(req, res, match, server.join);
+	});
+	server.get(new RegExp(basePath + "/(.+[^/])/part"), function(req, res, match){
+		handle(req, res, match, server.part);
+	});
+	server.get(new RegExp(basePath + "/(.+[^/])/send"), function(req, res, match){
+		handle(req, res, match, server.send);
+	});
+	server.get(new RegExp(basePath + "/(.+[^/])/recv"), function(req, res, match){
+		handle(req, res, match, server.recv);
+	});
 	
 	return server;
 }
+
+extend(Server.prototype, {
+	listen: function(port, host) {this.httpServer.listen(port, host);},
+	get: function(path, handler) {this.httpServer.get(path, handler);},
+	post: function(path, handler) {this.httpServer.post(path, handler);},
+	
+	join: function(channel, request, response, query) {
+		var nick = query.nick;
+		var userid = query.userid;
+
+		if (!nick || !userid) {
+			response.simpleJsonp(400, {error: "missing parameter: nick or id."}, query.callback);
+			return;
+		}
+		
+		var size = channel.size++;
+		if(size > maxChannelSize){
+			response.simpleJsonp(503, {error: "channel "+channel.name+" is full."}, query.callback);
+			return;
+		}
+		
+		channel.sysmessages.push({
+			id: ++channel.lastid,
+			userid: userid, 
+			nick: nick, 
+			type: "join",
+			timestamp: (new Date()).getTime()
+		});
+		
+		channel.server.channels[channel.name] = channel;
+		response.simpleJsonp(200, {status: "ok"}, query.callback);
+	},
+
+	part: function(channel, request, response, query) {
+		var userid = query.userid;
+		var nick = query.nick;
+		
+		channel.size--;
+		
+		if (channel.size <= 0) {
+			delete channel.server.channels[channel.name];
+		}
+		
+		channel.sysmessages.push({
+			id: ++channel.lastid,
+			userid: userid, 
+			nick: nick, 
+			type: "part",
+			timestamp: (new Date()).getTime()
+		});
+		
+		channel.server.channels[channel.name] = channel;
+		response.simpleJsonp(200, {status: "ok"}, query.callback);
+	},
+
+	recv: function(channel, request, response, query) {
+		var since = parseInt(query.since, 10);
+
+		if (isNaN(since)) {
+			response.simpleJsonp(400, {error: "Missing parameter 'since'."}, query.callback);
+			return;
+		}
+		
+		channel.server.getMessages(channel, since, function(messages) {
+			response.simpleJsonp(200, {messages: messages}, query.callback);
+		});
+	},
+
+	send: function(channel, request, response, query) {
+		var text = query.text;
+		var userid = query.userid;
+		var nick = query.nick;
+
+		if (!text || !text.length) {
+			response.simpleJsonp(400, {error: "Message cannot be empty."}, query.callback);
+			return;
+		}
+
+		var id = channel.server.appendMessage(channel, nick, userid, "msg", text);
+		response.simpleJsonp(200, {id: id}, query.callback);
+	},
+	
+	appendMessage: function(channel, nick, userid, type, text) {
+		var id = ++channel.lastid;
+		
+		var message = {
+			id: id,
+			nick: nick,
+			userid: userid,
+			type: type,
+			text: shorten(text, maxMsgSize),
+			timestamp: (new Date()).getTime()
+		};
+		channel.messages.push(message);
+		
+		while (channel.callbacks.length > 0) {
+			channel.callbacks.shift().callback([message]);
+		}
+		
+		while (channel.messages.length > msgBufferLength) {
+			channel.messages.shift();
+		}
+		
+		channel.server.channels[channel.name] = channel;
+		
+		return id;
+	},
+	
+	getMessages: function(channel, since, callback) {
+		var matching = [];
+		var sysmatching = [];
+		
+		for (var i = 0; i < channel.messages.length; i++) {
+			if (channel.messages[i].id > since) {
+				matching = channel.messages.slice(i);
+				break;
+			}
+		}
+		for (var j = 0; j < channel.sysmessages.length; j++) {
+			if (channel.sysmessages[j].id > since) {
+				sysmatching = channel.sysmessages.slice(j);
+				break;
+			}
+		}
+				
+		var all = matching.concat(sysmatching);
+		
+		if (all.length) {
+			// any new messages since last poll? yes -> return
+			callback(all);
+		} else {
+			// no new messages -> keep connection open till timeout
+			channel.callbacks.push({
+				timestamp: new Date(),
+				callback: callback
+			});
+		}
+		channel.sysmessages = [];
+	},
+	
+	flushCallbacks: function(channel) {
+		var now = new Date();
+		var callbacks = channel.callbacks;
+		while (callbacks.length && (now - callbacks[0].timestamp) > longPollPeriod * 0.75) {
+			callbacks.shift().callback([]);
+		}
+	}
+});
 
 var slice = [].slice;
 Function.prototype.partial = function() {
@@ -170,6 +224,12 @@ function extend(obj, props) {
 	for (var prop in props) {
 		obj[prop] = props[prop];
 	}
+}
+function shorten(txt, len){
+	if(txt && txt.length > len){
+		return txt.substr(0, len);
+	}
+	return txt;
 }
 
 // start server
