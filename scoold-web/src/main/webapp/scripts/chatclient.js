@@ -8,15 +8,16 @@
 		usersContSel: '#chat-members',
 		chatMsgClass: 'chat-msg',
 		chatSystemMsgClass: 'chat-system-msg',
-		chatTimeMsgClass: 'chat-time mrs',
-		chatNickMsgClass: 'chat-nick mrs bold',
+		chatTimeMsgClass: 'chat-time smallText',
+		chatNickMsgClass: 'chat-nick',
 		chatTextMsgClass: 'chat-text',
 		userJoinText: 'joined the room',
 		userLeaveText: 'left the room',
 		connectionErrorText: "Failed to connect!",
 		pollingErrorText: "Disconnected. Let's try again...",
 		reconnectErrorText: "OK, let's try to reconnect...",
-		tryReconnectAfter: 20 // sec
+		tryReconnectAfter: 20, // sec
+		autoExpireAfter: 5 * 60 // sec
 	};
 	
 	$.fn.nodechat = function (nickname, channelname, userid, settings) {
@@ -118,24 +119,11 @@
 							$chatnode.triggerHandler("connection-error");
 						}
 
-						chatnode.since = data.since;
 						chatnode.poll();
-
 						chatnode.messageCont.focus();
 					},
 					error: function(){
 						$chatnode.triggerHandler("connection-error");
-					}
-				});
-			},
-
-			part: function() {
-				var chatnode = this;
-
-				return chatnode.request("/part", {
-					data: {
-						userid: userid,
-						nick: nickname
 					}
 				});
 			},
@@ -164,32 +152,53 @@
 			this.messageCont.attr("autocomplete", "off");
 		}
 		
-		// notify the chat server that we're leaving if we close the window
-		window.onbeforeunload = function() {
-			chatnode.part();
-		};
-
-		function formatTime(timestamp) {
-			var date = new Date(timestamp),
-				hours = date.getHours(),
-				minutes = date.getMinutes(),
-				seconds = date.getSeconds();
-
-			if (hours < 10) {hours = "0" + hours;}
-			if (minutes < 10) {minutes = "0" + minutes;}
-			if (seconds < 10) {seconds = "0" + seconds;}
-			return "[" + hours + ":" + minutes + "]";
+		function formatTime(time){
+			var now = new Date();
+			var diff = now.getTime() - time.getTime();
+ 
+			var timeDiff = getTimeDiffDescription(diff, 'd', 86400000);
+			if (!timeDiff) {
+				timeDiff = getTimeDiffDescription(diff, 'h', 3600000);
+				if (!timeDiff) {
+					timeDiff = getTimeDiffDescription(diff, 'm', 60000);
+					if (!timeDiff) {
+						timeDiff = getTimeDiffDescription(diff, 's', 1000);
+						if (!timeDiff) {
+							timeDiff = '';
+						}
+					}
+				}
+			}
+ 
+			return timeDiff;
+		}
+ 
+		function getTimeDiffDescription(diff, unit, timeDivisor){
+			var unitAmount = (diff / timeDivisor).toFixed(0);
+			if (unitAmount > 0) {
+				return unitAmount + unit + " ago";
+			} else if (unitAmount < 0) {
+				return 'in ' + Math.abs(unitAmount) + unit;
+			} else {
+				return null;
+			}
+ 
 		}
 
-		function getChatRow(timestamp, nick, msg, issystem){
+		function getChatRow(timestamp, uid, nick, msg, issystem){
 			var row = $("<div></div>").addClass(chatnode.chatMsgClass);
 			if(issystem){row.addClass(chatnode.chatSystemMsgClass);}
 
-			if(timestamp && timestamp !== null){
-				$("<span></span>").addClass(chatnode.chatTimeMsgClass).text(formatTime(timestamp)).appendTo(row);
-			}
 			if(nick && nick !== null){
-				$("<span></span>").addClass(chatnode.chatNickMsgClass).text(nick+":").appendTo(row);
+				if (uid && uid !== null) {
+					nick = "<a class=\"extlink\" href=\""+contextpath+"/profile/"+uid+"\">"+nick+"</a>"
+				}
+				$("<span></span>").addClass(chatnode.chatNickMsgClass).html(nick).appendTo(row);
+			}
+			if(timestamp && timestamp !== null){
+				var date = new Date(timestamp);
+				$("<span></span>").addClass(chatnode.chatTimeMsgClass).attr("title", date).
+					html("&nbsp;"+formatTime(date)+":&nbsp;").data("timestamp", date).appendTo(row);
 			}
 			if(msg && msg !== null){
 				$("<span></span>").addClass(chatnode.chatTextMsgClass).text(msg).appendTo(row);
@@ -204,30 +213,35 @@
 			chatnode.messageCont.val("").focus();
 			return false;
 		});
+		
+		setInterval(function(){
+			$(chatnode.logContSel).find(".chat-time").each(function(i, elem){
+				$(elem).html("&nbsp;"+formatTime($(elem).data("timestamp")) + ":&nbsp;");
+			});
+		}, 30*1000);
+
 
 		// Bind custom channel events to actions
 		// new message posted to channel
 		chatnode.bind("msg", function(event, message) {
-			var row = getChatRow(message.timestamp, message.nick, message.text, false);
+			var row = getChatRow(message.timestamp, message.userid, message.nick, message.text, false);
 			row.appendTo(chatnode.logCont);
 		})
-		// user joined the channel
-		.bind("join", function(event, message) {
+		// Auto scroll list to bottom
+		.bind("join msg", function(event, message) {
+			// auto scroll if we're within 50 pixels of the bottom
 			if(!$membersbox.data("user-"+message.userid)){
 				$.get(contextpath+"/profile/"+message.userid+"/?getsmallpersonbox=true", function(data){
-					$membersbox.append(data);					
+					$membersbox.append(data);
 				});
+				// prevent duplicates
 				$membersbox.data("user-"+message.userid, true);
+				// auto-expire after 5 min
+				setTimeout(function(){
+					$("#user-"+message.userid, $membersbox).remove();
+					$membersbox.removeData("user-"+message.userid);						
+				},chatnode.autoExpireAfter * 1000);
 			}
-		})
-		// another user left the channel
-		.bind("part", function(event, message) {
-			$("#user-"+message.userid, $membersbox).remove();
-		})
-
-		// Auto scroll list to bottom
-		.bind("join part msg", function() {
-			// auto scroll if we're within 50 pixels of the bottom
 			if (chatnode.logCont.scrollTop() + 100 >=
 				chatnode.logCont[0].scrollHeight - chatnode.logCont.height()) {
 				
@@ -238,18 +252,18 @@
 		})
 		// display error message when connenction failed
 		.bind("connection-error", function(){
-			var row = getChatRow(null, "System", chatnode.connectionErrorText, true);
+			var row = getChatRow(null, null, "System", chatnode.connectionErrorText, true);
 			row.appendTo(chatnode.logCont);
 		})
 		// display error msg when polling failed
 		.bind("polling-error", function(){
-			var row = getChatRow(null, "System", chatnode.pollingErrorText, true);
+			var row = getChatRow(null, null, "System", chatnode.pollingErrorText, true);
 			row.appendTo(chatnode.logCont);
 		})
 
 		// display error msg when polling failed
 		.bind("reconnect-error", function(){
-			var row = getChatRow(null, "System", chatnode.reconnectErrorText, true);
+			var row = getChatRow(null, null, "System", chatnode.reconnectErrorText, true);
 			row.appendTo(chatnode.logCont);
 		});
 				

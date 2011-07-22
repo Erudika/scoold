@@ -5,10 +5,10 @@ var router = require("./node-router"),
 	fs = require("fs");
 
 var basePath = "/chat";
-var msgBufferLength = 10; //lines in memory
+var msgBufferLength = 20; //lines in memory
 var longPollPeriod = 60 * 1000; //ms
 var maxMsgSize = 500;	// symbols
-var maxChannelSize = 100;
+var flushCallbacksInterval = 5 * 1000;
 
 function Server() {
 	this.httpServer = router.getServer();
@@ -28,13 +28,12 @@ function createServer() {
 					messages: [], 
 					sysmessages: [], 
 					callbacks: [],
-					size: 1,
 					lastid: 0, 
 					server: server
 				};
 				setInterval(function() {
 					server.flushCallbacks(chan);
-				}, 5000);
+				}, flushCallbacksInterval);
 			}
 			
 			return handler(chan, req, res, query); //"hello "+ match;
@@ -43,18 +42,14 @@ function createServer() {
 		}
 	}
 	
-//	server.get(new RegExp(basePath + "/(.+[^/])/who"), function(req, res, match){
-//		handle(req, res, match, server.who, "who");
-//	});
 	server.get(new RegExp(basePath + "/(.+[^/])/join"), function(req, res, match){
 		handle(req, res, match, server.join);
 	});
-	server.get(new RegExp(basePath + "/(.+[^/])/part"), function(req, res, match){
-		handle(req, res, match, server.part);
-	});
+	
 	server.get(new RegExp(basePath + "/(.+[^/])/send"), function(req, res, match){
 		handle(req, res, match, server.send);
 	});
+	
 	server.get(new RegExp(basePath + "/(.+[^/])/recv"), function(req, res, match){
 		handle(req, res, match, server.recv);
 	});
@@ -65,7 +60,6 @@ function createServer() {
 extend(Server.prototype, {
 	listen: function(port, host) {this.httpServer.listen(port, host);},
 	get: function(path, handler) {this.httpServer.get(path, handler);},
-	post: function(path, handler) {this.httpServer.post(path, handler);},
 	
 	join: function(channel, request, response, query) {
 		var nick = query.nick;
@@ -76,39 +70,11 @@ extend(Server.prototype, {
 			return;
 		}
 		
-		var size = channel.size++;
-		if(size > maxChannelSize){
-			response.simpleJsonp(503, {error: "channel "+channel.name+" is full."}, query.callback);
-			return;
-		}
-		
 		channel.sysmessages.push({
 			id: ++channel.lastid,
 			userid: userid, 
 			nick: nick, 
 			type: "join",
-			timestamp: (new Date()).getTime()
-		});
-		
-		channel.server.channels[channel.name] = channel;
-		response.simpleJsonp(200, {status: "ok"}, query.callback);
-	},
-
-	part: function(channel, request, response, query) {
-		var userid = query.userid;
-		var nick = query.nick;
-		
-		channel.size--;
-		
-		if (channel.size <= 0) {
-			delete channel.server.channels[channel.name];
-		}
-		
-		channel.sysmessages.push({
-			id: ++channel.lastid,
-			userid: userid, 
-			nick: nick, 
-			type: "part",
 			timestamp: (new Date()).getTime()
 		});
 		

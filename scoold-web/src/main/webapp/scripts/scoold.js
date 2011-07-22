@@ -761,8 +761,8 @@ $(function(){
 
 	var chatbox = $("#chat");
 	if (chatbox.length > 0) {
-		var chatServerHost = "http://localhost:8001/chat";
-	//	var chatServerHost = "http://a1x.no.de:8001/chat";
+//		var chatServerHost = "http://localhost:8001/chat";
+		var chatServerHost = "http://a1x.no.de:8001/chat";
 		var channelname = chatbox.children("#channel").text();
 		var nickname = chatbox.children("#nickname").text();
 		var userid = chatbox.children("#userid").text();
