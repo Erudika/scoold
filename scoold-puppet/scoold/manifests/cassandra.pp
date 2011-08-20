@@ -3,9 +3,9 @@ class scoold::cassandra {
 	# ------------ EDIT HERE ---------------------#
 	$HEAP_SIZE = "7G"
 	$HEAP_NEW = "200M"
-	$ver = "0.8.1"
+	$ver = "0.8.4" 
 	$nodeid = 0
-	$seedlist = "127.0.0.1,127.0.1.1"
+	$seedlist = "$HOSTNAME_OF_NODE_0" #replace with hostnames of nodes 0 and 1
 	$tokens = ["0", "56713727820156410577229101238628035242", "113427455640312821154458202477256070485"]
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${ver}/apache-cassandra-${ver}-bin.tar.gz"
 	# --------------------------------------------#
@@ -19,6 +19,9 @@ class scoold::cassandra {
 	$mhs = "MAX_HEAP_SIZE="
 	$hns = "HEAP_NEWSIZE="
 	$cname = "cluster_name:"
+	$itok = "initial_token:" 
+	$abst = "auto_bootstrap:"
+	$seeds = "seeds:"
 			 	
 	user { $cassandrausr:
 		home => $cassandrahome,
@@ -53,9 +56,9 @@ class scoold::cassandra {
 #		before => Exec["start-cassandra"]
 #	}	
 	
-	$cnamecmd = "'1,/#${cname}/ s/#${cname}.*/${cname} ${CLUSTER_NAME}/'"
+	$cnamecmd = "'1,/${cname}/ s/${cname}.*/${cname} ${CLUSTER_NAME}/'"
 	exec { "set-cluster-name": 
-		command => "sed -e ${cmd1} -i.bak ${casconf}",
+		command => "sed -e ${cnamecmd} -i.bak ${casconf}",
 		require => Exec["rename-cassandra"]
 	}
 	
@@ -72,14 +75,62 @@ class scoold::cassandra {
 	}
 	
 	if $nodeid == 0 {
+		# first node is the seed node
 		exec { "enable-start": 
 			command => "sed -e 's/${dontstart}//' ${casconf}",
-			require => File[$casconf]
+			require => Exec["set-cluster-name"];
 		}
-	}else{
-		$itok = "initial_token:" 
-		$abst = "auto_bootstrap:"
-		$seeds = "seeds:"
+		
+		# first node has token 0
+		exec { "set-token":
+			command => "sed -e '1,/${itok}/ s/${itok}.*/${itok} 0/' -i.bak1 ${casconf}",
+			require => Exec["set-cluster-name"];		
+		}
+		
+		# first node is also the munin server
+		package { ["munin", "nginx"]: }
+		
+		file { "/etc/nginx/sites-enabled/default": 
+			ensure => absent,
+			before => Exec["restart-nginx"]
+		}
+		
+		file { "/etc/nginx/sites-enabled/munin":
+			ensure => file,
+			source => "puppet:///modules/scoold/munin.nginx.txt",
+			owner => root,
+			mode => 777,
+			require => [Package["munin"], Package["nginx"]],
+			before => Exec["restart-nginx"]
+		}
+		
+		exec { "restart-nginx":
+			command => "service nginx restart"
+		}		
+		
+		$cmpdir = "/home/${scoold::defuser}/cassandra-munin-plugins"
+		$cmd1 = "chmod -R 777 ${cmpdir}"
+		$cmd2 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/jvm_memory"
+		$cmd3 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
+		 
+#		$cmd4 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
+#		$cmd5 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
+#		$cmd6 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
+#		$cmd7 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
+		
+		$cmdr = "service munin-node restart"
+		
+		file { $cmpdir:
+			source => "puppet:///modules/scoold/cassandra-munin-plugins",
+			recurse => true,
+			force => true,
+			before => Exec["install-cassandra-munin-plugin"]			
+		}
+		
+		exec { "install-cassandra-munin-plugin":
+			command => "$cmd1 && $cmd2 && $cmd3 && $cmdr"			
+		}
+	}else{		
 		exec { 
 			"disable-start": 
 				command => "echo '${dontstart}' >> ${casconf}",
@@ -97,7 +148,7 @@ class scoold::cassandra {
 	}
 			
 	file { ["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/lib/cassandra/commitlog", 
-			"/var/lib/cassandra/data", "/var/run/cassandra", "/var/log/cassandra"]:
+			"/var/lib/cassandra/data", "/var/log/cassandra"]:
 		ensure => directory,
 	    owner => $cassandrausr,
 	    group => $cassandrausr,
@@ -116,13 +167,14 @@ class scoold::cassandra {
 	
 	exec { "stop-cassandra":
 		command => "stop cassandra",
-		onlyif => ["test -e /var/run/cassandra/cassandra.pid"],
+		onlyif => ["test -e ${cassandrahome}/cassandra.pid"],
 		before => Exec["start-cassandra"]
 	}
 	
 	exec { "start-cassandra":
 		command => "start cassandra",
-		unless => ["test -e /var/run/cassandra/cassandra.pid", "grep '${dontstart}' ${casconf} 2>/dev/null"]
+		unless => ["test -e ${cassandrahome}/cassandra.pid", "grep '${dontstart}' ${casconf} 2>/dev/null"],
+		require => Exec["set-cluster-name"]
 	}
 			
 }

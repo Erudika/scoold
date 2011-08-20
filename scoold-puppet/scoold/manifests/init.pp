@@ -1,17 +1,14 @@
 # Class: scoold
 #
-# This module manages scoold
+# This module manages scoold.com servers
 #
-# Parameters:
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
-#
-# [Remember: No empty lines between comments and class definition]
 class scoold {
+	# ------------ EDIT HERE ---------------------#	
+	$inproduction = false
+	$defuser = "ubuntu"
+	$release = "natty"
+	$nodename = "db3"
+	# --------------------------------------------#
 	
 	Package { ensure => latest}
 	User { ensure => present }
@@ -19,48 +16,29 @@ class scoold {
 	File { ensure => present }
 	Service { ensure => running }
 	Exec { path => ["/bin", "/sbin", "/usr/bin", "/usr/sbin"] }
-		
-	$inproduction = false
-	$defuser = "ubuntu"
-	$release = "natty"
+    stage { "last": require => Stage["main"] }	
 	
-	include scoold::sudo
-	#include scoold::glassfish
-	#include scoold::cassandra
-	include scoold::elasticsearch
+	case $nodename {
+      /^web(\d+)$/: { 
+      	class { "scoold::glassfish": stage => "main" }
+    	class { "scoold::monit": stage => "last", type => "glassfish" }  	 
+      } 
+      /^db(\d+)$/: { 
+      	class { "scoold::cassandra": stage => "main" }
+    	class { "scoold::monit": stage => "last", type => "cassandra" } 
+      } 
+      /^search(\d+)$/: { 
+      	class { "scoold::elasticsearch": stage => "main" }
+    	class { "scoold::monit": stage => "last", type => "elasticsearch" } 
+      }  
+    }   
+    	
+	file { "/etc/sudoers":
+        owner => root,
+        group => root,
+        mode  => 440,
+    }
 	
-	#case $hostname {
-    #    jack,jill:      { include hill    } # apply the hill class
-    #    humpty,dumpty:  { include wall    } # apply the wall class
-    #    default:        { include generic } # apply the generic class
-    #}
-			
-	
-#	package { 'openssh-server':
-#      ensure => present,
-#      before => File['/etc/ssh/sshd_config'],
-#    }
-#
-#    file { '/etc/ssh/sshd_config':
-#      ensure => file,
-#      mode   => 600,
-#      source => '/root/learning-manifests/sshd_config',
-#    }
-#
-#    service { 'sshd':
-#      ensure     => running,
-#      enable     => true,
-#      hasrestart => true,
-#      hasstatus  => true,
-#      subscribe  => File['/etc/ssh/sshd_config'],
-#    }
-
-#	file { '/home/ubuntu/testis.txt':
-#      ensure => file,
-#      mode   => 600,      
-#      source => "puppet:///modules/scoold/kure.txt"
-#    }
-
 	define line ($file, $line, $ensure = 'present') {
 		case $ensure {
 			default: {
@@ -79,6 +57,5 @@ class scoold {
 				}
 			}
 		}
-	}
-		
+	}		
 }

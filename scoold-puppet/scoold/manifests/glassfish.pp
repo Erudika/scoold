@@ -17,7 +17,7 @@ class scoold::glassfish {
 	package { "ufw": 
 		before => File[$ufwconf]
 	}
-	
+		
 	# setup firewall for webserver
 	file { 
 		$ufwconf:

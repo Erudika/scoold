@@ -1,12 +1,14 @@
-class scoold::monit {
-
-#	check process cassandra with pidfile /var/run/cassandra/cassandra.pid
-#  start program = "/sbin/start cassandra" with timeout 60 seconds
-#  stop program  = "/sbin/stop cassandra"
-#  if failed port 9160 type tcp
-#     with timeout 15 seconds
-#     then restart
-#  if 3 restarts within 5 cycles then timeout
-#  group server
+class scoold::monit ($type) {
 	
+	file { "/etc/monit/monitrc":
+		ensure => file,
+		source => "puppet:///modules/scoold/monitrc-${type}.txt",
+		owner => root,
+		mode => 600,
+		before => Exec["start-monit"]
+	}
+	
+	exec { "start-monit":
+		command => "monit &> /dev/null; monit monitor all &> /dev/null; sed -e '1,/startup=0/ s/startup=0/startup=1/' -i.bak1 /etc/default/monit",
+	}
 }

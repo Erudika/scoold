@@ -1,51 +1,40 @@
-# Init script for our Ubuntu servers
-# 
-# Installs git, puppet and creates a new puppet repo with a 
-# post-receive hook which triggers a puppet run. 
-
-#!/bin/bash -ex
+#!/bin/bash 
+set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
-# SUN JDK 
+# enable SUN JDK 
 sed -ire '/natty partner/ s/^#//' /etc/apt/sources.list
-apt-get update && apt-get -y upgrade
 echo 'sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true' | debconf-set-selections
-apt-get -y install sun-java6-jdk
+# update + upgrade system
+apt-get -y update && apt-get -y upgrade
 
-apt-get -y install git
-apt-get -y install puppet
+# install Java, Git, Puppet, Munin, htop, dstat
+apt-get -y install sun-java6-jdk git puppet monit munin-node htop dstat
+
+# allow all machines to see the munin-node
+echo "cidr_allow 0.0.0.0/0" >> /etc/munin/munin-node.conf
 
 # create a git server
-GIT_HOME=/home/git
-GIT_REPO=puppet.git
-MOD_DIR=/usr/share/puppet/modules/
+GIT_REPO=/home/ubuntu/puppet.git
+MOD_DIR=/usr/share/puppet/modules
+HOOK=$GIT_REPO/hooks/post-receive
 
-adduser --system --shell /bin/bash --gecos 'git version control' --group --disabled-password --home $GIT_HOME git
-echo "git  ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# create puppet repo 
+sudo -u ubuntu mkdir $GIT_REPO
+mkdir -p $MOD_DIR
+chown -R ubuntu:ubuntu $MOD_DIR/
 
-mkdir $GIT_HOME/.ssh
-cp /home/ubuntu/.ssh/authorized_keys $GIT_HOME/.ssh/
-chown -R git:git $GIT_HOME/.ssh
-chmod 700 $GIT_HOME/.ssh
-chmod 600 $GIT_HOME/.ssh/*
+sudo -u ubuntu git --git-dir $GIT_REPO --bare init
+if [ -e "$HOOK" ]; then
+	rm $HOOK
+fi
+sudo -u ubuntu touch $HOOK
+chmod 755 $HOOK
 
-sudo -u git mkdir $GIT_HOME/$GIT_REPO
-sudo -u git mkdir $GIT_HOME/puppet
-mkdir /usr/share/puppet
-mkdir $MOD_DIR 
-
-sudo -u git git --git-dir $GIT_HOME/$GIT_REPO --bare init
-sudo -u git touch $GIT_HOME/$GIT_REPO/hooks/post-receive
-chmod 755 $GIT_HOME/$GIT_REPO/hooks/post-receive
-
-echo "#!/bin/bash
-sudo rm -rf $MOD_DIR/.gitignore $MOD_DIR/.git $MOD_DIR/*
-sudo git clone --no-hardlinks $GIT_HOME/$GIT_REPO $MOD_DIR
-sudo puppet apply -e 'include scoold'" >> $GIT_HOME/$GIT_REPO/hooks/post-receive
-
-# add hostname alias
-HOSTNAME=web1
-hostname $HOSTNAME
-echo "127.0.2.2  $HOSTNAME.localdomain  $HOSTNAME" >> /etc/hosts
-
-
+echo "#!/bin/bash" >> $HOOK
+echo "if [ -d \"$MOD_DIR/.git\" ]; then" >> $HOOK
+echo "unset GIT_DIR; cd $MOD_DIR; sudo git pull -f $GIT_REPO master" >> $HOOK
+echo "else" >> $HOOK
+echo "git clone --no-hardlinks $GIT_REPO $MOD_DIR" >> $HOOK
+echo "fi" >> $HOOK
+echo "sudo puppet apply -e 'include scoold'" >> $HOOK

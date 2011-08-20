@@ -68,7 +68,7 @@ class scoold::elasticsearch {
 	}
 				
 	file { ["/var/lib/elasticsearch", "/var/lib/elasticsearch/data", "/var/lib/elasticsearch/work", 
-			"/var/run/elasticsearch", "/var/log/elasticsearch", "${esdir}/plugins"]:
+			"/var/log/elasticsearch", "${esdir}/plugins"]:
 		ensure => directory,
 	    owner => $elasticsearchusr,
 	    group => $elasticsearchusr,
@@ -133,13 +133,13 @@ class scoold::elasticsearch {
 	
 	exec { "stop-elasticsearch":
 		command => "stop elasticsearch",
-		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
+		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		before => Exec["start-elasticsearch"]
 	}
 	
 	exec { "start-elasticsearch":
 		command => "start elasticsearch",
-		unless => "test -e /var/run/elasticsearch/elasticsearch.pid"
+		unless => "test -e ${elasticsearchhome}/elasticsearch.pid"
 	}		
 	
 	exec { "sleep":
@@ -150,7 +150,7 @@ class scoold::elasticsearch {
 		
 	exec { "create-river":
 		command => "curl -XPUT '${ipaddress}:${PORT}/_river/${INDEX_NAME}/_meta' -d '{ \"type\" : \"amazonsqs\" }' &> /dev/null",
-		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
+		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		require => [Exec["start-elasticsearch"], Package["curl"]],
 		before => Exec["create-index"]
 	}
@@ -163,7 +163,7 @@ class scoold::elasticsearch {
 	
 	exec { "create-index":
 		command => "curl -XPUT '${ipaddress}:${PORT}/${INDEX_NAME}' -d @${esdir}/config/index.json &> /dev/null",
-		onlyif => "test -e /var/run/elasticsearch/elasticsearch.pid",
+		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		require => [Exec["start-elasticsearch"], Package["curl"]]		
 	}	
 }
