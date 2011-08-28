@@ -7,7 +7,30 @@ class scoold {
 	$inproduction = false
 	$defuser = "ubuntu"
 	$release = "natty"
-	$nodename = "db3"
+	
+	$nodename = "web"
+		
+	#### DB ####	
+	$dbnodes = ["10.227.94.112", "10.226.226.8", "10.51.94.94"]
+	$dbnodeids = { "${dbnodes[0]}" => 0, "${dbnodes[1]}" => 1, "${dbnodes[2]}" => 2 }
+	$dbseeds = "\"${dbnodes[0]},${dbnodes[1]}\""
+	$ver = "0.8.4"
+	$caslink = "http://www.eu.apache.org/dist/cassandra/${ver}/apache-cassandra-${ver}-bin.tar.gz"
+	$dbheapsize = "7G" # memory of m1.large
+	$dbheapnew = "200M"
+	$dbcluster = "scoold"
+	
+	#### WEB ####
+	$gflink = "http://download.java.net/glassfish/3.1.1/release/glassfish-3.1.1.zip"
+	$gfcluster = "scoold" 
+		 
+	#### SEARCH ####
+	$esmaster = true
+	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.4.zip"
+	$esport = 9200
+	$esheapsize = "1200M"
+	$esheapdev = "200M"
+	$esindex = "scoold"
 	# --------------------------------------------#
 	
 	Package { ensure => latest}
@@ -19,15 +42,15 @@ class scoold {
     stage { "last": require => Stage["main"] }	
 	
 	case $nodename {
-      /^web(\d+)$/: { 
+      /^web(\d*)$/: { 
       	class { "scoold::glassfish": stage => "main" }
     	class { "scoold::monit": stage => "last", type => "glassfish" }  	 
       } 
-      /^db(\d+)$/: { 
+      /^db(\d*)$/: { 
       	class { "scoold::cassandra": stage => "main" }
     	class { "scoold::monit": stage => "last", type => "cassandra" } 
       } 
-      /^search(\d+)$/: { 
+      /^search(\d*)$/: { 
       	class { "scoold::elasticsearch": stage => "main" }
     	class { "scoold::monit": stage => "last", type => "elasticsearch" } 
       }  

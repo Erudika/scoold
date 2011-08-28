@@ -36,7 +36,7 @@ else
 
 	# wait for the instance to be fully operational
 	while host=$(ec2-describe-instances --region $REGION "$instanceid" | egrep ^INSTANCE | cut -f4) && test -z $host; do sleep 3; done
-	echo "$NAME [$instanceid] ==> $host"
+	echo "$host"
 
 	# echo -n "Verifying ssh connection to box..."
 	# while ssh -o StrictHostKeyChecking=no -q ubuntu@$host true && test; do echo -n .; sleep 1; done

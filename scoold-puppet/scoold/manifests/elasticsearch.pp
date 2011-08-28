@@ -1,12 +1,7 @@
 class scoold::elasticsearch {
 	
 	# ------------ EDIT HERE ---------------------#
-	$HEAP_SIZE = "1200M"
-	$HEAP_DEV = "200M"
-	$PORT = 9200
-	$INDEX_NAME = "scoold"
-	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.4.zip"
-	$MASTER = true
+	
 	# --------------------------------------------#
 	
 	$elasticsearchusr = "elasticsearch"
@@ -23,14 +18,14 @@ class scoold::elasticsearch {
 	user { $elasticsearchusr:
 		home => $elasticsearchhome,
 		managehome => true,
-		shell => "/bin/bash"
+		shell => "/bin/bash" 
 	}
 		
 	notify{ "installing elasticsearch...": before => Exec["download-elasticsearch"] }
 	 
 	exec { 
 		"download-elasticsearch":
-			command => "sudo -u ${elasticsearchusr} wget -O ${espath} ${eslink}",
+			command => "sudo -u ${elasticsearchusr} wget -O ${espath} ${scoold::eslink}",
 			unless => "test -e ${espath}",
 			require => User[$elasticsearchusr],
 			before => Exec["unzip-elasticsearch"];
@@ -55,11 +50,11 @@ class scoold::elasticsearch {
 	}
 	
 	if $scoold::inproduction {		
-		$cmd1 = "'1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${HEAP_SIZE}\"/'"
-		$cmd2 = "'1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${HEAP_SIZE}\"/'"
+		$cmd1 = "'1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/'"
+		$cmd2 = "'1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/'"
 	}else{
-		$cmd1 = "'1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${HEAP_DEV}\"/'"
-		$cmd2 = "'1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${HEAP_DEV}\"/'"
+		$cmd1 = "'1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapdev}\"/'"
+		$cmd2 = "'1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapdev}\"/'"
 	}
 	
 	exec { "set-env": 
@@ -149,7 +144,7 @@ class scoold::elasticsearch {
 	}
 		
 	exec { "create-river":
-		command => "curl -XPUT '${ipaddress}:${PORT}/_river/${INDEX_NAME}/_meta' -d '{ \"type\" : \"amazonsqs\" }' &> /dev/null",
+		command => "curl -XPUT '${ipaddress}:${scoold::esport}/_river/${scoold::esindex}/_meta' -d '{ \"type\" : \"amazonsqs\" }' &> /dev/null",
 		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		require => [Exec["start-elasticsearch"], Package["curl"]],
 		before => Exec["create-index"]
@@ -162,7 +157,7 @@ class scoold::elasticsearch {
 	}
 	
 	exec { "create-index":
-		command => "curl -XPUT '${ipaddress}:${PORT}/${INDEX_NAME}' -d @${esdir}/config/index.json &> /dev/null",
+		command => "curl -XPUT '${ipaddress}:${scoold::esport}/${scoold::esindex}' -d @${esdir}/config/index.json &> /dev/null",
 		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		require => [Exec["start-elasticsearch"], Package["curl"]]		
 	}	

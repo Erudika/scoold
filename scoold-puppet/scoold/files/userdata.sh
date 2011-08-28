@@ -8,8 +8,8 @@ echo 'sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true' | debconf-set-sel
 # update + upgrade system
 apt-get -y update && apt-get -y upgrade
 
-# install Java, Git, Puppet, Munin, htop, dstat
-apt-get -y install sun-java6-jdk git puppet monit munin-node htop dstat
+# install Java, Git, Puppet, Munin, htop, dstat, tmux
+apt-get -y install sun-java6-jdk git puppet monit munin-node htop dstat tmux
 
 # allow all machines to see the munin-node
 echo "cidr_allow 0.0.0.0/0" >> /etc/munin/munin-node.conf
@@ -32,9 +32,7 @@ sudo -u ubuntu touch $HOOK
 chmod 755 $HOOK
 
 echo "#!/bin/bash" >> $HOOK
-echo "if [ -d \"$MOD_DIR/.git\" ]; then" >> $HOOK
-echo "unset GIT_DIR; cd $MOD_DIR; sudo git pull -f $GIT_REPO master" >> $HOOK
-echo "else" >> $HOOK
-echo "git clone --no-hardlinks $GIT_REPO $MOD_DIR" >> $HOOK
-echo "fi" >> $HOOK
+echo "sudo rm -rf $MOD_DIR/.git" >> $HOOK
+echo "sudo rm -rf $MOD_DIR/*" >> $HOOK
+echo "sudo -u ubuntu git clone --no-hardlinks $GIT_REPO $MOD_DIR" >> $HOOK
 echo "sudo puppet apply -e 'include scoold'" >> $HOOK

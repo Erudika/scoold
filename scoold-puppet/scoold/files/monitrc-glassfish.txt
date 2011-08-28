@@ -257,10 +257,10 @@ set httpd port 2812 and
 
 set daemon 120 with start delay 60
 set logfile /home/ubuntu/.monit.log
-check process cassandra with pidfile "/home/cassandra/cassandra.pid"
-  start program = "/sbin/start cassandra" with timeout 60 seconds
-  stop program  = "/sbin/stop cassandra"
-  if failed port 9160 type tcp
+check process glassfish with pidfile "/home/glassfish/glassfish.pid"
+  start program = "/sbin/start glassfish" with timeout 60 seconds
+  stop program  = "/sbin/stop glassfish"
+  if failed port 8080 type tcp
      with timeout 45 seconds
      then restart
   if 3 restarts within 5 cycles then timeout
