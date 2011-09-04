@@ -46,5 +46,5 @@ if [ -n "$1$2" ]; then
 		esac		
 	fi	
 else
-	echo "USAGE:  $0 datafile ami [sub group]"
+	echo "USAGE:  $0 datafile ami [sub group] [size]"
 fi

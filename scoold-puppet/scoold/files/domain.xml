@@ -1,4 +1,4 @@
-<domain log-root="${com.sun.aas.instanceRoot}/logs" application-root="${com.sun.aas.instanceRoot}/applications" version="43">
+<domain log-root="${com.sun.aas.instanceRoot}/logs" application-root="${com.sun.aas.instanceRoot}/applications" version="12">
   <system-applications>
     <application context-root="" location="${com.sun.aas.installRootURI}/lib/install/applications/__admingui" name="__admingui" directory-deployed="true" object-type="system-admin">
       <module name="__admingui">
@@ -11,6 +11,7 @@
   <resources></resources>
   <servers>
     <server name="server" config-ref="server-config">
+	  <system-property name="com.scoold.workerid" value="0"></system-property>
       <application-ref ref="__admingui" virtual-servers="__asadmin"></application-ref>
     </server>
   </servers>
@@ -115,7 +116,7 @@
           <provider-config provider-type="server" provider-id="GFConsoleAuthModule" class-name="org.glassfish.admingui.common.security.AdminConsoleAuthModule">
             <request-policy auth-source="sender"></request-policy>
             <response-policy></response-policy>
-            <property name="restAuthURL" value="http://localhost:${ADMIN_LISTENER_PORT}/management/sessions"></property>
+            <property name="restAuthURL" value="https://localhost:${ADMIN_LISTENER_PORT}/management/sessions"></property>
             <property name="loginPage" value="/login.jsf"></property>
             <property name="loginErrorPage" value="/loginError.jsf"></property>
           </provider-config>
@@ -176,13 +177,28 @@
           <protocol name="admin-listener">
             <http xpowered-by="false" default-virtual-server="__asadmin" max-connections="250" compressable-mime-type="text/html,text/xml,text/plain,text/javascript,text/css,application/json" compression="force" encoded-slash-enabled="true">
               <file-cache enabled="true"></file-cache>
-            </http>            
+            </http>
+          </protocol>
+          <protocol security-enabled="true" name="sec-admin-listener">
+            <http default-virtual-server="__asadmin" encoded-slash-enabled="true">
+              <file-cache></file-cache>
+            </http>
+            <ssl client-auth="want" ssl3-enabled="false" classname="com.sun.enterprise.security.ssl.GlassfishSSLImpl" cert-nickname="s1as"></ssl>
+          </protocol>
+          <protocol name="admin-http-redirect">
+            <http-redirect secure="true"></http-redirect>
+          </protocol>
+          <protocol name="pu-protocol">
+            <port-unification>
+              <protocol-finder protocol="sec-admin-listener" name="http-finder" classname="com.sun.grizzly.config.HttpProtocolFinder"></protocol-finder>
+              <protocol-finder protocol="admin-http-redirect" name="admin-http-redirect" classname="com.sun.grizzly.config.HttpProtocolFinder"></protocol-finder>
+            </port-unification>
           </protocol>
         </protocols>
         <network-listeners>
           <network-listener port="8080" protocol="http-listener-1" transport="tcp" name="http-listener-1" thread-pool="http-thread-pool"></network-listener>
           <network-listener port="8181" protocol="http-listener-2" transport="tcp" name="http-listener-2" thread-pool="http-thread-pool"></network-listener>
-          <network-listener port="4848" protocol="admin-listener" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
+          <network-listener port="4848" protocol="pu-protocol" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
         </network-listeners>
         <transports>
           <transport name="tcp"></transport>
@@ -353,11 +369,26 @@
               <file-cache></file-cache>
             </http>
           </protocol>
+          <protocol security-enabled="true" name="sec-admin-listener">
+            <http default-virtual-server="__asadmin" encoded-slash-enabled="true">
+              <file-cache></file-cache>
+            </http>
+            <ssl client-auth="want" ssl3-enabled="false" classname="com.sun.enterprise.security.ssl.GlassfishSSLImpl" cert-nickname="glassfish-instance"></ssl>
+          </protocol>
+          <protocol name="admin-http-redirect">
+            <http-redirect secure="true"></http-redirect>
+          </protocol>
+          <protocol name="pu-protocol">
+            <port-unification>
+              <protocol-finder protocol="sec-admin-listener" name="http-finder" classname="com.sun.grizzly.config.HttpProtocolFinder"></protocol-finder>
+              <protocol-finder protocol="admin-http-redirect" name="admin-http-redirect" classname="com.sun.grizzly.config.HttpProtocolFinder"></protocol-finder>
+            </port-unification>
+          </protocol>
         </protocols>
         <network-listeners>
           <network-listener port="${HTTP_LISTENER_PORT}" protocol="http-listener-1" transport="tcp" name="http-listener-1" thread-pool="http-thread-pool"></network-listener>
           <network-listener port="${HTTP_SSL_LISTENER_PORT}" protocol="http-listener-2" transport="tcp" name="http-listener-2" thread-pool="http-thread-pool"></network-listener>
-          <network-listener port="${ASADMIN_LISTENER_PORT}" protocol="admin-listener" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
+          <network-listener port="${ASADMIN_LISTENER_PORT}" protocol="pu-protocol" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
         </network-listeners>
         <transports>
           <transport name="tcp"></transport>
@@ -392,4 +423,8 @@
   <load-balancers></load-balancers>
   <lb-configs></lb-configs>
   <clusters></clusters>
+  <secure-admin enabled="true" special-admin-indicator="e92bbd5a-9880-4c7c-b12a-4eaa20e2780f">
+    <secure-admin-principal dn="CN=localhost,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US"></secure-admin-principal>
+    <secure-admin-principal dn="CN=localhost-instance,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US"></secure-admin-principal>
+  </secure-admin>
 </domain>

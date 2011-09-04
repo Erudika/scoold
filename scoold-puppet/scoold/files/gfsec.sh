@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ASADM=/home/glassfish/glassfish/bin/asadmin
-GF_DIR=/home/glassfish/glassfish/glassfish/domains/domain1/config
+ASADM="sudo -u glassfish /home/glassfish/glassfish/bin/asadmin"
+GF_DIR="/home/glassfish/glassfish/glassfish/domains/domain1/config"
 DNAME="CN=Scoold,O=Erudika,L=Sofia,S=Sofia-Grad,C=Bulgaria"
-CERT1=s1as
-CERT2=glassfish-instance
+CERT1="s1as"
+CERT2="glassfish-instance"
 
 if [ "1" == "$1" ]; then
 	# STEP 1: change master password
@@ -47,4 +47,15 @@ elif [ "5" == "$1" ]; then
 	
 	keytool -import -alias $CERT1 -file $GF_DIR/scoold-admin.cert -keystore /etc/java-6-sun/security/cacerts -storepass "changeit"
 	keytool -import -alias $CERT2 -file $GF_DIR/scoold-nodes.cert -keystore /etc/java-6-sun/security/cacerts -storepass "changeit"
+else
+	echo "Changing admin password"
+	$ASADM --user admin change-admin-password
+	
+	echo "Enabling secure admin"
+	$ASADM enable-secure-admin
+	
+	echo "Changing master password"
+	sudo stop glassfish	
+	$ASADM change-master-password --savemasterpassword=true
+	sudo start glassfish
 fi

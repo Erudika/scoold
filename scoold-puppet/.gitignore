@@ -1,5 +1,12 @@
 .DS_Store
 *.class
 commit.sh
+deploy.sh
+ec2run.sh
+ec2spotreq.sh
+ec2runall.sh
+web-hostnames.txt
+web-servers.txt
 pom.xml
 scoold/files/ignore/*
+pssh/*

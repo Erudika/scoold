@@ -881,18 +881,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 	
 	private void initIdGen(){
-		try {
-			InetAddress addr = InetAddress.getLocalHost();
-			String hostname = addr.getHostName();
-			hostname = hostname.replaceAll("\\D", "");
-			workerId = NumberUtils.toLong(hostname, maxWorkerId + 1);
-		} catch (UnknownHostException ex) {
-			// this shouldn't happen
-			workerId = -1;
-		}
-		
+		String workerID = System.getProperty("com.scoold.workerid");
+		workerId = NumberUtils.toLong(workerID, maxWorkerId + 1);
+				
 		if (workerId > maxWorkerId || workerId < 0) {
-			workerId = new Random().nextInt((int) maxWorkerId+1);
+			workerId = new Random().nextInt((int) maxWorkerId + 1);
 		}
 
 //		if (dataCenterId > maxDataCenterId || dataCenterId < 0) {

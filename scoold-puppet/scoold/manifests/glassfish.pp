@@ -8,6 +8,8 @@ class scoold::glassfish {
 	$glassfishhome = "/home/glassfish"	
 	$gfpath = "${glassfishhome}/gf.zip"
 	$gfdir = "${glassfishhome}/glassfish"	
+	$gfdomain = "${gfdir}/glassfish/domains/domain1"
+	$workerid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2'))
 	
 #	$ufwconf = "/etc/ufw/ufw.conf"
 #	$ufwrules = "/lib/ufw/user.rules"
@@ -63,39 +65,68 @@ class scoold::glassfish {
 			unless => "test -e ${gfdir}",
 			require => Exec["download-glassfish"]					
 	}
+	
+	file { 
+		"${gfdomain}/config/domain.xml":
+			ensure => file,
+			source => "puppet:///modules/scoold/domain.xml",
+			mode => 644,
+			owner => $glassfishusr,
+			group => $glassfishusr, 
+			require => Exec["rename-glassfish"],
+			before => Exec["start-glassfish"];
+		"${gfdomain}/config/admin-keyfile":
+			ensure => file,
+			source => "puppet:///modules/scoold/admin-keyfile",
+			mode => 644,
+			owner => $glassfishusr,
+			group => $glassfishusr, 
+			require => Exec["rename-glassfish"],
+			before => Exec["start-glassfish"];		
+		"/etc/init/${glassfishusr}.conf":
+			ensure => file,
+			source => "puppet:///modules/scoold/glassfish.conf",
+			owner => root,
+			mode => 644,
+			before => Exec["start-glassfish"];
+		"${glassfishhome}/gfsec.sh":
+			ensure => file,
+			source => "puppet:///modules/scoold/gfsec.sh",
+			owner => $glassfishusr,
+			group => $glassfishusr,
+			mode => 744,
+			require => Exec["rename-glassfish"]; 
+		"${glassfishhome}/.asadminpass":
+			ensure => file,
+			source => "puppet:///modules/scoold/adminpass.txt",
+			owner => $glassfishusr,
+			group => $glassfishusr,
+			mode => 644,
+			require => Exec["rename-glassfish"];
+		"${gfdomain}/docroot/index.html":
+			ensure => file, 
+			source => "puppet:///modules/scoold/index.html",
+			owner => $glassfishusr,
+			group => $glassfishusr,
+			mode => 664,
+			require => Exec["rename-glassfish"]
+	}
 		
-	file { "${gfdir}/glassfish/domains/domain1/config/domain.xml":
-		ensure => file,
-		source => "puppet:///modules/scoold/domain.xml",
-		mode => 644,
-		owner => $glassfishusr,
-		group => $glassfishusr,
-		require => [Exec["unzip-glassfish"], Exec["rename-glassfish"]],
+	$prop = '\(com\.scoold\.workerid\" value=\)"[0-9]*"'
+	$cmd = "'1,/${prop}/ s/${prop}/\\1\"${workerid}\"/'"
+	exec { "set-worker-id": 
+		command => "sed -e ${cmd} -i.bak ${gfdomain}/config/domain.xml",
+		require => File["${gfdomain}/config/domain.xml"],
 		before => Exec["start-glassfish"]
 	}
-	
-	file { "/etc/init/${glassfishusr}.conf":
-		ensure => file,
-		source => "puppet:///modules/scoold/glassfish.conf",
-		owner => root,
-		mode => 644,
-		before => Exec["start-glassfish"]
-	}
-	
-	file { "${glassfishhome}/gfsec.sh":
-		ensure => file,
-		source => "puppet:///modules/scoold/gfsec.sh",
-		owner => $glassfishusr,
-		group => $glassfishusr,
-		mode => 744		
-	}	
-	
+		
 #	exec { "stop-glassfish":
 #		command => "stop cassandra",		
 #		before => Exec["start-glassfish"]
 #	}
 	
 	exec{ "start-glassfish":
-		command => "start glassfish"		
+		command => "start glassfish",
+		unless => "test -e ${glassfishhome}/glassfish.pid",				
 	}	
 }

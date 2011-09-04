@@ -8,8 +8,10 @@ class scoold {
 	$defuser = "ubuntu"
 	$release = "natty"
 	
-	$nodename = "web"
-		
+	#-- UPDATED VIA SHELL SCRIPT --#
+	$nodename = "web2"
+	#------------------------------#	
+	
 	#### DB ####	
 	$dbnodes = ["10.227.94.112", "10.226.226.8", "10.51.94.94"]
 	$dbnodeids = { "${dbnodes[0]}" => 0, "${dbnodes[1]}" => 1, "${dbnodes[2]}" => 2 }
@@ -21,7 +23,7 @@ class scoold {
 	$dbcluster = "scoold"
 	
 	#### WEB ####
-	$gflink = "http://download.java.net/glassfish/3.1.1/release/glassfish-3.1.1.zip"
+	$gflink = "http://dlc.sun.com.edgesuite.net/glassfish/3.1.1/release/glassfish-3.1.1.zip"	
 	$gfcluster = "scoold" 
 		 
 	#### SEARCH ####
