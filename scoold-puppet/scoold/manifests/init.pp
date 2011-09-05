@@ -29,6 +29,7 @@ class scoold {
 	#### SEARCH ####
 	$esmaster = true
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.4.zip"
+	$esriverlink = "https://s3-eu-west-1.amazonaws.com/com.scoold.files/river-amazonsqs.zip"
 	$esport = 9200
 	$esheapsize = "1200M"
 	$esheapdev = "200M"

@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+# -*- Mode: python -*-
+
+# Copyright (c) 2009, Andrew McNabb
+# Copyright (c) 2003-2008, Brent N. Chun
+
+"""Nukes all processes that match pattern running as user on the set of nodes
+in hosts.txt.
+"""
+
+import os
+import sys
+
+parent, bindir = os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))
+if os.path.exists(os.path.join(parent, 'psshlib')):
+    sys.path.insert(0, parent)
+
+from psshlib import psshutil
+from psshlib.task import Task
+from psshlib.manager import Manager, FatalError
+from psshlib.cli import common_parser, common_defaults
+
+_DEFAULT_TIMEOUT = 60
+
+def option_parser():
+    parser = common_parser()
+    parser.usage = "%prog [OPTIONS] -h hosts.txt pattern"
+    parser.epilog = "Example: pnuke -h hosts.txt -l irb2 java"
+    return parser
+
+def parse_args():
+    parser = option_parser()
+    defaults = common_defaults(timeout=_DEFAULT_TIMEOUT)
+    parser.set_defaults(**defaults)
+    opts, args = parser.parse_args()
+
+    if len(args) < 1:
+        parser.error('Pattern not specified.')
+
+    if len(args) > 1:
+        parser.error('Extra arguments given after the pattern.')
+
+    if not opts.host_files and not opts.host_strings:
+        parser.error('Hosts not specified.')
+
+    return opts, args
+
+def do_pnuke(hosts, pattern, opts):
+    if opts.outdir and not os.path.exists(opts.outdir):
+        os.makedirs(opts.outdir)
+    if opts.errdir and not os.path.exists(opts.errdir):
+        os.makedirs(opts.errdir)
+    manager = Manager(opts)
+    for host, port, user in hosts:
+        cmd = ['ssh', host, '-o', 'NumberOfPasswordPrompts=1']
+        if opts.options:
+            for opt in opts.options:
+                cmd += ['-o', opt]
+        if user:
+            cmd += ['-l', user]
+        if port:
+            cmd += ['-p', port]
+        if opts.extra:
+            cmd.extend(opts.extra)
+        cmd.append('pkill -9 %s' % pattern)
+        t = Task(host, port, user, cmd, opts)
+        manager.add_task(t)
+    try:
+        statuses = manager.run()
+    except FatalError:
+        sys.exit(1)
+
+    if min(statuses) < 0:
+        # At least one process was killed.
+        sys.exit(3)
+    for status in statuses:
+        if status != 0:
+            sys.exit(4)
+
+if __name__ == "__main__":
+    opts, args = parse_args()
+    pattern = args[0]
+    try:
+        hosts = psshutil.read_host_files(opts.host_files,
+            default_user=opts.user)
+    except IOError:
+        _, e, _ = sys.exc_info()
+        sys.stderr.write('Could not open hosts file: %s\n' % e.strerror)
+        sys.exit(1)
+    if opts.host_strings:
+        for s in opts.host_strings:
+            hosts.extend(psshutil.parse_host_string(s, default_user=opts.user))
+    do_pnuke(hosts, pattern, opts)

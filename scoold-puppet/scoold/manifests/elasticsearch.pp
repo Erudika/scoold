@@ -37,9 +37,25 @@ class scoold::elasticsearch {
 		"rename-elasticsearch":
 			command => "mv ${elasticsearchhome}/elasticsearch-* ${esdir}",
 			unless => "test -e ${esdir}",
-			require => Exec["download-elasticsearch"]					
+			require => Exec["download-elasticsearch"];
+		"set-env": 
+			command => "sed -e ${cmd1} -e ${cmd2} -i.bak ${esdir}/bin/elasticsearch.in.sh",
+			require => Exec["rename-elasticsearch"]
+		"download-river":
+			command => "sudo -u ${elasticsearchusr} wget -O ${esdir}/plugins/river-amazonsqs.zip ${scoold::esriverlink}",
+			before => Exec["install-river"];
+		"install-river":
+			command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${esdir}/plugins/river-amazonsqs ${esdir}/plugins/river-amazonsqs.zip",
+			unless => "test -e ${esdir}/plugins/river-amazonsqs",
+			require => [Package["unzip"], Exec["rename-elasticsearch"]],
+			before => Exec["start-elasticsearch"];
+		"install-cloud-plugin":
+			command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
+			unless => "test -e ${esdir}/plugins/cloud-aws",
+			require => [Exec["rename-elasticsearch"], Exec["install-river"]],
+			before => Exec["start-elasticsearch"]
 	}
-			
+	
 	file { $esconf:
 		source => "puppet:///modules/scoold/elasticsearch.yml",
 		mode => 700,
@@ -56,64 +72,31 @@ class scoold::elasticsearch {
 		$cmd1 = "'1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapdev}\"/'"
 		$cmd2 = "'1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapdev}\"/'"
 	}
-	
-	exec { "set-env": 
-		command => "sed -e ${cmd1} -e ${cmd2} -i.bak ${esdir}/bin/elasticsearch.in.sh",
-		require => Exec["rename-elasticsearch"] 
-	}
-				
+					
 	file { ["/var/lib/elasticsearch", "/var/lib/elasticsearch/data", "/var/lib/elasticsearch/work", 
 			"/var/log/elasticsearch", "${esdir}/plugins"]:
-		ensure => directory,
-	    owner => $elasticsearchusr,
-	    group => $elasticsearchusr,
-	    recurse => true,
-	    mode => 755,
-	    require => Exec["rename-elasticsearch"]
+			ensure => directory,
+		    owner => $elasticsearchusr,
+		    group => $elasticsearchusr,
+		    recurse => true,
+		    mode => 755,
+		    require => Exec["rename-elasticsearch"];
+		"/etc/init/${elasticsearchusr}.conf":
+			ensure => file,
+			source => "puppet:///modules/scoold/elasticsearch.conf",
+			owner => root,
+			mode => 644,
+			before => Exec["start-elasticsearch"];
+		"${esdir}/config/index.json":
+			ensure => file,
+			source => "puppet:///modules/scoold/index.json",
+			owner => $elasticsearchusr,
+		    group => $elasticsearchusr,
+			mode => 700,
+			require => Exec["rename-elasticsearch"],
+			before => Exec["start-elasticsearch"];
 	}
-	
-	file { "/etc/init/${elasticsearchusr}.conf":
-		ensure => file,
-		source => "puppet:///modules/scoold/elasticsearch.conf",
-		owner => root,
-		mode => 644,
-		before => Exec["start-elasticsearch"]
-	}
-	
-	file { "${esdir}/config/index.json":
-		ensure => file,
-		source => "puppet:///modules/scoold/index.json",
-		owner => $elasticsearchusr,
-	    group => $elasticsearchusr,
-		mode => 700,
-		require => Exec["rename-elasticsearch"],
-		before => Exec["start-elasticsearch"]
-	}
-		
-	file { "${esdir}/plugins/river-amazonsqs.zip":
-		ensure => file,
-		source => "puppet:///modules/scoold/river-amazonsqs.zip",
-		owner => $elasticsearchusr,
-	    group => $elasticsearchusr,
-		mode => 700,
-		require => Exec["rename-elasticsearch"],
-		before => [Exec["start-elasticsearch"], Exec["install-river"]]
-	}
-	
-	exec { "install-river":
-		command => "sudo -u ${elasticsearchusr} unzip -qq -d ${esdir}/plugins/river-amazonsqs ${esdir}/plugins/river-amazonsqs.zip",
-		unless => "test -e ${esdir}/plugins/river-amazonsqs",
-		require => [Package["unzip"], Exec["rename-elasticsearch"]],
-		before => Exec["start-elasticsearch"]
-	}
-	
-	exec { "install-cloud-plugin":
-		command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
-		unless => "test -e ${esdir}/plugins/cloud-aws",
-		require => [Exec["rename-elasticsearch"], Exec["install-river"]],
-		before => Exec["start-elasticsearch"]
-	}
-			
+				
 	line { "limits.conf1":
 		ensure => present,		
 		file => "/etc/security/limits.conf",
