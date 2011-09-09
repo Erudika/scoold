@@ -15,26 +15,26 @@
 	<body id="error" class="ptl">
 		<div class="mtl">
 			<div class="container center pal clearfix">
-				<div class="inlineblock mbl"><a id="logo" href="$!context">$APPNAME</a></div>
+<!--				<div class="inlineblock mbl"><a id="logo" href="$!context">$APPNAME</a></div>-->
+				<div class="mbl">
+					<a href="$!context"><img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/logosq.png" width="220" height="220" alt="Error" class="rounded5"/></a>
+				</div>				
 				#if($request.getParameter("e"))
 					#set($e = $request.getParameter("e"))
 					#if($e == "403")
-						<h1>$lang.get("forbidden")</h1><br />
-						<img src="https://lh3.googleusercontent.com/_lMno-ymR6yc/TbwYV0NbH0I/AAAAAAAABeQ/1eALMtZTbY8/403.jpg" width="300" height="225" alt="Forbidden" class="rounded5"/>
+						<h1>$lang.get("forbidden")</h1>						
 					#elseif($e == "500")
-						<h1>$lang.get("servererror")</h1><br />
-						<img src="https://lh6.googleusercontent.com/_lMno-ymR6yc/TbwYWBFt4KI/AAAAAAAABeU/S_YcpPVU2-0/error.jpg" width="300" height="225" alt="Error" class="rounded5"/>
+						<h1>$lang.get("servererror")</h1>
 					#elseif($e == "503")
-						<h1>$lang.get("sitedown")</h1><br />
-						<img src="https://lh6.googleusercontent.com/_lMno-ymR6yc/TbwYWBFt4KI/AAAAAAAABeU/S_YcpPVU2-0/error.jpg" width="300" height="225" alt="Error" class="rounded5"/>
+						<h1>$lang.get("sitedown")</h1>
 					#else
-						<h1>$lang.get("error") $!rand</h1><br />
-						<img src="https://lh6.googleusercontent.com/_lMno-ymR6yc/TbwYWBFt4KI/AAAAAAAABeU/S_YcpPVU2-0/error.jpg" width="300" height="225" alt="Error" class="rounded5"/>
+						<h1>$lang.get("error") $!rand - $lang.get("error.title")</h1>
 					#end
 				#else
-					<h1>$lang.get("error") $!rand</h1><br />
-					<img src="https://lh6.googleusercontent.com/_lMno-ymR6yc/TbwYWBFt4KI/AAAAAAAABeU/S_YcpPVU2-0/error.jpg" width="300" height="225" alt="Error" class="rounded5"/>
-				#end
+					<h1>$lang.get("error") $!rand - $lang.get("error.title")</h1>
+				#end				
+				<br />
+				<p class="legs pal mal">&Pi;</p>
 			</div>
 		</div>
 	</body>

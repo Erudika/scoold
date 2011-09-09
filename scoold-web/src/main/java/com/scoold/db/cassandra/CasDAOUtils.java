@@ -41,6 +41,8 @@ import me.prettyprint.hector.api.beans.HSuperColumn;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.beans.SuperRows;
 import me.prettyprint.hector.api.beans.SuperSlice;
+import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition;
+import me.prettyprint.hector.api.ddl.ComparatorType;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.CountQuery;
@@ -91,14 +93,14 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	
 	static {
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
-		config.setHosts(CasDAOFactory.CLUSTER_NODE1);
-		config.setPort(9160);
-//		config.setAutoDiscoverHosts(true);
+		config.setHosts(System.getProperty("com.scoold.cassandra.hosts","localhost"));
+		config.setPort(CasDAOFactory.CASSANDRA_PORT);
 		config.setRetryDownedHosts(true);
 		config.setRetryDownedHostsDelayInSeconds(60);
-//		config.setMaxActive(100);
-		config.setMaxIdle(10);
 		config.setExhaustedPolicy(ExhaustedPolicy.WHEN_EXHAUSTED_GROW);
+//		config.setAutoDiscoverHosts(true);
+//		config.setMaxActive(100);
+//		config.setMaxIdle(10);
 		Cluster cluster = HFactory.getOrCreateCluster(CasDAOFactory.CLUSTER, config);
 		keyspace = HFactory.createKeyspace(CasDAOFactory.KEYSPACE, cluster,
 			new ConsistencyLevelPolicy() {
@@ -830,7 +832,20 @@ public class CasDAOUtils extends AbstractDAOUtils {
 			updateBeanCount(so.getClass(), true, mut);
 		}
 	}
+	
+	private void initIdGen(){
+		String workerID = System.getProperty("com.scoold.workerid");
+		workerId = NumberUtils.toLong(workerID, maxWorkerId + 1);
+				
+		if (workerId > maxWorkerId || workerId < 0) {
+			workerId = new Random().nextInt((int) maxWorkerId + 1);
+		}
 
+//		if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+//			dataCenterId =  new Random().nextInt((int) maxDataCenterId+1);
+//		}
+	}
+	
 	public synchronized Long getNewId() {
 		// OLD simple version - only unique for this JVM
 //		return HFactory.createClockResolution(ClockResolution.MICROSECONDS_SYNC).
@@ -880,19 +895,6 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		return new com.eaio.uuid.UUID().toString();
 	}
 	
-	private void initIdGen(){
-		String workerID = System.getProperty("com.scoold.workerid");
-		workerId = NumberUtils.toLong(workerID, maxWorkerId + 1);
-				
-		if (workerId > maxWorkerId || workerId < 0) {
-			workerId = new Random().nextInt((int) maxWorkerId + 1);
-		}
-
-//		if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
-//			dataCenterId =  new Random().nextInt((int) maxDataCenterId+1);
-//		}
-	}
-
 	// add column to a CF with fixed size. Order by: LongType DESCENDING
 	public void addTimesortColumn(String key, Long id, CF<Long> cf,
 			Long time, Long oldTime){

@@ -25,11 +25,8 @@ public class CasDAOFactory extends AbstractDAOFactory{
 
 	public static final String CLUSTER = "scoold";
 	public static final String KEYSPACE = "scoold";
-	public static final String DS_PATH = "cassandra/scoold";
-
 	public static final int CASSANDRA_PORT = 9160;
-	public static final String CLUSTER_NODE1 = "localhost";
-
+	
 	public static final CF<String> USERS = new CF<String>("Users");
 	public static final CF<String> SCHOOLS = new CF<String>("Schools");
 	public static final CF<String> CLASSES = new CF<String>("Classes");
@@ -135,7 +132,7 @@ public class CasDAOFactory extends AbstractDAOFactory{
 	public AbstractDAOUtils getDAOUtils() {
 		return utils;
 	}
-
+	
 	public static final class CF<T>{
 
 		public CF() {}

@@ -51,7 +51,7 @@ class scoold::glassfish {
 		 
 	exec { 
 		"download-glassfish":
-			command => "sudo -u ${glassfishusr} wget -O ${gfpath} ${scoold::gflink}",
+			command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
 			unless => "test -e ${gfpath}",
 			require => User[$glassfishusr],
 			before => Exec["unzip-glassfish"];
@@ -113,17 +113,23 @@ class scoold::glassfish {
 	}
 		
 	$prop = '\(com\.scoold\.workerid\" value=\)"[0-9]*"'
-	$cmd = "'1,/${prop}/ s/${prop}/\\1\"${workerid}\"/'"
-	exec { "set-worker-id": 
-		command => "sed -e ${cmd} -i.bak ${gfdomain}/config/domain.xml",
-		require => File["${gfdomain}/config/domain.xml"],
-		before => Exec["start-glassfish"]
+	$prop1 = '\(com\.scoold\.cassandra\.hosts\" value=\)".*"'
+	exec { 
+		"set-worker-id": 
+			command => "sed -e '1,/${prop}/ s/${prop}/\\1\"${workerid}\"/' -i.bak ${gfdomain}/config/domain.xml",
+			require => File["${gfdomain}/config/domain.xml"],
+			before => Exec["start-glassfish"];
+		"set-db-hosts": 
+			command => "sed -e '1,/${prop1}/ s/${prop1}/\\1\"${scoold::dbhosts}\"/' -i.bak ${gfdomain}/config/domain.xml",
+			require => File["${gfdomain}/config/domain.xml"],
+			before => Exec["start-glassfish"]
 	}
 		
-#	exec { "stop-glassfish":
-#		command => "stop cassandra",		
-#		before => Exec["start-glassfish"]
-#	}
+	exec { "stop-glassfish":
+		command => "stop glassfish",		
+		onlyif => "test -e ${glassfishhome}/glassfish.pid",
+		before => Exec["start-glassfish"]
+	}
 	
 	exec{ "start-glassfish":
 		command => "start glassfish",

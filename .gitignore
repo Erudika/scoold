@@ -10,4 +10,4 @@ scoold-search/nbproject/
 scoold-search/lib/
 scoold-search/target/
 scoold-web/target/
-
+scoold-puppet/*.txt

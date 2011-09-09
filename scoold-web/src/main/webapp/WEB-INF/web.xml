@@ -583,12 +583,6 @@
         <description>The user</description>
         <role-name>user</role-name>
     </security-role>
-    <resource-ref>
-        <res-ref-name>jdbc/scoold</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-        <res-sharing-scope>Shareable</res-sharing-scope>
-    </resource-ref>
     <filter>
         <description>css caching</description>
         <filter-name>cssCache</filter-name>
@@ -634,12 +628,6 @@
     <resource-ref>
         <res-ref-name>mail/scoold</res-ref-name>
         <res-type>javax.mail.Session</res-type>
-        <res-auth>Container</res-auth>
-        <res-sharing-scope>Shareable</res-sharing-scope>
-    </resource-ref>
-    <resource-ref>
-        <res-ref-name>cassandra/scoold</res-ref-name>
-        <res-type>me.prettyprint.cassandra.jndi.CassandraClientJndiResourcePool</res-type>
         <res-auth>Container</res-auth>
         <res-sharing-scope>Shareable</res-sharing-scope>
     </resource-ref>

@@ -3,37 +3,43 @@
 # This module manages scoold.com servers
 #
 class scoold {
-	# ------------ EDIT HERE ---------------------#	
+	# ----------------- EDIT HERE ---------------------#	
 	$inproduction = false
 	$defuser = "ubuntu"
 	$release = "natty"
 	
-	#-- UPDATED VIA SHELL SCRIPT --#
+	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
 	$nodename = "web2"
-	#------------------------------#	
+	$dbseeds = "10.234.157.237,10.235.6.253"
+	$dbhosts = "10.234.157.237,10.235.6.253,10.228.139.81"
+	#--------------------------------------------------#	
 	
-	#### DB ####	
-	$dbnodes = ["10.227.94.112", "10.226.226.8", "10.51.94.94"]
-	$dbnodeids = { "${dbnodes[0]}" => 0, "${dbnodes[1]}" => 1, "${dbnodes[2]}" => 2 }
-	$dbseeds = "\"${dbnodes[0]},${dbnodes[1]}\""
-	$ver = "0.8.4"
-	$caslink = "http://www.eu.apache.org/dist/cassandra/${ver}/apache-cassandra-${ver}-bin.tar.gz"
+	#### Cassandra ####	
+	$casver = "0.8.5"
+	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
+	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
 	$dbheapsize = "7G" # memory of m1.large
 	$dbheapnew = "200M"
 	$dbcluster = "scoold"
+	$dbupgrade = true
 	
-	#### WEB ####
+	#### Glassfish ####
 	$gflink = "http://dlc.sun.com.edgesuite.net/glassfish/3.1.1/release/glassfish-3.1.1.zip"	
 	$gfcluster = "scoold" 
 		 
-	#### SEARCH ####
+	#### Elasticsearch ####
 	$esmaster = true
-	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.16.4.zip"
+	$esver = "0.17.6"
+	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$esriverlink = "https://s3-eu-west-1.amazonaws.com/com.scoold.files/river-amazonsqs.zip"
+	$esguilink = "https://github.com/mobz/elasticsearch-head/zipball/master"
 	$esport = 9200
 	$esheapsize = "1200M"
 	$esheapdev = "200M"
 	$esindex = "scoold"
+	if inproduction == false {		
+		$esheapsize = $esheapdev	
+	}
 	# --------------------------------------------#
 	
 	Package { ensure => latest}

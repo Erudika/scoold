@@ -28,7 +28,7 @@ if [ -n "$1" ]; then
 		
 		### STEP 1: upload .war file to all servers	(enabled if deployed for the first time, disabled otherwise)
 		pssh/bin/pscp -h $FILE2 -l ubuntu $1 /home/ubuntu/$FILE && 
-		pssh/bin/pssh -h $FILE2 -l ubuntu -i "chmod 755 ~/$FILE && $ASADMIN deploy --enabled=$ENABLE --contextroot $CONTEXT --name $APPNAME ~/$FILE"
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "chmod 755 ~/$FILE && $ASADMIN deploy --enabled=$ENABLE --contextroot $CONTEXT --name $APPNAME ~/$FILE"
 
 		OLDAPP=""
 

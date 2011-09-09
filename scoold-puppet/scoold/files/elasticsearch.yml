@@ -6,29 +6,27 @@ node:
   river: amazonsqs
   
 network:
-  host: _eth0:ipv4_
+  bind_host: 0.0.0.0
+  publish_host: _ec2:privateIpv4_
   tcp:
     keep_alive: true
     
-# index:
-#   number_of_shards: 10
-#   number_of_replicas: 1
-  
-# Path Settings
+index:
+  number_of_shards: 6
+  number_of_replicas: 1
+
 path:
   data: /var/lib/elasticsearch/data
   work: /var/lib/elasticsearch/work
   logs: /var/log/elasticsearch/
 
-# Gateway Settings
-# gateway:
-#   type: s3
-#   s3:
-#     bucket: com.scoold.elasticsearch
-#  recover_after_nodes: 1
-#  recover_after_time: 5m
-#  expected_nodes: 2
-
+gateway:
+  type: s3
+  s3:
+    bucket: com.scoold.elasticsearch
+  recover_after_nodes: 1
+  recover_after_time: 5m
+  expected_nodes: 3
 
 # Force all memory to be locked, forcing JVM to never swap
 #  (make sure to set MIN and MAX mem to the same value)
@@ -36,10 +34,10 @@ path:
 #  mlockall: true
 
 # Unicast Discovery (disable multicast)
-# discovery:
-#   type: ec2
-#   ec2:
-#     groups: elasticsearch
+discovery:
+  type: ec2
+  ec2:
+    groups: elasticsearch
 
 # discovery:
 #   zen:
