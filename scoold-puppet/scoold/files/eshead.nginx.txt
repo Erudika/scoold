@@ -14,5 +14,5 @@ server {
                 try_files $uri $uri/ /index.html;
                 allow 127.0.0.1;
                 deny all;
-        }        
+        }
 }
