@@ -44,29 +44,29 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.9</version>
 			<scope>test</scope>
 		</dependency>
-	 <dependency>
-	  <groupId>com.amazonaws</groupId>
-	  <artifactId>aws-java-sdk</artifactId>
-	  <version>1.2.2</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>commons-codec</groupId>
-	  <artifactId>commons-codec</artifactId>
-	  <version>1.4</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.codehaus.jackson</groupId>
-	  <artifactId>jackson-mapper-asl</artifactId>
-	  <version>1.8.2</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.elasticsearch</groupId>
-	  <artifactId>elasticsearch</artifactId>
-	  <version>0.16.4</version>
-	 </dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.8.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>0.17.6</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
@@ -91,6 +91,9 @@
 				<executions>
 					<execution>
 						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
 						<configuration>
 							<target>
 								<copy todir="${project.build.directory}/lib">
@@ -105,10 +108,7 @@
 									</fileset>
                                 </copy>
 							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
+						</configuration>						
 					</execution>					
 				</executions>
 			</plugin>
@@ -122,6 +122,15 @@
 					<finalName>river-amazonsqs</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>install</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
                 <artifactId>maven-jar-plugin</artifactId>

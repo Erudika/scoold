@@ -1,19 +1,15 @@
 #!/bin/bash -e
 
-# Example: 
-# ./ec2run.sh cassandra /Users/alexb/Desktop/scoold/scoold-puppet/scoold/files/userdata.sh m1.small ami-1b9fa86f db1
-#
 # Ubuntu 11.04 Natty		32 bit			64 bit
 # ---------------------------------------------------------
 # EBS boot					ami-359ea941  	ami-379ea943
 # instance-store 			ami-1b9fa86f  	ami-619ea915
 
-AMI=$2  
-TYPE="m1.small"
-#TYPE="t1.micro"
+TYPE=$1
+AMI=$2
 REGION="eu-west-1"
 PRICE="0.060"
-DATAFILE=$1
+DATAFILE="./scoold/files/userdata.sh"
 SSHKEY="alexb-pubkey"
 NDB=3
 NWEB=2
@@ -23,11 +19,11 @@ function ec2req () {
 	GROUP=$1
 	N=$2	
 	if [ -z "$2" ]; then
-		if [ $GROUP = "cassandra" ]; then
+		if [ "$GROUP" = "cassandra" ]; then
 			N=$NDB
-		elif [ $GROUP = "glassfish" ]; then
+		elif [ "$GROUP" = "glassfish" ]; then
 			N=$NWEB
-		elif [ $GROUP = "elasticsearch" ]; then
+		elif [ "$GROUP" = "elasticsearch" ]; then
 			N=$NSEARCH
 		fi
 	fi
@@ -41,7 +37,7 @@ function ec2req () {
 	fi	
 }
 
-if [ -n "$1$2$3" ]; then
+if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 	case $3 in
 	    glassfish 		) ec2req $3 $4 $5;;
 	    cassandra 		) ec2req $3 $4 $5;;
@@ -51,7 +47,7 @@ if [ -n "$1$2$3" ]; then
 	    	     		  ec2req "elasticsearch" $4 $5;;
 	esac	
 else
-	echo "USAGE:  $0 datafile ami group/all [size] [nospot]"
+	echo "USAGE:  $0 type ami group/all [size] [nospot]"
 fi
 
 ################

@@ -4,7 +4,7 @@
             <actionName>build</actionName>
             <goals>
                 <goal>install</goal>
-                <goal>assembly:single</goal>
+                
             </goals>
             <properties>
                 <skipTests>true</skipTests>
@@ -15,7 +15,7 @@
             <goals>
                 <goal>clean</goal>
                 <goal>install</goal>
-                <goal>assembly:single</goal>
+                
             </goals>
         </action>
     </actions>

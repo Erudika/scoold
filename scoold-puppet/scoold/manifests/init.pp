@@ -9,9 +9,9 @@ class scoold {
 	$release = "natty"
 	
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "web2"
-	$dbseeds = "10.234.157.237,10.235.6.253"
-	$dbhosts = "10.234.157.237,10.235.6.253,10.228.139.81"
+	$nodename = "search1"
+	$dbseeds = "10.234.34.148,10.234.179.44"
+	$dbhosts = "10.234.34.148,10.234.179.44,10.234.34.198"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
@@ -31,7 +31,6 @@ class scoold {
 	$esmaster = true
 	$esver = "0.17.6"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
-	$esriverlink = "https://s3-eu-west-1.amazonaws.com/com.scoold.files/river-amazonsqs.zip"
 	$esguilink = "https://github.com/mobz/elasticsearch-head/zipball/master"
 	$esport = 9200
 	$esheapsize = "1200M"

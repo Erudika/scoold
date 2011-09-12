@@ -13,6 +13,7 @@ class scoold::cassandra {
 	$abst = "auto_bootstrap:"
 	$seeds = "seeds:"
 	$listenaddr = "listen_address:"
+	$rpcaddr = "rpc_address:"
 	$nodeid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2')) - 1
 	$tokens = ["0", "56713727820156410577229101238628035242", "113427455640312821154458202477256070485"]
 		
@@ -59,6 +60,10 @@ class scoold::cassandra {
 				command => "sed -e '1,/${listenaddr}/ s/${listenaddr}.*/${listenaddr} ${ipaddress}/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
 				before => Exec["start-cassandra"];
+			"set-rpc-address": 
+				command => "sed -e '1,/${rpcaddr}/ s/${rpcaddr}.*/${rpcaddr} 0\\.0\\.0\\.0/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"];			
 			"download-jna":
 				command => "sudo -u ${cassandrausr} wget --no-check-certificate -O ${casdir}/lib/jna.jar ${scoold::jnalink}",
 				require => Exec["rename-cassandra"],
@@ -117,7 +122,7 @@ class scoold::cassandra {
 			ensure => file,
 			source => "puppet:///modules/scoold/munin.nginx.txt",
 			owner => root,
-			mode => 777,
+			mode => 755,
 			require => [Package["munin"], Package["nginx"]],
 			before => Exec["restart-nginx"]
 		}
@@ -133,7 +138,7 @@ class scoold::cassandra {
 	}	
 		
 	$cmpdir = "/home/${scoold::defuser}/cassandra-munin-plugins"
-	$cmd1 = "chmod -R 777 ${cmpdir}"
+	$cmd1 = "chmod -R 755 ${cmpdir}"
 	$cmd2 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/jvm_memory"
 	$cmd3 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
 	 

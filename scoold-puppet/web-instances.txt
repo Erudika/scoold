@@ -1,2 +1,0 @@
-i-88f4e7fe ec2-46-51-142-16.eu-west-1.compute.amazonaws.com 10.224.113.224
-i-76fbe800 ec2-79-125-61-103.eu-west-1.compute.amazonaws.com 10.234.90.222

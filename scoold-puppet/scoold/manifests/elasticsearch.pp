@@ -38,7 +38,6 @@ class scoold::elasticsearch {
 		"set-env": 
 			command => "sed -e '1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/' -e '1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/' -i.bak ${esdir}/bin/elasticsearch.in.sh",
 			require => Exec["rename-elasticsearch"];
-
 		"install-cloud-plugin":
 			command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
 			unless => "test -e ${esdir}/plugins/cloud-aws",
@@ -46,13 +45,33 @@ class scoold::elasticsearch {
 			before => Exec["start-elasticsearch"]
 	}
 	
-	if $nodeid == 1 {
+	if $nodeid == 1 {		
+		package { "nginx": }
+		
+		file { "/etc/nginx/sites-enabled/default": 
+			ensure => absent,
+			before => Exec["restart-nginx"]
+		}
+		
+		file { "/etc/nginx/sites-enabled/eshead":
+			ensure => file,
+			source => "puppet:///modules/scoold/eshead.nginx.txt",
+			owner => root,
+			mode => 755,
+			require => [Package["nginx"], Exec["install-gui"]],
+			before => Exec["restart-nginx"]
+		}
+		
+		exec { "restart-nginx":
+			command => "service nginx restart"
+		}
+	
 		exec {
-			"download-river":
-				command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${esdir}/plugins/river-amazonsqs.zip ${scoold::esriverlink}",
-				before => Exec["install-river"];
+			# "download-river":
+			# 	command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${elasticsearchhome}/river-amazonsqs.zip ${scoold::esriverlink}",
+			# 	before => Exec["install-river"];
 			"install-river":
-				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${esdir}/plugins/river-amazonsqs ${esdir}/plugins/river-amazonsqs.zip",
+				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${esdir}/plugins/river-amazonsqs ${elasticsearchhome}/river-amazonsqs.zip",
 				require => [Package["unzip"], Exec["rename-elasticsearch"]],
 				before => Exec["start-elasticsearch"];
 			"download-gui":
@@ -62,7 +81,14 @@ class scoold::elasticsearch {
 				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome}/elasticsearch-head ${elasticsearchhome}/elasticsearch-head.zip",
 				require => [Package["unzip"], Exec["rename-elasticsearch"]],
 				before => Exec["start-elasticsearch"];
-		}		
+		}
+		
+		file { "${elasticsearchhome}/elasticsearch-head":
+			recurse => true,
+			owner => ${elasticsearchusr},
+			mode => 755,
+			require => Exec["install-gui"]
+		}
 	}	
 	
 	file { $esconf:

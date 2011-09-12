@@ -1,38 +1,43 @@
 # !/bin/bash
 
-if [ -n "$1" ]; then
-	FILE=$(expr $1 : '.*/\(.*\)$')
+if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 	FILE1="web-instances.txt"
 	FILE2="web-hostnames.txt"
-	APPNAME=$(expr $FILE : '^\(.*\)\.war$')
 	ASADMIN="sudo -u glassfish /home/glassfish/glassfish/bin/asadmin"
-	CONTEXT=$APPNAME
-	ENABLE="false"
 	LBNAME="ScooldLB"
 	REGION="eu-west-1"
+	WAR=$1
+	APPNAME=$2
+	CONTEXT=$3
+	ENABLED="false"
+	FILENAME=$(expr $WAR : '.*/\(.*\)$')
 	
-	if [ -n "$2" ]; then
-		CONTEXT=$2
-		if [ $3 == "true" ]; then
-			ENABLE=$3		
-		fi
-		if [ -n "$4" ]; then
-			APPNAME="$APPNAME$4"
-		fi
+	if [ "$4" = "true" ]; then
+		ENABLED="true"
 	fi	
 		
-	if [ -f $FILE1 ] && [ -f $FILE2 ]; then		
+	if [ -f $FILE1 && -f $FILE2 ]; then		
 		echo "-------------------  ROLLING UPGRADE SCRIPT -----------------------"
 		echo ""
-		echo "Uploading $FILE as '$APPNAME' --> /$CONTEXT [enabled=$ENABLE]"	
+		echo "Deploying '$APPNAME' --> /$CONTEXT [enabled=$ENABLED]"
+				
+		if [ `expr $1 : '^http.*$'` != 0 ]; then
+			AUTH=""
+			if [ -e "jenkins.txt" ]; then
+				AUTH="-u $(cat jenkins.txt)"
+			fi
+			FETCHWAR="curl -s $AUTH $WAR > ~/$FILENAME"
+		else
+			FETCHWAR="echo -n ''"
+			pssh/bin/pscp -h $FILE2 -l ubuntu $1 /home/ubuntu/$FILENAME
+		fi
 		
-		### STEP 1: upload .war file to all servers	(enabled if deployed for the first time, disabled otherwise)
-		pssh/bin/pscp -h $FILE2 -l ubuntu $1 /home/ubuntu/$FILE && 
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "chmod 755 ~/$FILE && $ASADMIN deploy --enabled=$ENABLE --contextroot $CONTEXT --name $APPNAME ~/$FILE"
+		### STEP 1: deploy .war file to all servers	(enabled if deployed for the first time, disabled otherwise)
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$FETCHWAR && chmod 755 ~/$FILENAME && $ASADMIN deploy --enabled=$ENABLED --contextroot $CONTEXT --name $APPNAME ~/$FILENAME"
+		
 
-		OLDAPP=""
-
-		if [ $ENABLE = "false" ]; then			
+		if [ "$ENABLED" = "false" ]; then			
+			OLDAPP=""
 			while read i; do
 				if [ -n "$i" ]; then
 					instid=$(echo $i | awk '{ print $1 }')
@@ -67,7 +72,8 @@ if [ -n "$1" ]; then
 		fi
 		echo ""
 		echo "---------------------------- DONE ---------------------------------"	
-	else
-		echo "ERROR: hostname files $FILE1, $FILE2 are missing."	
 	fi
 fi
+
+# git archive command
+# git --git-dir=../.git archive --format=zip --prefix=scoold/ -o ~/Desktop/scoold.zip HEAD
