@@ -67,7 +67,7 @@
             <id>inprod</id>
             <activation>
 				<property>
-					<name>INPROD</name>
+					<name>env.INPROD</name>
 				</property>
             </activation>
 			<build>
