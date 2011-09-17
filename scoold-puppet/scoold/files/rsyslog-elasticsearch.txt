@@ -1,0 +1,13 @@
+*.* @logs.loggly.com:16696
+
+$ModLoad imfile
+$InputFileName /var/log/elasticsearch/server.log
+$InputFileTag elasticsearch:
+$InputFileStateFile stat-elasticsearch-access
+$InputFileSeverity info
+$InputRunFileMonitor
+
+$InputFilePollInterval 10
+
+if $programname == "elasticsearch" then @logs.loggly.com:16696;
+& ~

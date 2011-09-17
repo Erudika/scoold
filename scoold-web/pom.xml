@@ -6,11 +6,12 @@
 		<artifactId>scoold</artifactId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
+	
     <groupId>com.erudika</groupId>
     <artifactId>scoold-web</artifactId>
     <packaging>war</packaging>
-    <version>0.3-SNAPSHOT</version>
     <name>scoold-web</name>
+	
 <!--	<properties>
      OSGi bundle properties 
 		<bundle.symbolicName>com.erudika.scoold</bundle.symbolicName>
@@ -385,39 +386,36 @@
     </build>
     <profiles>
         <profile>
-            <id>endorsed</id>
+            <id>inprod</id>
             <activation>
-                <property>
-                    <name>sun.boot.class.path</name>
-                </property>
+				<property>
+					<name>inprod</name>
+					<value>true</value>
+				</property>				
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>2.3.2</version>
-                        <configuration>
-                            <!-- javaee6 contains upgrades of APIs contained within the JDK itself.
-                                 As such these need to be placed on the bootclasspath, rather than classpath of the
-                                 compiler.
-                                 If you don't make use of these new updated API, you can delete the profile.
-                                 On non-SUN jdk, you will need to create a similar profile for your jdk, with the similar property as sun.boot.class.path in Sun's JDK.-->
-                            <compilerArguments>
-                                <bootclasspath>${settings.localRepository}/javax/javaee-endorsed-api/6.0/javaee-endorsed-api-6.0.jar${path.separator}${sun.boot.class.path}</bootclasspath>
-                            </compilerArguments>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax</groupId>
-                                <artifactId>javaee-endorsed-api</artifactId>
-                                <version>6.0</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+			<build>
+				<plugins>
+					 <plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo message="------ PRODUCTION MODE ------"/>
+										<delete file="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
+										<copy file="${basedir}/src/main/resources/click.xml" tofile="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>              
     </profiles>
     <description>Scoold is a student network for knowledge sharing and collaboration.</description>
     <properties>

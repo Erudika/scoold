@@ -1,5 +1,8 @@
 # !/bin/bash
 
+# Latest build: 
+# https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web.war
+
 if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 	FILE1="web-instances.txt"
 	FILE2="web-hostnames.txt"
@@ -16,7 +19,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 		ENABLED="true"
 	fi	
 		
-	if [ -f $FILE1 && -f $FILE2 ]; then		
+	if [ -f $FILE1 ] && [ -f $FILE2 ]; then		
 		echo "-------------------  ROLLING UPGRADE SCRIPT -----------------------"
 		echo ""
 		echo "Deploying '$APPNAME' --> /$CONTEXT [enabled=$ENABLED]"

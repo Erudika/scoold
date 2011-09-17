@@ -1,6 +1,5 @@
 .DS_Store
 *target/**
-scoold-web/src/main/webapp/WEB-INF/lib/**
 *.class
 *.jar
 *.zip
@@ -10,4 +9,6 @@ scoold-search/nbproject/
 scoold-search/lib/
 scoold-search/target/
 scoold-web/target/
+scoold-web/tmp/**
+scoold-web/src/main/webapp/WEB-INF/lib/**
 scoold-puppet/*.txt

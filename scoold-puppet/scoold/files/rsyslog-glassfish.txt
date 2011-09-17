@@ -1,0 +1,13 @@
+*.* @logs.loggly.com:34882
+
+$ModLoad imfile
+$InputFileName /home/glassfish/glassfish/glassfish/domains/domain1/logs/server.log
+$InputFileTag glassfish:
+$InputFileStateFile stat-glassfish-access
+$InputFileSeverity info
+$InputRunFileMonitor
+
+$InputFilePollInterval 10
+
+if $programname == "glassfish" then @logs.loggly.com:34882;
+& ~

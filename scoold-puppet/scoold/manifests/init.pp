@@ -7,11 +7,12 @@ class scoold {
 	$inproduction = false
 	$defuser = "ubuntu"
 	$release = "natty"
-	
+	$upgrade = true
+		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "search1"
-	$dbseeds = "10.234.34.148,10.234.179.44"
-	$dbhosts = "10.234.34.148,10.234.179.44,10.234.34.198"
+	$nodename = "db1"
+	$dbseeds = "192.168.113.128"
+	$dbhosts = "192.168.113.128"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
@@ -21,7 +22,6 @@ class scoold {
 	$dbheapsize = "7G" # memory of m1.large
 	$dbheapnew = "200M"
 	$dbcluster = "scoold"
-	$dbupgrade = true
 	
 	#### Glassfish ####
 	$gflink = "http://dlc.sun.com.edgesuite.net/glassfish/3.1.1/release/glassfish-3.1.1.zip"	

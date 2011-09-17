@@ -35,22 +35,22 @@ class scoold::cassandra {
 		before => User[$cassandrausr]
 	}
 	
-	if $scoold::dbupgrade {
+	if $scoold::upgrade {
 		exec{			
 			"download-cassandra":
 				command => "sudo -u ${cassandrausr} wget --no-check-certificate -O ${caspath} ${scoold::caslink}",
 				require => User[$cassandrausr],
 				before => Exec["unzip-cassandra"];
-			"rename-old-cassandra":
-				command => "mv ${casdir} ${cassandrahome}/cassandra_${scoold::casver}",
-				onlyif => "test -e ${cassandrahome}/cassandra",
+			"remove-old-cassandra":
+				command => "rm -rf ${casdir}",
+				onlyif => "test -e ${casdir}",
 				require => Exec["download-cassandra"],
 				before => Exec["unzip-cassandra"];
 			"unzip-cassandra":
 				command => "sudo -u ${cassandrausr} tar x -C ${cassandrahome} -f ${caspath}",
 				before => Exec["rename-cassandra"];	
 			"rename-cassandra":
-				command => "mv ${cassandrahome}/apache-cassandra* ${casdir}",
+				command => "mv -f ${cassandrahome}/apache-cassandra* ${casdir}",
 				require => Exec["download-cassandra"];
 			"set-cluster-name": 
 				command => "sed -e '1,/${cname}/ s/${cname}.*/${cname} ${scoold::dbcluster}/' -i.bak ${casconf}",
@@ -156,26 +156,31 @@ class scoold::cassandra {
 		before => Exec["install-cassandra-munin-plugin"]			
 	}
 	
-	exec { "install-cassandra-munin-plugin":
-		command => "$cmd1 && $cmd2 && $cmd3 && $cmdr"			
+	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-cassandra.txt")
+	
+	exec { 
+		"install-cassandra-munin-plugin":
+			command => "$cmd1 && $cmd2 && $cmd3 && $cmdr";
+		"configure-rsyslog":
+			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
+			require => Exec["start-cassandra"];
 	}
 	
-	file { ["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/lib/cassandra/commitlog", 
+	file { 
+		["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/lib/cassandra/commitlog", 
 			"/var/lib/cassandra/data", "/var/log/cassandra"]:
-		ensure => directory,
-	    owner => $cassandrausr,
-	    group => $cassandrausr,
-	    recurse => true,
-	    mode => 755,
-	    require => Exec["rename-cassandra"]
-	}
-	
-	file { "/etc/init/cassandra.conf":
-		ensure => file,
-		source => "puppet:///modules/scoold/cassandra.conf",
-		owner => root,
-		mode => 644,
-		before => Exec["start-cassandra"]
+			ensure => directory,
+		    owner => $cassandrausr,
+		    group => $cassandrausr,
+		    recurse => true,
+		    mode => 755,
+		    require => Exec["rename-cassandra"];
+		"/etc/init/cassandra.conf":
+			ensure => file,
+			source => "puppet:///modules/scoold/cassandra.conf",
+			owner => root,
+			mode => 644,
+			before => Exec["start-cassandra"];
 	}
 		
 	exec { "start-cassandra":

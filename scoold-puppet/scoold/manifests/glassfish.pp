@@ -48,22 +48,35 @@ class scoold::glassfish {
 		managehome => true,
 		shell => "/bin/bash"
 	}
-		 
-	exec { 
-		"download-glassfish":
-			command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
-			unless => "test -e ${gfpath}",
-			require => User[$glassfishusr],
-			before => Exec["unzip-glassfish"];
-		"unzip-glassfish":
-			command => "sudo -u ${glassfishusr} unzip -qq -d ${glassfishhome} ${gfpath}",
-			unless => "test -e ${gfdir}",
-			require => Package["unzip"],
-			before => Exec["rename-glassfish"];
-		"rename-glassfish":
-			command => "mv ${glassfishhome}/glassfish* ${gfdir}",
-			unless => "test -e ${gfdir}",
-			require => Exec["download-glassfish"]					
+	
+	exec { "stop-glassfish":
+		command => "stop glassfish && rm ${glassfishhome}/glassfish.pid",		
+		onlyif => "test -e ${glassfishhome}/glassfish.pid",
+		before => User[$glassfishusr]
+	}
+
+	if $scoold::upgrade {	
+		exec { 
+			"download-glassfish":
+				command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
+				unless => "test -e ${gfpath}",
+				require => User[$glassfishusr],
+				before => Exec["unzip-glassfish"];
+			"remove-old-glassfish":
+				command => "rm -rf ${gfdir}",
+				onlyif => "test -e ${gfdir}",
+				require => Exec["download-glassfish"],
+				before => Exec["unzip-glassfish"];
+			"unzip-glassfish":
+				command => "sudo -u ${glassfishusr} unzip -qq -o -d ${glassfishhome} ${gfpath}",
+				unless => "test -e ${gfdir}",
+				require => Package["unzip"],
+				before => Exec["rename-glassfish"];
+			"rename-glassfish":
+				command => "mv -f ${glassfishhome}/glassfish* ${gfdir}",
+				unless => "test -e ${gfdir}",
+				require => Exec["download-glassfish"]					
+		}
 	}
 	
 	file { 
@@ -113,7 +126,9 @@ class scoold::glassfish {
 	}
 		
 	$prop = '\(com\.scoold\.workerid\" value=\)"[0-9]*"'
-	$prop1 = '\(com\.scoold\.cassandra\.hosts\" value=\)".*"'
+	$prop1 = '\(com\.scoold\.cassandra\.hosts\" value=\)".*"'	
+	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-glassfish.txt")
+	
 	exec { 
 		"set-worker-id": 
 			command => "sed -e '1,/${prop}/ s/${prop}/\\1\"${workerid}\"/' -i.bak ${gfdomain}/config/domain.xml",
@@ -122,13 +137,10 @@ class scoold::glassfish {
 		"set-db-hosts": 
 			command => "sed -e '1,/${prop1}/ s/${prop1}/\\1\"${scoold::dbhosts}\"/' -i.bak ${gfdomain}/config/domain.xml",
 			require => File["${gfdomain}/config/domain.xml"],
-			before => Exec["start-glassfish"]
-	}
-		
-	exec { "stop-glassfish":
-		command => "stop glassfish",		
-		onlyif => "test -e ${glassfishhome}/glassfish.pid",
-		before => Exec["start-glassfish"]
+			before => Exec["start-glassfish"];
+		"configure-rsyslog":
+			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
+			require => Exec["start-glassfish"];		
 	}
 	
 	exec{ "start-glassfish":

@@ -5,32 +5,58 @@ REGION="eu-west-1"
 MODULESDIR=/usr/share/puppet/modules
 MODNAME="scoold"
 NODETYPE="unknown"
+F1SUFFIX="-instances.txt"
+F2SUFFIX="-hostnames.txt"
+
+function init () {
+	GROUP=$1
+	FILE1=$2
+	FILE2=$3
+	ec2-describe-instances --region $REGION --filter group-name=$GROUP --filter "instance-state-name=running" | egrep ^INSTANCE | awk '{ print $2,$4,$15}' > $FILE1
+	cat $FILE1 | awk '{print $2}' > $FILE2 # hostnames only
+}
+
+function getType () {
+	NODETYPE=""
+	if [ "$1" = "cassandra" ]; then
+		NODETYPE="db"
+	elif [ "$1" = "glassfish" ]; then
+		NODETYPE="web"
+	elif [ "$1" = "elasticsearch" ]; then
+		NODETYPE="search"
+	fi
+	echo $NODETYPE
+}
+
 
 if [ -n "$1" ] && [ -n "$2" ]; then
 	GROUP=$2			
-	if [ "$GROUP" = "cassandra" ]; then
-		NODETYPE="db"
-	elif [ "$GROUP" = "glassfish" ]; then
-		NODETYPE="web"
-	elif [ "$GROUP" = "elasticsearch" ]; then
-		NODETYPE="search"
-	fi
+	NODETYPE=$(getType $GROUP)
+	FILE1="$NODETYPE$F1SUFFIX"
+	FILE2="$NODETYPE$F2SUFFIX"
 	
-	FILE1="$NODETYPE-instances.txt"
-	FILE2="$NODETYPE-hostnames.txt"
-	
-	if [ "$1" = "init" ]; then				
-		### commit to all hosts in group, get info about all web servers			
-		ec2-describe-instances --region $REGION --filter group-name=$GROUP --filter "instance-state-name=running" | egrep ^INSTANCE | awk '{ print $2,$4,$15}' > $FILE1
-		cat $FILE1 | awk '{print $2}' > $FILE2 # hostnames only
+	if [ "$1" = "init" ]; then
+		### get info about all web servers		
+		if [ "$GROUP" = "all" ]; then
+			for grp in "cassandra" "glassfish" "elasticsearch"; do
+				ntype=$(getType $grp)
+				f1="$ntype$F1SUFFIX"
+				f2="$ntype$F2SUFFIX"
+				init $grp $f1 $f2
+			done			
+		else
+			init $GROUP $FILE1 $FILE2
+		fi	
 		echo "done."	
-	elif [ "$1" = "all" ]; then		
-		dbseeds=$(sed -n 1,2p db-instances.txt | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')
-		dbhosts=$(cat db-instances.txt | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
-		# set seed nodes to be the first two IPs
-		sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$M ODNAME/manifests/init.pp
-		# set hosts system param in domain.xml to be picked up by the web app
-		sed -e "1,/\\\$dbhosts/ s/\\\$dbhosts.*/\\\$dbhosts = \"$dbhosts\"/" -i.bak ./$MODNAME/manifests/init.pp
+	elif [ "$1" = "all" ]; then	
+		if [ -e "db$F1SUFFIX" ]; then
+			dbseeds=$(sed -n 1,2p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')
+			dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
+			# set seed nodes to be the first two IPs
+			sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$MODNAME/manifests/init.pp
+			# set hosts system param in domain.xml to be picked up by the web app
+			sed -e "1,/\\\$dbhosts/ s/\\\$dbhosts.*/\\\$dbhosts = \"$dbhosts\"/" -i.bak ./$MODNAME/manifests/init.pp
+		fi
 		
 		### special case for elasticsearch - download sqs river plugin first
 		if [ "$GROUP" = "elasticsearch" ] && [ -e "jenkins.txt" ]; then
@@ -38,7 +64,8 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			ZIP="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 			FILENAME=$(expr $ZIP : '.*/\(.*\)$')
 			search1host=$(head -n 1 $FILE2)
-			ssh -n ubuntu@$search1host "curl -s $AUTH $ZIP > ~/$FILENAME"
+			echo "downloading elasticsearch river plugin..."
+			ssh -n ubuntu@$search1host "curl -s $AUTH $ZIP > ~/$FILENAME && sudo mv ~/$FILENAME /opt/$FILENAME && sudo chown elasticsearch:elasticsearch /opt/$FILENAME"
 		fi	
 		
 		count=1	
@@ -53,7 +80,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				
 				# skip autotagging and LB regging when running on local virtual machine
 				if [ -z "$3" ]; then				
-					ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"
+					#ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"
 		
 					if [ "$NODETYPE" = "web" ]; then
 						# register instance with LB
@@ -75,7 +102,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq ~/$MODNAME.zip -d $MODULESDIR/; sudo puppet apply -e 'include $MODNAME'"
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$MODNAME.zip -d $MODULESDIR/; sudo puppet apply -e 'include $MODNAME'"
 	fi
 elif [ "$1" = "munin" ]; then
 	# clear old hosts
@@ -100,7 +127,7 @@ elif [ "$1" = "munin" ]; then
 				fi
 				count=$((count+1))
 			fi
-		done < "$grp-instances.txt"		
+		done < "$grp$F1SUFFIX"		
 	done
 	echo "#end" >> $MCONF
 	
@@ -110,7 +137,12 @@ elif [ "$1" = "munin" ]; then
 	
 	### cleanup
 	rm ./$MODNAME/files/*.bak
+elif [ "$1" = "checkdb" ]; then
+	### check if db is up and running and ring is OK
+	db1host=$(head -n 1 "db$F2SUFFIX")
+	ssh -n ubuntu@$db1host "/home/cassandra/cassandra/bin/nodetool -h localhost ring"
 elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
+	db1host=$(head -n 1 "db$F2SUFFIX")
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
 fi
