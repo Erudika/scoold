@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.erudika</groupId>
   <artifactId>scoold</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>scoold</name>
   <url>http://scoold.com</url>
@@ -60,6 +60,39 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+        <profile>
+            <id>inprod</id>
+            <activation>
+				<property>
+					<name>INPROD</name>
+				</property>
+            </activation>
+			<build>
+				<plugins>
+					 <plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo message="------ PRODUCTION MODE ------"/>
+										<delete file="${basedir}/scoold-web/src/main/webapp/WEB-INF/click.xml"/>
+										<copy file="${basedir}/scoold-web/src/main/resources/click.xml" tofile="${basedir}/scoold-web/src/main/webapp/WEB-INF/click.xml"/>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>              
+    </profiles>
+	<description>Scoold is a student network for knowledge sharing and collaboration.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>

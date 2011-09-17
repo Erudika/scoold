@@ -383,40 +383,7 @@
             </plugin>
         </plugins>
         <finalName>scoold-web</finalName>
-    </build>
-    <profiles>
-        <profile>
-            <id>inprod</id>
-            <activation>
-				<property>
-					<name>INPROD</name>
-				</property>				
-            </activation>
-			<build>
-				<plugins>
-					 <plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<echo message="------ PRODUCTION MODE ------"/>
-										<delete file="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
-										<copy file="${basedir}/src/main/resources/click.xml" tofile="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
-									</target>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>              
-    </profiles>
-    <description>Scoold is a student network for knowledge sharing and collaboration.</description>
+    </build>    
     <properties>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
