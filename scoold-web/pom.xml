@@ -389,7 +389,7 @@
             <id>inprod</id>
             <activation>
 				<property>
-					<name>inprod</name>
+					<name>env.INPROD</name>
 					<value>true</value>
 				</property>				
             </activation>
