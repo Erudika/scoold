@@ -65,7 +65,6 @@
 					},
 					success: function(data) {
 						if (data) {
-//							console.log(data);
 							chatnode.handlePoll(data);
 						} else {
 							chatnode.handlePollError();
@@ -130,7 +129,7 @@
 
 			send: function(msg) {
 				var chatnode = this;
-				// TODO: use POST
+				// TODO: could use POST but jsonp lib doesn't support it!
 				return chatnode.request("/send", {
 					data: {				
 						userid: userid,

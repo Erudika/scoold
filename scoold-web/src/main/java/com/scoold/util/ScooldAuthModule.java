@@ -170,11 +170,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	}
 	
 	private static void attachIdentifier(String openidURL, HttpServletRequest request){
-		ScooldPrincipal<User> userPricipal = (ScooldPrincipal<User>) 
-				SimplePrincipal.getPrincipal(request);
-		if (userPricipal != null) {
-			User authUser = userPricipal.getUser();
-			//initCoreObjects(remoteUser);
+		if (request.getRemoteUser() != null) {
+			User authUser = User.getUser(request.getRemoteUser());
 			if (authUser != null) {
 				authUser.attachIdentifier(openidURL);
 			}
@@ -216,11 +213,9 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				authUser.setLastseen(System.currentTimeMillis());
 				authUser.setNewmessages(authUser.countNewMessages());
 				authUser.update();
-
-				ScooldPrincipal<User> principal = new ScooldPrincipal<User>
-						(identifier, authUser, authUser.getGroups());
-
-				SimplePrincipal.setPrincipal(request.getHttpServletRequest(), principal);
+				
+				SimplePrincipal.setPrincipal(request.getHttpServletRequest(), 
+						new SimplePrincipal(identifier, authUser.getGroups()));
 
 				if(manager.hasRequest(request)){
 					//FINALLY: success. send back to request

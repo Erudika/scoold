@@ -25,7 +25,6 @@ import com.scoold.core.Votable;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.util.ScooldAppListener;
-import com.scoold.util.ScooldPrincipal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -35,7 +34,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import name.aikesommer.authenticator.SimplePrincipal;
 import org.apache.click.Page;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
@@ -71,7 +69,6 @@ public class BasePage extends Page {
 	public static final String FB_APP_ID = "99517177417";
 	public static final String FB_API_KEY = "bc6c5faabc3b00982b97b2a5a9d4d13f";
 	public static final String FLICKR_API_KEY = "834dc1c2493561354a02d6d739a970a4";
-//	private static final String FLICKR_SECRET = "84cd98ba9a72dda8";
 	public static final Logger logger = Logger.getLogger(BasePage.class.getName());
 
 	public String prefix = getContext().getServletContext().getContextPath()+"/";
@@ -162,23 +159,20 @@ public class BasePage extends Page {
 		if(pagenum.longValue() <= 0L) pagenum = new MutableLong(1);
 		showdownJS = getContext().getServletContext().
 				getAttribute(ScooldAppListener.SHOWDOWN_CONV);
-		canComment = authenticated && (authUser.hasBadge(Badge.FRESHMAN) || authUser.isModerator());
+		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
 		commentslist = new ArrayList<Comment> ();
 		addModel("isAjaxRequest", isAjaxRequest());
 	}
 
 	/* * PRIVATE METHODS * */
-	private void checkAuth() {
-		ScooldPrincipal<User> userPricipal = (ScooldPrincipal<User>) SimplePrincipal.
-				getPrincipal(req);
+	private void checkAuth() {	
 		isFBconnected = false;
-		if (userPricipal != null) {
+		if (req.getRemoteUser() != null) {
 			authenticated = true;
-			String identifier = userPricipal.getName();
-			//initCoreObjects(remoteUser);
+			String identifier = req.getRemoteUser();
 			if (authUser == null) {
-				authUser = userPricipal.getUser();
-				authUser.setIdentifier(identifier);
+				authUser = User.getUser(identifier);
+				if(authUser != null) authUser.setIdentifier(identifier);
 			}
 			isFBconnected = !identifier.startsWith("http");
 		} else {
@@ -576,7 +570,7 @@ public class BasePage extends Page {
 						updated = true;
 					}
 				} else if(showPost.isAnswer() || showPost.isTranslation()) {
-					if(isMine && showPost.getVotes() < 5){
+					if(isMine || inRole("mod")){
 						if(showPost.getParentpostid() != null){
 							redirectTo = escapelink+"/"+showPost.getParentpostid();
 						}else{
@@ -1055,13 +1049,14 @@ public class BasePage extends Page {
 					if(p.isAnswer()){
 						addBadge(Badge.GOODANSWER, votes >= User.GOODANSWER_IFHAS);
 						award = User.ANSWER_VOTEUP_REWARD_AUTHOR;
-					}
-					if(p.isQuestion()){
+					}else if(p.isQuestion()){
 						addBadge(Badge.GOODQUESTION, votes >= User.GOODQUESTION_IFHAS);
 						award = User.QUESTION_VOTEUP_REWARD_AUTHOR;
+					}else{
+						award = User.VOTEUP_REWARD_AUTHOR;
 					}
 				}else{
-					award = User.POST_VOTEUP_REWARD_AUTHOR;
+					award = User.VOTEUP_REWARD_AUTHOR;
 				}
 
 				if(author != null){
@@ -1076,16 +1071,16 @@ public class BasePage extends Page {
 				authUser.incrementDownvotes();
 
 				if(StringUtils.equalsIgnoreCase(classname,
-						Comment.class.getSimpleName()) && votes <= 5){
+						Comment.class.getSimpleName()) && votes <= -5){
 					//treat comment as offensive or spam - hide
 					((Comment) votable).setHidden(true);
 				}else if(StringUtils.equalsIgnoreCase(classname,
-						Media.class.getSimpleName()) &&	votes <= 10){
+						Media.class.getSimpleName()) &&	votes <= -10){
 					//treat media as offensive - delete
 					((Media) votable).delete();
 					result = false;
 				}else if(StringUtils.equalsIgnoreCase(classname,
-						Post.class.getSimpleName()) && votes <= 5){
+						Post.class.getSimpleName()) && votes <= -5){
 					Post p = (Post) votable;
 
 					if(p.isQuestion() || p.isFeedback()){
@@ -1100,17 +1095,17 @@ public class BasePage extends Page {
 						}
 						rep.setDescription(lang.get("posts.forclosing"));
 						rep.setType(ReportType.OTHER);
-						rep.setAuthor("Owlcat");
+						rep.setAuthor("System");
 
 						rep.create();
-					}
-
-					if(author != null){
-						author.removeRep(User.POST_VOTEDOWN_PENALTY_AUTHOR);
-						author.update();
-						//small penalty to voter
-						authUser.removeRep(User.POST_VOTEDOWN_PENALTY_VOTER);
-					}
+					}					
+				}
+				
+				if(author != null){
+					author.removeRep(User.POST_VOTEDOWN_PENALTY_AUTHOR);
+					author.update();
+					//small penalty to voter
+					authUser.removeRep(User.POST_VOTEDOWN_PENALTY_VOTER);
 				}
 			}
 

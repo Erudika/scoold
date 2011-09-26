@@ -200,7 +200,6 @@ public class CasDAOUtilsTest {
 //		Object colName = null;
 //		List<HColumn<SUBN, String>> colValue = null;
 //		putSuperColumn(key, cf, colName, colValue);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -215,7 +214,6 @@ public class CasDAOUtilsTest {
 //		Object expResult = null;
 //		Object result = getColumn(key, cf, colName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -231,7 +229,6 @@ public class CasDAOUtilsTest {
 //		List expResult = null;
 //		List result = getSuperColumn(key, cf, colName, subColClass);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -247,7 +244,6 @@ public class CasDAOUtilsTest {
 //		Object expResult = null;
 //		Object result = getSubColumn(key, cf, colName, subColName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -260,7 +256,6 @@ public class CasDAOUtilsTest {
 //		CF<N> cf = null;
 //		Object colName = null;
 //		removeColumn(key, cf, colName);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -273,7 +268,6 @@ public class CasDAOUtilsTest {
 //		SCF<SN, ?> cf = null;
 //		Object colName = null;
 //		removeSuperColumn(key, cf, colName);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -288,7 +282,6 @@ public class CasDAOUtilsTest {
 //		HColumn expResult = null;
 //		HColumn result = getHColumn(key, cf, colName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -304,7 +297,6 @@ public class CasDAOUtilsTest {
 //		HSuperColumn expResult = null;
 //		HSuperColumn result = getHSuperColumn(key, cf, colName, subColClass);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -320,7 +312,6 @@ public class CasDAOUtilsTest {
 //		HColumn expResult = null;
 //		HColumn result = getHSubColumn(key, cf, colName, subColName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -335,7 +326,6 @@ public class CasDAOUtilsTest {
 //		String expResult = "";
 //		String result = createRow(key, cf, row);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -350,7 +340,6 @@ public class CasDAOUtilsTest {
 //		String expResult = "";
 //		String result = createSuperRow(key, cf, row);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -370,7 +359,6 @@ public class CasDAOUtilsTest {
 //		List expResult = null;
 //		List result = readRow(key, cf, colNameClass, startKey, page, itemcount, maxItems, reverse);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -391,7 +379,6 @@ public class CasDAOUtilsTest {
 //		List expResult = null;
 //		List result = readSuperRow(key, cf, superColNameClass, colNameClass, startKey, page, itemcount, maxItems, reverse);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -403,7 +390,6 @@ public class CasDAOUtilsTest {
 //		String key = "";
 //		CF<?> cf = null;
 //		deleteRow(key, cf);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -415,7 +401,6 @@ public class CasDAOUtilsTest {
 //		String key = "";
 //		SCF<?, ?> cf = null;
 //		deleteSuperRow(key, cf);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -439,7 +424,6 @@ public class CasDAOUtilsTest {
 //		ArrayList expResult = null;
 //		ArrayList result = readAll(clazz, keysKey, keysCf, valsCf, colNameClass, startKey, page, itemcount, maxItems, reverse, colNamesAreKeys, countOnlyColumns);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -454,7 +438,6 @@ public class CasDAOUtilsTest {
 //		ArrayList expResult = null;
 //		ArrayList result = readAll(clazz, keys, cf);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -469,7 +452,6 @@ public class CasDAOUtilsTest {
 //		boolean expResult = false;
 //		boolean result = existsColumn(key, cf, columnName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -485,7 +467,6 @@ public class CasDAOUtilsTest {
 //		boolean expResult = false;
 //		boolean result = existsSuperColumn(key, cf, columnName, subColClass);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -501,7 +482,6 @@ public class CasDAOUtilsTest {
 //		boolean expResult = false;
 //		boolean result = existsSubColumn(key, cf, columnName, subColName);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -516,7 +496,6 @@ public class CasDAOUtilsTest {
 //		int expResult = 0;
 //		int result = countColumns(key, cf, colNameClass);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -531,7 +510,6 @@ public class CasDAOUtilsTest {
 //		int expResult = 0;
 //		int result = countSuperColumns(key, cf, clazz);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -547,7 +525,6 @@ public class CasDAOUtilsTest {
 //		int expResult = 0;
 //		int result = countSubColumns(key, cf, superCol, subColClass);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -560,7 +537,6 @@ public class CasDAOUtilsTest {
 //		Long expResult = null;
 //		Long result = getCount(clazz);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -574,7 +550,6 @@ public class CasDAOUtilsTest {
 //		Long expResult = null;
 //		Long result = instance.getBeanCount(clazz);
 //		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 //
@@ -586,7 +561,6 @@ public class CasDAOUtilsTest {
 //		Class<?> clazz = null;
 //		boolean decrement = false;
 //		updateBeanCount(clazz, decrement);
-//		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
 

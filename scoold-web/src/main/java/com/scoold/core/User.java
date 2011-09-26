@@ -66,13 +66,13 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = 10;	//
 	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = 5;	//
-	public static final int POST_VOTEUP_REWARD_AUTHOR = 2;		//
+	public static final int VOTEUP_REWARD_AUTHOR = 2;		//
 	public static final int ANSWER_ACCEPT_REWARD_AUTHOR = 10;	//
 	public static final int ANSWER_ACCEPT_REWARD_VOTER = 3;		//
-	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = 4;	//
-	public static final int POST_VOTEDOWN_PENALTY_VOTER = 2;	//
+	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = 3;	//
+	public static final int POST_VOTEDOWN_PENALTY_VOTER = 1;	//
 
-	public static final int VOTER_IFHAS = 100; // votes			//
+	public static final int VOTER_IFHAS = 100; // total votes	//
 	public static final int COMMENTATOR_IFHAS = 100; // coments	//
 	public static final int CRITIC_IFHAS = 10; // downvotes		//
 	public static final int SUPPORTER_IFHAS = 50; // upvotes	//
@@ -96,7 +96,7 @@ public class User implements ScooldObject, Comparable<User>,
 		NICEPROFILE(10),	//100% profile completed
 		TESTER(0),			//for testers only
 		REPORTER(0),		//for every report
-		VOTER(0),			//100+ votes
+		VOTER(0),			//100 total votes
 		COMMENTATOR(0),		//100+ comments
 		CRITIC(0),			//10+ downvotes
 		SUPPORTER(10),		//50+ upvotes
@@ -118,7 +118,7 @@ public class User implements ScooldObject, Comparable<User>,
 		BACKTOSCHOOL(0),	//first school joined
 		CONNECTED(10),		//10+ contacts added
 		DISCIPLINED(0),		//each time user deletes own comment
-		POLYGLOT(10);		//author of an approved translation
+		POLYGLOT(5);		//for every approved translation
 
 		private int reward;
 
@@ -560,7 +560,7 @@ public class User implements ScooldObject, Comparable<User>,
 		if(upvotes == null) upvotes = 0L;
 		if(downvotes == null) downvotes = 0L;
 
-		return upvotes+downvotes;
+		return upvotes + downvotes;
 	}
 
 	public void addRep(int rep){

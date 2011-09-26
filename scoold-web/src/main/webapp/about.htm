@@ -1,6 +1,219 @@
-<h2>todo</h2>
-#foreach($q in $queues)
-	<h4>$q</h4>
-#end
-
-<h4>$!msgs</h4>
+<div id="about">
+	<h1>$lang.get("about.title")</h1>
+	<hr />
+	
+	<p>$lang.get("about.scoold.1")</p>
+	<p>$lang.get("about.scoold.2")</p>
+	<p>$lang.get("about.scoold.3")</p>
+	<p>$lang.get("about.scoold.4")</p>
+	<ul class="squarelist">
+		<li>$lang.get("about.scoold.5")</li>
+		<li>$lang.get("about.scoold.6")</li>
+		<li>$lang.get("about.scoold.7")</li>
+		<li>$lang.get("about.scoold.8")</li>
+	</ul>
+	<br />
+	<h2>$lang.get("questions.title")</h2>
+	<p>$lang.get("about.questions.1")</p>
+	<ul class="squarelist">
+		<li>$lang.get("about.questions.2")</li>
+		<li>$lang.get("about.questions.3")</li>
+		<li>$lang.get("about.questions.4")</li>
+		<li>$lang.get("about.questions.5")</li>
+		<li>$lang.get("about.questions.6")</li>
+		<li>$lang.get("about.questions.7")</li>
+	</ul>
+	<br />
+	<p>$lang.get("about.questions.8")</p>
+	<p>$lang.get("about.questions.9")</p>
+	<p>$lang.get("about.questions.10")</p>
+	<p>$lang.get("about.questions.11")</p>
+	<p>$lang.get("about.questions.12")</p>
+	
+	<h2>$lang.get("answers.title")</h2>
+	<p>$lang.get("about.answers.1")</p>
+	<p>$lang.get("about.answers.2")</p>
+	
+	<h2>$lang.get("revisions.title")</h2>
+	<p>$lang.get("about.revisions.1")</p>
+	<p>$lang.get("about.revisions.2")</p>
+	
+	<h2>$lang.get("comments.title")</h2>
+	<p>$lang.get("about.comments.1")</p>
+	<p>$lang.get("about.comments.2")</p>
+	
+	<h2>$lang.get("schools.title")</h2>
+	<p>$lang.get("about.schools.1")</p>
+	<p>$lang.get("about.schools.2")</p>
+	<p>$lang.get("about.schools.3")</p>
+	
+	<h2>$lang.get("classes.title")</h2>
+	<p>$lang.get("about.classes.1")</p>
+	<p>$lang.get("about.classes.2")</p>
+	<p>$lang.get("about.classes.3")</p>
+	
+	<h2>$lang.get("voterep.title")</h2>
+	<p>$lang.get("about.voterep.1")</p>
+	<p>$lang.get("about.voterep.2")</p>
+	<p>$lang.get("about.voterep.3")</p>
+	<table>
+		<tbody>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.4")</td>
+				<td class="bold">$!ANSWER_VOTEUP_REWARD_AUTHOR $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.5")</td>
+				<td class="bold">$!QUESTION_VOTEUP_REWARD_AUTHOR $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.6")</td>
+				<td class="bold">$!VOTEUP_REWARD_AUTHOR $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.7")</td>
+				<td class="bold">$!ANSWER_ACCEPT_REWARD_AUTHOR $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.8")</td>
+				<td class="bold">$!ANSWER_ACCEPT_REWARD_VOTER $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.9")</td>
+				<td class="bold">$!POST_VOTEDOWN_PENALTY_AUTHOR $lang.get("points")</td>
+			</tr>
+			<tr>
+				<td class="prl">$lang.get("about.voterep.10")</td>
+				<td class="bold">$!POST_VOTEDOWN_PENALTY_VOTER $lang.get("points")</td>
+			</tr>
+		</tbody>
+	</table>
+	<br />
+	<h2>$lang.get("badges.title")</h2>
+	<p>$lang.get("about.badges.1")</p>
+	<table>
+		<tbody>
+			<tr>
+				<td class="prl">#badgebox("niceprofile" 0)</td>
+				<td>$lang.get("about.badges.2") (&plus;$!NICEPROFILE_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("tester" 0)</td>
+				<td>$lang.get("about.badges.3")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("reporter" 0)</td>
+				<td>$lang.get("about.badges.4")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("voter" 0)</td>
+				<td>$lang.get("about.badges.5")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("critic" 0)</td>
+				<td>$lang.get("about.badges.6")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("supporter" 0)</td>
+				<td>$lang.get("about.badges.7") (&plus;$!SUPPORTER_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("commentator" 0)</td>
+				<td>$lang.get("about.badges.8")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("editor" 0)</td>
+				<td>$lang.get("about.badges.9")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("backintime" 0)</td>
+				<td>$lang.get("about.badges.10")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("noob" 0)</td>
+				<td>$lang.get("about.badges.11") (&plus;$!NOOB_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("enthusiast" 0)</td>
+				<td>$lang.get("about.badges.12")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("freshman" 0)</td>
+				<td>$lang.get("about.badges.13")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("scholar" 0)</td>
+				<td>$lang.get("about.badges.14")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("teacher" 0)</td>
+				<td>$lang.get("about.badges.15")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("professor" 0)</td>
+				<td>$lang.get("about.badges.16")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("geek" 0)</td>
+				<td>$lang.get("about.badges.17")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("goodquestion" 0)</td>
+				<td>$lang.get("about.badges.18") (&plus;$!GOODQUESTION_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("goodanswer" 0)</td>
+				<td>$lang.get("about.badges.19") (&plus;$!GOODANSWER_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("eureka" 0)</td>
+				<td>$lang.get("about.badges.20")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("senior" 0)</td>
+				<td>$lang.get("about.badges.21")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("photolover" 0)</td>
+				<td>$lang.get("about.badges.22")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("firstclass" 0)</td>
+				<td>$lang.get("about.badges.23")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("backtoschool" 0)</td>
+				<td>$lang.get("about.badges.24")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("connected" 0)</td>
+				<td>$lang.get("about.badges.25") (&plus;$!CONNECTED_BONUS $lang.get("points"))</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("disciplined" 0)</td>
+				<td>$lang.get("about.badges.26")</td>
+			</tr>
+			<tr>
+				<td class="prl">#badgebox("polyglot" 0)</td>
+				<td>$lang.get("about.badges.27") (&plus;$!POLYGLOT_BONUS $lang.get("points"))</td>
+			</tr>
+		</tbody>
+	</table>
+	<br />
+	<h2>$lang.get("reports.title")</h2>
+	<p>$lang.get("about.reports.1")</p>
+	
+	<h2>$lang.get("accounts.title")</h2>
+	<p>$lang.get("about.accounts.1")</p>
+	
+	<h2>$lang.get("feedback.title")</h2>
+	<p>$lang.get("about.feedback.1")</p>
+	
+	<h2>$lang.get("contact.title")</h2>
+	<p>
+		<a href="mailto:scoold@erudika.com" class="extlink">$lang.get("signup.form.email")</a> &bull; 
+		<a href="http://www.facebook.com/getscoold" class="extlink">Facebook</a> &bull; 
+		<a href="http://www.twitter.com/getscoold" class="extlink">Twitter</a>
+	</p>
+	
+</div>

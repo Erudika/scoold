@@ -88,7 +88,7 @@
 
 			####################################################################################################################
 			#elseif($showParam == "answers")
-				<h2>${lang.get("posts.answers")} #showcount($itemcount.longValue())</h2>
+				<h2>${lang.get("answers.title")} #showcount($itemcount.longValue())</h2>
 
 				<div id="answers-edit">
 					#if($postlist.isEmpty())
@@ -251,7 +251,7 @@
 				<li class="rounded3"><a href="$!myprofilelink/#stripstr($!showUser.fullname)">${lang.get("profile.about.title")}</a></li>
 				<li class="rounded3"><a href="$!mycontactslink/#stripstr($!showUser.fullname)">${lang.get("contacts.title")}</a></li>
 				<li class="rounded3"><a href="$!myquestionslink/#stripstr($!showUser.fullname)">${lang.get("questions.title")}</a></li>
-				<li class="rounded3"><a href="$!myanswerslink/#stripstr($!showUser.fullname)">${lang.get("posts.answers")}</a></li>
+				<li class="rounded3"><a href="$!myanswerslink/#stripstr($!showUser.fullname)">${lang.get("answers.title")}</a></li>
 				<li class="rounded3"><a href="$!myphotoslink/#stripstr($!showUser.fullname)">${lang.get("photos.title")}</a></li>
 				<li class="rounded3"><a href="$!mydrawerlink/#stripstr($!showUser.fullname)">${lang.get("drawer.title")}</a></li>
 			</ul>

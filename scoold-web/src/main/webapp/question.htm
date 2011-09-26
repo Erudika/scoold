@@ -73,7 +73,7 @@
 						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers" class="button-tiny rounded3">$lang.get("votes")</a>
 						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers" class="button-tiny rounded3">$lang.get("newest")</a>
 					</span>
-					<h2>$lang.get("posts.answers") #showcount($itemcount.longValue())</h2>
+					<h2>$lang.get("answers.title") #showcount($itemcount.longValue())</h2>
 					<hr />
 				#end
 
@@ -126,9 +126,9 @@
 				<div class="hugeText" title="$lang.get('votes')">$!votes</div>
 				<div>$lang.get('votes')</div>
 				<div class="line">
-					<div class="unit size1of2" title="$lang.get('posts.answers')">
+					<div class="unit size1of2" title="$lang.get('answers.title')">
 						<span class="mediumText">$!showPost.answercount</span> <br />
-						$lang.get('posts.answers')
+						$lang.get('answers.title')
 					</div>
 					<div class="unit size1of2 lastUnit" title="$lang.get('posts.views')">
 						<span class="mediumText">$!showPost.viewcount</span> <br />

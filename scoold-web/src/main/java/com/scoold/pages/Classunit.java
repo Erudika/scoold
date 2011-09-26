@@ -70,7 +70,7 @@ public class Classunit extends BasePage{
 		isMine = isMine || inRole("admin");
 
 
-		if(authenticated && (isMine || authUser.hasBadge(Badge.FRESHMAN)
+		if(authenticated && (isMine || authUser.hasBadge(Badge.ENTHUSIAST)
 				|| inRole("mod"))){
 			canEdit = true;
 		}else{

@@ -68,15 +68,19 @@ public class Question extends BasePage{
 
 				isMine = (authenticated) ?
 					authUser.getId().equals(showPost.getUserid()) : false;
-
-				// author can edit, mods can edit & ppl with rep > 100 can edit
-				if(authenticated && (inRole("mod") || isMine ||
-						authUser.hasBadge(Badge.FRESHMAN) )){
-					canEdit = true;
-				}
 				
-				if(showPost.isFeedback()){
-					canEdit = isMine || inRole("mod");
+				canEdit = (authenticated) ? 
+						(authUser.hasBadge(Badge.FRESHMAN) || inRole("mod") || isMine) : false;
+				
+				// author can edit, mods can edit & ppl with rep > 100 can edit
+				if(!isMine && !inRole("mod")){
+					if (showPost.isFeedback()) {
+						canEdit = false;						
+					}else if(showPost.isQuestion()){
+						if (!authenticated || !authUser.hasBadge(Badge.TEACHER)) {
+							canEdit = false;
+						}
+					}
 				}
 
 			}else{
