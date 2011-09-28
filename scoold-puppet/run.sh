@@ -47,7 +47,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 	    	     		  ec2req "elasticsearch" $4 $5;;
 	esac	
 else
-	echo "USAGE:  $0 type ami group/all [size] [nospot]"
+	echo "USAGE:  $0 type ami (group | all) [size] [nospot]"
 fi
 
 ################

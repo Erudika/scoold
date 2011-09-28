@@ -1,5 +1,7 @@
 <div id="settings">
 	#if($request.getParameter("delete"))
+		<br />
+		<br />
 		<div class="mvl">
 			<div class="center">
 				<div class="largeText">$lang.get("settings.delete.confirm")</div>
@@ -7,13 +9,12 @@
 
 				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$daoutils.MD5($authUser.id.toString())">
 					<fieldset>
-						<input type="submit" value="$lang.get('delete')" class="button rounded3"/>
-						<a href="$settingslink" title="Cancel" >$lang.get("cancel")</a>
+						<input type="submit" value="$lang.get('delete')" class="button rounded3 mrl redbg"/>  &nbsp; &nbsp; &nbsp;
+						<a href="$settingslink" title="Cancel" class="button-small rounded3">$lang.get("cancel")</a>
 					</fieldset>
 				</form>
 			</div>
 		</div>
-
 	#else
 		<h1><span class="pictos">y</span> $lang.get("settings.title")</h1>
 		<hr/>

@@ -118,24 +118,47 @@ class scoold::cassandra {
 			before => Exec["restart-nginx"]
 		}
 		
-		file { "/etc/nginx/sites-enabled/munin":
-			ensure => file,
-			source => "puppet:///modules/scoold/munin.nginx.txt",
-			owner => root,
-			mode => 755,
-			require => [Package["munin"], Package["nginx"]],
-			before => Exec["restart-nginx"]
+		file { 
+			"/etc/nginx/sites-enabled/munin":
+				ensure => file,
+				source => "puppet:///modules/scoold/munin.nginx.txt",
+				owner => root,
+				mode => 755,
+				require => [Package["munin"], Package["nginx"]],
+				before => Exec["restart-nginx"];
+			"${cassandrahome}/duplicity.sh":
+				ensure => file,
+				source => "puppet:///modules/scoold/duplicity.sh",
+				owner => $cassandrausr,
+				mode => 700;
 		}
 		
 		exec { "restart-nginx":
 			command => "service nginx restart"
 		}
+		
+		cron { "snapshot":
+			command => "sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost snapshot",
+			user => root,
+			hour => [10, 22],
+			minute => 1,
+			require => Exec["start-cassandra"]
+		}
+
+		cron { "clearsnapshot":
+			command => "sudo -u ${cassandrausr} ${cassandrahome}/duplicity.sh && ${casdir}/bin/nodetool -h localhost clearsnapshot",
+			user => root,
+			hour => 4,
+			minute => 1,
+			require => Exec["start-cassandra"]
+		}
+		
 	} else {
 		exec { "set-autobootstrap":
 			command => "sed -e '1,/${abst}/ s/${abst}.*/${abst} true/' -i.bak ${casconf}",
 			require => Exec["set-cluster-name"];	
 		}
-	}	
+	}
 		
 	$cmpdir = "/home/${scoold::defuser}/cassandra-munin-plugins"
 	$cmd1 = "chmod -R 755 ${cmpdir}"
@@ -166,6 +189,16 @@ class scoold::cassandra {
 			require => Exec["start-cassandra"];
 	}
 	
+	$repairhour = 6 + $nodeid
+	
+	cron { "nodetool-repair":
+		command => "sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost repair",
+		user => root,
+		monthday => [1,6,11,16,21,26],
+		hour => $repairhour,
+		minute => 1
+	}
+	
 	file { 
 		["/var/lib/cassandra", "/var/lib/cassandra/saved_caches", "/var/lib/cassandra/commitlog", 
 			"/var/lib/cassandra/data", "/var/log/cassandra"]:
@@ -180,7 +213,7 @@ class scoold::cassandra {
 			source => "puppet:///modules/scoold/cassandra.conf",
 			owner => root,
 			mode => 644,
-			before => Exec["start-cassandra"];
+			before => Exec["start-cassandra"];		
 	}
 		
 	exec { "start-cassandra":

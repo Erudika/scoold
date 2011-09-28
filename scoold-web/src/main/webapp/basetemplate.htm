@@ -1937,7 +1937,7 @@
 				<h2 id="fb-login">$lang.get("signin.facebook")</h2>
 			#end
 			<div class="mvl">
-				<fb:login-button id="$fbbtnclass"></fb:login-button>
+				<fb:login-button id="$fbbtnclass">$lang.get("signin.title")</fb:login-button>
 			</div>
 		</div>
 	</div>
@@ -2091,19 +2091,6 @@
 			/*]]>*/
 		</script>
 		<script type="text/javascript" src="$scriptslink/head.min.js"></script>
-		
-		<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'></script>
-		<script type='text/javascript'>
-			GS_googleAddAdSenseService("ca-pub-9562225988804475");
-			GS_googleEnableAllServices();
-		</script>
-		<script type='text/javascript'>
-			GA_googleAddSlot("ca-pub-9562225988804475", "Main");
-		</script>
-		<script type='text/javascript'>
-			GA_googleFetchAds();
-		</script>		
-		
 	</head>
     <body>
 		#if($includeFBscripts)

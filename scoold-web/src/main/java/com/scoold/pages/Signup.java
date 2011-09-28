@@ -110,7 +110,7 @@ public class Signup extends BasePage{
 				!(mail.indexOf(".") > 2) && (mail.indexOf("@") > 0)){
 			email.setError(lang.get("signup.form.error.email"));
 		}		
-        if(User.exists(StringUtils.trim(email.getValue()))){
+        if(User.exists(StringUtils.trim(identString))){
             //Email is claimed => user exists!
             email.setError(lang.get("signup.form.error.emailexists"));
         }        

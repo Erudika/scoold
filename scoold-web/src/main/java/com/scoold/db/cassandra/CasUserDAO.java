@@ -129,7 +129,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 			}
 		}
 
-		CasDAOUtils.addInsertions(Arrays.asList(new Column[]{
+		CasDAOUtils.addDeletions(Arrays.asList(new Column[]{
 			new Column(persistentUser.getEmail(), CasDAOFactory.EMAILS),
 			new Column(uid, CasDAOFactory.USER_AUTH),		
 			new Column(uid, CasDAOFactory.USER_SCHOOLS),		

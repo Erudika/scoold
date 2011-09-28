@@ -16,7 +16,7 @@ class scoold {
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
-	$casver = "0.8.5"
+	$casver = "0.8.6"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
 	$dbheapsize = "7G" # memory of m1.large

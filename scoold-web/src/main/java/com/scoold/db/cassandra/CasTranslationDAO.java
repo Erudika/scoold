@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
+import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.factory.HFactory;
@@ -137,12 +138,11 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 			keyz.add(locale.concat(CasDAOFactory.SEPARATOR).concat(key));
 			map.put(key, 0);
 		}
-
+		
+		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);		
+		
 		MultigetSliceQuery<String, String, String> q =
-				HFactory.createMultigetSliceQuery(cdu.getKeyspace(),
-				CasDAOUtils.getSerializer(String.class),
-				CasDAOUtils.getSerializer(String.class),
-				CasDAOUtils.getSerializer(String.class));
+				HFactory.createMultigetSliceQuery(cdu.getKeyspace(), strser, strser, strser);
 
 		q.setColumnFamily(CasDAOFactory.LOCALES_TRANSLATIONS.getName());
 		q.setKeys(keyz.toArray(new String[]{}));
@@ -204,12 +204,11 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 				allocs.add(locstr);
 			}
 		}
+		
+		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);
 
 		MultigetSliceQuery<String, String, String> q =
-			HFactory.createMultigetSliceQuery(cdu.getKeyspace(),
-			CasDAOUtils.getSerializer(String.class),
-			CasDAOUtils.getSerializer(String.class),
-			CasDAOUtils.getSerializer(String.class));
+			HFactory.createMultigetSliceQuery(cdu.getKeyspace(), strser, strser, strser);
 
 		q.setColumnFamily(CasDAOFactory.APPROVED_TRANSLATIONS.getName());
 		q.setKeys(allocs.toArray(new String[]{}));

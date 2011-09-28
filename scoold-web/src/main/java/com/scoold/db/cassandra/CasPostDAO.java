@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.factory.HFactory;
@@ -548,12 +549,12 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 			uuids.add(post.getUuid());
 			map.put(post.getUuid(), i);
 		}
+		
+		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);
 
 		MultigetSliceQuery<String, Long, String> q =
 					HFactory.createMultigetSliceQuery(cdu.getKeyspace(),
-					CasDAOUtils.getSerializer(String.class),
-					CasDAOUtils.getSerializer(Long.class),
-					CasDAOUtils.getSerializer(String.class));
+					strser, CasDAOUtils.getSerializer(Long.class), strser);
 
 		q.setKeys(uuids);
 		q.setColumnFamily(CasDAOFactory.COMMENTS_PARENTUUIDS.getName());

@@ -13,8 +13,6 @@ import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import com.scoold.db.cassandra.CasDAOFactory.SCF;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +26,6 @@ import me.prettyprint.cassandra.serializers.SerializerTypeInferer;
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 import me.prettyprint.cassandra.service.ExhaustedPolicy;
 import me.prettyprint.cassandra.service.OperationType;
-import me.prettyprint.hector.api.ClockResolution;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.ConsistencyLevelPolicy;
 import me.prettyprint.hector.api.HConsistencyLevel;
@@ -41,8 +38,6 @@ import me.prettyprint.hector.api.beans.HSuperColumn;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.beans.SuperRows;
 import me.prettyprint.hector.api.beans.SuperSlice;
-import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition;
-import me.prettyprint.hector.api.ddl.ComparatorType;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.CountQuery;
@@ -66,6 +61,7 @@ import org.apache.commons.lang.mutable.MutableLong;
 public class CasDAOUtils extends AbstractDAOUtils {
 	
 	private static final Logger logger = Logger.getLogger(CasDAOUtils.class.getName());
+	private static Serializer<String> strser = getSerializer(String.class);
 	private static final long TIMER_OFFSET = 1310084584692L;
 	private static Keyspace keyspace;
 	private Mutator<String> mutator;
@@ -206,11 +202,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public <N, V> void putColumn(String key, CF<N> cf, N colName, V colValue, int ttl){
-		if(StringUtils.isBlank(key) || cf == null || colValue == null) return;
+		if(StringUtils.isBlank(key) || cf == null || colName == null || colValue == null) 
+			return;
 
 		HColumn<N, String> col = HFactory.createColumn(colName, colValue.toString(),
-				getSerializer((Class<N>) colName.getClass()),
-				getSerializer(String.class));
+				getSerializer(colName), strser);
 
 		if(ttl > 0) col.setTtl(ttl);
 
@@ -220,18 +216,18 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public <SN, SUBN> void putSuperColumn(String key, SCF<SN, SUBN> cf,
 			SN colName, List<HColumn<SUBN, String>> colValue){
-		if(StringUtils.isBlank(key) || cf == null || colValue == null) return;
+		if(StringUtils.isBlank(key) || cf == null || colName == null || colValue == null) 
+			return;
 		if(colValue == null || colValue.isEmpty()) return;
 
 		mutator.insert(key, cf.getName(), HFactory.createSuperColumn(colName,
-				colValue, getSerializer((Class<SN>) colName.getClass()),
-				colValue.get(0).getNameSerializer(),
-				getSerializer(String.class)));
+				colValue, getSerializer(colName), colValue.get(0).getNameSerializer(), strser));
 		mutator.discardPendingMutations();
 	}
 
 	public <CV, N, SUBN> CV getColumn(String key, CF<N> cf, N colName) {
-		if(StringUtils.isBlank(key) || cf == null || colName == null) return null;
+		if(StringUtils.isBlank(key) || cf == null || colName == null || colName == null) 
+			return null;
 		HColumn<N, String> col = getHColumn(key, cf, colName);
 		return (col != null) ? (CV) col.getValue() : null;
 	}
@@ -260,15 +256,14 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	
 	public <N> void removeColumn(String key, CF<N> cf, N colName) {
 		if(StringUtils.isBlank(key) || cf == null) return;
-		mutator.delete(key, cf.getName(), colName,
-				getSerializer((Class<N>) colName.getClass()));
+		
+		mutator.delete(key, cf.getName(), colName, getSerializer(colName));
 		mutator.discardPendingMutations();
 	}
 
 	public <SN> void removeSuperColumn(String key, SCF<SN, ?> cf, SN colName) {
 		if(StringUtils.isBlank(key) || cf == null) return;
-		mutator.delete(key, cf.getName(), colName,
-				getSerializer((Class<SN>) colName.getClass()));
+		mutator.delete(key, cf.getName(), colName, getSerializer(colName));
 		mutator.discardPendingMutations();
 	}
 
@@ -304,10 +299,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public static <N, V> void addInsertion(Column<N, V> col, Mutator<String> mut){
 		if(mut != null && col != null){
-			HColumn<N, String> hCol = HFactory.createColumn(
-						col.getName(), col.getValue().toString(),
-					getSerializer((Class<N>) col.getName().getClass()),
-					getSerializer(String.class));
+			HColumn<N, String> hCol = HFactory.createColumn(col.getName(), 
+					col.getValue().toString(), getSerializer(col.getName()), strser);
 
 			if(col.getTtl() > 0) hCol.setTtl(col.getTtl());
 			mut.addInsertion(col.getKey(), col.getCf().getName(), hCol);
@@ -322,9 +315,9 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public static <N, V> void addDeletion(Column<N, V> col, Mutator<String> mut){
-		if(mut != null && col != null){
+		if(mut != null && col != null){			
 			mut.addDeletion(col.getKey(), col.getCf().getName(), col.getName(),
-					getSerializer((Class<N>) col.getName().getClass()));
+					getSerializer(col.getName()));
 		}
 	}
 
@@ -342,10 +335,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public <N> HColumn<N, String> getHColumn(String key, CF<N> cf, N colName){
 		if(cf == null) return null;
-		HColumn<N, String> col = HFactory.createColumnQuery(keyspace,
-					getSerializer(String.class),
-					getSerializer((Class<N>) colName.getClass()),
-					getSerializer(String.class))
+		HColumn<N, String> col = HFactory.createColumnQuery(keyspace, strser,
+					getSerializer(colName), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setName(colName)
@@ -356,11 +347,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	public <SN, SUBN> HSuperColumn<SN, SUBN, String> getHSuperColumn(String key,
 			SCF<SN, SUBN> cf, SN colName, Class<SUBN> subColClass){
 		if(cf == null) return null;
-		HSuperColumn<SN, SUBN, String> scol = HFactory.createSuperColumnQuery(keyspace,
-					getSerializer(String.class),
-					getSerializer((Class<SN>) colName.getClass()),
-					getSerializer(subColClass),
-					getSerializer(String.class))
+		HSuperColumn<SN, SUBN, String> scol = HFactory.createSuperColumnQuery(keyspace, strser,
+					getSerializer(colName), getSerializer(subColClass), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setSuperName(colName)
@@ -371,11 +359,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	public <SN, SUBN> HColumn<SUBN, String> getHSubColumn(String key,
 			SCF<SN, SUBN> cf, SN colName, SUBN subColName){
 		if(cf == null) return null;
-		HColumn<SUBN, String> scol = HFactory.createSubColumnQuery(keyspace,
-					getSerializer(String.class),
-					getSerializer((Class<SN>) colName.getClass()),
-					getSerializer((Class<SUBN>) subColName.getClass()),
-					getSerializer(String.class))
+		HColumn<SUBN, String> scol = HFactory.createSubColumnQuery(keyspace, strser,
+					getSerializer(colName),	getSerializer(subColName), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setSuperColumn(colName)
@@ -386,7 +371,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	
 	public HCounterColumn<String> getHCounterColumn(String key){
 		CounterQuery<String, String> cq = HFactory.createCounterColumnQuery(keyspace, 
-				getSerializer(String.class), getSerializer(String.class));
+				strser, strser);
 		cq.setColumnFamily(CasDAOFactory.COUNTERS.getName());
 		cq.setKey(key);
 		cq.setName(CasDAOFactory.CN_COUNTS_COUNT);
@@ -429,8 +414,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		ArrayList<HColumn<N, String>> list = new ArrayList<HColumn<N, String>>();
 
 		SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
-				getSerializer(String.class), getSerializer(colNameClass),
-				getSerializer(String.class));
+				strser, getSerializer(colNameClass), strser);
 		sq.setKey(key);
 		sq.setColumnFamily(cf.getName());
 		sq.setRange((N) startKey, null, reverse, maxItems);
@@ -469,8 +453,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 			SuperRows<String, SN, SUBN, String> rows =
 					HFactory.createMultigetSuperSliceQuery(keyspace,
-					getSerializer(String.class), getSerializer(superColNameClass),
-					getSerializer(colNameClass), getSerializer(String.class))
+					strser, getSerializer(superColNameClass),
+					getSerializer(colNameClass), strser)
 				.setKeys(key)
 				.setColumnFamily(cf.getName())
 				.setRange((SN) startKey, null, reverse, maxItems + 1)
@@ -502,12 +486,12 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public void deleteRow(String key, CF<?> cf, Mutator<String> mut){
 		if(StringUtils.isBlank(key) || cf == null) return;
-		mut.addDeletion(key, cf.getName(), null, getSerializer(String.class));
+		mut.addDeletion(key, cf.getName(), null, strser);
 	}
 
 	public void deleteSuperRow(String key, SCF<?, ?> cf, Mutator<String> mut){
 		if(StringUtils.isBlank(key) || cf == null) return;
-		mut.addDeletion(key, cf.getName(), null, getSerializer(String.class));
+		mut.addDeletion(key, cf.getName(), null, strser);
 	}
 
 	/********************************************
@@ -525,9 +509,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		
 		// get keys from linker table
 		SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
-				getSerializer(String.class), 
-				getSerializer(colNameClass),
-				getSerializer(String.class));
+				strser,	getSerializer(colNameClass), strser);
 
 		sq.setKey(keysKey);
 		sq.setColumnFamily(keysCf.getName());
@@ -577,8 +559,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 		MultigetSliceQuery<String, String, String> q =
 				HFactory.createMultigetSliceQuery(keyspace,
-				getSerializer(String.class), getSerializer(String.class),
-				getSerializer(String.class));
+				strser, strser, strser);
 
 		q.setColumnFamily(cf.getName());
 		q.setKeys(keys);
@@ -631,12 +612,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public <N> int countColumns(String key, CF<N> cf, Class<N> colNameClass){
-		if(StringUtils.isBlank(key) || cf == null) return 0;
+		if(StringUtils.isBlank(key) || cf == null || colNameClass == null) return 0;
 
 		int result = 0;
 		CountQuery<String, N> cq = HFactory.createCountQuery(keyspace,
-				getSerializer(String.class),
-				getSerializer(colNameClass));
+				strser, getSerializer(colNameClass));
 
 		cq.setKey(key);
 		cq.setColumnFamily(cf.getName());
@@ -647,12 +627,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public <SN> int countSuperColumns(String key, SCF<SN, ?> cf, Class<SN> clazz){
-		if(StringUtils.isBlank(key) || cf == null) return 0;
+		if(StringUtils.isBlank(key) || cf == null || clazz == null) return 0;
 
 		int result = 0;
 		SuperCountQuery<String, SN> cq = HFactory.createSuperCountQuery(keyspace,
-				getSerializer(String.class),
-				getSerializer(clazz));
+				strser, getSerializer(clazz));
 
 		cq.setKey(key);
 		cq.setColumnFamily(cf.getName());
@@ -664,12 +643,10 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public <SN, SUBN> int countSubColumns(String key, SCF<SN, SUBN> cf,
 			SN superCol, Class<SUBN> subColClass){
-		if(StringUtils.isBlank(key) || cf == null) return 0;
+		if(StringUtils.isBlank(key) || cf == null || subColClass == null) return 0;
 
-		SubCountQuery<String, SN, SUBN> cq = HFactory.createSubCountQuery(keyspace,
-				getSerializer(String.class),
-				getSerializer((Class<SN>) superCol.getClass()),
-				getSerializer(subColClass));
+		SubCountQuery<String, SN, SUBN> cq = HFactory.createSubCountQuery(keyspace, strser,
+				getSerializer(superCol), getSerializer(subColClass));
 
 		cq.setKey(key);
 		cq.setColumnFamily(cf.getName());
@@ -784,12 +761,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 			if(value != null){
 				HColumn<String, String> col = HFactory.createColumn(
-						field, value.toString(), getSerializer(String.class),
-						getSerializer(String.class));
+						field, value.toString(), strser, strser);
 
 				mut.addInsertion(key, cf.getName(), col);
 			}else if(value == null && !creation) {
-				mut.addDeletion(key, cf.getName(), field, getSerializer(String.class));
+				mut.addDeletion(key, cf.getName(), field, strser);
 			}
 		}
 
@@ -813,7 +789,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(so == null || cf == null) return;
 
 //		Mutator<String> mutator = getMutator();
-//		mutator.addDeletion(key, cf.getName(), null, getSerializer(String.class));
+//		mutator.addDeletion(key, cf.getName(), null, strser);
 //		mutator.execute();
 //		mutator.discardPendingMutations();
 
@@ -1014,10 +990,9 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public <N> HColumn<N, String> getLastColumn(String key, CF<N> cf,
 			Class<N> colNameClass, boolean reverse){
-		if(cf == null) return null;
+		if(cf == null || colNameClass == null) return null;
 		SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
-					getSerializer(String.class), getSerializer(colNameClass),
-					getSerializer(String.class));
+					strser, getSerializer(colNameClass), strser);
 			sq.setKey(key);
 			sq.setColumnFamily(cf.getName());
 			sq.setRange(null, null, reverse, 1);
@@ -1030,13 +1005,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	public <SN, SUBN> HSuperColumn<SN, SUBN, String> getLastSuperColumn(String key,
 			SCF<SN, SUBN> cf, Class<SN> colNameClass, Class<SUBN> subColClass, boolean reverse){
 
-		if(cf == null) return null;
+		if(cf == null || colNameClass == null || subColClass == null) return null;
 		SuperSliceQuery<String, SN, SUBN, String> sq =
-				HFactory.createSuperSliceQuery(keyspace,
-					getSerializer(String.class),
+				HFactory.createSuperSliceQuery(keyspace, strser,
 					getSerializer(colNameClass),
-					getSerializer(subColClass),
-					getSerializer(String.class));
+					getSerializer(subColClass), strser);
 
 			sq.setKey(key);
 			sq.setColumnFamily(cf.getName());
@@ -1053,7 +1026,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public static Mutator<String> createMutator(){
-		return HFactory.createMutator(keyspace, CasDAOUtils.getSerializer(String.class));
+		return HFactory.createMutator(keyspace, strser);
 	}
 	
 	protected static <T extends ScooldObject> T fromColumns(Class<T> clazz,
@@ -1080,6 +1053,10 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public static <T> Serializer<T> getSerializer(Class<T> clazz) {
 		return SerializerTypeInferer.getSerializer(clazz);
+	}
+	
+	public static <T> Serializer<T> getSerializer(T obj){
+		return (Serializer<T>) (obj == null ? strser : getSerializer(obj.getClass()));
 	}
 
 }
