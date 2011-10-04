@@ -95,7 +95,7 @@ public class Settings extends BasePage {
 				getParamValue("key"))) {
 
 			authUser.delete();
-			seshun.invalidate();
+			clearSession();
 			redirectto = signinlink + "?code=4&success=true";
 		}else if(param("clearallmedia") && PI_ENABLED){
 			authUser.deleteAllMedia();

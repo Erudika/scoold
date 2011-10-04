@@ -844,7 +844,7 @@ public class User implements ScooldObject, Comparable<User>,
 	public static boolean exists(String identifier){
 		return getUserDao().userExists(identifier);
 	}
-
+	
 	public ArrayList<String> getIdentifiers(){
 		return getUserDao().readAllIdentifiersForUser(id);
 	}

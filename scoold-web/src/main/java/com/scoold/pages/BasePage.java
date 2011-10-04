@@ -33,7 +33,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.apache.click.Page;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
@@ -63,8 +62,11 @@ public class BasePage extends Page {
 
 	public static final String APPNAME = "scoold"; //app name
 	public static final boolean IN_BETA = true;
+	public static final boolean USE_SESSIONS = false;
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int MAX_IMG_SIZE_PX = 730;
+	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
+	
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String FB_APP_ID = "99517177417";
 	public static final String FB_API_KEY = "bc6c5faabc3b00982b97b2a5a9d4d13f";
@@ -124,7 +126,7 @@ public class BasePage extends Page {
 	public String infoStripMsg = "";
 	public boolean authenticated; //for use in velocity
 	public boolean canComment;
-	public HttpSession seshun;
+	public boolean hasNewBadges;
 	public HttpServletRequest req;
 	public boolean isFBconnected;
 	public boolean includeFBscripts;
@@ -135,6 +137,7 @@ public class BasePage extends Page {
 	public ArrayList<Comment> commentslist;
 	public ArrayList<Media> medialist;
 	public ArrayList<String> labelslist;
+	public ArrayList<String> badgelist;
 	public MutableLong mediacount;
 	public MutableLong pagenum;
 	public MutableLong itemcount;
@@ -144,7 +147,6 @@ public class BasePage extends Page {
 	public Map<String, String> lang = Language.getDefaultLanguage();
 
 	public BasePage() {
-		seshun = getContext().getSession();
 		search = new Search((Client) getContext().getServletContext().
 				getAttribute(ScooldAppListener.SEARCH_CLIENT));
 		req = getContext().getRequest();
@@ -160,7 +162,9 @@ public class BasePage extends Page {
 		showdownJS = getContext().getServletContext().
 				getAttribute(ScooldAppListener.SHOWDOWN_CONV);
 		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
+		hasNewBadges = getStateParam("new-badges") != null;
 		commentslist = new ArrayList<Comment> ();
+		badgelist = new ArrayList<String> (); 
 		addModel("isAjaxRequest", isAjaxRequest());
 	}
 
@@ -169,21 +173,21 @@ public class BasePage extends Page {
 		isFBconnected = false;
 		if (req.getRemoteUser() != null) {
 			authenticated = true;
-			String identifier = req.getRemoteUser();
+			String uid = req.getRemoteUser();
 			if (authUser == null) {
-				authUser = User.getUser(identifier);
-				if(authUser != null) authUser.setIdentifier(identifier);
+				authUser = User.getUser(NumberUtils.toLong(uid, 0));
+//				if(authUser != null) authUser.setIdentifier(uid);
 			}
-			isFBconnected = !identifier.startsWith("http");
+			isFBconnected = authUser != null && !authUser.getIdentifier().startsWith("http");
 		} else {
 			authenticated = false;
 		} 
 	}
 
 	private void initLanguage() {
-		Cookie cookieLoc = ClickUtils.getCookie(req, "locale");
+		String cookieLoc = ClickUtils.getCookieValue(req, "locale");
 		Locale loc = Language.getProperLocale(req.getLocale().getLanguage());
-		String langname = (cookieLoc != null) ? cookieLoc.getValue() : loc.getLanguage();
+		String langname = (cookieLoc != null) ? cookieLoc : loc.getLanguage();
 		//locale cookie set?
 		setCurrentLocale(langname, false);
 	}
@@ -198,10 +202,10 @@ public class BasePage extends Page {
 
 		if(setCookie){
 			//create a cookie
-			Cookie c = new Cookie("locale", loc.getLanguage());
-			c.setPath(getContext().getServletContext().getContextPath());
-			c.setMaxAge(5 * 60 * 60 * 24 * 365);  //5 years
-			setCookie(c);
+//			String cookiePath = getContext().getServletContext().getContextPath();
+			int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
+			ClickUtils.setCookie(req, getContext().getResponse(), "locale", 
+					loc.getLanguage(), maxAge, "/");
 		}
 		setFBLocale(langname);
 		addModel("currentLocale", loc);
@@ -722,18 +726,17 @@ public class BasePage extends Page {
 		//do not count views from author
 		if(authenticated && authUser.getId().equals(showPost.getUserid())) return false;
 		// inaccurate but... KISS!
-		Map<Long, Integer> countmap = (Map<Long, Integer>)
-				seshun.getAttribute("postviewmap");
-
-		if(countmap == null){
-			countmap = new HashMap<Long, Integer>();
-			seshun.setAttribute("postviewmap", countmap);
+		String list = getStateParam("postviews");
+		
+		if(list == null){			
+			list = showPost.getId().toString();
+			setStateParam("postviews", list);
 		}
-
-		if (!countmap.containsKey(showPost.getId())) {
+		
+		if (!list.contains(showPost.getId().toString())) {
 			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 			showPost.setViewcount(views + 1); //increment count
-			countmap.put(showPost.getId(), 1);
+			list = list.concat(",").concat(showPost.getId().toString());
 			return true;
 		}
 		return false;
@@ -1134,15 +1137,25 @@ public class BasePage extends Page {
 		if(index < 0) index = 0;
 		return index;
 	}
-
-	public final void setCookie(Cookie newcookie) {
-		if (newcookie == null) return;
-		Cookie oldcookie = ClickUtils.getCookie(req,
-				newcookie.getName());
-		if (oldcookie != null) 	oldcookie.setMaxAge(0);
-		getContext().getResponse().addCookie(newcookie);
+	
+	public final void setStateParam(String name, String value){
+		AbstractDAOUtils.setStateParam(name, value, req, getContext().getResponse(), 
+				USE_SESSIONS);
+	}
+	
+	public final String getStateParam(String name){
+		return AbstractDAOUtils.getStateParam(name, req, getContext().getResponse(), 
+				USE_SESSIONS);
 	}
 
+	public final void removeStateParam(String name){
+		AbstractDAOUtils.removeStateParam(name, req, getContext().getResponse(), USE_SESSIONS);
+	}
+	
+	public final void clearSession(){
+		AbstractDAOUtils.clearSession(req, getContext().getResponse(), USE_SESSIONS);
+	}
+		
 	public boolean inRole(String role){
 		return req.isUserInRole(role);
 	}
@@ -1158,16 +1171,18 @@ public class BasePage extends Page {
 	public final boolean addBadge(Badge b, User u, boolean condition){
 		if(u == null) u = authUser;
 		if(!authenticated || !condition) return false;
-
-//		u.addBadge(b);
-
-		ArrayList<Badge> newbadges = (ArrayList<Badge>)
-				getContext().getSession().getAttribute("new-badges");;
-		if(newbadges == null) newbadges = new ArrayList<Badge>();
+		
+		String newbadges = getStateParam("new-badges");
+		if(StringUtils.isBlank(newbadges)) newbadges = b.toString();
 
 		if(u.equals(authUser)){
-			newbadges.add(b);
-			getContext().getSession().setAttribute("new-badges", newbadges);
+			if (!newbadges.equals(b.toString())) {
+				newbadges = newbadges.concat(",").concat(b.toString());
+			}
+			setStateParam("new-badges", newbadges);
+		}else{
+			u.addBadge(b);
+			u.update();
 		}
 		return true;
 	}
@@ -1182,10 +1197,18 @@ public class BasePage extends Page {
 		return true;
 	}
 
-	private ArrayList<Badge> hasNewBadges(){
-		ArrayList<Badge> newbadges = (ArrayList<Badge>)
-				getContext().getSession().getAttribute("new-badges");
-		if(newbadges == null) newbadges = new ArrayList<Badge>();
+	private Badge[] hasNewBadges(){
+		String[] badges = StringUtils.split(getStateParam("new-badges"), ',');
+		if(badges == null) return new Badge[0];
+		Badge[] newbadges = new Badge[badges.length];
+		
+		try {
+			for (int i = 0; i < badges.length; i++) {
+				String bs = badges[i];
+				Badge b = Badge.valueOf(bs.toUpperCase());
+				newbadges[i] = b;
+			}			
+		} catch (Exception e) {}
 
 		return newbadges;
 	}
@@ -1195,7 +1218,7 @@ public class BasePage extends Page {
 	}
 
 	public void onDestroy(){
-		if(authenticated && getContext().hasSession() && !isAjaxRequest()){
+		if(authenticated && !isAjaxRequest()){
 
 			long oneYear = authUser.getTimestamp() + (365 * 24 * 60 * 60 * 1000);
 			long now = System.currentTimeMillis();
@@ -1209,14 +1232,14 @@ public class BasePage extends Page {
 			addBadgeOnce(Badge.SENIOR, now >= oneYear);
 			addBadgeOnce(Badge.PHOTOLOVER, authUser.getPhotos() >= User.PHOTOLOVER_IFHAS);
 
-			ArrayList<Badge> newbadges = hasNewBadges();
-			if(!newbadges.isEmpty() && !getContext().hasSessionAttribute("more-badges")){
-				authUser.addBadges(newbadges.toArray(new Badge[]{}));
+			Badge[] newbadges = hasNewBadges();
+			if(newbadges.length > 0 && !getContext().hasSessionAttribute("more-badges")){
+				authUser.addBadges(newbadges);
 				authUser.update();
-				getContext().getSession().setAttribute("more-badges", true);
+				setStateParam("more-badges", "true");
 			}else{
-				getContext().getSession().removeAttribute("more-badges");
-				getContext().getSession().removeAttribute("new-badges");
+				removeStateParam("more-badges");
+				removeStateParam("new-badges");
 			}
 		}
 	}

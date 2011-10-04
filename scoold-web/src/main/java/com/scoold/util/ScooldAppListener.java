@@ -99,9 +99,6 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 		}
 	}
 
-	public void sessionCreated(HttpSessionEvent se) {
-	}
-
-	public void sessionDestroyed(HttpSessionEvent se) {
-	}
+	public void sessionCreated(HttpSessionEvent se) { }
+	public void sessionDestroyed(HttpSessionEvent se) { }
 }

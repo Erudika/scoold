@@ -415,7 +415,6 @@ pre, code, .chat-msg{
     background: white;
 	padding-left: 30px;
 }
-.legs{ color: #AAAAAA; font-size: 7em; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }

@@ -1,7 +1,9 @@
 package com.scoold.util;
 
+import com.scoold.core.Language;
 import com.scoold.core.User;
 import com.scoold.db.AbstractDAOUtils;
+import com.scoold.db.cassandra.CasDAOFactory;
 import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -11,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import name.aikesommer.authenticator.AuthenticationRequest;
@@ -23,6 +25,8 @@ import name.aikesommer.authenticator.AuthenticationRequest.Status;
 import name.aikesommer.authenticator.PluggableAuthenticator;
 import name.aikesommer.authenticator.RequestHandler;
 import name.aikesommer.authenticator.SimplePrincipal;
+import org.apache.click.Context;
+import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.openid4java.OpenIDException;
@@ -56,9 +60,12 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public static final String ATTACH_FACEBOOK_ACTION = "attach_facebook";	
 	public static final String OPENID_IDENTIFIER = "openid_identifier";
 	public static final String IDENTIFIER = "identifier";
+	public static final String AUTH_USER = "auth-user";
+	public static final String RETURNTO = "returnto";
 	public static final String FB_USER_CLIENT = "facebook.user.client";
 	public static final String SIGNUP_SUCCESS = "signup-success";
-	public static final String NEW_USER = "new-user";
+	public static final String NEW_USER_NAME = "new-user-name";
+	public static final String NEW_USER_EMAIL = "new-user-email";
 	public static final String THIS_IS_ME = "this-is-me";
 	public static final String OPENID = "openid";
 	public static final String FACEBOOK = "facebook";
@@ -67,7 +74,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public static final String FB_API_KEY = BasePage.FB_API_KEY;
 	private static final String FB_SECRET = "955b8c8bca778a1476d620ab36b762ef";
 	public static final String CONSUMER_MANAGER = "consumer-manager";
-	public static final String DISCOVERY_INFO = "discovery-info";
+//	public static final String DISCOVERY_INFO = "discovery-info";
 	
 	private static final String SIGNIN_PAGE = "/signin";
 	private static final String SIGNUP_PAGE = "/signup";
@@ -81,10 +88,10 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 
 	public Status tryAuthenticate(AuthenticationManager manager, AuthenticationRequest request) {
 		// authentication finishes here if successful...
-		SimplePrincipal sp = SimplePrincipal.getPrincipal(request.getHttpServletRequest());
-		if(manager.matchesRequest(request) && sp != null){
+		SimplePrincipal sp = getPrincipal(request.getHttpServletRequest(), request.getHttpServletResponse());
+		if(matchesRequest(manager, request) && sp != null){
 			manager.register(request, sp);
-			manager.restoreRequest(request);
+			restoreRequest(manager, request);
 			return Status.Success;
 		}
 		
@@ -92,12 +99,16 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	}
 
 	public Status authenticate(AuthenticationManager manager, AuthenticationRequest request) {
-		manager.saveRequest(request);
+		saveRequest(manager, request);
 
 		if(DEVEL_MODE){
 			//override using facebook uid or openid
 			tryCreatingPrincipal("517966023", manager, request);
 			return Status.Success;
+		}
+		
+		if(ClickUtils.isAjaxRequest(request.getHttpServletRequest())){
+			return expiredResponse(request);
 		}
 		
 		manager.forward(request, SIGNIN_PAGE);
@@ -108,20 +119,142 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		return ManageAction.None;
 	}
 	
+	private void saveRequest(AuthenticationManager manager, AuthenticationRequest request){
+		if (BasePage.USE_SESSIONS) {
+			manager.saveRequest(request);
+		} else {
+			String uri = request.getRequestPath();
+			String qs = request.getHttpServletRequest().getQueryString();
+			if(!StringUtils.isBlank(qs)){
+				uri += "?" + qs;
+			}
+			AbstractDAOUtils.setStateParam(RETURNTO, uri, request.getHttpServletRequest(), 
+					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+		}
+	}
+	
+	private void restoreRequest(AuthenticationManager manager, AuthenticationRequest request){
+		if(BasePage.USE_SESSIONS){
+			manager.restoreRequest(request);
+		}else{
+			AbstractDAOUtils.removeStateParam(RETURNTO, request.getHttpServletRequest(), 
+					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+		}
+	}
+	
+	private boolean matchesRequest(AuthenticationManager manager, AuthenticationRequest request){
+		if (BasePage.USE_SESSIONS) {
+			return manager.matchesRequest(request);
+		} else {
+			
+			// TODO: get from cookies separately and check if they match
+//			String originalPath = AbstractDAOUtils.getStateParam(REQUEST_PATH_NOTE);
+//			String path = request.getRequestPath();
+//			String originalContext = (String) session(request).get(REQUEST_CONTEXT_NOTE);
+//			String context = request.getOriginalContext().getContextPath();
+//
+//			if (originalPath != null && originalContext != null) {
+//				return path.equals(originalPath) && context.equals(originalContext);
+//			}
+//			String returnto = AbstractDAOUtils.getStateParam(RETURNTO, request.getHttpServletRequest(), 
+//					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+			
+			return true;
+		}
+	}
+	
+	private static boolean hasRequest(AuthenticationManager manager, AuthenticationRequest request){
+		if (BasePage.USE_SESSIONS) {
+			return manager.hasRequest(request);
+		} else {
+			String returnto = AbstractDAOUtils.getStateParam(RETURNTO, request.getHttpServletRequest(), 
+					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+			return !StringUtils.isBlank(returnto);
+		}
+	}
+	
+	private static void redirectToRequest(AuthenticationManager manager, AuthenticationRequest request){
+		if (BasePage.USE_SESSIONS) {
+			manager.redirectToRequest(request);
+		} else {
+			String returnto = AbstractDAOUtils.getStateParam(RETURNTO, request.getHttpServletRequest(), 
+					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+			AbstractDAOUtils.removeStateParam(RETURNTO, request.getHttpServletRequest(), 
+					request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+			if(StringUtils.isBlank(returnto)){
+				manager.forward(request, HOME);
+			}else{
+				manager.forward(request, returnto);
+			}
+		}
+	}
+	
+	private SimplePrincipal getPrincipal(HttpServletRequest req, HttpServletResponse res){
+		if (BasePage.USE_SESSIONS) {
+			return SimplePrincipal.getPrincipal(req);
+		} else {
+			String authToken = AbstractDAOUtils.getStateParam(AUTH_USER, req, res, BasePage.USE_SESSIONS);
+			if (!StringUtils.isBlank(authToken) && StringUtils.contains(authToken, CasDAOFactory.SEPARATOR)) {
+				String[] tuparts = authToken.split(CasDAOFactory.SEPARATOR);
+				
+				Long uid = NumberUtils.toLong(tuparts[0], 0L);
+				String savedKey = tuparts[1];
+				
+				if(uid.longValue() == 0L) return null;
+				User u = User.getUser(uid);
+				
+				if(u != null){
+					String[] groups = StringUtils.split(u.getGroups(), ',');
+					Long authstamp = u.getLastseen();
+					if(authstamp == null) return null;
+
+					long now = System.currentTimeMillis() ;
+					long expires = authstamp + (BasePage.SESSION_TIMEOUT_SEC * 1000);
+
+					String authKey = AbstractDAOUtils.MD5(authstamp.toString().
+							concat(CasDAOFactory.SEPARATOR).concat(uid.toString()));
+
+					if (now <= expires && authKey.equals(savedKey)) {
+						return new SimplePrincipal(uid.toString(), groups);
+					}
+				}else{
+					AbstractDAOUtils.clearAuthCookie(req, res);
+				}
+			}
+			return null;
+		}
+	}
+	
+	private static void setPrincipal(SimplePrincipal sp, Long timestamp, 
+			HttpServletRequest req, HttpServletResponse res){
+		if (BasePage.USE_SESSIONS) {
+			SimplePrincipal.setPrincipal(req, sp);
+		} else {
+			String id = sp.getName();
+			
+			if(sp != null && !StringUtils.isBlank(id) && !sp.getGroups().isEmpty()){
+				String authKey = AbstractDAOUtils.MD5(timestamp.toString().
+						concat(CasDAOFactory.SEPARATOR).concat(id));
+				String auth = id.concat(CasDAOFactory.SEPARATOR).concat(authKey);
+								
+				AbstractDAOUtils.setStateParam(AUTH_USER, auth, 
+						req, res, BasePage.USE_SESSIONS, true);					
+			}
+		}
+	}
+	
 	private static Long getFacebookId(HttpServletRequest request){
-		Cookie c = getCookie("fbs_"+FB_APP_ID, request.getCookies());
+		String cookie = ClickUtils.getCookieValue(request, "fbs_"+FB_APP_ID);
 		Long id = null;
-		if(isValidSignature(c)){
-			id = NumberUtils.toLong(getFBCookieAttribute(c, "uid"));
+		if(isValidSignature(cookie)){
+			id = NumberUtils.toLong(getFBCookieAttribute(cookie, "uid"));
 		}
 
 		return id;
 	}
 
-	private static String getFBCookieAttribute(Cookie c, String attributeName) {
-		if(c == null) return null;
-
-		String cookieValue = c.getValue();
+	private static String getFBCookieAttribute(String cookieValue, String attributeName) {
+		if(cookieValue == null) return null;
 		int startIndex = cookieValue.indexOf(attributeName);
 		if (startIndex == -1) {
 			return null;
@@ -133,38 +266,26 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		return cookieValue.substring(startIndex	+ attributeName.length() + 1, endIndex);
 	}
 
-	private static Cookie getCookie(String name, Cookie[] cookies){
-		if(cookies == null || cookies.length == 0) return null;
-		Cookie c = null;
-		for (int i = 0; i < cookies.length; i++) {
-			c = cookies[i];
-			if (c.getName().equals(name)) {
-				break;
-			}
-		}
-		return c;
-	}
-
-	private static boolean isValidSignature(Cookie fbCookie) {
+	private static boolean isValidSignature(String fbCookie) {
 		String signature = "";
 		String sig = null;
-		if (fbCookie != null) {
-			ArrayList<String> list = new ArrayList<String>();
-			for (String param : fbCookie.getValue().split("&")) {
-				if(!param.startsWith("sig=")){
-					list.add(param);
-				}else{
-					sig = param.substring(param.indexOf("=") + 1);
-				}
+		if (fbCookie == null) return false;
+		
+		ArrayList<String> list = new ArrayList<String>();
+		for (String param : fbCookie.split("&")) {
+			if(!param.startsWith("sig=")){
+				list.add(param);
+			}else{
+				sig = param.substring(param.indexOf("=") + 1);
 			}
-
-			Collections.sort(list);
-
-			for (String param : list) {
-				signature = signature.concat(param);
-			}
-			signature = AbstractDAOUtils.urlDecode(signature).concat(FB_SECRET);
 		}
+
+		Collections.sort(list);
+
+		for (String param : list) {
+			signature = signature.concat(param);
+		}
+		signature = AbstractDAOUtils.urlDecode(signature).concat(FB_SECRET);
 
 		return StringUtils.equals(AbstractDAOUtils.MD5(signature), sig);
 	}
@@ -185,9 +306,12 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		String reqUrl = reqHandler.getPathForRequest(request);
 		User authUser = User.getUser(identifier);
 		
+		HttpServletRequest req = request.getHttpServletRequest();
+		HttpServletResponse res = request.getHttpServletResponse();
+		
 		if (authUser == null) {			
 			// new user! send to signup page			
-			request.getSessionMap().put(IDENTIFIER, identifier);
+			AbstractDAOUtils.setStateParam(IDENTIFIER, identifier, req, res, BasePage.USE_SESSIONS);
 			// "THIS IS ME" button logic
 			if(reqUrl != null){
 				Map<String, String> paramMap = getParamMap(reqUrl);
@@ -197,29 +321,32 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 					try {
 						thisisme = URLDecoder.decode(thisisme, "UTF-8");
 					} catch (UnsupportedEncodingException ex) {}
-					request.getSessionMap().put(THIS_IS_ME, thisisme);
+					AbstractDAOUtils.setStateParam(THIS_IS_ME, thisisme, req, res, BasePage.USE_SESSIONS);
 				}
 			}
 			manager.forward(request, SIGNUP_PAGE);
 		} else {
 			//clean up a bit
-			request.getSessionMap().remove(NEW_USER);
-			request.getSessionMap().remove(IDENTIFIER);
-			request.getSessionMap().remove(DISCOVERY_INFO);
+			AbstractDAOUtils.removeStateParam(NEW_USER_NAME, req, res, BasePage.USE_SESSIONS);
+			AbstractDAOUtils.removeStateParam(NEW_USER_EMAIL, req, res, BasePage.USE_SESSIONS);
+//			AbstractDAOUtils.removeStateParam(IDENTIFIER, rreq, res, BasePage.USE_SESSIONS);
+//			AbstractDAOUtils.removeStateParam(DISCOVERY_INFO, req, res, BasePage.USE_SESSIONS);
 
 			//is this account active??? 
 			if (authUser.getActive()) {
 				//update lastseen
 				authUser.setLastseen(System.currentTimeMillis());
 				authUser.setNewmessages(authUser.countNewMessages());
+				authUser.setIdentifier(identifier);
 				authUser.update();
+			
+				setPrincipal(new SimplePrincipal(authUser.getId().toString(), 
+						StringUtils.split(authUser.getGroups(), ',')), 
+						authUser.getLastseen(), req, res);
 				
-				SimplePrincipal.setPrincipal(request.getHttpServletRequest(), 
-						new SimplePrincipal(identifier, authUser.getGroups()));
-
-				if(manager.hasRequest(request)){
+				if(hasRequest(manager, request)){
 					//FINALLY: success. send back to request
-					manager.redirectToRequest(request);
+					redirectToRequest(manager, request);
 				}else{
 					manager.forward(request, HOME);
 				}
@@ -231,7 +358,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	}
 
 	private static String buildAuthRequestUrl(String suppliedIdentifier,
-			HttpServletRequest httpReq, ConsumerManager consmanager) {
+			HttpServletRequest httpReq, HttpServletResponse httpRes, ConsumerManager consmanager) {
 
 		if (suppliedIdentifier == null) {
 			return null;
@@ -253,7 +380,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			if (discovered == null) return null;
 
 			// store the discovery information in the user's session
-			httpReq.getSession().setAttribute(DISCOVERY_INFO, discovered);
+//			AbstractDAOUtils.setStateParam(DISCOVERY_INFO, discovered);
 
 			// Attribute Exchange extension
 			FetchRequest fetch = FetchRequest.createFetchRequest();
@@ -339,18 +466,19 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	}
 
 	private static Identifier verifyResponse(HttpServletRequest httpReq, 
-			ConsumerManager consmanager) {
+			HttpServletResponse httpRes, ConsumerManager consmanager) {
 		try {
 			// extract the parameters from the authentication response
 			// (which comes in as a HTTP request from the OpenID provider)
 			ParameterList response = new ParameterList(httpReq.getParameterMap());
 
 			// retrieve the previously stored discovery information
-			DiscoveryInformation discovered = (DiscoveryInformation)
-					httpReq.getSession().getAttribute(DISCOVERY_INFO);
-			if (discovered == null) {
-				return null;
-			}
+//			DiscoveryInformation discovered = (DiscoveryInformation)
+//					AbstractDAOUtils.setStateParam(DISCOVERY_INFO);
+//			if (discovered == null) {
+//				return null;
+//			}
+			
 			// extract the receiving URL from the HTTP request
 			StringBuffer receivingURL = httpReq.getRequestURL();
 			String queryString = httpReq.getQueryString();
@@ -361,7 +489,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			// verify the response; ConsumerManager needs to be the same
 			// (static) instance used to place the authentication request
 			VerificationResult verification =
-					consmanager.verify(receivingURL.toString(), response, discovered);
+					consmanager.verify(receivingURL.toString(), response, null);
 
 			// examine the verification result and extract the verified
 			// identifier
@@ -397,21 +525,30 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 					}
 				}
 
-				User newUser = new User();
-
+				String newUserName = "";
+				String newUserEmail = "";
+				
 				if (sregFullName != null) {
-					newUser.setFullname(StringUtils.trimToEmpty(sregFullName));
+					newUserName = StringUtils.trimToEmpty(sregFullName);
 				} else {
-					newUser.setFullname(StringUtils.trimToEmpty(axFullName));
+					newUserName = StringUtils.trimToEmpty(axFullName);
 				}
 
 				if (sregEmail == null) {
-					newUser.setEmail(axEmail);
+					newUserEmail = axEmail;
 				} else {
-					newUser.setEmail(sregEmail);
+					newUserEmail = sregEmail;
 				}
 				
-				httpReq.getSession().setAttribute(NEW_USER, newUser);
+				if(!StringUtils.isBlank(newUserName)){
+					AbstractDAOUtils.setStateParam(NEW_USER_NAME, newUserName, httpReq, 
+							httpRes, BasePage.USE_SESSIONS);
+				}
+				
+				if(!StringUtils.isBlank(newUserEmail)){
+					AbstractDAOUtils.setStateParam(NEW_USER_EMAIL, newUserEmail, httpReq, 
+							httpRes, BasePage.USE_SESSIONS);
+				}
 
 				return verified; // success
 			}
@@ -455,7 +592,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				//1.discovery of OP server
 				//2.request info via AX or SReg
 				//3.build the openid auth request
-				String oidpRequestURL = buildAuthRequestUrl(openidFromUser, request, consman);
+				String oidpRequestURL = buildAuthRequestUrl(openidFromUser, 
+						request, response, consman);
 
 				if (oidpRequestURL != null) {
 					//save and redirect to oidp
@@ -468,7 +606,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				}
 			} else if ("true".equals(request.getParameter("return"))) {
 				// Coming back from oidp? then process return
-				Identifier identifier = verifyResponse(request, consman);
+				Identifier identifier = verifyResponse(request, response, consman);
 				if (identifier == null) {
 					//error! send back to signin page					
 					forward(manager, authreq, request, response, forwardTo);
@@ -486,7 +624,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				}
 			} else if ("true".equals(request.getParameter(SIGNUP_SUCCESS))) {
 				// Coming back from signup page? try creating principal
-				String openidURL = (String) request.getSession(true).getAttribute(IDENTIFIER);
+				String openidURL = AbstractDAOUtils.getStateParam(IDENTIFIER, 
+						request, response, BasePage.USE_SESSIONS);
 				tryCreatingPrincipal(openidURL, manager, authreq);
 				return Status.Continue;
 			}
@@ -532,5 +671,17 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				logger.log(Level.SEVERE, null, ex);
 			}
 		}
+	}
+	
+	private Status expiredResponse(AuthenticationRequest request){
+		String l = AbstractDAOUtils.getStateParam(Context.LOCALE, request.getHttpServletRequest(), 
+				request.getHttpServletResponse(), BasePage.USE_SESSIONS);
+		Locale loc = (l == null) ? request.getHttpServletRequest().getLocale() : new Locale(l);
+		Map<String, String> lang = Language.readLanguage(loc);
+		try {
+			request.getHttpServletResponse().sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, 
+					lang.get("sessiontimeout"));
+		} catch (Exception ex) { }
+		return Status.None;
 	}
 }

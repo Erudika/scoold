@@ -29,7 +29,7 @@ public abstract class AbstractUserDAO<T extends User, PK>
     public abstract void attachIdentifierToUser(String openidurl, PK userid);
     public abstract void detachIdentifierFromUser(String openidurl, PK userid);
     public abstract void deleteAllOpenidsForUser(PK userid);
-
+	
     public abstract ArrayList<Classunit> readAllClassUnitsForUser(PK userid, MutableLong page, MutableLong itemcount);
     public abstract ArrayList<T> readAllContactsForUser(PK userid, MutableLong page, MutableLong itemcount);
     

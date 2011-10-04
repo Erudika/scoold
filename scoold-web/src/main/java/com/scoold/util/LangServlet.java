@@ -6,6 +6,8 @@
 package com.scoold.util;
 
 import com.scoold.core.Language;
+import com.scoold.db.AbstractDAOUtils;
+import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -26,7 +28,6 @@ public class LangServlet extends HttpServlet {
 	// the lang keys for all strings used in scoold.js
 	private static final String[] jsLang = {
 		"success",
-		"sessiontimeout",
 		"areyousure",
 		"messages.sent",
 		"profile.contacts.added",
@@ -65,8 +66,8 @@ public class LangServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/javascript;charset=UTF-8");
 		//response.setHeader("pragma", "");
-		Locale loc = (Locale) request.getSession().getAttribute(Context.LOCALE);
-		if(loc == null)	loc = request.getLocale();
+		String l = AbstractDAOUtils.getStateParam(Context.LOCALE, request, response, BasePage.USE_SESSIONS);
+		Locale loc = (l == null) ? request.getLocale() : new Locale(l);
 		Map<String, String> lang = Language.readLanguage(loc);
         PrintWriter out = response.getWriter();
 		StringBuilder sb = new StringBuilder("var lang = {");

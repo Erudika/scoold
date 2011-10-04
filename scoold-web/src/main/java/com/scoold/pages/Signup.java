@@ -35,7 +35,7 @@ public class Signup extends BasePage{
     
     public Signup() {
         title = lang.get("signup.title");
-		identString = (String) seshun.getAttribute(ScooldAuthModule.IDENTIFIER);
+		identString = getStateParam(ScooldAuthModule.IDENTIFIER);
 		isFacebookUser = NumberUtils.isDigits(identString);
 		includeFBscripts = isFacebookUser;
 		makeForm();
@@ -51,10 +51,14 @@ public class Signup extends BasePage{
     }
     
     private void makeForm(){
-		newUser = (User) seshun.getAttribute(ScooldAuthModule.NEW_USER);
-		if(newUser == null) newUser = new User();
+		newUser = new User();
+		String n = getStateParam(ScooldAuthModule.NEW_USER_NAME);
+		String e = getStateParam(ScooldAuthModule.NEW_USER_EMAIL);
+		if(StringUtils.isBlank(n)) newUser.setFullname(n);
+		if(StringUtils.isBlank(e)) newUser.setEmail(e);
+			
 		String name = newUser.getFullname();
-		String thisisme = (String) seshun.getAttribute(ScooldAuthModule.THIS_IS_ME);
+		String thisisme = getStateParam(ScooldAuthModule.THIS_IS_ME);
 		if(StringUtils.length(name) < StringUtils.length(thisisme) &&
 				!StringUtils.isBlank(thisisme) && !thisisme.matches("^\\d+$")){
 			name = thisisme;
@@ -100,10 +104,8 @@ public class Signup extends BasePage{
     }
     
     public boolean onSignupClick() {		
-		Field name = signupForm.getField("fullname");
         Field email = signupForm.getField("email");
         Field additional = signupForm.getField("additional");
-        Field ident = signupForm.getField("identifier");
 		String mail = email.getValue();
 
 		if(mail == null || mail.contains("<") || mail.contains(">") || mail.contains("\\") ||

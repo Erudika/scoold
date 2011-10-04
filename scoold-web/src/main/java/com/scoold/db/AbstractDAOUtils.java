@@ -9,7 +9,9 @@ import com.scoold.core.ScooldObject;
 import com.scoold.core.Stored;
 import com.scoold.core.User;
 import com.scoold.core.Votable;
+import com.scoold.pages.BasePage;
 import com.scoold.util.HumanTime;
+import com.scoold.util.ScooldAuthModule;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -18,8 +20,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormatSymbols;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -30,11 +30,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.click.util.ClickUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,57 +61,8 @@ public abstract class AbstractDAOUtils {
 	private static final Logger logger = Logger.getLogger(AbstractDAOUtils.class.getName());
 	public static HumanTime humantime = new HumanTime();
 
-	private static final char[] hexChars = {
-		'0', '1', '2', '3', '4', '5', '6', '7',
-		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-	
-	public static enum DigestAlgorithm {
-		MD2("MD2"),
-		MD5("MD5"),
-		SHA_1("SHA-1"),
-		SHA_256("SHA-256"),
-		SHA_384("SHA-348"),
-		SHA_512("SHA-512");
-
-		private String name;
-
-		private DigestAlgorithm(String name){
-			this.name = name;
-		}
-		public String getName() {
-			return name;
-		}
-
-	}
-
 	public static String MD5(String s) {
-		return digestMessage(s, DigestAlgorithm.MD5);
-	}
-
-	public static String SHA1(String s) {
-		return digestMessage(s, DigestAlgorithm.SHA_1);
-	}
-
-	public static String digestMessage(String msg, DigestAlgorithm algrthm) {
-		if(msg == null) return null;
-		try {
-			MessageDigest md = MessageDigest.getInstance(algrthm.getName());
-			md.update(msg.getBytes(), 0, msg.getBytes().length);
-			byte[] hash = md.digest();
-			StringBuilder sb = new StringBuilder();
-			int msb;
-			int lsb = 0;
-			int i;
-			for (i = 0; i < hash.length; i++) {
-				msb = ((int) hash[i] & 255) / 16;
-				lsb = ((int) hash[i] & 255) % 16;
-				sb.append(hexChars[msb]);
-				sb.append(hexChars[lsb]);
-			}
-			return sb.toString();
-		} catch (NoSuchAlgorithmException e) {
-			return null;
-		}
+		return ClickUtils.toMD5Hash(s);
 	}
 
 	public static String formatDate(Long timestamp, String format, Locale loc) {
@@ -475,7 +432,70 @@ public abstract class AbstractDAOUtils {
 		}		
 		return res;
 	}
-
+	
+	public static void setStateParam(String name, String value, HttpServletRequest req,
+			HttpServletResponse res, boolean useSessions){
+		setStateParam(name, value, req, res, useSessions, false);
+	}
+	
+	public static void setStateParam(String name, String value, HttpServletRequest req,
+			HttpServletResponse res, boolean useSessions, boolean httpOnly){
+		HttpSession session = useSessions ? req.getSession() : null;
+		if (useSessions) {
+			session.setAttribute(name, value);
+		} else {
+			if (httpOnly) {
+				setRawCookie(name, value, req, res, httpOnly, false);
+			} else {
+				ClickUtils.setCookie(req, res, name, value, BasePage.SESSION_TIMEOUT_SEC, "/");
+			}
+		}
+	}
+	
+	public static String getStateParam(String name, HttpServletRequest req, 
+			HttpServletResponse res, boolean useSessions){
+		HttpSession session = useSessions ? req.getSession() : null;
+		String param = null;
+		if (useSessions) {
+			param = (String) session.getAttribute(name);
+		}else{
+			param = ClickUtils.getCookieValue(req, name);
+		}
+		return param;
+	}
+	
+	public static void removeStateParam(String name, HttpServletRequest req, 
+			HttpServletResponse res, boolean useSessions){
+		HttpSession session = useSessions ? req.getSession() : null;
+		if (useSessions) {
+			session.removeAttribute(name);
+		} else {
+			Cookie c = ClickUtils.getCookie(req, name);
+			if(c != null) ClickUtils.setCookie(req, res, name, "", 0, c.getPath());
+		}
+	}
+	
+	public static void clearSession(HttpServletRequest req, HttpServletResponse res, 
+			boolean useSessions){
+		req.getSession().invalidate();
+		clearAuthCookie(req, res);
+	}
+	
+	public static void clearAuthCookie(HttpServletRequest req, HttpServletResponse res){
+		Cookie c = ClickUtils.getCookie(req, ScooldAuthModule.AUTH_USER);
+		if(c != null){
+			setRawCookie(ScooldAuthModule.AUTH_USER, "", req, res, true, true);
+		}
+	}
+	
+	public static void setRawCookie(String name, String value, HttpServletRequest req, 
+			HttpServletResponse res, boolean httpOnly, boolean clear){
+		long exp = System.currentTimeMillis() + (BasePage.SESSION_TIMEOUT_SEC * 1000);
+		String date = clear ? "Thu, 01-Jan-1970 00:00:01" : DateFormatUtils.format(exp, 
+				"EEE, dd-MMM-yyyy HH:mm:ss", TimeZone.getTimeZone("GMT"));
+		String httponly = httpOnly ? "; HttpOnly" : "";
+		res.setHeader("Set-Cookie", name+"="+value+"; path=/; expires="+date+" GMT"+httponly);
+	}
 
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);
 	public abstract boolean voteDown(Long userid, Votable<Long> votable);

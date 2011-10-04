@@ -19,7 +19,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -66,19 +65,11 @@ public class SecurityFilter implements Filter {
 		this.filterConfig = filterConfig;
 		if (filterConfig != null) {
 			if (debug) {
-				log("RateLimitFilter:Initializing filter");
+				log("SecurityFilter:Initializing filter");
 			}
 //			blacklist_ips.put("", true);
 		}
 
-		/**
-		 * A filter that limits the request rate to a certain threshold
-		 * of requests per second. The default rate is 15 page hits in 10 seconds. This can be
-		 * overridden in the web.xml file by adding parameters named "hits" and "period"
-		 * with the desired values. When the rate is exceeded, a short string is written
-		 * to the response output stream and the chain method is not invoked. Otherwise,
-		 * processing proceeds as normal.
-		 */
 		String initParameterHits = filterConfig.getInitParameter(HITS_KEY);
 		if (initParameterHits != null) {
 				MAX_HITS = Integer.parseInt(initParameterHits);
@@ -89,27 +80,12 @@ public class SecurityFilter implements Filter {
 		}
 	}
 
-	/**
-	 * Checks to see if the current session has exceeded the allowed number of
-     * requests in the specified time period. If the threshold has been
-     * exceeded, then a short error message is written to the output stream and
-     * no further processing is done on the request. Otherwise the request is
-     * processed as normal.
-	 *
-	 * @param request The servlet request we are processing
-	 * @param response The servlet response we are creating
-	 * @param chain The filter chain we are processing
-	 *
-	 * @exception IOException if an input/output error occurs
-	 * @exception ServletException if a servlet error occurs
-	 */
 	public void doFilter(ServletRequest req, ServletResponse resp,
 			FilterChain chain)
 			throws IOException, ServletException {
 		
 		final HttpServletRequest request = (HttpServletRequest) req;
 		final HttpServletResponse response = (HttpServletResponse) resp;
-		final HttpSession session = request.getSession(false);
 		final String address = request.getRemoteAddr();
 		final String host = request.getRemoteHost();
 		final String userAgent = request.getHeader("User-Agent");
@@ -117,8 +93,7 @@ public class SecurityFilter implements Filter {
 		if(!request.getRequestURI().contains("error")){
 			if(StringUtils.isBlank(userAgent) || isBlocked(host, address, userAgent)){
 				//BLOCK!
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied!");
-				log("blocked: "+host+"/"+address+" ("+userAgent+")");
+				forbidden(response, host, address, userAgent);
 				return ;
 			}
 		}
@@ -140,7 +115,6 @@ public class SecurityFilter implements Filter {
 //						oldest = times.peekLast();
 //					}
 //					if (times.size() > MAX_HITS) {
-//						
 //						addResponseHeaderNoCache(response);
 //						response.sendError(HttpServletResponse.SC_FORBIDDEN, 
 //								"Slow down, robot! Try again in "+ MAX_PERIOD + " seconds.");
@@ -154,6 +128,12 @@ public class SecurityFilter implements Filter {
 		// Uncomment to enable XSS Filter for all req params
 //		chain.doFilter(new RequestWrapper(request), response);
 		chain.doFilter(request, response);
+	}
+	
+	private void forbidden(HttpServletResponse response, String host, String address, 
+			String userAgent) throws IOException{
+		response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied!");
+		log("blocked: "+host+"/"+address+" ("+userAgent+")");
 	}
 
 	/**
@@ -214,11 +194,6 @@ public class SecurityFilter implements Filter {
 		return AbstractDAOUtils.endsWithAny(useragent, blacklist_useragents) ||
 			AbstractDAOUtils.endsWithAny(host, blacklist_hosts) ||
 			blacklist_ips.containsKey(address);
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> T getSessionAttribute(HttpSession session, String key) {
-		return (T) session.getAttribute(key);
 	}
 
 	private void addResponseHeaderNoCache(final HttpServletResponse response) {

@@ -1833,7 +1833,7 @@
 		#set($infoStripClass = "infoBox" )
 	#end
 
-	#if($infoStripMsg.isEmpty() && !$request.getParameter("code") && !$session.containsKey("new-badges"))
+	#if($infoStripMsg.isEmpty() && !$request.getParameter("code") && !$hasNewBadges)
 		#set($hideInfoStrip = "hide")
 	#else
 		#set($hideInfoStrip = "")
@@ -1847,8 +1847,7 @@
 			#end
 		</span>
 
-		#if($session.containsKey("new-badges"))
-			#set($badgelist = $session.get("new-badges"))
+		#if($hasNewBadges)
 			#if($badgelist.size() > 1)
 				$lang.get("newbadge") -
 				#foreach($badge in $badgelist)
@@ -2086,7 +2085,7 @@
 		<script type="text/javascript">
 			/*<![CDATA[*/
 			var authenticated = $authenticated;
-			var sessiontimeout = $seshun.maxInactiveInterval + 1;
+			var sessiontimeout = $SESSION_TIMEOUT_SEC;
 			var contextpath = "$!context";
 			/*]]>*/
 		</script>

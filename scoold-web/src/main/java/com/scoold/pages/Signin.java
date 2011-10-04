@@ -14,10 +14,12 @@ public class Signin extends BasePage{
     public Signin() {
         title = lang.get("signin.title");
 		includeFBscripts = true;
-
+    }
+	
+	public void	onGet(){
 		if (authenticated ) {
 			if(param("signout")){
-				getContext().getSession().invalidate();
+				clearSession();
 				if (isFBconnected) {
 					setRedirect(signinlink + "?code=5&fblogout=true");
 				}else{
@@ -29,5 +31,5 @@ public class Signin extends BasePage{
 				return;
 			}
         }
-    }
+	}
 }

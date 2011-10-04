@@ -170,10 +170,7 @@
         <url-pattern>/feed.xml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>30</session-timeout>
-        <cookie-config>
-            <http-only>true</http-only>
-        </cookie-config>
+        <session-timeout>2</session-timeout>
     </session-config>
     <error-page>
         <error-code>404</error-code>

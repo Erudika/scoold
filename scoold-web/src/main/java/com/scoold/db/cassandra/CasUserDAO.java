@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
@@ -365,10 +364,10 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		mut.execute();
     }
 
-    public void detachIdentifierFromUser (String openidurl, Long userid) {
+    public void detachIdentifierFromUser (String identifier, Long userid) {
 		CasDAOUtils.batchRemove(
-			new Column(openidurl, CasDAOFactory.AUTH_KEYS, userid.toString(), null),
-			new Column(userid.toString(), CasDAOFactory.USER_AUTH, openidurl, null)
+			new Column(identifier, CasDAOFactory.AUTH_KEYS, userid.toString(), null),
+			new Column(userid.toString(), CasDAOFactory.USER_AUTH, identifier, null)
 		);
     }
 

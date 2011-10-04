@@ -176,26 +176,7 @@ $(function(){
 	/****************************************************
      *					MISC FUNCTIONS
      ****************************************************/
-	var sessionTimer = null;
-
-	/// OTHER FUNCTIONS
-	function setTimeoutTimers(timeout){
-		clearTimeout(sessionTimer);
-		//session expired so reload page and login
-		sessionTimer = setTimeout(function(){
-			showInfoBox(lang.sessiontimeout);
-		}, timeout * 1000);
-	}
-
-	if(authenticated && typeof sessiontimeout !== "undefined"){
-		setTimeoutTimers(sessiontimeout);
-
-		// reset the timer after every ajax request
-		$("#main").ajaxComplete(function(){
-			setTimeoutTimers(sessiontimeout);
-		});
-	}
-	
+		
 	function clearForm(form) {
 		$(":input", form).each(function() {
 			var type = this.type;
@@ -211,14 +192,18 @@ $(function(){
 		});
 	}
 	
-	function createCookie(name,value,days) {
+	function createCookie(name, value) {
 		var expires = "";
-		if (days) {
-			var date = new Date();
-			date.setTime(date.getTime()+(days*24*60*60*1000));
-			expires = "; expires="+date.toGMTString();
-		}
-		document.cookie = name+"="+value+expires+"; path=/";
+		var date = new Date();
+		date.setTime(date.getTime()+(sessiontimeout * 1000));
+		expires = ";expires="+date.toGMTString();
+		document.cookie = name+"="+value+expires+";path=/";
+	}
+	
+	function deleteCookie(name) {
+		if (readCookie(name)){
+			document.cookie = name + "=;path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		} 
 	}
 
 	function readCookie(name) {
@@ -231,13 +216,16 @@ $(function(){
 			}
 		return null;
 	}
+	
 	function eraseCookie(name) {
-		createCookie(name,"",-1);
+		createCookie(name, "", 0);
 	}
+	
 	function highlight(elem, hlclass){
 		$('.'+hlclass).removeClass(hlclass);
 		$(elem).addClass(hlclass);
 	}
+	
 	function crossfadeToggle(elem1, elem2){
 		if($(elem1).hasClass("hide") || $(elem1).css("display") === "none"){
             $(elem2).animate({opacity: "hide"}, 200, function(){
