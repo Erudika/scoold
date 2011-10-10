@@ -30,6 +30,7 @@ public class LangServlet extends HttpServlet {
 		"success",
 		"areyousure",
 		"messages.sent",
+		"messages.to",
 		"profile.contacts.added",
 		"alumnus", "teacher", "student",
 		"profile.status.txt",

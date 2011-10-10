@@ -128,15 +128,7 @@ public class Profile extends BasePage{
 		}
 
 		if(!isMyProfile){
-			if(param("addcontact")){
-				int count = authUser.addContact(showUser);
-				if(!addBadgeOnce(Badge.CONNECTED, count >= User.CONNECTED_IFHAS) && !isAjaxRequest())
-					setRedirect(profilelink+"/"+showUser.getId()+"?code=12&success=true");
-			}else if(param("removecontact")){
-				authUser.removeContact(showUser);
-				if(!isAjaxRequest())
-					setRedirect(profilelink+"/"+showUser.getId()+"?code=13");
-			}else if(param("makemod") && inRole("admin")){
+			if(param("makemod") && inRole("admin")){
 				boolean makemod = Boolean.parseBoolean(getParamValue("makemod"));
 				if(makemod == true && !showUser.isModerator()){
 					showUser.setGroups(UserGroup.MODS.toString());
@@ -158,6 +150,7 @@ public class Profile extends BasePage{
 		if(canEdit){
 			if("photos".equals(showParam)){
 				processImageEmbedRequest(showUser, myphotoslink, canEdit);
+				processGalleryRequest(showUser, myphotoslink, canEdit);
 			}else if("drawer".equals(showParam)) {
 				proccessDrawerRequest(showUser, mydrawerlink, canEdit);
 			}
@@ -196,5 +189,16 @@ public class Profile extends BasePage{
 					setRedirect(profilelink); //redirect after post
 			}
 		}
-    }
+		if(!isMyProfile){
+			if(param("addcontact")){
+				int count = authUser.addContact(showUser);
+				if(!addBadgeOnce(Badge.CONNECTED, count >= User.CONNECTED_IFHAS) && !isAjaxRequest())
+					setRedirect(profilelink+"/"+showUser.getId()+"?code=12&success=true");
+			}else if(param("removecontact")){
+				authUser.removeContact(showUser);
+				if(!isAjaxRequest())
+					setRedirect(profilelink+"/"+showUser.getId()+"?code=13");
+			}
+		}
+	}
 }

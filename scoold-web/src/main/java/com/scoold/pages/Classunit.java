@@ -151,8 +151,7 @@ public class Classunit extends BasePage{
 		if("photos".equals(showParam)){
 			processGalleryRequest(showClass, galleryUri, canEdit);
 		}else if("drawer".equals(showParam)){
-			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId() +
-					"/drawer", canEdit);
+			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId()+"/drawer", canEdit);
 		}
 
 	}
@@ -160,9 +159,9 @@ public class Classunit extends BasePage{
 	public void onPost(){
 		if("photos".equals(showParam)){
 			processImageEmbedRequest(showClass, galleryUri, canEdit);
+			processGalleryRequest(showClass, galleryUri, canEdit);
 		}else if("drawer".equals(showParam)) {
-			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId() +
-					"/drawer", canEdit);
+			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId()+"/drawer", canEdit);
 		}else if (param("addclassmates") && isMine && isLinkedToMe) {
 			String inactive = showClass.getInactiveusers();
 			if(inactive == null) inactive = ",";

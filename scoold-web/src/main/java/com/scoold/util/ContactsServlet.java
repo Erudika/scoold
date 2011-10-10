@@ -45,9 +45,9 @@ public class ContactsServlet extends HttpServlet {
 		StringBuilder sb = new StringBuilder("var contacts = [");
 			try {
 				for (Entry<String, String> entry : contacts.entrySet()) {
-					sb.append("{id:");
+					sb.append("{uuid:\"");
 					sb.append(entry.getKey());
-					sb.append(", name:\"");
+					sb.append("\", fullname:\"");
 //					sb.append(StringEscapeUtils.escapeJavaScript(entry.getValue()));
 					sb.append(entry.getValue());
 					sb.append("\"},");

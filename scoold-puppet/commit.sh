@@ -80,12 +80,12 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				
 				# skip autotagging and LB regging when running on local virtual machine
 				if [ -z "$3" ]; then				
-					#ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"
+					ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"
 		
-					if [ "$NODETYPE" = "web" ]; then
-						# register instance with LB
-						$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
-					fi
+					# if [ "$NODETYPE" = "web" ]; then
+					# 	# register instance with LB
+					# 	$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
+					# fi
 				fi
 								
 				### push updated puppet script
@@ -146,7 +146,6 @@ elif [ "$1" = "initdb" ]; then
 	db1host=$(head -n 1 "db$F2SUFFIX")
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
 else
-	echo "USAGE: $0 (checkdb | initdb | munin | (init | all) group)"
+	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"
 fi
-
 # rsync --verbose --progress --stats --compress --recursive --times --perms --links --delete --rsync-path="sudo rsync" ~/Desktop/scoold_snapshots/1317214358735/ ubuntu@192.168.113.128:/var/lib/cassandra/data/scoold/

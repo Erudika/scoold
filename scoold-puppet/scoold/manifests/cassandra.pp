@@ -126,11 +126,16 @@ class scoold::cassandra {
 				mode => 755,
 				require => [Package["munin"], Package["nginx"]],
 				before => Exec["restart-nginx"];
-			"${cassandrahome}/duplicity.sh":
+			"${cassandrahome}/backupdb.sh":
 				ensure => file,
-				source => "puppet:///modules/scoold/duplicity.sh",
+				source => "puppet:///modules/scoold/backupdb.sh",
 				owner => $cassandrausr,
 				mode => 700;
+			"${cassandrahome}/.s3cfg":
+				ensure => file,
+				source => "puppet:///modules/scoold/s3cfg.txt",
+				owner => $cassandrausr,
+				mode => 600;
 		}
 		
 		exec { "restart-nginx":
@@ -146,7 +151,7 @@ class scoold::cassandra {
 		}
 
 		cron { "clearsnapshot":
-			command => "sudo -u ${cassandrausr} ${cassandrahome}/duplicity.sh && ${casdir}/bin/nodetool -h localhost clearsnapshot",
+			command => "sudo -u ${cassandrausr} ${cassandrahome}/backupdb.sh && ${casdir}/bin/nodetool -h localhost clearsnapshot",
 			user => root,
 			hour => 4,
 			minute => 1,

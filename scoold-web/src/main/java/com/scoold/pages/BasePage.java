@@ -31,7 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.click.Page;
 import org.apache.click.control.Field;
@@ -347,7 +346,7 @@ public class BasePage extends Page {
 	public final void processGalleryRequest(CanHasMedia parent, String escapeUrl,
 			boolean canEdit){
 		if(param("addlabel") || param("removelabel")){
-			if(!canEdit) return ;
+			if(!canEdit || !req.getMethod().equals("POST")) return ;
 			
 			String label = getParamValue("addlabel");
 			Long mid = NumberUtils.toLong(getParamValue("id"), 0);
@@ -381,24 +380,25 @@ public class BasePage extends Page {
 				if(addLabelSuccess) currentMedia.update();
 			}
 			addModel("labeladded", addLabelSuccess);
-		} else {
-			if(param("remove") && param("parentuuid") && canEdit && authenticated){
-				Long mid = NumberUtils.toLong(getParamValue("remove"));
-				Media m = new Media();
-				m.setParentuuid(getParamValue("parentuuid"));
-				m.setId(mid);
-				m.delete();
+		} else if(param("remove")){
+			if(!canEdit || !authenticated || !req.getMethod().equals("POST")) return;
+				
+			Long mid = NumberUtils.toLong(getParamValue("remove"));
+			Media m = new Media();
+//			m.setParentuuid(getParamValue("parentuuid"));
+			m.setParentuuid(parent.getUuid());
+			m.setId(mid);
+			m.delete();
 
-				if(authUser.getUuid().equals(m.getParentuuid())){
-					long pc = authUser.getPhotos();
-					authUser.setPhotos(pc - 1);
-					authUser.update();
-				}
-
-				if(!isAjaxRequest()) setRedirect(escapeUrl);
-				return;
+			if(authUser.getUuid().equals(m.getParentuuid())){
+				long pc = authUser.getPhotos();
+				authUser.setPhotos(pc - 1);
+				authUser.update();
 			}
 
+			if(!isAjaxRequest()) 
+				setRedirect(escapeUrl);
+		}else{
 			String parentuuid = parent.getUuid();
 			String label = null;
 			if(param("label")) label = getParamValue("label");
@@ -1034,8 +1034,7 @@ public class BasePage extends Page {
 
 	public boolean processVoteRequest(Votable<Long> votable, String classname, String uuid){
 		boolean result = false;
-		if(votable != null){
-
+		if(votable != null && authenticated){
 			User author = User.getUser(votable.getUserid());
 			Integer votes = (votable.getVotes() == null) ? 0 : votable.getVotes();
 

@@ -9,7 +9,7 @@ echo 'sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true' | debconf-set-sel
 apt-get -y update && apt-get -y upgrade
 
 # install all the core apps
-apt-get -y install sun-java6-jdk puppet monit munin-node htop dstat unzip wget curl duplicity
+apt-get -y install sun-java6-jdk puppet monit munin-node htop dstat unzip wget curl s3cmd
 
 # allow all machines to see the munin-node
 echo "cidr_allow 0.0.0.0/0" >> /etc/munin/munin-node.conf

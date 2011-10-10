@@ -16,6 +16,7 @@ import com.scoold.db.cassandra.CasDAOFactory.SCF;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -122,7 +123,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	/********************************************
 	 *			CORE OBJECT CRUD FUNCTIONS
 	********************************************/
-
+ 
 	public Long create(ScooldObject so, CF<String> cf){
 		Long id = create(so, cf, mutator);
 		mutator.execute();
@@ -335,47 +336,68 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 	public <N> HColumn<N, String> getHColumn(String key, CF<N> cf, N colName){
 		if(cf == null) return null;
-		HColumn<N, String> col = HFactory.createColumnQuery(keyspace, strser,
+		HColumn<N, String> col = null;
+		try {
+			col = HFactory.createColumnQuery(keyspace, strser,
 					getSerializer(colName), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setName(colName)
 				.execute().get();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
+		}
 		return col;
 	}
 
 	public <SN, SUBN> HSuperColumn<SN, SUBN, String> getHSuperColumn(String key,
 			SCF<SN, SUBN> cf, SN colName, Class<SUBN> subColClass){
 		if(cf == null) return null;
-		HSuperColumn<SN, SUBN, String> scol = HFactory.createSuperColumnQuery(keyspace, strser,
+		HSuperColumn<SN, SUBN, String> scol = null;
+		try {
+			scol = HFactory.createSuperColumnQuery(keyspace, strser,
 					getSerializer(colName), getSerializer(subColClass), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setSuperName(colName)
 				.execute().get();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
+		}
 		return scol;
 	}
 
 	public <SN, SUBN> HColumn<SUBN, String> getHSubColumn(String key,
 			SCF<SN, SUBN> cf, SN colName, SUBN subColName){
 		if(cf == null) return null;
-		HColumn<SUBN, String> scol = HFactory.createSubColumnQuery(keyspace, strser,
+		
+		HColumn<SUBN, String> scol = null;
+		try {
+			scol = HFactory.createSubColumnQuery(keyspace, strser,
 					getSerializer(colName),	getSerializer(subColName), strser)
 				.setKey(key)
 				.setColumnFamily(cf.getName())
 				.setSuperColumn(colName)
 				.setColumn(subColName)
 				.execute().get();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
+		}
 		return scol;
 	}
 	
 	public HCounterColumn<String> getHCounterColumn(String key){
-		CounterQuery<String, String> cq = HFactory.createCounterColumnQuery(keyspace, 
-				strser, strser);
-		cq.setColumnFamily(CasDAOFactory.COUNTERS.getName());
-		cq.setKey(key);
-		cq.setName(CasDAOFactory.CN_COUNTS_COUNT);
-		return cq.execute().get();
+		CounterQuery<String, String> cq = null;
+		try {
+			cq = HFactory.createCounterColumnQuery(keyspace, 
+					strser, strser);
+			cq.setColumnFamily(CasDAOFactory.COUNTERS.getName());
+			cq.setKey(key);
+			cq.setName(CasDAOFactory.CN_COUNTS_COUNT);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
+		}
+		return (cq == null) ? null : cq.execute().get();
 	}
 
 	/********************************************
@@ -413,28 +435,32 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 		ArrayList<HColumn<N, String>> list = new ArrayList<HColumn<N, String>>();
 
-		SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
-				strser, getSerializer(colNameClass), strser);
-		sq.setKey(key);
-		sq.setColumnFamily(cf.getName());
-		sq.setRange((N) startKey, null, reverse, maxItems);
+		try {
+			SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
+					strser, getSerializer(colNameClass), strser);
+			sq.setKey(key);
+			sq.setColumnFamily(cf.getName());
+			sq.setRange((N) startKey, null, reverse, maxItems);
 
-		list.addAll((Collection<? extends HColumn<N, String>>)
-				sq.execute().get().getColumns());
+			list.addAll((Collection<? extends HColumn<N, String>>)
+					sq.execute().get().getColumns());
 
-		if(!list.isEmpty() && page != null){
-			HColumn<?,?> last = list.get(list.size() - 1);
-			Object lastk = ((HColumn<N, String>) last).getName();
-			page.setValue(lastk);
-			// showing max + 1 just to get the start key of next page so remove last
-			if(maxItems > 1 && list.size() > maxItems){
-				list.remove(list.size() - 1); //remove last
+			if(!list.isEmpty() && page != null){
+				HColumn<?,?> last = list.get(list.size() - 1);
+				Object lastk = ((HColumn<N, String>) last).getName();
+				page.setValue(lastk);
+				// showing max + 1 just to get the start key of next page so remove last
+				if(maxItems > 1 && list.size() > maxItems){
+					list.remove(list.size() - 1); //remove last
+				}
 			}
-		}
-		// count keys
-		if(itemcount != null){
-			int count = countColumns(key, cf, colNameClass);
-			itemcount.setValue(count);
+			// count keys
+			if(itemcount != null){
+				int count = countColumns(key, cf, colNameClass);
+				itemcount.setValue(count);
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
 		}
 
 		return list;
@@ -450,7 +476,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 		ArrayList<HSuperColumn<SN, SUBN, String>> list =
 				new ArrayList<HSuperColumn<SN, SUBN, String>>();
-
+		
+		try {
 			SuperRows<String, SN, SUBN, String> rows =
 					HFactory.createMultigetSuperSliceQuery(keyspace,
 					strser, getSerializer(superColNameClass),
@@ -465,20 +492,23 @@ public class CasDAOUtils extends AbstractDAOUtils {
 			list.addAll((Collection<? extends HSuperColumn<SN, SUBN, String>>)
 					rows.getByKey(key).getSuperSlice().getSuperColumns());
 
-		if(!list.isEmpty() && page != null){
-			HSuperColumn<?,?,?> last = list.get(list.size() - 1);
-			Object lastk = ((HSuperColumn<SN, SUBN, String>) last).getName();
-			page.setValue(lastk);
-			// showing max + 1 just to get the start key of next page so remove last
-			if(maxItems > 1 && list.size() > maxItems){
-				list.remove(list.size() - 1); //remove last
+			if(!list.isEmpty() && page != null){
+				HSuperColumn<?,?,?> last = list.get(list.size() - 1);
+				Object lastk = ((HSuperColumn<SN, SUBN, String>) last).getName();
+				page.setValue(lastk);
+				// showing max + 1 just to get the start key of next page so remove last
+				if(maxItems > 1 && list.size() > maxItems){
+					list.remove(list.size() - 1); //remove last
+				}
 			}
-		}
 
-		// count keys
-		if(itemcount != null){
-			int count = countSuperColumns(key, cf, superColNameClass);
-			itemcount.setValue(count);
+			// count keys
+			if(itemcount != null){
+				int count = countSuperColumns(key, cf, superColNameClass);
+				itemcount.setValue(count);
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
 		}
 
 		return list;
@@ -506,45 +536,49 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(StringUtils.isBlank(keysKey) || keysCf == null) return new ArrayList<T>();
 
 		ArrayList<HColumn<N, String>> keys = new ArrayList<HColumn<N, String>>();
-		
-		// get keys from linker table
-		SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
-				strser,	getSerializer(colNameClass), strser);
-
-		sq.setKey(keysKey);
-		sq.setColumnFamily(keysCf.getName());
-		sq.setRange(startKey, null, reverse, maxItems + 1);
-
-		keys.addAll(sq.execute().get().getColumns());
-
-		if(keys == null || keys.isEmpty()) return new ArrayList<T>();
-
-		if(page != null){
-			Long lastKey = 0L;
-			if (colNamesAreKeys) {
-				lastKey = (Long) keys.get(keys.size() - 1).getName();
-			}else{
-				lastKey =  NumberUtils.toLong(keys.get(keys.size() - 1).getValue());
-			}
-
-			page.setValue(lastKey);
-//			Long startK = Arrays.equals(startKey, new byte[0]) ? 0L :
-//				getLongFromBytes(startKey);
-
-			if(maxItems > 1 && keys.size() > maxItems){
-				keys.remove(keys.size() - 1); // remove last
-			}
-		}
-
-		setTotalCount(clazz, keysKey, keysCf, colNameClass, itemcount, countOnlyColumns);
-
 		ArrayList<String> keyz = new ArrayList<String>();
-		for (HColumn<N, String> col : keys){
-			if (colNamesAreKeys) {
-				keyz.add(col.getName().toString());
-			} else {
-				keyz.add(col.getValue());
+		
+		try {
+			// get keys from linker table
+			SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
+					strser,	getSerializer(colNameClass), strser);
+
+			sq.setKey(keysKey);
+			sq.setColumnFamily(keysCf.getName());
+			sq.setRange(startKey, null, reverse, maxItems + 1);
+
+			keys.addAll(sq.execute().get().getColumns());
+
+			if(keys == null || keys.isEmpty()) return new ArrayList<T>();
+
+			if(page != null){
+				Long lastKey = 0L;
+				if (colNamesAreKeys) {
+					lastKey = (Long) keys.get(keys.size() - 1).getName();
+				}else{
+					lastKey =  NumberUtils.toLong(keys.get(keys.size() - 1).getValue());
+				}
+
+				page.setValue(lastKey);
+	//			Long startK = Arrays.equals(startKey, new byte[0]) ? 0L :
+	//				getLongFromBytes(startKey);
+
+				if(maxItems > 1 && keys.size() > maxItems){
+					keys.remove(keys.size() - 1); // remove last
+				}
 			}
+
+			setTotalCount(clazz, keysKey, keysCf, colNameClass, itemcount, countOnlyColumns);
+
+			for (HColumn<N, String> col : keys){
+				if (colNamesAreKeys) {
+					keyz.add(col.getName().toString());
+				} else {
+					keyz.add(col.getValue());
+				}
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
 		}
 
 		return readAll(clazz, keyz, valsCf);
@@ -556,24 +590,29 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(keys == null || keys.isEmpty() || cf == null) return new ArrayList<T>();
 
 		ArrayList<T> list = new ArrayList<T>(keys.size());
-
-		MultigetSliceQuery<String, String, String> q =
-				HFactory.createMultigetSliceQuery(keyspace,
-				strser, strser, strser);
-
-		q.setColumnFamily(cf.getName());
-		q.setKeys(keys);
-		q.setRange(null, null, false, CasDAOFactory.DEFAULT_LIMIT);
-
+		Map<String, Integer> index = new HashMap<String, Integer>(keys.size());
+		for (int i = 0; i < keys.size(); i++) {
+			index.put(keys.get(i), i);
+			list.add(null);
+		}
+		
 		try{
+			MultigetSliceQuery<String, String, String> q =
+					HFactory.createMultigetSliceQuery(keyspace,
+					strser, strser, strser);
+									
+			q.setColumnFamily(cf.getName());
+			q.setKeys(keys);
+			q.setRange(null, null, false, CasDAOFactory.DEFAULT_LIMIT);
+			
 			for (Row<String, String, String> row : q.execute().get()) {
 				T so = fromColumns(clazz, row.getColumnSlice().getColumns());
 				if (so.getId() != null){
-					list.add(so);
+					list.set(index.get(row.getKey()), so);
 				}
 			}
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, null, e);
 		}
 		return list;
 	}

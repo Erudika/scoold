@@ -1,5 +1,5 @@
 <div class="line">
-	<div class="unit size3of4">
+	<div class="unit size4of5">
 		#if($request.getParameter("ask"))
 			#if($schoolsMap.isEmpty())
 				<div class="largeText">$lang.get("posts.noschools")</div>
@@ -66,9 +66,7 @@
 		#end
 	</div>
 
-	<div class="unit size1of4 lastUnit r">
-		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
-		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
-		<img src="http://placehold.it/220x420" width="220" height="420" alt="ad"/>
+	<div class="unit size1of5 lastUnit center">
+		#adplaceholders()
 	</div>
 </div>

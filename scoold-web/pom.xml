@@ -366,6 +366,7 @@
 					<encoding>UTF-8</encoding>
 					<showWarnings>true</showWarnings>
 					<verbose>true</verbose>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
             <plugin>

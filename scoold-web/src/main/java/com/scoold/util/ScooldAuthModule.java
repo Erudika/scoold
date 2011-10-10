@@ -336,7 +336,6 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			if (authUser.getActive()) {
 				//update lastseen
 				authUser.setLastseen(System.currentTimeMillis());
-				authUser.setNewmessages(authUser.countNewMessages());
 				authUser.setIdentifier(identifier);
 				authUser.update();
 			

@@ -20,7 +20,6 @@ public abstract class AbstractMessageDAO<T extends Message, PK>
 
 	public abstract void deleteAllMessagesForUUID(String parentUUID);
     public abstract ArrayList<T> readAllMessagesForUUID(String uuid, MutableLong page, MutableLong itemcount);
-    
-	public abstract int countNewMessages(PK userid);
-	public abstract void markAllAsRead(PK userid);
+	public abstract int countNewMessagesForUUID(String uuid);
+	public abstract void markAllAsReadForUUID(String uuid);
 }

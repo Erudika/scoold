@@ -26,35 +26,25 @@ public class Messages extends BasePage{
 	}
 
 	public void onGet(){
-		if(param("delete")){
-			Long mid = NumberUtils.toLong(getParamValue("delete"), 0);
-			new Message(mid).delete();
-		}else if(param("deleteall")){
-			Message.deleteAll(authUser.getUuid());
-			setRedirect(messageslink);
-			return;
-		}
-
 		if(!isAjaxRequest()){
-			Message.markAllRead(authUser.getId());
-			authUser.setNewmessages(0);
 			messageslist = Message.getMessages(authUser.getUuid(), pagenum, itemcount);
+			Message.markAllRead(authUser.getUuid());
 		}
 	}
 
 	public void onPost(){
 		if(param("newmessage")){
 			String message = getParamValue("body");
-			String[] ids = getContext().getRequestParameterValues("touuid");
+			String[] uids = getContext().getRequestParameterValues("touuids");
 
-			if((ids == null || ids.length < 1 || StringUtils.isBlank(message))
+			if((uids == null || uids.length < 1 || StringUtils.isBlank(message))
 					&& !isAjaxRequest()){
 				setRedirect(messageslink+"/new?code=7&error=true");
 			}else{
 				HashSet<String> uuids = new HashSet<String>();
-				uuids.addAll(Arrays.asList(ids));
-
-				Message msg = new Message(uuids, authUser.getId(), null, false, message);
+				uuids.addAll(Arrays.asList(uids));
+				
+				Message msg = new Message(uuids, authUser.getId(), false, message);
 				boolean done = msg.send();
 				
 				if(!isAjaxRequest()){
@@ -62,6 +52,13 @@ public class Messages extends BasePage{
 					else setRedirect(messageslink+"/new?code=7&error=true");
 				}
 			}
+		}else if(param("delete")){
+			Long mid = NumberUtils.toLong(getParamValue("delete"), 0);
+			new Message(mid).delete();
+		}else if(param("deleteall")){
+			Message.deleteAll(authUser.getUuid());
+			setRedirect(messageslink);
+			return;
 		}
 	}
 

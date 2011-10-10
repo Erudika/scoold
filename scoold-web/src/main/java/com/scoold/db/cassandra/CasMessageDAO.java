@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 /**
  *
@@ -61,9 +62,9 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 
 		if(id != null){
 			CasDAOUtils.addInsertions(Arrays.asList(new Column[]{
-				new Column(parentUUID, CasDAOFactory.NEW_MESSAGES, id, id.toString()),
-				new Column(newMessage.getUuid(), CasDAOFactory.MESSAGES_UUIDS, idstr, id.toString()),
-				new Column(parentUUID, CasDAOFactory.MESSAGES_PARENTUUIDS, id, id.toString())
+				new Column(parentUUID, CasDAOFactory.NEW_MESSAGES, id, idstr),
+				new Column(newMessage.getUuid(), CasDAOFactory.MESSAGES_UUIDS, idstr, idstr),
+				new Column(parentUUID, CasDAOFactory.MESSAGES_PARENTUUIDS, id, idstr)
 			}), mut);
 		}
 
@@ -131,7 +132,7 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 		List<HColumn<Long, String>> row = cdu.readRow(parentUUID,
 				CasDAOFactory.NEW_MESSAGES, Long.class, null, null, null,
 				CasDAOFactory.DEFAULT_LIMIT, true);
-
+		
 		Map<Long, Integer> newIdsMap = new HashMap<Long, Integer>();
 		//map contains new msg ids
 		for (HColumn<Long, String> hColumn : row) {
@@ -149,14 +150,15 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 		return messages;
 	}
 
-	public int countNewMessages (Long userid){
-		return cdu.countColumns(userid.toString(), CasDAOFactory.NEW_MESSAGES,
+	public int countNewMessagesForUUID (String uuid){
+		if(StringUtils.isBlank(uuid)) return 0;
+		return cdu.countColumns(uuid, CasDAOFactory.NEW_MESSAGES,
 				Long.class);
 	}
 
-	public void markAllAsRead (Long userid){
+	public void markAllAsReadForUUID (String uuid){
 		Mutator<String> mut = CasDAOUtils.createMutator();
-		cdu.deleteRow(userid.toString(), CasDAOFactory.NEW_MESSAGES, mut);
+		cdu.deleteRow(uuid, CasDAOFactory.NEW_MESSAGES, mut);
 		mut.execute();
 	}
 

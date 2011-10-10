@@ -118,8 +118,7 @@ public class School extends BasePage{
 		if("photos".equals(showParam)){
 			processGalleryRequest(showSchool, galleryUri, canEdit);
 		}else if("drawer".equals(showParam)){
-			proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer",
-					canEdit);
+			proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer", canEdit);
 		}
 
 		if(!authenticated) return;
@@ -146,11 +145,11 @@ public class School extends BasePage{
 
     public void onPost(){
 		if(canEdit){
-			if("drawer".equals(showParam)){
-				proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer",
-					canEdit);
-			}else if("photos".equals(showParam)){
+			if("photos".equals(showParam)){
 				processImageEmbedRequest(showSchool, galleryUri, canEdit);
+				processGalleryRequest(showSchool, galleryUri, canEdit);
+			}else if("drawer".equals(showParam)){
+				proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer", canEdit);
 			}else{
 				String snameOrig = showSchool.getName();
 				//update school

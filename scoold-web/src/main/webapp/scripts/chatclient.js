@@ -1,6 +1,7 @@
 (function($) {
 
 	var defaults = {
+		contextpath: "",
 		serverUrl: '',
 		logContSel: '#chat-log',
 		messageContSel: '#chat-message',

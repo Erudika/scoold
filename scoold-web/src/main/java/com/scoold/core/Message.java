@@ -23,7 +23,6 @@ public class Message implements ScooldObject{
 	private String uuid;
 	@Stored private String touuid;
     @Stored private Long userid;
-    @Stored private String title;
     @Stored private Boolean isread;
     @Stored private String body;
 	@Stored private Long timestamp;
@@ -38,16 +37,13 @@ public class Message implements ScooldObject{
     }
 
     public Message() {
-        title = "untitled";
         isread = false;
         body = "";
     }
 
-	public Message(Set<String> touuids, Long userid, String title,
-			Boolean isread, String body) {
+	public Message(Set<String> touuids, Long userid, Boolean isread, String body) {
 		this.touuids = touuids;
 		this.userid = userid;
-		this.title = title;
 		this.isread = isread;
 		this.body = body;
 	}
@@ -130,24 +126,6 @@ public class Message implements ScooldObject{
     }
 
     /**
-     * Get the value of title
-     *
-     * @return the value of title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set the value of title
-     *
-     * @param title new value of title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
      * Get the value of userid
      *
      * @return the value of userid
@@ -212,8 +190,8 @@ public class Message implements ScooldObject{
 		return true;
 	}
 
-	public static void markAllRead(Long uid){
-		getMessageDao().markAllAsRead(uid);
+	public static void markAllRead(String uuid){
+		getMessageDao().markAllAsReadForUUID(uuid);
 	}
 
 	public static void deleteAll(String parentUUID){
@@ -263,7 +241,6 @@ public class Message implements ScooldObject{
 		int hash = 3;
 		hash = 79 * hash + (this.touuid != null ? this.touuid.hashCode() : 0);
 		hash = 79 * hash + (this.userid != null ? this.userid.hashCode() : 0);
-		hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
 		hash = 79 * hash + (this.body != null ? this.body.hashCode() : 0);
 		hash = 79 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
 		return hash;

@@ -162,7 +162,7 @@ body {
 
 hr { height: 1px; border: 0; background-color: #666666; width: 100%;}
 
-h1, h2, h3, h4, h5, h6 { line-height: 1em; margin: 7px 0;}
+h1, h2, h3, h4, h5, h6 { line-height: 1em; margin: 7px 0; font-weight: normal;}
 h1 {font-size: 180%;}
 h2 {font-size: 150%;}
 h3 {font-size: 120%;}
@@ -189,49 +189,47 @@ a:visited { color: #7799AA; } /*#2266BB*/
 a:hover, a:active { text-decoration: underline;}
 a.nodecoration { text-decoration: none; }
 a.nodecoration:hover{ text-decoration: none;}
-a.button-small, a.button-tiny, a.button-medium, a.button-large {
+a.button-small, a.button-tiny, a.button-medium, a.button-large,
+span.button-small, span.button-tiny, span.button-medium, span.button-large{
+	background-color: #CCCCCC;
+    color: black;
+	border-bottom: 1px solid transparent;
 	text-align:center;
 	text-decoration:none;
 	display: inline-block;
 	zoom: 1;
 	*display: inline;
 }
-a.button-tiny:hover, a.button-small:hover, a.button-medium:hover, a.button-large:hover {
-	background-color: #555555;
-	color: white;
+a.button-tiny:hover, a.button-small:hover, a.button-medium:hover, a.button-large:hover, a.button-tiny-selected:hover,
+span.button-tiny:hover, span.button-small:hover, span.button-medium:hover, span.button-large:hover, span.button-tiny-selected:hover{
 	text-decoration: none;
+	background-color: #BBBBBB;
+	color: black;
+	border-bottom: 1px solid #555555;
 }
 a.button-large, span.button-large {
-	background-color: #555555;
-	color: white;
 	line-height: 1.5em;
 	font-size: 1.5em;
     padding: 3px 10px;
 }
 a.button-small, span.button-small {
-    background-color: #555555;
-    color: white;
     line-height: inherit;
 	font-size: 1em;
     padding: 2px 8px;
 }
 a.button-medium, span.button-medium{
-    background-color: #CCCCCC;
-    color: black;
     line-height: inherit;
 	font-size: 0.9em;
     padding: 1px 7px;
 }
 a.button-tiny, span.button-tiny {
-    background-color: #CCCCCC;
-    color: black;
     line-height: inherit;
 	font-size: 0.8em;
     padding: 0 6px;
 }
-a.button-tiny-hover{
+a.button-tiny-selected, span.button-tiny-selected{
 	background-color: #555555;
-	color: white;
+    color: white;
 	text-decoration: none;
 }
 .nicebtn, .nicebtn:visited {
@@ -287,14 +285,14 @@ select.nicebox{
 }
 input.button, input[type=submit], input[type=reset], input[type=button]{
 	font-size:16px;
-	background-color: #555555;
-	color:white;
+	background-color: #CCCCCC;
+	color:black;
 	padding: 3px 10px;
 }
 input.small-button{
 	font-size:11px;
-	background-color: #555555;
-	color:white;
+	background-color: #CCCCCC;
+	color:black;
 	height: 24px;
 	padding: 0px 8px;
 }
@@ -313,8 +311,8 @@ input.search-btn{
 form.clickedit button{
 	font-size: 16px;
 	border: 0;
-	background-color: #555555;
-	color:white;
+	background-color: #CCCCCC;
+	color:black;
 	font-weight:bold;
 	padding: 1px 5px;
 	-moz-border-radius: 3px; /* FF1+ */
@@ -340,7 +338,7 @@ form.clickedit select{
 	margin-right: 15px;
 }
 
-input.error, select.error, textarea.error{ background-color: #FFF5A0; }
+input.error, select.error, textarea.error{ background-color: #EFFCFF; }
 label.error, span.error{ width: 99%; background-color: transparent; color: #BB1111; display: block;}
 
 blockquote {
@@ -401,6 +399,7 @@ pre, code, .chat-msg{
 .successBox{ 
     background-color: white;
     color:#88AF12;
+	border-bottom: 1px solid #CCCCCC;
 }
 .infoBox{
     background-color: white;
@@ -408,8 +407,9 @@ pre, code, .chat-msg{
 	border-bottom: 1px solid #CCCCCC;
 }
 .errorBox{
-	background-color: #FFF5A0;
+	background-color: white;
 	color: #BB1111;
+	border-bottom: 1px solid #CCCCCC;
 }
 .openidbox{
     background: white;
@@ -455,7 +455,11 @@ pre, code, .chat-msg{
 .red{ color: #BB1111 !important;}
 .redbg{ background: #BB1111 !important; }
 .green{ color: #88AF12 !important; }
+.blue{ color: #33AAFF !important; }
+.white{ color: white !important; }
 .gray{ color: #777777 !important; }
+.vertcenter{ vertical-align: middle; }
+.lightbluebg{	background-color: #EFFCFF;}
 .lightgraybg{	background-color: #F5F5F5;}
 .lightgray{ color: #AAAAAA !important;}
 .nobackground {	background: none;}
@@ -489,6 +493,12 @@ pre, code, .chat-msg{
 .diff-ins{ background-color: #E6FFE6;}
 .diff-del{ background-color: #FFE6E6;}
 .labelbox, .labelbox a{ color: black;}
+.loading{ 
+	background-image: url(../images/indicator.gif); 
+	background-position: 10% 50%; 
+	background-repeat: no-repeat; 
+	text-indent: 20px;
+}
 .badge a{color: white;}
 .badge{
 	background-color: #555555;
@@ -497,8 +507,8 @@ pre, code, .chat-msg{
 	padding: 2px 0;
 }
 .reputationbox{
-	background-color: #777777;
-	color: white;
+/*	background-color: #E5E5E5;*/
+	border: 2px solid #DDDDDD;
 }
 .sidebar li{
     margin: 7px;
@@ -577,7 +587,7 @@ pre, code, .chat-msg{
 /* -- AUTOCOMPLETE CSS -- */
 .ac_results {
 	text-align: left;
-	padding: 0px;
+	padding: 0;
 	border: 1px solid black;
 	background-color: white;
 	overflow: hidden;
@@ -596,11 +606,11 @@ pre, code, .chat-msg{
 	cursor: default;
 	display: block;
 	font: menu;
-	line-height: 20px;
+	line-height: 25px;
 }
 .ac_loading {background: white url(../images/indicator.gif) right center no-repeat;}
 .ac_odd {background-color: #EEEEEE;}
-.ac_over {	background-color: #0A246A;	color: white;}
+.ac_over {	background-color: #444444;	color: white;}
 
 /* -- MODAL CSS -- */
 .jqmWindow {

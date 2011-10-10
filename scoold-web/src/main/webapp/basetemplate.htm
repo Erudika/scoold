@@ -211,7 +211,6 @@
 						</div>
 
 						<div class="center mtl">
-							#ajaxloading(true)
 							<input type="submit" value="${lang.get('save')}" class="edit-schoolbtn button rounded3"/>
 							<input type="button" value="${lang.get('close')}" class="button rounded3 canceledit $hideview"/>
 						</div>
@@ -254,36 +253,39 @@
 #end
 ################# MESSAGES MACROS #####################
 #macro(newmessageform $names $ids)
-	#set($tonames = "")
 	<form method="post" class="new-message-form" action="$messageslink/new">
-		<fieldset class="p100">
-			<legend>$lang.get("messages.new")</legend>
-			<div class="line">
-				<div class="unit size3of4">
-					#foreach($name in $names)
-						#set($tonames = ", $!name")
-					#end
-
-					#if($tonames.trim().isEmpty())
-						<input type="text" name="to" class="contactnamebox nicebox hintbox p100 mbm" value="$lang.get('messages.to')..."/>
-						<input type="hidden" name="touserid" value=""/>
-					#else
-						<span>
-							#set($tonames = $tonames.substring(1, $tonames.length()))
-							$tonames
-						</span>
-					#end
-					<!--<input type="text" class="nicebox p90" value="$tonames"/>-->
-					#foreach($id in $ids)
-						<input type="hidden" name="touuid" value="$id"/>
-					#end
-					<textarea rows="3" cols="4" class="p100 nicebox hintbox" name="body">$lang.get("messages.text")...</textarea>
-				</div>
-				<div class="unit size1of4 lastUnit">
-					<div class="center">
-						<input type="submit" value="$lang.get('send')" id="sendmessage-btn" class="button rounded3"/> <br />
-					</div>
-				</div>
+		<fieldset class="p100 mtl">
+			#if($names.size() == 0)
+				#set($toval = "")
+			#else
+				#foreach($showname in $names)
+					#set($toval = "$!toval, $showname" )
+				#end
+				#set($toval = $toval.substring(2, $toval.length()))
+			#end
+			<table>
+				<tbody>
+					<tr>
+						<th class="prm">$lang.get("messages.to"):</th>
+						<td class="p100">
+							<input type="text" name="to" class="contactnamebox nicebox p100 mbm" value="$!toval"/>
+							<input type="hidden" name="touuids" value=""/>
+							<!--<input type="text" class="nicebox p90" value="$tonames"/>-->
+							#foreach($id in $ids)
+								<input type="hidden" name="touuid" value="$id"/>
+							#end
+						</td>
+					</tr>
+					<tr>
+						<th class="prm">$lang.get("message.title"):</th>
+						<td class="p100"><textarea rows="3" cols="4" class="p100 nicebox" name="body"></textarea></td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<div class="center mtl">
+				<input type="submit" value="$lang.get('send')" id="sendmessage-btn" class="button rounded3 mrm"/>
+				<input type="button" value="$lang.get('close')" id="sendmessage-close" class="button rounded3 mlm"/>
 			</div>
 		</fieldset>
 	</form>
@@ -609,11 +611,10 @@
 
 						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&</span> $lang.get("photos.addlabels")</a>
 						<div class="hide mtm">
-							<form method="get" id="add-label-form" action="$gurl">
+							<form method="post" id="add-label-form" action="$gurl">
 								<fieldset>
 									<input type="text" class="addlabelbox nicebox p60" value="" name="addlabel"/>
 									<input type="hidden" name="id" value="$currentPhoto.id"/>
-									#ajaxloading(true)
 									<input type="submit" value="$lang.get('add')" class="button rounded3"/>
 								</fieldset>
 							</form>
@@ -645,9 +646,8 @@
 		<a href="http://api.embed.ly" class="extlink">
 			<img src="http://api.embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
 		</a>
-		<span class="mediumText">
-			$lang.get("profile.drawer.embedly") 
-		</span>#ajaxloading(false)
+		<span class="mediumText">$lang.get("profile.drawer.embedly")</span>
+		#ajaxloading(false)
 		<div></div>
 		<div class="center mtl">
 			<a href="#" class="jqmClose button-small rounded3">$lang.get("close")</a>
@@ -690,8 +690,6 @@
 		#set($reqURL = "$requri?page")
 	#end
 
-	#if($page && $page > $pages) #set($page = $pages) #end
-
 	## NOT NEEDED? #set($queryString = $request.queryString.replaceAll("[&\?]?page=[a-zA-Z0-9]*$",""))
 	## NOT NEEDED? #if($queryString && !$queryString.isEmpty()) #set($queryString = "$queryString&amp;page") #else #set($queryString = "page") #end
 
@@ -699,10 +697,11 @@
 	#if($count > $MAX_ITEMS_PER_PAGE && $body && !$body.trim().isEmpty())
 		<div class="pages center mtl">
 		#if($mode == "pageless")
-			<a href="$reqURL=$!page" class="more-link $classes" title="More">#ajaxloading(true) $lang.get("more")</a>
+			<a href="$reqURL=$!page" class="more-link $classes" title="More">$lang.get("more")</a>
 		#elseif($mode == "pageless-noajax")
 			<a href="$reqURL=$!page" class="more-link-na $classes" title="More">$lang.get("more")</a>
 		#else
+			#if($page && $page > $pages) #set($page = $pages) #end
 			#if($pages > $maxPlinks)
 				#if($page == 1)
 					<span class="$classes2">1</span>
@@ -911,11 +910,11 @@
 				<div class="unit size1of4 lastUnit r">
 					#if($authenticated && $authUser.id != $showFriend.id)
 						#if($authUser.isFriendWith($showFriend))
-							<a class="button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove" class="delfriend">
+							<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove">
 								<span class="pictos">-</span> ${lang.get("remove")}
 							</a>
 						#else
-							<a class="button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add" class="addfriend">
+							<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add">
 								<span class="pictos">+</span> $lang.get("add")
 							</a>
 						#end
@@ -1010,18 +1009,23 @@
 ####################################
 #macro(messagebox $showmsg)
 	#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
-	<div class="whitebox clearfix">
-		<a href="${uri}?delete=$showmsg.id" title="Delete" class="red delete-message right">$lang.get("delete")</a>
-		#if($showmsg.isread) #set($msgclass = "message-read") #else
-		#set($msgclass = "message-unread")	<span>&bull;</span>	#end
-		#smallpersonbox($showmsg.author)
-		<div>
-			<span class="lightgray">#formatdate($showmsg.timestamp "")</span><br/>
-		</div>
-		<div>
-			#if($showmsg && !$showmsg.title.isEmpty()) <h5>$!showmsg.title</h5> #end
-			$!showmsg.body
-		</div>
+	#if($showmsg.isread) #set($gclass = "" ) #else #set($gclass = "lightbluebg" ) #end
+	<div class="whitebox clearfix $gclass">
+		<table>
+			<tbody>
+				<tr>
+					<td class="prm">
+						#tinypersonbox($showmsg.author)
+					</td>
+					<td class="p95"><span class="lightgray right">#formatdate($showmsg.timestamp "")</span> $!showmsg.body</td>
+					<td class="pll">
+						<a href="${uri}?delete=$showmsg.id" title="Delete" class="button-tiny rounded3 delete-message">
+							<span class="pictos red">*</span> 
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 #end
 ####################################
@@ -1371,7 +1375,7 @@
 				#if($showpost.deleteme)
 					<a href="$!actionlink/$showpost.id/undelete" class="button-tiny rounded3" title="Undelete"><span class="pictos">1</span> $lang.get("undelete")</a>
 				#elseif($isMine || $request.isUserInRole("mod"))
-					<a href="$questionlink/$showpost.id/delete" class="button-tiny rounded3 rusure" title="Delete"><span class="pictos">#</span> $lang.get("delete")</a>
+					<a href="$questionlink/$showpost.id/delete" class="button-tiny rounded3 rusure" title="Delete"><span class="pictos">*</span> $lang.get("delete")</a>
 				#end
 			#end
 
@@ -1784,7 +1788,6 @@
 				<input type="hidden" name="link" value="$!link"/>
 			#end
 			<div class="center mtm">
-				#ajaxloading(true)
 				<input id="sendreport-btn" type="submit" value="$lang.get('send')" class="button rounded3 mrm"/>
 				<input type="button" value="$lang.get('close')" class="button rounded3 jqmClose"/>
 			</div>
@@ -1801,7 +1804,7 @@
 #####################################
 #macro(ajaxloading $hide)
 	#if($hide) #set($hidden = "hide") #else #set($hidden = "") #end
-	<img src="$imageslink/indicator.gif" alt="loading" class="ajaxwait $!hidden"/>
+	<img src="$imageslink/indicator.gif" alt="loading" class="ajaxwait vertcenter $!hidden"/>
 #end
 #####################################
 #macro(profilepic $user $thumb)
@@ -1840,30 +1843,37 @@
 	#end
 
 	<div class="infostrip center pvs $hideInfoStrip $infoStripClass" title="$lang.get('close')">
-		<span class="pictos">
-			#if($infoStripClass == "successBox") 2
-			#elseif($infoStripClass == "errorBox") !
-			#elseif($infoStripClass == "infoBox") i
+		#set($hs = "hide" ) #set($he = "hide" ) #set($hi = "hide" )
+		#if($infoStripClass == "successBox")
+			#set($hs = "" ) 
+		#elseif($infoStripClass == "errorBox")
+			 #set($he = "" )
+		#elseif($infoStripClass == "infoBox")
+			#set($hi = "" )
+		#end
+		<span class="pictos ico successBoxIcon $!hs">2</span>
+		<span class="pictos ico errorBoxIcon $!he">!</span>
+		<span class="pictos ico infoBoxIcon  $!hi">i</span>
+		
+		<span class="infostrip-msg">
+			#if($hasNewBadges)
+				#if($badgelist.size() > 1)
+					$lang.get("newbadge") -
+					#foreach($badge in $badgelist)
+						#badgebox($badge 0)
+					#end
+				#else
+					$lang.get("newbadge") -
+					#foreach($badge in $badgelist)
+						#badgebox($badge 0)
+					#end
+				#end
+			#elseif($request.getParameter("code"))
+				$lang.get("msgcode.${request.getParameter('code')}")
+			#else
+				$!infoStripMsg
 			#end
 		</span>
-
-		#if($hasNewBadges)
-			#if($badgelist.size() > 1)
-				$lang.get("newbadge") -
-				#foreach($badge in $badgelist)
-					#badgebox($badge 0)
-				#end
-			#else
-				$lang.get("newbadge") -
-				#foreach($badge in $badgelist)
-					#badgebox($badge 0)
-				#end
-			#end
-		#elseif($request.getParameter("code"))
-			$lang.get("msgcode.${request.getParameter('code')}")
-		#else
-			$!infoStripMsg
-		#end
 	</div>
 #end
 #####################################
@@ -1897,7 +1907,7 @@
 #end
 #####################################
 #macro(setsortbyselection $paramMap $defkey )
-	#set($sbparam = $request.getParameter("sortby")) #set($sbclazz = "button-tiny-hover" )
+	#set($sbparam = $request.getParameter("sortby")) #set($sbclazz = "button-tiny-selected" )
 	#if($sbparam && !$sbparam.isEmpty()) #set($paramMap[$sbparam] = $sbclazz) #else #set($paramMap[$defkey] = $sbclazz) #end
 #end
 #####################################
@@ -1924,7 +1934,6 @@
 							#set($submitlabel = $lang.get("signin.title"))
 						#end						
 						<input type="submit" value="$submitlabel" class="button rounded3"/>
-						#ajaxloading(true)
 					</div>
 				</fieldset>
 			</form>
@@ -1940,6 +1949,44 @@
 			</div>
 		</div>
 	</div>
+#end
+#####################################
+#macro(adplaceholders )
+	<!-- Begin: adBrite, Generated: 2011-10-07 18:18:09  -->
+<!--		<script type="text/javascript">
+			var AdBrite_Title_Color = '0000FF';
+			var AdBrite_Text_Color = '000000';
+			var AdBrite_Background_Color = 'FFFFFF';
+			var AdBrite_Border_Color = 'CCCCCC';
+			var AdBrite_URL_Color = '008000';
+			try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
+		</script>
+		<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2026165&zs=3138305f313530&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
+		<div><a target="_top" href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026165&afsid=1" style="font-weight:bold;font-family:Arial;font-size:13px;">Your Ad Here</a></div>-->
+		<!-- End: adBrite -->
+		<!-- Begin: adBrite, Generated: 2011-10-07 18:17:09  -->
+<!--		<script type="text/javascript">
+			var AdBrite_Title_Color = '0000FF';
+			var AdBrite_Text_Color = '000000';
+			var AdBrite_Background_Color = 'FFFFFF';
+			var AdBrite_Border_Color = 'CCCCCC';
+			var AdBrite_URL_Color = '008000';
+			try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
+		</script>
+		<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2026171&zs=3136305f363030&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
+		<div><a target="_top" href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&afsid=1" style="font-weight:bold;font-family:Arial;font-size:13px;">Your Ad Here</a></div>-->
+		<!-- End: adBrite -->
+			
+<!--		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
+		<img src="http://placehold.it/220x420" width="220" height="420" alt="ad"/>-->
+
+	<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
+		<img src="http://placehold.it/180x150&amp;text=Your+ad+here" width="180" height="150" alt="ad"/>
+	</a>
+	<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
+		<img src="http://placehold.it/160x600&amp;text=Your+ad+here" width="160" height="600" alt="ad"/>
+	</a>
 #end
 ################# END MACROS ###################################################
 #if($isAjaxRequest || false)
@@ -2000,7 +2047,11 @@
 		#stop
 
 	#elseif($request.getParameter("newmessage"))
-		#newmessageform($request.getParameterValues("touser") $request.getParameterValues("touserid"))
+		#if($request.getParameter("toname") && $request.getParameter("touuid"))
+			#newmessageform($request.getParameterValues("toname") $request.getParameterValues("touuid"))
+		#else
+			#newmessageform([] [])
+		#end
 		#stop
 
 	#elseif($request.getParameter("getcommenthtmlcode"))
@@ -2067,13 +2118,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>$APPNAME - $!title </title>
-<!--		<base href="$request.scheme://$request.serverName:$request.serverPort$context/"/>-->
-<!--        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />-->
+        <title>$APPNAME - $!title</title>
         <meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
         <meta name="description" content="$DESCRIPTION" />
         <meta name="keywords" content="$KEYWORDS" />
-		<!--<link rel="stylesheet" type="text/css" href="jquery.ui.css" title="CSS for jquery ui"/>-->
 		<link href="$styleslink/style.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
         <link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
@@ -2086,11 +2134,10 @@
 			/*<![CDATA[*/
 			var authenticated = $authenticated;
 			var sessiontimeout = $SESSION_TIMEOUT_SEC;
-			var contextpath = "$!context";
 			/*]]>*/
 		</script>
-		<script type="text/javascript" src="$scriptslink/head.min.js"></script>
-	</head>
+		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
+	</head>	
     <body>
 		#if($includeFBscripts)
 			<div id="fb-root"></div>
@@ -2111,8 +2158,8 @@
 			<div id="header" class="ptm">
 				<div class="container">
 					<div class="left">
-							<a id="logo" href="$!context">$APPNAME</a> 
-							#if($IN_BETA) &nbsp;<code class="smallText">&beta;</code> #end
+						<a id="logo" href="$!prefix">$APPNAME</a> 
+						#if($IN_BETA) &nbsp;<code class="smallText">&beta;</code> #end
 					</div>
 					<div id="topnav" class="right mtl">
 					#if($authenticated)
@@ -2125,8 +2172,7 @@
 							<a href="$profilelink/$authUser.id/#stripstr($authUser.fullname)" title="My profile">$!{authUser.fullname}</a>
 						#end
 						|
-						#set($newMessageCount = $authUser.newmessages)
-						#if($newMessageCount > 0) <span class="green">$newMessageCount</span> #set($msgclass = "green") #else #set($msgclass = "gray") #end
+						#if($authUser.countNewMessages() > 0) $authUser.countNewMessages() #set($msgclass = "blue") #else #set($msgclass = "gray") #end
 						<span class="pictos $!msgclass">M</span> <a href="$messageslink" title="Messages">${lang.get('messages.title')}</a> |
 						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">${lang.get('settings.title')}</a> |
 						#if($request.isUserInRole("mod"))
@@ -2221,7 +2267,7 @@
 		
 		<script type="text/javascript">
 			head.js(
-				{jquery:		"https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"},
+				{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.6.4/jquery.min.js"},
 				{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8/jquery.validate.min.js"},
 				{modal:			"$scriptslink/jquery.modal.js"},
 				{jeditable:		"$scriptslink/jquery.jeditable.js"},

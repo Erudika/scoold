@@ -36,11 +36,11 @@
 		#if(!$isMyProfile && $authenticated)
 			<div class="mvm">
 				#if($authUser.isFriendWith($showUser))
-					<a href="$myprofilelink/remove/" class="delfriend button-tiny rounded3"><span class="pictos">-</span> ${lang.get("delfriend")}</a>
+					<a href="$myprofilelink/remove" class="delfriend button-tiny rounded3"><span class="pictos">-</span> ${lang.get("delfriend")}</a>
 				#else
 					<a href="$myprofilelink/add" class="addfriend button-tiny rounded3"><span class="pictos">+</span> ${lang.get("addfriend")}</a>
 				#end
-				<a href="$messageslink/new?touser=${daoutils.urlEncode($showUser.fullname)}&amp;touserid=${showUser.id}" class="button-tiny rounded3"><span class="pictos">M</span> $lang.get("sendmsg")</a>
+				<a href="$messageslink/new?toname=${daoutils.urlEncode($showUser.fullname)}&amp;touuid=${showUser.uuid}" class="button-tiny rounded3"><span class="pictos">M</span> $lang.get("sendmsg")</a>
 
 				#if($request.isUserInRole("admin"))
 					#if($showUser.isModerator())
@@ -62,13 +62,7 @@
 
 				<div id="contacts-list" class="mvm">
 					#if($contactlist.isEmpty())
-					<div class="mvl">
-						#if($isMyProfile)
-							${lang.get("profile.contacts.nocontacts1")}
-						#else
-							${lang.get("profile.contacts.nocontacts2")}
-						#end
-					</div>
+						<div class="mvl">${lang.get("profile.contacts.nocontacts")}</div>
 					#else
 						#paginate($pagenum.longValue() "#peoplepage($contactlist)" $itemcount.longValue() "" "pageless")
 					#end
@@ -80,7 +74,7 @@
 
 				<div id="questions-edit">
 					#if($postlist.isEmpty())
-						<h3>${lang.get("profile.posts.noquestions")}</h3>
+						<div class="mvl">${lang.get("profile.posts.noquestions")}</div>
 					#else
 						#paginate($pagenum.longValue() "#questionspage($postlist)" $itemcount.longValue() "" "pageless")
 					#end
@@ -92,7 +86,7 @@
 
 				<div id="answers-edit">
 					#if($postlist.isEmpty())
-						<h3>${lang.get("profile.posts.noanswers")}</h3>
+						<div class="mvl">${lang.get("profile.posts.noanswers")}</div>
 					#else
 						#paginate($pagenum.longValue() "#compactanswerspage($postlist)" $itemcount.longValue() "" "pageless")
 					#end
@@ -139,7 +133,7 @@
 							<table class="p100">
 								<tbody>
 									<tr>
-										<td class="r p25">${lang.get("profile.about.iama")}:</td>
+										<td class="r p25">${lang.get("signup.form.iama")}:</td>
 										<td class="pll p75">
 											<select name="type" class="nicebox">
 												#foreach($utype in ["alumnus", "student", "teacher"])
@@ -201,7 +195,6 @@
 							</table>
 							
 							<div class="center mtl">
-								#ajaxloading(true)
 								<input type="submit" value="${lang.get('save')}" class="button rounded3"/>
 								<input type="button" value="${lang.get('close')}" class="button rounded3 canceledit $hideview1"/>
 								<a href="$myprofilelink" class="$hideedit1">${lang.get('close')}</a>

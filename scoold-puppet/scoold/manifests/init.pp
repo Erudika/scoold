@@ -10,7 +10,7 @@ class scoold {
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "db1"
+	$nodename = "web1"
 	$dbseeds = "192.168.113.128"
 	$dbhosts = "192.168.113.128"
 	#--------------------------------------------------#	

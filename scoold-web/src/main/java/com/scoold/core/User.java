@@ -52,7 +52,7 @@ public class User implements ScooldObject, Comparable<User>,
 	@Stored private String favtags;
 
 	private Long oldreputation;
-	private int newmessages;
+	private Integer newmessages;
 
 	private MutableLong reportcount = new MutableLong(0L);
 
@@ -175,39 +175,21 @@ public class User implements ScooldObject, Comparable<User>,
 	}
 
 	public User(String uuid) {
-		this.uuid = uuid;
-		this.upvotes = 0L;
-		this.downvotes = 0L;
-		this.comments = 0L;
-		this.reputation = 0L;
-		this.photos = 0L;
-		this.groups = getUserType(this.type).toGroupString();
+		this();
+		this.uuid = uuid;		
 	}
 
 	public User (Long id){
-		this.fullname = "";
-		this.id = id;
-		this.upvotes = 0L;
-		this.downvotes = 0L;
-		this.comments = 0L;
-		this.reputation = 0L;
-		this.photos = 0L;
-		this.groups = getUserType(this.type).toGroupString();
+		this();
+		this.id = id;		
 	}
 
-    public User (String email, Boolean active, UserType type,
-			String fullname) {
-        
+    public User (String email, Boolean active, UserType type, String fullname) {
+        this();
 		this.fullname = fullname;
         this.email = email;
         this.active = active;
 		this.type =  type.toString();
-		this.groups = getUserType(this.type).toGroupString();
-		this.upvotes = 0L;
-		this.downvotes = 0L;
-		this.comments = 0L;
-		this.reputation = 0L;
-		this.photos = 0L;
     }
 
 	public String getFavtags() {
@@ -216,14 +198,6 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public void setFavtags(String favtags) {
 		this.favtags = favtags;
-	}
-
-	public int getNewmessages() {
-		return newmessages;
-	}
-
-	public void setNewmessages(int newmessages) {
-		this.newmessages = newmessages;
 	}
 
 	public Long getPhotos() {
@@ -822,12 +796,12 @@ public class User implements ScooldObject, Comparable<User>,
 
     public static User getUser(String identifier){
 		if(StringUtils.isBlank(identifier)) return null;
-		if(identifier.startsWith("http") || NumberUtils.isDigits(identifier)){
-			//identifier is an openid url
-			return getUserDao().readUserForIdentifier(identifier);
-		}else if(identifier.contains("@")){
-			//identifier is an email
-			return getUserDao().readUserByEmail(identifier);
+			if(identifier.startsWith("http") || NumberUtils.isDigits(identifier)){
+				//identifier is an openid url
+				return getUserDao().readUserForIdentifier(identifier);
+			}else if(identifier.contains("@")){
+				//identifier is an email
+				return getUserDao().readUserByEmail(identifier);
 		}else{
 			return null;
 		}
@@ -867,11 +841,13 @@ public class User implements ScooldObject, Comparable<User>,
 	}
 
 	public boolean hasNewMessages(){
-		return Message.getMessageDao().countNewMessages(id) != 0;
+		return Message.getMessageDao().countNewMessagesForUUID(uuid) != 0;
 	}
 
 	public int countNewMessages(){
-		return Message.getMessageDao().countNewMessages(id);
+		if(newmessages == null)
+			newmessages = Message.getMessageDao().countNewMessagesForUUID(uuid);
+		return newmessages;
 	}
 
 	public boolean equals(Object obj) {

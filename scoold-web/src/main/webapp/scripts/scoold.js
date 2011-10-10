@@ -6,7 +6,7 @@
 /*global window: false, jQuery: false, $: false, lang: false */
 $(function(){
 	var ajaxpath = window.location.pathname;
-	var msgboxSelector = "div.infostrip";
+	var infobox = $("div.infostrip");
 	var hideMsgBoxAfter = 10 * 1000; //10 sec
 
 	/**************************
@@ -268,6 +268,7 @@ $(function(){
 				url: form.action,
 				data: $(form).serialize(),
 				success: function(data, status, xhr){
+					clearLoading();
 					callbackfn(data, status, xhr, form);
 				}
 			});
@@ -336,13 +337,13 @@ $(function(){
             extraParams: params,
 			scroll: true,
 			formatItem: function(row) {
-				return row.name;
+				return row.fullname;
 			}
 		});
 		$(elem).result(function(event, data, formatted) {
-			var hidden = $(this).next("input:hidden");
+			var hidden = $(this).nextAll("input:hidden");
 			var newHidden = hidden.clone();
-			newHidden.val(data.id);
+			newHidden.val(data.uuid);
 			hidden.after(newHidden);
 		});
 
@@ -365,27 +366,33 @@ $(function(){
 		});
 
 	}
-
+	
 	function showInfoBox(msg){
 		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
 	}
 	function showErrorBox(msg){
-		showMsgBox(msg, "errorBox", hideMsgBoxAfter);
+		showMsgBox(msg, "errorBox", 0);
 	}
 	function showSuccessBox(msg){
 		showMsgBox(msg, "successBox", hideMsgBoxAfter);
 	}
 
 	function showMsgBox(msg, clazz, hideafter){
-		$(msgboxSelector).addClass(clazz).fadeIn().text(msg);
-
-		setTimeout(function(){
-			$(msgboxSelector).fadeOut();
-		}, hideafter);
+		infobox.removeClass("infoBox errorBox successBox")
+		infobox.find(".ico").hide();
+		infobox.find("."+clazz+"Icon").show();
+		infobox.addClass(clazz).children(".infostrip-msg").text(msg);
+		infobox.show();
+		
+		if(hideafter && hideafter > 0){
+			setTimeout(function(){
+				infobox.hide();
+			}, hideafter);
+		}
 	}
 
 	function hideMsgBoxes(){
-		$(msgboxSelector).hide();
+		infobox.hide();
 	}
 
 	function areYouSure(func, msg, returns){
@@ -396,6 +403,11 @@ $(function(){
 			}
 		}
 		return false;
+	}
+	
+	function clearLoading(){
+		$(".loading").removeClass("loading");
+		$("img.ajaxwait").hide();
 	}
 
 	/****************************************************
@@ -463,23 +475,22 @@ $(function(){
 
 	//close msg boxes 
 	$(".infostrip, .messagebox").live("click", function(){
-		$(this).fadeOut();
+		$(this).hide();
 		return false;
 	});
 
 	// show ajax indicator when submit is pressed
 	$("input[type=submit]").live("click", function(){
-		$("img.ajaxwait", $(this).parent()).show();
+		$(this).addClass("loading");
+//		$("img.ajaxwait", $(this).parent()).show();
 		return true;
 	});
-
-	// hide ajax indicator when ajax completes
-	$.ajaxSetup({
-		complete: function(){
-			$("img.ajaxwait").hide();
-		}
+	
+	$("body").ajaxSuccess(function() {
+		clearLoading();
+		console.log("DONE!");
 	});
-
+		
 	$(":checked").next("label").addClass("bold");
 
 	$("input[type=radio]").click(function(){
@@ -561,16 +572,27 @@ $(function(){
      *                    MESSAGES
      ****************************************************/
 
-	$("a.delete-message").click(function(){
-		$.get(this.href);
+	$(".delete-message").click(function(){
+		$.post(this.href);
 		$(this).closest("div").fadeOut();
 		return false;
 	});
+	
+	submitFormBind("form.delete-all-messages-form", function(data, status, xhr, form){
+		$("#all-messages").empty();
+		$(form).add(".reputationbox").hide();
+	});
+	
+	$("#sendmessage-close").click(function(){
+		$(this).closest("div.newmessage").slideToggle("fast");
+		return false;
+	})
 
 	submitFormBind("form.new-message-form", function(data, status, xhr, form){
-		$(form).closest("div").slideToggle("fast");
-		showInfoBox(lang["messages.sent"]);
-		f.find("input[type='hidden']").not(":first").remove();
+		var dis = $(form);
+		dis.closest("div").slideToggle("fast");
+		showSuccessBox(lang["messages.sent"]);
+		dis.find("input[type='hidden']").not(":first").remove();
 		clearForm(form);
 	});
 
@@ -584,8 +606,8 @@ $(function(){
 		dis.find("input.canceledit").click();
 	});
 	
-	$("a.addfriend").click(function(){
-		$.get(this.href);
+	$("a.addfriend").live("click", function(){
+		$.post(this.href);
 		showInfoBox(lang["profile.contacts.added"]);
 		$(this).fadeOut();
 		return false;
@@ -595,8 +617,8 @@ $(function(){
 	$("a.delfriend").live("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
-			that.closest("div.whitebox").andSelf().fadeOut();
-			$.get(that.attr("href"));
+			that.fadeOut();
+			$.post(that.attr("href"));
 		}, rusuremsg, false);
 	});
 
@@ -780,6 +802,7 @@ $(function(){
 			var trigr = $(hash.t);
 			if(typeof trigr.data("loadedForm") === "undefined"){
 				$.get(trigr.attr("href"), function(data) {
+					clearLoading();
 					div.html(data);
 					trigr.data("loadedForm", data);
 				});
@@ -812,10 +835,10 @@ $(function(){
 			if(typeof hash.w.data("loadedServices") === "undefined"){
 				var html = "";
 				$.getJSON('http://api.embed.ly/1/services?callback=?', function(data) {
+					clearLoading();
 					$.each(data, function(key, service) {
 						html += '<span class="smallText">' + service.displayname + '</span> &nbsp; ';
 					});
-					$(".ajaxwait").hide();
 					div.html(html);
 					hash.w.data("loadedServices", html);
 				});
@@ -915,8 +938,10 @@ $(function(){
 		var href = that.attr("href");
 		var cleanHref = href.substring(0, href.lastIndexOf("page=") + 5);
 //		var page = parseInt(href.substring(href.lastIndexOf("page=") + 5));
-		that.find("img:hidden").show();
+//		that.find("img:hidden").show();
+		that.addClass("loading");
 		$.get(dis.href, function(data){
+			clearLoading();
 			var trimmed = $.trim(data);
 			if(trimmed !== ""){
 				var spanBlock = data.substring(data.lastIndexOf("<span"));
@@ -1051,7 +1076,8 @@ $(function(){
 
 	$("a.remove-label").live("click", function(){
 		var box = $(this).closest(".labelbox");
-		$.get(this.href, function(){
+		$.post(this.href, function(){
+			clearLoading();
 			box.fadeOut(function(){
 				box.remove();
 			});
@@ -1065,7 +1091,7 @@ $(function(){
 			that.closest(".thumb-wrap").fadeOut(function(){
 				that.remove();
 			});
-			$.get(that.attr("href"));
+			$.post(that.attr("href"));
 		}, rusuremsg, false);
 	});
 
@@ -1208,6 +1234,7 @@ $(function(){
 				};
 			} else {
 				callbackfn = function(html){
+					clearLoading();
 					var drawer = $("div#drawer");
 					if(drawer.children().length === 0){
 						drawer.siblings().hide();
@@ -1501,30 +1528,21 @@ $(function(){
 	var openid_input = $("#openid_identifier", $("fieldset"));
     
 	if(openid_input.length > 0){
-		var cookie_name1 = 'openid_provider',
-		cookie_name2 = 'openid_url',
+		var cookie_name2 = 'openid_url',
 		openid_username = $("#openid-username"),
 		openid_selectclass = "openidbtn-selected",
 		cookie_expires = 6*30,	// 6 months.
 		openid_form = openid_input.parents("form"),
-		openid_provider = readCookie(cookie_name1),
 		openid_url = readCookie(cookie_name2);
 
 		if(openid_form.attr("id") !== "add-openid-form"){
-			if (openid_provider) {
-				highlight('a#'+openid_provider, openid_selectclass);
-			}
 			if(openid_url) {
 				openid_input.val(openid_url);
 			}
 		}
 		openid_form.submit(function(){
-			var value1 = $("a."+openid_selectclass).attr("title");
-            if(value1) {value1 = value1.toLowerCase();}
 			var value2 = openid_input.val();
-			createCookie(cookie_name1, value1, cookie_expires);
 			createCookie(cookie_name2, value2, cookie_expires);
-
 			return true;
 		});		
 		openid_username.keypress(function(e){
@@ -1573,7 +1591,6 @@ $(function(){
 				crossfadeToggle(that.parent()[0], openid_username.parent()[0]);
 			} else {
 				openid_username.parent().hide();
-				that.parent().parent().siblings(".ajaxwait").show();
 				openid_form.submit();
 			}
 			return false;
@@ -1585,8 +1602,9 @@ $(function(){
      ************************************************************************/
 
 	 var highlightfn = function(element) {$(element).addClass("error");};
-	 var unhighlightfn = function(element) {$(element).addClass("error");};
+	 var unhighlightfn = function(element) {$(element).removeClass("error");};
 	 var errorplacefn = function(error, element) {error.insertBefore(element);};
+	 var errorplacefn2 = function(error, element) {error.insertAfter(element);};
 	 var reqmsg = lang['signup.form.error.required'];
 	 var emailmsg = lang['signup.form.error.email'];
 	 var emailexistsmsg = lang['signup.form.error.emailexists'];
@@ -1758,13 +1776,10 @@ $(function(){
 	$("input#sendmessage-btn").live("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn2,
 			rules: {
 				body: {required: true},
-				to: {required: function(elem){
-						return $(elem).siblings("input[name='touserid']").length !== 0;
-					}
-				}
+				to: {required: true}
 			},
 			messages: {body: reqmsg, to: reqmsg}
 		});
