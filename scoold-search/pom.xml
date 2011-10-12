@@ -39,13 +39,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.9</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
-			<version>1.2.7</version>
+			<version>1.2.9</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.17.6</version>
+			<version>0.17.8</version>
 		</dependency>
 	</dependencies>
 	

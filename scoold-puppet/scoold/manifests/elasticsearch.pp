@@ -65,51 +65,53 @@ class scoold::elasticsearch {
 	
 	if $nodeid == 1 {		
 		package { "nginx": }
-		
-		file { "/etc/nginx/sites-enabled/default": 
-			ensure => absent,
-			before => Exec["restart-nginx"]
-		}
-		
-		file { "/etc/nginx/sites-enabled/eshead":
-			ensure => file,
-			source => "puppet:///modules/scoold/eshead.nginx.txt",
-			owner => root,
-			mode => 755,
-			require => [Package["nginx"], Exec["rename-gui"]],
-			before => Exec["restart-nginx"]
+				
+		file { 
+			"/etc/nginx/sites-enabled/default": 
+				ensure => absent,
+				before => Exec["restart-nginx"];
+			"/etc/nginx/sites-enabled/eshead":
+				ensure => file,
+				source => "puppet:///modules/scoold/eshead.nginx.txt",
+				owner => root,
+				mode => 755,
+				require => [Package["nginx"], Exec["rename-gui"]],
+				before => Exec["restart-nginx"];
+			"${elasticsearchhome}/eshead":
+				recurse => true,
+				owner => $elasticsearchusr,
+				mode => 755,
+				require => Exec["rename-gui"];
 		}
 		
 		exec { "restart-nginx":
 			command => "service nginx restart"
 		}
 	
+		
+		$jauthpath = "/usr/share/puppet/modules/scoold/files/jenkins-auth.txt"
+		$jauth = file("${jauthpath}")
+		$riverfile = "river-amazonsqs.zip"
+		
 		exec {
-			# "download-river":
-			# 	command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${elasticsearchhome}/river-amazonsqs.zip ${scoold::esriverlink}",
-			# 	before => Exec["install-river"];
+			"download-river":				
+				command => "sudo -u ${elasticsearchusr} curl -s -u ${jauth} -o ${elasticsearchhome}/${riverfile} ${scoold::esriverlink} && rm ${jauthpath}",
+				before => Exec["install-river"];
 			"install-river":
-				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${esdir}/plugins/river-amazonsqs /opt/river-amazonsqs.zip",
+				command => "sudo -u ${elasticsearchusr} unzip -qq -o -f -d ${esdir}/plugins/ ${elasticsearchhome}/${riverfile} && rm ${elasticsearchhome}/${riverfile}",
 				require => [Package["unzip"], Exec["rename-elasticsearch"]],
 				before => Exec["start-elasticsearch"];
 			"download-gui":
 				command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${elasticsearchhome}/eshead.zip ${scoold::esguilink}",
 				before => Exec["unzip-gui"];
 			"unzip-gui":
-				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome} ${elasticsearchhome}/eshead.zip",
+				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome}/ ${elasticsearchhome}/eshead.zip",
 				require => Package["unzip"],
 				before => Exec["rename-gui"];
 			"rename-gui":
 				command => "rm -rf ${elasticsearchhome}/eshead && sudo -u ${elasticsearchusr} mv -f ${elasticsearchhome}/mobz-* ${elasticsearchhome}/eshead",
 				require => Exec["download-gui"]
-		}
-		
-		file { "${elasticsearchhome}/eshead":
-			recurse => true,
-			owner => $elasticsearchusr,
-			mode => 755,
-			require => Exec["rename-gui"]
-		}
+		}		
 	}	
 			
 	file { 
@@ -141,7 +143,7 @@ class scoold::elasticsearch {
 			owner => $elasticsearchusr,
 			group => $elasticsearchusr,
 			require => Exec["rename-elasticsearch"],
-			before => Exec["start-elasticsearch"]
+			before => Exec["start-elasticsearch"];		
 	}
 	
 	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-elasticsearch.txt")

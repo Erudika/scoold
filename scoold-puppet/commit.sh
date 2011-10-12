@@ -58,15 +58,15 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			sed -e "1,/\\\$dbhosts/ s/\\\$dbhosts.*/\\\$dbhosts = \"$dbhosts\"/" -i.bak ./$MODNAME/manifests/init.pp
 		fi
 		
-		### special case for elasticsearch - download sqs river plugin first
-		if [ "$GROUP" = "elasticsearch" ] && [ -e "jenkins.txt" ]; then
-			AUTH="-u $(cat jenkins.txt)"
-			ZIP="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
-			FILENAME=$(expr $ZIP : '.*/\(.*\)$')
-			search1host=$(head -n 1 $FILE2)
-			echo "downloading elasticsearch river plugin..."
-			ssh -n ubuntu@$search1host "curl -s $AUTH $ZIP > ~/$FILENAME && sudo mv ~/$FILENAME /opt/$FILENAME && sudo chown elasticsearch:elasticsearch /opt/$FILENAME"
-		fi	
+		# ### special case for elasticsearch - download sqs river plugin first
+		# 		if [ "$GROUP" = "elasticsearch" ] && [ -e "jenkins.txt" ]; then
+		# 			AUTH="-u $(cat jenkins.txt)"
+		# 			ZIP="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
+		# 			FILENAME=$(expr $ZIP : '.*/\(.*\)$')
+		# 			search1host=$(head -n 1 $FILE2)
+		# 			echo "downloading elasticsearch river plugin..."
+		# 			ssh -n ubuntu@$search1host "curl -s $AUTH $ZIP > ~/$FILENAME && sudo mv ~/$FILENAME /opt/$FILENAME && sudo chmod 777 /opt/$FILENAME"
+		# 		fi	
 		
 		count=1	
 		while read i; do
@@ -80,12 +80,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				
 				# skip autotagging and LB regging when running on local virtual machine
 				if [ -z "$3" ]; then				
-					ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"
-		
-					# if [ "$NODETYPE" = "web" ]; then
-					# 	# register instance with LB
-					# 	$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
-					# fi
+					ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"					
 				fi
 								
 				### push updated puppet script
@@ -145,6 +140,16 @@ elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
 	db1host=$(head -n 1 "db$F2SUFFIX")
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
+elif [ "$1" = "lbadd" ]; then	
+	if [ -n "$2" ]; then
+	 	# register instance with LB
+		$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
+	fi
+elif [ "$1" = "lbremove" ]; then	
+	if [ -n "$2" ]; then
+	 	# deregister instance from LB
+		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
+	fi
 else
 	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"
 fi

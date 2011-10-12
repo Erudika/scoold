@@ -50,4 +50,4 @@ cloud:
     access_key: AKIAI5WX2PJPYQEPWECQ
     secret_key: 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
     sqs:
-      queue_url: https://queue.amazonaws.com/374874639893/ScooldIndex
+      queue_url: https://eu-west-1.queue.amazonaws.com/374874639893/ScooldIndex

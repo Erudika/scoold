@@ -10,13 +10,13 @@ class scoold {
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "web1"
-	$dbseeds = "192.168.113.128"
-	$dbhosts = "192.168.113.128"
+	$nodename = "web2"
+	$dbseeds = "10.224.78.5,10.224.30.143"
+	$dbhosts = "10.224.78.5,10.224.30.143,10.235.90.169"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
-	$casver = "0.8.6"
+	$casver = "0.8.7"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
 	$dbheapsize = "7G" # memory of m1.large
@@ -29,8 +29,9 @@ class scoold {
 		 
 	#### Elasticsearch ####
 	$esmaster = true
-	$esver = "0.17.6"
+	$esver = "0.17.8"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
+	$esriverlink = "https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 	$esguilink = "https://github.com/mobz/elasticsearch-head/zipball/master"
 	$esport = 9200
 	$esheapsize = "1200M"
