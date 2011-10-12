@@ -333,12 +333,12 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.16.4</version>
+            <version>0.17.8</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
-            <version>0.16.4</version>
+            <version>0.17.8</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
