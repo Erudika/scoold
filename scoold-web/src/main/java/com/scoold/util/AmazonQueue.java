@@ -37,7 +37,6 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	protected static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
 	protected static final String SECRETKEY = "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";
 	
-	private static final int TIMEOUT = 30; //sec
 	private static final int MAX_MESSAGES = 10;  //max in bulk
 	private String QUEUE_URL;
 	private AmazonSQSAsyncClient sqs;
@@ -104,7 +103,7 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	public String create(String name){
 		String url = null;
 		try{
-			url = sqs.createQueue(new CreateQueueRequest(name, TIMEOUT)).getQueueUrl();
+			url = sqs.createQueue(new CreateQueueRequest(name)).getQueueUrl();
 		} catch (AmazonServiceException ase) {
 			logException(ase);
 		} catch (AmazonClientException ace) {
