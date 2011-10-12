@@ -10,9 +10,9 @@ class scoold {
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "web2"
-	$dbseeds = "10.224.78.5,10.224.30.143"
-	$dbhosts = "10.224.78.5,10.224.30.143,10.235.90.169"
+	$nodename = "search1"
+	$dbseeds = "10.234.179.216,10.234.134.84"
+	$dbhosts = "10.234.179.216,10.234.134.84,10.224.30.128"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	

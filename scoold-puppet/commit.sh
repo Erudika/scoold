@@ -58,16 +58,6 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			sed -e "1,/\\\$dbhosts/ s/\\\$dbhosts.*/\\\$dbhosts = \"$dbhosts\"/" -i.bak ./$MODNAME/manifests/init.pp
 		fi
 		
-		# ### special case for elasticsearch - download sqs river plugin first
-		# 		if [ "$GROUP" = "elasticsearch" ] && [ -e "jenkins.txt" ]; then
-		# 			AUTH="-u $(cat jenkins.txt)"
-		# 			ZIP="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
-		# 			FILENAME=$(expr $ZIP : '.*/\(.*\)$')
-		# 			search1host=$(head -n 1 $FILE2)
-		# 			echo "downloading elasticsearch river plugin..."
-		# 			ssh -n ubuntu@$search1host "curl -s $AUTH $ZIP > ~/$FILENAME && sudo mv ~/$FILENAME /opt/$FILENAME && sudo chmod 777 /opt/$FILENAME"
-		# 		fi	
-		
 		count=1	
 		while read i; do
 			instid=$(echo $i | awk '{ print $1 }')
@@ -85,7 +75,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 								
 				### push updated puppet script
 				echo "copying $MODNAME.zip to $NODETYPE$count..."
-				zip -rq $MODNAME $MODNAME/
+				zip -rq $MODNAME.zip $MODNAME/
 				scp $MODNAME.zip ubuntu@$host:~/				
 				
 	 			count=$((count+1))
@@ -93,7 +83,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	 	done < $FILE1	
 		
 		### cleanup
-		rm ./$MODNAME/manifests/*.bak
+		rm ./$MODNAME/manifests/*.bak #$MODNAME.zip
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely

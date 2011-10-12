@@ -96,13 +96,14 @@ class scoold::elasticsearch {
 		exec {
 			"download-river":				
 				command => "sudo -u ${elasticsearchusr} curl -s -u ${jauth} -o ${elasticsearchhome}/${riverfile} ${scoold::esriverlink} && rm ${jauthpath}",
-				before => Exec["install-river"];
+				before => Exec["install-river"],
+				require => User[$elasticsearchusr];
 			"install-river":
 				command => "sudo -u ${elasticsearchusr} unzip -qq -o -f -d ${esdir}/plugins/ ${elasticsearchhome}/${riverfile} && rm ${elasticsearchhome}/${riverfile}",
 				require => [Package["unzip"], Exec["rename-elasticsearch"]],
 				before => Exec["start-elasticsearch"];
 			"download-gui":
-				command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${elasticsearchhome}/eshead.zip ${scoold::esguilink}",
+				command => "sudo -u ${elasticsearchusr} wget -q --no-check-certificate -O ${elasticsearchhome}/eshead.zip ${scoold::esguilink}",
 				before => Exec["unzip-gui"];
 			"unzip-gui":
 				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome}/ ${elasticsearchhome}/eshead.zip",
@@ -110,7 +111,7 @@ class scoold::elasticsearch {
 				before => Exec["rename-gui"];
 			"rename-gui":
 				command => "rm -rf ${elasticsearchhome}/eshead && sudo -u ${elasticsearchusr} mv -f ${elasticsearchhome}/mobz-* ${elasticsearchhome}/eshead",
-				require => Exec["download-gui"]
+				require => User[$elasticsearchusr];
 		}		
 	}	
 			

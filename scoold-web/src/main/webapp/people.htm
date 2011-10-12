@@ -1,5 +1,5 @@
 <div class="line">
-	<div class="unit size3of4">
+	<div class="unit size4of5">
 		<a href="$peoplelink?find=true" class="right button-small next-div-toggle rounded3" title="Find a person">${lang.get('search.people')}</a>
 		<h2>$lang.get("people.title") #showcount($itemcount.longValue())</h2>
 		#if($request.getParameter("find"))	#set($hide = "" ) #else #set($hide = "hide" ) #end
@@ -22,7 +22,7 @@
 		#paginate($pagenum.longValue() "#peoplepage($userlist)" $itemcount.longValue() "" "pageless")
 	</div>
 
-	<div class="unit size1of4 lastUnit r">
+	<div class="unit size1of5 lastUnit r">
 		#adplaceholders()
 	</div>
 </div>
