@@ -37,8 +37,7 @@ public class Message implements ScooldObject{
     }
 
     public Message() {
-        isread = false;
-        body = "";
+		this(null, null, null, null);        
     }
 
 	public Message(Set<String> touuids, Long userid, Boolean isread, String body) {
@@ -46,11 +45,13 @@ public class Message implements ScooldObject{
 		this.userid = userid;
 		this.isread = isread;
 		this.body = body;
+        this.isread = false;
 	}
 
-	public Message(Long id) {
+	public Message(Long id, String touuid) {
+		this();
 		this.id = id;
-        this.isread = false;
+		this.touuid = touuid;        
 	}
 
 	/**

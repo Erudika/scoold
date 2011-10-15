@@ -50,10 +50,13 @@ public class User implements ScooldObject, Comparable<User>,
 	@Stored private String identifier;
 	@Stored private Long photos;
 	@Stored private String favtags;
+	@Stored private String newbadges;
+	@Stored private Long authstamp;
 
 	private Long oldreputation;
 	private Integer newmessages;
-
+	private Integer newreports;
+	
 	private MutableLong reportcount = new MutableLong(0L);
 
 	public static enum UserGroup{
@@ -191,11 +194,27 @@ public class User implements ScooldObject, Comparable<User>,
         this.active = active;
 		this.type =  type.toString();
     }
+		
+	public Long getAuthstamp() {
+		return authstamp;
+	}
 
+	public void setAuthstamp(Long authstamp) {
+		this.authstamp = authstamp;
+	}
+	
+	public String getNewbadges() {
+		return newbadges;
+	}
+
+	public void setNewbadges(String newbadges) {
+		this.newbadges = newbadges;
+	}
+	
 	public String getFavtags() {
 		return favtags;
 	}
-
+	
 	public void setFavtags(String favtags) {
 		this.favtags = favtags;
 	}
@@ -840,14 +859,19 @@ public class User implements ScooldObject, Comparable<User>,
 		return StringUtils.equalsIgnoreCase(groups, UserGroup.ADMINS.toString());
 	}
 
-	public boolean hasNewMessages(){
-		return Message.getMessageDao().countNewMessagesForUUID(uuid) != 0;
-	}
-
 	public int countNewMessages(){
 		if(newmessages == null)
 			newmessages = Message.getMessageDao().countNewMessagesForUUID(uuid);
 		return newmessages;
+	}
+	
+	public int countNewReports(){
+		if(!isModerator()) return 0;
+		if(newreports == null)
+			newreports = AbstractDAOFactory.getDefaultDAOFactory().
+					getDAOUtils().getBeanCount(Report.class).intValue();
+			
+		return newreports;
 	}
 
 	public boolean equals(Object obj) {

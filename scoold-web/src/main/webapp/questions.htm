@@ -2,10 +2,10 @@
 	<div class="unit size4of5">
 		#if($request.getParameter("ask"))
 			#if($schoolsMap.isEmpty())
-				<div class="largeText">$lang.get("posts.noschools")</div>
-				<br/>
+				<h2 class="mvl pvl center">$lang.get("posts.noschools")</h2>
+				
 				<div class="center">
-					<a href="$schoolslink" title="Search schools" class="button-large rounded3">$lang.get("search.schools")</a>
+					<a href="$schoolslink" title="Search schools" class="button-small rounded3">$lang.get("search.schools")</a>
 				</div>
 			#else
 				#newquestionform($qForm false "question")
@@ -25,18 +25,18 @@
 			#set($schoolid = $!request.getParameter("schoolid"))
 			#if($request.getParameter("schoolid")) #set($filterparam = "?schoolid=$!schoolid") #else #set($filterparam = "") #end
 			
-			#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': ""} )
+			#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 			#setsortbyselection($sortarr 'newest')
 			<div class="mvm">
 				<a href="${questionslink}${filterparam}" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
 				<a href="${questionslink}/votes${filterparam}" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
 				<a href="${questionslink}/updated${filterparam}" class="button-tiny rounded3 $sortarr.activity">$lang.get("posts.updated")</a>
-
+				
 				#if(!$request.getParameter("schoolid"))
 					<a href="${questionslink}/unanswered${filterparam}" class="button-tiny rounded3 $sortarr.unanswered">$lang.get("posts.unanswered")</a>
 				#end
 				#if($authenticated)
-					<a href="#" class="button-tiny rounded3 next-div-toggle">$lang.get("posts.filtered")</a>
+					<a href="#" class="button-tiny rounded3 next-div-toggle $sortarr.filter">$lang.get("posts.filtered")</a>
 					<div class="hide mtm">
 						<span class="right">
 							<span class="bold">$lang.get("settings.tagfilter"):</span>
@@ -46,7 +46,7 @@
 								<a href="$settingslink" class="red">$lang.get("inactive")</a>
 							#end
 						</span>
-						<form id="filter-questions-form" action="$questionslink" method="get">
+						<form id="filter-questions-form" action="$questionslink/filter/" method="get">
 							<select name="schoolid" class="nicebox p50">
 								<option value="">$lang.get("posts.schoolfilter")</option>
 								#foreach($school in $authUser.schoolsMap)
@@ -66,7 +66,7 @@
 		#end
 	</div>
 
-	<div class="unit size1of5 lastUnit center">
+	<div class="unit size1of5 lastUnit r">
 		#adplaceholders()
 	</div>
 </div>

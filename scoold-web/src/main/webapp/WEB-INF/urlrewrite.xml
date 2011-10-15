@@ -547,12 +547,16 @@
         <to>/questions.htm?sortby=unanswered</to>
     </rule>
 	<rule>
+        <from>^/questions/filter(/?)$</from>
+        <to>/questions.htm?sortby=filter</to>
+    </rule>
+	<rule>
         <from>^/questions/tag/([%\w\S][^/]+)(/?)$</from>
         <to>/questions.htm?tag=$1</to>
     </rule>
 	<!--SEO URLs-->
 	<rule>
-        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^ask][^selected][^votes][^updated][^unanswered])*.*(/?)$</from>
+        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
         <to>/question.htm?id=$1</to>
     </rule>
 

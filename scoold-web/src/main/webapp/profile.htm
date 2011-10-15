@@ -36,9 +36,9 @@
 		#if(!$isMyProfile && $authenticated)
 			<div class="mvm">
 				#if($authUser.isFriendWith($showUser))
-					<a href="$myprofilelink/remove" class="delfriend button-tiny rounded3"><span class="pictos">-</span> ${lang.get("delfriend")}</a>
+					<a href="$myprofilelink/remove" class="delfriend button-tiny rounded3" title="Remove from contacts"><span class="pictos">-</span> ${lang.get("delfriend")}</a>
 				#else
-					<a href="$myprofilelink/add" class="addfriend button-tiny rounded3"><span class="pictos">+</span> ${lang.get("addfriend")}</a>
+					<a href="$myprofilelink/add" class="addfriend button-tiny rounded3" title="Add to contacts"><span class="pictos">+</span> ${lang.get("addfriend")}</a>
 				#end
 				<a href="$messageslink/new?toname=${daoutils.urlEncode($showUser.fullname)}&amp;touuid=${showUser.uuid}" class="button-tiny rounded3"><span class="pictos">M</span> $lang.get("sendmsg")</a>
 
@@ -237,7 +237,7 @@
 	<div class="unit size1of4 lastUnit">
 		<div class="mll center">
 			<div class="mbm">
-				<img src="#profilepic($showUser false)" alt="Profile picture" class="mbm"/>
+				<img src="#profilepic($showUser false)" alt="Profile picture" class="mbm rounded3"/>
 			</div>
 			<span class="largeText reputationbox p80 phl rounded5" title="$lang.get('reputation')">$!showUser.reputation</span>
 			<ul class="sidebar">

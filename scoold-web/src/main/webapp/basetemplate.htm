@@ -164,7 +164,7 @@
 			#if($showUser.lastseen)
 			<tr>
 				<td class="r p25">${lang.get("profile.about.lastseen")}:</td>
-				<td class="pll p75">#formatdate($!{showUser.lastseen} "dd MMMM yyyy @ HH:mm")</td>
+				<td class="pll p75">#formatdate($!{showUser.lastseen} "")</td>
 			</tr>
 			#end
 		</tbody>
@@ -223,19 +223,19 @@
 #####################################
 #macro(schoolaboutview )
 	<table class="p100">
-		<tbody>
-			##if($showSchool.about && !$showSchool.about.trim().isEmpty())
-			<tr>
-				<td class="p100" colspan="2">
-					$showSchool.about
-					#if(!$showSchool.about || $showSchool.about.trim().isEmpty())
-						<a class="editlink info-placeholder largeText center inlineblock p100" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
-					#else
-						$!showSchool.about
-					#end
-				</td>
-			</tr>
-			##end
+		<tbody>			
+			#if(!$showSchool.about || $showSchool.about.trim().isEmpty() && !$canEdit)
+				<tr>
+					<td class="p100" colspan="2">
+						$showSchool.about
+						#if(!$showSchool.about || $showSchool.about.trim().isEmpty())
+							<a class="editlink info-placeholder largeText center inlineblock p100 rounded5" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
+						#else
+							$!showSchool.about
+						#end
+					</td>
+				</tr>
+			#end
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>
@@ -357,7 +357,7 @@
 				<input type="hidden" name="ask" value="true"/>
 				#createformfield(${form.fields.parentuuid} "nicebox p50")
 				#createformfield(${form.fields.title} "nicebox p100")
-				#createformfield(${form.fields.body} "edit-post unload-confirm nicebox p100 nicebox hidelabel")
+				#createformfield(${form.fields.body} "edit-post nicebox p100 nicebox hidelabel")
 				<div class="edit-preview"></div>
 				#createformfield(${form.fields.tags} "tagbox nicebox p100")
 
@@ -910,11 +910,11 @@
 				<div class="unit size1of4 lastUnit r">
 					#if($authenticated && $authUser.id != $showFriend.id)
 						#if($authUser.isFriendWith($showFriend))
-							<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove">
+							<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove" title="Remove from contacts">
 								<span class="pictos">-</span> ${lang.get("remove")}
 							</a>
 						#else
-							<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add">
+							<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add" title="Add to contacts">
 								<span class="pictos">+</span> $lang.get("add")
 							</a>
 						#end
@@ -1036,7 +1036,7 @@
 #end
 ####################################
 #macro(commentbox $showcomment)
-	#set($timestamp = "#formatdate($showcomment.timestamp '')")
+	#set($timestamp = "#formatdate($showcomment.timestamp 'slim')")
 	#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 	#if($request.getParameter('javax.servlet.forward.query_string'))
 		#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
@@ -1044,7 +1044,7 @@
 	#if($thisuri.contains("?"))	#set($amp = "&amp;") #else #set($amp = "?") #end
 	
 	#if($showcomment == "")	#set($hide = "hide") #else #set($hide = "clearfix")	#end
-	<div class="commentbox plm $hide">
+	<div class="commentbox pas $hide">
 		#if($showcomment.hidden)
 			#set($hidden = "hide")
 			<span>$lang.get("comments.hidden") &nbsp;</span>
@@ -1054,21 +1054,19 @@
 		#end
 
 		<div class="left">
-			#votebox($showcomment "mrm")
+			<span class="lightgray pictos">w</span>
+			#set($commentAuthor = {'fullname': $!showcomment.author, 'id': $showcomment.userid})
+			#personlink($commentAuthor):
 			<span class="comment-text $hidden">$!showcomment.comment</span>
 		</div>
 		<div class="inlineblock right $hidden">
-			<span class="lightgray pictos">w</span>
-			#set($commentAuthor = {'fullname': $!showcomment.author, 'id': $showcomment.userid})
-			#personlink($commentAuthor)
-			<span class="comment-timestamp"><span class="pictos">t</span>$!timestamp</span>
+			#votebox($showcomment "mrm")
+			<span class="comment-timestamp"><span class="pictos" title="$timestamp.trim()">t</span></span>
 			#if($showcomment == "")
 				#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
-				<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment button-tiny rounded3"><span class="pictos">*</span></a>
+				<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
 			#elseif($authenticated && ($showcomment.userid == $authUser.id || $request.isUserInRole("mod")))
-				<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$lang.get('delete')" class="red delete-comment">
-					<span class="pictos">D</span>
-				</a>
+				<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
 			#else
 				#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
 			#end
@@ -1258,8 +1256,10 @@
 #macro(questionbox $showpost )
 	#if($showpost.isQuestion())
 		#set($actionlink = $questionlink)
+		#set($actionlink2 = $questionslink)
 	#elseif($showpost.isFeedback())
 		#set($actionlink = $feedbacklink)
+		#set($actionlink2 = $feedbacklink)
 	#end
 
 	<div class="questionbox whitebox clearfix">
@@ -1295,7 +1295,7 @@
 				#end
 				<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 				<div>$!daoutils.abbreviate($showpost.body, 160)</div>
-				<div>#tagsbox($showpost.tags $actionlink)</div>
+				<div>#tagsbox($showpost.tags $actionlink2)</div>
 			</div>
 		</div>
 	</div>
@@ -1339,8 +1339,10 @@
 
 	#if($showpost.isQuestion() || $showpost.isAnswer())
 		#set($actionlink = $questionlink)
+		#set($actionlink2 = $questionslink)
 	#elseif($showpost.isFeedback())
 		#set($actionlink = $feedbacklink)
+		#set($actionlink2 = $feedbacklink)
 	#end
 	<div class="p100 postbox $boxclass">
 		#if($showpost.isBlackboard())
@@ -1447,7 +1449,7 @@
 				#end
 				
 				#if($showpost.tags && !$showpost.tags.isEmpty())
-					<div>#tagsbox($showpost.tags $actionlink)</div>
+					<div>#tagsbox($showpost.tags $actionlink2)</div>
 				#end
 			</div>
 
@@ -1505,11 +1507,11 @@
 			</div>
 		#end
 
-		#if($showpost.commentcount > 0)
-			<div class="comments post-comments">
-				#paginate($showpost.pagenum.longValue() "#commentspagepreview($showpost.comments 2)" $showpost.commentcount "getcomments=true&amp;parentuuid=$showpost.uuid" "pageless")
-			</div>
-		#end
+		<div class="comments post-comments">
+			#if($showpost.commentcount > 0)
+					#paginate($showpost.pagenum.longValue() "#commentspagepreview($showpost.comments 2)" $showpost.commentcount "getcomments=true&amp;parentuuid=$showpost.uuid" "pageless")
+			#end
+		</div>
 	</div>
 #end
 ####################################
@@ -1543,8 +1545,10 @@
 
 	#if($showpost.isQuestion() || $showpost.isAnswer())
 		#set($actionlink = $questionlink)
+		#set($actionlink2 = $questionslink)
 	#elseif($showpost.isFeedback())
 		#set($actionlink = $feedbacklink)
+		#set($actionlink2 = $feedbacklink)
 	#end
 
 	<div class="revisionbox">
@@ -1585,9 +1589,9 @@
 				#end
 			#end
 			#if($showrev.tags)
-				<div class="newrev">#tagsbox($showrev.tags $actionlink)</div>
+				<div class="newrev">#tagsbox($showrev.tags $actionlink2)</div>
 				#if($showorigrev.tags)
-					<span class="hide oldrev">#tagsbox($showorigrev.tags $actionlink)</span>
+					<span class="hide oldrev">#tagsbox($showorigrev.tags $actionlink2)</span>
 				#end
 			#end
 		</div>
@@ -1748,17 +1752,23 @@
 #end
 #####################################
 #macro(formatdate $date $format)
-	#if($date && !$format.trim().isEmpty())
+	#if($date && !$format.trim().isEmpty() && $format != "slim")
 		$daoutils.formatDate($date, $format, $currentLocale)
 	#elseif($date)
-		#set($delta = $daoutils.timestamp() - $date )
+		#set($delta = $daoutils.timestamp() - $date)
 		#set($approxtime = $daoutils.humanTime.approximately($delta))
-		#if(!$approxtime || $approxtime.isEmpty())
-			#set($approxtime = "1s")
+		#if(!$approxtime || $approxtime.isEmpty()) #set($approxtime = "1s") #end
+		#set($lastindx = $approxtime.length() - 1 )
+		#set($suffix = $approxtime.substring($lastindx))
+		#set($approx = $approxtime.substring(0, $lastindx))		
+		#set($sufstr = "humantime.$suffix" )
+		#if($format == "slim")
+			$!daoutils.formatMessage($lang.get($!sufstr), $!approx) [$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)]
+		#else
+			<span title="$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
+				$!daoutils.formatMessage($lang.get($!sufstr), $!approx)
+			</span>
 		#end
-		<span title="$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
-			$!daoutils.formatMessage($lang.get("timeago"), $approxtime)
-		</span>
 	#end
 #end
 #####################################
@@ -1836,7 +1846,7 @@
 		#set($infoStripClass = "infoBox" )
 	#end
 
-	#if($infoStripMsg.isEmpty() && !$request.getParameter("code") && !$hasNewBadges)
+	#if($infoStripMsg.isEmpty() && !$request.getParameter("code") && $badgelist.isEmpty())
 		#set($hideInfoStrip = "hide")
 	#else
 		#set($hideInfoStrip = "")
@@ -1856,18 +1866,12 @@
 		<span class="pictos ico infoBoxIcon  $!hi">i</span>
 		
 		<span class="infostrip-msg">
-			#if($hasNewBadges)
-				#if($badgelist.size() > 1)
-					$lang.get("newbadge") -
-					#foreach($badge in $badgelist)
-						#badgebox($badge 0)
-					#end
-				#else
-					$lang.get("newbadge") -
-					#foreach($badge in $badgelist)
-						#badgebox($badge 0)
-					#end
-				#end
+			#if(!$badgelist.isEmpty())
+				#if($badgelist.size() > 1) $lang.get("newbadges") #else $lang.get("newbadge") #end
+				&nbsp;
+				#foreach($badge in $badgelist)
+					#badgebox($badge 0)
+				#end					
 			#elseif($request.getParameter("code"))
 				$lang.get("msgcode.${request.getParameter('code')}")
 			#else
@@ -2115,8 +2119,9 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
     <head>
+		#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>$APPNAME - $!title</title>
+        <title>$APPNAME $!titlestr</title>
         <meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
         <meta name="description" content="$DESCRIPTION" />
         <meta name="keywords" content="$KEYWORDS" />
@@ -2130,7 +2135,6 @@
 		#end
 		<script type="text/javascript">
 			/*<![CDATA[*/
-			var authenticated = $authenticated;
 			var sessiontimeout = $SESSION_TIMEOUT_SEC;
 			/*]]>*/
 		</script>
@@ -2170,11 +2174,22 @@
 							<a href="$profilelink/$authUser.id/#stripstr($authUser.fullname)" title="My profile">$!{authUser.fullname}</a>
 						#end
 						|
-						#if($authUser.countNewMessages() > 0) $authUser.countNewMessages() #set($msgclass = "blue") #else #set($msgclass = "gray") #end
+						#if($authUser.countNewMessages() > 0) 
+							<span class="blue">$authUser.countNewMessages()</span> 
+							#set($msgclass = "blue") 
+						#else 
+							#set($msgclass = "gray") 
+						#end
 						<span class="pictos $!msgclass">M</span> <a href="$messageslink" title="Messages">${lang.get('messages.title')}</a> |
 						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">${lang.get('settings.title')}</a> |
 						#if($request.isUserInRole("mod"))
-							<span class="pictos gray">^</span> <a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
+							#if($authUser.countNewReports() > 0) 
+								<span class="blue">$authUser.countNewReports()</span> 
+								#set($repclass = "blue") 
+							#else 
+								#set($repclass = "gray") 
+							#end
+							<span class="pictos $!repclass">^</span> <a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
 						#end
 						#if($isFBconnected) #set($logoutid = "fb-logout" ) #else #set($logoutid = "logoutbtn" )	#end
 						<span class="pictos">K</span> <a id="$!logoutid" href="$signoutlink" title="Sign out"><strong>${lang.get('signout')}</strong></a>

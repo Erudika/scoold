@@ -78,6 +78,8 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
     }
 
     public void delete (Message persistentMessage) {
+		if(persistentMessage.getTouuid() == null || persistentMessage.getId() == null)
+			return;
 		// delete the message object
 		Mutator<String> mut = CasDAOUtils.createMutator();
 		cdu.delete(persistentMessage, CasDAOFactory.MESSAGES, mut);

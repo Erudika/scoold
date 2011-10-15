@@ -104,6 +104,7 @@ public class School implements Votable<Long>, CanHasMedia,
 	}
 
 	public School(Long id){
+		this();
         this.id = id;
     }
 
@@ -499,8 +500,7 @@ public class School implements Votable<Long>, CanHasMedia,
 
 			public STATE onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
 				int code = responseStatus.getStatusCode();
-				Logger.getLogger(School.class.getName()).log(Level.WARNING,
-						"GET: {0} => {1}", new Object[]{website, responseStatus.getStatusCode()});
+				
 				if (code == HttpServletResponse.SC_OK ||
 					code == HttpServletResponse.SC_NOT_MODIFIED ||
 					code == HttpServletResponse.SC_MOVED_TEMPORARILY ||

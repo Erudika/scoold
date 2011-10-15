@@ -52,7 +52,7 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 		}catch (Exception e){
 			logger.log(Level.SEVERE, "could not create showdown converter", e);
 		}
-		sc.setAttribute("showdownConverter", showdownConverter);
+		sc.setAttribute(SHOWDOWN_CONV, showdownConverter);
 		 
 		// elasticsearch init   
 		if(ELASTICSEARCH_ON){
@@ -78,7 +78,6 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
 			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
 			nb.settings().put("cloud.aws.sqs.queue_url", AmazonQueue.SQS_URL.
-					concat(AmazonQueue.SQS_ACCOUNT_ID).concat("/").
 					concat(QueueFactory.SCOOLD_INDEX));
 			
 			

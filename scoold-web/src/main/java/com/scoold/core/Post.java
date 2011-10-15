@@ -82,32 +82,22 @@ public class Post implements ScooldObject, Votable<Long>,
 	}
 
 	public Post(){
-		votes = 0;
-		answercount = 0L;
-		viewcount = 0L;
-		commentcount = 0L;
-		pagenum = 0L;
-		deleteme = false;
+		this.votes = 0;
+		this.answercount = 0L;
+		this.viewcount = 0L;
+		this.commentcount = 0L;
+		this.pagenum = 0L;
+		this.deleteme = false;
 	}
 
 	public Post(Long id) {
+		this();
 		this.id = id;
-		votes = 0;
-		answercount = 0L;
-		viewcount = 0L;
-		commentcount = 0L;
-		pagenum = 0L;
-		deleteme = false;
 	}
 
 	public Post(String uuid) {
-		this.uuid = uuid;
-		votes = 0;
-		answercount = 0L;
-		viewcount = 0L;
-		commentcount = 0L;
-		pagenum = 0L;
-		deleteme = false;
+		this();
+		this.uuid = uuid;		
 	}
 
 	public Long getPagenum() {

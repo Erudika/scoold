@@ -32,8 +32,7 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	
 	// This queue contains only messages in JSON format!
 	
-	public static final String SQS_URL = "https://queue.amazonaws.com/";
-	protected static final String SQS_ACCOUNT_ID = "374874639893";
+	public static final String SQS_URL = "https://eu-west-1.queue.amazonaws.com/374874639893/";
 	protected static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
 	protected static final String SECRETKEY = "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";
 	
@@ -45,7 +44,7 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	
 	public AmazonQueue(String name){
 		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
-		QUEUE_URL = SQS_URL.concat(SQS_ACCOUNT_ID).concat("/").concat(name);
+		QUEUE_URL = SQS_URL.concat(name);
 		mapper = new ObjectMapper();
 	}
 

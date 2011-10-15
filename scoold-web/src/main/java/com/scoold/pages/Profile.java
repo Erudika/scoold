@@ -157,7 +157,7 @@ public class Profile extends BasePage{
 			
 			if(param("fullname")){
 				String newFname = getParamValue("fullname");
-				if(newFname != null && newFname.length() >= 3){
+				if(newFname != null && newFname.length() >= 4){
 					showUser.setFullname(newFname);
 					showUser.update();
 				}

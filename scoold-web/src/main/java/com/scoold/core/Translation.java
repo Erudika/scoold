@@ -34,10 +34,11 @@ public class Translation implements Votable<Long>, ScooldObject{
 	}
 
 	public Translation() {
-		this.votes = 0;
+		this(null, null, null);
 	}
 
 	public Translation(Long id) {
+		this();
 		this.id = id;
 	}
 

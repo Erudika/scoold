@@ -26,7 +26,7 @@
 		#end		
 	</div>
 	<div class="right">
-		#if(!$messageslist.isEmpty())
+		#if($messageslist.size() > 1)
 			<form action="$messageslink/delete/all" method="post" class="delete-all-messages-form">
 				<fieldset>
 					<input type="submit" value="$lang.get('deleteall')" class="button rounded3 red rusure"/>
@@ -36,4 +36,7 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="$context/contactsmap.js?id=$!authUser.id"></script>
+#set($list = $authUser.userDao.readAllContactsForUser($authUser.id, null, null))
+<script type="text/javascript">
+	var contacts = [#foreach($contact in $list){uuid: "$contact.uuid", fullname: "$contact.fullname"}#if($velocityCount < $list.size()),#end #end];
+</script>

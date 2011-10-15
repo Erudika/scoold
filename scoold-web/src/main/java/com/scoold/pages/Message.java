@@ -34,12 +34,6 @@ public class Message extends BasePage{
 			if(isMine || inRole("admin")){
 				canEdit = true;
 			}
-
-		}
-
-		if(param("delete") && canEdit){
-			Long mid = NumberUtils.toLong(getParamValue("delete"), 0);
-			new com.scoold.core.Message(mid).delete();
 		}
 	}
 }

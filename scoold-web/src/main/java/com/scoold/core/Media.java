@@ -47,29 +47,19 @@ public class Media implements Votable<Long>, Commentable,
     }
 
 	public Media(String uuid) {
+		this();
 		this.uuid = uuid;
-		commentcount = 0L;
 	}
     
 	public Media() {
-        type = MediaType.UNKNOWN.toString();
-//        url = "";
-//		link = "";
-//        title = "";
-//        description = "";
-//        tags = "";
-		commentcount = 0L;
+		this.type = MediaType.UNKNOWN.toString();
+		this.commentcount = 0L;
+		this.votes = 0;
     }
 
 	public Media(Long id) {
+		this();
 		this.id = id;
-		commentcount = 0L;
-	}
-
-	public Media(Long id, Long userid) {
-		this.id = id;
-		this.userid = userid;
-		commentcount = 0L;
 	}
 
 	/**

@@ -21,6 +21,29 @@
 		</form>
 	</div>
 
-#elseif($request.getParameter("filldb"))
-	<h1 class="center">Done.</h1>
+#else
+	<h1><span class="pictos">e</span> Admin actions</h1>
+	<hr />
+	<div class="center">
+		<form action="$adminlink?createschools=true" method="post">
+			<fieldset>
+				<input type="submit" value="Create schools" class="button rounded3"/>
+			</fieldset>
+		</form>
+		<br />
+		<br />
+		<form action="$adminlink" method="post">
+			<fieldset>
+				<input type="radio" name="reindex" value="school" /> Schools
+				<input type="radio" name="reindex" value="classunit" /> Classes
+				<input type="radio" name="reindex" value="question" /> Questions
+				<input type="radio" name="reindex" value="answer" /> Answers
+				<input type="radio" name="reindex" value="post" /> Posts
+				<input type="radio" name="reindex" value="feedback" /> Feedback
+				<input type="radio" name="reindex" value="user" /> People
+				<input type="radio" name="reindex" value="tag" /> Tags <br /> <br />
+				<input type="submit" value="Reindex" class="button rounded3 red"/>
+			</fieldset>
+		</form>
+	</div>
 #end

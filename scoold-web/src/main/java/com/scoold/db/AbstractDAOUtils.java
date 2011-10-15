@@ -494,7 +494,8 @@ public abstract class AbstractDAOUtils {
 		String date = clear ? "Thu, 01-Jan-1970 00:00:01" : DateFormatUtils.format(exp, 
 				"EEE, dd-MMM-yyyy HH:mm:ss", TimeZone.getTimeZone("GMT"));
 		String httponly = httpOnly ? "; HttpOnly" : "";
-		res.setHeader("Set-Cookie", name+"="+value+"; path=/; expires="+date+" GMT"+httponly);
+		String cookie = name+"="+value+"; Path=/; Expires="+date+" GMT"+httponly;
+		res.setHeader("Set-Cookie", cookie);
 	}
 
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);

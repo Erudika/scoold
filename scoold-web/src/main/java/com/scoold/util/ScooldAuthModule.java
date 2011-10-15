@@ -29,7 +29,6 @@ import org.apache.click.Context;
 import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.openid4java.OpenIDException;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
 import org.openid4java.discovery.DiscoveryInformation;
@@ -199,15 +198,15 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				
 				Long uid = NumberUtils.toLong(tuparts[0], 0L);
 				String savedKey = tuparts[1];
+				User u = null;
 				
-				if(uid.longValue() == 0L) return null;
-				User u = User.getUser(uid);
+				if(uid.longValue() != 0L){
+					u = User.getUser(uid);
+				}
 				
-				if(u != null){
+				if(u != null && u.getAuthstamp() != null){
 					String[] groups = StringUtils.split(u.getGroups(), ',');
-					Long authstamp = u.getLastseen();
-					if(authstamp == null) return null;
-
+					Long authstamp = u.getAuthstamp();
 					long now = System.currentTimeMillis() ;
 					long expires = authstamp + (BasePage.SESSION_TIMEOUT_SEC * 1000);
 
@@ -217,9 +216,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 					if (now <= expires && authKey.equals(savedKey)) {
 						return new SimplePrincipal(uid.toString(), groups);
 					}
-				}else{
-					AbstractDAOUtils.clearAuthCookie(req, res);
 				}
+				AbstractDAOUtils.clearAuthCookie(req, res);
 			}
 			return null;
 		}
@@ -336,12 +334,13 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			if (authUser.getActive()) {
 				//update lastseen
 				authUser.setLastseen(System.currentTimeMillis());
+				authUser.setAuthstamp(authUser.getLastseen());
 				authUser.setIdentifier(identifier);
 				authUser.update();
 			
 				setPrincipal(new SimplePrincipal(authUser.getId().toString(), 
 						StringUtils.split(authUser.getGroups(), ',')), 
-						authUser.getLastseen(), req, res);
+						authUser.getAuthstamp(), req, res);
 				
 				if(hasRequest(manager, request)){
 					//FINALLY: success. send back to request
@@ -422,7 +421,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 						authReq.getOPEndpoint());
 			}
 
-		} catch (OpenIDException e) {
+		} catch (Exception e) {
 			logger.severe(e.toString());
 		}
 		
@@ -551,7 +550,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 
 				return verified; // success
 			}
-		} catch (OpenIDException e) {
+		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Openid response verification failed: {0}", e);
 		}
 
@@ -678,7 +677,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		Locale loc = (l == null) ? request.getHttpServletRequest().getLocale() : new Locale(l);
 		Map<String, String> lang = Language.readLanguage(loc);
 		try {
-			request.getHttpServletResponse().sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, 
+			request.getHttpServletResponse().sendError(HttpServletResponse.SC_UNAUTHORIZED, 
 					lang.get("sessiontimeout"));
 		} catch (Exception ex) { }
 		return Status.None;

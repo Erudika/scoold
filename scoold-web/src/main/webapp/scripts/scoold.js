@@ -1601,7 +1601,7 @@ $(function(){
      *                           JS VALIDATION
      ************************************************************************/
 
-	 var highlightfn = function(element) {$(element).addClass("error");};
+	 var highlightfn = function(element) {$(element).addClass("error");clearLoading();};
 	 var unhighlightfn = function(element) {$(element).removeClass("error");};
 	 var errorplacefn = function(error, element) {error.insertBefore(element);};
 	 var errorplacefn2 = function(error, element) {error.insertAfter(element);};
@@ -1621,7 +1621,7 @@ $(function(){
 			onsubmit: true,
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-				fullname: "required",
+				fullname: {required: true, minlength: 4},
                 email: {required: true, email: true}
 			},
 			messages: {
@@ -1728,7 +1728,7 @@ $(function(){
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
 				title: {required: true, minlength: 10, maxlength: 255},
-				body: {required: true, minlength: 15, maxlength: 20000},
+				body: {required: true, minlength: 10, maxlength: 20000},
 				tags: {required: true, tags: true},
 				parentuuid: "required"
 			},

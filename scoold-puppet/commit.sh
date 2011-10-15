@@ -7,6 +7,7 @@ MODNAME="scoold"
 NODETYPE="unknown"
 F1SUFFIX="-instances.txt"
 F2SUFFIX="-hostnames.txt"
+COPYSCHOOLS=false
 
 function init () {
 	GROUP=$1
@@ -22,6 +23,7 @@ function getType () {
 		NODETYPE="db"
 	elif [ "$1" = "glassfish" ]; then
 		NODETYPE="web"
+		COPYSCHOOLS=true
 	elif [ "$1" = "elasticsearch" ]; then
 		NODETYPE="search"
 	fi
@@ -77,13 +79,16 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				echo "copying $MODNAME.zip to $NODETYPE$count..."
 				zip -rq $MODNAME.zip $MODNAME/
 				scp $MODNAME.zip ubuntu@$host:~/				
+				if [ $COPYSCHOOLS = true ]; then
+					scp -C schools.txt ubuntu@$host:~/
+				fi
 				
 	 			count=$((count+1))
 	 		fi		
 	 	done < $FILE1	
 		
 		### cleanup
-		rm ./$MODNAME/manifests/*.bak #$MODNAME.zip
+		rm ./$MODNAME/manifests/*.bak $MODNAME.zip
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely

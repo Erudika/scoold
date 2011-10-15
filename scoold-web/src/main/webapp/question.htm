@@ -21,7 +21,7 @@
 
 #else
 <div class="line">
-	<div class="unit size3of4">
+	<div class="unit size4of5">
 		<div id="question-head">
 			#if($showPost.isAnswer())
 				#set($actionlink = $questionlink)
@@ -120,34 +120,22 @@
 			</div>
 		#end
 	</div>
-	<div class="unit size1of4 lastUnit">
-		<div class="mll centr">
-			<div class="qstatsbox-large mbl pas rounded5 center">
-				<div class="hugeText" title="$lang.get('votes')">$!votes</div>
-				<div>$lang.get('votes')</div>
-				<div class="line">
-					<div class="unit size1of2" title="$lang.get('answers.title')">
-						<span class="mediumText">$!showPost.answercount</span> <br />
-						$lang.get('answers.title')
-					</div>
-					<div class="unit size1of2 lastUnit" title="$lang.get('posts.views')">
-						<span class="mediumText">$!showPost.viewcount</span> <br />
-						$lang.get('posts.views')
-					</div>
+	<div class="unit size1of5 lastUnit r">
+		<div class="thickborder p85 mbl pas rounded5 center right">
+			<div class="hugeText" title="$lang.get('votes')">$!votes</div>
+			<div>$lang.get('votes')</div>
+			<div class="line">
+				<div class="unit size1of2" title="$lang.get('answers.title')">
+					<span class="mediumText">$!showPost.answercount</span> <br />
+					$lang.get('answers.title')
+				</div>
+				<div class="unit size1of2 lastUnit" title="$lang.get('posts.views')">
+					<span class="mediumText">$!showPost.viewcount</span> <br />
+					$lang.get('posts.views')
 				</div>
 			</div>
-			<div class="center">
-				#if(!$showPost.isClosed())
-					<div class="mvm">
-						#if($showPost.isQuestion())
-							<a href="#answer" rel="nofollow" class="button-small rounded3" title="Answer this question"><span class="pictos">p</span> $lang.get("posts.writeanswer")</a>
-						#elseif($showPost.isFeedback())
-							<a href="#reply" rel="nofollow" class="button-small rounded3" title="Reply"><span class="pictos">p</span> $lang.get("feedback.reply")</a>
-						#end
-					</div>
-				#end
-			</div>
 		</div>
+		#adplaceholders()
 		#if($similarquestions && !$similarquestions.isEmpty())
 			<div class="similar">
 				<h2>$lang.get("posts.similar")</h2>

@@ -72,6 +72,7 @@ public class Signup extends BasePage{
 
         TextField fullname = new TextField("fullname", true);
         fullname.setValue(name);
+		fullname.setMinLength(4);
         fullname.setLabel(lang.get("signup.form.myname"));
 
         TextField email = new TextField("email", true);

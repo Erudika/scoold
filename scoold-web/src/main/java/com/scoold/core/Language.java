@@ -227,6 +227,12 @@ public final class Language {
 			.put("map", "Map")
 			.put("points", "points")
 			
+			.put("humantime.s", "{0} seconds ago")
+			.put("humantime.m", "{0} minutes ago")
+			.put("humantime.h", "{0} hours ago")
+			.put("humantime.d", "{0} days ago")
+			.put("humantime.y", "{0} years ago")			
+			
 			.put("school."+School.SchoolType.PRIMARY.toString(), "Primary school")
 			.put("school."+School.SchoolType.ELEMENTARY.toString(), "Elementary school")
 			.put("school."+School.SchoolType.SECONDARY.toString(), "Secondary school")

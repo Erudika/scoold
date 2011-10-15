@@ -34,19 +34,17 @@ public class Comment implements ScooldObject, Votable<Long>,
     }
 
 	public Comment() {
+		this(null, null, null);
 	}
 
 	public Comment(String uuid) {
+		this();
 		this.uuid = uuid;
 	}
 	
 	public Comment(Long id) {
+		this();
 		this.id = id;
-	}
-
-	public Comment(Long id, Long userid) {
-		this.id = id;
-		this.userid = userid;
 	}
 
 	public Comment(Long userid, String comment, String parentuuid) {
@@ -54,6 +52,7 @@ public class Comment implements ScooldObject, Votable<Long>,
 		this.comment = comment;
 		this.parentuuid = parentuuid;
 		this.timestamp = new Long(System.currentTimeMillis()); //now
+		this.votes = 0;
 	}
 
 	/**

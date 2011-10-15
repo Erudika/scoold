@@ -724,7 +724,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	protected boolean vote(Long userid, Votable<Long> votable, boolean isUpvote,
 			long voteLockAfter, int voteLockedForSec) {
 		//no voting on your own stuff!
-		if(userid == null || userid.equals(votable.getUserid()) ||
+		if(votable == null || userid == null || userid.equals(votable.getUserid()) ||
 				StringUtils.isBlank(votable.getUuid())) return false;
 
 		boolean voteSuccess = false;
@@ -738,7 +738,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 		// if vote exists check timestamp for recent correction,
 		// otherwise insert new vote
-		Integer votes = votable.getVotes();
+		Integer votes = (votable.getVotes() == null) ? 0 : votable.getVotes();
 		Integer newVotes = votes;
 
 		if (vote != null){

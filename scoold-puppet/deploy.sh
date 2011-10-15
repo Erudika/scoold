@@ -17,7 +17,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	FILENAME=$(expr $WAR : '.*/\(.*\)$')
 	WARPATH="/home/ubuntu/$FILENAME"
 	
-	if [ -n "$3" ] && [ "$3" !=  "true"] && [ "$3" !=  "false" ]; then
+	if [ -n "$3" ] && [ "$3" !=  "true" ] && [ "$3" !=  "false" ]; then
 		CONTEXT="--contextroot $3"
 	fi
 	
@@ -26,9 +26,9 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	fi	
 		
 	if [ -f $FILE1 ] && [ -f $FILE2 ]; then		
-		echo "-------------------  ROLLING UPGRADE SCRIPT -----------------------"
+		echo "-------------------  BEGIN ROLLING UPGRADE  -----------------------"
 		echo ""
-		echo "Deploying '$APPNAME' --> /$3 [enabled=$ENABLED]"
+		echo "Deploying '$APPNAME' [enabled=$ENABLED]"
 				
 		if [ `expr $1 : '^http.*$'` != 0 ]; then
 			AUTH=""
@@ -65,7 +65,8 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				read -p "'ok' to confirm > " response < /dev/tty
 
 				if [ "$response" = "ok" ]; then
-				    echo "OK!"
+				    echo "OK! Undeploying old application..."
+					ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
 				else
 					### STEP 4.1 REVERT back to old application
 					echo "NOT OK! Reverting back to old application..."
@@ -82,5 +83,3 @@ else
 	echo "USAGE:  $0 war appname [context | enabled]"
 fi
 
-# git archive command
-# git --git-dir=../.git archive --format=zip --prefix=scoold/ -o ~/Desktop/scoold.zip HEAD

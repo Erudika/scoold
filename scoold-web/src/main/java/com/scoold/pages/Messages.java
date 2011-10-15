@@ -54,7 +54,7 @@ public class Messages extends BasePage{
 			}
 		}else if(param("delete")){
 			Long mid = NumberUtils.toLong(getParamValue("delete"), 0);
-			new Message(mid).delete();
+			new Message(mid, authUser.getUuid()).delete();
 		}else if(param("deleteall")){
 			Message.deleteAll(authUser.getUuid());
 			setRedirect(messageslink);

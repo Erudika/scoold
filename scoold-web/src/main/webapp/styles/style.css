@@ -179,9 +179,9 @@ img.noborder { border: 0px; outline: 0px;}
 img.align-center, img[align="center"] { margin: 0 auto;}
 img.align-right, img[align="right"] { float: right; margin-left: 20px;}
 img.align-left, img[align="left"] { float: left; margin-right: 20px; }
-img#school-pic{ max-width: 200px; min-width: 50px;}
-img#school-pic{ width: expression(this.width > 200 ? 200: true); }
-img#school-pic{ width: expression(this.width < 50 ? 50: true); }
+.school-icon img{ max-width: 200px; min-width: 50px;}
+.school-icon img{ width: expression(this.width > 200 ? 200: true); }
+.school-icon img{ width: expression(this.width < 50 ? 50: true); }
 
 /* -- LINKS -- */
 a {	color: #5397CC;  text-decoration: none;}
@@ -370,7 +370,7 @@ p{ margin-bottom: 1em;}
 a.pictos:hover{text-decoration: none; color: #55AADD;}
 a.accept-answer, a.approve-translation{ color: #777777;}
 a.accept-answer:hover, a.approve-translation:hover{ color: #88AF12;}
-a.info-placeholder{ border: 4px #CCCCCC dashed; color: #CCCCCC; padding: 85px 0; text-decoration: none; }
+a.info-placeholder{ border: 4px #CCCCCC dashed; color: #CCCCCC; padding: 50px 0; text-decoration: none; }
 pre, code, .chat-msg{
 	font-family: Monaco, Consolas,Menlo,"Lucida Console","Liberation Mono",
 		"DejaVu Sans Mono","Bitstream Vera Sans Mono","Courier New",monospace,serif;
@@ -426,7 +426,6 @@ pre, code, .chat-msg{
 .strikeout{ text-decoration: line-through; }
 .userbox{ width: 200px;}
 .qstatsbox{ width: 70px; border: 2px solid #CCCCCC;}
-.qstatsbox-large{ width: 210px; border: 2px solid #CCCCCC;}
 .messagebox{ cursor: pointer; }
 .editbox{ background-color: #EEEEEE; }
 .inline-list { list-style: none; }
@@ -453,13 +452,13 @@ pre, code, .chat-msg{
 .r{ text-align: right;}
 .l{ text-align: left;}
 .red{ color: #BB1111 !important;}
-.redbg{ background: #BB1111 !important; }
+.redbg{ background: #BB1111 !important;}
 .green{ color: #88AF12 !important; }
 .blue{ color: #33AAFF !important; }
 .white{ color: white !important; }
 .gray{ color: #777777 !important; }
 .vertcenter{ vertical-align: middle; }
-.lightbluebg{	background-color: #EFFCFF;}
+.lightbluebg{	background-color: #E5F5FC;}
 .lightgraybg{	background-color: #F5F5F5;}
 .lightgray{ color: #AAAAAA !important;}
 .nobackground {	background: none;}
@@ -468,6 +467,7 @@ pre, code, .chat-msg{
 .clear{ clear: both; }
 .uppercase{ text-transform: uppercase; }
 .lowercase{ text-transform: lowercase; }
+.thickborder{ border: 2px solid #CCCCCC;}
 .darkborder{ border: 1px solid #777777; }
 .lightborder{ border: 1px solid #CCCCCC; }
 .rightborder{ border-right: 2px dashed #CCCCCC; }
@@ -558,7 +558,7 @@ pre, code, .chat-msg{
 
 #logo, #oids-google, #oids-yahoo, #oids-aol, #oids-blogger, #oids-claimid, #oids-flickr, 
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
-#oids-wordpress, #school-pic, .school-pic-thumb, .openid-icon-small,
+#oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon{
 	background-image: url(../images/sprites.png);
 	background-repeat: no-repeat;

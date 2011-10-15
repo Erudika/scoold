@@ -144,12 +144,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-        <description>serves a javascript file with all contacts for user</description>
-        <servlet-name>ContactsServlet</servlet-name>
-        <servlet-class>com.scoold.util.ContactsServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet>
         <servlet-name>FeedServlet</servlet-name>
         <servlet-class>com.scoold.util.FeedServlet</servlet-class>
     </servlet>
@@ -160,10 +154,6 @@
     <servlet-mapping>
         <servlet-name>LangServlet</servlet-name>
         <url-pattern>/langmap.js</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ContactsServlet</servlet-name>
-        <url-pattern>/contactsmap.js</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FeedServlet</servlet-name>

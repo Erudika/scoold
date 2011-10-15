@@ -26,6 +26,7 @@ import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.util.ScooldAppListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.apache.click.control.Submit;
 import org.apache.click.control.TextArea;
 import org.apache.click.control.TextField;
 import org.apache.click.util.ClickUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.commons.lang.StringUtils;
@@ -62,6 +64,7 @@ public class BasePage extends Page {
 	public static final String APPNAME = "scoold"; //app name
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
+	public static final boolean IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int MAX_IMG_SIZE_PX = 730;
 	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
@@ -101,7 +104,6 @@ public class BasePage extends Page {
 	public String aboutlink = prefix + "about";
 	public String privacylink = prefix + "privacy";
 	public String termslink = prefix + "terms";
-	public String faqlink = prefix + "faq";
 	public String settingslink = prefix + "settings";
 	public String translatelink = prefix + "translate";
 	public String changepasslink = prefix + "changepass";
@@ -125,7 +127,6 @@ public class BasePage extends Page {
 	public String infoStripMsg = "";
 	public boolean authenticated; //for use in velocity
 	public boolean canComment;
-	public boolean hasNewBadges;
 	public HttpServletRequest req;
 	public boolean isFBconnected;
 	public boolean includeFBscripts;
@@ -161,9 +162,12 @@ public class BasePage extends Page {
 		showdownJS = getContext().getServletContext().
 				getAttribute(ScooldAppListener.SHOWDOWN_CONV);
 		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
-		hasNewBadges = getStateParam("new-badges") != null;
 		commentslist = new ArrayList<Comment> ();
 		badgelist = new ArrayList<String> (); 
+		if(authenticated && !StringUtils.isBlank(authUser.getNewbadges())){
+			badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
+			authUser.setNewbadges("none");
+		}
 		addModel("isAjaxRequest", isAjaxRequest());
 	}
 
@@ -175,7 +179,12 @@ public class BasePage extends Page {
 			String uid = req.getRemoteUser();
 			if (authUser == null) {
 				authUser = User.getUser(NumberUtils.toLong(uid, 0));
-//				if(authUser != null) authUser.setIdentifier(uid);
+				long delta = System.currentTimeMillis() - authUser.getLastseen();
+				if(delta > 2 * 60 * 60 * 1000){
+					// last seen 2 hours ago -> update
+					authUser.setLastseen(System.currentTimeMillis());
+					authUser.update();
+				}
 			}
 			isFBconnected = authUser != null && !authUser.getIdentifier().startsWith("http");
 		} else {
@@ -201,7 +210,6 @@ public class BasePage extends Page {
 
 		if(setCookie){
 			//create a cookie
-//			String cookiePath = getContext().getServletContext().getContextPath();
 			int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
 			ClickUtils.setCookie(req, getContext().getResponse(), "locale", 
 					loc.getLanguage(), maxAge, "/");
@@ -750,9 +758,7 @@ public class BasePage extends Page {
 		if(schoolsMap == null) schoolsMap = authUser.getSchoolsMap();
 
 		Form qForm = getPostForm(PostType.QUESTION, "qForm", "ask-question-form");
-
 		Field puuid = null;
-
 		Long pid = 0L;
 
 		if (param("schoolid")) {
@@ -839,7 +845,7 @@ public class BasePage extends Page {
 
 		TextArea body = new TextArea("body", true);
 		body.setLabel(lang.get("messages.text"));
-		body.setMinLength(15);
+		body.setMinLength(10);
 		body.setMaxLength(AbstractDAOFactory.MAX_TEXT_LENGTH);
 		body.setRows(4);
 		body.setCols(5);
@@ -1171,47 +1177,37 @@ public class BasePage extends Page {
 		if(u == null) u = authUser;
 		if(!authenticated || !condition) return false;
 		
-		String newbadges = getStateParam("new-badges");
-		if(StringUtils.isBlank(newbadges)) newbadges = b.toString();
-
-		if(u.equals(authUser)){
-			if (!newbadges.equals(b.toString())) {
-				newbadges = newbadges.concat(",").concat(b.toString());
-			}
-			setStateParam("new-badges", newbadges);
-		}else{
-			u.addBadge(b);
+		String newb = StringUtils.isBlank(u.getNewbadges()) ? "" : u.getNewbadges().concat(",");
+		newb = newb.concat(b.toString());
+		
+		u.addBadge(b);		
+		u.setNewbadges(newb);
+		
+		if(!authUser.getUuid().equals(u.getUuid())){
 			u.update();
 		}
+		
 		return true;
 	}
 
 	public final boolean removeBadge(Badge b, User u, boolean condition){
 		if(u == null) u = authUser;
 		if(!authenticated || !condition) return false;
-
+		
+		if(StringUtils.contains(u.getNewbadges(), b.toString())){
+			String newb = u.getNewbadges();
+			newb = newb.replaceAll(b.toString().concat(","), "");
+			newb = newb.replaceAll(b.toString(), "");
+			newb = newb.replaceFirst(",$", "");
+			u.setNewbadges(newb);
+		}
+		
 		u.removeBadge(b);
 		u.update();
 		
 		return true;
 	}
-
-	private Badge[] hasNewBadges(){
-		String[] badges = StringUtils.split(getStateParam("new-badges"), ',');
-		if(badges == null) return new Badge[0];
-		Badge[] newbadges = new Badge[badges.length];
-		
-		try {
-			for (int i = 0; i < badges.length; i++) {
-				String bs = badges[i];
-				Badge b = Badge.valueOf(bs.toUpperCase());
-				newbadges[i] = b;
-			}			
-		} catch (Exception e) {}
-
-		return newbadges;
-	}
-
+	
 	public String getTemplate() {
 		return "basetemplate.htm";
 	}
@@ -1230,15 +1226,12 @@ public class BasePage extends Page {
 			addBadgeOnce(Badge.GEEK, authUser.getReputation() >= User.GEEK_IFHAS);
 			addBadgeOnce(Badge.SENIOR, now >= oneYear);
 			addBadgeOnce(Badge.PHOTOLOVER, authUser.getPhotos() >= User.PHOTOLOVER_IFHAS);
-
-			Badge[] newbadges = hasNewBadges();
-			if(newbadges.length > 0 && !getContext().hasSessionAttribute("more-badges")){
-				authUser.addBadges(newbadges);
-				authUser.update();
-				setStateParam("more-badges", "true");
-			}else{
-				removeStateParam("more-badges");
-				removeStateParam("new-badges");
+			
+			if(!StringUtils.isBlank(authUser.getNewbadges())){
+				if(authUser.getNewbadges().equals("none")){
+					authUser.setNewbadges(null);
+				}
+				authUser.update();			
 			}
 		}
 	}

@@ -179,12 +179,12 @@
 	<div class="unit size1of4 lastUnit">
 		<div id="school-nav" class="center mll">
 			#if($showSchool.iconurl && !$showSchool.iconurl.isEmpty())
-				#set($spclass = "noclass" )
+				#set($spclass = "school-icon" )
 			#else
 				#set($spclass = "school-pic inlineblock" )
 			#end
 			
-			<div id="school-pic" class="mbm $spclass">
+			<div class="mbm $spclass">
 				#if($showSchool.iconurl && !$showSchool.iconurl.isEmpty())
 					<img src="$showSchool.iconurl" alt="School picture"/>
 				#else
