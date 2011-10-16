@@ -222,20 +222,16 @@
 #end
 #####################################
 #macro(schoolaboutview )
+	#if((!$showSchool.about || $showSchool.about.trim().isEmpty()) && $canEdit)
+		$showSchool.about
+		#if(!$showSchool.about || $showSchool.about.trim().isEmpty())
+			<a class="editlink info-placeholder largeText center inlineblock p100 rounded5 mbl" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
+		#else
+			$!showSchool.about
+		#end
+	#end
 	<table class="p100">
 		<tbody>			
-			#if(!$showSchool.about || $showSchool.about.trim().isEmpty() && !$canEdit)
-				<tr>
-					<td class="p100" colspan="2">
-						$showSchool.about
-						#if(!$showSchool.about || $showSchool.about.trim().isEmpty())
-							<a class="editlink info-placeholder largeText center inlineblock p100 rounded5" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
-						#else
-							$!showSchool.about
-						#end
-					</td>
-				</tr>
-			#end
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>

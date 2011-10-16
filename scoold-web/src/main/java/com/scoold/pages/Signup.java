@@ -9,9 +9,11 @@ import com.scoold.core.User;
 import com.scoold.core.User.Badge;
 import com.scoold.core.User.UserGroup;
 import com.scoold.core.User.UserType;
+import com.scoold.db.AbstractDAOUtils;
 import com.scoold.util.ScooldAuthModule;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
+import org.apache.click.control.HiddenField;
 import org.apache.click.control.Radio;
 import org.apache.click.control.RadioGroup;
 import org.apache.click.control.Submit;
@@ -65,14 +67,15 @@ public class Signup extends BasePage{
 		}
 		signupForm = new Form();
 
-		TextField identifier = new TextField("identifier", true);
-		identifier.setValue(identString);
-		identifier.setLabel(lang.get("openid.title"));
-		identifier.setReadonly(true);
+		HiddenField identifier = new HiddenField("identifier", identString);
+		identifier.setRequired(true);
+//		identifier.setLabel(lang.get("openid.title"));
+//		identifier.setReadonly(true);
 
         TextField fullname = new TextField("fullname", true);
         fullname.setValue(name);
 		fullname.setMinLength(4);
+		fullname.setMaxLength(255);
         fullname.setLabel(lang.get("signup.form.myname"));
 
         TextField email = new TextField("email", true);
@@ -109,14 +112,23 @@ public class Signup extends BasePage{
         Field additional = signupForm.getField("additional");
 		String mail = email.getValue();
 
+		
 		if(mail == null || mail.contains("<") || mail.contains(">") || mail.contains("\\") ||
 				!(mail.indexOf(".") > 2) && (mail.indexOf("@") > 0)){
 			email.setError(lang.get("signup.form.error.email"));
 		}		
+		
         if(User.exists(StringUtils.trim(identString))){
             //Email is claimed => user exists!
-            email.setError(lang.get("signup.form.error.emailexists"));
-        }        
+			AbstractDAOUtils.clearAuthCookie(req, getContext().getResponse());
+			setRedirect(signinlink);
+			return false;
+        }
+		
+		if(User.exists(StringUtils.trim(mail))){
+			email.setError(lang.get("signup.form.error.emailexists"));
+		}
+		
 		if (!StringUtils.isBlank(additional.getValue())){
 			signupForm.setError("You are not supposed to do that!");
 		}

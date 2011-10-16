@@ -52,7 +52,8 @@ public class LangServlet extends HttpServlet {
 		"close", "save", "clickedit",
 		"profile.drawer.embedly.notanimage",
 		"profile.drawer.embedly.photosaved",
-		"epicfail"
+		"epicfail",
+		"invalidyear"
 	};
 
 

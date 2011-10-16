@@ -37,10 +37,6 @@
         <from>^/signup(/?)$</from>
         <to>/signup.htm</to>
     </rule>
-    <rule>
-        <from>^/checkemail(/?)$</from>
-        <to>/?checkemail=true</to>
-    </rule>
 	<rule>
         <from>^/about(/?)$</from>
         <to>/about.htm</to>

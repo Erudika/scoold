@@ -491,12 +491,12 @@ $(function(){
 		console.log("DONE!");
 	});
 		
-	$(":checked").next("label").addClass("bold");
-
-	$("input[type=radio]").click(function(){
-		$(this).next("label").addClass("bold")
-		.siblings().removeClass("bold");
-	});
+//	$(":checked").next("label").addClass("bold");
+//
+//	$("input[type=radio]").click(function(){
+//		$(this).next("label").addClass("bold")
+//		.siblings().removeClass("bold");
+//	});
 
 	var color1 = $("body").css("color");
 	var color2 = "#AAAAAA";
@@ -1608,7 +1608,7 @@ $(function(){
 	 var reqmsg = lang['signup.form.error.required'];
 	 var emailmsg = lang['signup.form.error.email'];
 	 var emailexistsmsg = lang['signup.form.error.emailexists'];
-	 var digitsmsg = lang['signup.form.error.year'];
+	 var digitsmsg = lang['invalidyear'];
 	 var maxlenmsg = lang.maxlength;
 	 var minlenmsg = lang.minlength;
 	 var tagsmsg = lang["tags.toomany"];
@@ -1625,7 +1625,11 @@ $(function(){
                 email: {required: true, email: true}
 			},
 			messages: {
-				fullname: reqmsg,
+				fullname: {
+					required: reqmsg,
+					maxlength: jQuery.format(maxlenmsg),
+					minlength: jQuery.format(minlenmsg)
+				},
 				email: {
 					required: reqmsg, email: emailmsg
 				}

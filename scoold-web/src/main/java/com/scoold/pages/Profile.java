@@ -17,7 +17,7 @@ import com.scoold.db.AbstractDAOUtils;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.geonames.ToponymSearchResult;
+import com.scoold.util.GeoNames.ToponymSearchResult;
 /**
  *
  * @author alexb

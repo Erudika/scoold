@@ -182,12 +182,7 @@
             <groupId>name.aikesommer</groupId>
             <artifactId>AuthenticRoast-Impl</artifactId>
             <version>0.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geonames</groupId>
-            <artifactId>geonames</artifactId>
-            <version>1.0</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>

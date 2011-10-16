@@ -226,6 +226,7 @@ public final class Language {
 			.put("loading", "Loading...")
 			.put("map", "Map")
 			.put("points", "points")
+			.put("invalidyear", "Invalid year")
 			
 			.put("humantime.s", "{0} seconds ago")
 			.put("humantime.m", "{0} minutes ago")
@@ -253,11 +254,10 @@ public final class Language {
 			.put("signup.form.myname", "My name is")
 			.put("signup.form.iama", "I am a")
 			.put("signup.form.email", "Email")
-			.put("signup.form.termsofuse", "Clicking the button above implies that you agree to our 'Terms of use'.")
+			.put("signup.form.termsofuse", "By clicking the button above you agree to our 'Terms of use'.")
 			.put("signup.form.error.required", "This field is required and cannot be empty.")
 			.put("signup.form.error.email", "This email appears to be invalid.")
 			.put("signup.form.error.emailexists", "This email is already registered.")
-			.put("signup.form.error.year", "Invalid year")
 
 			.put("signin.form.title", "Please sign in")
 			.put("signin.facebook", "Sign in with Facebook")
@@ -302,7 +302,7 @@ public final class Language {
 			.put("search.classes", "Find a class")
 			.put("search.questions", "Find a question")
 
-			.put("school.create", "Create new school")
+			.put("school.create", "Create a new school")
 			.put("school.created", "Created")
 			.put("school.someinfo", "Write some information about this school.")
 			.put("school.nocontact", "This school is unreachable. You can fix that.")
@@ -310,7 +310,7 @@ public final class Language {
 			.put("school.nopeople", "This school is empty.")
 
 			.put("classes.noschools", "You don't seem to have any schools linked to your account. You need to join at least one school before you can start creating classes.")
-			.put("class.create", "Create new class")
+			.put("class.create", "Create a new class")
 			.put("class.classroom", "Classroom")
 			.put("class.classmates", "Classmates")
 			.put("class.blankboard", "This blackboard is blank.")

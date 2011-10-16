@@ -327,7 +327,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			//clean up a bit
 			AbstractDAOUtils.removeStateParam(NEW_USER_NAME, req, res, BasePage.USE_SESSIONS);
 			AbstractDAOUtils.removeStateParam(NEW_USER_EMAIL, req, res, BasePage.USE_SESSIONS);
-//			AbstractDAOUtils.removeStateParam(IDENTIFIER, rreq, res, BasePage.USE_SESSIONS);
+			AbstractDAOUtils.removeStateParam(IDENTIFIER, req, res, BasePage.USE_SESSIONS);
 //			AbstractDAOUtils.removeStateParam(DISCOVERY_INFO, req, res, BasePage.USE_SESSIONS);
 
 			//is this account active??? 

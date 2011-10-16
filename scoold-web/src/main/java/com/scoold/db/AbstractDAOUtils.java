@@ -45,12 +45,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.geonames.FeatureClass;
-import org.geonames.Style;
-import org.geonames.Toponym;
-import org.geonames.ToponymSearchCriteria;
-import org.geonames.ToponymSearchResult;
-import org.geonames.WebService;
+import com.scoold.util.GeoNames;
+import com.scoold.util.GeoNames.FeatureClass;
+import com.scoold.util.GeoNames.Style;
+import com.scoold.util.GeoNames.Toponym;
+import com.scoold.util.GeoNames.ToponymSearchCriteria;
+import com.scoold.util.GeoNames.ToponymSearchResult;
 
 /**
  *
@@ -169,10 +169,11 @@ public abstract class AbstractDAOUtils {
 		ToponymSearchCriteria searchLocation = new ToponymSearchCriteria();
 		searchLocation.setMaxRows(7);
 		searchLocation.setFeatureClass(FeatureClass.P);
-		searchLocation.setStyle(style);
+		searchLocation.setStyle(style);		
 		searchLocation.setQ(q);
 		try {
-			locationSearchResult = WebService.search(searchLocation);
+			GeoNames.setUserName("erudika");
+			locationSearchResult = GeoNames.search(searchLocation);
 			if(locationSearchResult != null) 
 				list.addAll(locationSearchResult.getToponyms());
 		} catch (Exception ex) {
@@ -485,6 +486,9 @@ public abstract class AbstractDAOUtils {
 		Cookie c = ClickUtils.getCookie(req, ScooldAuthModule.AUTH_USER);
 		if(c != null){
 			setRawCookie(ScooldAuthModule.AUTH_USER, "", req, res, true, true);
+			removeStateParam(ScooldAuthModule.IDENTIFIER, req, res, BasePage.USE_SESSIONS);
+			removeStateParam(ScooldAuthModule.NEW_USER_NAME, req, res, BasePage.USE_SESSIONS);
+			removeStateParam(ScooldAuthModule.NEW_USER_EMAIL, req, res, BasePage.USE_SESSIONS);
 		}
 	}
 	

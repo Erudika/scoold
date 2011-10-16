@@ -11,8 +11,8 @@ class scoold {
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
 	$nodename = "search1"
-	$dbseeds = "10.234.179.216,10.234.134.84"
-	$dbhosts = "10.234.179.216,10.234.134.84,10.224.30.128"
+	$dbseeds = "10.224.67.115,10.224.57.192"
+	$dbhosts = "10.224.67.115,10.224.57.192,10.228.174.69"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
@@ -32,7 +32,6 @@ class scoold {
 	$esver = "0.17.8"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$esriverlink = "https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
-	$esguilink = "https://github.com/mobz/elasticsearch-head/zipball/master"
 	$esport = 9200
 	$esheapsize = "1200M"
 	$esheapdev = "200M"

@@ -289,6 +289,9 @@ input.button, input[type=submit], input[type=reset], input[type=button]{
 	color:black;
 	padding: 3px 10px;
 }
+input[type=radio]{
+	margin-right: 6px;
+}
 input.small-button{
 	font-size:11px;
 	background-color: #CCCCCC;
@@ -606,9 +609,13 @@ pre, code, .chat-msg{
 	cursor: default;
 	display: block;
 	font: menu;
-	line-height: 25px;
+	font-size: inherit;
 }
-.ac_loading {background: white url(../images/indicator.gif) right center no-repeat;}
+.ac_loading {
+	background: white url(../images/indicator.gif); 
+	background-position: 99% 50%; 
+	background-repeat: no-repeat;
+}
 .ac_odd {background-color: #EEEEEE;}
 .ac_over {	background-color: #444444;	color: white;}
 
