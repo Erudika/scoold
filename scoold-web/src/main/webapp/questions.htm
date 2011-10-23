@@ -31,10 +31,8 @@
 				<a href="${questionslink}${filterparam}" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
 				<a href="${questionslink}/votes${filterparam}" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
 				<a href="${questionslink}/updated${filterparam}" class="button-tiny rounded3 $sortarr.activity">$lang.get("posts.updated")</a>
+				<a href="${questionslink}/unanswered${filterparam}" class="button-tiny rounded3 $sortarr.unanswered">$lang.get("posts.unanswered")</a>
 				
-				#if(!$request.getParameter("schoolid"))
-					<a href="${questionslink}/unanswered${filterparam}" class="button-tiny rounded3 $sortarr.unanswered">$lang.get("posts.unanswered")</a>
-				#end
 				#if($authenticated)
 					<a href="#" class="button-tiny rounded3 next-div-toggle $sortarr.filter">$lang.get("posts.filtered")</a>
 					<div class="hide mtm">

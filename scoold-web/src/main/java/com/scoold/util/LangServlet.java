@@ -45,7 +45,6 @@ public class LangServlet extends HttpServlet {
 		"posts.unloadconfirm",
 		"signup.form.error.required",
 		"signup.form.error.email",
-		"signup.form.error.emailexists",
 		"maxlength",
 		"minlength",
 		"tags.toomany",

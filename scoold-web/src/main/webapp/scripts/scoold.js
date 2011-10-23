@@ -1,35 +1,45 @@
 /*
  * scoold.js - unobtrusive javascript for scoold.com
  * author: Alexander Bogdanovski
- * (cc) 2008-2009
+ * (cc) 2008-2011
  */
 /*global window: false, jQuery: false, $: false, lang: false */
-$(function(){
-	var ajaxpath = window.location.pathname;
-	var infobox = $("div.infostrip");
-	var hideMsgBoxAfter = 10 * 1000; //10 sec
+$(function () {
+	"use strict";
+	var ajaxpath = window.location.pathname,
+		infobox = $("div.infostrip"),
+		hideMsgBoxAfter = 10 * 1000, //10 sec
+		mapCanvas = $("div#map-canvas"),
+		rusuremsg = lang.areyousure,
+		highlightfn = function(element) {$(element).addClass("error");clearLoading();},
+		unhighlightfn = function(element) {$(element).removeClass("error");},
+		errorplacefn = function(error, element) {error.insertBefore(element);},
+		errorplacefn2 = function(error, element) {error.insertAfter(element);},
+		reqmsg = lang['signup.form.error.required'],
+		emailmsg = lang['signup.form.error.email'],
+		digitsmsg = lang.invalidyear,
+		maxlenmsg = lang.maxlength,
+		minlenmsg = lang.minlength,
+		tagsmsg = lang["tags.toomany"];
 
 	/**************************
 	 *  Google Maps API v3.3
 	 **************************/
-	var mapCanvas = $("div#map-canvas");
 	if(mapCanvas.length){
-		var geocoder = new google.maps.Geocoder();
-		var myLatlng = new google.maps.LatLng(42.6975, 23.3241);
-		var marker = new google.maps.Marker({});
-		var locbox = $("input.locationbox");
-		var locality = "";
-		var sublocality = "";
-		var country = "";
-		
-		var map = new google.maps.Map(mapCanvas.get(0), {
+		var geocoder = new google.maps.Geocoder(),
+			myLatlng = new google.maps.LatLng(42.6975, 23.3241),
+			marker = new google.maps.Marker({}),
+			locbox = $("input.locationbox"),
+			locality = "",
+			sublocality = "",
+			country = "",	
+			map = new google.maps.Map(mapCanvas.get(0), {
 			zoom: 3,
 			center: myLatlng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
 			mapTypeControl: false,
 			streetViewControl: false
 		});
-		
 		google.maps.event.addListener(map, 'click', function(event) {
 			map.setCenter(event.latLng);
 			marker.setPosition(event.latLng);
@@ -40,9 +50,10 @@ $(function(){
 					locbox.val("");
 				} else {
 					if(results.length && results.length > 0){
-						for (var h = 0; h < results.length; h++) {
-							var arr = results[h].address_components;
-							for (var i = 0; i < arr.length; i++) {
+						var h = 0;
+						for (h = 0; h < results.length; h++) {
+							var arr = results[h].address_components, i;
+							for (i = 0; i < arr.length; i++) {
 								var type = $.trim(arr[i].types[0]);
 								var name = arr[i].long_name;
 								if(type === "country"){
@@ -80,7 +91,7 @@ $(function(){
      ****************************************************/
 
 	var fbauthurl = "fbconnect_auth";
-	var attachfburl = "attach_facebook"
+	var attachfburl = "attach_facebook";
 
 	if($("#fb-login").length){
 		FB.Event.subscribe('auth.login', function(response) {
@@ -176,7 +187,12 @@ $(function(){
 	/****************************************************
      *					MISC FUNCTIONS
      ****************************************************/
-		
+
+	function clearLoading(){
+		$(".loading").removeClass("loading");
+		$("img.ajaxwait").hide();
+	}
+
 	function clearForm(form) {
 		$(":input", form).each(function() {
 			var type = this.type;
@@ -190,6 +206,17 @@ $(function(){
 				this.selectedIndex = 0;
 			}
 		});
+	}
+	
+	function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';'), i;
+		for(i = 0; i < ca.length; i++) {
+			var c = ca[i];
+            while (c.charAt(0) === ' '){c = c.substring(1,c.length);}
+            if (c.indexOf(nameEQ) === 0){return c.substring(nameEQ.length,c.length);}
+		}
+		return null;
 	}
 	
 	function createCookie(name, value) {
@@ -206,21 +233,7 @@ $(function(){
 		} 
 	}
 
-	function readCookie(name) {
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for(var i=0;i < ca.length;i++) {
-			var c = ca[i];
-            while (c.charAt(0) === ' '){c = c.substring(1,c.length);}
-            if (c.indexOf(nameEQ) === 0){return c.substring(nameEQ.length,c.length);}
-			}
-		return null;
-	}
-	
-	function eraseCookie(name) {
-		createCookie(name, "", 0);
-	}
-	
+		
 	function highlight(elem, hlclass){
 		$('.'+hlclass).removeClass(hlclass);
 		$(elem).addClass(hlclass);
@@ -247,6 +260,20 @@ $(function(){
 		});
 	}
 
+	function submitForm(form, method, callbackfn){
+		if (method === "GET" || method === "POST") {
+			$.ajax({
+				type: method,
+				url: form.action,
+				data: $(form).serialize(),
+				success: function(data, status, xhr){
+					clearLoading();
+					callbackfn(data, status, xhr, form);
+				}
+			});
+		}
+	}
+	
 	function submitFormBind(formname, callbackfn){
 		return $(formname).live("submit", function(){
 			submitForm(this, "POST", callbackfn);
@@ -261,25 +288,12 @@ $(function(){
 		});
 	}
 
-	function submitForm(form, method, callbackfn){
-		if (method === "GET" || method === "POST") {
-			$.ajax({
-				type: method,
-				url: form.action,
-				data: $(form).serialize(),
-				success: function(data, status, xhr){
-					clearLoading();
-					callbackfn(data, status, xhr, form);
-				}
-			});
-		}
-	}
-
 	function autocompleteBind(elem, params){
-		$(elem).attr("autocomplete", "off");
-		$(elem).autocomplete(ajaxpath, {
+		var that = $(elem);
+		that.attr("autocomplete", "off");
+		that.autocomplete(ajaxpath, {
 			minChars: 3,
-			width: this.width,
+			width: that.width(),
 			matchContains: true,
 			highlight: false,
             extraParams: params,	
@@ -287,11 +301,11 @@ $(function(){
 				return row[0] + "<br/>" + row[1];
 			}
 		});
-		$(elem).result(function(event, data, formatted) {
+		that.result(function(event, data, formatted) {
 			$(this).next("input:hidden").val(data[2]);
 		});
 		//clear hidden fields on keypress except enter
-		$(elem).keypress(function(e){
+		that.keypress(function(e){
 			if(e.which !== 13 || e.keyCode !== 13){
 				$(this).next("input:hidden").val("");
 			}
@@ -299,10 +313,11 @@ $(function(){
 	}
 
 	function autocompleteTagBind(elem, params){
-		$(elem).attr("autocomplete", "off");
-		$(elem).autocomplete(ajaxpath, {
+		var that = $(elem);
+		that.attr("autocomplete", "off");
+		that.autocomplete(ajaxpath, {
 			minChars: 2,
-			width: this.width,
+			width: that.width(),
 			matchContains: true,
 			multiple: true,
 			highlight: false,
@@ -324,61 +339,50 @@ $(function(){
 	}
 
 	function autocompleteContactBind(elem, params){
-		if(typeof contacts === "undefined"){
-			contacts = [];
-		}
-		$(elem).attr("autocomplete", "off");
-		$(elem).autocomplete(contacts, {
-			minChars: 3,
-			width: this.width,
-			matchContains: true,
-			multiple: true,
-			highlight: false,
-            extraParams: params,
-			scroll: true,
-			formatItem: function(row) {
-				return row.fullname;
-			}
-		});
-		$(elem).result(function(event, data, formatted) {
-			var hidden = $(this).nextAll("input:hidden");
-			var newHidden = hidden.clone();
-			newHidden.val(data.uuid);
-			hidden.after(newHidden);
-		});
+		if(typeof contacts !== "undefined"){
+			var that = $(elem);
+			that.attr("autocomplete", "off");
+			that.autocomplete(contacts, {
+				minChars: 3,
+				width: that.width(),
+				matchContains: true,
+				multiple: true,
+				highlight: false,
+				extraParams: params,
+				scroll: true,
+				formatItem: function(row) {
+					return row.fullname;
+				}
+			});
+			that.result(function(event, data, formatted) {
+				var hidden = $(this).nextAll("input:hidden");
+				var newHidden = hidden.clone();
+				newHidden.val(data.uuid);
+				hidden.after(newHidden);
+			});
 
-		var clear = function(elem){
-			$(elem).nextAll("input:hidden").not(":first").remove();
-			$(elem).val("");
-		};
+			var clear = function(e){
+				$(e).nextAll("input:hidden").not(":first").remove();
+				$(e).val("");
+			};
 
-		//clear hidden fields on keypress except enter
-		$(elem).keyup(function(e){
-			if(e.keyCode === 8 || e.keyCode === 46){
+			//clear hidden fields on keypress except enter
+			that.keyup(function(e){
+				if(e.keyCode === 8 || e.keyCode === 46){
+					clear(this);
+				}
+			}).bind('copy', function(e) {
 				clear(this);
-			}
-		}).bind('copy', function(e) {
-			clear(this);
-		}).bind('paste', function(e) {
-			clear(this);
-		}).bind('cut', function(e) {
-			clear(this);
-		});
-
+			}).bind('paste', function(e) {
+				clear(this);
+			}).bind('cut', function(e) {
+				clear(this);
+			});
+		}
 	}
 	
-	function showInfoBox(msg){
-		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
-	}
-	function showErrorBox(msg){
-		showMsgBox(msg, "errorBox", 0);
-	}
-	function showSuccessBox(msg){
-		showMsgBox(msg, "successBox", hideMsgBoxAfter);
-	}
-
 	function showMsgBox(msg, clazz, hideafter){
-		infobox.removeClass("infoBox errorBox successBox")
+		infobox.removeClass("infoBox errorBox successBox");
 		infobox.find(".ico").hide();
 		infobox.find("."+clazz+"Icon").show();
 		infobox.addClass(clazz).children(".infostrip-msg").text(msg);
@@ -389,6 +393,16 @@ $(function(){
 				infobox.hide();
 			}, hideafter);
 		}
+	}
+	
+	function showInfoBox(msg){
+		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
+	}
+	function showErrorBox(msg){
+		showMsgBox(msg, "errorBox", 0);
+	}
+	function showSuccessBox(msg){
+		showMsgBox(msg, "successBox", hideMsgBoxAfter);
 	}
 
 	function hideMsgBoxes(){
@@ -403,12 +417,7 @@ $(function(){
 			}
 		}
 		return false;
-	}
-	
-	function clearLoading(){
-		$(".loading").removeClass("loading");
-		$("img.ajaxwait").hide();
-	}
+	}	
 
 	/****************************************************
      *					GLOBAL BINDINGS
@@ -475,6 +484,15 @@ $(function(){
 
 	//close msg boxes 
 	$(".infostrip, .messagebox").live("click", function(){
+		var that = $(this);
+		that.hide();
+		if(that.hasClass("introBox")){
+			createCookie("intro", "0");
+		}
+		return false;
+	});
+	
+	$(".introstrip").live("click", function(){
 		$(this).hide();
 		return false;
 	});
@@ -490,14 +508,7 @@ $(function(){
 		clearLoading();
 		console.log("DONE!");
 	});
-		
-//	$(":checked").next("label").addClass("bold");
-//
-//	$("input[type=radio]").click(function(){
-//		$(this).next("label").addClass("bold")
-//		.siblings().removeClass("bold");
-//	});
-
+	
 	var color1 = $("body").css("color");
 	var color2 = "#AAAAAA";
 	$(".hintbox").focus(function(){
@@ -586,7 +597,7 @@ $(function(){
 	$("#sendmessage-close").click(function(){
 		$(this).closest("div.newmessage").slideToggle("fast");
 		return false;
-	})
+	});
 
 	submitFormBind("form.new-message-form", function(data, status, xhr, form){
 		var dis = $(form);
@@ -608,7 +619,7 @@ $(function(){
 	
 	$("a.addfriend").live("click", function(){
 		$.post(this.href);
-		showInfoBox(lang["profile.contacts.added"]);
+		showSuccessBox(lang["profile.contacts.added"]);
 		$(this).fadeOut();
 		return false;
 	});
@@ -689,6 +700,16 @@ $(function(){
      *               CONTACT DETAILS
      ****************************************************/
 
+	function getDetailValue(typeRaw){
+		var val = "";
+		if (typeRaw === "WEBSITE") {
+			val = "http://";
+		}else if(typeRaw === "FACEBOOK"){
+			val = "http://facebook.com/";
+		} 
+		return val;
+	}
+	
 	$(".add-contact").click(function(){
 		var txtbox = $(this).prev("input");
 		var val = txtbox.val();
@@ -715,16 +736,6 @@ $(function(){
 	$("select#detail-type").change(function(){
 		$("#detail-value").val(getDetailValue(this.value));
 	}).change();
-
-	function getDetailValue(typeRaw){
-		var val = "";
-		if (typeRaw === "WEBSITE") {
-			val = "http://";
-		}else if(typeRaw === "FACEBOOK"){
-			val = "http://facebook.com/";
-		} 
-		return val;
-	}
     
 	/****************************************************
      *                    AUTOCOMPLETE
@@ -888,7 +899,18 @@ $(function(){
 	/****************************************************
      *                    TRANSLATIONS
      ****************************************************/
-
+	
+	var validateTrans = function(form){
+		form.validate({
+			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+			rules: {value: {required: true, notEmpty: true}},
+			messages: {
+				value: {required: reqmsg, notEmpty: reqmsg}
+			}
+		});
+		return form.valid();
+	};
+	
 	$("a.delete-translation").live("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
@@ -931,7 +953,14 @@ $(function(){
 	/****************************************************
      *                       PAGES
      ****************************************************/
-
+	function simpleHash(s) {
+		var i, hash = 0;
+		for (i = 0; i < s.length; i++) {
+			hash += (s[i].charCodeAt() * (i+1));
+		}
+		return Math.abs(hash);
+	}
+	
 	function loadMoreHandler(dis, callback){
 		var that = $(dis);
 		var contentDiv = that.parent("div").prev("div");
@@ -974,14 +1003,6 @@ $(function(){
 	$("a.more-link").live('click', function(){
 		return loadMoreHandler(this, $.noop());
 	});
-
-	function simpleHash(s) {
-		var i, hash = 0;
-		for (i = 0; i < s.length; i++) {
-			hash += (s[i].charCodeAt() * (i+1));
-		}
-		return Math.abs(hash);
-	}
 
 	/****************************************************
      *                       PHOTOS
@@ -1050,7 +1071,7 @@ $(function(){
 		};
 		// Initialize history plugin.
 		// The callback is called at once by present location.hash.
-		$.history.init(pl) //, window.location.pathname);
+		$.history.init(pl); //, window.location.pathname);
 
 		// set onlick event for buttons using the jQuery 1.3 live method
 		$("a[rel='history']").live('click', function() {
@@ -1105,19 +1126,21 @@ $(function(){
 			var labelsCont = $("#labels");
 			var box;
 			if(label.indexOf(",") >= 0){
-				var labels = label.split(",");
-				for (var i=0; i<labels.length; i++) {
+				var labels = label.split(","), i;
+				
+				for (i = 0; i<labels.length; i++) {
 					var ltrim = labels[i];
 					ltrim = $.trim(ltrim);
-					if(ltrim === ""){continue;}
-					box = labelsCont.children(":hidden:first").clone();
-					box.find("a:first").attr("href", function(){
-						return this.href + ltrim;
-					}).text(ltrim);
-					box.find("a:last").attr("href", function(){
-						return this.href + ltrim + "&uuid=" + uuid;
-					});
-					labelsCont.append(box.show());
+					if(ltrim !== ""){
+						box = labelsCont.children(":hidden:first").clone();
+						box.find("a:first").attr("href", function(){
+							return this.href + ltrim;
+						}).text(ltrim);
+						box.find("a:last").attr("href", function(){
+							return this.href + ltrim + "&uuid=" + uuid;
+						});
+						labelsCont.append(box.show());
+					}
 				}
 			}else{
 				var trimed = $.trim(label);
@@ -1150,16 +1173,6 @@ $(function(){
 		});
 		return false;
 	});
-
-	$(".addvideo").click(function(){
-		onEmbedClick(this);
-		return false;
-	}).prev("input").focus();
-
-	$(".addimage").click(function(){
-		onEmbedClick(this, "photo");
-		return false;
-	}).prev("input").focus();
 
 	function onEmbedClick(that, type){
 		var container = $("div#oembed-container");
@@ -1194,6 +1207,16 @@ $(function(){
 			}
 		});
 	}
+	
+	$(".addvideo").click(function(){
+		onEmbedClick(this);
+		return false;
+	}).prev("input").focus();
+
+	$(".addimage").click(function(){
+		onEmbedClick(this, "photo");
+		return false;
+	}).prev("input").focus();
 
 	$(".cancel-embed-btn").click(function(){
 		$(this).closest(".oembed-preview").hide();
@@ -1274,15 +1297,13 @@ $(function(){
 		return false;
 	});
 
-	$("input.close-toggle", "form#answer-question-form").click(function(){
-		crossfadeToggle($(this).closest("div").get(0), $("div.close-toggle").get(0));
+	$(".close-answer-form", "form#answer-question-form").click(function(){
+		crossfadeToggle($(this).closest("form").parent("div").get(0), $(".open-answer-form").closest("div").get(0));
 		return false;
 	});
 
-	$(".answerbtn", "div.close-toggle").click(function(){
-		var formDiv = $(this).closest("div").prev("div");
-		var thisDiv = $(this).closest("div");
-		crossfadeToggle(thisDiv.get(0), formDiv.get(0));
+	$(".open-answer-form").click(function(){
+		crossfadeToggle($(".close-answer-form").closest("form").parent("div").get(0), $(this).closest("div").get(0));
 		return false;
 	});
 
@@ -1302,6 +1323,16 @@ $(function(){
 		$.post(this.href);
 		return false;
 	});
+
+	function markdownToHTML(text, last, converter) {
+		// if there's no change to input, cancel conversion
+		if (text && text !== last) {
+			last = text;
+		}
+		// Do the conversion
+		text = converter.makeHtml(text);
+		return text;
+	}
 
 	function initPostEditor(index, elem){
 		var that = $(elem).addClass("markedUp");
@@ -1366,17 +1397,6 @@ $(function(){
 		});
 	}
 
-
-	function markdownToHTML(text, last, converter) {
-		// if there's no change to input, cancel conversion
-		if (text && text !== last) {
-			last = text;
-		}
-		// Do the conversion
-		text = converter.makeHtml(text);
-		return text;
-	}
-
 	var dmp = new diff_match_patch();
 
 	function diffToHtml(diffs, oldText, newText) {
@@ -1386,7 +1406,7 @@ $(function(){
 		var done = false;
 		
 		function reconstruct(diffArray, what){
-			var out = "";
+			var out = "", i;
 			if(what === 0){
 				return out;
 			} 
@@ -1401,16 +1421,13 @@ $(function(){
 			return out;
 		}
 
-
 		function diffMarkup(text, op){
 			var t1,t2 = "";
 			switch (op) {
-				case 1:t1 = '<span class="diff-ins">';t2 = '</span>';break;
-				case -1:t1 = '<span class="diff-del">';t2 = '</span>';break;
+				case 1:t1 = '&nbsp;<span class="diff-ins">';t2 = '</span>&nbsp;';break;
+				case -1:t1 = '&nbsp;<span class="diff-del">';t2 = '</span>&nbsp;';break;
 				case 0:t1 = "";t2 = "";break;
 			}
-
-//			console.log(">>>> "+x+". "+op+", "+intag+" >> ", text);
 
 			var trimed = $.trim(text);
 			if(trimed !== ""){
@@ -1435,46 +1452,22 @@ $(function(){
 						}else{
 							intag = true;
 						}
-
-//						console.log("da ima problem>> ", text);
 					}else{
 						text = t1.concat(text, t2);
-//						console.log("a tag>> ", text);
-//						intag = false;
 					}
-//					intag = false;
 				// CASE 2: <tag bla bla="blah"
 				}else if((text.indexOf("<") >= 0 && text.indexOf(">") < 0) ||
 					(text.indexOf(">") >= 0 && text.indexOf("<") < 0)){
-
-//					console.log("super> "+intag);
 					if (!done) {
 						appendMe += " "+diffMarkup(reconstruct(diffs, -1), -1);
 						appendMe += " "+diffMarkup(reconstruct(diffs, 1), 1);
 						done = true;
 					}
 					text = "";
-//					console.log("new code>> ", text);
-
-//					text = text.replace(/(.*)</, t1.concat("$1",t2,"<"));
-//					console.log("tag open>> ", text);
-//					intag = true;
-//				//CASE 3: bla/> bla bla
-//				}else if( text.indexOf(">") >= 0 && text.indexOf("<") < 0 ){
-//					if(intag !== false){
-//						text = text.replace(/>(.*)/, ">".concat(t1,"$1",t2));
-//					}else{
-//						//SUB CASE 3.1: blabla>text (OVERLAPPING!)
-//						appendMe += " "+diffMarkup(reconstruct(diffs, op), op);
-//						text = "";
-//					}
-//					console.log("tag closed>> ", text);
-//					intag = false;
-				//CASE 4: bla bla bla.
+				//CASE 4: bla bla bla. (clean text)
 				}else if(text.indexOf(">") < 0 && text.indexOf("<") < 0){
 					if(intag === false){
 						text = t1.concat(text,t2);
-//						console.log("a string>> ", text);
 					}
 				}
 			}
@@ -1482,9 +1475,10 @@ $(function(){
 		}
 
 		//main loop over diff fragments
-		for (var x = 0; x < diffs.length; x++) {
+		var x;
+		for (x = 0; x < diffs.length; x++) {
 			html[x] = diffMarkup(diffs[x][1], diffs[x][0]);
-			if(done){break;}
+			if(done){ break; }
 		}
 		
 		if($.trim(appendMe) !== ""){
@@ -1601,19 +1595,6 @@ $(function(){
      *                           JS VALIDATION
      ************************************************************************/
 
-	 var highlightfn = function(element) {$(element).addClass("error");clearLoading();};
-	 var unhighlightfn = function(element) {$(element).removeClass("error");};
-	 var errorplacefn = function(error, element) {error.insertBefore(element);};
-	 var errorplacefn2 = function(error, element) {error.insertAfter(element);};
-	 var reqmsg = lang['signup.form.error.required'];
-	 var emailmsg = lang['signup.form.error.email'];
-	 var emailexistsmsg = lang['signup.form.error.emailexists'];
-	 var digitsmsg = lang['invalidyear'];
-	 var maxlenmsg = lang.maxlength;
-	 var minlenmsg = lang.minlength;
-	 var tagsmsg = lang["tags.toomany"];
-	 var rusuremsg = lang.areyousure;
-
 	/********* SIGNUP FORM ************/
 	$("input#signup-btn").live("click", function(){
 		var form = $(this).closest("form");
@@ -1656,6 +1637,7 @@ $(function(){
 
 	/********* CHANGE EMAIL FORM ************/
 	$("input#change-email-btn").live("click", function(){
+		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
@@ -1722,7 +1704,7 @@ $(function(){
         return form.valid();
 	});
 	/********* ASK QUESTION FORM ************/
-	var maxTags = 6;
+	var maxTags = 6, maxTagsS = "6";
 	$.validator.addMethod("tags", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxTags;
 	});
@@ -1746,7 +1728,7 @@ $(function(){
 					minlength: jQuery.format(minlenmsg)
 				},
 				tags: {required: reqmsg,
-					tags: $.validator.format(tagsmsg, ""+maxTags)
+					tags: $.validator.format(tagsmsg, maxTagsS)
 				},
 				parentuuid: reqmsg
 			}
@@ -1808,7 +1790,7 @@ $(function(){
 		return form.valid();
 	});
 
-	var maxFavTags = 50;
+	var maxFavTags = 50, maxFavTagsS = "50";
 	$.validator.addMethod("tags2", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxFavTags;
 	});
@@ -1822,7 +1804,7 @@ $(function(){
 			messages: {
 				favtags: {
 					required: reqmsg,
-					tags2: $.validator.format(tagsmsg, ""+maxFavTags)
+					tags2: $.validator.format(tagsmsg, maxFavTagsS)
 				}
 			}
 		});
@@ -1869,18 +1851,7 @@ $(function(){
 	$.validator.addMethod("notEmpty", function(value, elem){
 		var datval = $(elem).data("val");
 		return this.optional(elem) || (datval !== "" && datval !== value);
-	});
-	
-	var validateTrans = function(form){
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {value: {required: true, notEmpty: true}},
-			messages: {
-				value: {required: reqmsg, notEmpty: reqmsg}
-			}
-		});
-		return form.valid();
-	};
+	});	
 
 });//end of scoold script
 

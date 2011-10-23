@@ -54,8 +54,7 @@ public class School implements Votable<Long>, CanHasMedia,
 	@Stored private String contacts;
 	@Stored private Long timestamp;
 	@Stored private String iconurl;
-
-	private Integer oldvotes;
+	@Stored private Integer oldvotes;
 
 	public static enum SchoolType{
 		UNKNOWN, HIGHSCHOOL, LYCEUM, COLLEGE, THEOLOGY, SEMINARY, ACADEMY, SPECIALIZED,

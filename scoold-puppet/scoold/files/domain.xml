@@ -22,7 +22,7 @@
   </nodes>
   <configs>
     <config name="server-config">
-      <http-service access-logging-enabled="true">
+      <http-service access-logging-enabled="false">
         <access-log write-interval-seconds="900" max-history-files="31" format="%client.name% %auth-user-name% %datetime% %request% %status% %response.length% %header.referer% %header.user-agent%"></access-log>
         <virtual-server id="server" network-listeners="http-listener-1,http-listener-2"></virtual-server>
         <virtual-server id="__asadmin" network-listeners="admin-listener"></virtual-server>

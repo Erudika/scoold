@@ -56,4 +56,15 @@
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </action>
+        <action>
+            <actionName>profile</actionName>
+            <goals>
+                <goal>package</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+                <netbeans.deploy>true</netbeans.deploy>
+                <netbeans.deploy.profilemode>true</netbeans.deploy.profilemode>
+            </properties>
+        </action>
     </actions>

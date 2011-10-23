@@ -58,6 +58,11 @@
 			#end
 
 			<div id="questiontitle" class="largeText inlineblock p99 $editable">$!{showPost.title}</div>
+			#if($showPost.isQuestion())
+				#if($showPost.isQuestion() && $showSchool && $showSchool.id)
+					<span class="pictos">j</span> <a href="$!schoollink/$!showSchool.id/#stripstr($!showSchool.name)">$!showSchool.name</a>				
+				#end
+			#end
 		</div>
 
 		<hr/>
@@ -89,12 +94,12 @@
 
 				#if($authenticated && !$showPost.isClosed())
 					#newanswerform($aForm $showPost $hideForm)
-					#set($btnclass = "answerbtn")
+					#set($btnclass = "open-answer-form")
 				#else
 					#set($btnclass = "")
 				#end
 
-				<div class="center mtm close-toggle $hideBtn">
+				<div class="center mtm $hideBtn">
 					#if($showPost.isClosed())
 						<h2>
 							<span class="pictos">(</span> $lang.get("posts.closed")
@@ -102,17 +107,15 @@
 								#if($showPost.closerid == 0)
 									#set($closer = $APPNAME)
 								#else
-									#set($closer = "<a href='$profilelink/$!showPost.closerid' title='Go to profile'>user</a>")
+								#set($closer = "<a href='$profilelink/$!showPost.closerid' title='Go to profile'>$lang.get('mod')</a>")
 								#end
 								(by $closer)
 							#end
 						</h2>
 					#else
 						#if($showPost.isQuestion())
-							<a name="answer"></a>
 							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="button-large rounded3 $btnclass" title="Answer this question"><span class="pictos">p</span> $lang.get("posts.writeanswer")</a>
 						#elseif($showPost.isFeedback())
-							<a name="reply"></a>
 							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="button-large rounded3 $btnclass" title="Reply"><span class="pictos">p</span> $lang.get("feedback.reply")</a>
 						#end
 					#end

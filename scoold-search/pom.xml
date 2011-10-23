@@ -20,11 +20,7 @@
 		<repository>
 			<id>sonatype</id>
 			<url>http://oss.sonatype.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>alfresco</id>
-			<url>http://maven.alfresco.com/nexus/content/repositories/thirdparty/</url>
-		</repository>
+		</repository>		
 		<repository>
 			<id>openid4java</id>
 			<url>https://oss.sonatype.org/content/repositories/openid4java-snapshots/</url>
@@ -60,7 +56,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.17.8</version>
+			<version>0.17.9</version>
 		</dependency>
 	</dependencies>
 	

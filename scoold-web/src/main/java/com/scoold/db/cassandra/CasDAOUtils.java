@@ -528,18 +528,17 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	 *				READ ALL FUNCTIONS
 	********************************************/
 
-	public <N, T extends ScooldObject> ArrayList<T> readAll(Class<T> clazz,
-			String keysKey, CF<N> keysCf, CF<String> valsCf, Class<N> colNameClass,
-			N startKey, MutableLong page, MutableLong itemcount, int maxItems,
-			boolean reverse, boolean colNamesAreKeys, boolean countOnlyColumns){
-
-		if(StringUtils.isBlank(keysKey) || keysCf == null) return new ArrayList<T>();
-
-		ArrayList<HColumn<N, String>> keys = new ArrayList<HColumn<N, String>>();
+	public <N, T extends ScooldObject> ArrayList<String> readAllKeys(String keysKey, 
+			CF<N> keysCf, Class<N> colNameClass, N startKey, MutableLong page, int maxItems,
+			boolean reverse, boolean colNamesAreKeys){
+		
 		ArrayList<String> keyz = new ArrayList<String>();
+		ArrayList<HColumn<N, String>> keys = new ArrayList<HColumn<N, String>>();
+		
+		if(StringUtils.isBlank(keysKey) || keysCf == null) return keyz;
 		
 		try {
-			// get keys from linker table
+		// get keys from linker table
 			SliceQuery<String, N, String> sq = HFactory.createSliceQuery(keyspace,
 					strser,	getSerializer(colNameClass), strser);
 
@@ -549,7 +548,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 
 			keys.addAll(sq.execute().get().getColumns());
 
-			if(keys == null || keys.isEmpty()) return new ArrayList<T>();
+			if(keys == null || keys.isEmpty()) return keyz;
 
 			if(page != null){
 				Long lastKey = 0L;
@@ -567,19 +566,42 @@ public class CasDAOUtils extends AbstractDAOUtils {
 					keys.remove(keys.size() - 1); // remove last
 				}
 			}
-
-			setTotalCount(clazz, keysKey, keysCf, colNameClass, itemcount, countOnlyColumns);
-
-			for (HColumn<N, String> col : keys){
-				if (colNamesAreKeys) {
-					keyz.add(col.getName().toString());
-				} else {
-					keyz.add(col.getValue());
-				}
-			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, null, e);
 		}
+			
+		for (HColumn<N, String> col : keys){
+			if (colNamesAreKeys) {
+				keyz.add(col.getName().toString());
+			} else {
+				keyz.add(col.getValue());
+			}
+		}
+		
+		return keyz;
+	}
+	
+	
+	public <N, T extends ScooldObject> ArrayList<T> readAll(Class<T> clazz,
+			String keysKey, CF<N> keysCf, CF<String> valsCf, Class<N> colNameClass,
+			N startKey, MutableLong page, MutableLong itemcount, int maxItems,
+			boolean reverse, boolean colNamesAreKeys, boolean countOnlyColumns){
+
+		ArrayList<String> keyz = readAllKeys(keysKey, keysCf, colNameClass, startKey, 
+				page, maxItems, reverse, colNamesAreKeys);
+		
+		return readAll(clazz, keyz, keysKey, keysCf, valsCf, colNameClass, 
+				itemcount, countOnlyColumns);
+	}
+	
+	
+	public <N, T extends ScooldObject> ArrayList<T> readAll(Class<T> clazz, List<String> keyz,
+			String keysKey, CF<N> keysCf, CF<String> valsCf, Class<N> colNameClass,
+			MutableLong itemcount, boolean countOnlyColumns){
+
+		if(StringUtils.isBlank(keysKey) || keysCf == null) return new ArrayList<T>();
+		
+		setTotalCount(clazz, keysKey, keysCf, colNameClass, itemcount, countOnlyColumns);
 
 		return readAll(clazz, keyz, valsCf);
 	}

@@ -21,9 +21,9 @@ public class Signin extends BasePage{
 			if(param("signout")){
 				clearSession();
 				if (isFBconnected) {
-					setRedirect(signinlink + "?code=5&fblogout=true");
+					setRedirect(signinlink + "?code=5&success=true&fblogout=true");
 				}else{
-					setRedirect(signinlink + "?code=5");
+					setRedirect(signinlink + "?code=5&success=true");
 				}
 				return;
 			}else{

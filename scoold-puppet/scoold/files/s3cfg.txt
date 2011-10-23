@@ -1,7 +1,7 @@
 [default]
 access_key = AKIAI5WX2PJPYQEPWECQ
 acl_public = False
-bucket_location = US
+bucket_location = EU
 cloudfront_host = cloudfront.amazonaws.com
 cloudfront_resource = /2008-06-30/distribution
 default_mime_type = binary/octet-stream

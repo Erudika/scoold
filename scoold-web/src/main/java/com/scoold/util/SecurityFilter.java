@@ -191,8 +191,8 @@ public class SecurityFilter implements Filter {
 	}
 
 	private boolean isBlocked(String host, String address, String useragent) {
-		return AbstractDAOUtils.endsWithAny(useragent, blacklist_useragents) ||
-			AbstractDAOUtils.endsWithAny(host, blacklist_hosts) ||
+		return AbstractDAOUtils.containsAny(useragent, blacklist_useragents) ||
+			AbstractDAOUtils.containsAny(host, blacklist_hosts) ||
 			blacklist_ips.containsKey(address);
 	}
 

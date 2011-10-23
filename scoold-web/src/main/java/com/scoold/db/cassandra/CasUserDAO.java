@@ -199,10 +199,28 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     public ArrayList<User> readAllContactsForUser(Long userid, MutableLong page,
 			MutableLong itemcount){
 
-		return cdu.readAll(User.class, userid.toString(),
-			CasDAOFactory.CONTACTS, CasDAOFactory.USERS, Long.class,
-			CasDAOUtils.toLong(page), page, itemcount,
-			CasDAOFactory.MAX_ITEMS_PER_PAGE, false, true, true);
+		ArrayList<String> keyz = cdu.readAllKeys(userid.toString(), CasDAOFactory.CONTACTS, 
+				Long.class, CasDAOUtils.toLong(page), page, 
+				CasDAOFactory.MAX_ITEMS_PER_PAGE, false, true);
+		
+		ArrayList<User> list = cdu.readAll(User.class, keyz, userid.toString(), CasDAOFactory.CONTACTS, 
+				CasDAOFactory.USERS, Long.class, itemcount, true);
+
+		// clean deleted contacts on read
+		if(list.contains(null)){
+			for (int i = 0; i < list.size(); i++) {
+				User user = list.get(i);
+				if(user == null){
+					String id = keyz.get(i);
+					
+					if(id != null){
+						deleteContactForUser(userid, new User(id));
+					}
+				}
+			}
+		}
+		
+		return list;
     }
 
 	public boolean isFriendWith (Long userid, User contact){

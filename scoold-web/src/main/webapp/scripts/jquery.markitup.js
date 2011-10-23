@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // markItUp! Universal MarkUp Engine, JQuery plugin
-// v 1.1.x
+// v 1.1.11.x
 // Dual licensed under the MIT and GPL licenses.
 // ----------------------------------------------------------------------------
 // Copyright (C) 2007-2011 Jay Salvat
@@ -28,31 +28,34 @@
 	$.fn.markItUp = function(settings, extraSettings) {
 		var options, ctrlKey, shiftKey, altKey;
 		ctrlKey = shiftKey = altKey = false;
-	
-		options = {	id:						'',
-					nameSpace:				'',
-					root:					'',
+
+		options = {	id:					'',
+					nameSpace:			'',
+					root:				'',
 					previewInWindow:		'', // 'width=800, height=600, resizable=yes, scrollbars=yes'
 					previewAutoRefresh:		true,
 					previewPosition:		'after',
-					previewTemplatePath:	'~/templates/preview.html',
+					previewTemplatePath:		'~/templates/preview.html',
 					previewParserPath:		'',
 					previewParserVar:		'data',
 					resizeHandle:			true,
 					beforeInsert:			'',
 					afterInsert:			'',
-					onEnter:				{},
+					miu_skin:			'default',
+					miu_icons:			'famfamfam',
+					miu_icons_size:			'16',
+					onEnter:			{},
 					onShiftEnter:			{},
 					onCtrlEnter:			{},
-					onTab:					{},
-					markupSet:			[	{ /* set */ } ]
+					onTab:				{},
+					markupSet:			[ { /* set */ } ]
 				};
 		$.extend(options, settings, extraSettings);
 
 		// compute markItUp! path
 		if (!options.root) {
 			$('script').each(function(a, tag) {
-				miuScript = $(tag).get(0).src.match(/(.*)jquery\.markitup(\.pack)?\.js$/);
+				miuScript = $(tag).get(0).src.match(/(.*)jquery\.markitup(\.(min|pack|src))?\.js$/); // support standard minified and src naming schemes as well - LS 2010-05-18 11:04:59
 				if (miuScript !== null) {
 					options.root = miuScript[1];
 				}
@@ -75,9 +78,9 @@
 			// apply the computed path to ~/
 			function localize(data, inText) {
 				if (inText) {
-					return 	data.replace(/("|')~\//g, "$1"+options.root);
+					return data.replace(/("|')~\//g, "$1"+options.root);
 				}
-				return 	data.replace(/^~\//, options.root);
+				return data.replace(/^~\//, options.root);
 			}
 
 			// init and build editor
@@ -163,12 +166,12 @@
 						}).click(function() {
 							return false;
 						}).bind("focusin", function(){
-                            $$.focus();
+							$$.focus();
 						}).mouseup(function() {
 							if (button.call) {
-								eval(button.call)();
+								eval(button.call)(); // eval is evil
 							}
-							setTimeout(function() { markup(button) },1);
+							setTimeout(function() { markup(button); },1);
 							return false;
 						}).hover(function() {
 								$('> ul', this).show();
@@ -233,20 +236,19 @@
 
 			// build block to insert
 			function build(string) {
-				var openWith 			= prepare(clicked.openWith);
-				var placeHolder 		= prepare(clicked.placeHolder);
-				var replaceWith 		= prepare(clicked.replaceWith);
-				var closeWith 			= prepare(clicked.closeWith);
+				var openWith 	= prepare(clicked.openWith);
+				var placeHolder = prepare(clicked.placeHolder);
+				var replaceWith = prepare(clicked.replaceWith);
+				var closeWith 	= prepare(clicked.closeWith);
 				var openBlockWith 		= prepare(clicked.openBlockWith);
 				var closeBlockWith 		= prepare(clicked.closeBlockWith);
 				var multiline 			= clicked.multiline;
-				
 				if (replaceWith !== "") {
 					block = openWith + replaceWith + closeWith;
 				} else if (selection === '' && placeHolder !== '') {
 					block = openWith + placeHolder + closeWith;
 				} else {
-					string = string || selection;
+					string = string || selection;						
 
 					var lines = selection.split(/\r?\n/), blocks = [];
 					for (var l=0; l < lines.length; l++) {
@@ -279,16 +281,17 @@
 				var len, j, n, i;
 				hash = clicked = button;
 				get();
-				$.extend(hash, {	line:"", 
-						 			root:options.root,
-									textarea:textarea, 
-									selection:(selection||''), 
-									caretPosition:caretPosition,
-									ctrlKey:ctrlKey, 
-									shiftKey:shiftKey, 
-									altKey:altKey
-								}
-							);
+
+				$.extend(hash,	{	line:"", 
+							root:options.root,
+							textarea:textarea, 
+							selection:(selection||''), 
+							caretPosition:caretPosition,
+							ctrlKey:ctrlKey, 
+							shiftKey:shiftKey, 
+							altKey:altKey
+						}
+				);
 				// callbacks before insertion
 				prepare(options.beforeInsert);
 				prepare(clicked.beforeInsert);
@@ -296,7 +299,7 @@
 					prepare(clicked.beforeMultiInsert);
 				}			
 				$.extend(hash, { line:1 });
-
+				
 				if ((ctrlKey === true && shiftKey === true)) {
 					lines = selection.split(/\r?\n/);
 					for (j = 0, n = lines.length, i = 0; i < n; i++) {
@@ -428,7 +431,6 @@
 					}
 				} else { // gecko & webkit
 					caretPosition = textarea.selectionStart;
-
 					selection = textarea.value.substring(caretPosition, textarea.selectionEnd);
 				} 
 				return selection;
@@ -443,7 +445,7 @@
 							previewWindow.close();
 						});
 					} else {
-						iFrame = $('<iframe class="markItUpPreviewFrame"></iframe>');
+						iFrame = $('<iframe class="markItUpPreviewFrame" frameBorder="0"></iframe>'); // LS 2010-05-18 09:44:29 remove iframe border in ie http://bit.ly/c735I3
 						if (options.previewPosition == 'after') {
 							iFrame.insertAfter(footer);
 						} else {
@@ -469,7 +471,7 @@
 
 			// refresh Preview window
 			function refreshPreview() {
- 				renderPreview();
+				renderPreview();
 			}
 
 			function renderPreview() {		
@@ -503,7 +505,7 @@
 			function writeInPreview(data) {
 				if (previewWindow.document) {			
 					try {
-						sp = previewWindow.document.documentElement.scrollTop
+						sp = previewWindow.document.documentElement.scrollTop;
 					} catch(e) {
 						sp = 0;
 					}	

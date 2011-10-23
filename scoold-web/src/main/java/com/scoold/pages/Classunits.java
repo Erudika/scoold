@@ -89,7 +89,7 @@ public class Classunits extends BasePage{
 			classu.setUserid(authUser.getId());
 			classu.create();
 
-			setRedirect(classlink+"/"+classu.getId()+"/invite");
+			setRedirect(classlink+"/"+classu.getId());
 		}
 		return false;
     }

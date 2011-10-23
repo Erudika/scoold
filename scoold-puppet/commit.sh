@@ -2,7 +2,8 @@
 
 LBNAME="ScooldLB"
 REGION="eu-west-1"
-MODULESDIR=/usr/share/puppet/modules
+MODULESDIR="/usr/share/puppet/modules"
+SCOOLDWEB="../scoold-web"
 MODNAME="scoold"
 NODETYPE="unknown"
 F1SUFFIX="-instances.txt"
@@ -144,6 +145,17 @@ elif [ "$1" = "lbremove" ]; then
 	if [ -n "$2" ]; then
 	 	# deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
+	fi
+elif [ "$1" = "copyjacssi" ]; then
+	### copy javascript, css, images to S3
+	BUCKET="com.scoold.files"
+	DIR1="$SCOOLDWEB/target/scoold-web/styles"
+	DIR2="$SCOOLDWEB/target/scoold-web/scripts"
+	DIR3="$SCOOLDWEB/target/scoold-web/images"
+
+	if [ -e $DIR1 ] && [ -e $DIR2 ] && [ -e $DIR3 ]; then
+		# upload to S3
+		s3cmd --reduced-redundancy --acl-public --force put $DIR1/*min.css $DIR1/pictos* $DIR2/*min.js $DIR2/*.htc $DIR3/*.gif $DIR3/*.png s3://$BUCKET
 	fi
 else
 	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"

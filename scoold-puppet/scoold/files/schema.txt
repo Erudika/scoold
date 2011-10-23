@@ -1,118 +1,129 @@
 create keyspace scoold
-    with strategy_options=[{replication_factor:1}]
+    with strategy_options={replication_factor:1}
     and placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy';
 
 use scoold;
 
 create column family Users
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 20000
     and rows_cached = 20000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Schools
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Classes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Posts
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Reports
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 1000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Revisions
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Comments
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 100000
     and rows_cached = 100000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Media
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Messages
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Tags
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family Translations
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
     and gc_grace = 18000
     and key_cache_save_period = 3600
+    and compression_options={sstable_compression:SnappyCompressor, chunk_length_kb:64}
     and memtable_throughput = 64;
 
 create column family UsersUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -121,7 +132,7 @@ create column family UsersUuids
 
 create column family SchoolsUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -130,7 +141,7 @@ create column family SchoolsUuids
 
 create column family ClassesUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -139,7 +150,7 @@ create column family ClassesUuids
 
 create column family PostsUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -148,7 +159,7 @@ create column family PostsUuids
 
 create column family ReportsUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -157,7 +168,7 @@ create column family ReportsUuids
 
 create column family RevisionsUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -166,7 +177,7 @@ create column family RevisionsUuids
 
 create column family CommentsUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -175,7 +186,7 @@ create column family CommentsUuids
 
 create column family MediaUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -184,7 +195,7 @@ create column family MediaUuids
 
 create column family MessagesUuids
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -193,7 +204,7 @@ create column family MessagesUuids
 
 create column family RevisionsParentUuids
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -202,7 +213,7 @@ create column family RevisionsParentUuids
 
 create column family CommentsParentUuids
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -211,7 +222,7 @@ create column family CommentsParentUuids
 
 create column family MediaParentUuids
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -220,7 +231,7 @@ create column family MediaParentUuids
 
 create column family MessagesParentUuids
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -236,7 +247,7 @@ create column family Counters
 
 create column family Votes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -245,7 +256,7 @@ create column family Votes
 
 create column family AuthKeys
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -254,7 +265,7 @@ create column family AuthKeys
 
 create column family UserAuth
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -263,7 +274,7 @@ create column family UserAuth
 
 create column family Emails
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -272,7 +283,7 @@ create column family Emails
 
 create column family UsersByReputation
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -282,7 +293,7 @@ create column family UsersByReputation
 
 create column family UsersByTimestamp
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -292,7 +303,7 @@ create column family UsersByTimestamp
 
 create column family Contacts
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 10000
@@ -302,7 +313,7 @@ create column family Contacts
 
 create column family UserSchools
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -311,7 +322,7 @@ create column family UserSchools
 
 create column family UserClasses
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -320,7 +331,7 @@ create column family UserClasses
 
 create column family UserQuestions
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -329,7 +340,7 @@ create column family UserQuestions
 
 create column family UserAnswers
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -338,7 +349,7 @@ create column family UserAnswers
 
 create column family NewMessages
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -347,7 +358,7 @@ create column family NewMessages
 
 create column family Photos
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -356,7 +367,7 @@ create column family Photos
 
 create column family Drawer
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and gc_grace = 18000
@@ -365,7 +376,7 @@ create column family Drawer
 
 create column family Labels
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -375,7 +386,7 @@ create column family Labels
 
 create column family LabelsMedia
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and gc_grace = 18000
@@ -384,7 +395,7 @@ create column family LabelsMedia
 
 create column family SchoolClasses
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 10000
@@ -394,7 +405,7 @@ create column family SchoolClasses
 
 create column family SchoolUsers
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 10000
@@ -404,7 +415,7 @@ create column family SchoolUsers
 
 create column family SchoolsByTimestamp
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -414,7 +425,7 @@ create column family SchoolsByTimestamp
 
 create column family SchoolsByVotes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -424,7 +435,7 @@ create column family SchoolsByVotes
 
 create column family ClassUsers
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 10000
     and rows_cached = 10000
@@ -434,7 +445,7 @@ create column family ClassUsers
 
 create column family ClassesByTimestamp
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -444,7 +455,7 @@ create column family ClassesByTimestamp
 
 create column family Questions
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -454,7 +465,7 @@ create column family Questions
 
 create column family QuestionsByVotes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -464,7 +475,7 @@ create column family QuestionsByVotes
 
 create column family QuestionsByActivity
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -474,7 +485,7 @@ create column family QuestionsByActivity
 
 create column family Answers
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -484,7 +495,7 @@ create column family Answers
 
 create column family AnswersByVotes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -494,7 +505,7 @@ create column family AnswersByVotes
 
 create column family AllQuestions
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -504,7 +515,7 @@ create column family AllQuestions
 
 create column family AllQuestionsByVotes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -514,7 +525,7 @@ create column family AllQuestionsByVotes
 
 create column family AllQuestionsByActivity
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -524,7 +535,7 @@ create column family AllQuestionsByActivity
 
 create column family Feedback
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -534,7 +545,7 @@ create column family Feedback
 
 create column family FeedbackByVotes
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -544,7 +555,7 @@ create column family FeedbackByVotes
 
 create column family FeedbackByActivity
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -554,7 +565,7 @@ create column family FeedbackByActivity
 
 create column family ReportsByTimestamp
     with comparator = LongType
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -564,7 +575,7 @@ create column family ReportsByTimestamp
 
 create column family LocalesTranslations
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -574,7 +585,7 @@ create column family LocalesTranslations
 
 create column family ApprovedTranslations
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000
@@ -584,7 +595,7 @@ create column family ApprovedTranslations
 
 create column family Language
     with comparator = UTF8Type
-	and default_validation_class = UTF8Type
+    and default_validation_class = UTF8Type
     and key_validation_class = UTF8Type
     and keys_cached = 5000
     and rows_cached = 5000

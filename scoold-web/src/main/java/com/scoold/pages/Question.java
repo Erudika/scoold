@@ -6,6 +6,7 @@
 package com.scoold.pages;
 
 import com.scoold.core.Post;
+import com.scoold.core.School;
 import com.scoold.core.Post.PostType;
 import com.scoold.core.Revision;
 import com.scoold.core.User.Badge;
@@ -26,7 +27,7 @@ public class Question extends BasePage{
 	public Post showPost;
 	public ArrayList<Post> answerslist;
 	public ArrayList<Post> similarquestions;
-	public ArrayList<Revision> revisionslist;
+	public ArrayList<Revision> revisionslist;	
 	public Form aForm;
 	public String markdownHtml;
 
@@ -103,6 +104,10 @@ public class Question extends BasePage{
 			if(showPost.isQuestion() || showPost.isFeedback()){
 				if(!isAjaxRequest()){
 					similarquestions = search.findSimilarQuestions(showPost, 15);
+					if(showPost.isQuestion()){
+						addModel("showSchool", School.getSchoolDao().
+								read(showPost.getParentuuid())); 
+					}
 				}
 				String sortby = "votes";
 				if("newest".equals(getParamValue("sortby"))){
@@ -114,7 +119,7 @@ public class Question extends BasePage{
 					//get the comments for each answer
 					Post.getPostDao().readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
 				}
-			}
+			}			
 		}
 	}
 

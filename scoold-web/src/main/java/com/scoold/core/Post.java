@@ -52,9 +52,8 @@ public class Post implements ScooldObject, Votable<Long>,
 	@Indexed
 	@Stored private Long parentpostid;
 	@Stored private Long deletereportid;
-
-	private Integer oldvotes;
-	private Long oldactivity;
+	@Stored private Integer oldvotes;
+	@Stored private Long oldactivity;
 
 	private transient User author;
 	private transient User lastEditor;

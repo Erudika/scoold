@@ -46,12 +46,13 @@ miu_set_markdown = {
 
 // miu namespace to avoid conflict.
 miu = {
-	markdownTitle: function(markItUp, char) {
+	markdownTitle: function(markItUp, c) {
 		heading = '';
 		n = $.trim(markItUp.selection||markItUp.placeHolder).length;
 		for(i = 0; i < n; i++) {
-			heading += char;
+			heading += c;
 		}
-		return '\n'+heading;
+		heading = '\n'+heading;
+		return heading;
 	}
 }

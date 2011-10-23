@@ -52,8 +52,8 @@ public class User implements ScooldObject, Comparable<User>,
 	@Stored private String favtags;
 	@Stored private String newbadges;
 	@Stored private Long authstamp;
+	@Stored private Long oldreputation;
 
-	private Long oldreputation;
 	private Integer newmessages;
 	private Integer newreports;
 	
@@ -580,7 +580,7 @@ public class User implements ScooldObject, Comparable<User>,
 	}
 
 	public boolean hasBadge(Badge b){
-		return StringUtils.contains(badges, ",".concat(b.toString()).concat(","));
+		return StringUtils.containsIgnoreCase(badges, ",".concat(b.toString()).concat(","));
 	}
 
 	public void addBadge(Badge b){

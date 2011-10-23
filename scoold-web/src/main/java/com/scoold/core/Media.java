@@ -33,8 +33,8 @@ public class Media implements Votable<Long>, Commentable,
 	@Stored private Long commentcount;
 	@Stored private Long commentpage;
 	@Stored private String link;
+	@Stored private String oldlabels;
 
-	private String oldlabels;
 	private transient User author;
     private transient static AbstractMediaDAO<Media, Long> mydao;
 	private ArrayList<Comment> comments = new ArrayList<Comment>(0);

@@ -51,6 +51,7 @@ import com.scoold.util.GeoNames.Style;
 import com.scoold.util.GeoNames.Toponym;
 import com.scoold.util.GeoNames.ToponymSearchCriteria;
 import com.scoold.util.GeoNames.ToponymSearchResult;
+import org.jsoup.Jsoup;
 
 /**
  *
@@ -100,6 +101,11 @@ public abstract class AbstractDAOUtils {
 			return "[could not convert input]";
 		}
 	}
+	
+	public static String stripHtml(String html){
+		if(html == null) return "";
+		return Jsoup.parse(html).text();
+	}
 
 	public static <T extends ScooldObject> void populate(T transObject, Map<String, String[]> paramMap) {
 		if (transObject == null || paramMap.isEmpty()) return;
@@ -112,11 +118,12 @@ public abstract class AbstractDAOUtils {
 				String value = values[0];
 				// filter out any params that are different from the core params
 				if(!fields.containsKey(param)) continue;
-				//a special case of multi-value param - date
 				if (StringUtils.containsIgnoreCase(param, "date") &&
 						!StringUtils.equals(param, "update")) {
-
+					
+					//a special case of multi-value param - date
 					param = StringUtils.replace(param.toLowerCase(), "date", "", 1);
+					Long dateval = null;
 					if (values.length == 3 && StringUtils.isNotEmpty(values[2]) &&
 							StringUtils.isNotEmpty(values[1]) &&
 							StringUtils.isNotEmpty(values[0])) {
@@ -124,16 +131,13 @@ public abstract class AbstractDAOUtils {
 						String date = values[2] + "-" + values[1] + "-" + values[0];
 						//set property WITHOUT CONVERSION
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-						PropertyUtils.setProperty(transObject, param,
-								sdf.parse(date).getTime());
-						continue;
-					} else {
-						//set property WITHOUT CONVERSION
-						PropertyUtils.setProperty(transObject, param, null);
-						continue;
+						dateval = sdf.parse(date).getTime();
 					}
-					//a special case of multi-value param - contacts
+					//set property WITHOUT CONVERSION
+					PropertyUtils.setProperty(transObject, param, dateval);
+					continue;
 				} else if (StringUtils.equalsIgnoreCase(param, "contacts")) {
+					//a special case of multi-value param - contacts
 					String contacts = "";
 					int max = (values.length > AbstractDAOFactory.MAX_CONTACT_DETAILS) ?
 						AbstractDAOFactory.MAX_CONTACT_DETAILS : values.length;
@@ -434,6 +438,18 @@ public abstract class AbstractDAOUtils {
 		return res;
 	}
 	
+	public static boolean containsAny(String ext, String[] string) {
+		if(ext == null || ext.trim().isEmpty() || string == null) return false;
+		boolean res = false;
+		for (String string1 : string) {
+			if(StringUtils.contains(ext, string1)){
+				res = true;
+				break;
+			}
+		}		
+		return res;
+	}
+	
 	public static void setStateParam(String name, String value, HttpServletRequest req,
 			HttpServletResponse res, boolean useSessions){
 		setStateParam(name, value, req, res, useSessions, false);
@@ -486,9 +502,9 @@ public abstract class AbstractDAOUtils {
 		Cookie c = ClickUtils.getCookie(req, ScooldAuthModule.AUTH_USER);
 		if(c != null){
 			setRawCookie(ScooldAuthModule.AUTH_USER, "", req, res, true, true);
-			removeStateParam(ScooldAuthModule.IDENTIFIER, req, res, BasePage.USE_SESSIONS);
-			removeStateParam(ScooldAuthModule.NEW_USER_NAME, req, res, BasePage.USE_SESSIONS);
-			removeStateParam(ScooldAuthModule.NEW_USER_EMAIL, req, res, BasePage.USE_SESSIONS);
+			removeStateParam(ScooldAuthModule.IDENTIFIER, req, res, false);
+			removeStateParam(ScooldAuthModule.NEW_USER_NAME, req, res, false);
+			removeStateParam(ScooldAuthModule.NEW_USER_EMAIL, req, res, false);
 		}
 	}
 	

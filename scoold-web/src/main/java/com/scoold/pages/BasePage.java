@@ -125,7 +125,7 @@ public class BasePage extends Page {
 	public String HOMEPAGE = prefix;
 	public String pageMacroCode = "";
 	public String infoStripMsg = "";
-	public boolean authenticated; //for use in velocity
+	public boolean authenticated;
 	public boolean canComment;
 	public HttpServletRequest req;
 	public boolean isFBconnected;
@@ -150,8 +150,8 @@ public class BasePage extends Page {
 		search = new Search((Client) getContext().getServletContext().
 				getAttribute(ScooldAppListener.SEARCH_CLIENT));
 		req = getContext().getRequest();
-		checkAuth();
 		initLanguage();
+		checkAuth();
 		includeFBscripts = false;
 		daoutils = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils();
 		itemcount = new MutableLong(0);
@@ -187,8 +187,18 @@ public class BasePage extends Page {
 				}
 			}
 			isFBconnected = authUser != null && !authUser.getIdentifier().startsWith("http");
+			AbstractDAOUtils.removeStateParam("intro", req, getContext().getResponse(), false);
+			infoStripMsg = "";
 		} else {
 			authenticated = false;
+			String intro = AbstractDAOUtils.getStateParam("intro", 
+					req, getContext().getResponse(), false);
+			infoStripMsg = "intro";
+			if ("0".equals(intro)) {
+				infoStripMsg = "";
+			}else{
+				AbstractDAOUtils.setStateParam("intro", "1", req, getContext().getResponse(), false);
+			}
 		} 
 	}
 
@@ -665,22 +675,28 @@ public class BasePage extends Page {
 				if(answer != null && answer.isAnswer()){
 					User author = User.getUserDao().read(answer.getUserid());
 					if(author != null && authenticated){
+						boolean same = author.equals(authUser);
+						
 						if(ansid.equals(post.getAnswerid())){
 							// Answer accepted award - UNDO
 							post.setAnswerid(null);
-							authUser.removeRep(User.ANSWER_ACCEPT_REWARD_VOTER);
-							author.removeRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
+							if (!same) {
+								author.removeRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
+								authUser.removeRep(User.ANSWER_ACCEPT_REWARD_VOTER);
+							}
 						}else{
 							// Answer accepted award - GIVE
 							post.setAnswerid(ansid);
-							authUser.addRep(User.ANSWER_ACCEPT_REWARD_VOTER);
-							author.addRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
+							if(!same){
+								author.addRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
+								authUser.addRep(User.ANSWER_ACCEPT_REWARD_VOTER);
+								addBadgeOnce(Badge.NOOB, true);
+							}
 						}
 
-						authUser.update();
 						author.update();
+						authUser.update();
 						post.update();
-						addBadgeOnce(Badge.NOOB, true);
 					}
 				}
 			}
@@ -745,6 +761,7 @@ public class BasePage extends Page {
 			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 			showPost.setViewcount(views + 1); //increment count
 			list = list.concat(",").concat(showPost.getId().toString());
+			setStateParam("postviews", list);
 			return true;
 		}
 		return false;

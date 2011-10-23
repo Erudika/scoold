@@ -22,8 +22,8 @@ public class Translation implements Votable<Long>, ScooldObject{
 	@Stored private Integer votes;
 	@Stored private Long userid;
 	@Stored private Long timestamp;
+	@Stored private Integer oldvotes;
 
-	private Integer oldvotes;
 	private transient User author;
 
 	private transient static AbstractTranslationDAO<Translation, Long> mydao;

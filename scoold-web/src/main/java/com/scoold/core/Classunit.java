@@ -28,6 +28,7 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 	@Indexed
 	@Stored private String inactiveusers;
 
+	private transient Integer count;
 	private transient School school;
     private transient static AbstractClassUnitDAO<Classunit, Long> mydao;
 
@@ -306,6 +307,13 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 		list.addAll(Arrays.asList(inactiveusers.split(",")));
 		list.remove("");
 		return list;
+	}
+	
+	public int getCount(){		
+		if(count == null){
+			count = getClassSize() + getInactiveusersList().size();			
+		}
+		return count;		
 	}
 
 	public ArrayList<Classunit> readAllForKeys(ArrayList<String> keys) {

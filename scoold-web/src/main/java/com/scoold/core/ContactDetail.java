@@ -34,7 +34,7 @@ public class ContactDetail {
     }
 
 	public ContactDetail(String type, String value) {
-		this.type = getContactDetailType(type).toString();
+		this.setType(type);
 		this.value = value;
 	}
 
@@ -53,7 +53,7 @@ public class ContactDetail {
      * @param value new value of value
      */
     public void setValue(String value) {
-        this.value = value;
+        this.value = getContactDetailType(value).toString();
     }
 
 

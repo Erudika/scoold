@@ -13,7 +13,13 @@
 		<bundle.symbolicName>com.erudika.scoold</bundle.symbolicName>
 		<bundle.namespace>com.erudika</bundle.namespace>
 	</properties>-->
-	
+	<pluginRepositories>
+		<pluginRepository>
+			<name>oss.sonatype.org</name>
+			<id>oss.sonatype.org</id>
+			<url>http://oss.sonatype.org/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
     <repositories>
         <repository>
             <id>java.net2</id>
@@ -26,10 +32,6 @@
         <repository>
             <id>sonatype</id>
             <url>http://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>alfresco</id>
-            <url>http://maven.alfresco.com/nexus/content/repositories/thirdparty/</url>
         </repository>
 		<repository>
             <id>authenticroast-releases</id>
@@ -264,7 +266,7 @@
         <dependency>
             <groupId>me.prettyprint</groupId>
             <artifactId>hector-core</artifactId>
-            <version>0.8.0-2</version>
+            <version>1.0-1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>
@@ -328,12 +330,12 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.17.8</version>
+            <version>0.17.9</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
-            <version>0.17.8</version>
+            <version>0.17.9</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -373,6 +375,21 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<verbose>false</verbose>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>        
+			</plugin>
         </plugins>
         <finalName>scoold-web</finalName>
     </build>    

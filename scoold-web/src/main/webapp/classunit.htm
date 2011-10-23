@@ -6,9 +6,7 @@
 			<div class="line lightgray">
 				<div class="unit size1of3 mediumText">${lang.get("class.title")}</div>
 				<div class="unit size2of3 lastUnit r">
-<!--					$lang.get("year") $!{showClass.gradyear}-->
-					<span class="pictos">j</span> 
-					<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)">$!{showschool.name}</a>
+					$lang.get("year") $!{showClass.gradyear}					
 				</div>
 			</div>
 
@@ -17,7 +15,7 @@
 			#else
 				<div class="hugeText">$!{showClass.identifier}</div>
 			#end
-
+			<span class="pictos">j</span> <a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)">$!{showschool.name}</a>
 			<hr/>
 
 			<div class="mvm">
@@ -50,7 +48,7 @@
 
 			#elseif($showParam == "drawer")
 				<h2>$lang.get("drawer.title")</h2>
-
+				
 				#if($authenticated)
 					#oembedbox("addvideo")
 				#end
@@ -86,19 +84,14 @@
 
 			#elseif($showParam == "invite" && $isLinkedToMe && $isMine)
 				<h2>$lang.get("invite")</h2>
-				<fb:serverFbml>
-					<script type="text/fbml">
-						<fb:fbml>
-							#set($basehref = "$request.scheme://$request.serverName:$request.serverPort")
-							#set($invitetxt = "$lang.get('class.facebookinvite') <a href='http://scoold.com/class/$!showClass.id'>http://scoold.com/class/$!showClass.id/</a>")
-							<fb:request-form method="post" action="$basehref$classlink/$!showClass.id/addclassmates" content="$invitetxt" type="Scoold" invite="true" >
-								<fb:multi-friend-selector  actiontext="$lang.get('class.invitepeople')" showborder="false" cols="4" rows="3" email_invite="false" import_external_friends="false"/>
-							</fb:request-form>
-						</fb:fbml>
-					</script>
-				</fb:serverFbml>
-
-				<h2>$lang.get("class.simpleinvite")</h2>
+				<br />
+				<h4>$lang.get("class.copylink"):</h4>
+				<div class="lightborder pam rounded3 mediumText center">
+					<code>http://scoold.com/class/$!showClass.id/join</code>
+				</div>
+				
+				<br />
+				<h2>$lang.get("class.addclassmates")</h2>
 
 				<form method="post" action="$classlink/$showClass.id/addclassmates">
 					<fieldset>
@@ -112,7 +105,7 @@
 								<input tabindex="1" type="text" class="nicebox p90" value="" name="fullname"/>
 							</div>
 						</div>
-						<a href="#" id="add-more-classmates" title="Add more">$lang.get("addmore")</a>
+						<a href="#" id="add-more-classmates" title="Add more"><span class="pictos">&</span> $lang.get("addmore")</a>
 					</fieldset>
 					<div class="center">
 						<input id="addclassmates-btn" type="submit" value="$lang.get('add')" class="button rounded3"/>
@@ -123,9 +116,8 @@
 			#end
 		#else			
 			#postbox($showPost $showPost)
-
 			#set($inactivelist =  $showClass.getInactiveusersList())
-
+			<br />
 			#if(!$peoplelist.isEmpty() || !$inactivelist.isEmpty())
 				<h2>$lang.get("class.classmates") #showcount($itemcount.longValue())</h2>
 				#classmatespage($peoplelist)
