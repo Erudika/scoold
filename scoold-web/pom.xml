@@ -390,6 +390,37 @@
 					</execution>
 				</executions>        
 			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>maven-replacer-plugin</artifactId>
+				<version>1.3.9</version>
+				<executions>                
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>src/main/webapp/WEB-INF/style.css</file>
+					<outputFile>src/main/webapp/styles/style.css</outputFile>
+					<replacements>
+						<replacement>
+							<token>SCRIPTSLINK</token>
+							<value>../scripts</value>
+						</replacement>
+						<replacement>
+							<token>STYLESLINK</token>
+							<value></value>
+						</replacement>
+						<replacement>
+							<token>IMAGESLINK</token>
+							<value>../images</value>
+						</replacement>
+					</replacements>                        
+				</configuration>
+			</plugin>
         </plugins>
         <finalName>scoold-web</finalName>
     </build>    
@@ -416,12 +447,43 @@
 								<configuration>
 									<target>
 										<echo message="------ PRODUCTION MODE ------"/>
-										<delete file="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
-										<copy file="${basedir}/src/main/resources/click.xml" tofile="${basedir}/src/main/webapp/WEB-INF/click.xml"/>
+										<delete file="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
+										<copy file="${project.basedir}/src/main/resources/click.xml" tofile="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
 									</target>
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>maven-replacer-plugin</artifactId>
+						<version>1.3.9</version>
+						<executions>                
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<file>src/main/webapp/WEB-INF/style.css</file>
+							<outputFile>src/main/webapp/styles/style.css</outputFile>
+							<replacements>
+								<replacement>
+									<token>SCRIPTSLINK</token>
+									<value>http://d35029ynkhy54l.cloudfront.net</value>
+								</replacement>
+								<replacement>
+									<token>STYLESLINK</token>
+									<value>http://d35029ynkhy54l.cloudfront.net/</value>
+								</replacement>
+								<replacement>
+									<token>IMAGESLINK</token>
+									<value>http://d35029ynkhy54l.cloudfront.net</value>
+								</replacement>
+							</replacements>                        
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

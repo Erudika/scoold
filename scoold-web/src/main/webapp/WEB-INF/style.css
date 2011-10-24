@@ -66,11 +66,11 @@ table {
 
 @font-face {
     font-family: 'PictosRegular';
-    src: url('pictos-web-webfont.eot');
-    src: url('pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-         url('pictos-web-webfont.woff') format('woff'),
-         url('pictos-web-webfont.ttf') format('truetype'),
-         url('pictos-web-webfont.svg#PictosRegular') format('svg');
+    src: url('STYLESLINKpictos-web-webfont.eot');
+    src: url('STYLESLINKpictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+         url('STYLESLINKpictos-web-webfont.woff') format('woff'),
+         url('STYLESLINKpictos-web-webfont.ttf') format('truetype'),
+         url('STYLESLINKpictos-web-webfont.svg#PictosRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -274,7 +274,7 @@ input.nicebox, textarea.nicebox {
 	-moz-border-radius: 2px; /* FF1+ */
 	-webkit-border-radius: 2px; /* Saf3-4 */
 	border-radius: 2px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(SCRIPTSLINK/csspie.htc);
 }
 select.nicebox{
 	font-size: inherit;
@@ -310,7 +310,7 @@ form.clickedit button{
 	-moz-border-radius: 3px; /* FF1+ */
 	-webkit-border-radius: 3px; /* Saf3-4 */
 	border-radius: 3px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(SCRIPTSLINK/csspie.htc);
 }
 form.clickedit input, form.clickedit textarea{
 	border: 2px solid #CCCCCC;
@@ -487,7 +487,7 @@ pre, code, .chat-msg{
 .diff-del .button-tiny{ background-color: #FFE6E6;}
 .labelbox, .labelbox a{ color: black;}
 .loading{ 
-	background-image: url(../images/indicator.gif); 
+	background-image: url(IMAGESLINK/indicator.gif); 
 	background-position: 10% 50%; 
 	background-repeat: no-repeat; 
 	text-indent: 20px;
@@ -522,19 +522,19 @@ pre, code, .chat-msg{
 	-moz-border-radius: 5px; /* FF1+ */
 	-webkit-border-radius: 5px; /* Saf3-4 */
 	border-radius: 5px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(SCRIPTSLINK/csspie.htc);
 }
 .rounded3{
 	-moz-border-radius: 3px; /* FF1+ */
 	-webkit-border-radius: 3px; /* Saf3-4 */
 	border-radius: 3px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(SCRIPTSLINK/csspie.htc);
 }
 .shadow{
 	-moz-box-shadow: 0 0 2px 2px black; /* FF3.5+ */
 	-webkit-box-shadow: 0 0 2px 2px black; /* Saf3.0+, Chrome */
 	box-shadow: 0 0 2px 2px black; /* Opera 10.5, IE9 */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(SCRIPTSLINK/csspie.htc);
 }
 .button{
 	border: none;
@@ -554,7 +554,7 @@ pre, code, .chat-msg{
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon{
-	background-image: url(../images/sprites.png);
+	background-image: url(IMAGESLINK/sprites.png);
 	background-repeat: no-repeat;
     overflow: hidden;
 }
@@ -603,7 +603,7 @@ pre, code, .chat-msg{
 	font-size: inherit;
 }
 .ac_loading {
-	background: white url(../images/indicator.gif); 
+	background: white url(IMAGESLINK/indicator.gif); 
 	background-position: 99% 50%; 
 	background-repeat: no-repeat;
 }
@@ -631,7 +631,7 @@ div.jqmConfirmContent{	padding: 15px 0;}
 /* -- GALLERIFFIC CSS -- */
 div.loader {
 	position: relative;
-	background-image: url(../images/indicator.gif);
+	background-image: url(IMAGESLINK/indicator.gif);
 	background-repeat: no-repeat;
 	background-position: center;
 	width: 600px;
@@ -668,7 +668,7 @@ li.selected-thumb img{
 	width:60px;
 	height:12px;
 	margin: 0 auto;
-	background: #EEEEEE url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 3px 3px;
+	background: #EEEEEE url(IMAGESLINK/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 3px 3px;
 	background-position: 50% 4px;
 	cursor: s-resize;
 	border-color: #DDDDDD;
@@ -684,7 +684,7 @@ li.selected-thumb img{
 }
 .markItUpHeader ul li:hover > ul{display:block;}
 li.markItUpDropMenu, li.markItUpDropMenu:hover {
-	background:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 19px -119px transparent;
+	background:url(IMAGESLINK/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 19px -119px transparent;
 }
 .markItUpHeader ul .markItUpDropMenu li { margin-right:0px;}
 /* next rows of buttons */
@@ -750,10 +750,10 @@ li.markItUpDropMenu, li.markItUpDropMenu:hover {
 /*.markItUpButton a
 li.markItUpDropMenu,
 li.markItUpDropMenu:hover {
-	background-image:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
+	background-image:url(IMAGESLINK/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
 }*/
 .markItUpButton a {
-	background-image:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png);	/* Yeah, this line here! */
+	background-image:url(IMAGESLINK/miu.icons.famfamfam.16px.8bit.bg-ededed.png);	/* Yeah, this line here! */
 	height:16px;				/* Matches the size of the icons. */
 	width:16px;				/* Matches the size of the icons. */
 }

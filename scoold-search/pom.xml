@@ -88,13 +88,13 @@
 						<configuration>
 							<target>
 								<copy todir="${project.build.directory}/lib">
-									<fileset dir="${basedir}/target/">
+									<fileset dir="${project.basedir}/target/">
 										<include name="*.jar"/>
 									</fileset>
 									<flattenmapper/>
 								</copy>
 								<copy todir="${project.build.outputDirectory}">
-                                    <fileset dir="${basedir}/src/main/java/">
+                                    <fileset dir="${project.basedir}/src/main/java/">
 										<include name="*.properties"/>
 									</fileset>
                                 </copy>
