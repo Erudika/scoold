@@ -10,8 +10,6 @@
 # EBS boot					ami-65b28011  	ami-61b28015
 # instance-store 			ami-dfcdffab  	ami-75b28001
 
-ami-dfcdffab
-
 TYPE=$1
 AMI=$2
 REGION="eu-west-1"

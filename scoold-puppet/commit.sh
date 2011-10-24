@@ -3,12 +3,10 @@
 LBNAME="ScooldLB"
 REGION="eu-west-1"
 MODULESDIR="/usr/share/puppet/modules"
-SCOOLDWEB="../scoold-web"
 MODNAME="scoold"
 NODETYPE="unknown"
 F1SUFFIX="-instances.txt"
 F2SUFFIX="-hostnames.txt"
-COPYSCHOOLS=false
 
 function init () {
 	GROUP=$1
@@ -24,7 +22,6 @@ function getType () {
 		NODETYPE="db"
 	elif [ "$1" = "glassfish" ]; then
 		NODETYPE="web"
-		COPYSCHOOLS=true
 	elif [ "$1" = "elasticsearch" ]; then
 		NODETYPE="search"
 	fi
@@ -80,7 +77,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				echo "copying $MODNAME.zip to $NODETYPE$count..."
 				zip -rq $MODNAME.zip $MODNAME/
 				scp $MODNAME.zip ubuntu@$host:~/				
-				if [ $COPYSCHOOLS = true ]; then
+				if [ $NODETYPE = "web" ]; then
 					scp -C schools.txt ubuntu@$host:~/
 				fi
 				
@@ -93,7 +90,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$MODNAME.zip -d $MODULESDIR/; sudo puppet apply -e 'include $MODNAME'"
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$MODNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'"
 	fi
 elif [ "$1" = "munin" ]; then
 	# clear old hosts
@@ -145,17 +142,6 @@ elif [ "$1" = "lbremove" ]; then
 	if [ -n "$2" ]; then
 	 	# deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
-	fi
-elif [ "$1" = "copyjacssi" ]; then
-	### copy javascript, css, images to S3
-	BUCKET="com.scoold.files"
-	DIR1="$SCOOLDWEB/target/scoold-web/styles"
-	DIR2="$SCOOLDWEB/target/scoold-web/scripts"
-	DIR3="$SCOOLDWEB/target/scoold-web/images"
-
-	if [ -e $DIR1 ] && [ -e $DIR2 ] && [ -e $DIR3 ]; then
-		# upload to S3
-		s3cmd --reduced-redundancy --acl-public --force put $DIR1/*min.css $DIR1/pictos* $DIR2/*min.js $DIR2/*.htc $DIR3/*.gif $DIR3/*.png s3://$BUCKET
 	fi
 else
 	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"

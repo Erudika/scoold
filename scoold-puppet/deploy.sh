@@ -17,7 +17,12 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	WARPATH="/home/ubuntu/$FILENAME"
 	VERSION=$(date +%F-%H%M%S)
 	APPNAME="scoold-web-$VERSION"
-	
+	SCOOLDWEB="../scoold-web"
+	BUCKET="com.scoold.files"
+	CSSDIR="$SCOOLDWEB/target/scoold-web/styles"
+	JSDIR="$SCOOLDWEB/target/scoold-web/scripts"
+	IMGDIR="$SCOOLDWEB/target/scoold-web/images"
+		
 	if [ -n "$2" ] && [ "$2" !=  "true" ] && [ "$2" !=  "false" ]; then
 		CONTEXT="--contextroot $2"
 	fi
@@ -79,6 +84,12 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
 			fi
 		done < $FILE1
+		echo "Deploying javascript, css and images to CDN..."
+		### copy javascript, css, images to S3		
+		if [ -e $CSSDIR ] && [ -e $JSDIR ] && [ -e $IMGDIR ]; then
+			# upload to S3
+			s3cmd --reduced-redundancy --acl-public --force put $CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $JSDIR/*.htc $IMGDIR/*.gif $IMGDIR/*.png s3://$BUCKET
+		fi
 		echo ""
 		echo "---------------------------- DONE ---------------------------------"	
 	fi

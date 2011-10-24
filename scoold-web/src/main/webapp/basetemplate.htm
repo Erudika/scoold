@@ -1877,7 +1877,7 @@
 	
 	#if($infoStripMsg == "intro" && !$request.getParameter("code"))
 		#set($hideInfoStrip = "introBox" )
-		#set($infoStripMsg = $lang.get("about.intro") )
+		#set($infoStripMsg = "$lang.get('about.intro') <a href='$aboutlink'>$lang.get('learnmore')</a>" )
 		#set($infoStripClass = "" )
 	#end
 	
@@ -1957,7 +1957,7 @@
 					<a href="#" class="pictos next-div-toggle" title="About OpenID">?</a>
 				</h2>
 				<div class="hide mtm pvm">
-					$lang.get("signin.openid.text") <a href="http://openid.net" class="extlink">$lang.get("signin.openid.learn")</a>
+					$lang.get("signin.openid.text") <a href="http://openid.net" class="extlink">$lang.get("learnmore")</a>
 				</div>
 			#end			
 			#if($attachOnly) #set($oidurl = "attach_openid") #else #set($oidurl = "openid_auth") #end
@@ -2159,7 +2159,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
         <meta name="description" content="$DESCRIPTION" />
         <meta name="keywords" content="$KEYWORDS" />
-		<link href="$styleslink/style.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
+		<link href="$styleslink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
         <link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
@@ -2289,10 +2289,10 @@
 								<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons license</a>.
 							</div>
 							<ul class="inline-list">
-								<li><a href="$aboutlink" title="About">${lang.get('about.title')}</a> |</li>
-								<li><a href="$feedbacklink" title="Feedback">${lang.get('feedback.title')}</a> |</li>
-								<li><a href="http://blog.scoold.com" title="Blog" class="extlink">${lang.get('blog.title')}</a> |</li>								
-								<li><a href="$privacylink" title="Privacy">${lang.get('privacy.title')}</a> |</li>
+								<li><a href="$aboutlink" title="About">${lang.get('about.title')}</a> &bull;</li>
+								<li><a href="$feedbacklink" title="Feedback">${lang.get('feedback.title')}</a> &bull;</li>
+								<li><a href="http://blog.scoold.com" title="Blog" class="extlink">${lang.get('blog.title')}</a> &bull;</li>								
+								<li><a href="$privacylink" title="Privacy">${lang.get('privacy.title')}</a> &bull;</li>
 								<li><a href="$termslink" title="Terms">${lang.get('terms.title')}</a></li>								
 							</ul>
 						</div>
@@ -2309,36 +2309,27 @@
 				</div>
             </div>
         </div>
-		
-		#set($CF_URL = "http://d35029ynkhy54l.cloudfront.net" )
-		#if(!$IN_PRODUCTION)
-			#set($scriptspath = $CF_URL )
-			#set($minsuffix = "-min" )
-		#else
-			#set($scriptspath = $scriptslink )
-			#set($minsuffix = "" )
-		#end
-		
+				
 		<script type="text/javascript">
 			head.js(
 				{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.6.4/jquery.min.js"},
-				{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8/jquery.validate.min.js"},
-				{modal:			"$scriptspath/jquery.modal$!{minsuffix}.js"},
-				{jeditable:		"$scriptspath/jquery.jeditable$!{minsuffix}.js"},
-				{autocomplete:	"$scriptspath/jquery.autocomplete$!{minsuffix}.js"},
-				{jsonp:			"$scriptspath/jquery.jsonp$!{minsuffix}.js"},
-				{gallery:		"$scriptspath/jquery.galleriffic$!{minsuffix}.js"},
-				{history:		"$scriptspath/jquery.history$!{minsuffix}.js"},
-				{oembed:		"$scriptspath/jquery.oembed$!{minsuffix}.js"},
-				{markitup:		"$scriptspath/jquery.markitup$!{minsuffix}.js"},
+				{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"},
+				{modal:			"$scriptslink/jquery.modal$!{minsuffix}.js"},
+				{jeditable:		"$scriptslink/jquery.jeditable$!{minsuffix}.js"},
+				{autocomplete:	"$scriptslink/jquery.autocomplete$!{minsuffix}.js"},
+				{jsonp:			"$scriptslink/jquery.jsonp$!{minsuffix}.js"},
+				{gallery:		"$scriptslink/jquery.galleriffic$!{minsuffix}.js"},
+				{history:		"$scriptslink/jquery.history$!{minsuffix}.js"},
+				{oembed:		"$scriptslink/jquery.oembed$!{minsuffix}.js"},
+				{markitup:		"$scriptslink/jquery.markitup$!{minsuffix}.js"},
 				
 				{lang:			"$context/langmap.js"},
-				{chatclient:	"$scriptspath/chatclient$!{minsuffix}.js"},
-				{miuicons:		"$scriptspath/miu.set.markdown$!{minsuffix}.js"},
-				{showdown:		"$scriptspath/showdown$!{minsuffix}.js"},
-				{diff:			"$scriptspath/diff_match_patch$!{minsuffix}.js"},
+				{chatclient:	"$scriptslink/chatclient$!{minsuffix}.js"},
+				{miuicons:		"$scriptslink/miu.set.markdown$!{minsuffix}.js"},
+				{showdown:		"$scriptslink/showdown$!{minsuffix}.js"},
+				{diff:			"$scriptslink/diff_match_patch$!{minsuffix}.js"},
 				
-				{scoold:		"$scriptspath/scoold$!{minsuffix}.js"}
+				{scoold:		"$scriptslink/scoold$!{minsuffix}.js"}
 			);
 		</script>
 		

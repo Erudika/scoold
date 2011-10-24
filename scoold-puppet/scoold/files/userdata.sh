@@ -3,8 +3,10 @@ set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
 # enable SUN JDK 
-sed -ire '/natty partner/ s/^#//' /etc/apt/sources.list
+#sed -ire '/oneiric partner/ s/^#//' /etc/apt/sources.list
+add-apt-repository -y ppa:ferramroberto/java
 echo 'sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true' | debconf-set-selections
+
 # update + upgrade system
 apt-get -y update && apt-get -y upgrade
 

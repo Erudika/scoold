@@ -227,6 +227,7 @@ public final class Language {
 			.put("map", "Map")
 			.put("points", "points")
 			.put("invalidyear", "Invalid year")
+			.put("learnmore", "Learn more")
 			
 			.put("humantime.s", "{0} seconds ago")
 			.put("humantime.m", "{0} minutes ago")
@@ -263,8 +264,7 @@ public final class Language {
 			.put("signin.facebook", "Sign in with Facebook")
 			.put("signin.openid", "Sign in with OpenID")
 			.put("signin.openid.text", "OpenID allows you to use an existing account to sign in to multiple websites, without needing to create new passwords. It's a free and easy way to use a single digital identity across the Internet.")
-			.put("signin.openid.learn", "Learn more")
-
+			
 			.put("profile.about.title", "About me")
 			.put("profile.about.dob", "Date of birth")
 			.put("profile.about.location", "Location")

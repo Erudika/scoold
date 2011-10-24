@@ -62,6 +62,7 @@ public class BasePage extends Page {
 	private static final long serialVersionUID = 1L;
 
 	public static final String APPNAME = "scoold"; //app name
+	public static final String CDN_URL = "http://d35029ynkhy54l.cloudfront.net"; 
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
 	public static final boolean IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
@@ -76,6 +77,7 @@ public class BasePage extends Page {
 	public static final Logger logger = Logger.getLogger(BasePage.class.getName());
 
 	public String prefix = getContext().getServletContext().getContextPath()+"/";
+	public String minsuffix = "-min";
 	public String imageslink = prefix + "images";
 	public String scriptslink = prefix + "scripts";
 	public String styleslink = prefix + "styles";
@@ -152,6 +154,7 @@ public class BasePage extends Page {
 		req = getContext().getRequest();
 		initLanguage();
 		checkAuth();
+		cdnSwitch();
 		includeFBscripts = false;
 		daoutils = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils();
 		itemcount = new MutableLong(0);
@@ -172,6 +175,21 @@ public class BasePage extends Page {
 	}
 
 	/* * PRIVATE METHODS * */
+	
+	private void cdnSwitch(){
+		if (IN_PRODUCTION) {
+			scriptslink = CDN_URL;
+			imageslink = CDN_URL;
+			styleslink = CDN_URL;
+			minsuffix = "-min";
+		}else{			
+			scriptslink = prefix + "scripts";
+			imageslink = prefix + "images";
+			styleslink = prefix + "styles";
+			minsuffix = "";
+		}
+	}
+	
 	private void checkAuth() {	
 		isFBconnected = false;
 		if (req.getRemoteUser() != null) {

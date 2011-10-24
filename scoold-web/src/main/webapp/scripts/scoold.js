@@ -483,20 +483,15 @@ $(function () {
 	});
 
 	//close msg boxes 
-	$(".infostrip, .messagebox").live("click", function(){
+	$(".infostrip, .messagebox").live("click", function(event){
 		var that = $(this);
 		that.hide();
 		if(that.hasClass("introBox")){
 			createCookie("intro", "0");
 		}
-		return false;
+		return (event.target.nodeName === "A");
 	});
 	
-	$(".introstrip").live("click", function(){
-		$(this).hide();
-		return false;
-	});
-
 	// show ajax indicator when submit is pressed
 	$("input[type=submit]").live("click", function(){
 		$(this).addClass("loading");
@@ -1478,7 +1473,7 @@ $(function () {
 		var x;
 		for (x = 0; x < diffs.length; x++) {
 			html[x] = diffMarkup(diffs[x][1], diffs[x][0]);
-			if(done){ break; }
+			if(done){break;}
 		}
 		
 		if($.trim(appendMe) !== ""){

@@ -6,13 +6,12 @@ class scoold {
 	# ----------------- EDIT HERE ---------------------#	
 	$inproduction = false
 	$defuser = "ubuntu"
-	$release = "natty"
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "search1"
-	$dbseeds = "10.224.67.115,10.224.57.192"
-	$dbhosts = "10.224.67.115,10.224.57.192,10.228.174.69"
+	$nodename = "web2"
+	$dbseeds = "10.228.97.178,10.228.23.146"
+	$dbhosts = "10.228.97.178,10.228.23.146,10.234.109.144"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
@@ -29,7 +28,7 @@ class scoold {
 		 
 	#### Elasticsearch ####
 	$esmaster = true
-	$esver = "0.17.8"
+	$esver = "0.17.9"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$esriverlink = "https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 	$esport = 9200
