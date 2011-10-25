@@ -381,9 +381,13 @@
 				<version>1.2</version>
 				<configuration>
 					<verbose>false</verbose>
+					<excludes>
+						<exclude>${project.basedir}/src/main/webapp/WEB-INF/**</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
+						<phase>install</phase>
 						<goals>
 							<goal>compress</goal>
 						</goals>

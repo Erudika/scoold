@@ -66,11 +66,11 @@ table {
 
 @font-face {
     font-family: 'PictosRegular';
-    src: url('pictos-web-webfont.eot');
-    src: url('pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-         url('pictos-web-webfont.woff') format('woff'),
-         url('pictos-web-webfont.ttf') format('truetype'),
-         url('pictos-web-webfont.svg#PictosRegular') format('svg');
+    src: url('KURVA/pictos-web-webfont.eot');
+    src: url('KURVA/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+         url('KURVA/pictos-web-webfont.woff') format('woff'),
+         url('KURVA/pictos-web-webfont.ttf') format('truetype'),
+         url('KURVA/pictos-web-webfont.svg#PictosRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
