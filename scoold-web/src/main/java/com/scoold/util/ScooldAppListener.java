@@ -7,6 +7,7 @@ package com.scoold.util;
 
 import com.scoold.core.Search;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
@@ -37,7 +38,7 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 	
 	public void contextInitialized(ServletContextEvent sce) {
 		//logger.info("initializing context.");
-		ServletContext sc = sce.getServletContext();
+		ServletContext sc = sce.getServletContext();		
 		
 		// authentic roast
 		Registry.forContext(sc).register(new com.scoold.util.ScooldAuthModule());

@@ -15,6 +15,7 @@
 		<module>scoold-chat</module>
 		<module>scoold-search</module>
 		<module>scoold-puppet</module>
+		<module>scoold-invalidator</module>
 	</modules>
 	<build>
 		<plugins>

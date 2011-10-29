@@ -4,8 +4,10 @@
 # https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web.war
 # https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web/styles/style.css
 
-FILE1="web-instances.txt"
-FILE2="web-hostnames.txt"
+F1SUFFIX="-instances.txt"
+F2SUFFIX="-hostnames.txt"
+FILE1="web$F1SUFFIX"
+FILE2="web$F2SUFFIX"
 JAUTH="./scoold/files/jenkins-auth.txt"
 ASADMIN="sudo -u glassfish /home/glassfish/glassfish/bin/asadmin"
 LBNAME="ScooldLB"	
@@ -18,23 +20,39 @@ WARPATH="/home/ubuntu/$FILENAME"
 VERSION=$(date +%F-%H%M%S)
 APPNAME="scoold-web-$VERSION"
 BUCKET="com.scoold.files"
-CSSDIR="../scoold-web/target/scoold-web/styles"
-JSDIR="../scoold-web/target/scoold-web/scripts"
-IMGDIR="../scoold-web/target/scoold-web/images"
-STYLECSS="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web/styles/style-min.css"
+CSSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/styles"
+JSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/scripts"
+IMGDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/images"
+SUMSFILE="checksums.txt"
+PATHSFILE="filepaths.txt"
+JARPATH="../scoold-invalidator/target/scoold-invalidator-all.jar"
 
-function uploadJacssi () {
+function updateJacssi () {
 	echo "Deploying javascript, css and images to CDN..."
-	### copy javascript, css, images to S3		
-	if [ -e $CSSDIR ] && [ -e $JSDIR ] && [ -e $IMGDIR ]; then
+	### copy javascript, css, images to S3				
+	if [ -d $CSSDIR ] && [ -d $JSDIR ] && [ -d $IMGDIR ]; then
+		dirlist="$CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $JSDIR/*.htc $IMGDIR/*.gif $IMGDIR/*.png"
+		rm -rf $SUMSFILE $PATHSFILE &> /dev/null
+		for file in `ls -d1 $dirlist`; do
+			if [ -f "$file" ]; then
+				name=$(expr $file : '.*/\(.*\)$')
+				echo "$name $(md5 -q $file)" >> $SUMSFILE
+				echo "$name $file" >> $PATHSFILE
+			fi
+		done
+		
+		if [ -n "$1" ] && [ "$1" = "invalidateall" ]; then
+			SUMSFILE="all"
+			PATHSFILE=""
+		fi
+	
 		# upload to S3
-		AUTH="-u $(cat $JAUTH)"			
-		curl -s $AUTH -o $CSSDIR/style-min.css $STYLECSS
-		s3cmd --reduced-redundancy --acl-public --force put $CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $JSDIR/*.htc $IMGDIR/*.gif $IMGDIR/*.png s3://$BUCKET
+		#s3cmd --reduced-redundancy --acl-public --force put $dirlist $SUMSFILE s3://$BUCKET
+		java -jar $JARPATH $SUMSFILE $PATHSFILE
 	fi
 }
 
-if [ -n "$1" ] && [ -n "$2" ]; then
+if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 	if [ -n "$2" ] && [ "$2" !=  "true" ] && [ "$2" !=  "false" ]; then
 		CONTEXT="--contextroot $2"
 	fi
@@ -50,7 +68,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 
 		if [ `expr $1 : '^http.*$'` != 0 ]; then
 			AUTH=""
-			if [ -e "$JAUTH" ]; then
+			if [ -e $JAUTH ]; then
 				AUTH="-u $(cat $JAUTH)"
 			fi
 			FETCHWAR="curl -s $AUTH -o $WARPATH $WAR"
@@ -63,23 +81,30 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$FETCHWAR && chmod 755 $WARPATH && $ASADMIN deploy --enabled=$ENABLED $CONTEXT --name $APPNAME $WARPATH && rm $WARPATH"
 
 		OLDAPP=""
+		dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
+		production="true"
+		prefix="com.scoold"
+		count=1
 		while read i; do
 			if [ -n "$i" ]; then
 				instid=$(echo $i | awk '{ print $1 }')
-				host=$(echo $i | awk '{ print $2 }')
+				host=$(echo $i | awk '{ print $2 }')			
 
-				if [ "$ENABLED" = "false" ]; then					
+				if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
+					### STEP 2: set system properties
+					ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$workerid $prefix.production=\"$production\" $prefix.dbhosts=\"$dbhosts\""
+					
 					if [ -z "$OLDAPP" ]; then
 						OLDAPP=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
 					fi
 
-					### STEP 2: deregister each instance from the LB, consecutively 
+					### STEP 3: deregister each instance from the LB, consecutively 
 					$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --quiet --instances $instid
 
-					### STEP 3: disable old deployed application and enable new application
+					### STEP 4: disable old deployed application and enable new application
 					ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"
 
-					### STEP 4: TEST, TEST, TEST! then continue
+					### STEP 5: TEST, TEST, TEST! then continue
 					echo "TEST NOW! => $host"
 					read -p "'ok' to confirm > " response < /dev/tty
 
@@ -87,22 +112,23 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 					    echo "OK! Undeploying old application..."
 						ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
 					else
-						### STEP 4.1 REVERT back to old application
+						### STEP 5.1 REVERT back to old application
 						echo "NOT OK! Reverting back to old application..."
 						ssh -n ubuntu@$host "$ASADMIN disable $APPNAME && $ASADMIN enable $OLDAPP"
 					fi			
-				fi	
-				### STEP 5: register application back with the LB
+					count=$((count+1))
+				fi					
+				### STEP 6: register application back with the LB
 				$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
 			fi
 		done < $FILE1
-		uploadJacssi
+		updateJacssi
 		echo ""
 		echo "---------------------------- DONE ---------------------------------"	
 	fi
-elif [ "$1" = "uploadjacssi" ]; then
-	uploadJacssi
+elif [ "$1" = "updatejacssi" ]; then
+	updateJacssi $2
 else
-	echo "USAGE:  $0 (war | uploadjacssi)  [context | enabled]"
+	echo "USAGE:  $0 (war | updatejacssi [invalidateall])  [context | enabled]"
 fi
 

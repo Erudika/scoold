@@ -66,11 +66,11 @@ table {
 
 @font-face {
     font-family: 'PictosRegular';
-    src: url('KURVA/pictos-web-webfont.eot');
-    src: url('KURVA/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-         url('KURVA/pictos-web-webfont.woff') format('woff'),
-         url('KURVA/pictos-web-webfont.ttf') format('truetype'),
-         url('KURVA/pictos-web-webfont.svg#PictosRegular') format('svg');
+    src: url('../styles/pictos-web-webfont.eot');
+    src: url('../styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../styles/pictos-web-webfont.woff') format('woff'),
+         url('../styles/pictos-web-webfont.ttf') format('truetype'),
+         url('../styles/pictos-web-webfont.svg#PictosRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -188,7 +188,7 @@ a:hover, a:active { text-decoration: underline;}
 a.nodecoration { text-decoration: none; }
 a.nodecoration:hover{ text-decoration: none;}
 a.button-small, a.button-tiny, a.button-medium, a.button-large,
-span.button-small, span.button-tiny, span.button-medium, span.button-large{
+span.button-small, span.button-tiny, span.button-medium, span.button-large, input.button{
 	background-color: #CCCCCC;
     color: black;
 	border-bottom: 1px solid transparent;
@@ -210,7 +210,8 @@ a.button-large, span.button-large {
 	font-size: 1.5em;
     padding: 3px 10px;
 }
-a.button-small, span.button-small {
+a.button-small, span.button-small, input.button, 
+input[type=submit], input[type=reset], input[type=button] {
     line-height: inherit;
 	font-size: 1em;
     padding: 2px 8px;
@@ -280,12 +281,6 @@ select.nicebox{
 	font-size: inherit;
 	color:  inherit;
 	padding: 2px;
-}
-input.button, input[type=submit], input[type=reset], input[type=button]{
-	font-size:16px;
-	background-color: #CCCCCC;
-	color:black;
-	padding: 3px 10px;
 }
 input[type=radio]{margin-right: 6px;}
 input[disabled=true]{background-color: #CCCCCC;}
@@ -488,9 +483,9 @@ pre, code, .chat-msg{
 .labelbox, .labelbox a{ color: black;}
 .loading{ 
 	background-image: url(../images/indicator.gif); 
-	background-position: 10% 50%; 
+	background-position: 5px 50%; 
 	background-repeat: no-repeat; 
-	text-indent: 20px;
+	text-indent: 15px;
 }
 .badge a{color: white;}
 .badge .pictos{ color: #33AAFF; }

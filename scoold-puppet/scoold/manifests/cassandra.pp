@@ -5,7 +5,6 @@ class scoold::cassandra {
 	$caspath = "${cassandrahome}/cassandra.tar.gz"
 	$casdir = "${cassandrahome}/cassandra"
 	$casconf = "${casdir}/conf/cassandra.yaml"	
-	$dontstart = "#do-not-start"	 	
 	$mhs = "MAX_HEAP_SIZE="
 	$hns = "HEAP_NEWSIZE="
 	$itok = "initial_token:" 
@@ -56,6 +55,14 @@ class scoold::cassandra {
 				command => "sed -e '1,/${cname}/ s/${cname}.*/${cname} ${scoold::dbcluster}/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
 				before => Exec["start-cassandra"];
+			"set-token":
+	        	command => "sed -e '1,/${itok}/ s/${itok}.*/${itok} ${tokens[$nodeid]}/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"];
+			"set-seeds":
+				command => "sed -e '1,/${seeds}/ s/${seeds}.*/${seeds} \"${scoold::dbseeds}\"/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"];
 			"set-listen-address": 
 				command => "sed -e '1,/${listenaddr}/ s/${listenaddr}.*/${listenaddr} ${ipaddress}/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
@@ -93,22 +100,7 @@ class scoold::cassandra {
 				line => "${cassandrausr} hard memlock unlimited"
 		}
 	}
-		
-	exec { 
-#		"enable-start": 
-#			command => "sed -e 's/${dontstart}//' -i.bak ${casconf}",
-#			require => Exec["set-cluster-name"];
-#		"disable-start": 
-#			command => "echo '${dontstart}' >> ${casconf}",
-#			require => Exec["set-cluster-name"];
-		"set-token":
-        	command => "sed -e '1,/${itok}/ s/${itok}.*/${itok} ${tokens[$nodeid]}/' -i.bak ${casconf}",
-	        require => Exec["set-cluster-name"];
-		"set-seeds":
-			command => "sed -e '1,/${seeds}/ s/${seeds}.*/${seeds} \"${scoold::dbseeds}\"/' -i.bak ${casconf}",
-			require => Exec["set-cluster-name"];
-	}
-		
+	
 	if $nodeid == 0 {
 		# first node is also the munin server
 		package { ["munin", "nginx"]: }
@@ -223,7 +215,7 @@ class scoold::cassandra {
 		
 	exec { "start-cassandra":
 		command => "start cassandra",
-		unless => "grep '${dontstart}' ${casconf} 2>/dev/null", # "test -e ${cassandrahome}/cassandra.pid", 
+		unless => "test -e ${cassandrahome}/cassandra.pid", 
 		require => Exec["set-cluster-name"]
 	}			
 }

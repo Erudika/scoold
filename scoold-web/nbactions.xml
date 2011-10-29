@@ -21,6 +21,7 @@
             <properties>
                 <maven.test.skip>true</maven.test.skip>
                 <netbeans.deploy>true</netbeans.deploy>
+                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
             </properties>
         </action>
         <action>

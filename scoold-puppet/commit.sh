@@ -3,6 +3,7 @@
 LBNAME="ScooldLB"
 REGION="eu-west-1"
 MODULESDIR="/usr/share/puppet/modules"
+WEBDIR="../scoold-web/src/main/webapp/WEB-INF"
 MODNAME="scoold"
 NODETYPE="unknown"
 F1SUFFIX="-instances.txt"
@@ -28,7 +29,6 @@ function getType () {
 	echo $NODETYPE
 }
 
-
 if [ -n "$1" ] && [ -n "$2" ]; then
 	GROUP=$2			
 	NODETYPE=$(getType $GROUP)
@@ -50,12 +50,9 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		echo "done."	
 	elif [ "$1" = "all" ]; then	
 		if [ -e "db$F1SUFFIX" ]; then
-			dbseeds=$(sed -n 1,2p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')
-			dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
 			# set seed nodes to be the first two IPs
-			sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$MODNAME/manifests/init.pp
-			# set hosts system param in domain.xml to be picked up by the web app
-			sed -e "1,/\\\$dbhosts/ s/\\\$dbhosts.*/\\\$dbhosts = \"$dbhosts\"/" -i.bak ./$MODNAME/manifests/init.pp
+			dbseeds=$(sed -n 1,2p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')			
+			sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$MODNAME/manifests/init.pp			
 		fi
 		
 		count=1	

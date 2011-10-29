@@ -10,10 +10,7 @@
   <applications></applications>
   <resources></resources>
   <servers>
-    <server name="server" config-ref="server-config">
-	  <system-property name="com.scoold.production" value="true"></system-property>
-	  <system-property name="com.scoold.cassandra.hosts" value="localhost"></system-property>
-	  <system-property name="com.scoold.workerid" value="0"></system-property>
+    <server name="server" config-ref="server-config">	  
       <application-ref ref="__admingui" virtual-servers="__asadmin"></application-ref>
     </server>
   </servers>

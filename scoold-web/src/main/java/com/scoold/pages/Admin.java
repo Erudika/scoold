@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.scoold.pages;
 
 import com.scoold.core.ScooldObject;
@@ -22,43 +21,45 @@ import org.apache.commons.io.FileUtils;
  *
  * @author alexb
  */
-public class Admin extends BasePage{
+public class Admin extends BasePage {
 
 	public String title;
 
 	public Admin() {
 		title = "";
-		if(!authenticated || !authUser.isAdmin())
+		if (!authenticated || !authUser.isAdmin()) {
 			setRedirect(HOMEPAGE);
+		}
 	}
 
-	public void onGet(){
-		
+	public void onGet() {
 	}
 
-	public void onPost(){
+	public void onPost() {
 		String ref = param("returnto") ? getParamValue("returnto") : adminlink;
-		
-		if(param("confirmdelete")){
+
+		if (param("confirmdelete")) {
 			String classname = StringUtils.capitalize(getParamValue("confirmdelete"));
 			Long id = NumberUtils.toLong(getParamValue("id"));
 			ScooldObject sobject = AbstractDAOUtils.getObject(id, classname);
-			if(sobject != null){
+			if (sobject != null) {
 				sobject.delete();
-				
+
 				logger.log(Level.INFO, "{0} #{1} deleted {3} #{4}", new Object[]{
-					authUser.getFullname(),
-					authUser.getId(),
-					sobject.getClass().getName(),
-					sobject.getId()
-				});
+							authUser.getFullname(),
+							authUser.getId(),
+							sobject.getClass().getName(),
+							sobject.getId()
+						});
 			}
-		}else{
+		} else {
 			long startTime = System.nanoTime();
-			if(param("createschools")){
-				createSchools();
-				logger.log(Level.WARNING, "Executed createSchools().");
-			}else if(param("reindex")){
+			if (param("createschools")) {
+				if(daoutils.getBeanCount(School.class) == 0L){
+					createSchools();
+					logger.log(Level.WARNING, "Executed createSchools().");
+				}
+			} else if (param("reindex")) {
 				reindex(getParamValue("reindex"));
 				logger.log(Level.WARNING, "Executed reindex().");
 			}
@@ -66,64 +67,62 @@ public class Admin extends BasePage{
 			logger.log(Level.WARNING, "Time {0}", new Object[]{estimatedTime});
 		}
 
-		if(!StringUtils.isBlank(ref)) 
-			setRedirect(ref);
+		setRedirect(ref);
 	}
-	
-	private void reindex(String what){
-		if(what == null) return ;
+
+	private void reindex(String what) {
+		if (what == null) {
+			return;
+		}
 		ArrayList<Searchable<?>> list = new ArrayList<Searchable<?>>();
 		// TODO: all
 		if (what.startsWith("school")) {
-		} else if(what.startsWith("classunit")) {
-			
-		} else if(what.startsWith("question")) {
-			
-		} else if(what.startsWith("answer")) {
-			
-		} else if(what.startsWith("post")) {
-			
-		} else if(what.startsWith("feedback")) {
-			
-		} else if(what.startsWith("user")) {
-			
-		} else if(what.startsWith("tag")) {
-			
+		} else if (what.startsWith("classunit")) {
+		} else if (what.startsWith("question")) {
+		} else if (what.startsWith("answer")) {
+		} else if (what.startsWith("post")) {
+		} else if (what.startsWith("feedback")) {
+		} else if (what.startsWith("user")) {
+		} else if (what.startsWith("tag")) {
 		}
-		
+
 		for (Searchable<?> searchable : list) {
 			searchable.reindex();
 		}
 	}
-	
-	private void createSchools(){
-		String filepath = IN_PRODUCTION ? "/home/ubuntu/schools.txt" : 
-				"/Users/alexb/Desktop/schools.txt";
+
+	private void createSchools() {
+		String filepath = IN_PRODUCTION ? "/home/ubuntu/schools.txt"
+				: "/Users/alexb/Desktop/schools.txt";
 		File file = new File(filepath);
 		int i = 1;
 		try {
 			List<String> lines = FileUtils.readLines(file, "UTF-8");
 
 			for (String line : lines) {
-				if(StringUtils.isBlank(line)) continue;
+				if (StringUtils.isBlank(line)) {
+					continue;
+				}
 				School s = new School();
 				line = line.trim();
-				
+
 				String[] starr = line.split("\\|");
 				s.setType(starr[0]);
 				s.setName(starr[1]);
 				s.setLocation(starr[2]);
-				if(starr.length > 3) s.setContacts(starr[3]);
+				if (starr.length > 3) {
+					s.setContacts(starr[3]);
+				}
 				Long id = s.create();
 				Logger.getLogger(Admin.class.getName()).log(
-						Level.INFO, "{0}. created school {1} in {2}", new Object[]{i,id,starr[2]});				
-				i++;				
-			}						
+						Level.INFO, "{0}. created school {1} in {2}", new Object[]{i, id, starr[2]});
+				i++;
+			}
 		} catch (Exception ex) {
 			Logger.getAnonymousLogger().log(Level.SEVERE, null, ex);
-		} 
+		}
 	}
-
+	
 //	private void filldb(){
 //		//		Client searchClient = (Client) getContext().getServletContext().
 ////				getAttribute("searchClient");
@@ -214,5 +213,4 @@ public class Admin extends BasePage{
 //	}
 //
 //	private void resetIndex2(){j = 0;}
-
 }

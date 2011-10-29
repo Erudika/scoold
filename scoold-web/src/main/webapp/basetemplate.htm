@@ -2163,6 +2163,7 @@
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
         <link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
+		<link href="$CDN_URL/logosq.png" rel="image_src" />
 		#if($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
 			#set($feedkey = $daoutils.MD5("${authUser.id}${FEED_KEY_SALT}"))
 			<link href="$context/feed.xml?userid=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>

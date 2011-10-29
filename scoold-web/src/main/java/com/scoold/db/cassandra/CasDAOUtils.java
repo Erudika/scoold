@@ -90,7 +90,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	
 	static {
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
-		config.setHosts(System.getProperty("com.scoold.cassandra.hosts","localhost"));
+		config.setHosts(System.getProperty("com.scoold.dbhosts","localhost"));
 		config.setPort(CasDAOFactory.CASSANDRA_PORT);
 		config.setRetryDownedHosts(true);
 		config.setRetryDownedHostsDelayInSeconds(60);

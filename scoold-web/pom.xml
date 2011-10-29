@@ -338,6 +338,11 @@
             <version>0.17.9</version>
         </dependency>
         <dependency>
+            <groupId>net.java.dev.jets3t</groupId>
+            <artifactId>jets3t</artifactId>
+            <version>0.8.1</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
@@ -381,9 +386,6 @@
 				<version>1.2</version>
 				<configuration>
 					<verbose>false</verbose>
-					<excludes>
-						<exclude>${project.basedir}/src/main/webapp/WEB-INF/**</exclude>
-					</excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -393,38 +395,7 @@
 						</goals>
 					</execution>
 				</executions>        
-			</plugin>
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>maven-replacer-plugin</artifactId>
-				<version>1.3.9</version>
-				<executions>                
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<file>src/main/webapp/WEB-INF/style.css</file>
-					<outputFile>src/main/webapp/styles/style.css</outputFile>
-					<replacements>
-						<replacement>
-							<token>SCRIPTSLINK</token>
-							<value>../scripts</value>
-						</replacement>
-						<replacement>
-							<token>STYLESLINK</token>
-							<value></value>
-						</replacement>
-						<replacement>
-							<token>IMAGESLINK</token>
-							<value>../images</value>
-						</replacement>
-					</replacements>                        
-				</configuration>
-			</plugin>
+			</plugin>			
         </plugins>
         <finalName>scoold-web</finalName>
     </build>    
@@ -475,15 +446,15 @@
 							<outputFile>src/main/webapp/styles/style.css</outputFile>
 							<replacements>
 								<replacement>
-									<token>SCRIPTSLINK</token>
+									<token>../scripts</token>
 									<value>http://d35029ynkhy54l.cloudfront.net</value>
 								</replacement>
 								<replacement>
-									<token>STYLESLINK</token>
+									<token>../styles</token>
 									<value>http://d35029ynkhy54l.cloudfront.net/</value>
 								</replacement>
 								<replacement>
-									<token>IMAGESLINK</token>
+									<token>../images</token>
 									<value>http://d35029ynkhy54l.cloudfront.net</value>
 								</replacement>
 							</replacements>                        

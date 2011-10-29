@@ -1,5 +1,4 @@
 .DS_Store
-*target/**
 *.class
 *.jar
 *.zip
@@ -12,3 +11,4 @@ scoold-web/target/
 scoold-web/tmp/**
 scoold-web/src/main/webapp/WEB-INF/lib/**
 scoold-puppet/*.txt
+/scoold-invalidator/target/

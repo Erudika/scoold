@@ -4,14 +4,13 @@
 #
 class scoold {
 	# ----------------- EDIT HERE ---------------------#	
-	$inproduction = false
+	$inproduction = false #controls heap size for m2.large
 	$defuser = "ubuntu"
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "web2"
-	$dbseeds = "10.228.97.178,10.228.23.146"
-	$dbhosts = "10.228.97.178,10.228.23.146,10.234.109.144"
+	$nodename = "search1"
+	$dbseeds = ""
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	

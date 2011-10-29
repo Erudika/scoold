@@ -124,20 +124,9 @@ class scoold::glassfish {
 			mode => 664,
 			require => Exec["rename-glassfish"]
 	}
-		
-	$prop = '\(com\.scoold\.workerid\" value=\)"[0-9]*"'
-	$prop1 = '\(com\.scoold\.cassandra\.hosts\" value=\)".*"'	
-	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-glassfish.txt")
 	
+	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-glassfish.txt")	
 	exec { 
-		"set-worker-id": 
-			command => "sed -e '1,/${prop}/ s/${prop}/\\1\"${workerid}\"/' -i.bak ${gfdomain}/config/domain.xml",
-			require => File["${gfdomain}/config/domain.xml"],
-			before => Exec["start-glassfish"];
-		"set-db-hosts": 
-			command => "sed -e '1,/${prop1}/ s/${prop1}/\\1\"${scoold::dbhosts}\"/' -i.bak ${gfdomain}/config/domain.xml",
-			require => File["${gfdomain}/config/domain.xml"],
-			before => Exec["start-glassfish"];
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
 			require => Exec["start-glassfish"];		
