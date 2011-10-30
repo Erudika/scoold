@@ -10,7 +10,7 @@ class scoold {
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
 	$nodename = "search1"
-	$dbseeds = ""
+	$dbseeds = "10.235.90.251,10.224.103.69"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
@@ -27,7 +27,7 @@ class scoold {
 		 
 	#### Elasticsearch ####
 	$esmaster = true
-	$esver = "0.17.9"
+	$esver = "0.18.2"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$esriverlink = "https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 	$esport = 9200
