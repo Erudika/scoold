@@ -91,7 +91,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 				host=$(echo $i | awk '{ print $2 }')			
 				
 				### STEP 2: set system properties
-				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count $prefix.production=\"$production\" $prefix.dbhosts=\"$dbhosts\""
+				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\""
 				
 				if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
 					if [ -z "$OLDAPP" ]; then

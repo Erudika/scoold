@@ -450,7 +450,7 @@
 								</replacement>
 								<replacement>
 									<token>../styles</token>
-									<value>http://d35029ynkhy54l.cloudfront.net/</value>
+									<value>http://d35029ynkhy54l.cloudfront.net</value>
 								</replacement>
 								<replacement>
 									<token>../images</token>

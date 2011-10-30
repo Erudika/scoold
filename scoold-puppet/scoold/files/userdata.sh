@@ -27,4 +27,4 @@ sed -e "1,/$VAR2/ s/$VAR2.*/cron\.\*				\/var\/log\/cron\.log/" -i.bak /etc/rsys
 service rsyslog restart
 
 # disable byobu
-byobu-disable
+sudo -u ubuntu byobu-disable
