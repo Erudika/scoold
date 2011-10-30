@@ -442,8 +442,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<file>src/main/webapp/WEB-INF/style.css</file>
-							<outputFile>src/main/webapp/styles/style.css</outputFile>
+							<file>src/main/webapp/styles/style.css</file>
 							<replacements>
 								<replacement>
 									<token>../scripts</token>
