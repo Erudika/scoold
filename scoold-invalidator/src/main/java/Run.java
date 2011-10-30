@@ -92,19 +92,20 @@ public class Run {
 					String rsum = remoteSums.get(lfile);
 					String fullpath = filepaths.get(lfile);
 
-					if(rsum != null && !lsum.equals(rsum)){
-						if(fullpath != null && !fullpath.trim().isEmpty()){
-							// upload new version and mark for invalidation
-							System.out.println("found changes in "+lfile);
+					if(fullpath != null && !fullpath.trim().isEmpty()){
+						if((rsum != null && !lsum.equals(rsum)) || rsum == null){
+							if (rsum == null) {
+								// reupload file
+								System.out.println("found new file "+lfile);
+							} else {
+								// upload new version and mark for invalidation
+								System.out.println("found changes in "+lfile);
+							}
+							
 							uploadFile(lfile, fullpath, true);
 							invalidate.add("/"+lfile);							
 							changesFound = true;
 						}
-					}else if(rsum == null){
-						// reupload file
-						System.out.println("found new file "+lfile);
-						uploadFile(lfile, fullpath, true);
-						changesFound = true;
 					}
 				}
 

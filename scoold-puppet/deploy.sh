@@ -84,16 +84,16 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 		dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
 		production="true"
 		prefix="com.scoold"
-		count=1
+		count=1		
 		while read i; do
 			if [ -n "$i" ]; then
 				instid=$(echo $i | awk '{ print $1 }')
 				host=$(echo $i | awk '{ print $2 }')			
-
+				
+				### STEP 2: set system properties
+				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count $prefix.production=\"$production\" $prefix.dbhosts=\"$dbhosts\""
+				
 				if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
-					### STEP 2: set system properties
-					ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$workerid $prefix.production=\"$production\" $prefix.dbhosts=\"$dbhosts\""
-					
 					if [ -z "$OLDAPP" ]; then
 						OLDAPP=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
 					fi

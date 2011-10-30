@@ -28,9 +28,10 @@ public class Error extends ErrorPage {
 		lang = Language.readLanguage(getContext().getLocale());
         title = lang.get("error.title");
 		addModel("APPNAME", BasePage.APPNAME);
-		addModel("currentLocale", getContext().getLocale());
 		addModel("DESCRIPTION", BasePage.DESCRIPTION);
 		addModel("KEYWORDS", BasePage.KEYWORDS);
+		addModel("CDN_URL", BasePage.CDN_URL);
+		addModel("currentLocale", getContext().getLocale());
 		addModel("rand", (new Random().nextInt(1337) + 100));
     }
 

@@ -23,9 +23,10 @@ public class NotFound extends Page{
 		lang = Language.readLanguage(getContext().getLocale());
         title = lang.get("notfound.title");
 		addModel("APPNAME", BasePage.APPNAME);
-		addModel("currentLocale", getContext().getLocale());
 		addModel("DESCRIPTION", BasePage.DESCRIPTION);
 		addModel("KEYWORDS", BasePage.KEYWORDS);
+		addModel("CDN_URL", BasePage.CDN_URL);
+		addModel("currentLocale", getContext().getLocale());
 	}
 
 	public String getTemplate() {

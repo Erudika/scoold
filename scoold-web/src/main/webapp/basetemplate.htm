@@ -2024,6 +2024,22 @@
 		<img src="http://placehold.it/160x600/efefef/444444&amp;text=Your+ad+here" width="160" height="600" alt="ad" class="rounded3"/>
 	</a>
 #end
+#####################################
+#macro(basichead $showdesc $showkeyw)
+	#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
+	<title>$APPNAME $!titlestr </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="$context/styles/style.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
+	<link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+	<link href="$CDN_URL/logosq.png" rel="image_src" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+	#if($showdesc && !$showdesc.isEmpty())
+		<meta name="description" content="$showdesc" />
+	#end
+	#if($showkeyw && !$showkeyw.isEmpty())
+		<meta name="keywords" content="$showkeyw" />
+	#end	
+#end
 ################# END MACROS ###################################################
 #if($isAjaxRequest || false)
 	################# PAGINATION AJAX REQUESTS #################
@@ -2153,17 +2169,9 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
     <head>
-		#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>$APPNAME $!titlestr</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
-        <meta name="description" content="$DESCRIPTION" />
-        <meta name="keywords" content="$KEYWORDS" />
-		<link href="$styleslink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
+		#basichead($!DESCRIPTION $!KEYWORDS)		
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
-        <link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
-		<link href="$CDN_URL/logosq.png" rel="image_src" />
 		#if($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
 			#set($feedkey = $daoutils.MD5("${authUser.id}${FEED_KEY_SALT}"))
 			<link href="$context/feed.xml?userid=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>

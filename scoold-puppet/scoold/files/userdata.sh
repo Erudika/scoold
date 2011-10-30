@@ -25,3 +25,6 @@ VAR2="#cron.*"
 sed -e "1,/$VAR1/ s/$VAR1.*/$VAR1,cron\.none -\/var\/log\/syslog/" -i.bak /etc/rsyslog.d/50-default.conf
 sed -e "1,/$VAR2/ s/$VAR2.*/cron\.\*				\/var\/log\/cron\.log/" -i.bak /etc/rsyslog.d/50-default.conf
 service rsyslog restart
+
+# disable byobu
+byobu-disable
