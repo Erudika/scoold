@@ -501,7 +501,6 @@ $(function () {
 	
 	$("body").ajaxSuccess(function() {
 		clearLoading();
-		console.log("DONE!");
 	});
 	
 	var color1 = $("body").css("color");
@@ -1490,7 +1489,6 @@ $(function () {
 
 		if(newText && oldText){
 //			var dd = diff_linesToHtml(oldText, newText);
-//			console.log(dd[1]);
 //			var d = dmp.diff_main(dd[0], dd[1], false);
 
 			var d = dmp.diff_main(oldText, newText);

@@ -2,47 +2,45 @@
 
 <div id="messages">
 	
-	#if($list && !$list.isEmpty())
-		<a href="$messageslink/new" class="button-small right next-div-toggle rounded3" title="New message">$lang.get("sendmsg")</a>
-	#end
+	<a href="$messageslink/new" class="button-small right next-div-toggle rounded3" title="New message">$lang.get("sendmsg")</a>
 	
 	<h2><span class="pictos">M</span> $lang.get("messages.title") #showcount($itemcount.longValue())</h2>
 	<hr/>
-	#if($list && !$list.isEmpty())
-		#if($request.getParameter("newmessage"))
-			#set($hide = "")
-		#else
-			#set($hide = "hide")
-		#end
+	
+	#if($request.getParameter("newmessage"))
+		#set($hide = "")
+	#else
+		#set($hide = "hide")
+	#end
 
-		<div class="newmessage $hide">
+	<div class="newmessage $hide">
+		#if($list && !$list.isEmpty())
 			#if($request.getParameter("toname") && $request.getParameter("touuid"))
 				#newmessageform($request.getParameterValues("toname") $request.getParameterValues("touuid"))
 			#else
 				#newmessageform([] [])
 			#end
-		</div>
-		
-		<div id="all-messages">
-			#if($messageslist.isEmpty())
-				<h2 class="center mtl">$lang.get("messages.nomessages")</h2>
-			#else
-				#paginate($pagenum.longValue() "#messagespage($messageslist)" $itemcount.longValue() "" "pageless")
-			#end		
-		</div>
-		<div class="right">
-			#if($messageslist.size() > 1)
-				<form action="$messageslink/delete/all" method="post" class="delete-all-messages-form">
-					<fieldset>
-						<input type="submit" value="$lang.get('deleteall')" class="button rounded3 red rusure"/>
-					</fieldset>
-				</form>
-			#end
-		</div>
-	#else
-		<h2 class="center mtl">$lang.get("messages.nocontacts")</h2>
-	#end
-	
+		#else
+			<h2 class="center lightborder rounded3 pam mtl">$lang.get("messages.nocontacts")</h2>
+		#end
+	</div>
+
+	<div id="all-messages">
+		#if($messageslist.isEmpty())
+			<h2 class="center mtl">$lang.get("messages.nomessages")</h2>
+		#else
+			#paginate($pagenum.longValue() "#messagespage($messageslist)" $itemcount.longValue() "" "pageless")
+		#end		
+	</div>
+	<div class="right">
+		#if($messageslist.size() > 1)
+			<form action="$messageslink/delete/all" method="post" class="delete-all-messages-form">
+				<fieldset>
+					<input type="submit" value="$lang.get('deleteall')" class="button rounded3 red rusure"/>
+				</fieldset>
+			</form>
+		#end
+	</div>	
 </div>
 
 <script type="text/javascript">
