@@ -128,8 +128,9 @@
 				</div>
 				#if($canEdit)
 				<div id="about-edit" class="editbox rounded5 pal $hideedit1">
-					<form id="about-edit-form" method="post" action="$myprofilelink?getaboutviewcode=true">
+					<form method="post" id="about-edit-form" action="$myprofilelink?getaboutviewcode=true">
 						<fieldset>
+							#sectoken(false)
 							<table class="p100">
 								<tbody>
 									<tr>
@@ -177,7 +178,7 @@
 										<td class="pll p75">
 											<input id="detail-value" type="text" value="" maxlength="255" class="nicebox p80"/>
 											<a href="#" class="button-small rounded3 add-contact mls" title="$lang.get('add')">
-												<span class="pictos">&</span>
+												<span class="pictos">&amp;</span>
 											</a>
 										</td>
 									</tr>

@@ -7,6 +7,7 @@ package com.scoold.db.cassandra;
 
 import com.scoold.core.Language;
 import com.scoold.core.Translation;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractTranslationDAO;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 	private static final Logger logger = Logger.getLogger(CasTranslationDAO.class.getName());
 	private CasDAOUtils cdu = new CasDAOUtils();
-	private String cacheKey = "Language" + CasDAOFactory.SEPARATOR;
+	private String cacheKey = "Language" + AbstractDAOFactory.SEPARATOR;
 
 	public CasTranslationDAO() { }
 
@@ -60,7 +61,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 		if(id != null){
 			String compositeKey = newInstance.getLocale().
-					concat(CasDAOFactory.SEPARATOR).concat(newInstance.getKey());
+					concat(AbstractDAOFactory.SEPARATOR).concat(newInstance.getKey());
 
 			cdu.addNumbersortColumn(compositeKey, CasDAOFactory.LOCALES_TRANSLATIONS,
 					id, newInstance.getVotes(), null, mut);
@@ -73,7 +74,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 	public void update(Translation transientObject) {
 		String compositeKey = transientObject.getLocale().
-					concat(CasDAOFactory.SEPARATOR).concat(transientObject.getKey());
+					concat(AbstractDAOFactory.SEPARATOR).concat(transientObject.getKey());
 
 		Mutator<String> mut = CasDAOUtils.createMutator();
 
@@ -89,7 +90,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 	public void delete(Translation persistentObject) {
 		Long id = persistentObject.getId();
 		String compositeKey = persistentObject.getLocale().
-					concat(CasDAOFactory.SEPARATOR).concat(persistentObject.getKey());
+					concat(AbstractDAOFactory.SEPARATOR).concat(persistentObject.getKey());
 
 		Mutator<String> mut = CasDAOUtils.createMutator();
 
@@ -109,7 +110,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 	public ArrayList<Translation> readAllTranslationsForKey(String locale, String key,
 			MutableLong pagenum, MutableLong itemcount){
 
-		String compositeKey = locale.concat(CasDAOFactory.SEPARATOR).concat(key);
+		String compositeKey = locale.concat(AbstractDAOFactory.SEPARATOR).concat(key);
 
 		String startKey = null;
 		boolean isPageValid = pagenum != null && pagenum.longValue() > 1;
@@ -118,7 +119,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 			String votes = cdu.getColumn(pagenum.toString(),
 							CasDAOFactory.TRANSLATIONS, "votes");
 			if(votes != null){
-				startKey = votes.concat(CasDAOFactory.SEPARATOR)
+				startKey = votes.concat(AbstractDAOFactory.SEPARATOR)
 						.concat(pagenum.toString());
 			}
 		}
@@ -135,7 +136,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 		ArrayList<String> keyz = new ArrayList<String>();
 		for (String key : keys) {
-			keyz.add(locale.concat(CasDAOFactory.SEPARATOR).concat(key));
+			keyz.add(locale.concat(AbstractDAOFactory.SEPARATOR).concat(key));
 			map.put(key, 0);
 		}
 		
@@ -150,7 +151,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 		for (Row<String, String, String> row : q.execute().get()) {
 			String rk = row.getKey();
-			String rowKey = rk.substring(rk.indexOf(CasDAOFactory.SEPARATOR) + 1);
+			String rowKey = rk.substring(rk.indexOf(AbstractDAOFactory.SEPARATOR) + 1);
 			map.put(rowKey, row.getColumnSlice().getColumns().size());
 		}
 

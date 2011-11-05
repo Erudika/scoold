@@ -12,6 +12,7 @@
 				<hr />
 				<form method="post" id="$createClassForm.id" action="$classeslink/create">
 					<fieldset>
+						#sectoken(false)
 						${createClassForm.fields.form_name}
 						#createformfield(${createClassForm.fields.schoolid} "nicebox p50")
 						#createformfield(${createClassForm.fields.identifier} "newclassname nicebox p100")

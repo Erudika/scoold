@@ -140,6 +140,12 @@ elif [ "$1" = "lbremove" ]; then
 	 	# deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
 	fi
+elif [ "$1" = "inites" ]; then
+	es1host=$(head -n 1 "search$F2SUFFIX")
+	# create elasticsearch river and index
+	cmd1="curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	cmd2="curl -XPUT localhost:9200/_river/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
+	ssh -n ubuntu@$es1host "$cmd1; sleep 5; $cmd2"
 else
 	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"
 fi

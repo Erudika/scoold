@@ -28,8 +28,8 @@ public abstract class AbstractDAOFactory {
 	public static final int MAX_IDENTIFIERS_PER_USER = 2;
 	public static final int MAX_FAV_TAGS = 50;
 	public static final int MAX_INVITES = 50;
-
 	public static final int	DEFAULT_LIMIT = Integer.MAX_VALUE;
+	public static final String SEPARATOR = ":";
 
 	public static enum FactoryType {
 //		MYSQL,

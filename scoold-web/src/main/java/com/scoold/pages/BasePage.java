@@ -25,6 +25,7 @@ import com.scoold.core.Votable;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.util.ScooldAppListener;
+import com.scoold.util.ScooldAuthModule;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,6 +70,8 @@ public class BasePage extends Page {
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int MAX_IMG_SIZE_PX = 730;
 	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
+	public static final String SEPARATOR = AbstractDAOFactory.SEPARATOR;
+	public static final String AUTH_USER = ScooldAuthModule.AUTH_USER;
 	
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String FB_APP_ID = "99517177417";

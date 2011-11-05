@@ -87,8 +87,9 @@
             </div>
             #if($canEdit)
             <div class="editbox rounded5 pal $hideedit1">
-                <form id="school-about-edit-form" method="post" action="$schoollink/$!showSchool.id?getschoolaboutviewcode=true">
+                <form method="post" id="school-about-edit-form" action="$schoollink/$!showSchool.id?getschoolaboutviewcode=true">
                     <fieldset>
+						#sectoken(false)
 						<table class="p100">
 							<tbody>
 								<tr>

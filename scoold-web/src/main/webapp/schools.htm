@@ -6,6 +6,7 @@
 			
 			<form method="post" id="$createSchoolForm.id" action="$schoolslink/create">
 				<fieldset>
+					#sectoken(false)
 					${createSchoolForm.fields.form_name}
 					#createformfield(${createSchoolForm.fields.type} "nicebox p50")
 					#createformfield(${createSchoolForm.fields.name} "newschoolname nicebox p100")

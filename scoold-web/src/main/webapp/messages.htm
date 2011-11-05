@@ -34,8 +34,9 @@
 	</div>
 	<div class="right">
 		#if($messageslist.size() > 1)
-			<form action="$messageslink/delete/all" method="post" class="delete-all-messages-form">
+			<form method="post" action="$messageslink/delete/all" class="delete-all-messages-form">
 				<fieldset>
+					#sectoken(false)
 					<input type="submit" value="$lang.get('deleteall')" class="button rounded3 red rusure"/>
 				</fieldset>
 			</form>

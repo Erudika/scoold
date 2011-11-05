@@ -291,7 +291,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.2.9</version>
+            <version>1.2.10</version>
         </dependency>
         <dependency>
             <artifactId>httpcore</artifactId>
@@ -331,11 +331,13 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>0.18.2</version>
+<!--			<scope>system</scope>-->
+<!--			<systemPath>/Users/alexb/.m2/repository/org/elasticsearch/elasticsearch/0.18.2/elasticsearch-0.18.2.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
-            <version>0.17.9</version>
+            <version>0.18.2</version>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jets3t</groupId>
@@ -385,7 +387,7 @@
 				<artifactId>yuicompressor-maven-plugin</artifactId>
 				<version>1.2</version>
 				<configuration>
-					<verbose>false</verbose>
+					<jswarn>false</jswarn>
 				</configuration>
 				<executions>
 					<execution>

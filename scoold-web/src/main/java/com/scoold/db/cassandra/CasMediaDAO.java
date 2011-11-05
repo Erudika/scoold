@@ -3,6 +3,7 @@ package com.scoold.db.cassandra;
 import com.scoold.core.Comment;
 import com.scoold.core.Media;
 import com.scoold.core.Media.MediaType;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractMediaDAO;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
@@ -153,7 +154,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 					page, itemcount, maxPerPage, reverse, false, true);
 		} else {
 			//read keys from Labels and join with photos
-			String key = label.concat(CasDAOFactory.SEPARATOR).concat(parentUUID);
+			String key = label.concat(AbstractDAOFactory.SEPARATOR).concat(parentUUID);
 			list = cdu.readAll(Media.class, key, CasDAOFactory.LABELS_MEDIA, 
 				CasDAOFactory.MEDIA, Long.class, CasDAOUtils.toLong(page), 
 				page, itemcount, maxPerPage, reverse, true, true);
@@ -330,7 +331,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 
 	private void createLabel(String label, Long id, String parentuuid, Mutator<String> mut){
 		if(StringUtils.isBlank(label) || StringUtils.isBlank(parentuuid)) return;
-		String key = label.concat(CasDAOFactory.SEPARATOR).concat(parentuuid);
+		String key = label.concat(AbstractDAOFactory.SEPARATOR).concat(parentuuid);
 		CasDAOUtils.addInsertion(new Column<String, String>(parentuuid,
 				CasDAOFactory.LABELS, label, label), mut);
 		CasDAOUtils.addInsertion(new Column<Long, String>(key,
@@ -338,7 +339,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 	}
 
 	private void deleteLabel(String label, Long id, String parentuuid, Mutator<String> mut){
-		String key = label.concat(CasDAOFactory.SEPARATOR).concat(parentuuid);
+		String key = label.concat(AbstractDAOFactory.SEPARATOR).concat(parentuuid);
 		CasDAOUtils.addDeletion(new Column<Long, String>(key, CasDAOFactory.LABELS_MEDIA,
 				id, null), mut);
 
@@ -382,7 +383,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 
 		for (HColumn<String, String> label : labels) {
 			CasDAOUtils.addDeletion(new Column<Long, String>(label.getName().
-					concat(CasDAOFactory.SEPARATOR).concat(parentUUID), 
+					concat(AbstractDAOFactory.SEPARATOR).concat(parentUUID), 
 					CasDAOFactory.LABELS_MEDIA), mut);
 		}
 

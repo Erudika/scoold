@@ -1,0 +1,16 @@
+#macro(basichead $showdesc $showkeyw)
+	#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
+	<title>$APPNAME $!titlestr </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="$styleslink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
+	<link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+	<link href="$CDN_URL/logosq.png" rel="image_src" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+	#if($showdesc && !$showdesc.isEmpty())
+		<meta name="description" content="$showdesc" />
+	#end
+	#if($showkeyw && !$showkeyw.isEmpty())
+		<meta name="keywords" content="$showkeyw" />
+	#end	
+#end
+

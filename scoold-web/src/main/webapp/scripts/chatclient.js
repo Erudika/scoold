@@ -44,9 +44,15 @@
 				var chatnode = this;
 				var fullurl = chatnode.serverUrl + url;
 				
-				return $.jsonp($.extend({
+//				return $.jsonp($.extend({
+//					url: fullurl,
+//					callbackParameter: "callback"
+//				}, options));
+				
+				return $.ajax($.extend({
 					url: fullurl,
-					callbackParameter: "callback"
+					dataType: "jsonp",
+					jsonp: "callback"
 				}, options));
 			},
 
@@ -191,7 +197,7 @@
 
 			if(nick && nick !== null){
 				if (uid && uid !== null) {
-					nick = "<a class=\"extlink\" href=\""+contextpath+"/profile/"+uid+"\">"+nick+"</a>"
+					nick = "<a class=\"extlink\" href=\""+chatnode.contextpath+"/profile/"+uid+"\">"+nick+"</a>"
 				}
 				$("<span></span>").addClass(chatnode.chatNickMsgClass).html(nick).appendTo(row);
 			}
@@ -231,7 +237,7 @@
 		.bind("join msg", function(event, message) {
 			// auto scroll if we're within 50 pixels of the bottom
 			if(!$membersbox.data("user-"+message.userid)){
-				$.get(contextpath+"/profile/"+message.userid+"/?getsmallpersonbox=true", function(data){
+				$.get(chatnode.contextpath+"/profile/"+message.userid+"/?getsmallpersonbox=true", function(data){
 					$membersbox.append(data);
 				});
 				// prevent duplicates

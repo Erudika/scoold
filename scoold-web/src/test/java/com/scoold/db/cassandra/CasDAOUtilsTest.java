@@ -680,10 +680,10 @@ public class CasDAOUtilsTest {
 //	 * Test of addNumbersortColumn method, of class CasDAOUtils.
 //	 */ @Test
 //	public void testAddNumbersortColumn() {
-//		String compositeKey1 = "100".concat(CasDAOFactory.SEPARATOR).concat("1231");
-//		String compositeKey2 = "200".concat(CasDAOFactory.SEPARATOR).concat("1232");
-//		String compositeKey3 = "300".concat(CasDAOFactory.SEPARATOR).concat("1233");
-//		String compositeKey4 = "400".concat(CasDAOFactory.SEPARATOR).concat("1234");
+//		String compositeKey1 = "100".concat(AbstractDAOFactory.SEPARATOR).concat("1231");
+//		String compositeKey2 = "200".concat(AbstractDAOFactory.SEPARATOR).concat("1232");
+//		String compositeKey3 = "300".concat(AbstractDAOFactory.SEPARATOR).concat("1233");
+//		String compositeKey4 = "400".concat(AbstractDAOFactory.SEPARATOR).concat("1234");
 //		int max = 3;
 //		Mutator<String> mut = CasDAOUtils.createMutator();
 //

@@ -12,6 +12,7 @@
 
 		<form method="post" action="$reportslink?confirmmerge=$request.getParameter('merge')">
 			<fieldset>
+			#sectoken(false)
 			#if($request.getParameter("merge") == "school")
 				<input type="hidden" name="id2" value="$!showMergeSchool.id"/>
 				<label>$lang.get("name"): </label>

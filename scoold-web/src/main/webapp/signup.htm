@@ -11,6 +11,7 @@
 	</div>
 	<form method="post" id="$signupForm.id" action="$signuplink">
 		<fieldset>
+			#sectoken(false)
 			#renderSpecialFields($signupForm)
 			<div class="hide">Leave blank:</div>${signupForm.fields.additional}
 

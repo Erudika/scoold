@@ -4,6 +4,7 @@ import com.scoold.core.Classunit;
 import com.scoold.core.Media;
 import com.scoold.core.School;
 import com.scoold.core.User;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractSchoolDAO;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
@@ -137,7 +138,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 			colFamily = (CF<N>) CasDAOFactory.SCHOOLS_BY_VOTES;
 			String votes = cdu.getColumn(page.toString(), CasDAOFactory.SCHOOLS, "votes");
 			if(votes != null){
-				startKey = (N) votes.concat(CasDAOFactory.SEPARATOR).concat(page.toString());
+				startKey = (N) votes.concat(AbstractDAOFactory.SEPARATOR).concat(page.toString());
 			}
 		}else{
 			return new ArrayList<School>();
@@ -183,7 +184,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 		
 		// format: [id -> "fromyear=0:toyear=2000"]
 		String linkDetails = "fromyear=".concat(fyear.toString()).
-				concat(CasDAOFactory.SEPARATOR).
+				concat(AbstractDAOFactory.SEPARATOR).
 				concat("toyear=").concat(tyear.toString());
 
 		ArrayList<Column> list = new ArrayList<Column>();

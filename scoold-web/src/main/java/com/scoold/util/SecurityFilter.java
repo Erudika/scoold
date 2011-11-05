@@ -4,7 +4,9 @@
  */
 package com.scoold.util;
 
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
+import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +21,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -86,17 +89,17 @@ public class SecurityFilter implements Filter {
 		
 		final HttpServletRequest request = (HttpServletRequest) req;
 		final HttpServletResponse response = (HttpServletResponse) resp;
-		final String address = request.getRemoteAddr();
-		final String host = request.getRemoteHost();
-		final String userAgent = request.getHeader("User-Agent");
+//		final String address = request.getRemoteAddr();
+//		final String host = request.getRemoteHost();
+//		final String userAgent = request.getHeader("User-Agent");
 		
-		if(!request.getRequestURI().contains("error")){
-			if(StringUtils.isBlank(userAgent) || isBlocked(host, address, userAgent)){
-				//BLOCK!
-				forbidden(response, host, address, userAgent);
-				return ;
-			}
-		}
+//		if(!request.getRequestURI().contains("error")){
+//			if(StringUtils.isBlank(userAgent) || isBlocked(host, address, userAgent)){
+//				//BLOCK!
+//				forbidden(response, host, address, userAgent);
+//				return ;
+//			}
+//		}
 //
 //		if (!StringUtils.endsWithAny(request.getRequestURI(), safe_extensions)) {
 //			if (session != null) {
@@ -125,15 +128,48 @@ public class SecurityFilter implements Filter {
 //			}
 //		}
 		
-		// Uncomment to enable XSS Filter for all req params
-//		chain.doFilter(new RequestWrapper(request), response);
-		chain.doFilter(request, response);
+		
+		// anti-CSRF token validation
+		if(request.getMethod().equals("POST") && !StringUtils.isBlank(request.getRemoteUser())){
+			String token = request.getParameter("stoken");
+			String salt = request.getParameter("pepper");
+			String authToken = AbstractDAOUtils.getStateParam(ScooldAuthModule.AUTH_USER, 
+					request, response, BasePage.USE_SESSIONS);
+			
+			if(!StringUtils.isBlank(token) && !StringUtils.isBlank(authToken) 
+					&& !StringUtils.isBlank(salt) && token.equals(AbstractDAOUtils.
+					MD5(authToken.concat(AbstractDAOFactory.SEPARATOR).concat(salt)))){
+				
+				// Uncomment to enable XSS Filter for all req params
+				//chain.doFilter(new RequestWrapper(request), response);
+				chain.doFilter(request, response);
+			}else{
+				badrequest(response, request.getRemoteHost(), request.getRemoteAddr(), 
+						request.getHeader("User-Agent"), ClickUtils.isAjaxRequest(request));
+				return ;
+			}
+		}else{
+			// Uncomment to enable XSS Filter for all req params
+			//chain.doFilter(new RequestWrapper(request), response);
+			chain.doFilter(request, response);
+		}
 	}
 	
 	private void forbidden(HttpServletResponse response, String host, String address, 
 			String userAgent) throws IOException{
 		response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied!");
-		log("blocked: "+host+"/"+address+" ("+userAgent+")");
+		log("forbidden: "+host+"/"+address+" ("+userAgent+")");
+	}
+	
+	private void badrequest(HttpServletResponse response, String host, String address, 
+			String userAgent, boolean isAjax) throws IOException{
+		log("badrequest: "+host+"/"+address+" ("+userAgent+")");
+		String path = filterConfig.getServletContext().getContextPath();
+		if(isAjax){
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request.");
+		}else{
+			response.sendRedirect(path + "/" + HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 
 	/**
@@ -250,6 +286,7 @@ public class SecurityFilter implements Filter {
 //			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
 //			value = value.replaceAll("script", "");
 			value = StringEscapeUtils.escapeHtml(value);
+			value = StringEscapeUtils.escapeJavaScript(value);
 			return value;
 		}
 	}

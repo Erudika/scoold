@@ -51,6 +51,7 @@ import com.scoold.util.GeoNames.Style;
 import com.scoold.util.GeoNames.Toponym;
 import com.scoold.util.GeoNames.ToponymSearchCriteria;
 import com.scoold.util.GeoNames.ToponymSearchResult;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 
 /**
@@ -105,6 +106,10 @@ public abstract class AbstractDAOUtils {
 	public static String stripHtml(String html){
 		if(html == null) return "";
 		return Jsoup.parse(html).text();
+	}
+	
+	public static String escapeJavascript(String str){
+		return StringEscapeUtils.escapeJavaScript(str);
 	}
 
 	public static <T extends ScooldObject> void populate(T transObject, Map<String, String[]> paramMap) {

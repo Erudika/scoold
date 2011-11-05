@@ -126,14 +126,13 @@ class scoold::glassfish {
 	}
 	
 	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-glassfish.txt")	
-	exec { 
+
+	exec{ 
+		"start-glassfish":
+			command => "start glassfish",
+			unless => "test -e ${glassfishhome}/glassfish.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
-			require => Exec["start-glassfish"];		
-	}
-	
-	exec{ "start-glassfish":
-		command => "start glassfish",
-		unless => "test -e ${glassfishhome}/glassfish.pid",				
+			require => Exec["start-glassfish"];
 	}	
 }

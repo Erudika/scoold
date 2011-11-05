@@ -5,8 +5,6 @@
 
 package com.scoold.pages;
 
-import com.scoold.util.ScooldAuthModule;
-
 public class Signin extends BasePage{
      
     public String title;
@@ -16,7 +14,7 @@ public class Signin extends BasePage{
 		includeFBscripts = true;
     }
 	
-	public void	onGet(){
+	public void	onPost(){
 		if (authenticated ) {
 			if(param("signout")){
 				clearSession();

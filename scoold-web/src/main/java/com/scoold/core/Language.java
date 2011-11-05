@@ -219,6 +219,7 @@ public final class Language {
 			.put("forbidden", "You shall not pass!")
 			.put("servererror", "Critical server error.")
 			.put("sitedown", "System overload!")
+			.put("badrequest", "Bad request.")
 			.put("create", "Create")
 			.put("pause", "Pause")
 			.put("play", "Play")
@@ -357,8 +358,6 @@ public final class Language {
 			.put("settings.delete", "Delete account")
 			.put("settings.delete.text", "Permanently deletes your Scoold account and data, including photos, messages and profile.")
 			.put("settings.delete.confirm", "Please confirm that you really want to delete your account.")
-	//		.put("settings.clearallmedia", "Clear photos and drawer")
-	//		.put("settings.importphotos", "Import your photos")
 			.put("settings.tagfilter", "Tag filter")
 			.put("settings.tagfilter.text", "You can filter questions by specifying the tags you are interested in.")
 

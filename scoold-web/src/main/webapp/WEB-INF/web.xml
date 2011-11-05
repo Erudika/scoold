@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <description>scoold.com</description>
-    <display-name>scoold</display-name>    
+    <display-name>scoold</display-name>
     <filter>
         <filter-name>LoggingFilter</filter-name>
         <filter-class>com.scoold.util.LoggingFilter</filter-class>
@@ -138,12 +138,6 @@
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet>
-        <description>localization string map</description>
-        <servlet-name>LangServlet</servlet-name>
-        <servlet-class>com.scoold.util.LangServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
         <servlet-name>FeedServlet</servlet-name>
         <servlet-class>com.scoold.util.FeedServlet</servlet-class>
     </servlet>
@@ -152,15 +146,11 @@
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>LangServlet</servlet-name>
-        <url-pattern>/langmap.js</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>FeedServlet</servlet-name>
         <url-pattern>/feed.xml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>2</session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
     <error-page>
         <error-code>404</error-code>
@@ -177,6 +167,10 @@
     <error-page>
         <error-code>503</error-code>
         <location>/503</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/400</location>
     </error-page>
     <security-constraint>
         <display-name>Profile</display-name>

@@ -9,6 +9,7 @@ import com.scoold.core.Post;
 import com.scoold.core.ScooldObject;
 import com.scoold.core.Stored;
 import com.scoold.core.Votable;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
@@ -172,7 +173,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(so == null || cf == null) return;
 		String kee = (key == null) ? so.getId().toString() : key;
 		String cacheKey = so.getClass().getSimpleName()
-				.concat(CasDAOFactory.SEPARATOR).concat(kee);
+				.concat(AbstractDAOFactory.SEPARATOR).concat(kee);
 		storeBean(kee, so, cf, false, mut);		
 	}
 
@@ -190,7 +191,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(so == null || cf == null) return ;
 		String kee = (key == null) ? so.getId().toString() : key;
 		String cacheKey = so.getClass().getSimpleName()
-				.concat(CasDAOFactory.SEPARATOR).concat(kee);
+				.concat(AbstractDAOFactory.SEPARATOR).concat(kee);
 		unstoreBean(kee, so, cf, mut);
 	}
 
@@ -999,7 +1000,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		boolean isFull = countColumns(key, cf, String.class) >= maxColumns;
 
 		String compositeKey = number.toString().concat(
-				CasDAOFactory.SEPARATOR).concat(id.toString());
+				AbstractDAOFactory.SEPARATOR).concat(id.toString());
 
 		if(isFull){
 			//read last (oldest) column
@@ -1009,8 +1010,8 @@ public class CasDAOUtils extends AbstractDAOUtils {
 				String lastKey = last.getName();
 				Long lowestNumberInList = 0L;
 
-				if(lastKey.contains(CasDAOFactory.SEPARATOR)){
-					String[] sarr = lastKey.split(CasDAOFactory.SEPARATOR);
+				if(lastKey.contains(AbstractDAOFactory.SEPARATOR)){
+					String[] sarr = lastKey.split(AbstractDAOFactory.SEPARATOR);
 					lowestNumberInList = NumberUtils.toLong(sarr[0], 0);
 
 					if(number.longValue() > lowestNumberInList){
@@ -1044,7 +1045,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		if(cf == null || id == null || number == null) return;
 		if(StringUtils.isBlank(key)) key = CasDAOFactory.DEFAULT_KEY;
 
-		String compositeKey = number.toString().concat(CasDAOFactory.SEPARATOR)
+		String compositeKey = number.toString().concat(AbstractDAOFactory.SEPARATOR)
 				.concat(id.toString());
 		addDeletion(new Column(key, cf, compositeKey, null), mut);
 	}

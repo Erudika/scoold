@@ -176,14 +176,8 @@ class scoold::cassandra {
 		before => Exec["install-cassandra-munin-plugin"]			
 	}
 	
-	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-cassandra.txt")
-	
-	exec { 
-		"install-cassandra-munin-plugin":
-			command => "$cmd1 && $cmd2 && $cmd3 && $cmdr";
-		"configure-rsyslog":
-			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
-			require => Exec["start-cassandra"];
+	exec { "install-cassandra-munin-plugin":
+		command => "$cmd1 && $cmd2 && $cmd3 && $cmdr";
 	}
 	
 	$repairhour = 6 + $nodeid
@@ -213,9 +207,15 @@ class scoold::cassandra {
 			before => Exec["start-cassandra"];		
 	}
 		
-	exec { "start-cassandra":
-		command => "start cassandra",
-		unless => "test -e ${cassandrahome}/cassandra.pid", 
-		require => Exec["set-cluster-name"]
+	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-cassandra.txt")	
+		
+	exec { 
+		"start-cassandra":
+			command => "start cassandra",
+			unless => "test -e ${cassandrahome}/cassandra.pid", 
+			require => Exec["set-cluster-name"];
+		"configure-rsyslog":
+			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
+			require => Exec["start-cassandra"];
 	}			
 }

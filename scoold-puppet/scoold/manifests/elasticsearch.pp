@@ -116,24 +116,8 @@ class scoold::elasticsearch {
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "start elasticsearch";
-		"sleep":
-			command => "sleep 15",
-			require => [Exec["start-elasticsearch"], Package["curl"]],
-			before => Exec["create-river"];
-		"create-river":
-			command => "curl -XPUT '${ipaddress}:${scoold::esport}/_river/${scoold::esindex}/_meta' -d '{ \"type\" : \"amazonsqs\" }' &> /dev/null",
-			onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
-			require => [Exec["start-elasticsearch"], Package["curl"]],
-			before => Exec["create-index"];
-		"sleep2":
-			command => "sleep 5",
-			require => [Exec["create-river"], Package["curl"]],
-			before => Exec["create-index"];
-		"create-index":
-			command => "curl -XPUT '${ipaddress}:${scoold::esport}/${scoold::esindex}' -d @${esdir}/config/index.json &> /dev/null",
-			onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
-			require => [Exec["start-elasticsearch"], Package["curl"]];
+			command => "start elasticsearch",
+			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
 			require => Exec["start-elasticsearch"];

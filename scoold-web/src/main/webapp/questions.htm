@@ -44,18 +44,20 @@
 								<a href="$settingslink" class="red">$lang.get("inactive")</a>
 							#end
 						</span>
-						<form id="filter-questions-form" action="$questionslink/filter/" method="get">
-							<select name="schoolid" class="nicebox p50">
-								<option value="">$lang.get("posts.schoolfilter")</option>
-								#foreach($school in $authUser.schoolsMap)
-									#if($schoolid && $school.id.toString() == $schoolid)
-										<option selected="selected" value="$school.id">$school.name</option>
-									#else
-										<option value="$school.id">$school.name</option>
+						<form method="get" id="filter-questions-form" action="$questionslink/filter/">
+							<fieldset>
+								<select name="schoolid" class="nicebox p50">
+									<option value="">$lang.get("posts.schoolfilter")</option>
+									#foreach($school in $authUser.schoolsMap)
+										#if($schoolid && $school.id.toString() == $schoolid)
+											<option selected="selected" value="$school.id">$school.name</option>
+										#else
+											<option value="$school.id">$school.name</option>
+										#end
 									#end
-								#end
-							</select>
-							<input type="submit" value="$lang.get('ok')" class="button rounded3"/>
+								</select>
+								<input type="submit" value="$lang.get('ok')" class="button rounded3"/>
+							</fieldset>
 						</form>
 					</div>
 				#end

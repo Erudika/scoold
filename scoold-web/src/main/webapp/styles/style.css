@@ -122,7 +122,7 @@ body {
     font-size: 0.8em;
     height: 20px;
     position: relative;
-/*    width: 200px;*/
+    width: 230px;
 }
 #nav{
 	height: 45px;
@@ -158,7 +158,7 @@ body {
 #map-canvas{height: 300px;}
 #error{ background-color: white;}
 
-hr { height: 1px; border: 0; background-color: #666666; width: 100%;}
+hr { height: 1px; border: 0; background-color: #AAAAAA; width: 100%;}
 
 h1, h2, h3, h4, h5, h6 { line-height: 1em; margin: 7px 0; font-weight: normal;}
 h1 {font-size: 180%;}
@@ -182,23 +182,24 @@ img.align-left, img[align="left"] { float: left; margin-right: 20px; }
 .school-icon img{ width: expression(this.width < 50 ? 50: true); }
 
 /* -- LINKS -- */
-a {	color: #5397CC;  text-decoration: none;}
+a, input.button-link {	color: #5397CC; text-decoration: none;}
 a:visited { color: #7799AA; } /*#2266BB*/
-a:hover, a:active { text-decoration: underline;}
+a:hover, a:active, input.button-link:hover { text-decoration: underline;}
 a.nodecoration { text-decoration: none; }
 a.nodecoration:hover{ text-decoration: none;}
-a.button-small, a.button-tiny, a.button-medium, a.button-large,
+a.button-small, a.button-tiny, a.button-medium, a.button-large, form.clickedit button,
 span.button-small, span.button-tiny, span.button-medium, span.button-large, input.button{
 	background-color: #CCCCCC;
     color: black;
+	border: none;
 	border-bottom: 1px solid transparent;
-	text-align:center;
-	text-decoration:none;
+	text-align: center;
+	text-decoration: none;
 	display: inline-block;
 	zoom: 1;
 	*display: inline;
 }
-a.button-tiny:hover, a.button-small:hover, a.button-medium:hover, a.button-large:hover, a.button-tiny-selected:hover,
+a.button-tiny:hover, a.button-small:hover, a.button-medium:hover, a.button-large:hover, a.button-tiny-selected:hover,  form.clickedit button:hover,
 span.button-tiny:hover, span.button-small:hover, span.button-medium:hover, span.button-large:hover, span.button-tiny-selected:hover, input.button:hover{
 	text-decoration: none;
 	background-color: #BBBBBB;
@@ -210,7 +211,7 @@ a.button-large, span.button-large {
 	font-size: 1.5em;
     padding: 3px 10px;
 }
-a.button-small, span.button-small, input.button, 
+a.button-small, span.button-small, input.button,
 input[type=submit], input[type=reset], input[type=button] {
     line-height: inherit;
 	font-size: 1em;
@@ -221,7 +222,7 @@ a.button-medium, span.button-medium{
 	font-size: 0.9em;
     padding: 1px 7px;
 }
-a.button-tiny, span.button-tiny {
+a.button-tiny, span.button-tiny, form.clickedit button {
     line-height: inherit;
 	font-size: 0.8em;
     padding: 0 6px;
@@ -258,27 +259,24 @@ form label.blocklabel {
 form label{	margin-right: 10px;}
 form fieldset li {  list-style: none;  padding: 5px;  margin: 0;}
 form label {  width: 150px; /* Width of labels */  font-size: 1.1em;}
-input.nicebox {
-	height: 1.4em;
-	color: inherit;
-	font-size: 1.2em;
-	border: 2px solid #CCCCCC;
-	text-indent: 5px;
+input.nicebox, form.clickedit input {
+	padding: 2px 0;
 }
-textarea.nicebox {
-	border: 2px solid #CCCCCC;
+textarea.nicebox, form.clickedit textarea {
 	overflow: auto;
-	font-size: inherit;
-	padding: 5px 0;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
-input.nicebox, textarea.nicebox {
-	-moz-border-radius: 2px; /* FF1+ */
-	-webkit-border-radius: 2px; /* Saf3-4 */
-	border-radius: 2px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
-}
-select.nicebox{
+input.nicebox, textarea.nicebox, form.clickedit input, form.clickedit textarea {
 	font-size: inherit;
+	font-family: inherit;
+	padding-left: 3px;
+	padding-right: 3px;
+	border: 2px solid #CCCCCC;
+}
+select.nicebox, form.clickedit select{
+	font-size: inherit;
+	font-family: inherit;
 	color:  inherit;
 	padding: 2px;
 }
@@ -295,36 +293,25 @@ input.search-btn{
 }
 /* Editable styles */
 
-form.clickedit button{
-	font-size: 16px;
-	border: 0;
-	background-color: #CCCCCC;
-	color:black;
-	font-weight:bold;
-	padding: 1px 5px;
-	-moz-border-radius: 3px; /* FF1+ */
-	-webkit-border-radius: 3px; /* Saf3-4 */
-	border-radius: 3px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
-}
 form.clickedit input, form.clickedit textarea{
-	border: 2px solid #CCCCCC;
-	height: inherit !important;
 	width: 100%;
+	margin-bottom: 5px;
+	
+/*	border: 2px solid #CCCCCC;
+	height: inherit !important;
 	color: inherit;
-	font-family: inherit;
 	font-size: inherit;
-	overflow: auto;
+	overflow: auto;*/
 }
-form.clickedit select{
+/*form.clickedit select{
 	padding: inherit;
 	font-family: inherit;
 	font-size: inherit;
 	color:inherit;
 	font-weight: inherit;
 	margin-right: 15px;
-}
-
+}*/
+input.button-link{ background-color: transparent; border: none; cursor: pointer; font-family: inherit; padding: 0; margin: 0; }
 input.error, select.error, textarea.error{ background-color: #EFFCFF; }
 label.error, span.error{ width: 99%; background-color: transparent; color: #BB1111; display: block;}
 
@@ -397,7 +384,9 @@ pre, code, .chat-msg{
 }
 .openidbox{
     background: white;
-	padding-left: 30px;
+	text-indent: 30px;
+	line-height: 1.5em;
+	vertical-align: middle;
 }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
@@ -519,7 +508,7 @@ pre, code, .chat-msg{
 	border-radius: 5px; /* Opera 10.5, IE 9, Saf5, Chrome */
 	behavior: url(../scripts/csspie.htc);
 }
-.rounded3{
+.rounded3, form.clickedit button, input.nicebox, textarea.nicebox, form.clickedit input, form.clickedit textarea{
 	-moz-border-radius: 3px; /* FF1+ */
 	-webkit-border-radius: 3px; /* Saf3-4 */
 	border-radius: 3px; /* Opera 10.5, IE 9, Saf5, Chrome */
@@ -571,7 +560,7 @@ pre, code, .chat-msg{
 .school-pic-thumb{ background-position: -6px -222px; width: 50px; height: 50px; text-indent: -999999em;}
 .facebook-icon-small{ background-position: -88px -258px; padding: 0 6px;}
 .openid-icon-small{ background-position: -66px -258px; padding: 0 6px;}
-.openidbox{ background-position: -3px -809px;}
+.openidbox{ background-position: -3px -811px;}
 
 /* -- AUTOCOMPLETE CSS -- */
 .ac_results {

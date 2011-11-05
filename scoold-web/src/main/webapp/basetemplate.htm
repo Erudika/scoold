@@ -65,7 +65,7 @@
 #macro(renderSpecialFields $clickform)
 	${clickform.fields.form_name}
 	#foreach ($field in $clickform.fieldList)
-	#if ($field.name.contains("SUBMIT_CHECK")) $field #end
+		#if ($field.name.contains("SUBMIT_CHECK")) $field #end
 	#end
 #end
 #####################################
@@ -195,6 +195,7 @@
 			<div class="editbox rounded5 mvl pam $hideedit">
 				<form method="post" class="school-edit-form" action="$profilelink/$!showUser.id">
 					<fieldset>
+						#sectoken(false)
 						<input type="hidden" name="sid" value="$!school.id"/>
 						<input type="hidden" name="getmyschoolscode" value="true"/>
 
@@ -251,6 +252,7 @@
 #macro(newmessageform $names $ids)
 	<form method="post" class="new-message-form" action="$messageslink/new">
 		<fieldset class="p100 mtl">
+			#sectoken(false)
 			#if($names.size() == 0)
 				#set($toval = "")
 			#else
@@ -301,6 +303,7 @@
 	<div class="newcommentform mvm $hide">
 		<form method="post" class="new-comment-form" action="${thisuri}">
 			<fieldset>
+				#sectoken(false)
 				<div class="line">
 					<div class="unit size4of5">
 						<textarea rows="2" cols="4" class="p100 nicebox" name="comment"></textarea>
@@ -347,6 +350,7 @@
 				#getmessagebox("errorBox" $form.error false)
 			#end
 			<fieldset>
+				#sectoken(false)
 				#renderSpecialFields($form)
 				${form.fields.timer}
 				<div class="hide">Leave blank:</div>${form.fields.additional}
@@ -375,6 +379,7 @@
 				#getmessagebox("errorBox" $form.error false)
 			#end
 			<fieldset>
+				#sectoken(false)
 				#if($showpost.isQuestion())
 					<legend>$lang.get("posts.youranswer")</legend>
 				#elseif($showpost.isFeedback())
@@ -605,10 +610,11 @@
 							#labelbox("" $gurl $currentPhoto.uuid true)
 						</span>
 
-						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&</span> $lang.get("photos.addlabels")</a>
+						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&amp;</span> $lang.get("photos.addlabels")</a>
 						<div class="hide mtm">
 							<form method="post" id="add-label-form" action="$gurl">
 								<fieldset>
+									#sectoken(false)
 									<input type="text" class="addlabelbox nicebox p60" value="" name="addlabel"/>
 									<input type="hidden" name="id" value="$currentPhoto.id"/>
 									<input type="submit" value="$lang.get('add')" class="button rounded3"/>
@@ -651,8 +657,9 @@
 	</div>
 	<form method="post" id="embed-form" action="${uri}?getmediahtmlcode=true">
 		<fieldset>
+			#sectoken(false)
 			<input type="text" value="$lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
-			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&</span></a>
+			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&amp;</span></a>
 			<a href="#" class="pictos trigger-embedly-services">?</a>
 			<div class="red embed-error"></div>
 			<div class="hide oembed-preview pam center mtm rounded5">
@@ -839,7 +846,7 @@
 			#set($showschool = $showclass.school)
 			<div class="line lightgray">
 				<div class="unit size1of3">$lang.get("class.title")</div>
-				<div class="unit size2of3 lastUnit r" title="$lang.get('profile.myclasses.gradyear')">
+				<div class="unit size2of3 lastUnit r" title="$lang.get('class.classmates')">
 					<span class="pictos">g</span> $!showclass.count
 				</div>
 			</div>
@@ -1253,8 +1260,9 @@
 		</div>
 
 		<div class="hide report-solution-box p100 mtm">
-			<form class="report-solution-form" action="$reportslink/close/$!showreport.id" method="post">
+			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
 				<fieldset>
+					#sectoken(false)
 					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox">$lang.get("reports.actionstaken")...</textarea>
 					<input class="report-solution-btn right" type="submit" value="$lang.get('save') &amp; $lang.get('close')" class="button rounded3"/>
 				</fieldset>
@@ -1503,6 +1511,7 @@
 							#getmessagebox("errorBox" $form.error false)
 						#end
 						<fieldset>
+							#sectoken(false)
 							#renderSpecialFields($form)
 							${form.fields.timer}
 							#if($showpost.isAnswer())
@@ -1798,6 +1807,7 @@
 #macro(reportform $classname $parentid $grandparentuuid $parentuuid $link)
 	<form method="post" class="create-report-form" action="$context/?report=true">
 		<fieldset>
+			#sectoken(false)
 			<legend><span class="pictos">^</span> $lang.get("reportproblem")</legend>
 			<label class="blocklabel">$lang.get("reports.category")</label>
 			<select class="nicebox p100" name="type">
@@ -1961,9 +1971,10 @@
 				</div>
 			#end			
 			#if($attachOnly) #set($oidurl = "attach_openid") #else #set($oidurl = "openid_auth") #end
-			<form method="get" action="$context/$oidurl" class="mtl">
+			<form method="post" action="$context/$oidurl" class="mtl">
 				<fieldset>
-					<input id="openid_identifier" type="text" name="openid_identifier" value="http://" class="nicebox openidbox p90"/>
+					#sectoken(false)
+					<input id="openid_identifier" type="text" name="openid_identifier" value="http://" class="nicebox openidbox p95"/>
 					<div id="openid-btns">#getopenidbtns()</div>
 					<div class="center mtl">
 						#if($attachOnly)
@@ -1989,9 +2000,20 @@
 	</div>
 #end
 #####################################
+#macro(sectoken $bare)
+	#if($authenticated)
+		#set($authToken = $daoutils.getStateParam($AUTH_USER, $request, $request.response, $USE_SESSIONS) )
+		#set($authSalt = "$authUser.authstamp" )
+		#set($secToken = $daoutils.MD5($authToken.concat($SEPARATOR).concat($authSalt)) )
+		#if($bare && $bare == true)$secToken#else
+			<input type="hidden" name="stoken" value="$!secToken"/>
+			<input type="hidden" name="pepper" value="$!authSalt"/>
+		#end		
+	#end
+#end	
+#####################################
 #macro(adplaceholders )
-	<!-- Begin: adBrite, Generated: 2011-10-12 11:54:55  --
-	<script type="text/javascript">
+<!--	<script type="text/javascript">
 		var AdBrite_Title_Color = '5397CC';
 		var AdBrite_Text_Color = '444444';
 		var AdBrite_Background_Color = 'FFFFFF';
@@ -2000,8 +2022,6 @@
 		try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
 	</script>
 	<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2026165&zs=3138305f313530&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
-	!-- End: adBrite -->
-	<!-- Begin: adBrite, Generated: 2011-10-12 11:51:07  --
 	<script type="text/javascript">
 		var AdBrite_Title_Color = '5397CC';
 		var AdBrite_Text_Color = '444444';
@@ -2010,8 +2030,7 @@
 		var AdBrite_URL_Color = '5397CC';
 		try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
 	</script>
-	<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2026171&zs=3136305f363030&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
-	!-- End: adBrite -->
+	<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2026171&zs=3136305f363030&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>-->
 			
 <!--		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
 		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
@@ -2023,22 +2042,6 @@
 	<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
 		<img src="http://placehold.it/160x600/efefef/444444&amp;text=Your+ad+here" width="160" height="600" alt="ad" class="rounded3"/>
 	</a>
-#end
-#####################################
-#macro(basichead $showdesc $showkeyw)
-	#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
-	<title>$APPNAME $!titlestr </title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link href="$styleslink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
-	<link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-	<link href="$CDN_URL/logosq.png" rel="image_src" />
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-	#if($showdesc && !$showdesc.isEmpty())
-		<meta name="description" content="$showdesc" />
-	#end
-	#if($showkeyw && !$showkeyw.isEmpty())
-		<meta name="keywords" content="$showkeyw" />
-	#end	
 #end
 ################# END MACROS ###################################################
 #if($isAjaxRequest || false)
@@ -2182,7 +2185,7 @@
 			/*]]>*/
 		</script>
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
-	</head>	
+	</head>
     <body>
 		#if($includeFBscripts)
 			<div id="fb-root"></div>
@@ -2233,9 +2236,14 @@
 							<span class="pictos $!repclass">^</span> <a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
 						#end
 						#if($isFBconnected) #set($logoutid = "fb-logout" ) #else #set($logoutid = "logoutbtn" )	#end
-						<span class="pictos">K</span> <a id="$!logoutid" href="$signoutlink" title="Sign out"><strong>${lang.get('signout')}</strong></a>
+						<span class="pictos">K</span>
+						<form method="post" action="$signoutlink" class="inline">
+							<fieldset class="inline">
+								#sectoken(false)
+								<input type="submit" value="$lang.get('signout')" class="bold button-link"/>
+							</fieldset>
+						</form>
 					#else
-
 						#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 						#if($request.getParameter('javax.servlet.forward.query_string'))
 							#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
@@ -2243,7 +2251,7 @@
 						#if($thisuri && $thisuri.startsWith($context))
 							#set($thisuri = $thisuri.replaceFirst($context, ""))
 						#end
-						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span>&nbsp; $lang.get("signin.title")</a>
+						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $lang.get("signin.title")</a>
 					#end
 					</div>
 				</div>
@@ -2271,7 +2279,7 @@
 											#set($hintbox = "hintbox" )
 										#end
 										<input id="search-box" type="text" class="mls $!hintbox" name="q" value="$showSearchValue"/>
-										<input type="submit" class="lightgray pictos search-btn" value="s">
+										<input type="submit" class="lightgray pictos search-btn" value="s"/>
 									</fieldset>
 								</form>
 							</div>
@@ -2318,7 +2326,16 @@
 				</div>
             </div>
         </div>
-				
+		
+		#set($sectoken = "#sectoken(true)")
+		#set($sectoken = $sectoken.trim())
+		
+		#set($jslang = ["success","areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
+			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
+			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
+			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
+			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","epicfail","invalidyear"])
+			
 		<script type="text/javascript">
 			head.js(
 				{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.6.4/jquery.min.js"},
@@ -2326,25 +2343,27 @@
 				{modal:			"$scriptslink/jquery.modal$!{minsuffix}.js"},
 				{jeditable:		"$scriptslink/jquery.jeditable$!{minsuffix}.js"},
 				{autocomplete:	"$scriptslink/jquery.autocomplete$!{minsuffix}.js"},
-				{jsonp:			"$scriptslink/jquery.jsonp$!{minsuffix}.js"},
 				{gallery:		"$scriptslink/jquery.galleriffic$!{minsuffix}.js"},
 				{history:		"$scriptslink/jquery.history$!{minsuffix}.js"},
 				{oembed:		"$scriptslink/jquery.oembed$!{minsuffix}.js"},
 				{markitup:		"$scriptslink/jquery.markitup$!{minsuffix}.js"},
 				
-				{lang:			"$context/langmap.js"},
 				{chatclient:	"$scriptslink/chatclient$!{minsuffix}.js"},
 				{miuicons:		"$scriptslink/miu.set.markdown$!{minsuffix}.js"},
 				{showdown:		"$scriptslink/showdown$!{minsuffix}.js"},
 				{diff:			"$scriptslink/diff_match_patch$!{minsuffix}.js"},
 				
+				#if($includeGMapsScripts && $includeGMapsScripts == true)
+				{gmaps:			"http://maps.google.com/maps/api/js?v=3.6&sensor=false&key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"},
+				#end
+				
 				{scoold:		"$scriptslink/scoold$!{minsuffix}.js"}
 			);
+			#if($authenticated)
+				var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end};
+				var stoken = "$sectoken";
+				var pepper = "$authUser.authstamp";
+			#end
 		</script>
-		
-		#if($includeGMapsScripts && $includeGMapsScripts == true)
-			<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.3&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
-		#end
-       
     </body>
 </html> 

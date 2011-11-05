@@ -10,6 +10,7 @@ import com.scoold.core.Post;
 import com.scoold.core.Post.PostType;
 import com.scoold.core.Revision;
 import com.scoold.core.Tag;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractPostDAO;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
@@ -409,7 +410,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 					String votes = cdu.getColumn(page.toString(),
 							CasDAOFactory.POSTS, sortField);
 					if(votes != null){
-						startKey = (N) votes.concat(CasDAOFactory.SEPARATOR)
+						startKey = (N) votes.concat(AbstractDAOFactory.SEPARATOR)
 								.concat(page.toString());
 					}
 				}
@@ -432,7 +433,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 					String votes = cdu.getColumn(page.toString(),
 							CasDAOFactory.POSTS, sortField);
 					if(votes != null){
-						startKey = (N) votes.concat(CasDAOFactory.SEPARATOR)
+						startKey = (N) votes.concat(AbstractDAOFactory.SEPARATOR)
 								.concat(page.toString());
 					}
 				}
@@ -467,7 +468,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 				String votes = cdu.getColumn(page.toString(),
 							CasDAOFactory.POSTS, sortField);
 				if(votes != null){
-					startKey = (N) votes.concat(CasDAOFactory.SEPARATOR)
+					startKey = (N) votes.concat(AbstractDAOFactory.SEPARATOR)
 							.concat(page.toString());
 				}
 			}
@@ -504,7 +505,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 				String votes = cdu.getColumn(page.toString(),
 							CasDAOFactory.POSTS, sortField);
 				if(votes != null){
-					startKey = (N) votes.concat(CasDAOFactory.SEPARATOR)
+					startKey = (N) votes.concat(AbstractDAOFactory.SEPARATOR)
 							.concat(page.toString());
 				}
 			}

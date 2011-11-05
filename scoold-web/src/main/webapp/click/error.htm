@@ -1,20 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         #basichead($!DESCRIPTION $!KEYWORDS)		
 	</head>
 	<body id="error" class="ptl">
 		<div class="mtl">
 			<div class="container center pal clearfix">
-<!--				<div class="inlineblock mbl"><a id="logo" href="$!context">$APPNAME</a></div>-->
 				<div class="mbl">
-					<a href="$!context"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error" class="rounded5"/></a>
+					<a href="/"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error" class="rounded5"/></a>
 				</div>				
 				#if($request.getParameter("e"))
 					#set($e = $request.getParameter("e"))
 					#if($e == "403")
 						<h1>$lang.get("forbidden")</h1>						
+					#elseif($e == "400")
+						<h1>$lang.get("badrequest")</h1>
 					#elseif($e == "500")
 						<h1>$lang.get("servererror")</h1>
 					#elseif($e == "503")

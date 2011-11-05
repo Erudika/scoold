@@ -2,8 +2,8 @@ package com.scoold.util;
 
 import com.scoold.core.Language;
 import com.scoold.core.User;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
-import com.scoold.db.cassandra.CasDAOFactory;
 import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -193,8 +193,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			return SimplePrincipal.getPrincipal(req);
 		} else {
 			String authToken = AbstractDAOUtils.getStateParam(AUTH_USER, req, res, BasePage.USE_SESSIONS);
-			if (!StringUtils.isBlank(authToken) && StringUtils.contains(authToken, CasDAOFactory.SEPARATOR)) {
-				String[] tuparts = authToken.split(CasDAOFactory.SEPARATOR);
+			if (!StringUtils.isBlank(authToken) && StringUtils.contains(authToken, AbstractDAOFactory.SEPARATOR)) {
+				String[] tuparts = authToken.split(AbstractDAOFactory.SEPARATOR);
 				
 				Long uid = NumberUtils.toLong(tuparts[0], 0L);
 				String savedKey = tuparts[1];
@@ -211,7 +211,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 					long expires = authstamp + (BasePage.SESSION_TIMEOUT_SEC * 1000);
 
 					String authKey = AbstractDAOUtils.MD5(authstamp.toString().
-							concat(CasDAOFactory.SEPARATOR).concat(uid.toString()));
+							concat(AbstractDAOFactory.SEPARATOR).concat(uid.toString()));
 
 					if (now <= expires && authKey.equals(savedKey)) {
 						return new SimplePrincipal(uid.toString(), groups);
@@ -232,8 +232,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			
 			if(sp != null && !StringUtils.isBlank(id) && !sp.getGroups().isEmpty()){
 				String authKey = AbstractDAOUtils.MD5(timestamp.toString().
-						concat(CasDAOFactory.SEPARATOR).concat(id));
-				String auth = id.concat(CasDAOFactory.SEPARATOR).concat(authKey);
+						concat(AbstractDAOFactory.SEPARATOR).concat(id));
+				String auth = id.concat(AbstractDAOFactory.SEPARATOR).concat(authKey);
 								
 				AbstractDAOUtils.setStateParam(AUTH_USER, auth, 
 						req, res, BasePage.USE_SESSIONS, true);					

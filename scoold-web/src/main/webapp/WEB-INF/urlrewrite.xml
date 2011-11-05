@@ -16,6 +16,10 @@
         <from>^/p/(.*)$</from>
 		<to type="redirect">%{context-path}/$1</to>
     </rule>
+	<rule>
+        <from>^(.*)\.vm$</from>
+		<to type="redirect">%{context-path}/</to>
+    </rule>
     <!-- ======== PUBLIC RESOURCES ========== -->
     <rule>
         <from>^/$</from>

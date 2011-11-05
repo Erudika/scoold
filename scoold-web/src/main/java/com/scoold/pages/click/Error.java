@@ -27,11 +27,14 @@ public class Error extends ErrorPage {
 		daoutils = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils();
 		lang = Language.readLanguage(getContext().getLocale());
         title = lang.get("error.title");
+		
 		addModel("APPNAME", BasePage.APPNAME);
 		addModel("DESCRIPTION", BasePage.DESCRIPTION);
 		addModel("KEYWORDS", BasePage.KEYWORDS);
 		addModel("CDN_URL", BasePage.CDN_URL);
-		addModel("currentLocale", getContext().getLocale());
+		
+		addModel("styleslink", BasePage.CDN_URL);
+		addModel("minsuffix", "-min");
 		addModel("rand", (new Random().nextInt(1337) + 100));
     }
 

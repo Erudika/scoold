@@ -7,6 +7,7 @@ import com.scoold.core.Post;
 import com.scoold.core.Post.PostType;
 import com.scoold.core.School;
 import com.scoold.core.User;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractUserDAO;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
@@ -180,7 +181,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 			colFamily = (CF<N>) CasDAOFactory.USERS_BY_REPUTATION;
 			String rep = cdu.getColumn(page.toString(),	CasDAOFactory.USERS, "reputation");
 			if(rep != null){
-				startKey = (N) rep.concat(CasDAOFactory.SEPARATOR).concat(page.toString());
+				startKey = (N) rep.concat(AbstractDAOFactory.SEPARATOR).concat(page.toString());
 			}
 		}else{
 			return new ArrayList<User>();
@@ -314,7 +315,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		String tyear = "0";
 		for (School school : schools) {
 			String linkDetails = extraProps.get(school.getId());
-			int sepindx = linkDetails.indexOf(CasDAOFactory.SEPARATOR);
+			int sepindx = linkDetails.indexOf(AbstractDAOFactory.SEPARATOR);
 			if(!StringUtils.isBlank(linkDetails)){
 				
 				fyear = linkDetails.substring(9, sepindx);

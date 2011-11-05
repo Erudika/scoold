@@ -12,8 +12,9 @@
 			#set($ref = $HOMEPAGE)
 		#end
 
-		<form action="$!{confirmlink}" method="post">
+		<form method="post" action="$!{confirmlink}">
 			<fieldset>
+				#sectoken(false)
 				<input type="submit" value="$lang.get('yes')" class="button rounded3"/>
 				<input type="hidden" name="returnto" value="$!{ref}"/>
 				<a class="button-small rounded3" href="$!{ref}" title="No">$lang.get("no")</a>
@@ -27,15 +28,17 @@
 	<div class="center">
 		<br />
 		<br />
-		<form action="$adminlink?createschools=true" method="post">
+		<form method="post" action="$adminlink?createschools=true">
 			<fieldset>
+				#sectoken(false)
 				<input type="submit" value="Create schools" class="button rounded3 rusure"/>
 			</fieldset>
 		</form>
 		<br />
 		<br />
-		<form action="$adminlink" method="post">
+		<form method="post" action="$adminlink">
 			<fieldset>
+				#sectoken(false)
 				<input type="radio" name="reindex" value="school" /> Schools
 				<input type="radio" name="reindex" value="classunit" /> Classes
 				<input type="radio" name="reindex" value="question" /> Questions

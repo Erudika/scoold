@@ -3,10 +3,10 @@
 		<div id="class-head">
 			#set($showschool = $showClass.school)
 			
-			<div class="line lightgray">
-				<div class="unit size1of3 mediumText">${lang.get("class.title")}</div>
-				<div class="unit size2of3 lastUnit r">
-					$lang.get("year") $!{showClass.gradyear}					
+			<div class="line lightgray mediumText">
+				<div class="unit size1of3">${lang.get("class.title")}</div>
+				<div class="unit size2of3 lastUnit r">			
+					<span class="pictos">g</span> $!showClass.count
 				</div>
 			</div>
 
@@ -71,7 +71,7 @@
 					<span id="userid" class="hide">$!authUser.id</span>
 					<div id="chat-log" class="chatbox mbs rounded3"></div>
 
-					<form id="chat-form" action="$classlink/$showClass.id">
+					<form method="get" id="chat-form" action="$classlink/$showClass.id">
 						<fieldset>
 							<input type="text" name="message" value="" id="chat-message" class="p93 nicebox"/>
 							<a id="chat-send-msg" href="#" class="button-small rounded3"><span class="pictos">w</span></a>
@@ -95,6 +95,7 @@
 
 				<form method="post" action="$classlink/$showClass.id/addclassmates">
 					<fieldset>
+						#sectoken(false)
 						<div>
 							<div class="right p50">
 								<label class="blocklabel">$lang.get("signup.form.email") ($lang.get("optional"))</label>
@@ -105,7 +106,7 @@
 								<input tabindex="1" type="text" class="nicebox p90" value="" name="fullname"/>
 							</div>
 						</div>
-						<a href="#" id="add-more-classmates" title="Add more"><span class="pictos">&</span> $lang.get("addmore")</a>
+						<a href="#" id="add-more-classmates" title="Add more"><span class="pictos">&amp;</span> $lang.get("addmore")</a>
 					</fieldset>
 					<div class="center">
 						<input id="addclassmates-btn" type="submit" value="$lang.get('add')" class="button rounded3"/>

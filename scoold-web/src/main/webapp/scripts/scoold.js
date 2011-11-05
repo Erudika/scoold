@@ -20,7 +20,8 @@ $(function () {
 		digitsmsg = lang.invalidyear,
 		maxlenmsg = lang.maxlength,
 		minlenmsg = lang.minlength,
-		tagsmsg = lang["tags.toomany"];
+		tagsmsg = lang["tags.toomany"],
+		secdata = {stoken:stoken, pepper:pepper};
 
 	/**************************
 	 *  Google Maps API v3.3
@@ -140,51 +141,6 @@ $(function () {
 	}
 
 	/****************************************************
-     *					IMPORT PHOTOS
-     ****************************************************/
-
-//	$("#fb-getphotos").click(function(){
-//		var that = $(this);
-//		FB.login(function(response) {
-//			if (response.session) {
-//				if (response.perms) {
-//					// user is logged in and granted some permissions.
-//					// perms is a comma separated list of granted permissions
-//					that.next(":hidden").show();
-//					that.hide();
-//					$.post(ajaxpath, {importphotos: "facebook",
-//						authtoken: response.session.access_token}, function(){
-//						//done. what now?
-//						showSuccessBox(lang['success']);
-//					});
-//				}
-//			} else {
-//				// user is not logged in
-//				// NOOP
-//			}
-//		}, {perms:'user_photos,user_photo_video_tags'});
-//
-//		return false;
-//	});
-
-
-//	$("form#flickr-import-form, form#picasa-import-form").live("submit", function(){
-//		$(this).find("input[type=text]").val("");
-//		$.post(this.action, $(this).serialize(), function(data){
-//
-//			showSuccessBox(lang['success']);
-//		});
-//		return false;
-//	});
-
-	// custom form submit
-
-//	submitFormUsingGetBind("form#flickr-import-form, form#picasa-import-form", function(data){
-//		//todo: show progress to user => true = success, false = fail
-//	});
-
-
-	/****************************************************
      *					MISC FUNCTIONS
      ****************************************************/
 
@@ -293,7 +249,7 @@ $(function () {
 		that.attr("autocomplete", "off");
 		that.autocomplete(ajaxpath, {
 			minChars: 3,
-			width: that.width(),
+			width: that.attr("width"),
 			matchContains: true,
 			highlight: false,
             extraParams: params,	
@@ -317,7 +273,7 @@ $(function () {
 		that.attr("autocomplete", "off");
 		that.autocomplete(ajaxpath, {
 			minChars: 2,
-			width: that.width(),
+			width: that.attr("width"),
 			matchContains: true,
 			multiple: true,
 			highlight: false,
@@ -344,7 +300,7 @@ $(function () {
 			that.attr("autocomplete", "off");
 			that.autocomplete(contacts, {
 				minChars: 3,
-				width: that.width(),
+				width: that.attr("width"),
 				matchContains: true,
 				multiple: true,
 				highlight: false,
@@ -493,7 +449,7 @@ $(function () {
 	});
 	
 	// show ajax indicator when submit is pressed
-	$("input[type=submit]").live("click", function(){
+	$("input[type=submit]").not("input.button-link").live("click", function(){
 		$(this).addClass("loading");
 //		$("img.ajaxwait", $(this).parent()).show();
 		return true;
@@ -566,7 +522,7 @@ $(function () {
 	 $(".delopenid").click(function(){
 		 var that = $(this);
 		 return areYouSure(function(){
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 			that.closest("tr").fadeOut(function(){
 				that.remove();
 			}).siblings("tr").find(".delopenid").hide();
@@ -578,7 +534,7 @@ $(function () {
      ****************************************************/
 
 	$(".delete-message").click(function(){
-		$.post(this.href);
+		$.post(this.href, secdata);
 		$(this).closest("div").fadeOut();
 		return false;
 	});
@@ -612,7 +568,7 @@ $(function () {
 	});
 	
 	$("a.addfriend").live("click", function(){
-		$.post(this.href);
+		$.post(this.href, secdata);
 		showSuccessBox(lang["profile.contacts.added"]);
 		$(this).fadeOut();
 		return false;
@@ -623,7 +579,7 @@ $(function () {
 		var that = $(this);
 		return areYouSure(function(){
 			that.fadeOut();
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -643,6 +599,7 @@ $(function () {
 		}
 
 		var params = {};
+		$.extend(secdata, params);
 		var $elem = $(elem);			
 		$elem.editable(function(value, settings) {
 			var $text = $elem.data("value");
@@ -662,21 +619,11 @@ $(function () {
 	editableBind("#classname.editable", "identifier");
 	editableBind("#questiontitle.editable", "title");
 
-//	var editable_settings2 = {};
-//	$.extend(true, editable_settings2, editable_settings,
-//		{data: {"alumnus":lang.alumnus, "teacher":lang.teacher, "student":lang.student}, type: 'select'});
-//
-//	$("#usertype.editable").editable(function(value, settings){
-//		var $that = $(this);
-//		$.post(ajaxpath, {type: value});
-//		return $that.text(lang[value.toLowerCase()]).text();}, editable_settings2
-//	);
-
 	var editable_settings3 = {};
 	$.extend(true, editable_settings3, editable_settings, {type: "textarea"});
 	$(".drawer-description.editable").editable(function(value, settings){
 		var $that = $(this);
-		$.post(ajaxpath+"?update-description=true", {description: value, id: this.id});
+		$.post(ajaxpath+"?update-description=true", $.extend({description: value, id: this.id}, secdata));
 		return $that.text(value).text();}, editable_settings3
 	);
 
@@ -876,7 +823,7 @@ $(function () {
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest("div.commentbox").fadeOut("slow", function(){that.remove();});
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -911,7 +858,7 @@ $(function () {
 			that.closest("div.translationbox").fadeOut("slow", function(){
 				that.remove();
 			});
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -940,7 +887,7 @@ $(function () {
 		var that = $(this);
 		return areYouSure(function(){
 			that.fadeOut("slow", function(){that.remove();});
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -1091,7 +1038,7 @@ $(function () {
 
 	$("a.remove-label").live("click", function(){
 		var box = $(this).closest(".labelbox");
-		$.post(this.href, function(){
+		$.post(this.href, secdata, function(){
 			clearLoading();
 			box.fadeOut(function(){
 				box.remove();
@@ -1106,7 +1053,7 @@ $(function () {
 			that.closest(".thumb-wrap").fadeOut(function(){
 				that.remove();
 			});
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -1267,7 +1214,7 @@ $(function () {
 			container.html("").data("oembed-data", "");  //clear
 			container.closest(".oembed-preview").hide(); //hide buttons
 			phorm.find("input[type='text']").val("");
-			$.post(this.action, params, callbackfn);
+			$.post(this.action, $.extend(params, secdata), callbackfn);
 		}
 
 		return false;
@@ -1278,7 +1225,7 @@ $(function () {
 		return areYouSure(function(){
 			var parent = that.closest("div.drawerbox");
 			parent.fadeOut("slow", function(){parent.remove();});
-			$.post(that.attr("href"));
+			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
 	});
 
@@ -1314,7 +1261,7 @@ $(function () {
 			that.text("2");
 		}
 
-		$.post(this.href);
+		$.post(this.href, secdata);
 		return false;
 	});
 

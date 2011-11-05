@@ -9,6 +9,7 @@
 
 				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$daoutils.MD5($authUser.id.toString())">
 					<fieldset>
+						#sectoken(false)
 						<input type="submit" value="$lang.get('delete')" class="button rounded3 mrl red"/>  &nbsp; &nbsp; &nbsp;
 						<a href="$settingslink" title="Cancel" class="button-small rounded3">$lang.get("cancel")</a>
 					</fieldset>
@@ -42,55 +43,19 @@
 			#end
 
 			#if($canAttachOpenid)
-				<a href="#" class="next-div-toggle button-small rounded3"><span class="pictos">&</span> $lang.get("add")</a>
+				<a href="#" class="next-div-toggle button-small rounded3"><span class="pictos">&amp;</span> $lang.get("add")</a>
 				<div class="hide mtm">
 					#signinbox(true)
 				</div>
 			#end
 		</div>
 
-		#if($PI_ENABLED)
-			<h2>$lang.get("settings.importphotos")</h2>
-			<div class="mvl">
-				#if($authUser.photos != 0)
-					<form method="post" action="$settingslink?clearallmedia=true">
-						<fieldset>
-							<input type="submit" title="Clear all media" value="$lang.get('settings.clearallmedia')" class="button rounded3 rusure"/>
-						</fieldset>
-					</form>
-				#end
-				<h2>Facebook</h2>
-
-				<a id="fb-getphotos" href="#" title="get photos" class="button-small rounded3 trigger-import-photos">$lang.get("import")</a>
-				#ajaxloading(true)
-
-				<form method="get" id="flickr-import-form" action="${settingslink}">
-					<fieldset>
-						<legend>Flickr</legend>
-						<label>Flickr $lang.get("username")</label>
-						<input type="text" class="nicebox" value="" name="username"/>
-						<input type="hidden" name="importphotos" value="flickr"/>
-						<input type="submit" value="$lang.get('import')" class="button rounded3 trigger-import-photos import-media-btn"/>
-					</fieldset>
-				</form>
-
-				<form method="get" id="picasa-import-form" action="${settingslink}">
-					<fieldset>
-						<legend>Picasa Web Albums</legend>
-						<label>Google $lang.get("username")</label>
-						<input type="text" class="nicebox" value="" name="username"/>
-						<input type="hidden" name="importphotos" value="picasa"/>
-						<input type="submit" value="$lang.get('import')" class="button rounded3 trigger-import-photos import-media-btn"/>
-					</fieldset>
-				</form>
-			</div>
-		#end
-
 		<h2>$lang.get("settings.tagfilter")</h2>
 		<div class="mvl">
 			<div class="mbm">$lang.get("settings.tagfilter.text")</div>
 			<form method="post" action="$settingslink">
 				<fieldset>
+					#sectoken(false)
 					<input type="text" class="nicebox tagbox p50" value="$!authUser.favtagsString" name="favtags"/>
 					<input type="submit" id="add-favtag-btn" value="$lang.get('save')" class="button rounded3"/>
 				</fieldset>
@@ -102,6 +67,7 @@
 		<div class="mvl">
 			<form method="post" action="$settingslink">
 				<fieldset>
+					#sectoken(false)
 					#renderSpecialFields($changeEmailForm)
 					#createformfield(${changeEmailForm.fields.email} "nicebox p50")
 					${changeEmailForm.fields.save}

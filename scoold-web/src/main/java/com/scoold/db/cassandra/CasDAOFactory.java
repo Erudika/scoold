@@ -106,8 +106,6 @@ public class CasDAOFactory extends AbstractDAOFactory{
 	public static final String CN_ID = "id";
 	public static final String CN_UUID = "uuid";
 	public static final String DEFAULT_KEY = "key";
-	public static final String SEPARATOR = ":";
-
 
 	private static final CasDAOUtils utils = new CasDAOUtils();
 
