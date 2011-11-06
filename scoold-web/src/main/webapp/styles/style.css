@@ -66,11 +66,12 @@ table {
 
 @font-face {
     font-family: 'PictosRegular';
-    src: url('../styles/pictos-web-webfont.eot');
-    src: url('../styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../styles/pictos-web-webfont.woff') format('woff'),
-         url('../styles/pictos-web-webfont.ttf') format('truetype'),
-         url('../styles/pictos-web-webfont.svg#PictosRegular') format('svg');
+    src: url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot');
+    src: url('http://scooldlb-264824332.eu-west-1.elb.amazonaws.com/styles/pictos-web-webfont.woff') format('woff'),
+         url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.woff') format('woff'),
+         url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.ttf') format('truetype'),
+         url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+         url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.svg#PictosRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -383,10 +384,7 @@ pre, code, .chat-msg{
 	color: #BB1111;
 }
 .openidbox{
-    background: white;
 	text-indent: 30px;
-	line-height: 1.5em;
-	vertical-align: middle;
 }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
@@ -470,8 +468,10 @@ pre, code, .chat-msg{
 .diff-ins .button-tiny{ background-color: #E6FFE6;}
 .diff-del .button-tiny{ background-color: #FFE6E6;}
 .labelbox, .labelbox a{ color: black;}
+.loading, .ac_loading, div.loader{ 
+	background-image: url(http://d35029ynkhy54l.cloudfront.net/indicator.gif); 
+}
 .loading{ 
-	background-image: url(../images/indicator.gif); 
 	background-position: 5px 50%; 
 	background-repeat: no-repeat; 
 	text-indent: 15px;
@@ -506,19 +506,19 @@ pre, code, .chat-msg{
 	-moz-border-radius: 5px; /* FF1+ */
 	-webkit-border-radius: 5px; /* Saf3-4 */
 	border-radius: 5px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(http://d35029ynkhy54l.cloudfront.net/csspie.htc);
 }
 .rounded3, form.clickedit button, input.nicebox, textarea.nicebox, form.clickedit input, form.clickedit textarea{
 	-moz-border-radius: 3px; /* FF1+ */
 	-webkit-border-radius: 3px; /* Saf3-4 */
 	border-radius: 3px; /* Opera 10.5, IE 9, Saf5, Chrome */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(http://d35029ynkhy54l.cloudfront.net/csspie.htc);
 }
 .shadow{
 	-moz-box-shadow: 0 0 2px 2px black; /* FF3.5+ */
 	-webkit-box-shadow: 0 0 2px 2px black; /* Saf3.0+, Chrome */
 	box-shadow: 0 0 2px 2px black; /* Opera 10.5, IE9 */
-	behavior: url(../scripts/csspie.htc);
+	behavior: url(http://d35029ynkhy54l.cloudfront.net/csspie.htc);
 }
 .button{
 	border: none;
@@ -538,7 +538,7 @@ pre, code, .chat-msg{
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon{
-	background-image: url(../images/sprites.png);
+	background-image: url(http://d35029ynkhy54l.cloudfront.net/sprites.png);
 	background-repeat: no-repeat;
     overflow: hidden;
 }
@@ -587,7 +587,6 @@ pre, code, .chat-msg{
 	font-size: inherit;
 }
 .ac_loading {
-	background: white url(../images/indicator.gif); 
 	background-position: 99% 50%; 
 	background-repeat: no-repeat;
 }
@@ -615,7 +614,6 @@ div.jqmConfirmContent{	padding: 15px 0;}
 /* -- GALLERIFFIC CSS -- */
 div.loader {
 	position: relative;
-	background-image: url(../images/indicator.gif);
 	background-repeat: no-repeat;
 	background-position: center;
 	width: 600px;
@@ -652,7 +650,7 @@ li.selected-thumb img{
 	width:60px;
 	height:12px;
 	margin: 0 auto;
-	background: #EEEEEE url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 3px 3px;
+	background: #EEEEEE url(http://d35029ynkhy54l.cloudfront.net/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 3px 3px;
 	background-position: 50% 4px;
 	cursor: s-resize;
 	border-color: #DDDDDD;
@@ -668,7 +666,7 @@ li.selected-thumb img{
 }
 .markItUpHeader ul li:hover > ul{display:block;}
 li.markItUpDropMenu, li.markItUpDropMenu:hover {
-	background:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 19px -119px transparent;
+	background:url(http://d35029ynkhy54l.cloudfront.net/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 19px -119px transparent;
 }
 .markItUpHeader ul .markItUpDropMenu li { margin-right:0px;}
 /* next rows of buttons */
@@ -734,10 +732,10 @@ li.markItUpDropMenu, li.markItUpDropMenu:hover {
 /*.markItUpButton a
 li.markItUpDropMenu,
 li.markItUpDropMenu:hover {
-	background-image:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
+	background-image:url(http://d35029ynkhy54l.cloudfront.net/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
 }*/
 .markItUpButton a {
-	background-image:url(../images/miu.icons.famfamfam.16px.8bit.bg-ededed.png);	/* Yeah, this line here! */
+	background-image:url(http://d35029ynkhy54l.cloudfront.net/miu.icons.famfamfam.16px.8bit.bg-ededed.png);	/* Yeah, this line here! */
 	height:16px;				/* Matches the size of the icons. */
 	width:16px;				/* Matches the size of the icons. */
 }

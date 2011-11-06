@@ -21,6 +21,8 @@ $(function () {
 		maxlenmsg = lang.maxlength,
 		minlenmsg = lang.minlength,
 		tagsmsg = lang["tags.toomany"],
+		stoken = (typeof stoken === "undefined") ? null : stoken,
+		pepper = (typeof pepper === "undefined") ? null : pepper,
 		secdata = {stoken:stoken, pepper:pepper};
 
 	/**************************

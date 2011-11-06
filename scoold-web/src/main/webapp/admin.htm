@@ -51,4 +51,17 @@
 			</fieldset>
 		</form>
 	</div>
+	<br />
+	<h2>System properties</h2>
+	<br />
+	<table>
+		<tbody>
+		#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts"])
+			<tr>
+				<td class="mrl p50"><strong>$showprop.key</strong></td>
+				<td class="p50">$showprop.value</td>
+			</tr>
+		#end
+		</tbody>
+	</table>
 #end

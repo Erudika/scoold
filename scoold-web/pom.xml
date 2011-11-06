@@ -397,7 +397,37 @@
 						</goals>
 					</execution>
 				</executions>        
-			</plugin>			
+			</plugin>
+<!--			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>maven-replacer-plugin</artifactId>
+				<version>1.3.9</version>
+				<executions>                
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>src/main/webapp/styles/style.css</file>
+					<replacements>
+						<replacement>
+							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<value>../scripts</value>
+						</replacement>
+						<replacement>
+							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<value>../styles</value>
+						</replacement>
+						<replacement>
+							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<value>../images</value>
+						</replacement>
+					</replacements>                        
+				</configuration>
+			</plugin>-->
         </plugins>
         <finalName>scoold-web</finalName>
     </build>    
@@ -430,37 +460,7 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>maven-replacer-plugin</artifactId>
-						<version>1.3.9</version>
-						<executions>                
-							<execution>
-								<phase>compile</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<file>src/main/webapp/styles/style.css</file>
-							<replacements>
-								<replacement>
-									<token>../scripts</token>
-									<value>http://d35029ynkhy54l.cloudfront.net</value>
-								</replacement>
-								<replacement>
-									<token>../styles</token>
-									<value>http://d35029ynkhy54l.cloudfront.net</value>
-								</replacement>
-								<replacement>
-									<token>../images</token>
-									<value>http://d35029ynkhy54l.cloudfront.net</value>
-								</replacement>
-							</replacements>                        
-						</configuration>
-					</plugin>
+					</plugin>					
 				</plugins>
 			</build>
 		</profile>              

@@ -10,7 +10,7 @@ class scoold {
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
 	$nodename = "search1"
-	$dbseeds = "10.235.90.251,10.224.103.69"
+	$dbseeds = "10.234.101.162,10.234.89.130"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	

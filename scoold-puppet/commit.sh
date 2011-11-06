@@ -143,9 +143,12 @@ elif [ "$1" = "lbremove" ]; then
 elif [ "$1" = "inites" ]; then
 	es1host=$(head -n 1 "search$F2SUFFIX")
 	# create elasticsearch river and index
-	cmd1="curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	cmd2="curl -XPUT localhost:9200/_river/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
+	cmd1="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	cmd2="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
 	ssh -n ubuntu@$es1host "$cmd1; sleep 5; $cmd2"
+elif [ "$1" = "createlb" ]; then
+	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
+	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2	
 else
 	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"
 fi

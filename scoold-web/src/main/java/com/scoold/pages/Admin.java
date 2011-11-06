@@ -12,7 +12,9 @@ import com.scoold.core.Searchable;
 import com.scoold.db.AbstractDAOUtils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -33,6 +35,14 @@ public class Admin extends BasePage {
 	}
 
 	public void onGet() {
+		Enumeration<?> list = System.getProperties().propertyNames();
+		TreeMap<String, String> map = new TreeMap<String, String>(); 
+		
+		while (list.hasMoreElements()) {
+			String prop = (String) list.nextElement();
+			map.put(prop, System.getProperty(prop));
+		}
+		addModel("sysprops", map);
 	}
 
 	public void onPost() {

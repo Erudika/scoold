@@ -52,7 +52,7 @@ function updateJacssi () {
 	fi
 }
 
-if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
+if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]; then
 	if [ -n "$2" ] && [ "$2" !=  "true" ] && [ "$2" !=  "false" ]; then
 		CONTEXT="--contextroot $2"
 	fi
@@ -73,6 +73,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 			fi
 			FETCHWAR="curl -s $AUTH -o $WARPATH $WAR"
 		else
+			APPNAME=$(expr $FILENAME : '\(.*\)\.war$')
 			FETCHWAR="echo -n ''"
 			pssh/bin/pscp -h $FILE2 -l ubuntu $1 $WARPATH
 		fi
@@ -116,8 +117,8 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 						echo "NOT OK! Reverting back to old application..."
 						ssh -n ubuntu@$host "$ASADMIN disable $APPNAME && $ASADMIN enable $OLDAPP"
 					fi			
-					count=$((count+1))
 				fi					
+				count=$((count+1))
 				### STEP 6: register application back with the LB
 				$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
 			fi
@@ -128,6 +129,8 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ]; then
 	fi
 elif [ "$1" = "updatejacssi" ]; then
 	updateJacssi $2
+elif [ "$1" = "cmd" ]; then
+	pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"
 else
 	echo "USAGE:  $0 (war | updatejacssi [invalidateall])  [context | enabled]"
 fi
