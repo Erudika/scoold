@@ -60,9 +60,4 @@ public class Feedback <P extends Post> extends BasePage{
 		}
 		return false;
 	}
-
-	public boolean onSecurityCheck() {
-		if(fForm == null) return true;
-		return fForm.onSubmitCheck(this, feedbacklink+"/?code=7&error=true");
-    }
 }

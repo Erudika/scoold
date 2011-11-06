@@ -39,7 +39,7 @@ public class Messages extends BasePage{
 
 			if((uids == null || uids.length < 1 || StringUtils.isBlank(message))
 					&& !isAjaxRequest()){
-				setRedirect(messageslink+"/new?code=7&error=true");
+				setRedirect(messageslink+"/new");
 			}else{
 				HashSet<String> uuids = new HashSet<String>();
 				uuids.addAll(Arrays.asList(uids));
@@ -49,7 +49,7 @@ public class Messages extends BasePage{
 				
 				if(!isAjaxRequest()){
 					if(done) setRedirect(messageslink+"/new?code=8&success=true");
-					else setRedirect(messageslink+"/new?code=7&error=true");
+					else setRedirect(messageslink+"/new");
 				}
 			}
 		}else if(param("delete")){

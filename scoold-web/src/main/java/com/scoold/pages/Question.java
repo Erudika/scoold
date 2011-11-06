@@ -158,9 +158,4 @@ public class Question extends BasePage{
 		}
 		return false;
 	}
-
-	public boolean onSecurityCheck() {
-        return aForm.onSubmitCheck(this, actionlink+"/?code=7&error=true");
-    }
-
 }

@@ -138,9 +138,4 @@ public class Questions extends BasePage{
 		}
 		return false;
 	}
-
-	public boolean onSecurityCheck() {
-		if(qForm == null) return true;
-        return qForm.onSubmitCheck(this, questionslink+"/?code=7&error=true");
-    }
 }

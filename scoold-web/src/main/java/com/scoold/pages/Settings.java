@@ -27,9 +27,6 @@ public class Settings extends BasePage {
 	public boolean canDetachOpenid;
 	public boolean canAttachOpenid;
 
-	// keeps track of imported photos to prevent duplicates
-	private HashSet<String> photoIDs = new HashSet<String>();
-
 	public Settings() {
 		title = lang.get("settings.title");
 		includeFBscripts = true;
