@@ -8,7 +8,7 @@ F1SUFFIX="-instances.txt"
 F2SUFFIX="-hostnames.txt"
 FILE1="web$F1SUFFIX"
 FILE2="web$F2SUFFIX"
-JAUTH="./scoold/files/jenkins-auth.txt"
+JAUTH="jenkins-auth.txt"
 ASADMIN="sudo -u glassfish /home/glassfish/glassfish/bin/asadmin"
 LBNAME="ScooldLB"	
 REGION="eu-west-1"
@@ -101,7 +101,8 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 
 					### STEP 3: deregister each instance from the LB, consecutively 
 					$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --quiet --instances $instid
-
+					sleep 6
+					
 					### STEP 4: disable old deployed application and enable new application
 					ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"
 
@@ -121,6 +122,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 				count=$((count+1))
 				### STEP 6: register application back with the LB
 				$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
+				sleep 6
 			fi
 		done < $FILE1
 		updateJacssi

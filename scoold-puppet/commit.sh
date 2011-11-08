@@ -4,10 +4,13 @@ LBNAME="ScooldLB"
 REGION="eu-west-1"
 MODULESDIR="/usr/share/puppet/modules"
 WEBDIR="../scoold-web/src/main/webapp/WEB-INF"
+JAUTH=$(cat jenkins-auth.txt)
 MODNAME="scoold"
 NODETYPE="unknown"
 F1SUFFIX="-instances.txt"
 F2SUFFIX="-hostnames.txt"
+RIVERFILE="river-amazonsqs"
+RIVERLINK="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 
 function init () {
 	GROUP=$1
@@ -15,6 +18,17 @@ function init () {
 	FILE2=$3
 	ec2-describe-instances --region $REGION --filter group-name=$GROUP --filter "instance-state-name=running" | egrep ^INSTANCE | awk '{ print $2,$4,$15}' > $FILE1
 	cat $FILE1 | awk '{print $2}' > $FILE2 # hostnames only
+}
+
+function inites () {
+	# create elasticsearch river and index
+	cmd1="sudo -u elasticsearch curl -s -u $JAUTH -o /home/elasticsearch/$RIVERFILE.zip $RIVERLINK"
+	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
+	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
+	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
+	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	cmd6="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
+	ssh -n ubuntu@$1 "$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sleep 5; $cmd6"
 }
 
 function getType () {
@@ -130,6 +144,9 @@ elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
 	db1host=$(head -n 1 "db$F2SUFFIX")
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
+elif [ "$1" = "inites" ]; then
+	es1host=$(head -n 1 "search$F2SUFFIX")
+	inites $es1host
 elif [ "$1" = "lbadd" ]; then	
 	if [ -n "$2" ]; then
 	 	# register instance with LB
@@ -140,12 +157,6 @@ elif [ "$1" = "lbremove" ]; then
 	 	# deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
 	fi
-elif [ "$1" = "inites" ]; then
-	es1host=$(head -n 1 "search$F2SUFFIX")
-	# create elasticsearch river and index
-	cmd1="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	cmd2="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
-	ssh -n ubuntu@$es1host "$cmd1; sleep 5; $cmd2"
 elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2	

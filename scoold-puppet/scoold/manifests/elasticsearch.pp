@@ -59,27 +59,14 @@ class scoold::elasticsearch {
 			"limits.conf2":
 				ensure => present,		
 				file => "/etc/security/limits.conf",
-				line => "${elasticsearchusr} - memlock unlimited"
+				line => "${elasticsearchusr} - memlock unlimited";
+			"serverflag":
+				ensure => present,
+				file => "${esdir}/bin/elasticsearch.in.sh",
+				line => "JAVA_OPTS=\"\$JAVA_OPTS -server\""
 		}
 	}
-	
-	if $nodeid == 1 {		
-		$jauthpath = "/usr/share/puppet/modules/scoold/files/jenkins-auth.txt"
-		$jauth = file("${jauthpath}")
-		$riverfile = "river-amazonsqs.zip"
-		
-		exec {
-			"download-river":				
-				command => "sudo -u ${elasticsearchusr} curl -s -u ${jauth} -o ${elasticsearchhome}/${riverfile} ${scoold::esriverlink} && rm ${jauthpath}",
-				before => Exec["install-river"],
-				require => User[$elasticsearchusr];
-			"install-river":
-				command => "sudo -u ${elasticsearchusr} unzip -qq -o -f -d ${esdir}/plugins/ ${elasticsearchhome}/${riverfile} && rm ${elasticsearchhome}/${riverfile}",
-				require => [Package["unzip"], Exec["rename-elasticsearch"]],
-				before => Exec["start-elasticsearch"];
-		}		
-	}	
-			
+				
 	file { 
 		["/var/lib/elasticsearch", "/var/lib/elasticsearch/data", "/var/lib/elasticsearch/work", 
 			"/var/log/elasticsearch", "${esdir}/plugins"]:

@@ -261,7 +261,7 @@ form label{	margin-right: 10px;}
 form fieldset li {  list-style: none;  padding: 5px;  margin: 0;}
 form label {  width: 150px; /* Width of labels */  font-size: 1.1em;}
 input.nicebox, form.clickedit input {
-	padding: 2px 0;
+	padding: 3px 0;
 }
 textarea.nicebox, form.clickedit textarea {
 	overflow: auto;
@@ -373,7 +373,7 @@ pre, code, .chat-msg{
 }
 .successBox{ 
     background-color: white;
-    color:#88AF12;
+    color:#88AF12;z
 }
 .infoBox{
     background-color: white;
@@ -383,9 +383,7 @@ pre, code, .chat-msg{
 	background-color: white;
 	color: #BB1111;
 }
-.openidbox{
-	text-indent: 30px;
-}
+.openidbox{ padding-left: 30px; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }

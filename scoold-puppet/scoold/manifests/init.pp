@@ -26,10 +26,8 @@ class scoold {
 	$gfcluster = "scoold" 
 		 
 	#### Elasticsearch ####
-	$esmaster = true
 	$esver = "0.18.2"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
-	$esriverlink = "https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-search/target/river-amazonsqs.zip"
 	$esheapsize = "1200M"
 	$esheapdev = "200M"
 	if inproduction == false {		

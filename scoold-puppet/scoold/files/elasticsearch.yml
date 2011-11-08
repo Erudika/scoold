@@ -2,8 +2,8 @@
 cluster:
   name: scoold
   
-node:
-  river: amazonsqs
+#node:
+#  river: amazonsqs
   
 network:
   bind_host: 0.0.0.0
