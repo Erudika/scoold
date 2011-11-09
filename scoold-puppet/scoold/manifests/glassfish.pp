@@ -50,7 +50,7 @@ class scoold::glassfish {
 	}
 	
 	exec { "stop-glassfish":
-		command => "stop glassfish && rm ${glassfishhome}/glassfish.pid",		
+		command => "stop glassfish; rm ${glassfishhome}/glassfish.pid",		
 		onlyif => "test -e ${glassfishhome}/glassfish.pid",
 		before => User[$glassfishusr]
 	}

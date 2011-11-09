@@ -23,14 +23,14 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.inject.Module;
 import org.elasticsearch.plugins.AbstractPlugin;
 import org.elasticsearch.river.RiversModule;
-import org.elasticsearch.river.amazonsqs.AmazonSQSRiverModule;
+import org.elasticsearch.river.amazonsqs.AmazonsqsRiverModule;
 
 /**
  * @author aleski
  */
-public class AmazonSQSRiverPlugin extends AbstractPlugin {
+public class AmazonsqsRiverPlugin extends AbstractPlugin {
 
-    @Inject public AmazonSQSRiverPlugin() {
+    @Inject public AmazonsqsRiverPlugin() {
     }
 
     @Override public String name() {
@@ -43,7 +43,7 @@ public class AmazonSQSRiverPlugin extends AbstractPlugin {
 
     @Override public void processModule(Module module) {
         if (module instanceof RiversModule) {
-            ((RiversModule) module).registerRiver("amazonsqs", AmazonSQSRiverModule.class);
+            ((RiversModule) module).registerRiver("amazonsqs", AmazonsqsRiverModule.class);
         }
     }
 }

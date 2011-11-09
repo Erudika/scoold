@@ -67,7 +67,7 @@ table {
 @font-face {
     font-family: 'PictosRegular';
     src: url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot');
-    src: url('http://scooldlb-264824332.eu-west-1.elb.amazonaws.com/styles/pictos-web-webfont.woff') format('woff'),
+    src: url('pictos-web-webfont.woff') format('woff'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.woff') format('woff'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.ttf') format('truetype'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
@@ -383,7 +383,7 @@ pre, code, .chat-msg{
 	background-color: white;
 	color: #BB1111;
 }
-.openidbox{ padding-left: 30px; }
+.openidbox{ text-indent: 30px; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }

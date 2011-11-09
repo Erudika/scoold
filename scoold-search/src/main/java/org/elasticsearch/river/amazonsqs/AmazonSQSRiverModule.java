@@ -25,9 +25,9 @@ import org.elasticsearch.river.River;
 /**
  * @author aleski
  */
-public class AmazonSQSRiverModule extends AbstractModule {
+public class AmazonsqsRiverModule extends AbstractModule {
 
     @Override protected void configure() {
-        bind(River.class).to(AmazonSQSRiver.class).asEagerSingleton();
+        bind(River.class).to(AmazonsqsRiver.class).asEagerSingleton();
     }
 }

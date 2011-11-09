@@ -29,7 +29,7 @@ class scoold::cassandra {
 	}
 		
 	exec { "stop-cassandra":
-		command => "stop cassandra && rm ${cassandrahome}/cassandra.pid",
+		command => "stop cassandra; rm ${cassandrahome}/cassandra.pid",
 		onlyif => "test -e ${cassandrahome}/cassandra.pid",
 		before => User[$cassandrausr]
 	}

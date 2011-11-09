@@ -522,6 +522,10 @@ public abstract class AbstractDAOUtils {
 		String cookie = name+"="+value+"; Path=/; Expires="+date+" GMT"+httponly;
 		res.setHeader("Set-Cookie", cookie);
 	}
+	
+	public static String getSystemProperty(String name){
+		return System.getProperty(name);
+	}
 
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);
 	public abstract boolean voteDown(Long userid, Votable<Long> votable);

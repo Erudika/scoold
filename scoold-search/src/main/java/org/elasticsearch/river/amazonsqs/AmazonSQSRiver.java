@@ -49,7 +49,7 @@ import org.elasticsearch.client.action.index.IndexRequestBuilder;
 /**
  * @author aleski
  */
-public class AmazonSQSRiver extends AbstractRiverComponent implements River {
+public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 
     private final Client client;
 	private final AmazonSQSAsyncClient sqs;
@@ -67,7 +67,7 @@ public class AmazonSQSRiver extends AbstractRiverComponent implements River {
 	
     @SuppressWarnings({"unchecked"})
     @Inject 
-	public AmazonSQSRiver(RiverName riverName, RiverSettings settings, Client client) {
+	public AmazonsqsRiver(RiverName riverName, RiverSettings settings, Client client) {
         super(riverName, settings);
         this.client = client;
 				

@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.8.5</version>
+			<version>1.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>

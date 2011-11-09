@@ -19,7 +19,7 @@ class scoold::elasticsearch {
 	}
 	
 	exec { "stop-elasticsearch":
-		command => "stop elasticsearch && rm ${elasticsearchhome}/elasticsearch.pid",
+		command => "stop elasticsearch; rm ${elasticsearchhome}/elasticsearch.pid",
 		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		before => User[$elasticsearchusr];
 	}	
@@ -63,7 +63,9 @@ class scoold::elasticsearch {
 			"serverflag":
 				ensure => present,
 				file => "${esdir}/bin/elasticsearch.in.sh",
-				line => "JAVA_OPTS=\"\$JAVA_OPTS -server\""
+				line => "JAVA_OPTS=\"\$JAVA_OPTS -server\"",
+				require => Exec["rename-elasticsearch"],
+				before => Exec["start-elasticsearch"];
 		}
 	}
 				
