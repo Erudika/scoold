@@ -20,17 +20,6 @@ function init () {
 	cat $FILE1 | awk '{print $2}' > $FILE2 # hostnames only
 }
 
-function inites () {
-	# create elasticsearch river and index
-	cmd1="sudo -u elasticsearch curl -s -u $JAUTH -o /home/elasticsearch/$RIVERFILE.zip $RIVERLINK"
-	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
-	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
-	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
-	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
-	cmd6="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	ssh -n ubuntu@$1 "$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sleep 5; $cmd6"
-}
-
 function getType () {
 	NODETYPE=""
 	if [ "$1" = "cassandra" ]; then
@@ -146,7 +135,14 @@ elif [ "$1" = "initdb" ]; then
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
 elif [ "$1" = "inites" ]; then
 	es1host=$(head -n 1 "search$F2SUFFIX")
-	inites $es1host
+	### create elasticsearch river and index
+	cmd1="sudo -u elasticsearch curl -s -u $JAUTH -o /home/elasticsearch/$RIVERFILE.zip $RIVERLINK"
+	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
+	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
+	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
+	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
+	cmd6="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	ssh -n ubuntu@$es1host "$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sleep 5; $cmd6"
 elif [ "$1" = "lbadd" ]; then	
 	if [ -n "$2" ]; then
 	 	# register instance with LB

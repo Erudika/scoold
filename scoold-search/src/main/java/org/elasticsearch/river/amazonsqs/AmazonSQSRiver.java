@@ -133,7 +133,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 					
 					try {
 						JsonNode jsonTasks = mapper.readTree(task);
-
+						
 						if(jsonTasks.isArray()){
 							for (JsonNode msg : jsonTasks) {
 								if(msg.has("_id") && msg.has("_type") && msg.has("_op") 
