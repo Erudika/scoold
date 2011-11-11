@@ -32,9 +32,7 @@ public class Error extends ErrorPage {
 		addModel("DESCRIPTION", BasePage.DESCRIPTION);
 		addModel("KEYWORDS", BasePage.KEYWORDS);
 		addModel("CDN_URL", BasePage.CDN_URL);
-		
-		addModel("styleslink", BasePage.CDN_URL);
-		addModel("minsuffix", "-min");
+		addModel("IN_PRODUCTION", BasePage.IN_PRODUCTION);
 		addModel("rand", (new Random().nextInt(1337) + 100));
     }
 

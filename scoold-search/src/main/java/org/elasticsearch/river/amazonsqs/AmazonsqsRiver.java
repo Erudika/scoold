@@ -147,13 +147,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 									continue;
 								}
 
-								if (op.equalsIgnoreCase("create")) {
-									bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
-											setId(id).
-											setType(type).
-											setCreate(true).
-											setSource(data).request());
-								} else if(op.equalsIgnoreCase("update")) {
+								if (op.equalsIgnoreCase("create") || op.equalsIgnoreCase("update")) {
 									bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
 											setId(id).
 											setType(type).

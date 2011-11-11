@@ -66,12 +66,12 @@ public class BasePage extends Page {
 	public static final String CDN_URL = "http://d35029ynkhy54l.cloudfront.net"; 
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
-	public static final boolean IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int MAX_IMG_SIZE_PX = 730;
 	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
 	public static final String SEPARATOR = AbstractDAOFactory.SEPARATOR;
 	public static final String AUTH_USER = ScooldAuthModule.AUTH_USER;
+	public static boolean IN_PRODUCTION = false;
 	
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String FB_APP_ID = "99517177417";
@@ -152,6 +152,7 @@ public class BasePage extends Page {
 	public Map<String, String> lang = Language.getDefaultLanguage();
 
 	public BasePage() {
+		IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
 		search = new Search((Client) getContext().getServletContext().
 				getAttribute(ScooldAppListener.SEARCH_CLIENT));
 		req = getContext().getRequest();

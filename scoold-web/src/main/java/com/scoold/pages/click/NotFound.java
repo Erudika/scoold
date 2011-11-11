@@ -28,8 +28,7 @@ public class NotFound extends Page{
 		addModel("KEYWORDS", BasePage.KEYWORDS);
 		addModel("CDN_URL", BasePage.CDN_URL);
 		addModel("currentLocale", getContext().getLocale());
-		addModel("styleslink", BasePage.CDN_URL);
-		addModel("minsuffix", "-min");
+		addModel("IN_PRODUCTION", BasePage.IN_PRODUCTION);
 	}
 
 	public String getTemplate() {

@@ -133,16 +133,20 @@ elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
 	db1host=$(head -n 1 "db$F2SUFFIX")
 	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
-elif [ "$1" = "inites" ]; then
+elif [ "$1" = "esindex" ]; then
+	### create elasticsearch index
 	es1host=$(head -n 1 "search$F2SUFFIX")
-	### create elasticsearch river and index
+	cmd="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"	
+	ssh -n ubuntu@$es1host "$cmd"
+elif [ "$1" = "esriver" ]; then
+	es1host=$(head -n 1 "search$F2SUFFIX")
+	### create elasticsearch river
 	cmd1="sudo -u elasticsearch curl -s -u $JAUTH -o /home/elasticsearch/$RIVERFILE.zip $RIVERLINK"
 	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
 	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
 	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
-	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
-	cmd6="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	ssh -n ubuntu@$es1host "$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sleep 5; $cmd6"
+	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	ssh -n ubuntu@$es1host "$cmd1; $cmd2; $cmd3; $cmd4; $cmd5"
 elif [ "$1" = "lbadd" ]; then	
 	if [ -n "$2" ]; then
 	 	# register instance with LB
@@ -155,8 +159,8 @@ elif [ "$1" = "lbremove" ]; then
 	fi
 elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
-	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2	
+	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
 else
-	echo "USAGE: $0 checkdb | initdb | munin | [init | all] group"
+	echo "USAGE: $0 checkdb | initdb | munin | inites | [init | all] group"
 fi
 # rsync --verbose --progress --stats --compress --recursive --times --perms --links --delete --rsync-path="sudo rsync" ~/Desktop/scoold_snapshots/1317214358735/ ubuntu@192.168.113.128:/var/lib/cassandra/data/scoold/
