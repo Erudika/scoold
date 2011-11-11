@@ -248,7 +248,6 @@ a.button-tiny-selected, span.button-tiny-selected{
 .navbtn-hover { border-bottom: 3px solid #555555; text-decoration: none; }
 	
 /* -- FORMS -- */
-/*form fieldset { margin-bottom: 10px;}*/
 form fieldset fieldset label{ margin-right: 30px; }
 form legend { font-size: 1.3em;margin-bottom: 10px; color:#666666; line-height: 1em;}
 form label.blocklabel {
@@ -292,26 +291,10 @@ input.search-btn{
 	cursor: pointer; 
 	font-size: 1em;
 }
-/* Editable styles */
-
 form.clickedit input, form.clickedit textarea{
 	width: 100%;
 	margin-bottom: 5px;
-	
-/*	border: 2px solid #CCCCCC;
-	height: inherit !important;
-	color: inherit;
-	font-size: inherit;
-	overflow: auto;*/
 }
-/*form.clickedit select{
-	padding: inherit;
-	font-family: inherit;
-	font-size: inherit;
-	color:inherit;
-	font-weight: inherit;
-	margin-right: 15px;
-}*/
 input.button-link{ background-color: transparent; border: none; cursor: pointer; font-family: inherit; padding: 0; margin: 0; }
 input.error, select.error, textarea.error{ background-color: #EFFCFF; }
 label.error, span.error{ width: 99%; background-color: transparent; color: #BB1111; display: block;}
@@ -383,7 +366,7 @@ pre, code, .chat-msg{
 	background-color: white;
 	color: #BB1111;
 }
-.openidbox{ text-indent: 30px; }
+input.openidbox{ text-indent: 30px; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }

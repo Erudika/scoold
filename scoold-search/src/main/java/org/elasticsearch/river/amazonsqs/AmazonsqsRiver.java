@@ -119,7 +119,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 		public void run() {
 			String id = null;	// document id
 			String type = null;	// document type
-			String op = null;	// operation type - INDEX, CREATE, DELETE
+			String op = null;	// operation type - CREATE, UPDATE, DELETE
 			Map<String, Object> data = null; // document data for indexing
 			
             while (!closed) {
