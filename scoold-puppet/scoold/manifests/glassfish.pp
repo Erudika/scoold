@@ -11,36 +11,6 @@ class scoold::glassfish {
 	$gfdomain = "${gfdir}/glassfish/domains/domain1"
 	$workerid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2'))
 	
-#	$ufwconf = "/etc/ufw/ufw.conf"
-#	$ufwrules = "/lib/ufw/user.rules"
-#	$ufwbeforerules = "/etc/ufw/before.rules"
-#	
-#	package { "ufw": 
-#		before => File[$ufwconf]
-#	}
-#		
-#	# setup firewall for webserver
-#	file { 
-#		$ufwconf:
-#			mode => 644,
-#			owner => root;
-#		$ufwrules:
-#			ensure => file,
-#			mode => 640,
-#			owner => root,
-#			source => "puppet:///modules/scoold/web.rules";
-#		$ufwbeforerules:
-#			ensure => file,
-#			mode => 640,
-#			owner => root,
-#			source => "puppet:///modules/scoold/before.rules"				
-#	}
-#	
-#	exec { "enable-ufw":
-#		command => "yes | ufw enable",
-#		require => [Package["ufw"], File[[$ufwconf, $ufwrules, $ufwbeforerules]]]
-#	}
-
 	package { "unzip": }
 	 	
 	user { $glassfishusr:

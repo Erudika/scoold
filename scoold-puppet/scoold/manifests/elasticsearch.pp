@@ -9,7 +9,7 @@ class scoold::elasticsearch {
 	$minmem = "ES_MIN_MEM="
 	$maxmem = "ES_MAX_MEM="
 	$nodeid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2'))
-		 	
+		
 	package { ["unzip", "curl"]: }
 	
 	user { $elasticsearchusr:
@@ -48,7 +48,7 @@ class scoold::elasticsearch {
 			"install-cloud-plugin":
 				command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
 				require => Exec["rename-elasticsearch"],
-				before => Exec["start-elasticsearch"]
+				before => Exec["start-elasticsearch"];
 		}
 		
 		line { 

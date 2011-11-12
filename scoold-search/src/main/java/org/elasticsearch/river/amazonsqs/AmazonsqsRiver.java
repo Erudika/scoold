@@ -99,7 +99,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
     }
 
     public void start() {
-        logger.info("creating amazonsqs river using queue ", QUEUE_URL);
+        logger.info("creating amazonsqs river using queue {}", QUEUE_URL);
 
         thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), 
 				"amazonsqs_river").newThread(new Consumer());
