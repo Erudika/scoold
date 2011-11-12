@@ -680,15 +680,11 @@ public class Post implements ScooldObject, Votable<Long>,
 	}
 
 	public void index() {
-		Search.indexCreate(this);
-	}
-
-	public void reindex() {
-		Search.indexUpdate(this);
+		Search.index(this);
 	}
 
 	public void unindex() {
-		Search.indexDelete(this);
+		Search.unindex(this);
 	}
 
 	public ArrayList<Post> readAllForKeys(ArrayList<String> keys) {

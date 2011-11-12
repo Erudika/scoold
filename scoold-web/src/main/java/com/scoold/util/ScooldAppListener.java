@@ -19,7 +19,6 @@ import javax.servlet.http.HttpSessionListener;
 import name.aikesommer.authenticator.Registry;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.NodeBuilder;
 
 
@@ -59,18 +58,18 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 			boolean inproduction = "true".equals(System.getProperty("com.scoold.production"));
 			NodeBuilder nb = NodeBuilder.nodeBuilder();
 			nb.clusterName(Search.INDEX_NAME);
-			nb.settings().put("cloud.aws.region", "eu-west-1");
-			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
-			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
+//			nb.settings().put("cloud.aws.region", "eu-west-1");
+//			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
+//			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
 			nb.settings().put("client.transport.sniff", true);
 			nb.settings().put("network.tcp.keep_alive", true);
 			nb.settings().put("discovery.type", "ec2");
 			nb.settings().put("discovery.ec2.groups", "elasticsearch");
 			
 			TransportClient client = new TransportClient(nb.settings());
-			if(!inproduction){
-				client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
-			}
+//			if(!inproduction){
+//				client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+//			}
 			
 			sc.setAttribute(SEARCH_CLIENT, client);
 		}

@@ -17,8 +17,6 @@ public interface Searchable<T> {
 
 	public void index();
 
-	public void reindex();
-
 	public void unindex();
 
 }

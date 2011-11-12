@@ -27,6 +27,7 @@ import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.action.bulk.BulkRequestBuilder;
@@ -100,7 +101,8 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
     public void start() {
         logger.info("creating amazonsqs river using queue ", QUEUE_URL);
 
-        thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "amazonsqs_river").newThread(new Consumer());
+        thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), 
+				"amazonsqs_river").newThread(new Consumer());
         thread.start();
     }
 
@@ -119,74 +121,56 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 		public void run() {
 			String id = null;	// document id
 			String type = null;	// document type
-			String op = null;	// operation type - CREATE, UPDATE, DELETE
 			Map<String, Object> data = null; // document data for indexing
 			
             while (!closed) {
 				// pull
-				String task = pull();
+				List<JsonNode> msgs = pullMessages();
 				int sleeptime = TIMEOUT * 1000;
-				
-				// index
-				if (!isBlank(task)) {
+				try {
 					BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
-					
-					try {
-						JsonNode jsonTasks = mapper.readTree(task);
-						
-						if(jsonTasks.isArray()){
-							for (JsonNode msg : jsonTasks) {
-								if(msg.has("_id") && msg.has("_type") && msg.has("_op") 
-										&& msg.has("_data")){
-									id = msg.get("_id").getTextValue();
-									type = msg.get("_type").getTextValue();
-									op = msg.get("_op").getTextValue();
-									data = mapper.readValue(msg.get("_data"), 
-											new TypeReference<Map<String, Object>>(){});
-								}else{
-									continue;
-								}
+					for (JsonNode msg : msgs) {
+						if(msg.has("_id") && msg.has("_type")){
+							id = msg.get("_id").getTextValue();
+							type = msg.get("_type").getTextValue();
 
-								if (op.equalsIgnoreCase("create") || op.equalsIgnoreCase("update")) {
-									bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
-											setId(id).
-											setType(type).
-											setSource(data).request());
-								} else if(op.equalsIgnoreCase("delete")) {
-									bulkRequestBuilder.add(new DeleteRequestBuilder(client, INDEX).
-											setId(id).
-											setType(type).request());
-								}else{
-									continue;
-								}
-							}
-
-							// sleep less when there are lots of messages in queue
-							// sleep more when idle
-							if(bulkRequestBuilder.numberOfActions() > 0){
-								BulkResponse response = bulkRequestBuilder.execute().actionGet();
-								if (response.hasFailures()) {
-									logger.warn("Bulk operation completed with errors: " + response.buildFailureMessage());
-								}
-								// many tasks in queue => throttle up
-								if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
-									sleeptime = 1000;
-								}else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
-									sleeptime = 100;
-								}
-								idleCount = 0;
+							if(msg.has("_data")){
+								data = mapper.readValue(msg.get("_data"), 
+										new TypeReference<Map<String, Object>>(){});
+								bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
+									setId(id).setType(type).setSource(data).request());
 							}else{
-								idleCount++;
-								// no tasks in queue => throttle down
-								if(idleCount >= 3) {
-									sleeptime *= 10; 
-								}
+								bulkRequestBuilder.add(new DeleteRequestBuilder(client, INDEX).
+									setId(id).setType(type).request());
 							}
 						}
-					} catch (Exception e) {
-						logger.error("Bulk index operation failed {}", e);
-						continue;
 					}
+
+					// sleep less when there are lots of messages in queue
+					// sleep more when idle
+					if(bulkRequestBuilder.numberOfActions() > 0){
+						BulkResponse response = bulkRequestBuilder.execute().actionGet();
+						if (response.hasFailures()) {
+							logger.warn("Bulk operation completed with errors: " + 
+									response.buildFailureMessage());
+						}
+						// many tasks in queue => throttle up
+						if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
+							sleeptime = 1000;
+						}else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
+							sleeptime = 100;
+						}
+						idleCount = 0;
+					}else{
+						idleCount++;
+						// no tasks in queue => throttle down
+						if(idleCount >= 3) {
+							sleeptime *= 10; 
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Bulk index operation failed {}", e);
+					continue;
 				}
 				
 				try {
@@ -197,26 +181,23 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
             }
         }
 
-		private String pull() {
-			String task = "[]";
-			JsonNode rootNode = mapper.createArrayNode(); 
+		private List<JsonNode> pullMessages() {
+			List<JsonNode> msgs = new ArrayList<JsonNode> ();
 			if(!isBlank(QUEUE_URL)){
 				try {
 					ReceiveMessageRequest receiveReq = new ReceiveMessageRequest(QUEUE_URL);
 					receiveReq.setMaxNumberOfMessages(MAX_MESSAGES);
 					List<Message> list = sqs.receiveMessage(receiveReq).getMessages();
-
+					
 					if (list != null && !list.isEmpty()) {
 						for (Message message : list) {
 							if(!isBlank(message.getBody())){
-								JsonNode node = mapper.readTree(message.getBody());
-								((ArrayNode) rootNode).add(node);
+								msgs.add(mapper.readTree(message.getBody()));
 							}
 							sqs.deleteMessage(new DeleteMessageRequest(QUEUE_URL, 
 									message.getReceiptHandle()));
 						}
 					}
-					task = mapper.writeValueAsString(rootNode);
 				} catch (IOException ex) {
 					logger.error(ex.getMessage());
 				} catch (AmazonServiceException ase) {
@@ -225,7 +206,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 					logger.error("Could not reach SQS. {}", ace.getMessage());
 				}
 			}
-			return task;
+			return msgs;
 		}
 
 		private void logException(AmazonServiceException ase){

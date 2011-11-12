@@ -630,15 +630,11 @@ public class School implements Votable<Long>, CanHasMedia,
 	}
 
 	public void index() {
-		Search.indexCreate(this);
-	}
-
-	public void reindex() {
-		Search.indexUpdate(this);
+		Search.index(this);
 	}
 
 	public void unindex() {
-		Search.indexDelete(this);
+		Search.unindex(this);
 	}
 
 	public ArrayList<School> readAllForKeys(ArrayList<String> keys) {

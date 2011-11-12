@@ -290,15 +290,11 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 	}
 
 	public void index() {
-		Search.indexCreate(this);
-	}
-
-	public void reindex() {
-		Search.indexUpdate(this);
+		Search.index(this);
 	}
 
 	public void unindex() {
-		Search.indexDelete(this);
+		Search.unindex(this);
 	}
 
 	public Set<String> getInactiveusersList(){

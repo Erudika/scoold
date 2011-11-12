@@ -183,7 +183,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 		mut.execute();
 		
 		if(transientObject.isAnswer() || transientObject.isQuestion())
-			transientObject.reindex();
+			transientObject.index();
 	}
 
 	public void delete (Post persistentObject) {

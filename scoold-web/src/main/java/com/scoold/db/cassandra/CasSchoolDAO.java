@@ -70,7 +70,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 
 		mut.execute();
 		
-		transientSchool.reindex();
+		transientSchool.index();
     }
 
     public void delete(School persistentSchool) {

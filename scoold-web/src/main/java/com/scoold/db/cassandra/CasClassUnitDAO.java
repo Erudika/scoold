@@ -80,7 +80,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 
     public void update(Classunit transientClassUnit) {
 		cdu.update(transientClassUnit, CasDAOFactory.CLASSES);
-		transientClassUnit.reindex();
+		transientClassUnit.index();
     }
 
     public void delete(Classunit persistentClassUnit) {

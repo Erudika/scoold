@@ -102,7 +102,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
 		mut.execute();
 
-		transientUser.reindex();
+		transientUser.index();
     }
 
     public void delete(User persistentUser) {

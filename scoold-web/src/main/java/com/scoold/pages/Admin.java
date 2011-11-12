@@ -84,7 +84,7 @@ public class Admin extends BasePage {
 		}
 
 		for (Searchable<?> searchable : list) {
-			searchable.reindex();
+			searchable.index();
 		}
 	}
 

@@ -101,7 +101,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 
 					### STEP 3: deregister each instance from the LB, consecutively 
 					$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --quiet --instances $instid
-					sleep 6
+					sleep 10
 					
 					### STEP 4: disable old deployed application and enable new application
 					ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"

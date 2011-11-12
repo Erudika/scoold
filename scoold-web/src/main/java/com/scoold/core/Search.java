@@ -18,6 +18,9 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -40,6 +43,7 @@ import org.elasticsearch.search.sort.SortOrder;
 public final class Search{
 
 	public static final String INDEX_NAME = "scoold";
+	public static final String SCOOLD_INDEX = "ScooldIndex";
 	
 	private static final int MAX_ITEMS = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
     private static final Logger logger = Logger.getLogger(Search.class.getName());
@@ -55,20 +59,45 @@ public final class Search{
 	}
 
 	private static <E extends Serializable> Queue<E> getQueue(){
-		if(queue == null) queue = QueueFactory.getQueue(QueueFactory.SCOOLD_INDEX);
+		if(queue == null) queue = QueueFactory.getQueue(SCOOLD_INDEX);
 		return (Queue<E>) queue;
 	}
 	
-	public static void indexCreate(Searchable<?> so){
-		getQueue().push(QueueFactory.getIndexableData(so, "create"));
+	public static void index(Searchable<?> so){
+		getQueue().push(getIndexableData(so, "index"));
 	}
 
-	public static void indexDelete(Searchable<?> so){
-		getQueue().push(QueueFactory.getIndexableData(so, "delete"));
+	public static void unindex(Searchable<?> so){
+		getQueue().push(getIndexableData(so, "unindex"));
 	}
-
-	public static void indexUpdate(Searchable<?> so){
-		getQueue().push(QueueFactory.getIndexableData(so, "update"));
+	
+	private static String getIndexableData(Searchable<?> so, String op){
+		String json = "";
+		if(so == null) return json;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode rootNode = mapper.createObjectNode(); // will be of type ObjectNode
+		
+		ScooldObject bean = (ScooldObject) so;
+		String type = so.getClass().getSimpleName().toLowerCase();
+		if(so.getClass().equals(Post.class) &&
+				((Post) so).getPostType() == PostType.FEEDBACK){
+			type = PostType.FEEDBACK.name().toLowerCase();
+		}
+		
+		try {
+			((ObjectNode) rootNode).put("_id", bean.getId().toString());
+			((ObjectNode) rootNode).put("_type", type);
+			if("index".equals(op)){
+				((ObjectNode) rootNode).putPOJO("_data", 
+						AbstractDAOUtils.getAnnotatedFields(bean, Indexed.class));
+			}
+			json = mapper.writeValueAsString(rootNode);
+		} catch (Exception ex) {
+			Logger.getLogger(QueueFactory.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return json;
 	}
 
 	public <T extends Searchable<?>> ArrayList<T> findByKeyword(Class<T> clazz,
