@@ -55,12 +55,11 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 		 
 		// elasticsearch init   
 		if(ELASTICSEARCH_ON){
-			boolean inproduction = "true".equals(System.getProperty("com.scoold.production"));
 			NodeBuilder nb = NodeBuilder.nodeBuilder();
 			nb.clusterName(Search.INDEX_NAME);
-//			nb.settings().put("cloud.aws.region", "eu-west-1");
-//			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
-//			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
+			nb.settings().put("cloud.aws.region", "eu-west-1");
+			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
+			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
 			nb.settings().put("client.transport.sniff", true);
 			nb.settings().put("network.tcp.keep_alive", true);
 			nb.settings().put("discovery.type", "ec2");

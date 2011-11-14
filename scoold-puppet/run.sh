@@ -22,23 +22,24 @@ NSEARCH=1
 
 function ec2req () {
 	GROUP=$1
-	N=$2	
-	if [ -z "$2" ]; then
-		if [ "$GROUP" = "cassandra" ]; then
-			N=$NDB
-		elif [ "$GROUP" = "glassfish" ]; then
-			N=$NWEB
-		elif [ "$GROUP" = "elasticsearch" ]; then
-			N=$NSEARCH
-		fi
+	if [ "$GROUP" = "cassandra" ]; then
+		N=$NDB
+	elif [ "$GROUP" = "glassfish" ]; then
+		N=$NWEB
+	elif [ "$GROUP" = "elasticsearch" ]; then
+		N=$NSEARCH		
+	fi	
+		
+	if [ "$2" != "nospot" ]; then
+		N=$2
 	fi
 	
-	if [ -z "$3" ]; then
-		# default - spot request
-		ec2-request-spot-instances -n $N -g $GROUP -p $PRICE --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI		
-	else
+	if [ "$3" = "nospot" ] || [ "$2" = "nospot" ]; then
 		# normal request
 		ec2-run-instances -n $N -g $GROUP --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI
+	else
+		# default - spot request
+		ec2-request-spot-instances -n $N -g $GROUP -p $PRICE --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI
 	fi	
 }
 
@@ -47,9 +48,9 @@ if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 	    glassfish 		) ec2req $3 $4 $5;;
 	    cassandra 		) ec2req $3 $4 $5;;
 	    elasticsearch 	) ec2req $3 $4 $5;;
-	    all 			) ec2req "glassfish" $4 $5
-	    	    		  ec2req "cassandra" $4 $5
-	    	     		  ec2req "elasticsearch" $4 $5;;
+	    all 			) ec2req "glassfish" $4
+	    	    		  ec2req "cassandra" $4
+	    	     		  ec2req "elasticsearch" $4;;
 	esac	
 else
 	echo "USAGE:  $0 type ami (group | all) [size] [nospot]"

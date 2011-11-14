@@ -26,7 +26,7 @@
 		#if($request.queryString.contains("?q=")) #set($params = "q=$!searchQuery") #else #set($params = "") #end
 		
 		#if(!$request.getParameter("q") || $totalCount == 0)
-			<h3>$lang.get("search.notfound") </h3>
+			<h2 class="mtl center">$lang.get("search.notfound") </h2>
 		#elseif($showParam)
 			#if($showParam == "questions")
 				#paginate($pagenum.longValue() "#questionspage($questionlist)" $questioncount.longValue() $params "pageless")

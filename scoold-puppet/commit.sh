@@ -135,7 +135,7 @@ elif [ "$1" = "initdb" ]; then
 elif [ "$1" = "esindex" ]; then
 	### create elasticsearch index
 	es1host=$(head -n 1 "search$F2SUFFIX")	
-	ssh -n ubuntu@$es1host "sudo -u elasticsearch curl -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
+	ssh -n ubuntu@$es1host "sudo -u elasticsearch curl -s -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
 elif [ "$1" = "esriver" ]; then
 	es1host=$(head -n 1 "search$F2SUFFIX")
 	### create elasticsearch river
@@ -144,8 +144,8 @@ elif [ "$1" = "esriver" ]; then
 	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
 	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
 	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
-	cmd5="sudo -u elasticsearch curl -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5"
+	cmd5="sudo -u elasticsearch curl -s -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
+	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sudo stop elasticsearch; sudo start elasticsearch"
 elif [ "$1" = "lbadd" ]; then	
 	if [ -n "$2" ]; then
 	 	# register instance with LB
