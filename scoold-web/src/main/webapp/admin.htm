@@ -51,16 +51,24 @@
 			</fieldset>
 		</form>
 		<br />
-		<h2>System properties</h2>
+		<h2>System information</h2>
 		<br />
 		<table class="p100">
 			<tbody>
-			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts"])
+			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshost"])
 				<tr>
 					<td class="p50"><strong>$showprop</strong></td>
 					<td class="p50">$daoutils.getSystemProperty($showprop)</td>
 				</tr>
 			#end
+			<tr>
+				<td class="p50"><strong>ElasticSearch nodes</strong></td>
+				<td class="p50">$!esnodes</td>
+			</tr>
+			<tr>
+				<td class="p50"><strong>ElasticSearch hosts</strong></td>
+				<td class="p50">$!eshosts</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>

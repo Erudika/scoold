@@ -108,13 +108,13 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 					### STEP 4: disable old deployed application and enable new application
 					ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"
 
-					if [ !$isok ]; then
+					if [ $isok = false ]; then
 						### STEP 5: TEST, TEST, TEST! then continue
 						echo "TEST NOW! => $host"
 						read -p "'ok' to confirm > " response < /dev/tty
 					fi
 					
-					if [ "$response" = "ok" ] || [ $isok ]; then
+					if [ "$response" = "ok" ] || [ $isok = true ]; then
 					    echo "OK! Undeploying old application..."
 						ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
 						isok=true

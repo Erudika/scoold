@@ -8,6 +8,7 @@ import com.scoold.core.ScooldObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import com.scoold.core.School;
+import com.scoold.core.Search;
 import com.scoold.core.Searchable;
 import com.scoold.db.AbstractDAOUtils;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import org.elasticsearch.client.transport.TransportClient;
 
 /**
  *
@@ -29,7 +31,10 @@ public class Admin extends BasePage {
 		title = "";
 		if (!authenticated || !authUser.isAdmin()) {
 			setRedirect(HOMEPAGE);
+			return;
 		}
+		addModel("esnodes", ((TransportClient) Search.getClient()).connectedNodes());
+		addModel("eshosts", ((TransportClient) Search.getClient()).transportAddresses());
 	}
 
 	public void onPost() {

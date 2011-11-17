@@ -127,7 +127,7 @@ public final class Search{
 				.setFrom(start).setSize(max).setExplain(true).execute().actionGet();
 
 			SearchHits hits = response.getHits();
-			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
+			if(itemcount != null)	itemcount.setValue(getHits(clazz, keywords));
 			if(page != null)	page.setValue(page.longValue() + 1);
 
 			ArrayList<String> keys = new ArrayList<String>();
@@ -359,6 +359,10 @@ public final class Search{
 	
 	private void refreshClient(){
 		try {
+			if(searchClient != null){
+				searchClient.close();
+				searchClient = null;
+			}
 			NodeBuilder nb = NodeBuilder.nodeBuilder();
 			nb.clusterName(Search.INDEX_NAME);
 			nb.settings().put("cloud.aws.region", "eu-west-1");
@@ -373,7 +377,7 @@ public final class Search{
 			((TransportClient) searchClient).addTransportAddress(new InetSocketTransportAddress(
 					System.getProperty("com.scoold.eshost", "localhost"), 9300));
 		
-			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet();
+			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet();			
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to refresh search client: {0}", e.toString());		
 			searchClient.close();
