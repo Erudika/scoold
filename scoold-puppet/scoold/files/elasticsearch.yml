@@ -338,7 +338,7 @@ path.logs: /var/log/elasticsearch/
 gateway.type: s3
 gateway.s3.bucket: com.scoold.elasticsearch
 gateway.recover_after_nodes: 1
-gateway.recover_after_time: 5m
+gateway.recover_after_time: 2m
 gateway.expected_nodes: 3
 
 # Force all memory to be locked, forcing JVM to never swap

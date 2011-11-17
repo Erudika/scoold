@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.elasticsearch.client.Client;
 
 /**
  *
@@ -48,8 +47,7 @@ public class FeedServlet extends HttpServlet {
 	private Object convert;
 
 	public void init() {
-		Client searchClient = (Client) getServletContext().getAttribute("searchClient");
-		search = new Search(searchClient);
+		search = new Search();
 		convert = getServletContext().getAttribute("showdownConverter");
 		personalized = false;
     }

@@ -33,8 +33,8 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	// This queue contains only messages in JSON format!
 	
 	public static final String SQS_URL = "https://eu-west-1.queue.amazonaws.com/374874639893/";
-	protected static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
-	protected static final String SECRETKEY = "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";
+	public static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
+	public static final String SECRETKEY = "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";
 	
 	private static final int MAX_MESSAGES = 10;  //max in bulk
 	private String QUEUE_URL;

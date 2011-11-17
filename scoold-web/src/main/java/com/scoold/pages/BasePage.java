@@ -153,8 +153,7 @@ public class BasePage extends Page {
 
 	public BasePage() {
 		IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
-		search = new Search((Client) getContext().getServletContext().
-				getAttribute(ScooldAppListener.SEARCH_CLIENT));
+		search = new Search();
 		req = getContext().getRequest();
 		initLanguage();
 		checkAuth();

@@ -9,6 +9,7 @@ import com.scoold.core.Post.PostType;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOUtils;
+import com.scoold.util.AmazonQueue;
 import com.scoold.util.Queue;
 import com.scoold.util.QueueFactory;
 import java.io.Serializable;
@@ -26,10 +27,13 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.AndFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.OrFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
@@ -47,14 +51,16 @@ public final class Search{
 	
 	private static final int MAX_ITEMS = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
     private static final Logger logger = Logger.getLogger(Search.class.getName());
-	private Client searchClient;
+	private static Client searchClient;
 	private static Queue<String> queue;
 	
-    public Search(Client client){
-		searchClient = client;
+    public Search(){
+		if(searchClient == null){
+			refreshClient();
+		}
 	}
 	
-	public Client getClient(){
+	public static Client getClient(){
 		return searchClient;
 	}
 
@@ -353,9 +359,25 @@ public final class Search{
 	
 	private void refreshClient(){
 		try {
-			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet(); 
+			NodeBuilder nb = NodeBuilder.nodeBuilder();
+			nb.clusterName(Search.INDEX_NAME);
+			nb.settings().put("cloud.aws.region", "eu-west-1");
+			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
+			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
+			nb.settings().put("client.transport.sniff", true);
+			nb.settings().put("network.tcp.keep_alive", true);
+			nb.settings().put("discovery.type", "ec2");
+			nb.settings().put("discovery.ec2.groups", "elasticsearch");
+
+			searchClient = new TransportClient(nb.settings());
+			((TransportClient) searchClient).addTransportAddress(new InetSocketTransportAddress(
+					System.getProperty("com.scoold.eshost", "localhost"), 9300));
+		
+			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Failed to refresh search client: {0}", e.toString());			
+			logger.log(Level.WARNING, "Failed to refresh search client: {0}", e.toString());		
+			searchClient.close();
+			searchClient = null;
 		}
 	}
 }

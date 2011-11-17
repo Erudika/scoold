@@ -82,7 +82,9 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$FETCHWAR && chmod 755 $WARPATH && $ASADMIN deploy --enabled=$ENABLED $CONTEXT --name $APPNAME $WARPATH && rm $WARPATH"
 
 		OLDAPP=""
+		isok=false
 		dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
+		eshost=$(head -n 1 "search$F2SUFFIX")
 		production="true"
 		prefix="com.scoold"
 		count=1		
@@ -92,7 +94,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 				host=$(echo $i | awk '{ print $2 }')			
 				
 				### STEP 2: set system properties
-				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\""
+				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\":$prefix.eshost=\"$eshost\""
 				
 				if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
 					if [ -z "$OLDAPP" ]; then
@@ -106,17 +108,21 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 					### STEP 4: disable old deployed application and enable new application
 					ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"
 
-					### STEP 5: TEST, TEST, TEST! then continue
-					echo "TEST NOW! => $host"
-					read -p "'ok' to confirm > " response < /dev/tty
-
-					if [ "$response" = "ok" ]; then
+					if [ !$isok ]; then
+						### STEP 5: TEST, TEST, TEST! then continue
+						echo "TEST NOW! => $host"
+						read -p "'ok' to confirm > " response < /dev/tty
+					fi
+					
+					if [ "$response" = "ok" ] || [ $isok ]; then
 					    echo "OK! Undeploying old application..."
 						ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
+						isok=true
 					else
 						### STEP 5.1 REVERT back to old application
 						echo "NOT OK! Reverting back to old application..."
 						ssh -n ubuntu@$host "$ASADMIN disable $APPNAME && $ASADMIN enable $OLDAPP"
+						isok=false
 					fi			
 				fi					
 				count=$((count+1))
