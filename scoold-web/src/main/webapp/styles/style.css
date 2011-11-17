@@ -366,7 +366,7 @@ pre, code, .chat-msg{
 	background-color: white;
 	color: #BB1111;
 }
-input.openidbox{ text-indent: 30px; }
+input.openidbox{ padding-left: 35px; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }

@@ -29,8 +29,8 @@ function ec2req () {
 	elif [ "$GROUP" = "elasticsearch" ]; then
 		N=$NSEARCH		
 	fi	
-		
-	if [ "$2" != "nospot" ]; then
+	
+	if [ -n "$2" ] && [ "$2" != "nospot" ]; then
 		N=$2
 	fi
 	

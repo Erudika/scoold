@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSessionListener;
 import name.aikesommer.authenticator.Registry;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.NodeBuilder;
 
 
@@ -66,10 +67,7 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 			nb.settings().put("discovery.ec2.groups", "elasticsearch");
 			
 			TransportClient client = new TransportClient(nb.settings());
-//			if(!inproduction){
-//				client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
-//			}
-			
+			client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 			sc.setAttribute(SEARCH_CLIENT, client);
 		}
 	}

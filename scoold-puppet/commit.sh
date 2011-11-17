@@ -35,7 +35,8 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	GROUP=$2			
 	NODETYPE=$(getType $GROUP)
 	FILE1="$NODETYPE$F1SUFFIX"
-	FILE2="$NODETYPE$F2SUFFIX"
+	FILE2="$NODETYPE$F2SUFFIX"	
+	ZIPNAME="$MODNAME-$NODETYPE"
 	
 	if [ "$1" = "init" ]; then
 		### get info about all web servers		
@@ -56,7 +57,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			dbseeds=$(sed -n 1,2p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')			
 			sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$MODNAME/manifests/init.pp			
 		fi
-		
+				
 		count=1	
 		while read i; do
 			instid=$(echo $i | awk '{ print $1 }')
@@ -74,8 +75,8 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 								
 				### push updated puppet script
 				echo "copying $MODNAME.zip to $NODETYPE$count..."
-				zip -rq $MODNAME.zip $MODNAME/
-				scp $MODNAME.zip ubuntu@$host:~/				
+				zip -rq $ZIPNAME.zip $MODNAME/
+				scp $ZIPNAME.zip ubuntu@$host:~/
 				if [ $NODETYPE = "web" ]; then
 					scp -C schools.txt ubuntu@$host:~/
 				fi
@@ -85,11 +86,11 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	 	done < $FILE1	
 		
 		### cleanup
-		rm ./$MODNAME/manifests/*.bak $MODNAME.zip
+		rm ./$MODNAME/manifests/*.bak $ZIPNAME.zip
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$MODNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'"
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'"
 	fi
 elif [ "$1" = "munin" ]; then
 	# clear old hosts
@@ -145,7 +146,7 @@ elif [ "$1" = "esriver" ]; then
 	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
 	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
 	cmd5="sudo -u elasticsearch curl -s -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sudo stop elasticsearch; sudo start elasticsearch"
+	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5; sudo stop elasticsearch && sudo start elasticsearch"
 elif [ "$1" = "lbadd" ]; then	
 	if [ -n "$2" ]; then
 	 	# register instance with LB
