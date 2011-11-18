@@ -61,36 +61,12 @@ public class Admin extends BasePage {
 					createSchools();
 					logger.log(Level.WARNING, "Executed createSchools().");
 				}
-			} else if (param("reindex")) {
-				reindex(getParamValue("reindex"));
-				logger.log(Level.WARNING, "Executed reindex().");
-			}
+			} 
 			long estimatedTime = System.nanoTime() - startTime;
 			logger.log(Level.WARNING, "Time {0}", new Object[]{estimatedTime});
 		}
 
 		setRedirect(ref);
-	}
-
-	private void reindex(String what) {
-		if (what == null) {
-			return;
-		}
-		ArrayList<Searchable<?>> list = new ArrayList<Searchable<?>>();
-		// TODO: all
-		if (what.startsWith("school")) {
-		} else if (what.startsWith("classunit")) {
-		} else if (what.startsWith("question")) {
-		} else if (what.startsWith("answer")) {
-		} else if (what.startsWith("post")) {
-		} else if (what.startsWith("feedback")) {
-		} else if (what.startsWith("user")) {
-		} else if (what.startsWith("tag")) {
-		}
-
-		for (Searchable<?> searchable : list) {
-			searchable.index();
-		}
 	}
 
 	private void createSchools() {

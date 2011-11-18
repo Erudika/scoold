@@ -36,38 +36,23 @@
 		</form>
 		<br />
 		<br />
-		<form method="post" action="$adminlink">
-			<fieldset>
-				#sectoken(false)
-				<input type="radio" name="reindex" value="school" /> Schools
-				<input type="radio" name="reindex" value="classunit" /> Classes
-				<input type="radio" name="reindex" value="question" /> Questions
-				<input type="radio" name="reindex" value="answer" /> Answers
-				<input type="radio" name="reindex" value="post" /> Posts
-				<input type="radio" name="reindex" value="feedback" /> Feedback
-				<input type="radio" name="reindex" value="user" /> People
-				<input type="radio" name="reindex" value="tag" /> Tags <br /> <br />
-				<input type="submit" value="Reindex" class="button rounded3 rusure"/>
-			</fieldset>
-		</form>
-		<br />
 		<h2>System information</h2>
 		<br />
 		<table class="p100">
 			<tbody>
 			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshost"])
 				<tr>
-					<td class="p50"><strong>$showprop</strong></td>
-					<td class="p50">$daoutils.getSystemProperty($showprop)</td>
+					<td class="p20 l"><strong>$showprop</strong></td>
+					<td class="p80">$daoutils.getSystemProperty($showprop)</td>
 				</tr>
 			#end
 			<tr>
-				<td class="p50"><strong>ElasticSearch nodes</strong></td>
-				<td class="p50">$!esnodes</td>
+				<td class="p20 l"><strong>ElasticSearch nodes</strong></td>
+				<td class="p80">$!esnodes</td>
 			</tr>
 			<tr>
-				<td class="p50"><strong>ElasticSearch hosts</strong></td>
-				<td class="p50">$!eshosts</td>
+				<td class="p20 l"><strong>ElasticSearch hosts</strong></td>
+				<td class="p80">$!eshosts</td>
 			</tr>
 			</tbody>
 		</table>

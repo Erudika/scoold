@@ -84,7 +84,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 		OLDAPP=""
 		isok=false
 		dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
-		eshost=$(head -n 1 "search$F2SUFFIX")
+		eshosts=$(cat "search$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
 		production="true"
 		prefix="com.scoold"
 		count=1		
@@ -94,7 +94,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 				host=$(echo $i | awk '{ print $2 }')			
 				
 				### STEP 2: set system properties
-				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\":$prefix.eshost=\"$eshost\""
+				ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\":$prefix.eshosts=\"$eshosts\""
 				
 				if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
 					if [ -z "$OLDAPP" ]; then

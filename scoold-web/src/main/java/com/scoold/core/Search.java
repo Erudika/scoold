@@ -14,6 +14,7 @@ import com.scoold.util.Queue;
 import com.scoold.util.QueueFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -127,7 +128,7 @@ public final class Search{
 				.setFrom(start).setSize(max).setExplain(true).execute().actionGet();
 
 			SearchHits hits = response.getHits();
-			if(itemcount != null)	itemcount.setValue(getHits(clazz, keywords));
+			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
 			if(page != null)	page.setValue(page.longValue() + 1);
 
 			ArrayList<String> keys = new ArrayList<String>();
@@ -374,8 +375,11 @@ public final class Search{
 			nb.settings().put("discovery.ec2.groups", "elasticsearch");
 
 			searchClient = new TransportClient(nb.settings());
-			((TransportClient) searchClient).addTransportAddress(new InetSocketTransportAddress(
-					System.getProperty("com.scoold.eshost", "localhost"), 9300));
+			String[] eshosts = System.getProperty("com.scoold.eshosts", "localhost").split(",");
+			for (String host : eshosts) {
+				((TransportClient) searchClient).addTransportAddress(
+						new InetSocketTransportAddress(host, 9300));				
+			}
 		
 			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet();			
 		} catch (Exception e) {
