@@ -25,7 +25,7 @@
 #else
 	<h1><span class="pictos">e</span> Admin actions</h1>
 	<hr />
-	<div class="center">
+	<div>
 		<br />
 		<br />
 		<form method="post" action="$adminlink?createschools=true">
@@ -43,7 +43,7 @@
 			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshost"])
 				<tr>
 					<td class="p20 l"><strong>$showprop</strong></td>
-					<td class="p80">$daoutils.getSystemProperty($showprop)</td>
+					<td class="p80">$!daoutils.getSystemProperty($showprop)</td>
 				</tr>
 			#end
 			<tr>

@@ -9,10 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import com.scoold.core.School;
 import com.scoold.core.Search;
-import com.scoold.core.Searchable;
 import com.scoold.db.AbstractDAOUtils;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +31,15 @@ public class Admin extends BasePage {
 			setRedirect(HOMEPAGE);
 			return;
 		}
-		addModel("esnodes", ((TransportClient) Search.getClient()).connectedNodes());
-		addModel("eshosts", ((TransportClient) Search.getClient()).transportAddresses());
+		
+		TransportClient client = ((TransportClient) Search.getClient());
+		if(client != null){
+			addModel("esnodes", client.connectedNodes());
+			addModel("eshosts", client.transportAddresses());
+		}else{
+			addModel("esnodes", "ElastiSearch not available.");
+			addModel("eshosts", "ElastiSearch not available.");
+		}
 	}
 
 	public void onPost() {

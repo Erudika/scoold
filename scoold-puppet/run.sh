@@ -13,6 +13,7 @@
 TYPE=$1
 AMI=$2
 REGION="eu-west-1"
+AZ="eu-west-1a"
 PRICE="0.060"
 DATAFILE="./scoold/files/userdata.sh"
 SSHKEY="alexb-pubkey"
@@ -36,10 +37,10 @@ function ec2req () {
 	
 	if [ "$3" = "nospot" ] || [ "$2" = "nospot" ]; then
 		# normal request
-		ec2-run-instances -n $N -g $GROUP --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI
+		ec2-run-instances -n $N -g $GROUP --user-data-file $DATAFILE --region $REGION -z $AZ -k $SSHKEY -t $TYPE $AMI
 	else
 		# default - spot request
-		ec2-request-spot-instances -n $N -g $GROUP -p $PRICE --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI
+		ec2-request-spot-instances -n $N -g $GROUP -p $PRICE --user-data-file $DATAFILE --region $REGION -z $AZ -k $SSHKEY -t $TYPE $AMI
 	fi	
 }
 

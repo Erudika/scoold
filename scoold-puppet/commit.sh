@@ -132,7 +132,7 @@ elif [ "$1" = "checkdb" ]; then
 elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
 	db1host=$(head -n 1 "db$F2SUFFIX")
-	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema.txt"
+	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema-light.txt"
 elif [ "$1" = "esindex" ]; then
 	### create elasticsearch index
 	es1host=$(head -n 1 "search$F2SUFFIX")	
