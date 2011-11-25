@@ -26,21 +26,24 @@
 	<h1><span class="pictos">e</span> Admin actions</h1>
 	<hr />
 	<div>
-		<br />
-		<br />
-		<form method="post" action="$adminlink?createschools=true">
-			<fieldset>
-				#sectoken(false)
-				<input type="submit" value="Create schools" class="button rounded3 rusure"/>
-			</fieldset>
-		</form>
+		#if($schoolcount == 0)
+			<br />
+			<br />
+			<form method="post" action="$adminlink?createschools=true">
+				<fieldset>
+					#sectoken(false)
+					<input type="submit" value="Create schools" class="button rounded3 rusure"/>
+				</fieldset>
+			</form>
+		#end
+		
 		<br />
 		<br />
 		<h2>System information</h2>
 		<br />
 		<table class="p100">
 			<tbody>
-			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshost"])
+			#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshosts"])
 				<tr>
 					<td class="p20 l"><strong>$showprop</strong></td>
 					<td class="p80">$!daoutils.getSystemProperty($showprop)</td>

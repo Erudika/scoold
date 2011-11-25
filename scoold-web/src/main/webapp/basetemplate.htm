@@ -107,7 +107,7 @@
 	#elseif($showdetail.type == "ADDRESS")
 		#set($showdetailstr = $!lang.get("address") )
 	#else
-		#set($showdetailstr = $!lang.get(${detail.type}) )
+		#set($showdetailstr = $!lang.get(${detail.type.toLowerCase()}) )
 	#end
 	
 	<tr class="detailbox $hide">
@@ -144,7 +144,7 @@
 			#if($showUser.contacts && !$showUser.contacts.isEmpty())
 				#foreach($contact in $showUser.getAllContactDetails())
 				<tr>
-					<td class="r p25">$lang.get(${contact.type}):</td>
+					<td class="r p25">$lang.get(${contact.type.toLowerCase()}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
@@ -236,7 +236,7 @@
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>
-					<td class="r p25">$lang.get(${contact.type}):</td>
+					<td class="r p25">$lang.get(${contact.type.toLowerCase()}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end

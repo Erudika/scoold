@@ -19,7 +19,7 @@ class scoold::elasticsearch {
 	}
 	
 	exec { "stop-elasticsearch":
-		command => "stop elasticsearch; rm ${elasticsearchhome}/elasticsearch.pid",
+		command => "kill -1 `cat ${elasticsearchhome}/elasticsearch.pid`; rm ${elasticsearchhome}/elasticsearch.pid",
 		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		before => User[$elasticsearchusr];
 	}	
@@ -105,7 +105,7 @@ class scoold::elasticsearch {
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "start elasticsearch",
+			command => "${esdir}/bin/elasticsearch -p ${elasticsearchhome}/elasticsearch.pid",
 			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

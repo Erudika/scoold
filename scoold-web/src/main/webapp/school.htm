@@ -128,7 +128,7 @@
 									<td class="r p25">
 										<select id="detail-type" class="nicebox">
 											#foreach($mtype in $contactDetailTypes)
-												<option value="$mtype.name()">$mtype.toString()</option>
+												<option value="$mtype.name()">$lang.get($mtype.toString())</option>
 											#end
 										</select>
 									</td>

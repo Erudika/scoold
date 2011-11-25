@@ -10,14 +10,14 @@ class scoold {
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
 	$nodename = "search1"
-	$dbseeds = "10.55.77.55"
+	$dbseeds = "10.227.135.64,10.48.161.238"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
 	$casver = "1.0.3"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
-	$dbheapsize = "7G" # memory of m1.large
+	$dbheapsize = "6G" # memory of m1.large
 	$dbheapnew = "200M"
 	$dbcluster = "scoold"
 	
@@ -26,10 +26,10 @@ class scoold {
 	$gfcluster = "scoold" 
 		 
 	#### Elasticsearch ####
-	$esver = "0.18.2"
+	$esver = "0.18.4"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
-	$esheapsize = "1200M"
-	$esheapdev = "200M"
+	$esheapsize = "1024M"
+	$esheapdev = "256M"
 	if inproduction == false {		
 		$esheapsize = $esheapdev	
 	}

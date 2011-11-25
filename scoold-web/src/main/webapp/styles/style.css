@@ -67,7 +67,7 @@ table {
 @font-face {
     font-family: 'PictosRegular';
     src: url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot');
-    src: url('pictos-web-webfont.woff') format('woff'),
+    src: url('http://beta.scoold.com/styles/pictos-web-webfont.woff') format('woff'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.woff') format('woff'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.ttf') format('truetype'),
          url('http://d35029ynkhy54l.cloudfront.net/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
