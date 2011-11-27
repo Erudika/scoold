@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BUCKET="com.scoold.cassandra"
-TIMESTAMP=$(date +%F_%T)
+TIMESTAMP=$(date +%F-%H%M%S)
 DIR1="/var/lib/cassandra/data/scoold/snapshots"
 DIR2="/var/lib/cassandra/data/system/snapshots"
 BAK="snapshot-$TIMESTAMP.tar.gz"

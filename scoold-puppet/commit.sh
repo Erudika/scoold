@@ -90,12 +90,14 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		
 		echo "done. executing puppet code on each node..."
 		### unzip & execute remotely
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'"
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'; rm -rf ~/$ZIPNAME.zip"
 	fi
 elif [ "$1" = "munin" ]; then
 	# clear old hosts
 	MCONF="./$MODNAME/files/munin.conf"
+	MNCONF="./$MODNAME/files/munin-node.conf"
 	db1host=""
+	db1ip=""
 	sed -e "/#begin/,/#end/d" -i.bak $MCONF
 	### add the hostnames of all munin nodes to the munin server config
 	echo "#begin" >> $MCONF
@@ -104,14 +106,22 @@ elif [ "$1" = "munin" ]; then
 		while read line; do				
 			if [ -n "$line" ]; then
 				ipaddr=$(echo $line | awk '{ print $3 }')
-
+				host=$(echo $line | awk '{ print $2 }')
+				
 				if [ "$grp" = "db" ] && [ $count = 1 ]; then					
-					db1host=$(echo $line | awk '{ print $2 }')
+					db1host=$host
+					db1ip=$ipaddr
 				else
 					echo "[$grp$count.scoold.com]" 	>> $MCONF
-					echo "    address $ipaddr" 		>> $MCONF
-					echo "    use_node_name yes" 	>> $MCONF
+					echo "address $ipaddr" 			>> $MCONF
+					echo "use_node_name yes" 		>> $MCONF
 					echo ""							>> $MCONF
+					
+					ipexpr=$(echo $db1ip | sed 's/\./\\\./g')
+					cmd1="echo 'allow ^$ipexpr$' | sudo tee -a /etc/munin/munin-node.conf"
+					cmd2="echo 'host_name $grp$count.scoold.com' | sudo tee -a /etc/munin/munin-node.conf"
+					scp $MNCONF ubuntu@$host:~/
+					ssh -n ubuntu@$host "sudo mv ~/munin-node.conf /etc/munin/; $cmd1; $cmd2; sudo service munin-node restart"
 				fi
 				count=$((count+1))
 			fi
@@ -121,7 +131,7 @@ elif [ "$1" = "munin" ]; then
 	
 	### copy new munin.conf to db1
 	scp $MCONF ubuntu@$db1host:~/
-	ssh -n ubuntu@$db1host "sudo cp ~/munin.conf /etc/munin/"
+	ssh -n ubuntu@$db1host "sudo mv ~/munin.conf /etc/munin/"
 	
 	### cleanup
 	rm ./$MODNAME/files/*.bak

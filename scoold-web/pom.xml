@@ -330,14 +330,12 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.18.2</version>
-<!--			<scope>system</scope>-->
-<!--			<systemPath>/Users/alexb/.m2/repository/org/elasticsearch/elasticsearch/0.18.2/elasticsearch-0.18.2.jar</systemPath>-->
+            <version>0.18.4</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
-            <version>0.18.2</version>
+            <version>0.18.4</version>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jets3t</groupId>

@@ -2179,14 +2179,24 @@
 			#set($feedkey = $daoutils.MD5("${authUser.id}${FEED_KEY_SALT}"))
 			<link href="$context/feed.xml?userid=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>
 		#end
-		<script type="text/javascript">
-			/*<![CDATA[*/
-			var sessiontimeout = $SESSION_TIMEOUT_SEC;
-			/*]]>*/
-		</script>
 		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
+		<script type="text/javascript" src="$scriptslink/init${minsuffix}.js"></script>
 		#if($includeGMapsScripts && $includeGMapsScripts == true)
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
+		#end
+		#if(!$IN_PRODUCTION)
+			<style type="text/css">
+				@font-face {
+					font-family: 'PictosRegular';
+					src: url('styles/pictos-web-webfont.eot');
+					src: url('styles/pictos-web-webfont.woff') format('woff'),
+						url('styles/pictos-web-webfont.ttf') format('truetype'),
+						url('styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+						url('styles/pictos-web-webfont.svg#PictosRegular') format('svg');
+					font-weight: normal;
+					font-style: normal;
+				}
+			</style>
 		#end
 	</head>
     <body>
@@ -2195,10 +2205,10 @@
 			<script type="text/javascript" src="http://connect.facebook.net/$fb_locale/all.js"></script>
 			<script type="text/javascript">
 				FB.init({appId: '$FB_APP_ID', apiKey: '$FB_API_KEY', status: true, cookie: true, xfbml: true});
+				#if($request.getParameter("fblogout"))
+					FB.logout();
+				#end
 			</script>
-			#if($request.getParameter("fblogout"))
-				<script type="text/javascript">FB.logout();</script>
-			#end
 		#end
 		<div class="report-dialog jqmWindow rounded5"> <div class="center">#ajaxloading(false) </div></div>
 
@@ -2270,19 +2280,19 @@
 								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!classesSelected">$lang.get("classes.title")</a></li>
 							</ul>
 						</div>
-						<div class="unit size1of3 lastUnit r">
-							<div id="search" class="lightborder rounded3 prs">
+						<div class="unit size1of3 lastUnit">
+							<div id="search" class="rounded3 prs right">
 								<form method="get" id="search-form" action="$searchlink">
 									<fieldset>
 										#if($request.getParameter("q"))
 											#set($showSearchValue = $!request.getParameter('q'))
-											#set($hintbox = "" )
+											#set($hintbox = "noclass" )
 										#else
 											#set($showSearchValue = $lang.get('search.search'))
 											#set($hintbox = "hintbox" )
 										#end
-										<input id="search-box" type="text" class="mls $!hintbox" name="q" value="$showSearchValue"/>
-										<input type="submit" class="lightgray pictos search-btn" value="s"/>
+										<input type="submit" class="pictos search-btn right" value="s"/>
+										<input id="search-box" type="text" class="$!hintbox" name="q" value="$showSearchValue"/>
 									</fieldset>
 								</form>
 							</div>
@@ -2339,29 +2349,13 @@
 			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
 			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","epicfail","invalidyear"])
 			
+		
 		<script type="text/javascript">
-			head.js(
-				{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.6.4/jquery.min.js"},
-				{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"},
-				{modal:			"$scriptslink/jquery.modal$!{minsuffix}.js"},
-				{jeditable:		"$scriptslink/jquery.jeditable$!{minsuffix}.js"},
-				{autocomplete:	"$scriptslink/jquery.autocomplete$!{minsuffix}.js"},
-				{gallery:		"$scriptslink/jquery.galleriffic$!{minsuffix}.js"},
-				{history:		"$scriptslink/jquery.history$!{minsuffix}.js"},
-				{oembed:		"$scriptslink/jquery.oembed$!{minsuffix}.js"},
-				{markitup:		"$scriptslink/jquery.markitup$!{minsuffix}.js"},
-				
-				{chatclient:	"$scriptslink/chatclient$!{minsuffix}.js"},
-				{miuicons:		"$scriptslink/miu.set.markdown$!{minsuffix}.js"},
-				{showdown:		"$scriptslink/showdown$!{minsuffix}.js"},
-				{diff:			"$scriptslink/diff_match_patch$!{minsuffix}.js"},
-				
-				{scoold:		"$scriptslink/scoold$!{minsuffix}.js"}
-			);
-			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end};
+			loadScripts("$!{scriptslink}", "$!{minsuffix}");
+			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end},
+				sessiontimeout = $!SESSION_TIMEOUT_SEC;
 			#if($authenticated)
-				var stoken = "$sectoken";
-				var pepper = "$authUser.authstamp";
+				var stoken = "$sectoken", pepper = "$authUser.authstamp";
 			#end
 		</script>
     </body>

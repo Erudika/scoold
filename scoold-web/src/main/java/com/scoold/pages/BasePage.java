@@ -50,7 +50,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.client.Client;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -24,7 +24,8 @@ import org.elasticsearch.client.transport.TransportClient;
 public class Admin extends BasePage {
 
 	public String title;
-
+	public long schoolcount;
+	
 	public Admin() {
 		title = "";
 		if (!authenticated || !authUser.isAdmin()) {
@@ -40,6 +41,8 @@ public class Admin extends BasePage {
 			addModel("esnodes", "ElastiSearch not available.");
 			addModel("eshosts", "ElastiSearch not available.");
 		}
+		
+		schoolcount = daoutils.getBeanCount(School.class);
 	}
 
 	public void onPost() {
@@ -60,15 +63,13 @@ public class Admin extends BasePage {
 						});
 			}
 		} else {
-			long startTime = System.nanoTime();
-			if (param("createschools")) {
-				if(daoutils.getBeanCount(School.class) == 0L){
-					createSchools();
-					logger.log(Level.WARNING, "Executed createSchools().");
-				}
+			if (param("createschools") && schoolcount == 0L) {
+				long startTime = System.nanoTime();
+				createSchools();
+				logger.log(Level.WARNING, "Executed createSchools().");
+				long estimatedTime = System.nanoTime() - startTime;
+				logger.log(Level.WARNING, "Time {0}", new Object[]{estimatedTime});
 			} 
-			long estimatedTime = System.nanoTime() - startTime;
-			logger.log(Level.WARNING, "Time {0}", new Object[]{estimatedTime});
 		}
 
 		setRedirect(ref);

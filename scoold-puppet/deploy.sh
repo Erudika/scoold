@@ -23,6 +23,7 @@ BUCKET="com.scoold.files"
 CSSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/styles"
 JSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/scripts"
 IMGDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/images"
+JACSSIDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/jacssi"
 SUMSFILE="checksums.txt"
 PATHSFILE="filepaths.txt"
 JARPATH="../scoold-invalidator/target/scoold-invalidator-all.jar"
@@ -33,11 +34,16 @@ function updateJacssi () {
 	if [ -d $CSSDIR ] && [ -d $JSDIR ] && [ -d $IMGDIR ]; then
 		dirlist="$CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $JSDIR/*.htc $IMGDIR/*.gif $IMGDIR/*.png"
 		rm -rf $SUMSFILE $PATHSFILE &> /dev/null
+		if [ ! -d $JACSSIDIR ]; then
+			mkdir $JACSSIDIR
+		fi
+		
 		for file in `ls -d1 $dirlist`; do
-			if [ -f "$file" ]; then
+			if [ -f $file ]; then
 				name=$(expr $file : '.*/\(.*\)$')
-				echo "$name $(md5 -q $file)" >> $SUMSFILE
-				echo "$name $file" >> $PATHSFILE
+				gzip -9 -c $file > $JACSSIDIR/$name
+				echo "$name $(md5 -q $JACSSIDIR/$name)" >> $SUMSFILE
+				echo "$name $JACSSIDIR/$name" >> $PATHSFILE				
 			fi
 		done
 		
@@ -49,6 +55,7 @@ function updateJacssi () {
 		# upload to S3
 		#s3cmd --reduced-redundancy --acl-public --force put $dirlist $SUMSFILE s3://$BUCKET
 		java -jar $JARPATH $SUMSFILE $PATHSFILE
+		rm -rf $JACSSIDIR
 	fi
 }
 

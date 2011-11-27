@@ -29,7 +29,7 @@ class scoold::cassandra {
 	}
 		
 	exec { "stop-cassandra":
-		command => "stop cassandra; rm ${cassandrahome}/cassandra.pid",
+		command => "sudo -u ${cassandrausr} kill -1 `cat ${cassandrahome}/cassandra.pid`; rm ${cassandrahome}/cassandra.pid",
 		onlyif => "test -e ${cassandrahome}/cassandra.pid",
 		before => User[$cassandrausr]
 	}
@@ -143,7 +143,7 @@ class scoold::cassandra {
 		}
 
 		cron { "clearsnapshot":
-			command => "sudo -u ${cassandrausr} ${cassandrahome}/backupdb.sh && ${casdir}/bin/nodetool -h localhost clearsnapshot",
+			command => "sudo -u ${cassandrausr} ${cassandrahome}/backupdb.sh; sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost clearsnapshot",
 			user => root,
 			hour => 4,
 			minute => 1,
@@ -211,7 +211,7 @@ class scoold::cassandra {
 		
 	exec { 
 		"start-cassandra":
-			command => "start cassandra",
+			command => "sudo -u ${cassandrausr} ${casdir}/bin/cassandra -p ${cassandrahome}/cassandra.pid",
 			unless => "test -e ${cassandrahome}/cassandra.pid", 
 			require => Exec["set-cluster-name"];
 		"configure-rsyslog":

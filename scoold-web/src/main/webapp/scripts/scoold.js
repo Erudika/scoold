@@ -233,14 +233,14 @@ $(function () {
 	}
 	
 	function submitFormBind(formname, callbackfn){
-		return $(formname).live("submit", function(){
+		return $(formname).on("submit", function(){
 			submitForm(this, "POST", callbackfn);
 			return false;
 		});
 	}
 
 	function submitFormUsingGetBind(formname, callbackfn){
-		return $(formname).live("submit", function(){
+		return $(formname).on("submit", function(){
 			submitForm(this, "GET", callbackfn);
 			return false;
 		});
@@ -381,11 +381,11 @@ $(function () {
      *					GLOBAL BINDINGS
      ****************************************************/
 
-	$(".rusure").live("click", function(){
+	$(".rusure").on("click", function(){
 		return areYouSure($.noop, rusuremsg, true);
 	});
 	
-	$(".editlink").live("click", function(){
+	$(".editlink").on("click", function(){
 		var that = $(this);
 		var viewbox = that.parent().nextAll(".viewbox:first");
 		var editbox = that.parent().nextAll(".editbox:first");
@@ -407,7 +407,7 @@ $(function () {
 		return false;
 	});
 	
-	$(".canceledit").live("click", function(){
+	$(".canceledit").on("click", function(){
 		var editbox = $(this).closest(".editbox").get(0);
 		var viewbox = $(editbox).siblings(".viewbox").get(0);	
 		crossfadeToggle(viewbox, editbox);
@@ -415,12 +415,12 @@ $(function () {
 	});
 
 	//target=_blank is not valid XHTML
-	$("a.extlink").live("click", function(){
+	$("a.extlink").on("click", function(){
 		$(this).attr("target", "_blank");
 		return true;
 	});
 
-	$("a.votelink").live("click", function(){
+	$("a.votelink").on("click", function(){
 		var up = false;
 		up = $(this).hasClass("upvote");
 		var votes = $(this).closest("div.votebox").find(".votecount");
@@ -441,7 +441,7 @@ $(function () {
 	});
 
 	//close msg boxes 
-	$(".infostrip, .messagebox").live("click", function(event){
+	$(".infostrip, .messagebox").on("click", function(event){
 		var that = $(this);
 		that.hide();
 		if(that.hasClass("introBox")){
@@ -451,7 +451,7 @@ $(function () {
 	});
 	
 	// show ajax indicator when submit is pressed
-	$("input[type=submit]").not("input.button-link").live("click", function(){
+	$("input[type=submit]").not("input.button-link").on("click", function(){
 		$(this).addClass("loading");
 //		$("img.ajaxwait", $(this).parent()).show();
 		return true;
@@ -479,7 +479,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.next-div-toggle").live("click", function(e){
+	$("a.next-div-toggle").on("click", function(e){
 		var that = $(this);
 		var hdiv = that.nextAll("div:first");
 		if(!hdiv.length){
@@ -492,7 +492,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.next-span-toggle").live("click", function(){
+	$("a.next-span-toggle").on("click", function(){
 		$(this).nextAll("span:first").toggle();
 		return false;
 	});
@@ -569,7 +569,7 @@ $(function () {
 		dis.find("input.canceledit").click();
 	});
 	
-	$("a.addfriend").live("click", function(){
+	$("a.addfriend").on("click", function(){
 		$.post(this.href, secdata);
 		showSuccessBox(lang["profile.contacts.added"]);
 		$(this).fadeOut();
@@ -577,7 +577,7 @@ $(function () {
 	});
 
 	//delete friend link
-	$("a.delfriend").live("click", function(){
+	$("a.delfriend").on("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.fadeOut();
@@ -671,7 +671,7 @@ $(function () {
 		return false;
 	});
 
-	$(".remove-contact").live("click", function(){
+	$(".remove-contact").on("click", function(){
 		$(this).closest("tr").remove();
 		return false;
 	});
@@ -763,7 +763,7 @@ $(function () {
 			}else{
 				div.html(trigr.data("loadedForm"));
 			}
-			div.find(".jqmClose").live("click", function(){
+			div.find(".jqmClose").on("click", function(){
 				hash.w.jqmHide();
 				return false;
 			});
@@ -771,7 +771,7 @@ $(function () {
 		}
 	});
 
-	$(".trigger-report").live("click", function(){
+	$(".trigger-report").on("click", function(){
 		$("div.report-dialog").jqmShow(this);
 		return false;
 	});
@@ -804,7 +804,7 @@ $(function () {
 		}
 	});
 
-	$(".trigger-embedly-services").live("click", function(){
+	$(".trigger-embedly-services").on("click", function(){
 		$("div#embedly-services").jqmShow(this);
 		return false;
 	});
@@ -821,7 +821,7 @@ $(function () {
 		textbox.val("");
 	});
 
-	$("a.delete-comment").live("click", function(){
+	$("a.delete-comment").on("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest("div.commentbox").fadeOut("slow", function(){that.remove();});
@@ -829,12 +829,12 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(".more-comments-btn").live("click", function(){
+	$(".more-comments-btn").on("click", function(){
 		$(this).nextAll("div:first").show().end().remove();
 		return false;
 	});
 
-	$("a.show-comment").live("click", function(){
+	$("a.show-comment").on("click", function(){
 		$(this).nextAll("div:hidden").show().end().prev("span").andSelf().remove();
 		return false;
 	});
@@ -854,7 +854,7 @@ $(function () {
 		return form.valid();
 	};
 	
-	$("a.delete-translation").live("click", function(){
+	$("a.delete-translation").on("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest("div.translationbox").fadeOut("slow", function(){
@@ -864,10 +864,10 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$("input#addcont-translation-btn").live("click", function(){
+	$("input#addcont-translation-btn").on("click", function(){
 		return validateTrans($(this).closest("form"));
 	});
-	$("input#add-translation-btn").live("click", function(){
+	$("input#add-translation-btn").on("click", function(){
 		var that = $(this);
 		var form = that.closest("form");
 		var isValid = validateTrans(form);
@@ -943,7 +943,7 @@ $(function () {
 		return false;
 	}
 
-	$("a.more-link").live('click', function(){
+	$("a.more-link").on('click', function(){
 		return loadMoreHandler(this, $.noop());
 	});
 
@@ -1017,7 +1017,7 @@ $(function () {
 		$.history.init(pl); //, window.location.pathname);
 
 		// set onlick event for buttons using the jQuery 1.3 live method
-		$("a[rel='history']").live('click', function() {
+		$("a[rel='history']").on('click', function() {
 			var hash = this.href;
 			hash = hash.replace(/^.*#/, '');
 			// moves to a new page.
@@ -1038,7 +1038,7 @@ $(function () {
 
 	}
 
-	$("a.remove-label").live("click", function(){
+	$("a.remove-label").on("click", function(){
 		var box = $(this).closest(".labelbox");
 		$.post(this.href, secdata, function(){
 			clearLoading();
@@ -1049,7 +1049,7 @@ $(function () {
 		return false;
 	});
 
-	$(".image-delete").live("click", function(){
+	$(".image-delete").on("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest(".thumb-wrap").fadeOut(function(){
@@ -1109,7 +1109,7 @@ $(function () {
      ****************************************************/
 
 	// oembed plugin init bind
-	$(".oembed-box").live("click", function(){
+	$(".oembed-box").on("click", function(){
 		var that = $(this);
 		$.oembed.fetchData(this.href, function(data){
 			that.replaceWith(data.html);
@@ -1222,7 +1222,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.delvideo").live("click", function(){
+	$("a.delvideo").on("click", function(){
 		var that = $(this);
 		return areYouSure(function(){
 			var parent = that.closest("div.drawerbox");
@@ -1250,7 +1250,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.accept-answer, a.approve-translation").live("click", function(){
+	$("a.accept-answer, a.approve-translation").on("click", function(){
 		var on = "green";
 		var that = $(this);
 		$("a.accept-answer, a.approve-translation").removeClass(on).text("3");
@@ -1333,7 +1333,7 @@ $(function () {
 			}
 		};
 
-		$("a.more-link").die('click').live("click", function(){
+		$("a.more-link").die('click').on("click", function(){
 			return loadMoreHandler(this, function(updatedContainer){
 				updatedContainer.find("textarea.edit-post").not(".markedUp").each(initPostEditor);
 			});
@@ -1538,7 +1538,7 @@ $(function () {
      ************************************************************************/
 
 	/********* SIGNUP FORM ************/
-	$("input#signup-btn").live("click", function(){
+	$("input#signup-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			onsubmit: true,
@@ -1563,7 +1563,7 @@ $(function () {
 	});
 
 	/********* CREATE SCHOOL FORM ************/	
-	$("input#createschool").live("click", function(){
+	$("input#createschool").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1578,7 +1578,7 @@ $(function () {
 	});
 
 	/********* CHANGE EMAIL FORM ************/
-	$("input#change-email-btn").live("click", function(){
+	$("input#change-email-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1595,7 +1595,7 @@ $(function () {
 	});
 
 	/********* CREATE CLASS FORM ************/
-	$("input#createclass").live("click", function(){
+	$("input#createclass").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1622,7 +1622,7 @@ $(function () {
 	});
 
 	/********* ADD CLASSMATES FORM ************/
-	$("input#addclassmates-btn").live("click", function(){
+	$("input#addclassmates-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1650,7 +1650,7 @@ $(function () {
 	$.validator.addMethod("tags", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxTags;
 	});
-	$("input#ask-btn, input.post-edit-btn").live("click", function(){
+	$("input#ask-btn, input.post-edit-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1680,7 +1680,7 @@ $(function () {
 
 	/********* ANSWER QUESTION FORM ************/
 
-	$("input#answer-btn").live("click", function(){
+	$("input#answer-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1701,7 +1701,7 @@ $(function () {
 
 	/********* NEW MESSAGE FORM ************/
 
-	$("input#sendmessage-btn").live("click", function(){
+	$("input#sendmessage-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn2,
@@ -1716,7 +1716,7 @@ $(function () {
 
 	/********* SETTINGS FORMS ************/
 
-	$("input.import-media-btn").live("click", function(){
+	$("input.import-media-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1736,7 +1736,7 @@ $(function () {
 	$.validator.addMethod("tags2", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxFavTags;
 	});
-	$("input#add-favtag-btn").live("click", function(){
+	$("input#add-favtag-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1754,7 +1754,7 @@ $(function () {
 	});
 
 	/********* REPORT SOLUTION FORM ************/
-	$("input.report-solution-btn").live("click", function(){
+	$("input.report-solution-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1772,7 +1772,7 @@ $(function () {
         return form.valid();
 	});
 	/********* NEW COMMENT FORM ************/
-	$("input.new-comment-btn").live("click", function(){
+	$("input.new-comment-btn").on("click", function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,

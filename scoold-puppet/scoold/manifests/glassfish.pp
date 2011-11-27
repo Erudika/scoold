@@ -20,7 +20,7 @@ class scoold::glassfish {
 	}
 	
 	exec { "stop-glassfish":
-		command => "stop glassfish; rm ${glassfishhome}/glassfish.pid",		
+		command => "sudo -u ${glassfishusr} kill -1 `cat ${glassfishhome}/glassfish.pid`; rm ${glassfishhome}/glassfish.pid",		
 		onlyif => "test -e ${glassfishhome}/glassfish.pid",
 		before => User[$glassfishusr]
 	}
@@ -99,7 +99,7 @@ class scoold::glassfish {
 
 	exec{ 
 		"start-glassfish":
-			command => "start glassfish",
+			command => "sudo -u ${glassfishusr} ${gfdir}/bin/asadmin start-domain domain1 && sudo -u ${glassfishusr} echo `pidof java` | tee ${glassfishhome}/glassfish.pid",
 			unless => "test -e ${glassfishhome}/glassfish.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

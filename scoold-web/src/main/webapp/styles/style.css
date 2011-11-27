@@ -112,10 +112,10 @@ body {
 	font-size: 0.9em;
 }
 #search{
-	float: right;
-/*    width: 240px;*/
-	margin-top: 6px;
-	padding: 3px 4px 3px 0;
+    width: 270px;
+	margin-top: 7px;
+	padding: 3px 5px;
+	border: 1px solid #5397B9;
 }
 #search-box{	
     background-color: white;
@@ -123,7 +123,7 @@ body {
     font-size: 0.8em;
     height: 20px;
     position: relative;
-    width: 230px;
+    width: 220px;
 }
 #nav{
 	height: 45px;
@@ -283,11 +283,12 @@ select.nicebox, form.clickedit select{
 input[type=radio]{margin-right: 6px;}
 input[disabled=true]{background-color: #CCCCCC;}
 input.search-btn{ 
-	background-color: white; 
-	color: #CCCCCC; 
+	background-color: transparent; 
+	color: #5397B9;
 	border: 0; 
 	padding: 0; 
-	margin: 0; 
+	margin-top: 2px; 
+	width: 23px;
 	cursor: pointer; 
 	font-size: 1em;
 }

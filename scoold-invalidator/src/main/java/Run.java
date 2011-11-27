@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -137,6 +138,10 @@ public class Run {
 		PutObjectRequest por = new PutObjectRequest(bucket, name, new File(path));
 		if (publik) por.setCannedAcl(CannedAccessControlList.PublicRead);
 		por.setStorageClass(StorageClass.ReducedRedundancy);
+		ObjectMetadata om = new ObjectMetadata();
+		om.setCacheControl("max-age=605000, must-revalidate");
+		om.setContentEncoding("gzip");
+		por.setMetadata(om);
 		s3.putObject(por);
 	}
 	
