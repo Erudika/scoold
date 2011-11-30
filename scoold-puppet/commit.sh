@@ -92,49 +92,6 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		### unzip & execute remotely
 		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'; rm -rf ~/$ZIPNAME.zip"
 	fi
-elif [ "$1" = "munin" ]; then
-	# clear old hosts
-	MCONF="./$MODNAME/files/munin.conf"
-	MNCONF="./$MODNAME/files/munin-node.conf"
-	db1host=""
-	db1ip=""
-	sed -e "/#begin/,/#end/d" -i.bak $MCONF
-	### add the hostnames of all munin nodes to the munin server config
-	echo "#begin" >> $MCONF
-	for grp in "db" "web" "search"; do			
-		count=1
-		while read line; do				
-			if [ -n "$line" ]; then
-				ipaddr=$(echo $line | awk '{ print $3 }')
-				host=$(echo $line | awk '{ print $2 }')
-				
-				if [ "$grp" = "db" ] && [ $count = 1 ]; then					
-					db1host=$host
-					db1ip=$ipaddr
-				else
-					echo "[$grp$count.scoold.com]" 	>> $MCONF
-					echo "address $ipaddr" 			>> $MCONF
-					echo "use_node_name yes" 		>> $MCONF
-					echo ""							>> $MCONF
-					
-					ipexpr=$(echo $db1ip | sed 's/\./\\\./g')
-					cmd1="echo 'allow ^$ipexpr$' | sudo tee -a /etc/munin/munin-node.conf"
-					cmd2="echo 'host_name $grp$count.scoold.com' | sudo tee -a /etc/munin/munin-node.conf"
-					scp $MNCONF ubuntu@$host:~/
-					ssh -n ubuntu@$host "sudo mv ~/munin-node.conf /etc/munin/; $cmd1; $cmd2; sudo service munin-node restart"
-				fi
-				count=$((count+1))
-			fi
-		done < "$grp$F1SUFFIX"		
-	done
-	echo "#end" >> $MCONF
-	
-	### copy new munin.conf to db1
-	scp $MCONF ubuntu@$db1host:~/
-	ssh -n ubuntu@$db1host "sudo mv ~/munin.conf /etc/munin/"
-	
-	### cleanup
-	rm ./$MODNAME/files/*.bak
 elif [ "$1" = "checkdb" ]; then
 	### check if db is up and running and ring is OK
 	db1host=$(head -n 1 "db$F2SUFFIX")
@@ -171,6 +128,6 @@ elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
 else
-	echo "USAGE: $0 checkdb | initdb | munin | inites | [init | all] group"
+	echo "USAGE: $0 checkdb | initdb | inites | [init | all] group"
 fi
 # rsync --verbose --progress --stats --compress --recursive --times --perms --links --delete --rsync-path="sudo rsync" ~/Desktop/scoold_snapshots/1317214358735/ ubuntu@192.168.113.128:/var/lib/cassandra/data/scoold/

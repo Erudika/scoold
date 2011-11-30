@@ -56,7 +56,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 				StringUtils.isBlank(newInstance.getLocale()))
 			return null;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		Long id = cdu.create(newInstance, CasDAOFactory.TRANSLATIONS, mut);
 
 		if(id != null){
@@ -76,7 +76,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 		String compositeKey = transientObject.getLocale().
 					concat(AbstractDAOFactory.SEPARATOR).concat(transientObject.getKey());
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		cdu.addNumbersortColumn(compositeKey, CasDAOFactory.LOCALES_TRANSLATIONS,
 					transientObject.getId(), transientObject.getVotes(),
@@ -92,7 +92,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 		String compositeKey = persistentObject.getLocale().
 					concat(AbstractDAOFactory.SEPARATOR).concat(persistentObject.getKey());
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		// delete post
 		cdu.delete(persistentObject, CasDAOFactory.TRANSLATIONS, mut);
@@ -140,7 +140,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 			map.put(key, 0);
 		}
 		
-		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);		
+		Serializer<String> strser = cdu.getSerializer(String.class);		
 		
 		MultigetSliceQuery<String, String, String> q =
 				HFactory.createMultigetSliceQuery(cdu.getKeyspace(), strser, strser, strser);
@@ -160,7 +160,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 	public void approve(Translation t) {
 		if(t != null && !StringUtils.isBlank(t.getValue())){
-			CasDAOUtils.batchPut(
+			cdu.batchPut(
 				new Column(t.getLocale(), CasDAOFactory.LANGUAGE,
 					t.getKey(), t.getValue()),
 				new Column(t.getLocale(), CasDAOFactory.APPROVED_TRANSLATIONS,
@@ -171,7 +171,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 	public void disapprove(Translation t) {
 		if(t != null && !StringUtils.isBlank(t.getValue())){
-			CasDAOUtils.batchRemove(
+			cdu.batchRemove(
 				new Column(t.getLocale(), CasDAOFactory.LANGUAGE, t.getKey(), null),
 				new Column(t.getLocale(), CasDAOFactory.APPROVED_TRANSLATIONS, t.getKey(), null)
 			);
@@ -206,7 +206,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 			}
 		}
 		
-		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);
+		Serializer<String> strser = cdu.getSerializer(String.class);
 
 		MultigetSliceQuery<String, String, String> q =
 			HFactory.createMultigetSliceQuery(cdu.getKeyspace(), strser, strser, strser);
@@ -230,12 +230,12 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 	}
 
 	public void disapproveAllForKey(String key) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		for (String locstr : Language.ALL_LOCALES.keySet()) {
-			CasDAOUtils.addDeletion(new Column(locstr,
-					CasDAOFactory.LANGUAGE, key, null), mut);
-			CasDAOUtils.addDeletion(new Column(locstr,
-					CasDAOFactory.APPROVED_TRANSLATIONS, key, null), mut);
+			cdu.addDeletion(new Column<String, String>(locstr, CasDAOFactory.LANGUAGE, 
+					key, null), mut);
+			cdu.addDeletion(new Column<String, String>(locstr, CasDAOFactory.APPROVED_TRANSLATIONS, 
+					key, null), mut);
 		}
 
 		mut.execute();

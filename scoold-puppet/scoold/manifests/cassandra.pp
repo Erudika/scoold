@@ -13,6 +13,7 @@ class scoold::cassandra {
 	$seeds = "seeds:"
 	$listenaddr = "listen_address:"
 	$rpcaddr = "rpc_address:"
+	$rpcstype = "rpc_server_type:"	
 	$nodeid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2')) - 1
 	$tokens = ["0", "56713727820156410577229101238628035242", "113427455640312821154458202477256070485"]
 		
@@ -70,7 +71,12 @@ class scoold::cassandra {
 			"set-rpc-address": 
 				command => "sed -e '1,/${rpcaddr}/ s/${rpcaddr}.*/${rpcaddr} 0\\.0\\.0\\.0/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
-				before => Exec["start-cassandra"];			
+				before => Exec["start-cassandra"];	
+			"set-rpc-server-type": 
+				command => "sed -e '1,/${rpcstype}/ s/${rpcstype}.*/${rpcstype} hsha/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"],
+				onlyif => "test '${scoold::inproduction}' = 'false'";		
 			"download-jna":
 				command => "sudo -u ${cassandrausr} wget --no-check-certificate -O ${casdir}/lib/jna.jar ${scoold::jnalink}",
 				require => Exec["rename-cassandra"],
@@ -102,22 +108,7 @@ class scoold::cassandra {
 	}
 	
 	if $nodeid == 0 {
-		# first node is also the munin server
-		package { ["munin", "nginx"]: }
-		
-		file { "/etc/nginx/sites-enabled/default": 
-			ensure => absent,
-			before => Exec["restart-nginx"]
-		}
-		
-		file { 
-			"/etc/nginx/sites-enabled/munin":
-				ensure => file,
-				source => "puppet:///modules/scoold/munin.nginx.txt",
-				owner => root,
-				mode => 755,
-				require => [Package["munin"], Package["nginx"]],
-				before => Exec["restart-nginx"];
+		file { 			
 			"${cassandrahome}/backupdb.sh":
 				ensure => file,
 				source => "puppet:///modules/scoold/backupdb.sh",
@@ -129,22 +120,18 @@ class scoold::cassandra {
 				owner => $cassandrausr,
 				mode => 600;
 		}
-		
-		exec { "restart-nginx":
-			command => "service nginx restart"
-		}
-		
+				
 		cron { "snapshot":
-			command => "sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost snapshot",
-			user => root,
+			command => "${casdir}/bin/nodetool -h localhost snapshot",
+			user => $cassandrausr,
 			hour => [10, 22],
 			minute => 1,
 			require => Exec["start-cassandra"]
 		}
 
 		cron { "clearsnapshot":
-			command => "sudo -u ${cassandrausr} ${cassandrahome}/backupdb.sh; sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost clearsnapshot",
-			user => root,
+			command => "${cassandrahome}/backupdb.sh; ${casdir}/bin/nodetool -h localhost clearsnapshot",
+			user => $cassandrausr,
 			hour => 4,
 			minute => 1,
 			require => Exec["start-cassandra"]
@@ -157,34 +144,11 @@ class scoold::cassandra {
 		}
 	}
 		
-	$cmpdir = "/home/${scoold::defuser}/cassandra-munin-plugins"
-	$cmd1 = "chmod -R 755 ${cmpdir}"
-	$cmd2 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/jvm_memory"
-	$cmd3 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
-	 
-#		$cmd4 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
-#		$cmd5 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
-#		$cmd6 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
-#		$cmd7 = "ln -sf ${cmpdir}/jmx_ /etc/munin/plugins/ops_pending"
-	
-	$cmdr = "service munin-node restart"
-	
-	file { $cmpdir:
-		source => "puppet:///modules/scoold/cassandra-munin-plugins",
-		recurse => true,
-		force => true,
-		before => Exec["install-cassandra-munin-plugin"]			
-	}
-	
-	exec { "install-cassandra-munin-plugin":
-		command => "$cmd1 && $cmd2 && $cmd3 && $cmdr";
-	}
-	
 	$repairhour = 6 + $nodeid
 	
 	cron { "nodetool-repair":
-		command => "sudo -u ${cassandrausr} ${casdir}/bin/nodetool -h localhost repair",
-		user => root,
+		command => "${casdir}/bin/nodetool -h localhost repair",
+		user => $cassandrausr,
 		monthday => [1,6,11,16,21,26],
 		hour => $repairhour,
 		minute => 1

@@ -49,7 +49,7 @@ public class CasCommentDAO<T, PK> extends AbstractCommentDAO<Comment, Long> {
 				StringUtils.isBlank(newInstance.getParentuuid()))
 			return null;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		String key = newInstance.getParentuuid();
 		int count = cdu.countColumns(key,
 				CasDAOFactory.COMMENTS_PARENTUUIDS, Long.class);
@@ -61,9 +61,9 @@ public class CasCommentDAO<T, PK> extends AbstractCommentDAO<Comment, Long> {
 		Long id = cdu.create(newInstance, CasDAOFactory.COMMENTS, mut);
 
 		if(id != null){
-			CasDAOUtils.addInsertion(new Column<String, String>(newInstance.getUuid(), 
+			cdu.addInsertion(new Column<String, String>(newInstance.getUuid(), 
 					CasDAOFactory.COMMENTS_UUIDS, id.toString(), id.toString()), mut);
-			CasDAOUtils.addInsertion(new Column<Long, String>(key,
+			cdu.addInsertion(new Column<Long, String>(key,
 					CasDAOFactory.COMMENTS_PARENTUUIDS, id, id.toString()), mut);
 		}
 
@@ -80,12 +80,12 @@ public class CasCommentDAO<T, PK> extends AbstractCommentDAO<Comment, Long> {
 		if(persistentObject.getParentuuid() == null ||
 				persistentObject.getId() == null) return;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		// delete the comment object
 		cdu.delete(persistentObject, CasDAOFactory.COMMENTS, mut);
 
-		CasDAOUtils.addDeletion(new Column<Long, String>(persistentObject.getParentuuid(),
+		cdu.addDeletion(new Column<Long, String>(persistentObject.getParentuuid(),
 				CasDAOFactory.COMMENTS_PARENTUUIDS, persistentObject.getId(), null), mut);
 		cdu.deleteRow(persistentObject.getUuid(), CasDAOFactory.COMMENTS_UUIDS, mut);
 
@@ -125,7 +125,7 @@ public class CasCommentDAO<T, PK> extends AbstractCommentDAO<Comment, Long> {
 	}
 
 	public void deleteAllCommentsForUUID(String parentUUID) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteAllCommentsForUUID(parentUUID, mut);
 		mut.execute();
 	}
@@ -137,11 +137,11 @@ public class CasCommentDAO<T, PK> extends AbstractCommentDAO<Comment, Long> {
 
 		for (HColumn<Long, String> hColumn : keys) {
 			// delete all comments
-			CasDAOUtils.addDeletion(new Column<String, String>(hColumn.getName().toString(),
+			cdu.addDeletion(new Column<String, String>(hColumn.getName().toString(),
 					CasDAOFactory.COMMENTS), mut);			
 		}
 		// delete from parentuuids
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentUUID,
+		cdu.addDeletion(new Column<Long, String>(parentUUID,
 				CasDAOFactory.COMMENTS_PARENTUUIDS), mut);
 	}
 

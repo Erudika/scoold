@@ -62,12 +62,12 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 	public Long create(User newUser) {
 		if(newUser == null) return null;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		newUser.setLastseen(System.currentTimeMillis());
 		Long id = cdu.create(newUser, CasDAOFactory.USERS, mut);
 		if(id == null) return null;
 
-		CasDAOUtils.addInsertion(new Column(newUser.getUuid(),
+		cdu.addInsertion(new Column(newUser.getUuid(),
 				CasDAOFactory.USERS_UUIDS, id.toString(), id.toString()), mut);
 
 		//save auth identifier if there is one
@@ -77,7 +77,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		}
 
 		if(!userExists(newUser.getEmail()) && !StringUtils.isBlank(newUser.getEmail())){
-			CasDAOUtils.addInsertion(new Column(newUser.getEmail(), CasDAOFactory.EMAILS,
+			cdu.addInsertion(new Column(newUser.getEmail(), CasDAOFactory.EMAILS,
 					id.toString(), id.toString()), mut);
 		}
 
@@ -93,7 +93,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     }
 
     public void update(User transientUser) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.update(transientUser, CasDAOFactory.USERS, mut);
 
 		cdu.addNumbersortColumn(null, CasDAOFactory.USERS_BY_REPUTATION,
@@ -111,7 +111,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		String uid = persistentUser.getId().toString();
 		String uuid = persistentUser.getUuid();
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.delete(persistentUser, CasDAOFactory.USERS, mut);
 
 		// delete all auth keys for user
@@ -124,21 +124,21 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 			cflist0.add(CasDAOFactory.AUTH_KEYS.getName());
 
 			for (HColumn<String, String> authKey : userAuthKeys) {
-				CasDAOUtils.addDeletion(new Column<String, String>(authKey.getName(),
+				cdu.addDeletion(new Column<String, String>(authKey.getName(),
 						CasDAOFactory.AUTH_KEYS), mut);
 			}
 		}
 
-		CasDAOUtils.addDeletions(Arrays.asList(new Column[]{
-			new Column(persistentUser.getEmail(), CasDAOFactory.EMAILS),
-			new Column(uid, CasDAOFactory.USER_AUTH),		
-			new Column(uid, CasDAOFactory.USER_SCHOOLS),		
-			new Column(uid, CasDAOFactory.USER_SCHOOLS),		
-			new Column(uid, CasDAOFactory.USER_CLASSES),		
-			new Column(uid, CasDAOFactory.USER_ANSWERS),		
-			new Column(uid, CasDAOFactory.USER_QUESTIONS),	
-			new Column(uid, CasDAOFactory.CONTACTS),
-			new Column(uuid, CasDAOFactory.USERS_UUIDS)
+		cdu.addDeletions(Arrays.asList(new Column[]{
+			new Column<String, String>(persistentUser.getEmail(), CasDAOFactory.EMAILS),
+			new Column<String, String>(uid, CasDAOFactory.USER_AUTH),		
+			new Column<Long, String>(uid, CasDAOFactory.USER_SCHOOLS),		
+			new Column<Long, String>(uid, CasDAOFactory.USER_SCHOOLS),		
+			new Column<Long, String>(uid, CasDAOFactory.USER_CLASSES),		
+			new Column<Long, String>(uid, CasDAOFactory.USER_ANSWERS),		
+			new Column<Long, String>(uid, CasDAOFactory.USER_QUESTIONS),	
+			new Column<Long, String>(uid, CasDAOFactory.CONTACTS),
+			new Column<String, String>(uuid, CasDAOFactory.USERS_UUIDS)
 		}), mut);
 
 		// delete messages
@@ -359,21 +359,21 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     }
 
     public void attachIdentifierToUser(String identifier, Long userid) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		attachIdentifierToUser(identifier, userid, mut);
 		mut.execute();
 	}
 
     private void attachIdentifierToUser(String identifier, Long userid, Mutator<String> mut) {
 		if(StringUtils.isBlank(identifier) || userid == null) return;
-		CasDAOUtils.addInsertion(new Column(userid.toString(), CasDAOFactory.USER_AUTH,
+		cdu.addInsertion(new Column(userid.toString(), CasDAOFactory.USER_AUTH,
 				identifier, identifier), mut);
-		CasDAOUtils.addInsertion(new Column(identifier, CasDAOFactory.AUTH_KEYS,
+		cdu.addInsertion(new Column(identifier, CasDAOFactory.AUTH_KEYS,
 				userid.toString(), userid.toString()), mut);
     }
 
     public void deleteAllOpenidsForUser (Long userid) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.deleteRow(userid.toString(), CasDAOFactory.USER_AUTH, mut);
 
 		for (String identifier : readAllIdentifiersForUser(userid)) {
@@ -384,7 +384,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     }
 
     public void detachIdentifierFromUser (String identifier, Long userid) {
-		CasDAOUtils.batchRemove(
+		cdu.batchRemove(
 			new Column(identifier, CasDAOFactory.AUTH_KEYS, userid.toString(), null),
 			new Column(userid.toString(), CasDAOFactory.USER_AUTH, identifier, null)
 		);

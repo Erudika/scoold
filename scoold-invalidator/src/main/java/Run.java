@@ -46,30 +46,6 @@ public class Run {
 	private static AmazonS3Client s3 = new AmazonS3Client(awsCredentials);
 	private static AmazonCloudFrontClient cf = new AmazonCloudFrontClient(awsCredentials);
 	
-	private static boolean invalidateCDNCache(List<String> keys) {
-		boolean ok = false;		
-		try {
-			if (keys == null || keys.isEmpty()) {
-				ObjectListing ol = s3.listObjects(bucket);
-				List<S3ObjectSummary> list = ol.getObjectSummaries();
-				keys = new ArrayList<String>();				
-				for (S3ObjectSummary s3ObjectSummary : list) {
-					keys.add("/"+s3ObjectSummary.getKey());					
-				}
-			}		
-			System.out.println("invalidating " + keys);
-			
-			InvalidationBatch batch = new InvalidationBatch(keys, "" + System.currentTimeMillis());
-			CreateInvalidationResult cir = cf.createInvalidation(new CreateInvalidationRequest(distributionID, batch));
-			System.out.println("invalidation request status: " + cir.getInvalidation().getStatus());
-			ok = true;
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
-		}
-
-		return ok;
-	}
-	
 	/**
 	 * @param args the command line arguments
 	 */
@@ -103,7 +79,7 @@ public class Run {
 								System.out.println("found changes in "+lfile);
 							}
 							
-							uploadFile(lfile, fullpath, true);
+							uploadFile(lfile, fullpath, true, true);
 							invalidate.add("/"+lfile);							
 							changesFound = true;
 						}
@@ -117,13 +93,37 @@ public class Run {
 				}
 				
 				// finally upload new checksums.txt file 
-				if(changesFound) uploadFile(sumsfile, args[0], true);
+				if(changesFound) uploadFile(sumsfile, args[0], true, false);
 			}else{
 				System.out.println("USAGE: jar checksums.txt filepaths.txt");
 			}
 		}
 	}
 
+	private static boolean invalidateCDNCache(List<String> keys) {
+		boolean ok = false;		
+		try {
+			if (keys == null || keys.isEmpty()) {
+				ObjectListing ol = s3.listObjects(bucket);
+				List<S3ObjectSummary> list = ol.getObjectSummaries();
+				keys = new ArrayList<String>();				
+				for (S3ObjectSummary s3ObjectSummary : list) {
+					keys.add("/"+s3ObjectSummary.getKey());					
+				}
+			}		
+			System.out.println("invalidating " + keys);
+			
+			InvalidationBatch batch = new InvalidationBatch(keys, "" + System.currentTimeMillis());
+			CreateInvalidationResult cir = cf.createInvalidation(new CreateInvalidationRequest(distributionID, batch));
+			System.out.println("invalidation request status: " + cir.getInvalidation().getStatus());
+			ok = true;
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+
+		return ok;
+	}
+	
 	private static S3Object getS3Object(String name){
 		S3Object so = null;
 		try {
@@ -133,14 +133,14 @@ public class Run {
 		return so;
 	}
 	
-	private static void uploadFile(String name, String path, boolean publik){
+	private static void uploadFile(String name, String path, boolean publik, boolean gzip){
 		if(name == null || name.isEmpty() || path == null || path.isEmpty()) return;
 		PutObjectRequest por = new PutObjectRequest(bucket, name, new File(path));
 		if (publik) por.setCannedAcl(CannedAccessControlList.PublicRead);
 		por.setStorageClass(StorageClass.ReducedRedundancy);
 		ObjectMetadata om = new ObjectMetadata();
 		om.setCacheControl("max-age=605000, must-revalidate");
-		om.setContentEncoding("gzip");
+		if (gzip) om.setContentEncoding("gzip");
 		por.setMetadata(om);
 		s3.putObject(por);
 	}

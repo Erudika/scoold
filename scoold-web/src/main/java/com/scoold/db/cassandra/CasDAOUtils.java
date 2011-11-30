@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import me.prettyprint.cassandra.serializers.SerializerTypeInferer;
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 import me.prettyprint.cassandra.service.ExhaustedPolicy;
+import me.prettyprint.cassandra.service.FailoverPolicy;
 import me.prettyprint.cassandra.service.OperationType;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.ConsistencyLevelPolicy;
@@ -63,9 +64,9 @@ import org.apache.commons.lang.mutable.MutableLong;
 public class CasDAOUtils extends AbstractDAOUtils {
 	
 	private static final Logger logger = Logger.getLogger(CasDAOUtils.class.getName());
-	private static Serializer<String> strser = getSerializer(String.class);
+	private Serializer<String> strser = getSerializer(String.class);
 	private static final long TIMER_OFFSET = 1310084584692L;
-	private static Keyspace keyspace;
+	private Keyspace keyspace;
 	private Mutator<String> mutator;
 	private long voteLockAfter;
 
@@ -89,15 +90,16 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	
 	////////////////////////////////////
 	
-	static {
+	public CasDAOUtils() {
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
 		config.setHosts(System.getProperty("com.scoold.dbhosts","localhost"));
 		config.setPort(CasDAOFactory.CASSANDRA_PORT);
 		config.setRetryDownedHosts(true);
 		config.setRetryDownedHostsDelayInSeconds(60);
 		config.setExhaustedPolicy(ExhaustedPolicy.WHEN_EXHAUSTED_GROW);
-//		config.setAutoDiscoverHosts(true);
-//		config.setMaxActive(100);
+		config.setAutoDiscoverHosts(true);
+		config.setAutoDiscoveryDelayInSeconds(60);
+		config.setMaxActive(100);
 //		config.setMaxIdle(10);
 		Cluster cluster = HFactory.getOrCreateCluster(CasDAOFactory.CLUSTER, config);
 		keyspace = HFactory.createKeyspace(CasDAOFactory.KEYSPACE, cluster,
@@ -108,10 +110,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 				public HConsistencyLevel get(OperationType arg0, String arg1) {
 					return HConsistencyLevel.QUORUM;
 				}
-			});		
-	}
-	
-	public CasDAOUtils() {
+			}, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE);		
 		mutator = createMutator();
 		voteLockAfter = convertMsTimeToCasTime(keyspace, CasDAOFactory.VOTE_LOCK_AFTER);
 		initIdGen();
@@ -270,12 +269,12 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void batchPut(Column ... cols){
+	public void batchPut(Column ... cols){
 		batchPut(Arrays.asList(cols));
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void batchPut(List<Column> cols){
+	public void batchPut(List<Column> cols){
 		if(cols == null || cols.isEmpty()) return;
 		Mutator<String> mut = createMutator();
 		for (Column column : cols) {
@@ -285,12 +284,12 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void batchRemove(Column ... cols){
+	public void batchRemove(Column ... cols){
 		batchRemove(Arrays.asList(cols));
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void batchRemove(List<Column> cols){
+	public void batchRemove(List<Column> cols){
 		if(cols == null || cols.isEmpty()) return;
 		Mutator<String> mut = createMutator();
 		for (Column column : cols) {
@@ -299,7 +298,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		mut.execute();
 	}
 
-	public static <N, V> void addInsertion(Column<N, V> col, Mutator<String> mut){
+	public <N, V> void addInsertion(Column<N, V> col, Mutator<String> mut){
 		if(mut != null && col != null){
 			HColumn<N, String> hCol = HFactory.createColumn(col.getName(), 
 					col.getValue().toString(), getSerializer(col.getName()), strser);
@@ -310,13 +309,13 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void addInsertions(List<Column> col, Mutator<String> mut){
+	public void addInsertions(List<Column> col, Mutator<String> mut){
 		for (Column column : col) {
 			addInsertion(column, mut);
 		}
 	}
 
-	public static <N, V> void addDeletion(Column<N, V> col, Mutator<String> mut){
+	public <N, V> void addDeletion(Column<N, V> col, Mutator<String> mut){
 		if(mut != null && col != null){			
 			mut.addDeletion(col.getKey(), col.getCf().getName(), col.getName(),
 					getSerializer(col.getName()));
@@ -324,7 +323,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void addDeletions(List<Column> col, Mutator<String> mut){
+	public void addDeletions(List<Column> col, Mutator<String> mut){
 		for (Column column : col) {
 			addDeletion(column, mut);
 		}
@@ -925,14 +924,6 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		return timestamp;
 	}
 
-	public static java.util.UUID getTimeUUID() {
-		return java.util.UUID.fromString(new com.eaio.uuid.UUID().toString());
-	}
-
-	public static String getUUID() {
-		return new com.eaio.uuid.UUID().toString();
-	}
-	
 	// add column to a CF with fixed size. Order by: LongType DESCENDING
 	public void addTimesortColumn(String key, Long id, CF<Long> cf,
 			Long time, Long oldTime){
@@ -1083,15 +1074,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		return list.isEmpty() ? null : list.get(0);
 	}
 
-	public static Long toLong(MutableLong page){
-		return (page != null && page.longValue() > 1) ?	page.longValue() : null;
-	}
-
-	public static Mutator<String> createMutator(){
+	public Mutator<String> createMutator(){
 		return HFactory.createMutator(keyspace, strser);
 	}
 	
-	protected static <T extends ScooldObject> T fromColumns(Class<T> clazz,
+	private <T extends ScooldObject> T fromColumns(Class<T> clazz,
 			List<HColumn<String, String>> cols) {
 		if (cols == null ) 	return null;
 
@@ -1113,11 +1100,11 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		return transObject;
 	}
 
-	public static <T> Serializer<T> getSerializer(Class<T> clazz) {
+	public <T> Serializer<T> getSerializer(Class<T> clazz) {
 		return SerializerTypeInferer.getSerializer(clazz);
 	}
 	
-	public static <T> Serializer<T> getSerializer(T obj){
+	public <T> Serializer<T> getSerializer(T obj){
 		return (Serializer<T>) (obj == null ? strser : getSerializer(obj.getClass()));
 	}
 

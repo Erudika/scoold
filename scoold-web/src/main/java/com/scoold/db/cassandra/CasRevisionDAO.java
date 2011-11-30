@@ -43,13 +43,13 @@ public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 	}
 
 	public Long create(Revision newInstance) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		Long id = cdu.create(newInstance, CasDAOFactory.REVISIONS, mut);
 
 		if(id != null){
-			CasDAOUtils.addInsertion(new Column<String, String>(newInstance.getUuid(),
+			cdu.addInsertion(new Column<String, String>(newInstance.getUuid(),
 				CasDAOFactory.REVISIONS_UUIDS, id.toString(), id.toString()), mut);
-			CasDAOUtils.addInsertion(new Column<Long, String>(newInstance.getParentuuid(),
+			cdu.addInsertion(new Column<Long, String>(newInstance.getParentuuid(),
 				CasDAOFactory.REVISIONS_PARENTUUIDS, id, id.toString()), mut);
 		}
 		mut.execute();
@@ -61,7 +61,7 @@ public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 	}
 
 	public void delete(Revision persistentObject){
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.delete(persistentObject, CasDAOFactory.REVISIONS, mut);
 
 		cdu.removeColumn(persistentObject.getParentuuid(),
@@ -110,7 +110,7 @@ public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 	}
 
 	public void deleteAllRevisionsForUUID(String parentUUID) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteAllRevisionsForUUID(parentUUID, mut);
 		mut.execute();
 	}
@@ -121,11 +121,11 @@ public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 				null, null, null, CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : keys) {
-			CasDAOUtils.addDeletion(new Column<String, String>(hColumn.getName().toString(),
+			cdu.addDeletion(new Column<String, String>(hColumn.getName().toString(),
 					CasDAOFactory.REVISIONS), mut);
 		}
 
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentUUID,
+		cdu.addDeletion(new Column<Long, String>(parentUUID,
 				CasDAOFactory.REVISIONS_PARENTUUIDS), mut);
 	}
 

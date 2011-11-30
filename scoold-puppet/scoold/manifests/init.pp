@@ -4,7 +4,7 @@
 #
 class scoold {
 	# ----------------- EDIT HERE ---------------------#	
-	$inproduction = false #controls heap size for m2.large
+	$inproduction = false #controls heap size for m2.large and rpc server type
 	$defuser = "ubuntu"
 	$upgrade = true
 		

@@ -43,12 +43,12 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
     }
 
     public Long create(School newSchool) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		Long id =  cdu.create(newSchool, CasDAOFactory.SCHOOLS);
 		if(id == null) return null;
 
-		CasDAOUtils.addInsertion(new Column(newSchool.getUuid(),
+		cdu.addInsertion(new Column(newSchool.getUuid(),
 				CasDAOFactory.SCHOOLS_UUIDS, id.toString(), id.toString()), mut);
 		mut.execute();
 		
@@ -62,7 +62,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
     }
 
     public void update(School transientSchool) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.update(transientSchool, CasDAOFactory.SCHOOLS, mut);
 		cdu.addNumbersortColumn(null, CasDAOFactory.SCHOOLS_BY_VOTES, 
 				transientSchool.getId(), transientSchool.getVotes(),
@@ -77,7 +77,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 		String uuid = persistentSchool.getUuid();
 		Long id = persistentSchool.getId();
 		
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.delete(persistentSchool, CasDAOFactory.SCHOOLS, mut);
 
 		cdu.removeTimesortColumn(null, CasDAOFactory.SCHOOLS_BY_TIMESTAMP,
@@ -89,7 +89,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : userids) {
-			CasDAOUtils.addDeletion(new Column(hColumn.getName().toString(),
+			cdu.addDeletion(new Column(hColumn.getName().toString(),
 					CasDAOFactory.USER_SCHOOLS, id, null), mut);
 		}
 
@@ -102,10 +102,10 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 		cdu.removeNumbersortColumn(null, CasDAOFactory.SCHOOLS_BY_VOTES,
 			persistentSchool.getId(), persistentSchool.getVotes(), mut);
 
-		CasDAOUtils.addDeletions(Arrays.asList(new Column[]{
-			new Column(id.toString(), CasDAOFactory.SCHOOL_CLASSES),
-			new Column(id.toString(), CasDAOFactory.SCHOOL_USERS),
-			new Column(uuid, CasDAOFactory.SCHOOLS_UUIDS)
+		cdu.addDeletions(Arrays.asList(new Column[]{
+			new Column<Long, String>(id.toString(), CasDAOFactory.SCHOOL_CLASSES),
+			new Column<Long, String>(id.toString(), CasDAOFactory.SCHOOL_USERS),
+			new Column<String, String>(uuid, CasDAOFactory.SCHOOLS_UUIDS)
 		}), mut);
 
 		// delete all media for school
@@ -169,7 +169,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 
 			if(count >= CasDAOFactory.MAX_SCHOOLS_PER_USER) return false;
 			// insert into user_schools and school_users
-			CasDAOUtils.batchPut(getSchoolLinkColumns(userid, id, from, to));
+			cdu.batchPut(getSchoolLinkColumns(userid, id, from, to));
 
 			b = true;
 		}
@@ -198,7 +198,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
     public void deleteUserSchoolLink (Long userid, School school){
 		if(school == null || userid == null) return;
 
-		CasDAOUtils.batchRemove(
+		cdu.batchRemove(
 			new Column(userid.toString(), CasDAOFactory.USER_SCHOOLS,
 				school.getId(), null),
 			new Column(school.getId().toString(),
@@ -242,7 +242,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 
 		if(primarySchool == null || duplicateSchool == null) return false;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		// STEP 1:
 		// Move all users to the primary school
@@ -252,7 +252,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 
 		for (HColumn<Long, String> hColumn : userids) {
 			//create new user-class link
-			CasDAOUtils.addInsertions(getSchoolLinkColumns(hColumn.getName(),
+			cdu.addInsertions(getSchoolLinkColumns(hColumn.getName(),
 					primarySchoolid, 0, 0), mut);
 		}
 
@@ -263,7 +263,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : classids) {
-			CasDAOUtils.addInsertion(new Column<Long, String>(primarySchoolid.toString(),
+			cdu.addInsertion(new Column<Long, String>(primarySchoolid.toString(),
 				CasDAOFactory.SCHOOL_CLASSES, hColumn.getName(), hColumn.getValue()), mut);
 		}
 
@@ -274,7 +274,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : photoids) {
-			CasDAOUtils.addInsertion(new Column<Long, String>(primaryUuid,
+			cdu.addInsertion(new Column<Long, String>(primaryUuid,
 					CasDAOFactory.PHOTOS, hColumn.getName(), hColumn.getValue()), mut);
 		}
 
@@ -283,7 +283,7 @@ public final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : drawerids) {
-			CasDAOUtils.addInsertion(new Column<Long, String>(primaryUuid, CasDAOFactory.DRAWER,
+			cdu.addInsertion(new Column<Long, String>(primaryUuid, CasDAOFactory.DRAWER,
 					hColumn.getName(), hColumn.getValue()), mut);
 		}
 

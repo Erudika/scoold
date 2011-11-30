@@ -56,12 +56,12 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 
 		if(!existsUser || count > CasDAOFactory.MAX_MESSAGES_PER_USER) return null;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		Long id = cdu.create(newMessage, CasDAOFactory.MESSAGES, mut);
 		String idstr = id.toString();
 
 		if(id != null){
-			CasDAOUtils.addInsertions(Arrays.asList(new Column[]{
+			cdu.addInsertions(Arrays.asList(new Column[]{
 				new Column(parentUUID, CasDAOFactory.NEW_MESSAGES, id, idstr),
 				new Column(newMessage.getUuid(), CasDAOFactory.MESSAGES_UUIDS, idstr, idstr),
 				new Column(parentUUID, CasDAOFactory.MESSAGES_PARENTUUIDS, id, idstr)
@@ -81,13 +81,13 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 		if(persistentMessage.getTouuid() == null || persistentMessage.getId() == null)
 			return;
 		// delete the message object
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.delete(persistentMessage, CasDAOFactory.MESSAGES, mut);
 
 		// delete linker row
-		CasDAOUtils.addDeletion(new Column<Long, String>(persistentMessage.getTouuid(), 
+		cdu.addDeletion(new Column<Long, String>(persistentMessage.getTouuid(), 
 				CasDAOFactory.MESSAGES_PARENTUUIDS, persistentMessage.getId(), null), mut);
-		CasDAOUtils.addDeletion(new Column<Long, String>(persistentMessage.getTouuid(),
+		cdu.addDeletion(new Column<Long, String>(persistentMessage.getTouuid(),
 				CasDAOFactory.NEW_MESSAGES, persistentMessage.getId(), null), mut);
 
 		cdu.deleteRow(persistentMessage.getUuid(), CasDAOFactory.MESSAGES_UUIDS, mut);
@@ -96,7 +96,7 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
     }
 
 	public void deleteAllMessagesForUUID (String parentUUID) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteAllMessagesForUUID(parentUUID, mut);
 		mut.execute();
 	}
@@ -107,14 +107,14 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 				null, null, null, CasDAOFactory.DEFAULT_LIMIT, false);
 		
 		for (HColumn<Long, String> hColumn : keys) {
-			CasDAOUtils.addDeletion(new Column<String, String>(hColumn.getName().toString(), 
+			cdu.addDeletion(new Column<String, String>(hColumn.getName().toString(), 
 					CasDAOFactory.MESSAGES), mut);
 		}
 		
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentUUID,
+		cdu.addDeletion(new Column<Long, String>(parentUUID,
 				CasDAOFactory.MESSAGES_PARENTUUIDS), mut);
 
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentUUID,
+		cdu.addDeletion(new Column<Long, String>(parentUUID,
 			CasDAOFactory.NEW_MESSAGES), mut);
 
 	}
@@ -159,7 +159,7 @@ public final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long
 	}
 
 	public void markAllAsReadForUUID (String uuid){
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.deleteRow(uuid, CasDAOFactory.NEW_MESSAGES, mut);
 		mut.execute();
 	}

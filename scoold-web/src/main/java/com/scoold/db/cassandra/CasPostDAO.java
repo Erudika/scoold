@@ -64,12 +64,12 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 		newInstance.setRevisionuuid(UUID.randomUUID().toString());
 		newInstance.setTimestamp(System.currentTimeMillis());
 		
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		Long id = cdu.create(newInstance, CasDAOFactory.POSTS, mut);
 
 		if(id == null) return null;
 
-		CasDAOUtils.addInsertion(new Column<String, String>(newInstance.getUuid(),
+		cdu.addInsertion(new Column<String, String>(newInstance.getUuid(),
 				CasDAOFactory.POSTS_UUIDS, id.toString(), id.toString()), mut);
 
 		switch(newInstance.getPostType()){
@@ -82,7 +82,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 						CasDAOFactory.ANSWERS_BY_VOTES,
 						id, newInstance.getVotes(), null, mut);
 
-				CasDAOUtils.addInsertion(new Column<Long, String>(
+				cdu.addInsertion(new Column<Long, String>(
 						newInstance.getUserid().toString(), CasDAOFactory.USER_ANSWERS,
 						id, id.toString()), mut);
 
@@ -100,7 +100,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 				cdu.addNumbersortColumn(null, CasDAOFactory.ALL_QUESTIONS_BY_VOTES,
 						id, newInstance.getVotes(), null, mut);
 
-				CasDAOUtils.addInsertion(new Column<Long, String>(
+				cdu.addInsertion(new Column<Long, String>(
 						newInstance.getUserid().toString(), CasDAOFactory.USER_QUESTIONS,
 						id, id.toString()), mut);
 				break;
@@ -141,7 +141,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 		Long oldact = (transientObject.getOldactivity() == null) ? lastact :
 			transientObject.getOldactivity();
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		switch (transientObject.getPostType()) {
 			case ANSWER:
@@ -187,7 +187,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 	}
 
 	public void delete (Post persistentObject) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		String uuid = persistentObject.getUuid();
 		String parentuuid = persistentObject.getParentuuid();
@@ -198,7 +198,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 		// delete post
 		cdu.delete(persistentObject, CasDAOFactory.POSTS, mut);
 
-		CasDAOUtils.addDeletion(new Column<String, String>(uuid, CasDAOFactory.POSTS_UUIDS,
+		cdu.addDeletion(new Column<String, String>(uuid, CasDAOFactory.POSTS_UUIDS,
 				id.toString(), null), mut);
 
 		if(!persistentObject.isBlackboard()){
@@ -219,7 +219,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 				cdu.removeNumbersortColumn(parentuuid, CasDAOFactory.ANSWERS_BY_VOTES, id,
 						persistentObject.getVotes(), mut);
 
-				CasDAOUtils.addDeletion(new Column<Long, String>(
+				cdu.addDeletion(new Column<Long, String>(
 						persistentObject.getUserid().toString(),
 						CasDAOFactory.USER_ANSWERS, id, null), mut);
 
@@ -243,7 +243,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 				cdu.removeTimesortColumn(null, CasDAOFactory.ALL_QUESTIONS_BY_ACTIVITY,
 						lastact, mut);
 
-				CasDAOUtils.addDeletion(new Column<Long, String>(
+				cdu.addDeletion(new Column<Long, String>(
 						persistentObject.getUserid().toString(),
 						CasDAOFactory.USER_QUESTIONS, id, null), mut);
 
@@ -273,7 +273,7 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 	}
 
 	public void deleteAllAnswersForUUID(String parentUUID){
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteAllAnswersForUUID(parentUUID, mut);
 		mut.execute();
 	}
@@ -289,11 +289,11 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 
 		// delete all answers
 		for (Post ans : answers) {
-			CasDAOUtils.addDeletion(new Column<String, String>(ans.getId().toString(), 
+			cdu.addDeletion(new Column<String, String>(ans.getId().toString(), 
 					CasDAOFactory.POSTS), mut);
-			CasDAOUtils.addDeletion(new Column<String, String>(ans.getUuid(), 
+			cdu.addDeletion(new Column<String, String>(ans.getUuid(), 
 					CasDAOFactory.POSTS_UUIDS), mut);
-			CasDAOUtils.addDeletion(new Column<Long, String>(ans.getUserid().toString(),
+			cdu.addDeletion(new Column<Long, String>(ans.getUserid().toString(),
 					CasDAOFactory.USER_ANSWERS), mut);
 			// delete Comments
 			cdao.deleteAllCommentsForUUID(ans.getUuid(), mut);
@@ -302,9 +302,9 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 		}
 
 		// delete from answers
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentUUID,
+		cdu.addDeletion(new Column<Long, String>(parentUUID,
 				CasDAOFactory.ANSWERS), mut);
-		CasDAOUtils.addDeletion(new Column<String, String>(parentUUID,
+		cdu.addDeletion(new Column<String, String>(parentUUID,
 				CasDAOFactory.ANSWERS_BY_VOTES), mut);
 	}
 
@@ -551,11 +551,11 @@ public class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 			map.put(post.getUuid(), i);
 		}
 		
-		Serializer<String> strser = CasDAOUtils.getSerializer(String.class);
+		Serializer<String> strser = cdu.getSerializer(String.class);
 
 		MultigetSliceQuery<String, Long, String> q =
 					HFactory.createMultigetSliceQuery(cdu.getKeyspace(),
-					strser, CasDAOUtils.getSerializer(Long.class), strser);
+					strser, cdu.getSerializer(Long.class), strser);
 
 		q.setKeys(uuids);
 		q.setColumnFamily(CasDAOFactory.COMMENTS_PARENTUUIDS.getName());

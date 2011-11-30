@@ -42,7 +42,7 @@ function updateJacssi () {
 			if [ -f $file ]; then
 				name=$(expr $file : '.*/\(.*\)$')
 				gzip -9 -c $file > $JACSSIDIR/$name
-				echo "$name $(md5 -q $JACSSIDIR/$name)" >> $SUMSFILE
+				echo "$name $(md5 -q $file)" >> $SUMSFILE
 				echo "$name $JACSSIDIR/$name" >> $PATHSFILE				
 			fi
 		done
@@ -52,8 +52,7 @@ function updateJacssi () {
 			PATHSFILE=""
 		fi
 	
-		# upload to S3
-		#s3cmd --reduced-redundancy --acl-public --force put $dirlist $SUMSFILE s3://$BUCKET
+		# upload to S3		
 		java -jar $JARPATH $SUMSFILE $PATHSFILE
 		rm -rf $JACSSIDIR
 	fi

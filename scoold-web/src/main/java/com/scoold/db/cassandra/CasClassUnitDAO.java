@@ -53,20 +53,20 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 		bb.setParentuuid(newClassUnit.getUuid());
 
 		CasPostDAO<Post, Long> pdao = new CasPostDAO<Post, Long>();
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		Long bbid = pdao.create(bb);
 		newClassUnit.setBlackboardid(bbid);
 
 		cdu.create(newClassUnit, CasDAOFactory.CLASSES, mut);
 
-		CasDAOUtils.addInsertion(new Column<String, String>(newClassUnit.getUuid(),
+		cdu.addInsertion(new Column<String, String>(newClassUnit.getUuid(),
 				CasDAOFactory.CLASSES_UUIDS, id.toString(), id.toString()), mut);
-		CasDAOUtils.addInsertion(new Column<Long, String>(newClassUnit.getSchoolid().toString(),
+		cdu.addInsertion(new Column<Long, String>(newClassUnit.getSchoolid().toString(),
 				CasDAOFactory.SCHOOL_CLASSES, id, id.toString()), mut);
 
 		// auto add to my classes
-		CasDAOUtils.addInsertions(getClassLinkColumnsWithChecks(newClassUnit.getUserid(),
+		cdu.addInsertions(getClassLinkColumnsWithChecks(newClassUnit.getUserid(),
 				newClassUnit), mut);
 
 		cdu.addTimesortColumn(null, id,	CasDAOFactory.CLASSES_BY_TIMESTAMP, id, null, mut);
@@ -84,7 +84,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
     }
 
     public void delete(Classunit persistentClassUnit) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteClass(persistentClassUnit, mut);
 		mut.execute();
     }
@@ -99,7 +99,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 
 		cdu.delete(persistentClassUnit, CasDAOFactory.CLASSES, mut);
 
-		CasDAOUtils.addDeletion(new Column(persistentClassUnit.getSchoolid().toString(),
+		cdu.addDeletion(new Column<Long, String>(persistentClassUnit.getSchoolid().toString(),
 				CasDAOFactory.SCHOOL_CLASSES, id, null), mut);
 
 		cdu.removeTimesortColumn(null, CasDAOFactory.CLASSES_BY_TIMESTAMP, id, mut);
@@ -110,12 +110,12 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : userids) {
-			CasDAOUtils.addDeletion(new Column(hColumn.getName().toString(),
+			cdu.addDeletion(new Column<Long, String>(hColumn.getName().toString(),
 					CasDAOFactory.USER_CLASSES, id, null), mut);
 		}
 
-		CasDAOUtils.addDeletion(new Column(id.toString(), CasDAOFactory.CLASS_USERS), mut);
-		CasDAOUtils.addDeletion(new Column(uuid, CasDAOFactory.CLASSES_UUIDS), mut);
+		cdu.addDeletion(new Column<Long, String>(id.toString(), CasDAOFactory.CLASS_USERS), mut);
+		cdu.addDeletion(new Column<String, String>(uuid, CasDAOFactory.CLASSES_UUIDS), mut);
 
 		// delete all media for class
 		CasMediaDAO<Media, Long> mdao = new CasMediaDAO<Media, Long>();
@@ -149,9 +149,9 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 	}
 
 	public boolean createUserClassLink (Long userid, Classunit klass){
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		List<Column> list = getClassLinkColumnsWithChecks(userid, klass);
-		CasDAOUtils.addInsertions(list, mut);
+		cdu.addInsertions(list, mut);
 		mut.execute();
 
 		return !list.isEmpty();
@@ -189,7 +189,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 				CasDAOFactory.USER_CLASSES, classid, classid.toString()));
 		list.add(new Column<Long, String>(classid.toString(),
 				CasDAOFactory.CLASS_USERS, userid, userid.toString()));
-		CasDAOUtils.batchRemove(list);
+		cdu.batchRemove(list);
     }
 
 	public boolean isLinkedToUser (Long classid, Long userid) {
@@ -220,7 +220,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 		if(primaryClass == null || duplicateClass == null) return false;
 		else if(!duplicateClass.getSchoolid().equals(primaryClass.getSchoolid())) return false;
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		// STEP 1:
 		// Move every user to the primary class
 		List<HColumn<Long, String>> userids = cdu.readRow(duplicateClassid.toString(),
@@ -229,7 +229,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 
 		for (HColumn<Long, String> hColumn : userids) {
 			//create new user-class link
-			CasDAOUtils.addInsertions(getClassLinkColumnsOnly(hColumn.getName(),
+			cdu.addInsertions(getClassLinkColumnsOnly(hColumn.getName(),
 					primaryClassid), mut);
 		}
 
@@ -240,7 +240,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : photoids) {
-			CasDAOUtils.addInsertion(new Column<Long, String>(primaryUuid,
+			cdu.addInsertion(new Column<Long, String>(primaryUuid,
 					CasDAOFactory.PHOTOS, hColumn.getName(), hColumn.getValue()), mut);
 		}
 
@@ -249,7 +249,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : drawerids) {
-			CasDAOUtils.addInsertion(new Column<Long, String>(primaryUuid,
+			cdu.addInsertion(new Column<Long, String>(primaryUuid,
 					CasDAOFactory.DRAWER, hColumn.getName(), hColumn.getValue()), mut);
 		}
 

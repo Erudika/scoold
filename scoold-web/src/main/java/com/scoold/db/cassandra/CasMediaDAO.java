@@ -51,7 +51,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 		int count = 0;
 		CF<Long> linkerCF = null;
 		String parentuuid = newMedia.getParentuuid();
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		Long id = cdu.create(newMedia, CasDAOFactory.MEDIA, mut);
 		String idstr = id.toString();
@@ -79,7 +79,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 		}
 
 		if(id != null){
-			CasDAOUtils.addInsertions(Arrays.asList(new Column[]{
+			cdu.addInsertions(Arrays.asList(new Column[]{
 				new Column(newMedia.getUuid(), CasDAOFactory.MEDIA_UUIDS, idstr, id.toString()),
 				new Column(parentuuid, CasDAOFactory.MEDIA_PARENTUUIDS, id, id.toString()),
 				new Column(parentuuid, linkerCF, id, id.toString())
@@ -94,7 +94,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
     }
 
     public void update(Media transientMedia) {
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		updateOrCreateLabels(transientMedia, mut);
 		cdu.update(transientMedia, CasDAOFactory.MEDIA, mut);
 		mut.execute();
@@ -102,7 +102,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 
     public void delete(Media persistentMedia) {
 		Media media = persistentMedia;
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 
 		if(media.getUuid() == null || media.getType() == null ){
 			media = read(media.getId());
@@ -127,7 +127,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 		new CasCommentDAO<Comment, Long>().deleteAllCommentsForUUID(uuid, mut);
 		// delete linkers
 		cdu.deleteRow(uuid, CasDAOFactory.MEDIA_UUIDS, mut);
-		CasDAOUtils.addDeletion(new Column<Long, String>(parentuuid,
+		cdu.addDeletion(new Column<Long, String>(parentuuid,
 				CasDAOFactory.MEDIA_PARENTUUIDS, id, null), mut);
 		cdu.deleteRow(parentuuid, cf, mut);
 		
@@ -332,15 +332,15 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 	private void createLabel(String label, Long id, String parentuuid, Mutator<String> mut){
 		if(StringUtils.isBlank(label) || StringUtils.isBlank(parentuuid)) return;
 		String key = label.concat(AbstractDAOFactory.SEPARATOR).concat(parentuuid);
-		CasDAOUtils.addInsertion(new Column<String, String>(parentuuid,
+		cdu.addInsertion(new Column<String, String>(parentuuid,
 				CasDAOFactory.LABELS, label, label), mut);
-		CasDAOUtils.addInsertion(new Column<Long, String>(key,
+		cdu.addInsertion(new Column<Long, String>(key,
 				CasDAOFactory.LABELS_MEDIA, id, id.toString()), mut);
 	}
 
 	private void deleteLabel(String label, Long id, String parentuuid, Mutator<String> mut){
 		String key = label.concat(AbstractDAOFactory.SEPARATOR).concat(parentuuid);
-		CasDAOUtils.addDeletion(new Column<Long, String>(key, CasDAOFactory.LABELS_MEDIA,
+		cdu.addDeletion(new Column<Long, String>(key, CasDAOFactory.LABELS_MEDIA,
 				id, null), mut);
 
 		int count = cdu.countColumns(key, CasDAOFactory.LABELS_MEDIA, Long.class);
@@ -349,7 +349,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 			// delete from labels_media
 			cdu.deleteRow(key, CasDAOFactory.LABELS_MEDIA, mut);
 			// delete from labels
-			CasDAOUtils.addDeletion(new Column<String, String>(parentuuid,
+			cdu.addDeletion(new Column<String, String>(parentuuid,
 					CasDAOFactory.LABELS, label, null), mut);
 		}
 	}
@@ -367,7 +367,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 
 	public void deleteAllMediaForUUID(String parentUUID) {
 //		if(true) return;
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		deleteAllMediaForUUID(parentUUID, mut);
 		mut.execute();
 	}
@@ -382,21 +382,21 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 				null, null, null, CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<String, String> label : labels) {
-			CasDAOUtils.addDeletion(new Column<Long, String>(label.getName().
+			cdu.addDeletion(new Column<Long, String>(label.getName().
 					concat(AbstractDAOFactory.SEPARATOR).concat(parentUUID), 
 					CasDAOFactory.LABELS_MEDIA), mut);
 		}
 
 		for (HColumn<Long, String> hColumn : keys) {
-			CasDAOUtils.addDeletion(new Column<String, String>(hColumn.getName().toString(), 
+			cdu.addDeletion(new Column<String, String>(hColumn.getName().toString(), 
 					CasDAOFactory.MEDIA), mut);
 		}
 
-		CasDAOUtils.addDeletions(Arrays.asList(new Column[]{
-			new Column(parentUUID, CasDAOFactory.MEDIA_PARENTUUIDS),
-			new Column(parentUUID, CasDAOFactory.LABELS),
-			new Column(parentUUID, CasDAOFactory.PHOTOS),
-			new Column(parentUUID, CasDAOFactory.DRAWER)
+		cdu.addDeletions(Arrays.asList(new Column[]{
+			new Column<Long, String>(parentUUID, CasDAOFactory.MEDIA_PARENTUUIDS),
+			new Column<String, String>(parentUUID, CasDAOFactory.LABELS),
+			new Column<Long, String>(parentUUID, CasDAOFactory.PHOTOS),
+			new Column<Long, String>(parentUUID, CasDAOFactory.DRAWER)
 		}), mut);
 	}
 

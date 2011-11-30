@@ -6,7 +6,7 @@
     <artifactId>scoold-web</artifactId>
     <packaging>war</packaging>
     <name>scoold-web</name>
-	<version>0.4</version>
+	<version>0.5</version>
 	
 <!--	<properties>
      OSGi bundle properties 

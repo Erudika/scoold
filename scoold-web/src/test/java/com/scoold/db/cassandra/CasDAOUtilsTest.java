@@ -63,7 +63,7 @@ public class CasDAOUtilsTest {
 //	 */ @Test
 //	public void testCreate_3args() {
 //		String TEST_KEY = "testkey";
-//		Mutator<String> mut = CasDAOUtils.createMutator();
+//		Mutator<String> mut = cdu.createMutator();
 //		Long result = cdu.create(TEST_KEY, testObject, USERS, mut);
 //		mut.execute();
 //		assertTrue(result > 0L);
@@ -100,7 +100,7 @@ public class CasDAOUtilsTest {
 //		String key = "testkey";
 //		String newName = RandomStringUtils.randomAlphabetic(10);
 //		testObject.setFullname(newName);
-//		Mutator<String> mut = CasDAOUtils.createMutator();
+//		Mutator<String> mut = cdu.createMutator();
 //		cdu.update(key, testObject, USERS, mut);
 //		mut.execute();
 //		User out = cdu.read(User.class, key, USERS);
@@ -121,7 +121,7 @@ public class CasDAOUtilsTest {
 //	public void testDelete_3args() {
 //		String key = "testkey";
 //
-//		Mutator<String> mut = CasDAOUtils.createMutator();
+//		Mutator<String> mut = cdu.createMutator();
 //		cdu.delete(key, testObject, USERS, mut);
 //		mut.execute();
 //		assertNull(cdu.read(User.class, key, USERS));
@@ -137,7 +137,7 @@ public class CasDAOUtilsTest {
 //		cdu.putColumn(u.getUuid(), MEDIA_PARENTUUIDS, 1234567L, 1234567L);
 //		cdu.putColumn(u.getEmail(), EMAILS, u.getId().toString(), u.getId());
 //
-//		Mutator<String> mut = CasDAOUtils.createMutator();
+//		Mutator<String> mut = cdu.createMutator();
 //		
 //		CasDAOUtils.addDeletion(new Column(u.getId().toString(), USERS), mut);
 //		CasDAOUtils.addDeletion(new Column(u.getUuid(), USERS_UUIDS), mut);
@@ -685,7 +685,7 @@ public class CasDAOUtilsTest {
 //		String compositeKey3 = "300".concat(AbstractDAOFactory.SEPARATOR).concat("1233");
 //		String compositeKey4 = "400".concat(AbstractDAOFactory.SEPARATOR).concat("1234");
 //		int max = 3;
-//		Mutator<String> mut = CasDAOUtils.createMutator();
+//		Mutator<String> mut = cdu.createMutator();
 //
 //		cdu.addNumbersortColumn(null, USERS_BY_REPUTATION, 1231L, 100, 100, max, mut);
 //		assertNull(cdu.getColumn(DEFAULT_KEY, USERS_BY_REPUTATION, compositeKey1));

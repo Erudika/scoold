@@ -39,7 +39,7 @@ public class CasTagDAO<T, PK> extends AbstractTagDAO<Tag, Long> {
 
 	public Long create (Tag newInstance) {
 		if(StringUtils.isBlank(newInstance.getTag())) return null;
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		Long id =  cdu.create(newInstance.getTag(), newInstance, CasDAOFactory.TAGS, mut);
 		mut.execute();
 		if(id != null) newInstance.index();
@@ -54,7 +54,7 @@ public class CasTagDAO<T, PK> extends AbstractTagDAO<Tag, Long> {
 
 	public void delete (Tag persistentObject) {
 		if(StringUtils.isBlank(persistentObject.getTag())) return;
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		cdu.delete(persistentObject.getTag(), persistentObject, CasDAOFactory.TAGS, mut);
 		mut.execute();
 		persistentObject.unindex();

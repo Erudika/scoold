@@ -43,9 +43,9 @@ public final class CasReportDAO<T, PK> extends AbstractReportDAO<Report, Long> {
 	public Long create (Report newInstance) {
 		Long id = cdu.create(newInstance, CasDAOFactory.REPORTS);
 		if(id != null){
-			Mutator<String> mut = CasDAOUtils.createMutator();
+			Mutator<String> mut = cdu.createMutator();
 
-			CasDAOUtils.addInsertion(new Column(newInstance.getUuid(),
+			cdu.addInsertion(new Column(newInstance.getUuid(),
 					CasDAOFactory.REPORTS_UUIDS, id.toString(), id.toString()), mut);
 
 			cdu.addTimesortColumn(null, id, CasDAOFactory.REPORTS_BY_TIMESTAMP, id, null, mut);
@@ -68,7 +68,7 @@ public final class CasReportDAO<T, PK> extends AbstractReportDAO<Report, Long> {
 					CasDAOFactory.REPORTS);
 		}
 
-		Mutator<String> mut = CasDAOUtils.createMutator();
+		Mutator<String> mut = cdu.createMutator();
 		String uuid = rep.getUuid();
 
 		cdu.delete(rep, CasDAOFactory.REPORTS, mut);

@@ -52,6 +52,7 @@ import com.scoold.util.GeoNames.Toponym;
 import com.scoold.util.GeoNames.ToponymSearchCriteria;
 import com.scoold.util.GeoNames.ToponymSearchResult;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.mutable.MutableLong;
 import org.jsoup.Jsoup;
 
 /**
@@ -526,7 +527,19 @@ public abstract class AbstractDAOUtils {
 	public static String getSystemProperty(String name){
 		return System.getProperty(name);
 	}
+	
+	public static java.util.UUID getTimeUUID() {
+		return java.util.UUID.fromString(new com.eaio.uuid.UUID().toString());
+	}
 
+	public static String getUUID() {
+		return new com.eaio.uuid.UUID().toString();
+	}
+
+	public static Long toLong(MutableLong page){
+		return (page != null && page.longValue() > 1) ?	page.longValue() : null;
+	}
+	
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);
 	public abstract boolean voteDown(Long userid, Votable<Long> votable);
   
