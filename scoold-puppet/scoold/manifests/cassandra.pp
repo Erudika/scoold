@@ -122,21 +122,12 @@ class scoold::cassandra {
 		}
 				
 		cron { "snapshot":
-			command => "${casdir}/bin/nodetool -h localhost snapshot",
+			command => "${casdir}/bin/nodetool -h localhost snapshot && ${cassandrahome}/backupdb.sh; ${casdir}/bin/nodetool -h localhost clearsnapshot",
 			user => $cassandrausr,
 			hour => [10, 22],
 			minute => 1,
 			require => Exec["start-cassandra"]
-		}
-
-		cron { "clearsnapshot":
-			command => "${cassandrahome}/backupdb.sh; ${casdir}/bin/nodetool -h localhost clearsnapshot",
-			user => $cassandrausr,
-			hour => 4,
-			minute => 1,
-			require => Exec["start-cassandra"]
-		}
-		
+		}	
 	} else {
 		exec { "set-autobootstrap":
 			command => "sed -e '1,/${abst}/ s/${abst}.*/${abst} true/' -i.bak ${casconf}",
