@@ -33,7 +33,6 @@ public class Error extends ErrorPage {
 		addModel("KEYWORDS", BasePage.KEYWORDS);
 		addModel("CDN_URL", BasePage.CDN_URL);
 		addModel("IN_PRODUCTION", BasePage.IN_PRODUCTION);
-		addModel("rand", (new Random().nextInt(1337) + 100));
     }
 
 	public String getTemplate() {

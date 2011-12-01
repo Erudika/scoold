@@ -9,12 +9,12 @@ class scoold {
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "search1"
+	$nodename = "db1"
 	$dbseeds = "10.227.135.64,10.48.161.238"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
-	$casver = "1.0.3"
+	$casver = "1.0.5"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
 	$dbheapsize = "6G" # memory of m1.large

@@ -218,7 +218,7 @@ public final class Language {
 			.put("pagenotfound", "This page cannot be found.")
 			.put("forbidden", "You shall not pass!")
 			.put("servererror", "Critical server error.")
-			.put("sitedown", "System overload!")
+			.put("sitedown", "Scoold is down. We'll be back soon.")
 			.put("badrequest", "Bad request.")
 			.put("create", "Create")
 			.put("pause", "Pause")

@@ -97,7 +97,7 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		config.setRetryDownedHosts(true);
 		config.setRetryDownedHostsDelayInSeconds(60);
 		config.setExhaustedPolicy(ExhaustedPolicy.WHEN_EXHAUSTED_GROW);
-//		config.setAutoDiscoverHosts(true);
+		config.setAutoDiscoverHosts(false);
 //		config.setAutoDiscoveryDelayInSeconds(60);
 //		config.setMaxActive(100);
 //		config.setMaxIdle(10);

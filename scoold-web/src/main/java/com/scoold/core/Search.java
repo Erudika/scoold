@@ -368,10 +368,11 @@ public final class Search{
 			nb.settings().put("cloud.aws.region", "eu-west-1");
 			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
 			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
-//			nb.settings().put("client.transport.sniff", true);
+			nb.settings().put("client.transport.sniff", false);
 			nb.settings().put("network.tcp.keep_alive", true);
 			nb.settings().put("discovery.type", "ec2");
 			nb.settings().put("discovery.ec2.groups", "elasticsearch");
+			nb.settings().put("discovery.ec2.availability_zones", "eu-west-1a");
 
 			searchClient = new TransportClient(nb.settings());
 			String[] eshosts = System.getProperty("com.scoold.eshosts", "localhost").split(",");

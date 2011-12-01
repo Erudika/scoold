@@ -127,7 +127,7 @@ public class SecurityFilter implements Filter {
 //				}
 //			}
 //		}
-		
+
 		
 		// anti-CSRF token validation
 		if(request.getMethod().equals("POST") && !StringUtils.isBlank(request.getRemoteUser())){

@@ -31,6 +31,52 @@ function getType () {
 	echo $NODETYPE
 }
 
+function pushConfig () {
+	instid=$1
+	host=$2
+	ipaddr=$3
+	count=$4
+	NODETYPE=$5
+	ZIPNAME=$6
+		
+	### set node id and set tag
+	sed -e "1,/\\\$nodename/ s/\\\$nodename.*/\\\$nodename = \"$NODETYPE$count\"/" -i.bak ./$MODNAME/manifests/init.pp
+	
+	# skip autotagging and LB regging when running on local virtual machine
+	if [ -z "$3" ]; then				
+		ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"					
+	fi
+					
+	### push updated puppet script
+	echo "copying $MODNAME.zip to $NODETYPE$count..."
+	zip -rq $ZIPNAME.zip $MODNAME/
+	scp $ZIPNAME.zip ubuntu@$host:~/
+	if [ $NODETYPE = "web" ]; then
+		scp -C schools.txt ubuntu@$host:~/
+	fi	
+}
+
+function cleanupAndExec () {
+	ZIPNAME=$1
+	FILE2=$2
+	host=$3
+	cmd="sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'; rm -rf ~/$ZIPNAME.zip"
+	
+	### cleanup
+	rm ./$MODNAME/manifests/*.bak $ZIPNAME.zip
+	
+	echo "done. executing puppet code on each node..."
+	
+	### unzip & execute remotely	
+	if [ -n "$host" ]; then
+		### execute single
+		ssh -n ubuntu@$host "$cmd"
+	else
+		### execute on all nodes
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$cmd"
+	fi
+}
+
 if [ -n "$1" ] && [ -n "$2" ]; then
 	GROUP=$2			
 	NODETYPE=$(getType $GROUP)
@@ -64,33 +110,33 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			host=$(echo $i | awk '{ print $2 }')
 			ipaddr=$(echo $i | awk '{ print $3 }')
 			
-	 		if [ -n "$host" ]; then		
-				### set node id and set tag
-				sed -e "1,/\\\$nodename/ s/\\\$nodename.*/\\\$nodename = \"$NODETYPE$count\"/" -i.bak ./$MODNAME/manifests/init.pp
-				
-				# skip autotagging and LB regging when running on local virtual machine
-				if [ -z "$3" ]; then				
-					ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"					
-				fi
-								
-				### push updated puppet script
-				echo "copying $MODNAME.zip to $NODETYPE$count..."
-				zip -rq $ZIPNAME.zip $MODNAME/
-				scp $ZIPNAME.zip ubuntu@$host:~/
-				if [ $NODETYPE = "web" ]; then
-					scp -C schools.txt ubuntu@$host:~/
-				fi
-				
-	 			count=$((count+1))
-	 		fi		
+			if [ -n "$host" ]; then
+				pushConfig $instid $host $ipaddr $count $NODETYPE $ZIPNAME
+				count=$((count+1))
+			fi
 	 	done < $FILE1	
 		
-		### cleanup
-		rm ./$MODNAME/manifests/*.bak $ZIPNAME.zip
-		
-		echo "done. executing puppet code on each node..."
-		### unzip & execute remotely
-		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "sudo rm -rf $MODULESDIR/$MODNAME; sudo unzip -qq -o ~/$ZIPNAME.zip -d $MODULESDIR/ && sudo puppet apply -e 'include $MODNAME'; rm -rf ~/$ZIPNAME.zip"
+		cleanupAndExec $ZIPNAME $FILE2
+	elif [ `expr $1 : '^node-.*$'` != 0 ]; then
+		tag=$(expr $1 : '^node-\(.*\)$')	
+		count=$(expr $tag : '^[a-zA-Z]*\([0-9]*\)$')	
+		i=$(ec2din --region $REGION --filter group-name=$GROUP -F "tag-value=$tag" | egrep ^INSTANCE | awk '{ print $2,$4,$15}')
+		instid=$(echo $i | awk '{ print $1 }')
+		host=$(echo $i | awk '{ print $2 }')
+		ipaddr=$(echo $i | awk '{ print $3 }')
+		if [ -n "$host" ]; then
+			pushConfig $instid $host $ipaddr $count $NODETYPE $ZIPNAME
+			cleanupAndExec $ZIPNAME $FILE2 $host
+		fi		
+	elif [ "$1" = "lbadd" ]; then	
+	 	### register instance with LB
+		$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --instances $2
+	elif [ "$1" = "lbremove" ]; then	
+	 	### deregister instance from LB
+		$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --instances $2
+	elif [ "$1" = "restoredb" ]; then
+		### load snapshot from S3 + unpack
+		echo "TODO"
 	fi
 elif [ "$1" = "checkdb" ]; then
 	### check if db is up and running and ring is OK
@@ -99,7 +145,7 @@ elif [ "$1" = "checkdb" ]; then
 elif [ "$1" = "initdb" ]; then
 	### load schema definition from file on db1
 	db1host=$(head -n 1 "db$F2SUFFIX")
-	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema-light.txt"
+	ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/cassandra/bin/cassandra-cli -h localhost -f /usr/share/puppet/modules/scoold/files/schema-light.txt"	
 elif [ "$1" = "esindex" ]; then
 	### create elasticsearch index
 	es1host=$(head -n 1 "search$F2SUFFIX")	
@@ -114,16 +160,6 @@ elif [ "$1" = "esriver" ]; then
 	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
 	cmd5="sudo -u elasticsearch curl -s -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
 	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5"
-elif [ "$1" = "lbadd" ]; then	
-	if [ -n "$2" ]; then
-	 	# register instance with LB
-		$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
-	fi
-elif [ "$1" = "lbremove" ]; then	
-	if [ -n "$2" ]; then
-	 	# deregister instance from LB
-		$AWS_ELB_HOME/bin/elb-deregister-instances-with-lb $LBNAME --region $REGION --quiet --instances $2
-	fi
 elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
