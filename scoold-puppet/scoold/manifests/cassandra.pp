@@ -13,7 +13,8 @@ class scoold::cassandra {
 	$seeds = "seeds:"
 	$listenaddr = "listen_address:"
 	$rpcaddr = "rpc_address:"
-	$rpcstype = "rpc_server_type:"	
+	$concreads = "concurrent_reads:"
+	$concwrites = "concurrent_writes:"
 	$comptmbps = "compaction_throughput_mb_per_sec:"
 	$nodeid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2')) - 1
 	$tokens = ["0", "56713727820156410577229101238628035242", "113427455640312821154458202477256070485"]
@@ -73,16 +74,21 @@ class scoold::cassandra {
 				command => "sed -e '1,/${rpcaddr}/ s/${rpcaddr}.*/${rpcaddr} 0\\.0\\.0\\.0/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
 				before => Exec["start-cassandra"];	
-			"set-rpc-server-type": 
-				command => "sed -e '1,/${rpcstype}/ s/${rpcstype}.*/${rpcstype} hsha/' -i.bak ${casconf}",
-				require => Exec["rename-cassandra"],
-				before => Exec["start-cassandra"],
-				onlyif => "test '${scoold::inproduction}' = 'false'";
 			"set-compation-throughput": 
 				command => "sed -e '1,/${comptmbps}/ s/${comptmbps}.*/${comptmbps} 1/' -i.bak ${casconf}",
 				require => Exec["rename-cassandra"],
 				before => Exec["start-cassandra"],
+				onlyif => "test '${scoold::inproduction}' = 'false'";
+			"set-concurrent-reads": 
+				command => "sed -e '1,/${concreads}/ s/${concreads}.*/${concreads} 16/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"],
 				onlyif => "test '${scoold::inproduction}' = 'false'";		
+			"set-concurrent-writes": 
+				command => "sed -e '1,/${concwrites}/ s/${concwrites}.*/${concwrites} 8/' -i.bak ${casconf}",
+				require => Exec["rename-cassandra"],
+				before => Exec["start-cassandra"],
+				onlyif => "test '${scoold::inproduction}' = 'false'";
 			"download-jna":
 				command => "sudo -u ${cassandrausr} wget --no-check-certificate -O ${casdir}/lib/jna.jar ${scoold::jnalink}",
 				require => Exec["rename-cassandra"],
@@ -120,6 +126,11 @@ class scoold::cassandra {
 			"${cassandrahome}/backupdb.sh":
 				ensure => file,
 				source => "puppet:///modules/scoold/backupdb.sh",
+				owner => $cassandrausr,
+				mode => 700;
+			"${cassandrahome}/restoredb.sh":
+				ensure => file,
+				source => "puppet:///modules/scoold/restoredb.sh",
 				owner => $cassandrausr,
 				mode => 700;
 			"${cassandrahome}/.s3cfg":

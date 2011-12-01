@@ -104,11 +104,14 @@ public class CasDAOUtils extends AbstractDAOUtils {
 		Cluster cluster = HFactory.getOrCreateCluster(CasDAOFactory.CLUSTER, config);
 		keyspace = HFactory.createKeyspace(CasDAOFactory.KEYSPACE, cluster,
 			new ConsistencyLevelPolicy() {
-				public HConsistencyLevel get(OperationType arg0) {
-					return HConsistencyLevel.QUORUM;
-				}
-				public HConsistencyLevel get(OperationType arg0, String arg1) {
-					return HConsistencyLevel.QUORUM;
+				public HConsistencyLevel get(OperationType arg0) { return getLevel(arg0); }
+				public HConsistencyLevel get(OperationType arg0, String arg1) { return getLevel(arg0); }
+				private HConsistencyLevel getLevel(OperationType arg0){
+					switch(arg0){
+						case READ: return HConsistencyLevel.ONE;
+						case WRITE: return HConsistencyLevel.QUORUM;
+						default: return HConsistencyLevel.ONE;
+					}
 				}
 			}, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE);		
 		mutator = createMutator();

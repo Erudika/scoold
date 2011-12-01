@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 
 # Latest build: 
 # https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web.war

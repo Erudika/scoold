@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 
 LBNAME="ScooldLB"
 REGION="eu-west-1"
