@@ -23,8 +23,8 @@ set httpd port 2812 and
 set daemon 120 with start delay 60
 set logfile /home/ubuntu/.monit.log
 check process elasticsearch with pidfile "/home/elasticsearch/elasticsearch.pid"
-  start program = "/sbin/start elasticsearch" with timeout 60 seconds
-  stop program  = "/sbin/stop elasticsearch"
+  start program = "/bin/rm -rf /home/elasticsearch/elasticsearch.pid; /usr/bin/sudo -u elasticsearch /home/elasticsearch/elasticsearch/bin/elasticsearch -p /home/elasticsearch/elasticsearch.pid" with timeout 60 seconds
+  stop program  = "/usr/bin/sudo -u elasticsearch /bin/kill `/bin/cat /home/elasticsearch/elasticsearch.pid`"
   if failed port 9200 type tcp
      with timeout 45 seconds
      then restart

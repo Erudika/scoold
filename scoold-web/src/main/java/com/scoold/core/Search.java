@@ -14,6 +14,7 @@ import com.scoold.util.Queue;
 import com.scoold.util.QueueFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -116,10 +117,9 @@ public final class Search{
 		int start = (p == null) ? 0 : (p.intValue() - 1) * max;
 		// Types are used for posts: e.g. post of type answer, feedback, etc.
 		String type = clazz.getSimpleName().toLowerCase();
-		
-		T so = null;
-		
+		ArrayList<String> keys = new ArrayList<String>();
 		ArrayList<T> list = new ArrayList<T>();
+		
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.DFS_QUERY_AND_FETCH).setTypes(type)
@@ -130,7 +130,6 @@ public final class Search{
 			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
 			if(page != null)	page.setValue(page.longValue() + 1);
 
-			ArrayList<String> keys = new ArrayList<String>();
 			for (SearchHit hit : hits) {
 				if(clazz.equals(Post.class)){
 					SearchHitField qid = hit.field("parentpostid");
@@ -144,8 +143,9 @@ public final class Search{
 				}
 			}
 
-			so = clazz.newInstance();
+			T so = clazz.newInstance();
 			list = (ArrayList<T>) so.readAllForKeys(keys);
+			repairIndex(clazz, list, keys, itemcount);
 		} catch (Exception e) {
 			logger.warning(e.toString());
 			refreshClient();
@@ -178,7 +178,7 @@ public final class Search{
 				.setSize(max).setExplain(true).execute().actionGet();
 
 			SearchHits hits = response.getHits();
-
+			
 			for (SearchHit hit : hits) {
 				Tag tag = new Tag((String) hit.field("tag").getValue());
 				tag.setId(NumberUtils.toLong(hit.getId()));
@@ -192,8 +192,8 @@ public final class Search{
 		return tags;
 	}
 
-	public ArrayList<Post> findPostsForTags(PostType type, ArrayList<String> tags, MutableLong page,
-			MutableLong itemcount){
+	public ArrayList<Post> findPostsForTags(PostType type, ArrayList<String> tags, 
+			MutableLong page, MutableLong itemcount){
 
 		if(searchClient == null || tags == null || tags.isEmpty())
 			return new ArrayList<Post>(0);
@@ -202,6 +202,8 @@ public final class Search{
 		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
 		
 		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<Post> list = new ArrayList<Post>();
+		
 		try {
 			OrFilterBuilder tagFilter = FilterBuilders.orFilter(
 					FilterBuilders.termFilter("tags", tags.remove(0)));
@@ -223,26 +225,23 @@ public final class Search{
 					andFilter))
 				.addSort(SortBuilders.fieldSort("_id").order(SortOrder.DESC))
 				.setFrom(start).setSize(MAX_ITEMS).setExplain(true).execute().actionGet();
-
+			
 			SearchHits hits = response.getHits();
-			if (itemcount != null) {
-				itemcount.setValue(hits.getTotalHits());
-
-			}
-			if (page != null) {
-				page.setValue(page.longValue() + 1);
-
-
-			}
 			for (SearchHit hit : hits) {
 				keys.add(hit.getId());
 			}
+			
+			if (itemcount != null) itemcount.setValue(hits.getTotalHits());
+			if (page != null) page.setValue(page.longValue() + 1);
+			
+			list = new Post().readAllForKeys(keys);
+			repairIndex(Post.class, list, keys, itemcount);
 		} catch (Exception e) {
 			logger.warning(e.toString());
 			refreshClient();
 		}
 
-		return new Post().readAllForKeys(keys);
+		return list;
 	}
 
 	public ArrayList<Post> findSimilarQuestions(Post toThis, int max){
@@ -250,7 +249,8 @@ public final class Search{
 			return new ArrayList<Post>(0);
 
 		ArrayList<String> keys = new ArrayList<String>();
-
+		ArrayList<Post> list = new ArrayList<Post>();
+		
 		try {
 			String likeTxt = toThis.getTitle().concat(" ").concat(toThis.getBody()).
 					concat(" ").concat(toThis.getTags());
@@ -270,12 +270,15 @@ public final class Search{
 			for (SearchHit hit : hits) {
 				keys.add(hit.getId());
 			}
+			
+			list = new Post().readAllForKeys(keys);
+			repairIndex(Post.class, list, keys, null);
 		} catch (Exception e) {
 			logger.warning(e.toString());
 			refreshClient();
 		}
 
-		return new Post().readAllForKeys(keys);
+		return list;
 	}
 
 	public ArrayList<Post> findUnansweredQuestions(MutableLong page, MutableLong itemcount){
@@ -285,6 +288,7 @@ public final class Search{
 		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
 		
 		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<Post> list = new ArrayList<Post>();
 
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
@@ -301,6 +305,12 @@ public final class Search{
 			for (SearchHit hit : hits) {
 				keys.add(hit.getId());
 			}
+			
+			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
+			if(page != null)	page.setValue(page.longValue() + 1);
+			
+			list = new Post().readAllForKeys(keys);
+			repairIndex(Post.class, list, keys, itemcount);
 		} catch (Exception e) {
 			logger.warning(e.toString());
 			refreshClient();
@@ -313,7 +323,8 @@ public final class Search{
 		if(searchClient == null || StringUtils.isBlank(keywords))
 			return new ArrayList<User>(0);
 
-		ArrayList<User> users = new ArrayList<User>();
+		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<User> list = new ArrayList<User>();
 		
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
@@ -326,16 +337,17 @@ public final class Search{
 			SearchHits hits = response.getHits();
 
 			for (SearchHit hit : hits) {
-				User user = new User(NumberUtils.toLong(hit.getId()));
-				user.setFullname((String) hit.field("fullname").getValue());
-				users.add(user);
+				keys.add(hit.getId());
 			}
+			
+			list = new User().readAllForKeys(keys);
+			repairIndex(User.class, list, keys, null);
 		} catch (Exception e) {
 			logger.warning(e.toString());
 			refreshClient();
 		}
 		
-		return users;
+		return list;
 	}
 
 	public <T extends Searchable<?>> long getHits(Class<T> clazz, String keywords){
@@ -357,30 +369,57 @@ public final class Search{
 		return (response == null) ? 0L : response.getCount();
 	}
 	
+	private <T extends Searchable<?>> void repairIndex(Class<T> clazz, ArrayList<T> list, 
+			ArrayList<String> keys, MutableLong itemcount) throws Exception {
+		int countRemoved = 0;
+		if(list.contains(null)){
+			for (int i = 0; i < list.size(); i++) {
+				if(list.get(i) == null){
+					String id = keys.get(i);
+					T nul = clazz.newInstance();
+					nul.setId(NumberUtils.toLong(id));
+					unindex(nul);
+					countRemoved++;
+				}
+			}
+			list.removeAll(Collections.singleton(null));
+		}
+		if(itemcount != null && countRemoved > 0) {
+			itemcount.setValue(itemcount.toLong() - countRemoved);
+		}
+	}
+	
 	private void refreshClient(){
 		try {
 			if(searchClient != null){
 				searchClient.close();
 				searchClient = null;
 			}
+			boolean inprod = "true".equals(System.getProperty("com.scoold.production", "false"));
 			NodeBuilder nb = NodeBuilder.nodeBuilder();
 			nb.clusterName(Search.INDEX_NAME);
-			nb.settings().put("cloud.aws.region", "eu-west-1");
-			nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
-			nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
-			nb.settings().put("client.transport.sniff", false);
-			nb.settings().put("network.tcp.keep_alive", true);
-			nb.settings().put("discovery.type", "ec2");
-			nb.settings().put("discovery.ec2.groups", "elasticsearch");
-			nb.settings().put("discovery.ec2.availability_zones", "eu-west-1a");
+			if(inprod){
+				nb.settings().put("cloud.aws.region", "eu-west-1");
+				nb.settings().put("cloud.aws.access_key", AmazonQueue.ACCESSKEY);
+				nb.settings().put("cloud.aws.secret_key", AmazonQueue.SECRETKEY);
+				nb.settings().put("client.transport.sniff", false);
+				nb.settings().put("network.tcp.keep_alive", true);
+				nb.settings().put("discovery.type", "ec2");
+				nb.settings().put("discovery.ec2.groups", "elasticsearch");
+				nb.settings().put("discovery.ec2.availability_zones", "eu-west-1a");
+			}
 
 			searchClient = new TransportClient(nb.settings());
-			String[] eshosts = System.getProperty("com.scoold.eshosts", "localhost").split(",");
-			for (String host : eshosts) {
+			if(inprod){
+				String[] eshosts = System.getProperty("com.scoold.eshosts", "localhost").split(",");
+				for (String host : eshosts) {
+					((TransportClient) searchClient).addTransportAddress(
+							new InetSocketTransportAddress(host, 9300));				
+				}
+			}else{
 				((TransportClient) searchClient).addTransportAddress(
-						new InetSocketTransportAddress(host, 9300));				
-			}
-		
+							new InetSocketTransportAddress("localhost", 9300));				
+			}		
 			searchClient.admin().indices().refresh(Requests.refreshRequest()).actionGet();			
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to refresh search client: {0}", e.toString());		

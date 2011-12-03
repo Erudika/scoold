@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author alexb
  */
-public interface Searchable<T> {
+public interface Searchable<T> extends ScooldObject {
 
 	public ArrayList<T> readAllForKeys(ArrayList<String> keys);
 

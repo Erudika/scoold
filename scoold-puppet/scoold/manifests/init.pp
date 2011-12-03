@@ -9,7 +9,7 @@ class scoold {
 	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "db1"
+	$nodename = "db2"
 	$dbseeds = "10.227.135.64,10.48.161.238"
 	#--------------------------------------------------#	
 	

@@ -134,9 +134,14 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	elif [ "$1" = "lbremove" ]; then	
 	 	### deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --instances $2
+	elif [ "$1" = "backupdb" ]; then
+		### backup snapshot to S3
+		db1host=$(head -n 1 "db$F2SUFFIX")		
+		ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/backupdb.sh $2"
 	elif [ "$1" = "restoredb" ]; then
-		### load snapshot from S3 + unpack
-		echo "TODO"
+		### load snapshot from S3
+		db1host=$(head -n 1 "db$F2SUFFIX")
+		ssh -n ubuntu@$db1host "sudo -u cassandra /home/cassandra/restoredb.sh $2"
 	fi
 elif [ "$1" = "checkdb" ]; then
 	### check if db is up and running and ring is OK
@@ -164,6 +169,6 @@ elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
 else
-	echo "USAGE: $0 checkdb | initdb | inites | [init | all] group"
+	echo "USAGE: $0 checkdb | initdb | backupdb file | restoredb file | inites | [ init | all | node-xxx ] group"
 fi
 # rsync --verbose --progress --stats --compress --recursive --times --perms --links --delete --rsync-path="sudo rsync" ~/Desktop/scoold_snapshots/1317214358735/ ubuntu@192.168.113.128:/var/lib/cassandra/data/scoold/

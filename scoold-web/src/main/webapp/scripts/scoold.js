@@ -451,7 +451,7 @@ $(function () {
 	});
 	
 	// show ajax indicator when submit is pressed
-	$("input[type=submit]").not("input.button-link").on("click", function(){
+	$("input[type=submit]").not("input.button-link, input.search-btn").on("click", function(){
 		$(this).addClass("loading");
 //		$("img.ajaxwait", $(this).parent()).show();
 		return true;
@@ -1460,79 +1460,56 @@ $(function () {
 	/****************************************************
      *                      OPENID
      ****************************************************/
-	//OPENID VARS
-	var openid_input = $("#openid_identifier", $("fieldset"));
+	function setInputSelection(input, startPos, endPos) {
+        if (typeof input.selectionStart != "undefined") {
+            input.selectionStart = startPos;
+            input.selectionEnd = endPos;
+        } else if (document.selection && document.selection.createRange) {
+            // IE branch
+            input.focus();
+            input.select();
+            var range = document.selection.createRange();
+            range.collapse(true);
+            range.moveEnd("character", endPos);
+            range.moveStart("character", startPos);
+            range.select();
+        }
+    }
+	
+	var openid_identifier = $("#openid_identifier");
     
-	if(openid_input.length > 0){
-		var cookie_name2 = 'openid_url',
-		openid_username = $("#openid-username"),
-		openid_selectclass = "openidbtn-selected",
-		cookie_expires = 6*30,	// 6 months.
-		openid_form = openid_input.parents("form"),
-		openid_url = readCookie(cookie_name2);
+	if(openid_identifier.length > 0){
+		var cookie_name = 'openid_url',
+		cookie_expires = 30,	// 30 days.
+		openid_form = openid_identifier.parents("form"),
+		openid_url = readCookie(cookie_name);
 
 		if(openid_form.attr("id") !== "add-openid-form"){
-			if(openid_url) {
-				openid_input.val(openid_url);
+			if($.trim(openid_url) !== "") {
+				openid_identifier.val(openid_url);
+				openid_identifier.show();
 			}
 		}
 		openid_form.submit(function(){
-			var value2 = openid_input.val();
-			createCookie(cookie_name2, value2, cookie_expires);
+			var value2 = openid_identifier.val();
+			createCookie(cookie_name, value2, cookie_expires);
 			return true;
 		});		
-		openid_username.keypress(function(e){
-			var url = openid_url;
-			var c = String.fromCharCode(e.which);
-
-			if (e.which !== 8 && e.which !== 13) {
-				url = url.replace('(username)', $(this).val()+c);
-			}else if (e.which === 8) {
-				var ns = $(this).val();
-				ns = ns.substring(0, ns.length-1);
-				url = url.replace('(username)', ns);
-			}else if(e.which === 13){
-				url = url.replace('(username)', $(this).val());
-			}
-			openid_input.val(url);            
-		});
-		openid_username.blur(function(){
-			var url = openid_url;
-			url = url.replace('(username)', openid_username.val());
-			openid_input.val(url);
-		});
-
-		
-		$("a.openid-select").click(function(){
-			$("#openid-btns").slideToggle("fast");
-			$(this).hide("fast");
-			return false;
-		});
-		$("a.openidbtns-back").click(function(){
-			crossfadeToggle($(this).parent()[0], $(this).parent().siblings("div")[0]);
-			return false;
-		});
 		$("a.openidbtn-small, a.openidbtn-large").click(function(){
-			highlight(this, openid_selectclass);
 			var that = $(this);
-			var label = that.text();
 			var url = that.attr("href");
-			openid_url = url;
-			url = url.replace('(username)', openid_username.val());
-			openid_input.val(url);
-			//openid_input.val(openid_url);
-			if (label !== "") {
-				//prompt user fo username
-				openid_username.prev("p").text(label);
-				crossfadeToggle(that.parent()[0], openid_username.parent()[0]);
+			openid_identifier.val(url);			
+			if (url.indexOf("(") >= 0 && url.indexOf(")") >= 0) {
+				openid_identifier.show().focus();
+				setInputSelection(openid_identifier.get(0), url.indexOf("("), url.indexOf(")") + 1);
 			} else {
-				openid_username.parent().hide();
+				openid_identifier.hide();
 				openid_form.submit();
 			}
 			return false;
 		});
 	}
-
+	
 	/************************************************************************
      *                           JS VALIDATION
      ************************************************************************/

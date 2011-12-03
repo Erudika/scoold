@@ -1714,7 +1714,7 @@
 ###################################
 #macro(showcount $param )
 	#if($param > 1)
-		<span class="reputationbox rounded3 phs">$!param</span>
+		<span class="lightbluebg rounded3 phs">$!param</span>
 	#end
 #end
 ################# OPENID MACROS #####################
@@ -1722,25 +1722,21 @@
 	#set($lproviders = {
 		'google': {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'},
 		'yahoo': {'name': 'Yahoo', 'url': 'http://yahoo.com/'},
-		'aol': {'name': 'AOL', 'label': 'AOL screenname','url': 'http://openid.aol.com/(username)'}
+		'aol': {'name': 'AOL', 'url': 'http://openid.aol.com/(username)'}
 	})
 	#set($sproviders = {
-		'myopenid': {'name': 'MyOpenID','label': 'MyOpenID username','url': 'http://(username).myopenid.com/'},
-		'livejournal': {'name': 'LiveJournal','label': 'Livejournal username','url': 'http://(username).livejournal.com/'},
-		'wordpress': {'name': 'Wordpress.com','label': 'Wordpress.com username','url': 'http://(username).wordpress.com/'},
-		'blogger': {'name': 'Blogger','label': 'Blogger username','url': 'http://(username).blogspot.com/'},
-		'symantec': {'name': 'Symantec','label': 'Symantec username','url': 'http://(username).pip.verisignlabs.com/'},
-		'flickr': {'name': 'Flickr','label': 'Flickr username','url': 'http://flickr.com/photos/(username)'},
-		'myid': {'name': 'myID','label': 'myID username','url': 'http://(username).myid.net'},
-		'claimid': {'name': 'ClaimID','label': 'ClaimID username','url': 'http://claimid.com/(username)'},
-		'vidoop': {'name': 'myVidoop','label': 'myVidoop username','url': 'http://(username).myvidoop.com/'}
+		'myopenid': {'name': 'MyOpenID','url': 'http://(username).myopenid.com/'},
+		'livejournal': {'name': 'LiveJournal','url': 'http://(username).livejournal.com/'},
+		'wordpress': {'name': 'Wordpress.com','url': 'http://(username).wordpress.com/'},
+		'blogger': {'name': 'Blogger','url': 'http://(username).blogspot.com/'},
+		'symantec': {'name': 'Symantec','url': 'http://(username).pip.verisignlabs.com/'},
+		'flickr': {'name': 'Flickr','url': 'http://flickr.com/photos/(username)'},
+		'myid': {'name': 'myID','url': 'http://(username).myid.net'},
+		'claimid': {'name': 'ClaimID','url': 'http://claimid.com/(username)'},
+		'vidoop': {'name': 'myVidoop','url': 'http://(username).myvidoop.com/'}
 	})
-	#set($imgext = ".gif")
-	<div class="hide ptl center">
-		<input id="openid-username" type="text" value="" class="nicebox" />
-		<a class="openidbtns-back button-small rounded3" href="#" title="Back">${lang.get("close")}</a>
-	</div>
 	<div class="clearfix p100">
+		<input id="openid_identifier" type="text" name="openid_identifier" value="http://" class="nicebox openidbox p90 vertcenter hide"/>
 		#foreach($provider in $lproviders.entrySet())
 			<a id="oids-$!provider.key" title="$!provider.value.name" href="$provider.value.url" class="openidbtn-large rounded5">$!provider.value.label</a>
 		#end
@@ -1973,8 +1969,7 @@
 			#if($attachOnly) #set($oidurl = "attach_openid") #else #set($oidurl = "openid_auth") #end
 			<form method="post" action="$context/$oidurl" class="mtl">
 				<fieldset>
-					#sectoken(false)
-					<input id="openid_identifier" type="text" name="openid_identifier" value="http://" class="nicebox openidbox p90 vertcenter"/>
+					#sectoken(false)					
 					<div id="openid-btns">#getopenidbtns()</div>
 					<div class="center mtl">
 						#if($attachOnly)
@@ -1993,7 +1988,7 @@
 			#if(!$attachOnly)
 				<h2 id="fb-login">$lang.get("signin.facebook")</h2>
 			#end
-			<div class="mvl">
+			<div class="mvl ptl">
 				<fb:login-button id="$fbbtnclass" size="large">$lang.get("signin.title")</fb:login-button>
 			</div>
 		</div>

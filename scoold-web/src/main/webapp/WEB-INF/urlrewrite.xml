@@ -11,7 +11,7 @@
         <from>^/(\d+)$</from>
         <to>/click/error.htm?e=$1</to>
     </rule>
-    <!-- ======== GLOBAL RESOURCES PROTECTION (AKA 'GRP') ^_^ ========== -->
+    <!-- ======== PROTECTED ========== -->
 	<rule>
         <from>^/p/(.*)$</from>
 		<to type="redirect">%{context-path}/$1</to>

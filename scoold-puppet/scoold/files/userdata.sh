@@ -11,7 +11,7 @@ echo 'sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true' | debconf-set-sel
 apt-get -y update && apt-get -y upgrade
 
 # install all the core apps
-apt-get -y install sun-java6-jdk puppet monit htop dstat unzip wget curl s3cmd
+apt-get -y install sun-java6-jdk puppet monit htop dstat unzip wget curl s3cmd denyhosts
 
 # create puppet's modules dir
 mkdir -p /usr/share/puppet/modules

@@ -105,7 +105,7 @@ class scoold::elasticsearch {
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "sudo -u ${elasticsearchusr} ${esdir}/bin/elasticsearch -p ${elasticsearchhome}/elasticsearch.pid",
+			command => "rm -rf ${elasticsearchhome}/elasticsearch.pid; sudo -u ${elasticsearchusr} ${esdir}/bin/elasticsearch -p ${elasticsearchhome}/elasticsearch.pid",
 			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

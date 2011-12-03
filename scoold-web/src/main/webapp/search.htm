@@ -44,26 +44,31 @@
 			#if(!$questionlist.isEmpty())
 				<h2>$lang.get("questions.title") #showcount($questioncount.longValue())</h2>
 				#paginate($questionpage.longValue() "#questionspage($questionlist)" $questioncount.longValue() $params "pageless")
+				<br />
 			#end
 
 			#if(!$feedbacklist.isEmpty())
 				<h2>$lang.get("feedback.title") #showcount($feedbackcount.longValue())</h2>
 				#paginate($feedbackpage.longValue() "#questionspage($feedbacklist)" $feedbackcount.longValue() $params "pageless")
+				<br />
 			#end
 
 			#if(!$userlist.isEmpty())
 				<h2>$lang.get("people.title") #showcount($usercount.longValue())</h2>
 				#paginate($userpage.longValue() "#peoplepage($userlist)" $usercount.longValue() $params "pageless")
+				<br />
 			#end
 
 			#if(!$schoollist.isEmpty())
 				<h2>$lang.get("schools.title") #showcount($schoolcount.longValue())</h2>
 				#paginate($schoolpage.longValue() "#schoolspage($schoollist)" $schoolcount.longValue() $params "pageless")
+				<br />
 			#end
-
+			
 			#if(!$classlist.isEmpty())
 				<h2>$lang.get("classes.title") #showcount($classcount.longValue())</h2>
 				#paginate($classpage.longValue() "#classespage($classlist)" $classcount.longValue() $params "pageless")
+				<br />
 			#end
 		#end
 	</div>

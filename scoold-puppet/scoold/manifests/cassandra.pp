@@ -121,27 +121,27 @@ class scoold::cassandra {
 		}
 	}
 	
-	if $nodeid == 0 {
-		file { 			
-			"${cassandrahome}/backupdb.sh":
-				ensure => file,
-				source => "puppet:///modules/scoold/backupdb.sh",
-				owner => $cassandrausr,
-				mode => 700;
-			"${cassandrahome}/restoredb.sh":
-				ensure => file,
-				source => "puppet:///modules/scoold/restoredb.sh",
-				owner => $cassandrausr,
-				mode => 700;
-			"${cassandrahome}/.s3cfg":
-				ensure => file,
-				source => "puppet:///modules/scoold/s3cfg.txt",
-				owner => $cassandrausr,
-				mode => 600;
-		}
-				
+	file { 			
+		"${cassandrahome}/backupdb.sh":
+			ensure => file,
+			source => "puppet:///modules/scoold/backupdb.sh",
+			owner => $cassandrausr,
+			mode => 700;
+		"${cassandrahome}/restoredb.sh":
+			ensure => file,
+			source => "puppet:///modules/scoold/restoredb.sh",
+			owner => $cassandrausr,
+			mode => 700;
+		"${cassandrahome}/.s3cfg":
+			ensure => file,
+			source => "puppet:///modules/scoold/s3cfg.txt",
+			owner => $cassandrausr,
+			mode => 600;
+	}	
+	
+	if $nodeid == 0 {				
 		cron { "snapshot":
-			command => "${casdir}/bin/nodetool -h localhost snapshot && ${cassandrahome}/backupdb.sh; ${casdir}/bin/nodetool -h localhost clearsnapshot",
+			command => "${cassandrahome}/backupdb.sh",
 			user => $cassandrausr,
 			hour => [10, 22],
 			minute => 1,
@@ -185,7 +185,7 @@ class scoold::cassandra {
 		
 	exec { 
 		"start-cassandra":
-			command => "sudo -u ${cassandrausr} ${casdir}/bin/cassandra -p ${cassandrahome}/cassandra.pid",
+			command => "rm -rf ${cassandrahome}/cassandra.pid; sudo -u ${cassandrausr} ${casdir}/bin/cassandra -p ${cassandrahome}/cassandra.pid",
 			unless => "test -e ${cassandrahome}/cassandra.pid", 
 			require => Exec["set-cluster-name"];
 		"configure-rsyslog":

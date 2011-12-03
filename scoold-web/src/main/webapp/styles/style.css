@@ -387,11 +387,11 @@ input.openidbox{ padding-left: 35px; }
 .editable{border: 3px white solid;}
 .editable:hover{border: 3px #CCCCCC dashed;cursor: text;}
 .bold{ font-weight: bold;}
-.gigaText{ line-height: 1.0em;font-size: 4em;}
-.megaText{ line-height: 1.0em;font-size: 3em;}
-.hugeText{ line-height: 1.0em;font-size: 2.4em;}
-.largeText{line-height: 1.2em;font-size: 1.8em;}
-.mediumText {line-height: 1.2em;font-size: 1.3em;}
+.gigaText{ line-height: 1.0em;font-size: 4em; margin: 7px 0;}
+.megaText{ line-height: 1.0em;font-size: 3em; margin: 7px 0;}
+.hugeText{ line-height: 1.0em;font-size: 2.4em; margin: 5px 0;}
+.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0;}
+.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0;}
 .smallText {line-height: 1em;font-size: 0.8em;}
 .tinyText{line-height: 0.8em;font-size: x-small;}
 .hide { display: none; }
@@ -422,7 +422,7 @@ input.openidbox{ padding-left: 35px; }
 .uppercase{ text-transform: uppercase; }
 .lowercase{ text-transform: lowercase; }
 .thickborder{ border: 2px solid #CCCCCC;}
-.darkborder{ border: 1px solid #777777; }
+.darkborder{ border: 1px solid #444444; }
 .lightborder{ border: 1px solid #CCCCCC; }
 .rightborder{ border-right: 2px dashed #CCCCCC; }
 .noborder img { border: 0 none; outline: 0; }
@@ -800,8 +800,7 @@ a.openidbtn-large {
     width:92px;
 }
 a.openidbtn-large, a.openidbtn-small{ text-indent:-99999em;}
-a.openidbtn-large:hover, a.openidbtn-small:hover{border: 1px solid #222222;}
-a.openidbtn-selected {border: 1px solid green !important;}
+a.openidbtn-large:hover, a.openidbtn-small:hover{border: 1px solid #444444;}
 a.openidbtn-small {
     border: 1px solid #DDD;
     float:left;

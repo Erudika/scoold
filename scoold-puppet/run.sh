@@ -19,7 +19,7 @@ DATAFILE="./scoold/files/userdata.sh"
 SSHKEY="alexb-pubkey"
 NDB=3
 NWEB=2
-NSEARCH=1
+NSEARCH=2
 
 function ec2req () {
 	GROUP=$1
@@ -56,21 +56,3 @@ if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
 else
 	echo "USAGE:  $0 type ami (group | all) [size] [nospot]"
 fi
-
-################
-# OLD RUN SCRIPT
-################
-
-# instanceid=$(ec2-run-instances -g $GROUP --user-data-file $DATAFILE --region $REGION -k $SSHKEY -t $TYPE $AMI | egrep ^INSTANCE | cut -f2)
-# if [ -z "$instanceid" ]; then
-#     echo "ERROR: it failed!";
-#     exit;
-# else
-#     echo "$NAME [$instanceid] is booting up..."
-# fi    
-# 
-# # wait for the instance to be fully operational
-# while host=$(ec2-describe-instances --region $REGION "$instanceid" | egrep ^INSTANCE | cut -f4) && test -z $host; do sleep 3; done
-# echo "$host"
-
-################

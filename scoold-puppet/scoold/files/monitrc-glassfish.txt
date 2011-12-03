@@ -23,8 +23,8 @@ set httpd port 2812 and
 set daemon 120 with start delay 60
 set logfile /home/ubuntu/.monit.log
 check process glassfish with pidfile "/home/glassfish/glassfish.pid"
-  start program = "/sbin/start glassfish" with timeout 60 seconds
-  stop program  = "/sbin/stop glassfish"
+  start program = "/bin/rm -rf /home/glassfish/glassfish.pid; /usr/bin/sudo -u glassfish /home/glassfish/glassfish/bin/asadmin start-domain domain1 && sudo -u glassfish /bin/echo `/bin/pidof java` | /usr/bin/tee /home/glassfish/glassfish.pid" with timeout 60 seconds
+  stop program  = "/usr/bin/sudo -u glassfish /home/glassfish/glassfish/bin/asadmin stop-domain domain1 --secure"
   if failed port 8080 type tcp
      with timeout 45 seconds
      then restart
