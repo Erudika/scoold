@@ -29,9 +29,10 @@
 		#if($schoolcount == 0)
 			<br />
 			<br />
-			<form method="post" action="$adminlink?createschools=true">
+			<form method="post" action="$adminlink">
 				<fieldset>
 					#sectoken(false)
+					<input type="hidden" name="createschools" value="true"/>
 					<input type="submit" value="Create schools" class="button rounded3 rusure"/>
 				</fieldset>
 			</form>

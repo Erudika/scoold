@@ -20,11 +20,11 @@ set alert sashko5@gmail.com only on { timeout }  # receive all alerts
 set httpd port 2812 and
   allow 127.0.0.1         # allow localhost to connect to the server and
 
-set daemon 120 with start delay 60
+set daemon 120
 set logfile /home/ubuntu/.monit.log
 check process glassfish with pidfile "/home/glassfish/glassfish.pid"
-  start program = "/bin/rm -rf /home/glassfish/glassfish.pid; /usr/bin/sudo -u glassfish /home/glassfish/glassfish/bin/asadmin start-domain domain1 && sudo -u glassfish /bin/echo `/bin/pidof java` | /usr/bin/tee /home/glassfish/glassfish.pid" with timeout 60 seconds
-  stop program  = "/usr/bin/sudo -u glassfish /home/glassfish/glassfish/bin/asadmin stop-domain domain1 --secure"
+  start program = "/bin/bash -c '/home/glassfish/glassfish/bin/asadmin start-domain domain1 && echo `pidof java` > /home/glassfish/glassfish.pid'" as uid glassfish with timeout 60 seconds
+  stop program  = "/bin/bash -c '/home/glassfish/glassfish/bin/asadmin stop-domain domain1 --secure; rm -rf /home/glassfish/glassfish.pid'" as uid glassfish
   if failed port 8080 type tcp
      with timeout 45 seconds
      then restart

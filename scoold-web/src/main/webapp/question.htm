@@ -12,9 +12,9 @@
 	#end
 
 	#if($backtoLink && !$backtoLink.isEmpty())
-		<a href="$backtoLink" title="Go back">$lang.get("goback")</a>
+		<a href="$backtoLink" title="Go back" class="button-small rounded3 right">$lang.get("goback")</a>
 	#end
-	<h2>$lang.get("revisions.title") #showcount($itemcount.longValue())</h2>
+	<h2><span class="pictos">F</span> $lang.get("revisions.title") #showcount($itemcount.longValue())</h2>
 	<hr/>
 
 	#paginate($pagenum.longValue() "#revisionspage($revisionslist $canEdit $showPost)" $itemcount.longValue() "" "pageless-noajax")
@@ -54,10 +54,10 @@
 			#if($canEdit)
 				#set($editable = "editable")
 			#else
-				#set($editable = "")
+				#set($editable = "noclass")
 			#end
 
-			<div id="questiontitle" class="largeText inlineblock p99 $editable">$!{showPost.title}</div>
+			<h2 id="questiontitle" class="$!editable">$!{showPost.title}</h2>
 			#if($showPost.isQuestion())
 				#if($showPost.isQuestion() && $showSchool && $showSchool.id)
 					<span class="pictos">j</span> <a href="$!schoollink/$!showSchool.id/#stripstr($!showSchool.name)">$!showSchool.name</a>				

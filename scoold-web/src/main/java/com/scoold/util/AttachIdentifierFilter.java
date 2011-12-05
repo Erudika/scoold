@@ -49,11 +49,8 @@ public class AttachIdentifierFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
-		if (request.getMethod().equals("POST")) {
-			ScooldAuthModule.authAction(null, null, request, response);
-		}	
-		
-		chain.doFilter(request, response);
+		ScooldAuthModule.authAction(null, null, request, response);
+//			chain.doFilter(request, response);
 	}
 
 	/**

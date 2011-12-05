@@ -20,33 +20,31 @@ class scoold::glassfish {
 	}
 	
 	exec { "stop-glassfish":
-		command => "sudo -u ${glassfishusr} kill -1 `cat ${glassfishhome}/glassfish.pid`; rm ${glassfishhome}/glassfish.pid",		
+		command => "monit stop glassfish",		
 		onlyif => "test -e ${glassfishhome}/glassfish.pid",
 		before => User[$glassfishusr]
 	}
 
-	if $scoold::upgrade {	
-		exec { 
-			"download-glassfish":
-				command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
-				unless => "test -e ${gfpath}",
-				require => User[$glassfishusr],
-				before => Exec["unzip-glassfish"];
-			"remove-old-glassfish":
-				command => "rm -rf ${gfdir}",
-				onlyif => "test -e ${gfdir}",
-				require => Exec["download-glassfish"],
-				before => Exec["unzip-glassfish"];
-			"unzip-glassfish":
-				command => "sudo -u ${glassfishusr} unzip -qq -o -d ${glassfishhome} ${gfpath}",
-				unless => "test -e ${gfdir}",
-				require => Package["unzip"],
-				before => Exec["rename-glassfish"];
-			"rename-glassfish":
-				command => "mv -f ${glassfishhome}/glassfish* ${gfdir}",
-				unless => "test -e ${gfdir}",
-				require => Exec["download-glassfish"]					
-		}
+	exec { 
+		"download-glassfish":
+			command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
+			unless => "test -e ${gfpath}",
+			require => User[$glassfishusr],
+			before => Exec["unzip-glassfish"];
+		"remove-old-glassfish":
+			command => "rm -rf ${gfdir}",
+			onlyif => "test -e ${gfdir}",
+			require => Exec["download-glassfish"],
+			before => Exec["unzip-glassfish"];
+		"unzip-glassfish":
+			command => "sudo -u ${glassfishusr} unzip -qq -o -d ${glassfishhome} ${gfpath}",
+			unless => "test -e ${gfdir}",
+			require => Package["unzip"],
+			before => Exec["rename-glassfish"];
+		"rename-glassfish":
+			command => "mv -f ${glassfishhome}/glassfish* ${gfdir}",
+			unless => "test -e ${gfdir}",
+			require => Exec["download-glassfish"]					
 	}
 	
 	file { 
@@ -99,7 +97,7 @@ class scoold::glassfish {
 
 	exec{ 
 		"start-glassfish":
-			command => "rm -rf ${glassfishhome}/glassfish.pid; sudo -u ${glassfishusr} ${gfdir}/bin/asadmin start-domain domain1 && sudo -u ${glassfishusr} echo `pidof java` | tee ${glassfishhome}/glassfish.pid",
+			command => "monit start glassfish",
 			unless => "test -e ${glassfishhome}/glassfish.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

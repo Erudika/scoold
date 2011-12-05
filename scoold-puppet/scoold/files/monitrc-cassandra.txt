@@ -20,11 +20,11 @@ set alert sashko5@gmail.com only on { timeout }  # receive all alerts
 set httpd port 2812 and
   allow 127.0.0.1         # allow localhost to connect to the server and
 
-set daemon 120 with start delay 60
+set daemon 120
 set logfile /home/ubuntu/.monit.log
 check process cassandra with pidfile "/home/cassandra/cassandra.pid"
-  start program = "/bin/rm -rf /home/cassandra/cassandra.pid; /usr/bin/sudo -u cassandra /home/cassandra/cassandra/bin/cassandra -p /home/cassandra/cassandra.pid" with timeout 60 seconds
-  stop program  = "/usr/bin/sudo -u cassandra /bin/kill `/bin/cat /home/cassandra/cassandra.pid`"
+  start program = "/home/cassandra/cassandra/bin/cassandra -p /home/cassandra/cassandra.pid" as uid cassandra with timeout 60 seconds
+  stop program  = "/bin/bash -c 'kill `cat /home/cassandra/cassandra.pid`; rm -rf /home/cassandra/cassandra.pid'" as uid cassandra
   if failed port 9160 type tcp
      with timeout 45 seconds
      then restart

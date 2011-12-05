@@ -40,12 +40,8 @@ function pushConfig () {
 	ZIPNAME=$6
 		
 	### set node id and set tag
-	sed -e "1,/\\\$nodename/ s/\\\$nodename.*/\\\$nodename = \"$NODETYPE$count\"/" -i.bak ./$MODNAME/manifests/init.pp
-	
-	# skip autotagging and LB regging when running on local virtual machine
-	if [ -z "$3" ]; then				
-		ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"					
-	fi
+	sed -e "1,/\\\$nodename/ s/\\\$nodename.*/\\\$nodename = \"$NODETYPE$count\"/" -i.bak ./$MODNAME/manifests/init.pp	
+	ec2-create-tags --region $REGION $instid --tag Name="$NODETYPE$count"					
 					
 	### push updated puppet script
 	echo "copying $MODNAME.zip to $NODETYPE$count..."
@@ -100,7 +96,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	elif [ "$1" = "all" ]; then	
 		if [ -e "db$F1SUFFIX" ]; then
 			# set seed nodes to be the first two IPs
-			dbseeds=$(sed -n 1,2p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2 }' | sed 's/,$//g')			
+			dbseeds=$(sed -n 1,3p "db$F1SUFFIX" | awk '{ print $3" " }' | tr -d "\n" | awk '{ print $1","$2","$3 }' | sed 's/,$//g')			
 			sed -e "1,/\\\$dbseeds/ s/\\\$dbseeds.*/\\\$dbseeds = \"$dbseeds\"/" -i.bak ./$MODNAME/manifests/init.pp			
 		fi
 				
@@ -156,19 +152,12 @@ elif [ "$1" = "esindex" ]; then
 	es1host=$(head -n 1 "search$F2SUFFIX")	
 	ssh -n ubuntu@$es1host "sudo -u elasticsearch curl -s -XPUT localhost:9200/scoold -d @/home/elasticsearch/elasticsearch/config/index.json"
 elif [ "$1" = "esriver" ]; then
+	### create elasticsearch river	
 	es1host=$(head -n 1 "search$F2SUFFIX")
-	### create elasticsearch river
-	cmd0="sudo -u elasticsearch rm -rf /home/elasticsearch/elasticsearch/plugins/$RIVERFILE"
-	cmd1="sudo -u elasticsearch curl -s -o /home/elasticsearch/$RIVERFILE.zip $RIVERLINK"
-	cmd2="sudo -u elasticsearch unzip -o -d /home/elasticsearch/elasticsearch/plugins/$RIVERFILE /home/elasticsearch/$RIVERFILE.zip"
-	cmd3="sudo -u elasticsearch chmod -R 755 /home/elasticsearch/elasticsearch/plugins/$RIVERFILE/*"
-	cmd4="sudo -u elasticsearch rm /home/elasticsearch/$RIVERFILE.zip"
-	cmd5="sudo -u elasticsearch curl -s -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
-	ssh -n ubuntu@$es1host "$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5"
+	ssh -n ubuntu@$es1host "sudo -u elasticsearch curl -s -XPUT localhost:9200/_river/scoold/_meta -d '{ \"type\" : \"amazonsqs\" }'"
 elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
 else
 	echo "USAGE: $0 checkdb | initdb | backupdb file | restoredb file | inites | [ init | all | node-xxx ] group"
 fi
-# rsync --verbose --progress --stats --compress --recursive --times --perms --links --delete --rsync-path="sudo rsync" ~/Desktop/scoold_snapshots/1317214358735/ ubuntu@192.168.113.128:/var/lib/cassandra/data/scoold/

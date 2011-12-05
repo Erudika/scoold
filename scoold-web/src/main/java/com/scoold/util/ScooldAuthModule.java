@@ -290,7 +290,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	
 	private static void attachIdentifier(String openidURL, HttpServletRequest request){
 		if (request.getRemoteUser() != null) {
-			User authUser = User.getUser(request.getRemoteUser());
+			User authUser = User.getUser(NumberUtils.toLong(request.getRemoteUser(),0));
 			if (authUser != null) {
 				authUser.attachIdentifier(openidURL);
 			}

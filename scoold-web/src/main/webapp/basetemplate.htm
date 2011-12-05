@@ -1590,9 +1590,9 @@
 					#if($showrev.original) $lang.get("original") #else  #$!showrev.id #end 
 				</div>
 				<div class="mts">
-					<span class="smallText mrl"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
+					<span class="smallText mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
 					#if($showpost.revisionuuid == $showrev.uuid)
-						<span class="pictos green largeText" title="$lang.get('revisions.current')">2</span>
+						<span class="pictos green largeText" title="$lang.get('revisions.current')">S</span>
 					#elseif($canrestore || $request.isUserInRole("mod"))
 						<a href="$!actionlink/$showrev.postid/restore/$showrev.revisionid" class="button-small rounded3 rusure" title="Restore">
 							<span class="pictos">1</span> $lang.get("restore")
@@ -2183,11 +2183,11 @@
 			<style type="text/css">
 				@font-face {
 					font-family: 'PictosRegular';
-					src: url('styles/pictos-web-webfont.eot');
-					src: url('styles/pictos-web-webfont.woff') format('woff'),
-						url('styles/pictos-web-webfont.ttf') format('truetype'),
-						url('styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-						url('styles/pictos-web-webfont.svg#PictosRegular') format('svg');
+					src: url('$!context/styles/pictos-web-webfont.eot');
+					src: url('$!context/styles/pictos-web-webfont.woff') format('woff'),
+						url('$!context/styles/pictos-web-webfont.ttf') format('truetype'),
+						url('$!context/styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
+						url('$!context/styles/pictos-web-webfont.svg#PictosRegular') format('svg');
 					font-weight: normal;
 					font-style: normal;
 				}

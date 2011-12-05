@@ -19,54 +19,57 @@ class scoold::elasticsearch {
 	}
 	
 	exec { "stop-elasticsearch":
-		command => "sudo -u ${elasticsearchusr} kill -1 `cat ${elasticsearchhome}/elasticsearch.pid`; rm ${elasticsearchhome}/elasticsearch.pid",
+		command => "monit stop elasticsearch",
 		onlyif => "test -e ${elasticsearchhome}/elasticsearch.pid",
 		before => User[$elasticsearchusr];
 	}	
 	 
-	if $scoold::upgrade {	
-		exec { 
-			"download-elasticsearch":
-				command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${espath} ${scoold::eslink}",
-				require => User[$elasticsearchusr],
-				before => Exec["unzip-elasticsearch"];
-			"remove-old-elasticsearch":
-				command => "rm -rf ${esdir}",
-				onlyif => "test -e ${esdir}",
-				require => Exec["download-elasticsearch"],
-				before => Exec["unzip-elasticsearch"];
-			"unzip-elasticsearch":			
-				command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome} ${espath}",
-				require => Package["unzip"],
-				before => Exec["rename-elasticsearch"];
-			"rename-elasticsearch":
-				command => "mv -f ${elasticsearchhome}/elasticsearch-* ${esdir}",
-				require => Exec["download-elasticsearch"];
-			"set-env": 
-				command => "sed -e '1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/' -e '1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/' -i.bak ${esdir}/bin/elasticsearch.in.sh",
-				require => Exec["rename-elasticsearch"];
-			"install-cloud-plugin":
-				command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
-				require => Exec["rename-elasticsearch"],
-				before => Exec["start-elasticsearch"];
-		}
-		
-		line { 
-			"limits.conf1":
-				ensure => present,		
-				file => "/etc/security/limits.conf",
-				line => "${elasticsearchusr} - nofile 64000";
-			"limits.conf2":
-				ensure => present,		
-				file => "/etc/security/limits.conf",
-				line => "${elasticsearchusr} - memlock unlimited";
-			"serverflag":
-				ensure => present,
-				file => "${esdir}/bin/elasticsearch.in.sh",
-				line => "JAVA_OPTS=\"\$JAVA_OPTS -server\"",
-				require => Exec["rename-elasticsearch"],
-				before => Exec["start-elasticsearch"];
-		}
+	exec { 
+		"download-elasticsearch":
+			command => "sudo -u ${elasticsearchusr} wget --no-check-certificate -O ${espath} ${scoold::eslink}",
+			require => User[$elasticsearchusr],
+			before => Exec["unzip-elasticsearch"];
+		"remove-old-elasticsearch":
+			command => "rm -rf ${esdir}",
+			onlyif => "test -e ${esdir}",
+			require => Exec["download-elasticsearch"],
+			before => Exec["unzip-elasticsearch"];
+		"unzip-elasticsearch":			
+			command => "sudo -u ${elasticsearchusr} unzip -qq -o -d ${elasticsearchhome} ${espath}",
+			require => Package["unzip"],
+			before => Exec["rename-elasticsearch"];
+		"rename-elasticsearch":
+			command => "mv -f ${elasticsearchhome}/elasticsearch-* ${esdir}",
+			require => Exec["download-elasticsearch"];
+		"set-env": 
+			command => "sed -e '1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/' -e '1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/' -i.bak ${esdir}/bin/elasticsearch.in.sh",
+			require => Exec["rename-elasticsearch"];
+		"install-cloud-plugin":
+			command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
+			require => Exec["rename-elasticsearch"],
+			before => Exec["start-elasticsearch"];
+		"download-river":
+			command => "sudo -u ${elasticsearchusr} sh ${elasticsearchhome}/getriver.sh",
+			require => File["${elasticsearchhome}/getriver.sh"];
+	}
+
+	line { 
+		"limits.conf1":
+			ensure => present,		
+			file => "/etc/security/limits.conf",
+			line => "${elasticsearchusr} - nofile 64000",
+			require => User[$elasticsearchusr];
+		"limits.conf2":
+			ensure => present,		
+			file => "/etc/security/limits.conf",
+			line => "${elasticsearchusr} - memlock unlimited",
+			require => User[$elasticsearchusr];
+		"serverflag":
+			ensure => present,
+			file => "${esdir}/bin/elasticsearch.in.sh",
+			line => "JAVA_OPTS=\"\$JAVA_OPTS -server\"",
+			require => Exec["rename-elasticsearch"],
+			before => Exec["start-elasticsearch"];
 	}
 				
 	file { 
@@ -98,14 +101,22 @@ class scoold::elasticsearch {
 			owner => $elasticsearchusr,
 			group => $elasticsearchusr,
 			require => Exec["rename-elasticsearch"],
-			before => Exec["start-elasticsearch"];		
+			before => Exec["start-elasticsearch"];	
+		"${elasticsearchhome}/getriver.sh":
+			ensure => file,
+			source => "puppet:///modules/scoold/getriver.sh",
+			owner => $elasticsearchusr,
+		    group => $elasticsearchusr,
+			mode => 700,
+			require => Exec["rename-elasticsearch"],
+			before => Exec["start-elasticsearch"];
 	}
-	
+		
 	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-elasticsearch.txt")
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "rm -rf ${elasticsearchhome}/elasticsearch.pid; sudo -u ${elasticsearchusr} ${esdir}/bin/elasticsearch -p ${elasticsearchhome}/elasticsearch.pid",
+			command => "monit start elasticsearch",
 			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

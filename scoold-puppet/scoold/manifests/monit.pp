@@ -8,7 +8,10 @@ class scoold::monit ($type) {
 		before => Exec["start-monit"]
 	}
 	
-	exec { "start-monit":
-		command => "monit &> /dev/null; monit monitor all &> /dev/null; sed -e '1,/startup=0/ s/startup=0/startup=1/' -i.bak1 /etc/default/monit",
+	exec { 
+		"config-monit":
+			command => "sed -e '1,/startup=0/ s/startup=0/startup=1/' -i.bak1 /etc/default/monit";
+		"start-monit":
+			command => "monit quit &> /dev/null; monit -c /etc/monit/monitrc &> /dev/null; monit monitor all &> /dev/null";
 	}
 }

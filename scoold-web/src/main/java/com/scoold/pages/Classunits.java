@@ -26,8 +26,6 @@ public class Classunits extends BasePage{
 	public ArrayList<Classunit> classlist;
 	public Form createClassForm;
 	public Map<Long, String> schoolsMap;
-	public TextField gradyear;
-
 	
 	public Classunits(){
 		title = lang.get("classes.title");
@@ -60,10 +58,13 @@ public class Classunits extends BasePage{
         schoolselect.add(new Option("", lang.get("chooseone")));
         schoolselect.addAll(schoolsMap);
 		
-		gradyear = new TextField("gradyear", false);
+		Select gradyear = new Select("gradyear", true);
 		gradyear.setLabel(lang.get("profile.myclasses.gradyear"));
-		gradyear.setMaxLength(4);
-		gradyear.setMinLength(4);
+		int year = AbstractDAOUtils.getCurrentYear(); 
+		gradyear.add(new Option("", lang.get("chooseone")));
+		for (int i = (year-50); i <= (year+20); i++) {
+			gradyear.add(new Option(String.valueOf(i), String.valueOf(i)));
+		}
 		
 		Submit create = new Submit("createclass", lang.get("create"),
                 this, "onCreateClassClick");
@@ -77,10 +78,10 @@ public class Classunits extends BasePage{
 	}
 
     public boolean onCreateClassClick() {  //
-		int year = NumberUtils.toInt(gradyear.getValue(), 0);
+		int year = NumberUtils.toInt(getParamValue("gradyear"), 0);
 		int currentYear = AbstractDAOUtils.getCurrentYear();
 		if(year <= 0 || year < (currentYear - 100) || year > (currentYear + 100)){
-			gradyear.setError("Invalid year");
+			createClassForm.getField("gradyear").setError("Invalid year");
 		}
 		if(createClassForm.isValid()){
 			Map<String, String[]> paramMap = req.getParameterMap();

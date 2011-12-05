@@ -1577,16 +1577,14 @@ $(function () {
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-				gradyear: {required: true, digits: true, minlength: 4, maxlength: 4},
+				gradyear: {required: true, digits: true},
 				schoolid: "required",
 				identifier: {required: true, minlength: 4}
 			},
 			messages: {
 				gradyear: {
 					required: reqmsg,
-					digits: digitsmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
+					digits: digitsmsg
 				},
 				schoolid: reqmsg,
 				identifier: {

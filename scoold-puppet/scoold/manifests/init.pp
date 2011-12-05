@@ -4,13 +4,12 @@
 #
 class scoold {
 	# ----------------- EDIT HERE ---------------------#	
-	$inproduction = false #controls heap size for m2.large and rpc server type
+	$inproduction = false #controls heap size for m1.large and rpc server type
 	$defuser = "ubuntu"
-	$upgrade = true
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "db2"
-	$dbseeds = "10.227.135.64,10.48.161.238"
+	$nodename = "search2"
+	$dbseeds = "10.54.182.148,10.54.181.201,10.53.9.10"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	

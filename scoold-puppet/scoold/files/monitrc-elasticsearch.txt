@@ -20,11 +20,11 @@ set alert sashko5@gmail.com only on { timeout }  # receive all alerts
 set httpd port 2812 and
   allow 127.0.0.1         # allow localhost to connect to the server and
 
-set daemon 120 with start delay 60
+set daemon 120
 set logfile /home/ubuntu/.monit.log
 check process elasticsearch with pidfile "/home/elasticsearch/elasticsearch.pid"
-  start program = "/bin/rm -rf /home/elasticsearch/elasticsearch.pid; /usr/bin/sudo -u elasticsearch /home/elasticsearch/elasticsearch/bin/elasticsearch -p /home/elasticsearch/elasticsearch.pid" with timeout 60 seconds
-  stop program  = "/usr/bin/sudo -u elasticsearch /bin/kill `/bin/cat /home/elasticsearch/elasticsearch.pid`"
+  start program = "/home/elasticsearch/elasticsearch/bin/elasticsearch -p /home/elasticsearch/elasticsearch.pid" as uid elasticsearch with timeout 60 seconds
+  stop program  = "/bin/bash -c 'kill `cat /home/elasticsearch/elasticsearch.pid`; rm -rf /home/elasticsearch/elasticsearch.pid'" as uid elasticsearch
   if failed port 9200 type tcp
      with timeout 45 seconds
      then restart
