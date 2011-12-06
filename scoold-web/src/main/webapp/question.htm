@@ -74,9 +74,11 @@
 		#if(!$showPost.isAnswer())
 			<div id="answers">
 				#if($answerslist && !$answerslist.isEmpty())
+					#set($sortarr = {'votes': "", 'newest': ""} )
+					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers" class="button-tiny rounded3">$lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers" class="button-tiny rounded3">$lang.get("newest")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
 					</span>
 					<h2>$lang.get("answers.title") #showcount($itemcount.longValue())</h2>
 					<hr />

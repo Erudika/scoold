@@ -21,8 +21,6 @@ $(function () {
 		maxlenmsg = lang.maxlength,
 		minlenmsg = lang.minlength,
 		tagsmsg = lang["tags.toomany"],
-		stoken = (typeof stoken === "undefined") ? null : stoken,
-		pepper = (typeof pepper === "undefined") ? null : pepper,
 		secdata = {stoken:stoken, pepper:pepper};
 
 	/**************************
@@ -233,14 +231,14 @@ $(function () {
 	}
 	
 	function submitFormBind(formname, callbackfn){
-		return $(formname).on("submit", function(){
+		return $(document).on("submit", formname,  function(){
 			submitForm(this, "POST", callbackfn);
 			return false;
 		});
 	}
 
 	function submitFormUsingGetBind(formname, callbackfn){
-		return $(formname).on("submit", function(){
+		return $(document).on("submit", formname,  function(){
 			submitForm(this, "GET", callbackfn);
 			return false;
 		});
@@ -381,11 +379,11 @@ $(function () {
      *					GLOBAL BINDINGS
      ****************************************************/
 
-	$(".rusure").on("click", function(){
+	$(document).on("click", ".rusure",  function(){
 		return areYouSure($.noop, rusuremsg, true);
 	});
 	
-	$(".editlink").on("click", function(){
+	$(document).on("click", ".editlink",  function(){
 		var that = $(this);
 		var viewbox = that.parent().nextAll(".viewbox:first");
 		var editbox = that.parent().nextAll(".editbox:first");
@@ -407,7 +405,7 @@ $(function () {
 		return false;
 	});
 	
-	$(".canceledit").on("click", function(){
+	$(document).on("click", ".canceledit",  function(){
 		var editbox = $(this).closest(".editbox").get(0);
 		var viewbox = $(editbox).siblings(".viewbox").get(0);	
 		crossfadeToggle(viewbox, editbox);
@@ -415,12 +413,12 @@ $(function () {
 	});
 
 	//target=_blank is not valid XHTML
-	$("a.extlink").on("click", function(){
+	$(document).on("click", "a.extlink",  function(){
 		$(this).attr("target", "_blank");
 		return true;
 	});
 
-	$("a.votelink").on("click", function(){
+	$(document).on("click", "a.votelink",  function(){
 		var up = false;
 		up = $(this).hasClass("upvote");
 		var votes = $(this).closest("div.votebox").find(".votecount");
@@ -441,7 +439,7 @@ $(function () {
 	});
 
 	//close msg boxes 
-	$(".infostrip, .messagebox").on("click", function(event){
+	$(document).on("click", ".infostrip, .messagebox",  function(event){
 		var that = $(this);
 		that.hide();
 		if(that.hasClass("introBox")){
@@ -451,8 +449,8 @@ $(function () {
 	});
 	
 	// show ajax indicator when submit is pressed
-	$("input[type=submit]").not("input.button-link, input.search-btn").on("click", function(){
-		$(this).addClass("loading");
+	$(document).on("click", "input[type=submit]", function(){
+		$(this).not("input.button-link, input.search-btn").addClass("loading");
 //		$("img.ajaxwait", $(this).parent()).show();
 		return true;
 	});
@@ -479,7 +477,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.next-div-toggle").on("click", function(e){
+	$(document).on("click", "a.next-div-toggle",  function(e){
 		var that = $(this);
 		var hdiv = that.nextAll("div:first");
 		if(!hdiv.length){
@@ -492,7 +490,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.next-span-toggle").on("click", function(){
+	$(document).on("click", "a.next-span-toggle",  function(){
 		$(this).nextAll("span:first").toggle();
 		return false;
 	});
@@ -569,7 +567,7 @@ $(function () {
 		dis.find("input.canceledit").click();
 	});
 	
-	$("a.addfriend").on("click", function(){
+	$(document).on("click", "a.addfriend",  function(){
 		$.post(this.href, secdata);
 		showSuccessBox(lang["profile.contacts.added"]);
 		$(this).fadeOut();
@@ -577,7 +575,7 @@ $(function () {
 	});
 
 	//delete friend link
-	$("a.delfriend").on("click", function(){
+	$(document).on("click", "a.delfriend",  function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.fadeOut();
@@ -671,7 +669,7 @@ $(function () {
 		return false;
 	});
 
-	$(".remove-contact").on("click", function(){
+	$(document).on("click", ".remove-contact",  function(){
 		$(this).closest("tr").remove();
 		return false;
 	});
@@ -763,7 +761,7 @@ $(function () {
 			}else{
 				div.html(trigr.data("loadedForm"));
 			}
-			div.find(".jqmClose").on("click", function(){
+			div.on("click", ".jqmClose", function(){
 				hash.w.jqmHide();
 				return false;
 			});
@@ -771,7 +769,7 @@ $(function () {
 		}
 	});
 
-	$(".trigger-report").on("click", function(){
+	$(document).on("click", ".trigger-report",  function(){
 		$("div.report-dialog").jqmShow(this);
 		return false;
 	});
@@ -804,7 +802,7 @@ $(function () {
 		}
 	});
 
-	$(".trigger-embedly-services").on("click", function(){
+	$(document).on("click", ".trigger-embedly-services",  function(){
 		$("div#embedly-services").jqmShow(this);
 		return false;
 	});
@@ -821,7 +819,7 @@ $(function () {
 		textbox.val("");
 	});
 
-	$("a.delete-comment").on("click", function(){
+	$(document).on("click", "a.delete-comment",  function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest("div.commentbox").fadeOut("slow", function(){that.remove();});
@@ -829,12 +827,12 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(".more-comments-btn").on("click", function(){
+	$(document).on("click", ".more-comments-btn",  function(){
 		$(this).nextAll("div:first").show().end().remove();
 		return false;
 	});
 
-	$("a.show-comment").on("click", function(){
+	$(document).on("click", "a.show-comment",  function(){
 		$(this).nextAll("div:hidden").show().end().prev("span").andSelf().remove();
 		return false;
 	});
@@ -854,7 +852,7 @@ $(function () {
 		return form.valid();
 	};
 	
-	$("a.delete-translation").on("click", function(){
+	$(document).on("click", "a.delete-translation",  function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest("div.translationbox").fadeOut("slow", function(){
@@ -864,10 +862,10 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$("input#addcont-translation-btn").on("click", function(){
+	$(document).on("click", "input#addcont-translation-btn",  function(){
 		return validateTrans($(this).closest("form"));
 	});
-	$("input#add-translation-btn").on("click", function(){
+	$(document).on("click", "input#add-translation-btn",  function(){
 		var that = $(this);
 		var form = that.closest("form");
 		var isValid = validateTrans(form);
@@ -877,7 +875,7 @@ $(function () {
 			father.hide();
 			submitForm(form, "POST", function(data, status, xhr, form){
 				if($.trim(data) !== ""){
-					father.nextAll("div.translations").prepend(data);
+					$("#translations").prepend(data);
 				}
 				clearForm(form);
 			});
@@ -943,7 +941,7 @@ $(function () {
 		return false;
 	}
 
-	$("a.more-link").on('click', function(){
+	$(document).on("click", "a.more-link",  function(){
 		return loadMoreHandler(this, $.noop());
 	});
 
@@ -1017,7 +1015,7 @@ $(function () {
 		$.history.init(pl); //, window.location.pathname);
 
 		// set onlick event for buttons using the jQuery 1.3 live method
-		$("a[rel='history']").on('click', function() {
+		$(document).on("click", "a[rel='history']",  function() {
 			var hash = this.href;
 			hash = hash.replace(/^.*#/, '');
 			// moves to a new page.
@@ -1038,7 +1036,7 @@ $(function () {
 
 	}
 
-	$("a.remove-label").on("click", function(){
+	$(document).on("click", "a.remove-label",  function(){
 		var box = $(this).closest(".labelbox");
 		$.post(this.href, secdata, function(){
 			clearLoading();
@@ -1049,7 +1047,7 @@ $(function () {
 		return false;
 	});
 
-	$(".image-delete").on("click", function(){
+	$(document).on("click", ".image-delete",  function(){
 		var that = $(this);
 		return areYouSure(function(){
 			that.closest(".thumb-wrap").fadeOut(function(){
@@ -1109,7 +1107,7 @@ $(function () {
      ****************************************************/
 
 	// oembed plugin init bind
-	$(".oembed-box").on("click", function(){
+	$(document).on("click", ".oembed-box",  function(){
 		var that = $(this);
 		$.oembed.fetchData(this.href, function(data){
 			that.replaceWith(data.html);
@@ -1222,7 +1220,7 @@ $(function () {
 		return false;
 	});
 
-	$("a.delvideo").on("click", function(){
+	$(document).on("click", "a.delvideo",  function(){
 		var that = $(this);
 		return areYouSure(function(){
 			var parent = that.closest("div.drawerbox");
@@ -1250,10 +1248,10 @@ $(function () {
 		return false;
 	});
 
-	$("a.accept-answer, a.approve-translation").on("click", function(){
+	$(document).on("click", "a.accept-answer, a.approve-translation", function(){
 		var on = "green";
 		var that = $(this);
-		$("a.accept-answer, a.approve-translation").removeClass(on).text("3");
+		$(".accept-answer, .approve-translation").not(that).removeClass(on).text("3");
 		
 		if(that.hasClass(on)){
 			that.removeClass(on);
@@ -1333,7 +1331,7 @@ $(function () {
 			}
 		};
 
-		$("a.more-link").die('click').on("click", function(){
+		$(document).on("click", "a.more-link",  function(){
 			return loadMoreHandler(this, function(updatedContainer){
 				updatedContainer.find("textarea.edit-post").not(".markedUp").each(initPostEditor);
 			});
@@ -1515,7 +1513,7 @@ $(function () {
      ************************************************************************/
 
 	/********* SIGNUP FORM ************/
-	$("input#signup-btn").on("click", function(){
+	$(document).on("click", "input#signup-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			onsubmit: true,
@@ -1540,7 +1538,7 @@ $(function () {
 	});
 
 	/********* CREATE SCHOOL FORM ************/	
-	$("input#createschool").on("click", function(){
+	$(document).on("click", "input#createschool",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1555,7 +1553,7 @@ $(function () {
 	});
 
 	/********* CHANGE EMAIL FORM ************/
-	$("input#change-email-btn").on("click", function(){
+	$(document).on("click", "input#change-email-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1572,7 +1570,7 @@ $(function () {
 	});
 
 	/********* CREATE CLASS FORM ************/
-	$("input#createclass").on("click", function(){
+	$(document).on("click", "input#createclass",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1597,7 +1595,7 @@ $(function () {
 	});
 
 	/********* ADD CLASSMATES FORM ************/
-	$("input#addclassmates-btn").on("click", function(){
+	$(document).on("click", "input#addclassmates-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1625,7 +1623,7 @@ $(function () {
 	$.validator.addMethod("tags", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxTags;
 	});
-	$("input#ask-btn, input.post-edit-btn").on("click", function(){
+	$(document).on("click", "input#ask-btn, input.post-edit-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1655,7 +1653,7 @@ $(function () {
 
 	/********* ANSWER QUESTION FORM ************/
 
-	$("input#answer-btn").on("click", function(){
+	$(document).on("click", "input#answer-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1676,7 +1674,7 @@ $(function () {
 
 	/********* NEW MESSAGE FORM ************/
 
-	$("input#sendmessage-btn").on("click", function(){
+	$(document).on("click", "input#sendmessage-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn2,
@@ -1691,7 +1689,7 @@ $(function () {
 
 	/********* SETTINGS FORMS ************/
 
-	$("input.import-media-btn").on("click", function(){
+	$(document).on("click", "input.import-media-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1711,7 +1709,7 @@ $(function () {
 	$.validator.addMethod("tags2", function(value, elem){
 		return this.optional(elem) || value.split(",").length < maxFavTags;
 	});
-	$("input#add-favtag-btn").on("click", function(){
+	$(document).on("click", "input#add-favtag-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1729,7 +1727,7 @@ $(function () {
 	});
 
 	/********* REPORT SOLUTION FORM ************/
-	$("input.report-solution-btn").on("click", function(){
+	$(document).on("click", "input.report-solution-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
@@ -1747,7 +1745,7 @@ $(function () {
         return form.valid();
 	});
 	/********* NEW COMMENT FORM ************/
-	$("input.new-comment-btn").on("click", function(){
+	$(document).on("click", "input.new-comment-btn",  function(){
 		var form = $(this).closest("form");
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,

@@ -362,7 +362,7 @@
 				#createformfield(${form.fields.tags} "tagbox nicebox p100")
 
 				<div class="center mtl">
-					${form.fields.askbtn} &nbsp; <a href="$!actionlink">$lang.get('cancel')</a>
+					${form.fields.askbtn} &nbsp; <a href="$!actionlink" class="button-small rounded3">$lang.get('cancel')</a>
 				</div>
 			</fieldset>
 		</form>
@@ -1652,11 +1652,7 @@
 					#set($onclass = "")
 					#set($picon = "3")
 				#end
-				#if(!$approved)
-					<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!onclass" title="Approve">$picon</a>
-				#else
-					<span class="approve-translation pictos largeText green">$picon</span>
-				#end
+				<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!onclass" title="Approve">$picon</a>				
 				&nbsp;
 			#end
 			#votebox($showtrans "mediumText")
@@ -1689,9 +1685,9 @@
 		</div>
 		<div>
 			#if($progress != 100)
-				<span class="reputationbox rounded3 phs">$!{progress}%</span>
+				<span class="reputationbox rounded3 phs" title="$!{progress}%">$!{progress}%</span>
 			#else
-				<span class="reputationbox rounded3 phs"><span class="pictos">3</span></span>
+				<span class="reputationbox rounded3 phs" title="100%"><span class="pictos">3</span></span>
 			#end
 			
 			#if(!$showLangKey.equals("en"))
@@ -2346,12 +2342,12 @@
 			
 		
 		<script type="text/javascript">
-			loadScripts("$!{scriptslink}", "$!{minsuffix}");
 			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end},
 				sessiontimeout = $!SESSION_TIMEOUT_SEC;
 			#if($authenticated)
 				var stoken = "$sectoken", pepper = "$authUser.authstamp";
 			#end
+			loadScripts("$!{scriptslink}", "$!{minsuffix}");
 		</script>
     </body>
 </html> 

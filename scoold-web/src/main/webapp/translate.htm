@@ -34,7 +34,12 @@
 
 			#set($langkey = $langkeys.get($showIndex))
 			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$deflang.get($langkey)</div>
-
+			
+			<div id="translations">
+				#paginate($pagenum.longValue() "#translationspage($translationslist $approvedTransMap)" $itemcount.longValue() "" "pageless")
+			</div>
+			<br />
+			
 			#if(!$approvedTransMap.containsKey($langkey)) ##|| $request.isUserInRole("admin"))
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
@@ -44,21 +49,17 @@
 							<textarea rows="2" cols="3" name="value" class="nicebox hintbox p100 rounded5"> $translateHint</textarea>
 							<input type="hidden" name="gettranslationhtmlcode" value="true"/>
 							<div class="center mtm">
-								<input id="add-translation-btn" type="button" value="$lang.get('add')" class="button rounded3"/>
+								<input id="add-translation-btn" type="button" value="$lang.get('add')" class="button rounded3"/> &nbsp;
 								<input id="addcont-translation-btn" type="submit" value="$lang.get('add') &amp; $lang.get('continue')" class="button rounded3"/>
 							</div>
 						</fieldset>
 					</form>
 				</div>
 			#end
-			
-			<div class="translations">
-				#paginate($pagenum.longValue() "#translationspage($translationslist $approvedTransMap)" $itemcount.longValue() "" "pageless")
-			</div>
 		#else
 			<div class="center">
 				#foreach($langKey in $langkeys)
-					<div class="p30 inlineblock mrl l">
+					<div class="p30 inlineblock mrl l pvs">
 						<span class="reputationbox phs rounded3">$!translationcountsmap.get($langKey)</span>
 						#if($approvedTransMap.containsKey($langKey))
 							#if($request.isUserInRole("admin"))

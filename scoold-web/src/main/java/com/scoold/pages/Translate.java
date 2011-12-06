@@ -48,7 +48,7 @@ public class Translate extends BasePage{
 			approvedTransMap = Translation.getTranslationDao().
 					readApprovedIdsForLocale(showLocale.getLanguage());
 
-			for (String key : lang.keySet()) {
+			for (String key : Language.getDefaultLanguage().keySet()) {
 				langkeys.add(key);
 			}
 			
