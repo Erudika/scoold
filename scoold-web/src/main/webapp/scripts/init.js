@@ -10,13 +10,12 @@ function loadScripts(scriptslink, minsuffix){
 		{history:		scriptslink+"/jquery.history"+minsuffix+".js"},
 		{oembed:		scriptslink+"/jquery.oembed"+minsuffix+".js"},
 		{markitup:		scriptslink+"/jquery.markitup"+minsuffix+".js"},
-
+		{mathjax:		"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"},
 		{chatclient:	scriptslink+"/chatclient"+minsuffix+".js"},
 		{miuicons:		scriptslink+"/miu.set.markdown"+minsuffix+".js"},
 		{showdown:		scriptslink+"/showdown"+minsuffix+".js"},
 		{diff:			scriptslink+"/diff_match_patch"+minsuffix+".js"},
-
+		
 		{scoold:		scriptslink+"/scoold"+minsuffix+".js"}
 	);
 }
-

@@ -93,12 +93,18 @@ public class Reports extends BasePage{
 			Report rep = Report.getReportDAO().read(NumberUtils.toLong(getParamValue("id")));
 			if(rep != null && !rep.getClosed()){
 				String sol = getParamValue("solution");
-				if(StringUtils.length(sol) > 15 && StringUtils.length(sol) < 255){
+				if(StringUtils.length(sol) > 5 && StringUtils.length(sol) < 255){
 					rep.setClosed(true);
 					rep.setSolution(sol);
 					rep.update();
 				}
 			}
+		}else if(param("delete") && inRole("admin")){
+			Report rep = Report.getReportDAO().read(NumberUtils.toLong(getParamValue("id")));
+			if(rep != null){
+				rep.delete();
+			}
+			if(!isAjaxRequest()) setRedirect(reportslink);
 		}
 	}
 }

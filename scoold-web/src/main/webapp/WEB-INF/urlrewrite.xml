@@ -159,6 +159,10 @@
         <from>^/reports/close/(\d+)(/?)$</from>
         <to>/reports.htm?close=true&amp;id=$1</to>
     </rule>
+	<rule>
+        <from>^/reports/delete/(\d+)(/?)$</from>
+        <to>/reports.htm?delete=true&amp;id=$1</to>
+    </rule>
 
     <!-- ======== PROFILE PROTECTED RESOURCES ========== -->
 	<rule>

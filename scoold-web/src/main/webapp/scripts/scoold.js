@@ -21,7 +21,8 @@ $(function () {
 		maxlenmsg = lang.maxlength,
 		minlenmsg = lang.minlength,
 		tagsmsg = lang["tags.toomany"],
-		secdata = {stoken:stoken, pepper:pepper};
+		secdata = {stoken: (typeof stoken !== "undefined" ? stoken : null), 
+			pepper: (typeof pepper !== "undefined" ? pepper : null)};
 
 	/**************************
 	 *  Google Maps API v3.3
@@ -505,10 +506,17 @@ $(function () {
 		return false;
 	});
 
+	$("a.delete-report").click(function(){
+		var dis = $(this);
+		return areYouSure(function(){
+			$.post(dis.attr("href"), secdata);
+			dis.closest(".reportbox").fadeOut(function(){dis.remove();});
+		 }, rusuremsg, false);
+	});
+
 	submitFormBind("form.report-solution-form", function(data, status, xhr, form){
 		var dis = $(form);
 		var parent = dis.closest(".reportbox");
-		var div = dis.parent("div").hide();
 		$(".report-solution", parent).show().children("span").text(dis.find("textarea").val());
 		$("a.close-report", parent).hide();
 		$("div:hidden:first", parent).show();
@@ -1732,7 +1740,7 @@ $(function () {
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-                solution: {required: true, minlength: 15, maxlength: 255}
+                solution: {required: true, minlength:5, maxlength: 255}
 			},
 			messages: {
 				solution: {

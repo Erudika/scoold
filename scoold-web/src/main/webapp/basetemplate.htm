@@ -1228,16 +1228,16 @@
 			#set($hide = "hide" )
 		#end
 
-		<div class="pictos left mrl hugeText lightgray $hide">3</div>
+		<div class="pictos left mrl hugeText green $hide">3</div>
 		<div class="right">
-			<a href="$showreport.link" class="button-medium rounded3">$lang.get("view")</a>
+			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $lang.get("view")</a>
 			#if(!$showreport.closed)
 				<a href="#" class="button-medium rounded3 close-report" title="Close report"><span class="pictos">3</span> $lang.get("close")</a>
 			#else
-				<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="button-medium rounded3">$lang.get("reopen")</a>
+				<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="button-medium rounded3"><span class="pictos">1</span> $lang.get("reopen")</a>
 			#end
 			#if($request.isUserInRole("admin"))
-				<a href="${adminlink}?delete=report&amp;id=$showreport.id" title="Delete" class="button-medium rounded3 red"><span class="pictos">*</span> $lang.get("delete")</a>
+				<a href="$reportslink/delete/$showreport.id" title="Delete" class="button-medium rounded3 red delete-report"><span class="pictos">*</span> $lang.get("delete")</a>
 			#end
 		</div>
 		<div class="clearfix">
@@ -1256,7 +1256,7 @@
 			#else
 				#set($hide = "hide" )
 			#end
-			<p class="report-solution $hide">$lang.get("reports.actionstaken"): <span>$showreport.solution</span></p>
+			<p class="report-solution $hide"><span class="pictos lightgray" title="$lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
 		</div>
 
 		<div class="hide report-solution-box p100 mtm">
