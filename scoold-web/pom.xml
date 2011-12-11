@@ -412,15 +412,15 @@
 					<file>src/main/webapp/styles/style.css</file>
 					<replacements>
 						<replacement>
-							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<token>http://static.scoold.com</token>
 							<value>../scripts</value>
 						</replacement>
 						<replacement>
-							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<token>http://static.scoold.com</token>
 							<value>../styles</value>
 						</replacement>
 						<replacement>
-							<token>http://d35029ynkhy54l.cloudfront.net</token>
+							<token>http://static.scoold.com</token>
 							<value>../images</value>
 						</replacement>
 					</replacements>                        

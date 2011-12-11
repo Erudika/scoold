@@ -2170,7 +2170,7 @@
 			#set($feedkey = $daoutils.MD5("${authUser.id}${FEED_KEY_SALT}"))
 			<link href="$context/feed.xml?userid=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>
 		#end
-		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
+		<script type="text/javascript" src="$scriptslink/head${minsuffix}.js"></script>
 		<script type="text/javascript" src="$scriptslink/init${minsuffix}.js"></script>
 		#if($includeGMapsScripts && $includeGMapsScripts == true)
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
@@ -2342,12 +2342,14 @@
 			
 		
 		<script type="text/javascript">
+			/* <![CDATA[ */
 			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end},
 				sessiontimeout = $!SESSION_TIMEOUT_SEC;
 			#if($authenticated)
 				var stoken = "$sectoken", pepper = "$authUser.authstamp";
 			#end
 			loadScripts("$!{scriptslink}", "$!{minsuffix}");
+			/* ]]> */
 		</script>
     </body>
 </html> 

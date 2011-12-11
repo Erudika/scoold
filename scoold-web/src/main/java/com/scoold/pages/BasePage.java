@@ -61,8 +61,8 @@ public class BasePage extends Page {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String APPNAME = "scoold"; //app name
-	public static final String CDN_URL = "http://d35029ynkhy54l.cloudfront.net"; 
+	public static final String APPNAME = "Scoold"; //app name
+	public static final String CDN_URL = "http://static.scoold.com"; 
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
