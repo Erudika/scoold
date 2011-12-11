@@ -3,7 +3,7 @@
 	#if($IN_PRODUCTION) #set($slink = $CDN_URL) #set($minsuffix = "-min") #else #set($slink = "$context/styles") #set($minsuffix = "") #end
 	<title>$APPNAME $!titlestr </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta property="og:image" content="$CDN_URL/logosq.png"/>
+	<link href="$context/images/logosq.png" rel="image_src" />
 	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" title="Main stylesheet"/>
 	<link href="$context/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=8" />
