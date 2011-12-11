@@ -1310,8 +1310,8 @@ public class BasePage extends Page {
 		}
 	};
 
-	public static String DESCRIPTION = "Scoold is place for sharing knowledge. "
-			+ "It's all about helping your mates and learning new stuff.";
+	public static String DESCRIPTION = "Scoold is friendly place where students and teachers "
+			+ "can help each other and talk about anything related to education.";
 	
 	public static String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, "
 			+ "schools, students, classmates, alumni, teachers, contacts, social, "
