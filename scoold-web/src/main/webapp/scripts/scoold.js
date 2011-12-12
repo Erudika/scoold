@@ -606,8 +606,8 @@ $(function () {
 			$.extend(true, editable_settings, opts);
 		}
 
-		var params = {};
-		$.extend(secdata, params);
+		var params = {};		
+		$.extend(params, secdata);
 		var $elem = $(elem);			
 		$elem.editable(function(value, settings) {
 			var $text = $elem.data("value");
@@ -626,7 +626,7 @@ $(function () {
 	editableBind("#schoolname.editable", "name");
 	editableBind("#classname.editable", "identifier");
 	editableBind("#questiontitle.editable", "title");
-
+	
 	var editable_settings3 = {};
 	$.extend(true, editable_settings3, editable_settings, {type: "textarea"});
 	$(".drawer-description.editable").editable(function(value, settings){

@@ -57,7 +57,7 @@ public class Question extends BasePage{
 		}
 
         if(id.longValue() == 0L && StringUtils.isBlank(uuid)){
-			setRedirect(actionlink);
+			if(!isAjaxRequest()) setRedirect(actionlink); 
 			return;
 		}else {
             showPost = (id.longValue() == 0L) ? Post.getPostDao().read(uuid) :

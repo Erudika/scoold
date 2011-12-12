@@ -199,12 +199,11 @@ public abstract class AbstractDAOUtils {
 	public static String stripAndTrim(String str) {
 		if (StringUtils.isBlank(str)) return "";
 		
-		str = str.trim();
 		str = str.replaceAll("\\p{S}", "");
-		str = str.replaceAll("\\p{Po}", "");
+		str = str.replaceAll("\\p{P}", "");
 		str = str.replaceAll("\\p{C}", "");
 
-		return str;
+		return str.trim();
 	}
 
 	public static String formatMessage(String msg, Object... params){

@@ -720,7 +720,7 @@ public class BasePage extends Page {
 					}
 				}
 			}
-		}else if(param("editpostid")){
+		}else if(param("editpostid") || param("title")){
 			// edit post
 			Post beforeUpdate = new Post();
 
@@ -746,7 +746,7 @@ public class BasePage extends Page {
 			}
 
 			post.setLasteditby(authUser.getId());
-			post.fixTags();
+//			post.fixTags();
 			//note: update only happens if something has changed
 			boolean done = post.updateAndCreateRevision(beforeUpdate);
 

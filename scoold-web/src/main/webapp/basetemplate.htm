@@ -1755,9 +1755,15 @@
 	#if($votable.votes)	#set($votes = $votable.votes) #else #set($votes = 0) #end
 
 	<div class="votebox inlineblock $sizeClass">
-		<a href="$votedownlink/$classname/$!uuid" class="pictos downvote $linkclass" title="Vote down">-</a>
-		<span class="votecount">$!votes</span>
-		<a href="$voteuplink/$classname/$!uuid" class="pictos upvote $linkclass" title="Vote up">+</a>
+		#if($votable && $authenticated && $votable.userid.longValue() == $authUser.id.longValue())
+			<span class="pictos downvote lightgray" title="Vote down">-</span>
+			<span class="votecount">$!votes</span>
+			<span class="pictos upvote lightgray" title="Vote up">+</span>			
+		#else
+			<a href="$votedownlink/$classname/$!uuid" class="pictos downvote $linkclass" title="Vote down">-</a>
+			<span class="votecount">$!votes</span>
+			<a href="$voteuplink/$classname/$!uuid" class="pictos upvote $linkclass" title="Vote up">+</a>
+		#end
 	</div>
 #end
 #####################################

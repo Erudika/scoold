@@ -33,7 +33,8 @@
 				#set($actionlink = $feedbacklink)
 				#set($posttype = "<a href='$feedbacklink' title='Feedback'>$lang.get('feedback.title')</a>")
 				#if(!$showPost.tagsString.isEmpty())
-					#set($posttype = "$posttype / $lang.get('feedback.$!{showPost.tagsString}')")
+					#set($ftypestr =  "feedback.$!{showPost.tagsString}")					
+					#set($posttype = "$posttype / $!lang.get($ftypestr)")
 				#end
 			#end
 			<div class="line mediumText lightgray">

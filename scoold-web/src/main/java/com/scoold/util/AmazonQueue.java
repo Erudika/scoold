@@ -14,6 +14,7 @@ import com.amazonaws.services.sqs.model.DeleteQueueRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -43,9 +44,13 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	private ObjectMapper mapper;
 	
 	public AmazonQueue(String name){
-		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
-		QUEUE_URL = SQS_URL.concat(name);
-		mapper = new ObjectMapper();
+		if(BasePage.IN_PRODUCTION){
+			sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
+			QUEUE_URL = SQS_URL.concat(name);
+			mapper = new ObjectMapper();
+		}else{
+			QUEUE_URL = null;
+		}
 	}
 
 	public void push(final E task) {
@@ -70,9 +75,9 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 
 	public E pull() {
 		String task = "[]";
-		JsonNode rootNode = mapper.createArrayNode(); 
 		if(!StringUtils.isBlank(QUEUE_URL)){
 			try {
+				JsonNode rootNode = mapper.createArrayNode(); 
 				ReceiveMessageRequest receiveReq = new ReceiveMessageRequest(QUEUE_URL);
 				receiveReq.setMaxNumberOfMessages(MAX_MESSAGES);
 				List<Message> list = sqs.receiveMessage(receiveReq).getMessages();
