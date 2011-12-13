@@ -94,7 +94,7 @@ public class User implements ScooldObject, Comparable<User>,
 
 
 	public static enum Badge{
-		REGULAR(10),		//regular visitor		//TODO: IMPLEMENT!
+		VETERAN(10),		//regular visitor		//TODO: IMPLEMENT!
 
 		NICEPROFILE(10),	//100% profile completed
 		TESTER(0),			//for testers only

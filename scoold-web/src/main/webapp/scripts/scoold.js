@@ -890,14 +890,8 @@ $(function () {
 		}
 		return false;
 	});
-
-	$("a.reset-translation").click(function(){
-		var that = $(this);
-		return areYouSure(function(){
-			that.fadeOut("slow", function(){that.remove();});
-			$.post(that.attr("href"), secdata);
-		}, rusuremsg, false);
-	});
+	
+	$("form.new-translation-form").find("textarea").focus();
 
 	/****************************************************
      *                       PAGES

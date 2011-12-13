@@ -39,14 +39,14 @@
 				#paginate($pagenum.longValue() "#translationspage($translationslist $approvedTransMap)" $itemcount.longValue() "" "pageless")
 			</div>
 			<br />
-			
+				
 			#if(!$approvedTransMap.containsKey($langkey)) ##|| $request.isUserInRole("admin"))
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form" action="${thisuri}">
 						<fieldset>
 							#sectoken(false)
-							<textarea rows="2" cols="3" name="value" class="nicebox hintbox p100 rounded5"> $translateHint</textarea>
+							<textarea rows="2" cols="3" name="value" class="nicebox p100 rounded5"></textarea>
 							<input type="hidden" name="gettranslationhtmlcode" value="true"/>
 							<div class="center mtm">
 								<input id="add-translation-btn" type="button" value="$lang.get('add')" class="button rounded3"/> &nbsp;
@@ -56,17 +56,26 @@
 					</form>
 				</div>
 			#end
+			
+			#if($request.isUserInRole("admin") && $approvedTransMap.containsKey($langkey))
+				<br />
+				<div class="center">
+					<form action="$translatelink/$showLocale/?reset=$langkey" method="post">
+						<fieldset>
+							#sectoken(false)
+							<input type="submit" value="Global reset" class="button rounded3 red rusure"/>
+						</fieldset>
+					</form>
+				</div>
+			#end
 		#else
 			<div class="center">
 				#foreach($langKey in $langkeys)
 					<div class="p30 inlineblock mrl l pvs">
-						<span class="reputationbox phs rounded3">$!translationcountsmap.get($langKey)</span>
-						#if($approvedTransMap.containsKey($langKey))
-							#if($request.isUserInRole("admin"))
-								<a href="$translatelink/$showLocale/?reset=$langKey" title="Global Reset" class="reset-translation pictos red mediumText">2</a>
-							#else
-								<span title="Translated and approved" class="pictos green">2</span>
-							#end
+						#if($approvedTransMap.containsKey($langKey))							
+							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
+						#else
+							<span class="reputationbox phs rounded3">$!translationcountsmap.get($langKey)</span>
 						#end
 						<a href="$translatelink/$showLocale/$velocityCount" title="Translate this">$!daoutils.abbreviate($!deflang.get($langKey), 25)</a>
 					</div>

@@ -69,8 +69,6 @@ public class Signup extends BasePage{
 
 		HiddenField identifier = new HiddenField("identifier", identString);
 		identifier.setRequired(true);
-//		identifier.setLabel(lang.get("openid.title"));
-//		identifier.setReadonly(true);
 
         TextField fullname = new TextField("fullname", true);
         fullname.setValue(name);

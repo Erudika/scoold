@@ -30,7 +30,6 @@ public class Translate extends BasePage{
 	public Map<String, Long> approvedTransMap;
 	public static Map<String, String> deflang = Language.getDefaultLanguage();
 	public ArrayList<String> langkeys;
-	public String translateHint = "Translate here...";
 	public int showIndex;
 
 	public Translate(){
@@ -93,8 +92,7 @@ public class Translate extends BasePage{
 			String value = StringUtils.trim(getParamValue("value"));
 			String langkey = langkeys.get(showIndex);
 			boolean isTranslated = approvedTransMap.containsKey(langkey);
-			if(!StringUtils.isBlank(value) && !StringUtils.equals(value, translateHint)
-					&& (!isTranslated || inRole("admin"))){
+			if(!StringUtils.isBlank(value) && (!isTranslated || inRole("admin"))){
 				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
 				trans.setUserid(authUser.getId());
 				trans.create();
