@@ -19,7 +19,7 @@
 			<hr/>
 
 			<div class="mvm">
-				#if($isMine)
+				#if($isMine && $isLinkedToMe)
 					<a href="$classlink/$!showClass.id/invite/#stripstr($!showClass.identifier)" class="button-tiny rounded3"><span class="pictos">U</span> ${lang.get("invite")}</a>
 				#end
 				#if($authenticated)

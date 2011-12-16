@@ -1,7 +1,7 @@
 *.* @logs.loggly.com:16696
 
 $ModLoad imfile
-$InputFileName /var/log/elasticsearch/server.log
+$InputFileName /var/log/elasticsearch/scoold.log
 $InputFileTag elasticsearch:
 $InputFileStateFile stat-elasticsearch-access
 $InputFileSeverity info

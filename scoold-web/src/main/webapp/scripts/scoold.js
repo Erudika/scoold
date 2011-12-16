@@ -92,12 +92,12 @@ $(function () {
      *            FACEBOOK API FUNCTIONS
      ****************************************************/
 
-	var fbauthurl = "fbconnect_auth";
+	var fbauthurl = "facebook_auth";
 	var attachfburl = "attach_facebook";
 
 	if($("#fb-login").length){
 		FB.Event.subscribe('auth.login', function(response) {
-			if(response.session){
+			if(response.status === 'connected'){
 				window.location = fbauthurl;
 			}
 		});
@@ -105,29 +105,35 @@ $(function () {
 
 	$("#fb-login-btn").click(function(){
 		FB.getLoginStatus(function(response) {
-			if (response.session) {
+			if (response.status === 'connected') {
 				window.location = fbauthurl;
-				return false;
+			}else{
+				FB.login(function(response) {
+					if (response.authResponse) {
+						window.location = fbauthurl;
+					}
+				});
 			}
 		});
-		return true;
+		return false;
 	});
 
 	$("#fb-attach-btn").click(function(){
 		FB.getLoginStatus(function(response) {
-			if (response.session) {
+			if (response.status === 'connected') {
 				window.location = attachfburl;
-				return false;
 			}
 		});
-		return true;
+		return false;
 	});
 
-	var fbPicture = $("#fb-picture");
-	var fbName = $("#fb-name");
+	var fbPicture = $("#fb-picture"),
+		fbName = $("#fb-name"),
+		fbNames = $(".fb-name");
+	
 	if(fbPicture.length || fbName.length){
 		FB.getLoginStatus(function(response) {
-			if (response.session) {
+			if (response.status === 'connected') {
 				FB.api({
 					method: 'fql.query',
 					query: 'SELECT name, pic_small, url FROM profile WHERE id=' + response.session.uid
@@ -138,6 +144,16 @@ $(function () {
 					$('input.fb-name-box').val(user.name);
 				});
 			}
+		});
+	}
+	
+	if (fbNames.length) {
+		FB.api({
+			method: 'fql.query',
+			query: 'SELECT name, pic_small, url FROM profile WHERE id=' + fbNames.text()
+		}, function(response) {
+			var user = response[0];
+			fbNames.text(user.name);
 		});
 	}
 

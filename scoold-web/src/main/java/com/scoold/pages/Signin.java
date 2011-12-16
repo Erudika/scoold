@@ -14,6 +14,13 @@ public class Signin extends BasePage{
 		includeFBscripts = true;
     }
 	
+	public void onGet(){
+		if (authenticated ) {
+			setRedirect(HOMEPAGE);
+			return;
+		}
+	}
+	
 	public void	onPost(){
 		if (authenticated ) {
 			if(param("signout")){

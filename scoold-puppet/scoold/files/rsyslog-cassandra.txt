@@ -1,13 +1,1 @@
 *.* @logs.loggly.com:18670
-
-$ModLoad imfile
-$InputFileName /var/log/cassandra/system.log
-$InputFileTag cassandra:
-$InputFileStateFile stat-cassandra-access
-$InputFileSeverity info
-$InputRunFileMonitor
-
-$InputFilePollInterval 10
-
-if $programname == "cassandra" then @logs.loggly.com:18670;
-& ~

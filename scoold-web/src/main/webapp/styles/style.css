@@ -158,6 +158,15 @@ body {
 }
 #map-canvas{height: 300px;}
 #error{ background-color: white;}
+#fb-login-btn{
+	background-attachment: scroll;
+	background-color: #5872a6;
+    color: white;
+    display: inline-block;
+    height: 30px;
+    padding: 6px 14px 0 49px;
+	border: 1px solid #333333;
+}
 
 hr { height: 1px; border: 0; background-color: #AAAAAA; width: 100%;}
 
@@ -519,8 +528,8 @@ input.openidbox{ padding-left: 35px; }
 #logo, #oids-google, #oids-yahoo, #oids-aol, #oids-blogger, #oids-claimid, #oids-flickr, 
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
-.openidbox, .facebook-icon-small, #cc-icon{
-	background-image: url(http://static.scoold.com/sprites.png);
+.openidbox, .facebook-icon-small, #cc-icon, #fb-login-btn{
+	background-image: url(../images/sprites.png);
 	background-repeat: no-repeat;
     overflow: hidden;
 }
@@ -538,6 +547,7 @@ input.openidbox{ padding-left: 35px; }
 #oids-vidoop{ background-position: 1px -671px;}
 #oids-claimid{ background-position: 1px -756px;}
 #oids-symantec{ background-position: 0 -550px;}
+#fb-login-btn{ background-position: -117px -261px;}
 .school-pic{ background-position: -6px -65px; width: 200px; height: 150px; }
 .school-pic-thumb{ background-position: -6px -222px; width: 50px; height: 50px; text-indent: -999999em;}
 .facebook-icon-small{ background-position: -88px -258px; padding: 0 6px;}

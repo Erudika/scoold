@@ -988,7 +988,7 @@
 		<div class="bd">
 			<div class="smallText">
 				#if($isFBid)
-					<fb:name uid="$!showname" linked="false" />
+					<span class="fb-name">$!showname</span>
 				#else
 					$!showname
 				#end
@@ -1991,7 +1991,7 @@
 				<h2 id="fb-login">$lang.get("signin.facebook")</h2>
 			#end
 			<div class="mvl ptl">
-				<fb:login-button id="$fbbtnclass" size="large">$lang.get("signin.title")</fb:login-button>
+				<a id="$fbbtnclass" href="#" class="rounded3 mediumText nodecoration">$lang.get("signin.title")</a>
 			</div>
 		</div>
 	</div>
@@ -2199,16 +2199,20 @@
     <body>
 		#if($includeFBscripts)
 			<div id="fb-root"></div>
-			<script type="text/javascript" src="http://connect.facebook.net/$fb_locale/all.js"></script>
 			<script type="text/javascript">
-				FB.init({appId: '$FB_APP_ID', apiKey: '$FB_API_KEY', status: true, cookie: true, xfbml: true});
-				#if($request.getParameter("fblogout"))
-					FB.logout();
-				#end
+				window.fbAsyncInit = function() {
+					FB.init({appId: '$FB_APP_ID', status: true, cookie: true, xfbml: false, oauth: true});
+				};
+				// Load the SDK Asynchronously
+				(function(d){
+					var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+					js = d.createElement('script'); js.id = id; js.async = true;
+					js.src = "//connect.facebook.net/$fb_locale/all.js";
+					d.getElementsByTagName('head')[0].appendChild(js);
+				}(document));
 			</script>
 		#end
 		<div class="report-dialog jqmWindow rounded5"> <div class="center">#ajaxloading(false) </div></div>
-
 		<div id="main" class="clearfix">
 			#infostrip()
 			<div id="header" class="ptm">
@@ -2250,7 +2254,7 @@
 						<form method="post" action="$signoutlink" class="inline">
 							<fieldset class="inline">
 								#sectoken(false)
-								<input type="submit" value="$lang.get('signout')" class="bold button-link"/>
+								<input id="signout-btn" type="submit" value="$lang.get('signout')" class="bold button-link"/>
 							</fieldset>
 						</form>
 					#else

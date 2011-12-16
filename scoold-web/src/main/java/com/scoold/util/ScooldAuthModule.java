@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import name.aikesommer.authenticator.AuthenticationRequest;
@@ -27,8 +31,14 @@ import name.aikesommer.authenticator.RequestHandler;
 import name.aikesommer.authenticator.SimplePrincipal;
 import org.apache.click.Context;
 import org.apache.click.util.ClickUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.parser.JSONParser;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
 import org.openid4java.discovery.DiscoveryInformation;
@@ -54,7 +64,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	private static boolean DEVEL_MODE = false;
 
 	public static final String OPENID_ACTION = "openid_auth";
-	public static final String FB_CONNECT_ACTION = "fbconnect_auth";
+	public static final String FB_CONNECT_ACTION = "facebook_auth";
+	public static final String FB_COOKIE_PREFIX = "fbsr_";
 	public static final String ATTACH_OPENID_ACTION = "attach_openid";	
 	public static final String ATTACH_FACEBOOK_ACTION = "attach_facebook";	
 	public static final String OPENID_IDENTIFIER = "openid_identifier";
@@ -84,6 +95,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	private static RequestHandler reqHandler = new RequestHandler();
 	private static final Logger logger = Logger.getLogger(ScooldAuthModule.class.getName());
 	private static final ConsumerManager consman = new ConsumerManager();
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	public Status tryAuthenticate(AuthenticationManager manager, AuthenticationRequest request) {
 		// authentication finishes here if successful...
@@ -242,50 +254,38 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	}
 	
 	private static Long getFacebookId(HttpServletRequest request){
-		String cookie = ClickUtils.getCookieValue(request, "fbs_"+FB_APP_ID);
+		String cookie = ClickUtils.getCookieValue(request, FB_COOKIE_PREFIX+FB_APP_ID);
+		if(StringUtils.isBlank(cookie)) return null;
+		
 		Long id = null;
-		if(isValidSignature(cookie)){
-			id = NumberUtils.toLong(getFBCookieAttribute(cookie, "uid"));
+		
+		try {
+			String[] parts = cookie.split("\\.");
+			byte[] sig = Base64.decodeBase64(parts[0]);
+			byte[] json = Base64.decodeBase64(parts[1]);
+			byte[] plaintext = parts[1].getBytes();	// careful, we compute against the base64 encoded version
+			
+			JsonNode root = mapper.readTree(new String(json));
+			JsonNode alg = root.get("algorithm");
+			if(alg != null){
+				// "HMAC-SHA256" doesn't work, but "HMACSHA256" does.
+				String algorithm = alg.getTextValue().replace("-", "");
+
+				SecretKey secret = new SecretKeySpec(FB_SECRET.getBytes(), algorithm);
+
+				Mac mac = Mac.getInstance(algorithm);
+				mac.init(secret);
+				byte[] digested = mac.doFinal(plaintext);
+
+				if(Arrays.equals(sig, digested)){
+					id = NumberUtils.toLong(root.get("user_id").getTextValue());
+				}
+			}
+		} catch (Exception ex) {
+			throw new IllegalStateException("Unable to decode cookie", ex);
 		}
 
 		return id;
-	}
-
-	private static String getFBCookieAttribute(String cookieValue, String attributeName) {
-		if(cookieValue == null) return null;
-		int startIndex = cookieValue.indexOf(attributeName);
-		if (startIndex == -1) {
-			return null;
-		}
-		int endIndex = cookieValue.indexOf("&", startIndex + 1);
-		if (endIndex == -1) {
-			endIndex = cookieValue.length();
-		}
-		return cookieValue.substring(startIndex	+ attributeName.length() + 1, endIndex);
-	}
-
-	private static boolean isValidSignature(String fbCookie) {
-		String signature = "";
-		String sig = null;
-		if (fbCookie == null) return false;
-		
-		ArrayList<String> list = new ArrayList<String>();
-		for (String param : fbCookie.split("&")) {
-			if(!param.startsWith("sig=")){
-				list.add(param);
-			}else{
-				sig = param.substring(param.indexOf("=") + 1);
-			}
-		}
-
-		Collections.sort(list);
-
-		for (String param : list) {
-			signature = signature.concat(param);
-		}
-		signature = AbstractDAOUtils.urlDecode(signature).concat(FB_SECRET);
-
-		return StringUtils.equals(AbstractDAOUtils.MD5(signature), sig);
 	}
 	
 	private static void attachIdentifier(String openidURL, HttpServletRequest request){

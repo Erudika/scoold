@@ -146,11 +146,6 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>com.restfb</groupId>
-            <artifactId>restfb</artifactId>
-            <version>1.6.7</version>
-        </dependency>
-        <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
             <version>3.3.0</version>
@@ -159,21 +154,6 @@
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
             <version>3.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queries</artifactId>
-            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>name.aikesommer</groupId>
@@ -318,16 +298,6 @@
             <version>1.5</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-highlighter</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-memory</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>0.18.4</version>
@@ -336,11 +306,6 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
             <version>0.18.4</version>
-        </dependency>
-        <dependency>
-            <groupId>net.java.dev.jets3t</groupId>
-            <artifactId>jets3t</artifactId>
-            <version>0.8.1</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -385,6 +350,7 @@
 				<artifactId>yuicompressor-maven-plugin</artifactId>
 				<version>1.2</version>
 				<configuration>
+					<force>true</force>
 					<jswarn>false</jswarn>
 				</configuration>
 				<executions>
