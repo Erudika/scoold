@@ -81,8 +81,6 @@
 			<a href="ymsgr:addfriend?$!showcontact.value" rel="no-follow">$!showcontact.value</a>
 		#elseif($showcontact.type == "GTALK")
 			<a href="gtalk:chat?jid=$!showcontact.value" rel="no-follow">$!showcontact.value</a>
-		#elseif($showcontact.type == "XFIRE")
-			<a href="xfire:add_friend?user=$!showcontact.value" rel="no-follow">$!showcontact.value</a>
 		#elseif($showcontact.type == "TWITTER")
 			#if($showcontact.value.startsWith("@"))
 				#set($showcontval = $showcontact.value.substring(1))
@@ -96,22 +94,23 @@
 	#end
 #end
 #####################################
+#macro(contactdetailtypestr $detailtype )
+	#if($detailtype.name() == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
+	#elseif($detailtype.name() == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
+	#elseif($detailtype.name() == "UNKNOWN") #set($showdetailstr = $lang.get("unknown") )
+	#else #set($showdetailstr = $detailtype.toString() ) #end
+	$!showdetailstr
+#end
+#####################################
 #macro(contactdetailbox $showdetail )
 	#if($showdetail == "")
 		#set($hide = "hide" )
 	#else
 		#set($hide = "" )
 	#end
-	#if($showdetail.type == "WEBSITE")
-		#set($showdetailstr = $!lang.get("website") )
-	#elseif($showdetail.type == "ADDRESS")
-		#set($showdetailstr = $!lang.get("address") )
-	#else
-		#set($showdetailstr = $!lang.get(${detail.type.toLowerCase()}) )
-	#end
 	
 	<tr class="detailbox $hide">
-		<td class="r p25 contact-type">$showdetailstr:</td>
+		<td class="r p25 contact-type">#contactdetailtypestr($showdetail.getContactDetailType()):</td>
 		<td class="pll p75">
 			<span class="contact-value">$!detail.value</span>
 			<input type="hidden" name="contacts" value="$!detail"/>
@@ -1230,7 +1229,7 @@
 
 		<div class="pictos left mrl hugeText green $hide">3</div>
 		<div class="right">
-			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $lang.get("view")</a>
+			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $lang.get("open")</a>
 			#if(!$showreport.closed)
 				<a href="#" class="button-medium rounded3 close-report" title="Close report"><span class="pictos">3</span> $lang.get("close")</a>
 			#else
@@ -2219,7 +2218,7 @@
 				<div class="container">
 					<div class="left">
 						<a id="logo" href="$!prefix">$APPNAME</a> 
-						#if($IN_BETA) &nbsp;<code class="smallText">&beta;</code> #end
+						#if($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
 					</div>
 					<div id="topnav" class="right mtl">
 					#if($authenticated)
@@ -2344,7 +2343,7 @@
 		#set($sectoken = "#sectoken(true)")
 		#set($sectoken = $sectoken.trim())
 		
-		#set($jslang = ["success","areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
+		#set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
 			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
 			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
 			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",

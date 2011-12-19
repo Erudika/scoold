@@ -22,10 +22,24 @@ public class ContactDetail {
 
 	public static enum ContactDetailType{
 		UNKNOWN, WEBSITE, ADDRESS, FACEBOOK, TWITTER, SKYPE,
-		MSN, AIM, GTALK, QQ, YAHOO, ICQ, XFIRE, EBUDDY;
+		MSN, AIM, GTALK, QQ, YAHOO, ICQ, EBUDDY;
 
 		public String toString(){
-			return super.toString().toLowerCase();
+			switch (this) {
+				case WEBSITE: return "Website";
+				case ADDRESS: return "Address";
+				case FACEBOOK: return "Facebook";
+				case TWITTER: return "Twitter";
+				case SKYPE: return "Skype";
+				case MSN: return "Live Messenger";
+				case AIM: return "AOL IM";
+				case GTALK: return "Google Talk";
+				case QQ: return "Tencent QQ";
+				case YAHOO: return "Yahoo!";
+				case ICQ: return "ICQ";
+				case EBUDDY: return "eBuddy";
+			}
+			return UNKNOWN.toString().toLowerCase();
 		}
 	};
 

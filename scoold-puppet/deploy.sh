@@ -71,7 +71,9 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 		echo "-------------------  BEGIN ROLLING UPGRADE  -----------------------"
 		echo ""
 		echo "Deploying '$APPNAME' [enabled=$ENABLED]"
-
+		
+		updateJacssi
+		
 		if [ `expr $1 : '^http.*$'` != 0 ]; then
 			AUTH=""
 			if [ -e $JAUTH ]; then
@@ -136,8 +138,7 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 				$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --quiet --instances $instid
 				sleep 6
 			fi
-		done < $FILE1
-		updateJacssi
+		done < $FILE1		
 		echo ""
 		echo "---------------------------- DONE ---------------------------------"	
 	fi

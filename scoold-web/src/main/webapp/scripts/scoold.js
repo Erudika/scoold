@@ -93,7 +93,7 @@ $(function () {
      ****************************************************/
 
 	var fbauthurl = "facebook_auth";
-	var attachfburl = "attach_facebook";
+	var fbattachurl = "attach_facebook";
 
 	if($("#fb-login").length){
 		FB.Event.subscribe('auth.login', function(response) {
@@ -102,28 +102,28 @@ $(function () {
 			}
 		});
 	}
-
-	$("#fb-login-btn").click(function(){
+	
+	function fbAuthAction(actionurl){
 		FB.getLoginStatus(function(response) {
 			if (response.status === 'connected') {
-				window.location = fbauthurl;
+				window.location = actionurl;
 			}else{
 				FB.login(function(response) {
 					if (response.authResponse) {
-						window.location = fbauthurl;
+						window.location = actionurl;
 					}
 				});
 			}
 		});
+	}
+
+	$("#fb-login-btn").click(function(){
+		fbAuthAction(fbauthurl);
 		return false;
 	});
 
 	$("#fb-attach-btn").click(function(){
-		FB.getLoginStatus(function(response) {
-			if (response.status === 'connected') {
-				window.location = attachfburl;
-			}
-		});
+		fbAuthAction(fbattachurl);
 		return false;
 	});
 

@@ -105,8 +105,13 @@ public class Translate extends BasePage{
 		}else if(param("reset") && inRole("admin")){
 			String key = getParamValue("reset");
 			if(lang.containsKey(key)){
-				// global reset: delete all approved translations for this key
-				Translation.getTranslationDao().disapproveAllForKey(key);
+				if(param("global")){
+					// global reset: delete all approved translations for this key
+					Translation.getTranslationDao().disapproveAllForKey(key);
+				}else{
+					// loca reset: delete all approved translations for this key and locale
+					Translation.getTranslationDao().disapproveAllForKey(key, showLocale.getLanguage());
+				}
 				if(!isAjaxRequest())
 					setRedirect(translatelink+"/"+showLocale.getLanguage());
 			}
@@ -132,6 +137,7 @@ public class Translate extends BasePage{
 			if(id > 0L){
 				Translation t = Translation.getTranslationDao().read(id);
 				if(authUser.getId().equals(t.getUserid()) || inRole("admin")){
+					t.disapprove();
 					t.delete();
 				}
 				if(!isAjaxRequest())

@@ -25,6 +25,7 @@ public abstract class AbstractTranslationDAO<T, PK> implements GenericDAO<Transl
 	public abstract Map<String, Long> readApprovedIdsForLocale(String locale);
 	public abstract Map<String, Integer> calculateProgressForAll(int total);
 	public abstract void disapproveAllForKey(String key);
+	public abstract void disapproveAllForKey(String key, String locale);
 	public abstract Map<String, String> readLanguage(Locale locale);
 	public abstract Map<String, Integer> readTranslationCountForAllKeys(String locale, ArrayList<String> keys);
 }

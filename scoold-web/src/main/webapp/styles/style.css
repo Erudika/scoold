@@ -529,7 +529,7 @@ input.openidbox{ padding-left: 35px; }
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon, #fb-login-btn{
-	background-image: url(../images/sprites.png);
+	background-image: url(http://static.scoold.com/sprites.png);
 	background-repeat: no-repeat;
     overflow: hidden;
 }
@@ -547,7 +547,7 @@ input.openidbox{ padding-left: 35px; }
 #oids-vidoop{ background-position: 1px -671px;}
 #oids-claimid{ background-position: 1px -756px;}
 #oids-symantec{ background-position: 0 -550px;}
-#fb-login-btn{ background-position: -117px -261px;}
+#fb-login-btn{ background-position: -168px -225px;}
 .school-pic{ background-position: -6px -65px; width: 200px; height: 150px; }
 .school-pic-thumb{ background-position: -6px -222px; width: 50px; height: 50px; text-indent: -999999em;}
 .facebook-icon-small{ background-position: -88px -258px; padding: 0 6px;}

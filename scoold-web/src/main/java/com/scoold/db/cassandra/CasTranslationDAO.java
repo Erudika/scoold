@@ -240,6 +240,15 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 
 		mut.execute();
 	}
+	
+	public void disapproveAllForKey(String key, String locale) {
+		Mutator<String> mut = cdu.createMutator();
+		cdu.addDeletion(new Column<String, String>(locale, CasDAOFactory.LANGUAGE, 
+				key, null), mut);
+		cdu.addDeletion(new Column<String, String>(locale, CasDAOFactory.APPROVED_TRANSLATIONS, 
+				key, null), mut);
+		mut.execute();
+	}
 
 	public Map<String, String> readLanguage(Locale locale) {
 		Map<String, String> deflang = Language.getDefaultLanguage();

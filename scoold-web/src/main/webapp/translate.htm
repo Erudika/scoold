@@ -59,13 +59,26 @@
 			
 			#if($request.isUserInRole("admin") && $approvedTransMap.containsKey($langkey))
 				<br />
-				<div class="center">
-					<form action="$translatelink/$showLocale/?reset=$langkey" method="post">
-						<fieldset>
-							#sectoken(false)
-							<input type="submit" value="Global reset" class="button rounded3 red rusure"/>
-						</fieldset>
-					</form>
+				<div class="line center">
+					<div class="unit size1of2 r prm">
+						<form action="$translatelink/$showLocale/?reset=$langkey" method="post">
+							<fieldset>
+								#sectoken(false)
+								<input type="submit" value="Reset" class="button rounded3 red rusure"/>
+								<input type="hidden" name="reset" value="$langkey"/>
+							</fieldset>
+						</form>
+					</div>
+					<div class="unit size1of2 lastUnit l plm">
+						<form action="$translatelink/$showLocale" method="post">
+							<fieldset>
+								#sectoken(false)
+								<input type="submit" value="Global reset" class="button rounded3 red rusure"/>
+								<input type="hidden" name="reset" value="$langkey"/>
+								<input type="hidden" name="global" value="true"/>
+							</fieldset>
+						</form> 
+					</div>
 				</div>
 			#end
 		#else
