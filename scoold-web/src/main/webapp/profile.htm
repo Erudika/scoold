@@ -44,9 +44,9 @@
 
 				#if($request.isUserInRole("admin"))
 					#if($showUser.isModerator())
-						<a href="$profilelink/$showUser.id/?makemod=false" class="red button-tiny rounded3 rusure"><span class="pictos">&#10026;</span> Unmake mod</a>
+						<a href="$profilelink/$showUser.id/?makemod=false" class="red button-tiny rounded3 rusure"><span class="pictos">S</span> Unmake mod</a>
 					#else
-						<a href="$profilelink/$showUser.id/?makemod=true" class="red button-tiny rounded3 rusure"><span class="pictos">&#10026;</span> Make mod</a>
+						<a href="$profilelink/$showUser.id/?makemod=true" class="red button-tiny rounded3 rusure"><span class="pictos">S</span> Make mod</a>
 					#end
 					<a href="${adminlink}?delete=user&amp;id=$showUser.id" title="Delete user account" class="red button-tiny rounded3"><span class="pictos">*</span> $lang.get("delete")</a>
 				#end

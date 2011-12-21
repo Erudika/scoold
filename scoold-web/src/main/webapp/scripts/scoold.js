@@ -1,7 +1,7 @@
 /*
- * scoold.js - unobtrusive javascript for scoold.com
+ * Unobtrusive javascript for scoold.com
  * author: Alexander Bogdanovski
- * (cc) 2008-2011
+ * (CC) BY-SA
  */
 /*global window: false, jQuery: false, $: false, lang: false */
 $(function () {
@@ -1019,7 +1019,6 @@ $(function () {
 		// 2. after calling $.historyLoad();
 		// 3. after pushing "Go Back" button of a browser
 		var pl = function pageload(hash) {
-			// alert("pageload: " + hash);
 			// hash doesn't contain the first # character.
 			if(hash) {
 				$.galleriffic.go2(gallery, hash);

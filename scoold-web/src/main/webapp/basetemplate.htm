@@ -1010,7 +1010,7 @@
 				#if($showu.isAdmin())
 					<span class="pictos" title="Scoold developer">b</span>
 				#end
-				<span class="pictos" title="$lang.get('mod')">&#10026;</span>
+				<span class="pictos" title="$lang.get('mod')">S</span>
 			#else
 				<span class="pictos">U</span>
 			#end
@@ -1944,7 +1944,7 @@
 		#if($showu.isAdmin())
 			<span class="pictos" title="Scoold developer">b</span>
 		#end
-		<span class="pictos" title="$lang.get('mod')">&#10026;</span>
+		<span class="pictos" title="$lang.get('mod')">S</span>
 	#end
 	#set($tbadge = $showu.titleBadge )
 	#if($tbadge) #set($tbadgestr = $lang.get("$tbadge") ) #else #set($tbadgestr = "" ) #end
@@ -2168,7 +2168,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
     <head>
-		#basichead($!DESCRIPTION $!KEYWORDS)		
+		#basichead($!DESCRIPTION $!KEYWORDS)
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
 		#if($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
@@ -2184,11 +2184,11 @@
 			<style type="text/css">
 				@font-face {
 					font-family: 'PictosRegular';
-					src: url('$!context/styles/pictos-web-webfont.eot');
-					src: url('$!context/styles/pictos-web-webfont.woff') format('woff'),
-						url('$!context/styles/pictos-web-webfont.ttf') format('truetype'),
-						url('$!context/styles/pictos-web-webfont.eot?#iefix') format('embedded-opentype'),
-						url('$!context/styles/pictos-web-webfont.svg#PictosRegular') format('svg');
+					src: url('$!context/styles/pictos-web.eot');
+					src:  local('☺'), 
+						url('$!context/styles/pictos-web.woff') format('woff'),
+						url('$!context/styles/pictos-web.ttf') format('truetype'),
+						url('$!context/styles/pictos-web-webfont.svg#webfontIyfZbseF') format('svg');
 					font-weight: normal;
 					font-style: normal;
 				}
