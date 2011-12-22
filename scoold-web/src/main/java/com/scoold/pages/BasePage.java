@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.click.Page;
@@ -68,6 +69,7 @@ public class BasePage extends Page {
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int MAX_IMG_SIZE_PX = 730;
 	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
+	public static final long ONE_YEAR = 365L*24L*60L*60L*1000L;
 	public static final String SEPARATOR = AbstractDAOFactory.SEPARATOR;
 	public static final String AUTH_USER = ScooldAuthModule.AUTH_USER;
 	public static boolean IN_PRODUCTION = false;
@@ -149,7 +151,7 @@ public class BasePage extends Page {
 	public Report publicReport = new Report();
 	public Object showdownJS;
 	public Map<String, String> lang = Language.getDefaultLanguage();
-
+	
 	public BasePage() {
 		IN_PRODUCTION = BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
 		search = new Search();
@@ -1251,9 +1253,7 @@ public class BasePage extends Page {
 
 	public void onDestroy(){
 		if(authenticated && !isAjaxRequest()){
-
-			long oneYear = authUser.getTimestamp() + (365 * 24 * 60 * 60 * 1000);
-			long now = System.currentTimeMillis();
+			long oneYear = authUser.getTimestamp() + ONE_YEAR;
 
 			addBadgeOnce(Badge.ENTHUSIAST, authUser.getReputation() >= User.ENTHUSIAST_IFHAS);
 			addBadgeOnce(Badge.FRESHMAN, authUser.getReputation() >= User.FRESHMAN_IFHAS);
@@ -1261,7 +1261,7 @@ public class BasePage extends Page {
 			addBadgeOnce(Badge.TEACHER, authUser.getReputation() >= User.TEACHER_IFHAS);
 			addBadgeOnce(Badge.PROFESSOR, authUser.getReputation() >= User.PROFESSOR_IFHAS);
 			addBadgeOnce(Badge.GEEK, authUser.getReputation() >= User.GEEK_IFHAS);
-			addBadgeOnce(Badge.SENIOR, now >= oneYear);
+			addBadgeOnce(Badge.SENIOR, System.currentTimeMillis() >= oneYear);
 			addBadgeOnce(Badge.PHOTOLOVER, authUser.getPhotos() >= User.PHOTOLOVER_IFHAS);
 			
 			if(!StringUtils.isBlank(authUser.getNewbadges())){

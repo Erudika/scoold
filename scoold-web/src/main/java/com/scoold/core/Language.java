@@ -6,7 +6,6 @@
 package com.scoold.core;
 
 import com.google.common.collect.ImmutableMap;
-import com.scoold.core.ContactDetail.ContactDetailType;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -182,7 +181,6 @@ public final class Language {
 			.put("invite", "Invite people")
 			.put("contactdetails", "Contact details")
 			.put("more", "More")
-			.put("success", "Success!")
 			.put("addmore", "Add more")
 			.put("newbadges", "You've got new badges!")
 			.put("newbadge", "You've got a new badge!")
@@ -236,7 +234,6 @@ public final class Language {
 			.put("signup.form.error.email", "This email appears to be invalid.")
 			.put("signup.form.error.emailexists", "This email is already registered.")
 
-			.put("signin.form.title", "Please sign in")
 			.put("signin.facebook", "Sign in with Facebook")
 			.put("signin.openid", "Sign in with OpenID")
 			.put("signin.openid.text", "OpenID allows you to use an existing account to sign in to multiple websites, without needing to create new passwords. It's a free and easy way to use a single digital identity across the Internet.")
@@ -246,11 +243,10 @@ public final class Language {
 			.put("profile.about.location", "Location")
 			.put("profile.about.city", "City")
 			.put("profile.about.age", "Age")
-			.put("profile.about.membersince", "Member since")
-			.put("profile.about.lastseen", "Last seen")
+			.put("profile.about.membersince", "Active since")
+			.put("profile.about.lastseen", "Last activity")
 			.put("profile.about.aboutme", "More about me")
 			.put("profile.about.ilike", "Stuff I like")
-			.put("profile.about.usecomma", "Use a comma to separate values.")
 			.put("profile.contacts.title", "Contacts")
 			.put("profile.contacts.nocontacts", "No contacts.")
 			.put("profile.contacts.added", "You've added a new contact.")
@@ -263,8 +259,8 @@ public final class Language {
 			.put("profile.myclasses.create.name", "Class name")
 			.put("profile.drawer.share", "Share something...")
 			.put("profile.drawer.embedly", "Here you can embed content from any of the services listed below.")
-			.put("profile.drawer.embedly.notanimage", "Um, no. This is not an image.")
-			.put("profile.drawer.embedly.photosaved", "OK. Saved in photos.")
+			.put("profile.drawer.embedly.notanimage", "This is not an image.")
+			.put("profile.drawer.embedly.photosaved", "OK. Saved in Photos.")
 			.put("profile.thisisme", "This is me!")
 			.put("profile.deleted", "Deleted user")
 			.put("profile.posts.noquestions", "No questions.")
@@ -277,15 +273,14 @@ public final class Language {
 			.put("search.classes", "Find a class")
 			.put("search.questions", "Find a question")
 
-			.put("school.create", "Create a new school")
+			.put("school.create", "Create а school")
 			.put("school.created", "Created")
 			.put("school.someinfo", "Write some information about this school.")
-			.put("school.nocontact", "This school is unreachable. You can fix that.")
 			.put("school.noclasses", "This school has no classes.")
 			.put("school.nopeople", "This school is empty.")
 
 			.put("classes.noschools", "You don't seem to have any schools linked to your account. You need to join at least one school before you can start creating classes.")
-			.put("class.create", "Create a new class")
+			.put("class.create", "Create a class")
 			.put("class.classroom", "Classroom")
 			.put("class.classmates", "Classmates")
 			.put("class.blankboard", "This blackboard is blank.")
@@ -295,15 +290,11 @@ public final class Language {
 			.put("class.chat.connection.error", "Failed to connect.")
 			.put("class.chat.polling.error", "Connection lost. Let's try again...")
 			.put("class.chat.reconnect.error", "Reconnecting...")
-			.put("class.chat.disconnected", "Disconnected.")
-			.put("class.chat.connected", "Connected.")
-			.put("class.chat.error", "Could not connect. Let's try again...")
 			.put("class.chat.whoshere", "Who's here?")
-			.put("class.chat.multierror", "You are already in this chat.")
 			.put("class.invitepeople", "Invite people to join this class.")
 			.put("class.invite.text", "Hello! You were invited to join a class created by {0}. Follow this link:")
 			.put("class.copylink", "Copy and send this link to your friends")
-			.put("class.invitation", "Class invitation")
+			.put("class.invitation", "Invitation")
 			.put("class.addclassmates", "Add your classmates")
 
 			.put("messages.nomessages", "You have no messages.")
@@ -314,7 +305,7 @@ public final class Language {
 
 			.put("comments.write", "Add comment")
 			.put("comments.show", "Show comment")
-			.put("comments.hidden", "Comment was hidden.")
+			.put("comments.hidden", "Hidden.")
 
 			.put("photos.gallery", "Gallery")
 			.put("photos.viewall", "View all")
