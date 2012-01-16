@@ -330,8 +330,8 @@ p{ margin-bottom: 1em;}
 }
 .pictos { font-family: 'PictosRegular'; line-height: 1em; font-size: 1.2em;}
 a.pictos:hover{text-decoration: none; color: #55AADD;}
-a.accept-answer, a.approve-translation{ color: #777777;}
-a.accept-answer:hover, a.approve-translation:hover{ color: #88AF12;}
+a.approve-answer, a.approve-translation{ color: #777777;}
+a.approve-answer:hover, a.approve-translation:hover{ color: #88AF12;}
 a.info-placeholder{ border: 4px #CCCCCC dashed; color: #CCCCCC; padding: 50px 0; text-decoration: none; }
 pre, code, .chat-msg{
 	font-family: Monaco, Consolas,Menlo,"Lucida Console","Liberation Mono",

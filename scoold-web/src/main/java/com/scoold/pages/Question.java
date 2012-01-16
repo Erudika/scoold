@@ -136,7 +136,6 @@ public class Question extends BasePage{
 
 	public void onPost(){
 		processNewCommentRequest(showPost);
-		// catch "accept" requests!
 		processPostEditRequest(showPost, actionlink, canEdit);
 	}
 

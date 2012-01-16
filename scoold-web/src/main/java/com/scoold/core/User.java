@@ -70,8 +70,8 @@ public class User implements ScooldObject, Comparable<User>,
 	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = 10;	//
 	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = 5;	//
 	public static final int VOTEUP_REWARD_AUTHOR = 2;		//
-	public static final int ANSWER_ACCEPT_REWARD_AUTHOR = 10;	//
-	public static final int ANSWER_ACCEPT_REWARD_VOTER = 3;		//
+	public static final int ANSWER_APPROVE_REWARD_AUTHOR = 10;	//
+	public static final int ANSWER_APPROVE_REWARD_VOTER = 3;		//
 	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = 3;	//
 	public static final int POST_VOTEDOWN_PENALTY_VOTER = 1;	//
 
@@ -105,7 +105,7 @@ public class User implements ScooldObject, Comparable<User>,
 		SUPPORTER(10),		//50+ upvotes
 		EDITOR(0),			//first edit of post
 		BACKINTIME(0),		//for each rollback of post
-		NOOB(10),			//first question + first accepted answer
+		NOOB(10),			//first question + first approved answer
 		ENTHUSIAST(0),		//100+ rep  [//			 ]
 		FRESHMAN(0),		//300+ rep	[////		 ]
 		SCHOLAR(0),			//500+ rep	[//////		 ]

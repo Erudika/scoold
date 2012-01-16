@@ -1447,8 +1447,8 @@
 		<div id="$postviewid" class="viewbox $bbclazz">
 			#if(!$showpost.isBlackboard())
 				<div class="inlineblock mrl mls left">
-					#set($acceptedAnswer = $showpost.id.equals($parentpost.answerid) )
-					#if($acceptedAnswer)
+					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
+					#if($approvedAnswer)
 						#set($onclass = "green")
 						#set($picon = "2")
 					#else
@@ -1456,8 +1456,8 @@
 						#set($picon = "3")
 					#end
 					#if($authenticated && $showpost.isAnswer() && $parentpost.userid.equals($authUser.id))
-						<a href="$!actionlink/$parentpost.id/accept/$showpost.id" class="megaText pictos accept-answer nodecoration $!onclass" title="Accept answer">$picon</a>
-					#elseif($acceptedAnswer)
+						<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!onclass" title="Approve answer">$picon</a>
+					#elseif($approvedAnswer)
 						<span class="pictos megaText green">$picon</span>
 					#end
 				</div>

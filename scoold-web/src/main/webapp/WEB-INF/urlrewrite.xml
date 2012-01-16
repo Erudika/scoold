@@ -114,8 +114,8 @@
         <to>/question.htm?id=$1&amp;restore=true&amp;revisionid=$2</to>
     </rule>
 	<rule>
-        <from>^/feedback/(\d+)/accept/(\d+)(/?)$</from>
-        <to>/question.htm?id=$1&amp;accept=true&amp;answerid=$2</to>
+        <from>^/feedback/(\d+)/approve/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;approve=true&amp;answerid=$2</to>
     </rule>
 	<rule>
         <from>^/feedback/(\d+)/close((/?)(.*?))$</from>
@@ -128,7 +128,7 @@
 
 	<!--SEO URLs-->
 	<rule>
-        <from>^/feedback/(\d+)/([^write][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^updated][^votes])*.*(/?)$</from>
+        <from>^/feedback/(\d+)/([^write][^reply][^tag][^restore][^undelete][^undelete][^approve][^close][^newest][^updated][^votes])*.*(/?)$</from>
         <to>/question.htm?id=$1</to>
     </rule>
 
@@ -522,8 +522,8 @@
         <to>/question.htm?id=$1&amp;restore=true&amp;revisionid=$2</to>
     </rule>
 	<rule>
-        <from>^/question/(\d+)/accept/(\d+)(/?)$</from>
-        <to>/question.htm?id=$1&amp;accept=true&amp;answerid=$2</to>
+        <from>^/question/(\d+)/approve/(\d+)(/?)$</from>
+        <to>/question.htm?id=$1&amp;approve=true&amp;answerid=$2</to>
     </rule>
 	<rule>
         <from>^/question/(\d+)/close((/?)(.*?))$</from>
@@ -560,7 +560,7 @@
     </rule>
 	<!--SEO URLs-->
 	<rule>
-        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^accept][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
+        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^approve][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
         <to>/question.htm?id=$1</to>
     </rule>
 

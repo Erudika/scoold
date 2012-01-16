@@ -1265,10 +1265,10 @@ $(function () {
 		return false;
 	});
 
-	$(document).on("click", "a.accept-answer, a.approve-translation", function(){
+	$(document).on("click", "a.approve-answer, a.approve-translation", function(){
 		var on = "green";
 		var that = $(this);
-		$(".accept-answer, .approve-translation").not(that).removeClass(on).text("3");
+		$(".approve-answer, .approve-translation").not(that).removeClass(on).text("3");
 		
 		if(that.hasClass(on)){
 			that.removeClass(on);

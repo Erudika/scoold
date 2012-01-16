@@ -687,7 +687,7 @@ public class BasePage extends Page {
 				addBadge(Badge.EUREKA, newq.getUserid().equals(post.getUserid()));
 				setRedirect(escapelink+"/"+post.getId()+"#post-"+newq.getId());
 			}
-		}else if(param("accept")){
+		}else if(param("approve")){
 			boolean isMine = (authenticated) ? authUser.getId()
 					.equals(post.getUserid()) : false;
 			Long ansid = NumberUtils.toLong(getParamValue("answerid"), 0);
@@ -700,18 +700,18 @@ public class BasePage extends Page {
 						boolean same = author.equals(authUser);
 						
 						if(ansid.equals(post.getAnswerid())){
-							// Answer accepted award - UNDO
+							// Answer approved award - UNDO
 							post.setAnswerid(null);
 							if (!same) {
-								author.removeRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
-								authUser.removeRep(User.ANSWER_ACCEPT_REWARD_VOTER);
+								author.removeRep(User.ANSWER_APPROVE_REWARD_AUTHOR);
+								authUser.removeRep(User.ANSWER_APPROVE_REWARD_VOTER);
 							}
 						}else{
-							// Answer accepted award - GIVE
+							// Answer approved award - GIVE
 							post.setAnswerid(ansid);
 							if(!same){
-								author.addRep(User.ANSWER_ACCEPT_REWARD_AUTHOR);
-								authUser.addRep(User.ANSWER_ACCEPT_REWARD_VOTER);
+								author.addRep(User.ANSWER_APPROVE_REWARD_AUTHOR);
+								authUser.addRep(User.ANSWER_APPROVE_REWARD_VOTER);
 								addBadgeOnce(Badge.NOOB, true);
 							}
 						}
@@ -815,7 +815,7 @@ public class BasePage extends Page {
 		}
 
 		if (StringUtils.isBlank(parentuuid)) {
-			puuid = new Select("parentuuid", lang.get("posts.belongsto"), true);
+			puuid = new Select("parentuuid", lang.get("posts.linkedto"), true);
 			((Select) puuid).add(new Option("", lang.get("chooseone")));
 			for (com.scoold.core.School school : schoolsMap.values()) {
 				((Select) puuid).add(new Option(school.getUuid(), school.getName()));
@@ -846,15 +846,7 @@ public class BasePage extends Page {
 		timer.setValue(""+System.currentTimeMillis());
 		timer.setRequired(true);
 
-		String submittxt = "Post";
-		if (type == PostType.QUESTION) {
-			submittxt = lang.get("posts.answerit");
-		} else if(type == PostType.FEEDBACK) {
-			submittxt = lang.get("feedback.reply");
-		}
-
-        Submit submit = new Submit("answerbtn",
-				submittxt, this, "onAnswerClick");
+        Submit submit = new Submit("answerbtn", lang.get("post"), this, "onAnswerClick");
         submit.setAttribute("class", "button rounded3");
 		submit.setId("answer-btn");
 
@@ -893,7 +885,7 @@ public class BasePage extends Page {
 		Field tags = null;
 		if (type == PostType.QUESTION) {
 			tags = new TextField("tags", true);
-			tags.setLabel(lang.get("tags.tags"));
+			tags.setLabel(lang.get("tags.title"));
 			((TextField) tags).setMaxLength(255);
 			tags.setTabIndex(3);
 		} else if(type == PostType.FEEDBACK) {
@@ -916,12 +908,7 @@ public class BasePage extends Page {
 		timer.setValue(""+System.currentTimeMillis());
 		timer.setRequired(true);
 
-		String submittxt = lang.get("post");
-		if (type == PostType.QUESTION) {
-			submittxt = lang.get("posts.askit");
-		}
-		
-        Submit submit = new Submit("askbtn", submittxt, this, "onAskClick");
+        Submit submit = new Submit("askbtn", lang.get("post"), this, "onAskClick");
         submit.setAttribute("class", "button rounded3");
 		submit.setId("ask-btn");
 
