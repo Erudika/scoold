@@ -182,8 +182,6 @@ img.align-center, img[align="center"] { margin: 0 auto;}
 img.align-right, img[align="right"] { float: right; margin-left: 20px;}
 img.align-left, img[align="left"] { float: left; margin-right: 20px; }
 .school-icon img{ max-width: 200px; min-width: 50px;}
-.school-icon img{ width: expression(this.width > 200 ? 200: true); }
-.school-icon img{ width: expression(this.width < 50 ? 50: true); }
 
 /* -- LINKS -- */
 a, input.button-link {	color: #5397CC; text-decoration: none;}
@@ -246,6 +244,7 @@ a.button-tiny-selected, span.button-tiny-selected{
 	position: relative;
 	cursor: pointer;
 	background-color: #5397B9;
+	*border-bottom: 3px solid transparent;
 }
 .nicebtn:hover { border-bottom: 3px solid #555555; text-decoration: none; }
 .navbtn-hover { border-bottom: 3px solid #555555; text-decoration: none; }
@@ -329,6 +328,7 @@ p{ margin-bottom: 1em;}
 	text-align: left;
 }
 .pictos { font-family: 'PictosRegular'; line-height: 1em; font-size: 1.2em;}
+span.pictos { cursor: default; }
 a.pictos:hover{text-decoration: none; color: #55AADD;}
 a.approve-answer, a.approve-translation{ color: #777777;}
 a.approve-answer:hover, a.approve-translation:hover{ color: #88AF12;}
@@ -360,7 +360,7 @@ pre, code, .chat-msg{
 }
 .successBox{ 
     background-color: white;
-    color:#88AF12;z
+    color:#88AF12;
 }
 .infoBox{
     background-color: white;
@@ -525,7 +525,7 @@ input.openidbox{ padding-left: 35px; }
     overflow: hidden;
 }
 #logo{ background-position: 0 -5px;}
-#cc-icon{ background-position: -64px -220px; padding: 17px 45px;}
+#cc-icon{ background-position: -64px -220px; width: 90px; height: 30px; }
 #oids-google{ background-position: 23px -287px;}
 #oids-yahoo{ background-position: 21px -385px;}
 #oids-aol{ background-position: 24px -338px;}

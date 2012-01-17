@@ -419,7 +419,7 @@
 		<h2><a href="${baseurl}${labelparam}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") <span class="pictos">z</span> $!{showlabel} #showcount($mediacount.longValue())</h2>
 	#else
 		#set($showlabel = "")
-		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") #showcount($mediacount.longValue()) </h2>
+		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") #showcount($mediacount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
 	#end
 
 	#if($showlabel != "")
@@ -641,12 +641,12 @@
 #macro(oembedbox $btnclass)
 	#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
 	<div id="embedly-services" class="jqmWindow rounded5">
-		<a href="http://api.embed.ly" class="extlink">
-				<img src="http://api.embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
+		<a href="http://api.embed.ly" class="extlink right">
+			<img src="http://api.embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
 		</a>
 		<span class="mediumText">$lang.get("profile.drawer.embedly")</span>
 		#ajaxloading(false)
-		<div></div>
+		<div class="mtl"></div>
 		<div class="center mtl">
 			<a href="#" class="jqmClose button-small rounded3">$lang.get("close")</a>
 		</div>
@@ -656,7 +656,7 @@
 			#sectoken(false)
 			<input type="text" value="$lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
 			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&amp;</span></a>
-			<a href="#" class="pictos trigger-embedly-services">?</a>
+			
 			<div class="red embed-error"></div>
 			<div class="hide oembed-preview pam center mtm rounded5">
 				#ajaxloading(false)
@@ -1694,7 +1694,7 @@
 #end
 ###################################
 #macro(badgebox $showbadge $num)
-	<span class="badge phs mas rounded5 inlineblock">
+	<span class="badge phs mas rounded5 inlineblock" title="$lang.get('about.badges.${showbadge}')">
 		<span class="pictos">S</span> 
 		#if($num && $num > 1)
 			$lang.get("$showbadge") <sup>$num</sup>
@@ -2173,7 +2173,7 @@
 			<link href="$context/feed.xml?userid=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>
 		#end
 		<script type="text/javascript" src="$scriptslink/head${minsuffix}.js"></script>
-		<script type="text/javascript" src="$scriptslink/init${minsuffix}.js"></script>
+		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 		#if($includeGMapsScripts && $includeGMapsScripts == true)
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false&amp;key=ABQIAAAAA1422Oq_eBM65GXKc1EKmBQpUxXMgUUkS03NA9iiHvjrwMZsNBTcMwCDC6IzCtvARyV866T9rtg38w"></script>
 		#end
@@ -2349,6 +2349,23 @@
 		
 		<script type="text/javascript">
 			/* <![CDATA[ */
+			function loadScripts(scriptslink, minsuffix) {
+				head.js ({jquery:		"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js" },
+					{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" },
+					{modal:			scriptslink + "/jquery.modal" + minsuffix + ".js" },
+					{jeditable:		scriptslink + "/jquery.jeditable" + minsuffix + ".js" },
+					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
+					{gallery:		scriptslink + "/jquery.galleriffic" + minsuffix + ".js" },
+					{history:		scriptslink + "/jquery.history" + minsuffix + ".js" },
+					{oembed:		scriptslink + "/jquery.oembed" + minsuffix + ".js" },
+					{markitup:		scriptslink + "/jquery.markitup" + minsuffix + ".js" },
+					{chatclient:	scriptslink + "/chatclient" + minsuffix + ".js" },
+					{miuicons:		scriptslink + "/miu.set.markdown" + minsuffix + ".js" },
+					{showdown:		scriptslink + "/showdown" + minsuffix + ".js" },
+					{diff:			scriptslink + "/diff_match_patch" + minsuffix + ".js" },
+					{scoold:		scriptslink + "/scoold" + minsuffix + ".js" });
+			}
+			
 			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end},
 				sessiontimeout = $!SESSION_TIMEOUT_SEC;
 			#if($authenticated)

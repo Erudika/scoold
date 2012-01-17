@@ -270,11 +270,12 @@ public abstract class AbstractDAOUtils {
 		HashSet<String> tset = new HashSet<String>();
 		String[] split = s.split(",");
 		int max = (maxValues == 0) ? split.length : maxValues;
-
+		
 		if(max >= split.length) max = split.length;
 		
 		for(int i = 0; i < max; i++) {
 			String tag = split[i];
+			tag = tag.replaceAll("-", " ");
 			tag = AbstractDAOUtils.stripAndTrim(tag);
 			if(!tag.isEmpty() && !tset.contains(tag)){
 				tset.add(tag);

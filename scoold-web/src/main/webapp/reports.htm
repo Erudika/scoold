@@ -41,7 +41,7 @@
 	<h1><span class="pictos">^</span> $lang.get("reports.title") #showcount($itemcount.longValue())</h1>
 	<hr/>
 	#if($itemcount.longValue() == 0)
-		<div class="mediumText">${lang.get("none")}</div>
+		<div class="mediumText">${lang.get("search.notfound")}</div>
 	#else
 		#paginate($pagenum.longValue() "#reportspage($reportslist)" $itemcount.longValue() "" "pageless")
 	#end
