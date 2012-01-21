@@ -124,10 +124,10 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 			pushConfig $instid $host $ipaddr $count $NODETYPE $ZIPNAME
 			cleanupAndExec $ZIPNAME $FILE2 $host
 		fi		
-	elif [ "$1" = "lbadd" ]; then	
+	elif [ "$1" = "lbadd" ]; then
 	 	### register instance with LB
 		$AWS_ELB_HOME/bin/elb-register-instances-with-lb $LBNAME --region $REGION --instances $2
-	elif [ "$1" = "lbremove" ]; then	
+	elif [ "$1" = "lbremove" ]; then
 	 	### deregister instance from LB
 		$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --instances $2
 	elif [ "$1" = "backupdb" ]; then

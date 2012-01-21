@@ -144,7 +144,7 @@
         <jvm-options>-Xmx1408m</jvm-options>
         <jvm-options>-Djavax.management.builder.initial=com.sun.enterprise.v3.admin.AppServerMBeanServerBuilder</jvm-options>
         <jvm-options>-Dcom.sun.enterprise.security.httpsOutboundKeyAlias=s1as</jvm-options>
-        <jvm-options>-XX:MaxPermSize=192m</jvm-options>
+        <jvm-options>-XX:MaxPermSize=256m</jvm-options>
         <jvm-options>-XX:+UnlockDiagnosticVMOptions</jvm-options>
         <jvm-options>-Dfelix.fileinstall.bundles.startTransient=true</jvm-options>
         <jvm-options>-Dfelix.fileinstall.dir=${com.sun.aas.installRoot}/modules/autostart/</jvm-options>
@@ -154,6 +154,7 @@
         <jvm-options>-Dfelix.fileinstall.log.level=2</jvm-options>
         <jvm-options>-Dorg.glassfish.additionalOSGiBundlesToStart=org.apache.felix.shell,org.apache.felix.gogo.runtime,org.apache.felix.gogo.shell,org.apache.felix.gogo.command</jvm-options>
         <jvm-options>-XX:+UseConcMarkSweepGC</jvm-options>
+        <jvm-options>-XX:+CMSClassUnloadingEnabled</jvm-options>
         <jvm-options>-Djavax.net.ssl.keyStore=${com.sun.aas.instanceRoot}/config/keystore.jks</jvm-options>
         <jvm-options>-server</jvm-options>
         <jvm-options>-Djdbc.drivers=org.apache.derby.jdbc.ClientDriver</jvm-options>
@@ -318,7 +319,7 @@
       <transaction-service tx-log-dir="${com.sun.aas.instanceRoot}/logs" automatic-recovery="true"></transaction-service>
       <diagnostic-service></diagnostic-service>
       <java-config debug-options="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${JAVA_DEBUGGER_PORT}" system-classpath="" classpath-suffix="">
-        <jvm-options>-XX:MaxPermSize=192m</jvm-options>
+        <jvm-options>-XX:MaxPermSize=256m</jvm-options>
         <jvm-options>-server</jvm-options>
         <jvm-options>-XX:+UnlockDiagnosticVMOptions</jvm-options>
         <jvm-options>-Djava.endorsed.dirs=${com.sun.aas.installRoot}/modules/endorsed${path.separator}${com.sun.aas.installRoot}/lib/endorsed</jvm-options>

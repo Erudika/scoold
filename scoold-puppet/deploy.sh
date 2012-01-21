@@ -145,7 +145,16 @@ if [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "updatejacssi" ] && [ "$1" != "cmd" ]
 elif [ "$1" = "updatejacssi" ]; then
 	updateJacssi $2
 elif [ "$1" = "cmd" ]; then
-	pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"
+	if [ `expr $2 : '^web[0-9]*$'` != 0 ] && [ -n "$3" ]; then
+		i=$(ec2din --region $REGION -F "tag-value=$2" | egrep ^INSTANCE | awk '{ print $2,$4,$15}')
+		host=$(echo $i | awk '{ print $2 }')
+		if [ -n "$host" ]; then
+			ssh -n ubuntu@$host "$ASADMIN $3"
+		fi		
+	else
+		pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"		
+	fi
+
 else
 	echo "USAGE:  $0 (war | updatejacssi [invalidateall])  [context | enabled]"
 fi
