@@ -8,7 +8,7 @@ class scoold {
 	$defuser = "ubuntu"
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "db3"
+	$nodename = "search2"
 	$dbseeds = "10.54.182.148,10.54.181.201,10.53.9.10"
 	#--------------------------------------------------#	
 	

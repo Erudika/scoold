@@ -190,7 +190,7 @@ class scoold::cassandra {
 		
 	exec { 
 		"start-cassandra":
-			command => "monit start cassandra",
+			command => "monit; monit start cassandra",
 			unless => "test -e ${cassandrahome}/cassandra.pid", 
 			require => Exec["set-cluster-name"];
 		"configure-rsyslog":

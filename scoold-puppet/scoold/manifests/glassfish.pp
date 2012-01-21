@@ -97,7 +97,7 @@ class scoold::glassfish {
 
 	exec{ 
 		"start-glassfish":
-			command => "monit start glassfish",
+			command => "monit; monit start glassfish",
 			unless => "test -e ${glassfishhome}/glassfish.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

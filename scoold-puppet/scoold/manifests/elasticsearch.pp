@@ -116,7 +116,7 @@ class scoold::elasticsearch {
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "monit start elasticsearch",
+			command => "monit; monit start elasticsearch",
 			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",
