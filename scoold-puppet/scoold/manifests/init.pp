@@ -8,12 +8,12 @@ class scoold {
 	$defuser = "ubuntu"
 		
 	#--- AUTO UPDATED - CHANGES WILL BE OVERWRITTEN ---#
-	$nodename = "search2"
+	$nodename = "db3"
 	$dbseeds = "10.54.182.148,10.54.181.201,10.53.9.10"
 	#--------------------------------------------------#	
 	
 	#### Cassandra ####	
-	$casver = "1.0.5"
+	$casver = "1.0.7"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "http://java.net/projects/jna/sources/svn/content/trunk/jnalib/dist/jna.jar"
 	$dbheapsize = "6G" # memory of m1.large
@@ -25,7 +25,7 @@ class scoold {
 	$gfcluster = "scoold" 
 		 
 	#### Elasticsearch ####
-	$esver = "0.18.4"
+	$esver = "0.18.7"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$esheapsize = "1024M"
 	$esheapdev = "256M"

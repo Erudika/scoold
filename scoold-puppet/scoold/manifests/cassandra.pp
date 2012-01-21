@@ -26,6 +26,7 @@ class scoold::cassandra {
 	}
 	
 	exec { "nodetool-drain":
+		# ${casdir}/bin/nodetool -h localhost disablegossip && sleep 10 && ${casdir}/bin/nodetool -h localhost disablethrift && 
 		command => "${casdir}/bin/nodetool -h localhost drain",
 		onlyif => "test -e ${cassandrahome}/cassandra.pid",
 		before => Exec["stop-cassandra"]

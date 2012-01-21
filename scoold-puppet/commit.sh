@@ -110,7 +110,7 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 				pushConfig $instid $host $ipaddr $count $NODETYPE $ZIPNAME
 				count=$((count+1))
 			fi
-	 	done < $FILE1	
+	 	done < $FILE1
 		
 		cleanupAndExec $ZIPNAME $FILE2
 	elif [ `expr $1 : '^node-.*$'` != 0 ]; then
