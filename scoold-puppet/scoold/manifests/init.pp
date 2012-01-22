@@ -26,7 +26,9 @@ class scoold {
 		 
 	#### Elasticsearch ####
 	$esver = "0.18.7"
+	$esriverver = "1.1"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
+	$esriverlink = "aleski/elasticsearch-river-amazonsqs/${esriverver}"
 	$esheapsize = "1024M"
 	$esheapdev = "256M"
 	if inproduction == false {		

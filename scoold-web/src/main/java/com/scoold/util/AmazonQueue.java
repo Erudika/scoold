@@ -30,23 +30,23 @@ import org.codehaus.jackson.node.ArrayNode;
  * @author alexb
  */
 public class AmazonQueue<E extends Serializable> implements Queue<E> {
-	
-	// This queue contains only messages in JSON format!
-	
-	public static final String SQS_URL = "https://eu-west-1.queue.amazonaws.com/374874639893/";
 	public static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
 	public static final String SECRETKEY = "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";
 	
+	private static final String SQS_ID = "374874639893";
+	private static final String SQS_URL = "https://eu-west-1.queue.amazonaws.com";
 	private static final int MAX_MESSAGES = 10;  //max in bulk
 	private String QUEUE_URL;
 	private AmazonSQSAsyncClient sqs;
 	private static final Logger logger = Logger.getLogger(AmazonQueue.class.getName());
 	private ObjectMapper mapper;
 	
+	// This queue contains only messages in JSON format!
 	public AmazonQueue(String name){
 		if(BasePage.IN_PRODUCTION){
 			sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
-			QUEUE_URL = SQS_URL.concat(name);
+			sqs.setEndpoint(SQS_URL);
+			QUEUE_URL = SQS_URL.concat("/").concat(SQS_ID).concat("/").concat(name);
 			mapper = new ObjectMapper();
 		}else{
 			QUEUE_URL = null;

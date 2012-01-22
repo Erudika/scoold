@@ -45,12 +45,13 @@ class scoold::elasticsearch {
 			command => "sed -e '1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/' -e '1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/' -i.bak ${esdir}/bin/elasticsearch.in.sh",
 			require => Exec["rename-elasticsearch"];
 		"install-cloud-plugin":
-			command => "sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
+			command => "rm -rf ${esdir}/plugins/cloud-aws; sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
 			require => Exec["rename-elasticsearch"],
 			before => Exec["start-elasticsearch"];
 		"download-river":
-			command => "sudo -u ${elasticsearchusr} sh ${elasticsearchhome}/getriver.sh",
-			require => File["${elasticsearchhome}/getriver.sh"];
+			command => "rm -rf ${esdir}/plugins/river-amazonsqs; sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install ${scoold::esriverlink}",
+			require => Exec["rename-elasticsearch"],
+			before => Exec["start-elasticsearch"];
 	}
 
 	line { 
@@ -101,15 +102,7 @@ class scoold::elasticsearch {
 			owner => $elasticsearchusr,
 			group => $elasticsearchusr,
 			require => Exec["rename-elasticsearch"],
-			before => Exec["start-elasticsearch"];	
-		"${elasticsearchhome}/getriver.sh":
-			ensure => file,
-			source => "puppet:///modules/scoold/getriver.sh",
-			owner => $elasticsearchusr,
-		    group => $elasticsearchusr,
-			mode => 700,
-			require => Exec["rename-elasticsearch"],
-			before => Exec["start-elasticsearch"];
+			before => Exec["start-elasticsearch"];		
 	}
 		
 	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-elasticsearch.txt")

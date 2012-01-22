@@ -59,6 +59,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
     private final String ACCESSKEY;
     private final String SECRETKEY;
     private final String QUEUE_URL;
+    private final String REGION;
     private final int MAX_MESSAGES;
     private final int TIMEOUT;
 
@@ -73,10 +74,12 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 				
         if (settings.settings().containsKey("amazonsqs")) {
             Map<String, Object> sqsSettings = (Map<String, Object>) settings.settings().get("amazonsqs");
+            REGION = XContentMapValues.nodeStringValue(sqsSettings.get("region"), "null");
             ACCESSKEY = XContentMapValues.nodeStringValue(sqsSettings.get("accesskey"), "null");
             SECRETKEY = XContentMapValues.nodeStringValue(sqsSettings.get("secretkey"), "null");
             QUEUE_URL = XContentMapValues.nodeStringValue(sqsSettings.get("queue_url"), "null");
         } else {
+            REGION = settings.globalSettings().get("cloud.aws.region");
             ACCESSKEY = settings.globalSettings().get("cloud.aws.access_key");
             SECRETKEY = settings.globalSettings().get("cloud.aws.secret_key");
             QUEUE_URL = settings.globalSettings().get("cloud.aws.sqs.queue_url");
@@ -94,6 +97,7 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 		}
 		
 		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));
+		sqs.setEndpoint("https://".concat(REGION).concat(".queue.amazonaws.com"));
 		mapper = new ObjectMapper();
     }
 
