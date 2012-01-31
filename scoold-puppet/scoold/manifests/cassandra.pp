@@ -161,7 +161,7 @@ class scoold::cassandra {
 	$repairhour = 6 + $nodeid
 	
 	cron { "nodetool-repair":
-		command => "${casdir}/bin/nodetool -h localhost repair",
+		command => "${casdir}/bin/nodetool -h localhost repair; ${casdir}/bin/nodetool -h localhost compact; ${casdir}/bin/nodetool -h localhost cleanup",
 		user => $cassandrausr,
 		monthday => [1,6,11,16,21,26],
 		hour => $repairhour,

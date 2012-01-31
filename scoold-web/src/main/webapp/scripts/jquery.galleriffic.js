@@ -34,6 +34,7 @@
 		galleryUri:				   '',
 		totalCount:				   0,
 		label:					   '',
+		labelBoxClass:					   '',
 		preloadAhead:              1, // Set to -1 to preload all images
 		commentProfileLinkSel:	   '',
 		commentBoxSel:		       '.commentbox',
@@ -302,24 +303,23 @@
 			getLabels: function(imageData){
 				if(this.$labelsContainer){
 					var labelsCont = this.$labelsContainer;
-					var index = this.currentIndex;
 					labelsCont.children(":visible").remove(); // clear container
 
 					for (i = 0; i < imageData.labels.length; i++) {
 						var label = imageData.labels[i];
-						var box = labelsCont.children(":first").clone();
-						
-						box.find("a:first").attr("href", function(){
-							return this.href + label;
-						}).text(label);
-						box.find("a:last").attr("href", function(){
-							return this.href + label + "&index=" + index;
-						});
-
-						labelsCont.append(box.show());
+						if(label !== ""){
+							box = labelsCont.children(":hidden:first").clone();
+							box.find("a:first").attr("href", function(){
+								return this.href + label;
+							}).text(label);
+							box.find("a:last").attr("href", function(){
+								return this.href + label + "&uuid=" + imageData.uuid;
+							});
+							labelsCont.append(box.addClass(this.labelBoxClass).show());
+						}
 					}
-					labelsCont.parent("div").find(this.addLabelFormSel+" input[name=index]")
-						.val(this.currentIndex);
+					// update labels form mid
+					$(this.addLabelFormSel+" input[name=mid]").val(this.currentIndex);
 				}
 
 				return this;
@@ -335,6 +335,8 @@
 
 					currentImage.alt = imageData.title;
 					currentImage.src = imageData.url;
+					currentImage.height = imageData.height;
+					currentImage.width = imageData.width;
 
 					this.$captionContainer.find(this.titleSel).text(title);
 					this.$captionContainer.find(this.captionSel).text(caption);
@@ -483,10 +485,10 @@
 					this.interval = 0;
 					
 					if (this.$slideshowToggle) {
-						this.$slideshowToggle.removeClass().addClass('play')
+						this.$slideshowToggle.removeClass('pause').addClass('play')
 							.attr('title', this.playLinkText)
 							.attr('href', '#play')
-							.html(this.playLinkText);
+							.find("span:contains(6)").text("4");
 					}
 				} else {
 					var gallery = this;
@@ -495,10 +497,10 @@
 					}, this.delay);
 					
 					if (this.$slideshowToggle) {
-						this.$slideshowToggle.removeClass().addClass('pause')
+						this.$slideshowToggle.removeClass('play').addClass('pause')
 							.attr('title', this.pauseLinkText)
 							.attr('href', '#pause')
-							.html(this.pauseLinkText);
+							.find("span:contains(4)").text("6");
 					}
 				}
 

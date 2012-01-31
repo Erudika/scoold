@@ -30,6 +30,9 @@ public abstract class AbstractDAOFactory {
 	public static final int MAX_INVITES = 50;
 	public static final int	DEFAULT_LIMIT = Integer.MAX_VALUE;
 	public static final String SEPARATOR = ":";
+	
+	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
+	public static final int MAX_IMG_SIZE_PX = 730;
 
 	public static enum FactoryType {
 //		MYSQL,

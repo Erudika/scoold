@@ -66,8 +66,7 @@ public class BasePage extends Page {
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
-	public static final int MAX_IMG_SIZE_PX = 730;
-	public static final int SESSION_TIMEOUT_SEC = 24 * 60 * 60;
+	public static final int SESSION_TIMEOUT_SEC = AbstractDAOFactory.SESSION_TIMEOUT_SEC;
 	public static final long ONE_YEAR = 365L*24L*60L*60L*1000L;
 	public static final String SEPARATOR = AbstractDAOFactory.SEPARATOR;
 	public static final String AUTH_USER = ScooldAuthModule.AUTH_USER;
@@ -333,8 +332,8 @@ public class BasePage extends Page {
 				setRedirect(escapeUrl);
 		}else if("POST".equals(req.getMethod())){
 			if (param("update-description")) {
-				Long id = NumberUtils.toLong(getParamValue("id"), 0);
-				if(id.longValue() > 0){
+				Long id = NumberUtils.toLong(getParamValue("mid"), 0);
+				if(id.longValue() != 0){
 					Media media = Media.getMediaDao().read(id);
 					if(media != null){
 						media.setDescription(getParamValue("description"));
@@ -388,17 +387,17 @@ public class BasePage extends Page {
 			if(!canEdit || !req.getMethod().equals("POST")) return ;
 			
 			String label = getParamValue("addlabel");
-			Long mid = NumberUtils.toLong(getParamValue("id"), 0);
+			Long mid = NumberUtils.toLong(getParamValue("mid"), 0);
 			if(mid.longValue() == 0L) return;
 			else if(label == null) label = getParamValue("removelabel");
 
 			boolean addLabelSuccess = false;
-
 			Media currentMedia = Media.getMediaDao().read(mid);
-			String oldLables = currentMedia.getLabels();
-			currentMedia.setOldlabels(oldLables);
 
-			if(!StringUtils.isBlank(label)){
+			if(!StringUtils.isBlank(label) && currentMedia != null){
+				String oldLables = currentMedia.getLabels();
+				currentMedia.setOldlabels(oldLables);
+				
 				if(param("addlabel")){
 					// add multiple labels
 					if(label.contains(",")){
@@ -419,6 +418,9 @@ public class BasePage extends Page {
 				if(addLabelSuccess) currentMedia.update();
 			}
 			addModel("labeladded", addLabelSuccess);
+		} else if(param("comment")){
+			Media media = Media.getMediaDao().read(getParamValue("parentuuid"));
+			if(media != null) processNewCommentRequest(media);
 		} else if(param("remove")){
 			if(!canEdit || !authenticated || !req.getMethod().equals("POST")) return;
 				
@@ -499,12 +501,15 @@ public class BasePage extends Page {
 		try {
 			for (Media photo : medialist) {
 				JSONArray comments = new JSONArray();
+				int[] size = AbstractDAOUtils.
+						getMaxImgSize(photo.getHeight(), photo.getWidth());
 				//only get first page of comments
 				for (Comment comment : photo.getComments()) {
 
 					boolean canDelete = authenticated && (
 							(comment.getUserid().equals(authUser.getId())) ||
 							inRole("mod"));
+					
 
 					comments.put(new JSONObject()
 						.put("id", comment.getId())
@@ -518,7 +523,7 @@ public class BasePage extends Page {
 							comment.getTimestamp(),
 							"dd MMMM yyyy HH:mm", loc)));
 				}
-
+ 
 				thumbs.put(new JSONObject()
 					.put("id", photo.getId())
 					.put("uuid", photo.getUuid())
@@ -531,6 +536,8 @@ public class BasePage extends Page {
 					.put("votes", photo.getVotes())
 					.put("commentcount", photo.getCommentcount())
 					.put("comments", comments)
+					.put("height", size[0])
+					.put("width", size[1])
 					.put("pagenum", photo.getCommentpage())
 					.put("originalurl", photo.getOriginalurl())
 					.put("labels", photo.getLabelsSet()));
@@ -543,7 +550,7 @@ public class BasePage extends Page {
 
 		return jsonDataObject;
 	}
-
+	
 	/****  POSTS  ****/
 
 	public final void processPostRequest(Post showPost, String escapelink, 

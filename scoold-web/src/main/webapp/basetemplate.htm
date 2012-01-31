@@ -416,7 +416,7 @@
 	#if($request.getParameter("label"))
 		#set($showlabel = $request.getParameter("label"))
 		#if(!$showlabel.isEmpty()) #set($labelparam = "/?label=$daoutils.urlEncode($showlabel)") #else #set($labelparam = "") #end
-		<h2><a href="${baseurl}${labelparam}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") <span class="pictos">z</span> $!{showlabel} #showcount($mediacount.longValue())</h2>
+		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / <a href="${baseurl}${labelparam}"><span class="pictos">z</span> $!{showlabel} #showcount($mediacount.longValue())</a> / $lang.get("photos.gallery")</h2>
 	#else
 		#set($showlabel = "")
 		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") #showcount($mediacount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
@@ -437,6 +437,7 @@
 		<div id="photos" class="mvl">
 			#paginate($pagenum.longValue() "#thumbspage($medialist $showlabel)" $mediacount.longValue() "$labelparam" "pageless" )
 		</div>
+		<br />
 		#showlabels($labelslist $baseurl)
 	#end
 #end
@@ -489,35 +490,36 @@
 ###########################################
 #macro(showlabels $labels $url)
 	#if($labels && !$labels.isEmpty())
-		<div class="mvl clearfix">
+		<div>
 			<h2>$lang.get("photos.labels")</h2>
 			
 			#foreach($labelshow in $labels)
-				<a href="$url/?label=$!{labelshow}" title="$!labelshow">$!labelshow</a>
+				#labelbox($labelshow $url "" false)
 			#end
 		</div>
 	#end
 #end
 ###########################################
-#macro(labelbox $labelshow $url $uuid $showx )
-	#if(!$labelshow.isEmpty()) #set($showlabelenc = $daoutils.urlEncode($labelshow)) #end
-	#if($labelshow == "")
-		<span class="labelbox button-small rounded3 mas hide">
-			<span class="pictos">z</span>
-			<a href="$url/?label=" title="" class="empty-label">&nbsp;</a>
-			#if($showx)
-				<a href="$url/?removelabel=" title="Remove label" class="remove-label">X</a>
-			#end
-		</span>
-	#else
-		<span class="labelbox button-medium rounded3 mas">
-			<span class="pictos">z</span>
-			<a href="$url/?label=$!{showlabelenc}" title="$!labelshow">$!labelshow</a>
-			#if($showx)
-				<a href="$url/?removelabel=$!{showlabelenc}&amp;uuid=$uuid" title="Remove label" class="remove-label pictos">D</a>
-			#end
-		</span>
+#macro(labelbox $labelshow $url $mid $showx )
+	#if($labelshow == "") 
+		#set($hide = "hide" ) 
+		#set($labelclass = "empty-label" )
+		#set($lboxclass = "hide" )
+		#set($showlabelenc = "" )
+	#else 
+		#set($hide = "" )
+		#set($labelclass = "noclass" )
+		#set($lboxclass = "button-tiny" )
+		#set($showlabelenc = $daoutils.urlEncode($labelshow) )
 	#end
+	
+	<span class="labelbox rounded3 mrs $!lboxclass">
+		<span class="pictos">z</span>
+		<a href="${url}?label=$!{showlabelenc}" class="$!labelclass" title="$!labelshow">$!labelshow</a>
+		#if($showx)
+			<a href="${url}?mid=$!{mid}&amp;removelabel=$!{showlabelenc}" title="Remove label" class="remove-label"><span class="pictos">D</span></a>
+		#end
+	</span>
 #end
 ###########################################
 #macro(gallery $photos $gurl $totalCount)
@@ -552,15 +554,18 @@
 
 		#if(!$showlabel.isEmpty()) #set($labelparam = "/?label=$daoutils.urlEncode($showlabel)") #else #set($labelparam = "") #end
 		<div id="gallery" class="content mtl">
-			<div id="controls" class="controls center mbm">
-				<div class="nav-controls">
-					<a class="prev button-tiny rounded3" rel="history" href="${gurl}/$!{label}$!{prevIndex}#$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
+			<div id="controls" class="controls mbm line">
+				<div class="nav-controls unit size1of2 ptm">
+					<a class="prev button-small rounded3" rel="history" href="${gurl}/$!{label}$!{prevIndex}#$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
 					&nbsp;
-					<span class="ss-controls hide">
-						<a href="#play" class="play button-tiny rounded3" title="Play">&nbsp;<span class="pictos">4</span>&nbsp;</a>
+					<span class="ss-controls">
+						<a href="#play" class="play button-small rounded3" title="Play">&nbsp;<span class="pictos">4</span>&nbsp;</a>
 					</span>
 					&nbsp;
-					<a class="next button-tiny rounded3" rel="history" href="${gurl}/$!{label}$!{nextIndex}#$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
+					<a class="next button-small rounded3" rel="history" href="${gurl}/$!{label}$!{nextIndex}#$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
+				</div>
+				<div class="unit size1of2 lastUnit r">
+					#votebox($currentPhoto "largeText")
 				</div>
 			</div>
 			<div class="slideshow-container center">
@@ -568,21 +573,8 @@
 					<div id="loading" class="loader hide centr"></div>
 
 					<a class="advance-link" rel="history" href="${gurl}/$!{label}$!{nextIndex}#$!{nextIndex}" title="$lang.get('next')">
-						#if($currentPhoto.width > $MAX_IMG_SIZE_PX || $currentPhoto.height > $MAX_IMG_SIZE_PX)
-							#if($currentPhoto.width > $currentPhoto.height)
-								#set($ratio = (100 * $MAX_IMG_SIZE_PX) / $currentPhoto.width)
-								#set($w = 730)
-								#set($h = ($currentPhoto.height * $ratio) / 100)
-							#else
-								#set($ratio = (100 * $MAX_IMG_SIZE_PX) / $currentPhoto.height)
-								#set($w = ($currentPhoto.width * $ratio) / 100)
-								#set($h = 730)
-							#end
-						#else
-							#set($w = $currentPhoto.width)
-							#set($h = $currentPhoto.height)
-						#end
-						<img width="$w" height="$h" src="$currentPhoto.url" alt="$!currentPhoto.title" class="rounded3"/>
+						#set($sizearr = $daoutils.getMaxImgSize($currentPhoto.height, $currentPhoto.width) )
+						<img height="$sizearr.get(0)" width="$sizearr.get(1)" src="$currentPhoto.url" alt="$!currentPhoto.title" class="rounded3"/>
 					</a>
 
 					
@@ -601,9 +593,9 @@
 					<div class="mbs">
 						<span id="labels" class="labels-container">
 							#foreach($l in $currentPhoto.getLabelsSet())
-								#labelbox($l $gurl $currentPhoto.uuid true)
+								#labelbox($l $gurl $currentPhoto.id true)
 							#end
-							#labelbox("" $gurl $currentPhoto.uuid true)
+							#labelbox("" $gurl $currentPhoto.id true)
 						</span>
 
 						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&amp;</span> $lang.get("photos.addlabels")</a>
@@ -612,28 +604,27 @@
 								<fieldset>
 									#sectoken(false)
 									<input type="text" class="addlabelbox nicebox p60" value="" name="addlabel"/>
-									<input type="hidden" name="id" value="$currentPhoto.id"/>
+									<input type="hidden" name="mid" value="$currentPhoto.id"/>
 									<input type="submit" value="$lang.get('add')" class="button rounded3"/>
 								</fieldset>
 							</form>
 						</div>
 					</div>
-					
-					#votebox($currentPhoto "largeText")
 				</div>
 			</div>
 		</div>
-		<br />
-		<div class="center">
+
+		<div class="comments p100 mtl">
+			$commentslist
+			#paginate($pagenum.longValue() "#commentspage($commentslist)" $itemcount.longValue() "mid=$!{currentPhoto.id}&amp;parentuuid=$!{currentPhoto.uuid}" "pageless" )
+		</div>
+		
+		<div class="center mtl">
 			#if($authenticated && $canComment)
 				#if($request.getParameter("write")) #set($hidebox = false) #else #set($hidebox = true)	#end
 				<a href="${gurl}/$!{label}$!{currentPhoto.id}?write=true" class="button-small rounded3 next-div-toggle" title="Add a comment">$lang.get("comments.write")</a>
 				#newcommentform($currentPhoto.uuid $hidebox "")
 			#end
-		</div>
-
-		<div class="comments p70 center">
-			#paginate($pagenum.longValue() "#commentspage($commentslist)" $itemcount.longValue() "mid=$!{currentPhoto.id}&amp;parentuuid=$!{currentPhoto.uuid}" "pageless" )
 		</div>
 	#end
 #end
@@ -641,8 +632,8 @@
 #macro(oembedbox $btnclass)
 	#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
 	<div id="embedly-services" class="jqmWindow rounded5">
-		<a href="http://api.embed.ly" class="extlink right">
-			<img src="http://api.embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
+		<a href="http://embed.ly" class="extlink right">
+			<img src="http://embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
 		</a>
 		<span class="mediumText">$lang.get("profile.drawer.embedly")</span>
 		#ajaxloading(false)
@@ -1127,24 +1118,31 @@
 #end
 ####################################
 #macro(drawerbox $showvideo)
-	<div class="drawerbox mvl">
-		#if($showvideo.type && !$showvideo.type.equalsIgnoreCase("unknown"))
-			<div class="right">
-				<span class="pictos gigaText">
+	<div class="drawerbox mvl pbl">
+		<div class="right">
+			#if($authenticated && ($showvideo.userid == $authUser.id || $request.isUserInRole("mod")))
+				<a href="${uri}/?remove=$!{showvideo.id}&amp;parentuuid=$!{showvideo.parentuuid}" title="Remove" class="delvideo button-small rounded3 red"><span class="pictos">*</span></a>
+			#else
+				#getreportlink($showvideo "$medialink/$!showvideo.id" "button-tiny rounded3")
+			#end
+		</div>
+		
+		#set($oembedclass = "oembed-box" )
+		
+		#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
+		<h2>
+			#if($showvideo.type && !$showvideo.type.equalsIgnoreCase("unknown"))
+				<span class="pictos">
 					#if($showvideo.type.equalsIgnoreCase("video")) V
 					#elseif($showvideo.type.equalsIgnoreCase("rich")) m
-					#elseif($showvideo.type.equalsIgnoreCase("audio")) m
-					#elseif($showvideo.type.equalsIgnoreCase("text")) n
-					#elseif($showvideo.type.equalsIgnoreCase("product")) $
+					#else j #set($oembedclass = "" )
 					#end
 				</span>
-			</div>
-		#end
-
-		#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
-		#if($showvideo.title)
-			<h2><a href="$!showvideo.link" title="$!showvideo.title" class="extlink">$showvideo.title</a></h2>
-		#end
+			#end
+			#if($showvideo.title)
+				<a href="$!showvideo.link" title="$!showvideo.title" class="extlink">$showvideo.title</a>
+			#end
+		</h2>
 
 		#if($showvideo.type && $showvideo.type.equalsIgnoreCase("photo"))
 			#set($embedlink = $showvideo.url)
@@ -1153,24 +1151,19 @@
 		#end
 
 		#if($showvideo.thumburl)
-			<a href="$!embedlink" title="$!showvideo.title" class="oembed-box extlink">
+			<a href="$!embedlink" title="$!showvideo.title" class="extlink $!oembedclass">
 				<img src="$!showvideo.thumburl" alt="$!showvideo.title" />
 			</a>
 		#else
 			#set($w = ($showvideo.width * 30) / 100)
 			#set($h = ($showvideo.height * 30) / 100)
+			
 			<a href="$!embedlink" title="$!showvideo.title" class="oembed-box extlink">
 				<img width="$w" height="$h" src="$!showvideo.url" alt="$!showvideo.title" />
 			</a>
 		#end
 		#if($showvideo.description)
 			<p id="$showvideo.id" class="drawer-description editable">$showvideo.description</p>
-		#end
-
-		#if($authenticated && ($showvideo.userid == $authUser.id || $request.isUserInRole("mod")))
-			<a href="${uri}/?remove=$!{showvideo.id}&amp;parentuuid=$!{showvideo.parentuuid}" title="Remove" class="delvideo">$lang.get("remove")</a>
-		#else
-			#getreportlink($showvideo "$medialink/$!showvideo.id" "button-tiny rounded3")
 		#end
 	</div>
 #end
@@ -2119,7 +2112,7 @@
 		#stop
 
 	#elseif($request.getParameter("getimagedataobject"))
-		$mediaDataObject
+		$!mediaDataObject
 		#stop
 
 	#elseif($request.getParameter("getmediahtmlcode"))
@@ -2137,7 +2130,7 @@
 		#stop
 
 	#elseif($request.getParameter("voteup") || $request.getParameter("votedown"))
-		$voteresult
+		$!voteresult
 		#stop
 
 	#elseif($request.getParameter("addlabel"))
@@ -2344,7 +2337,7 @@
 			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
 			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
 			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
-			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","epicfail","invalidyear"])
+			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","invalidyear"])
 			
 		
 		<script type="text/javascript">

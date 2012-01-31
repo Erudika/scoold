@@ -254,13 +254,6 @@ $(function () {
 		});
 	}
 
-	function submitFormUsingGetBind(formname, callbackfn){
-		return $(document).on("submit", formname,  function(){
-			submitForm(this, "GET", callbackfn);
-			return false;
-		});
-	}
-
 	function autocompleteBind(elem, params){
 		var that = $(elem);
 		that.attr("autocomplete", "off");
@@ -647,7 +640,7 @@ $(function () {
 	$.extend(true, editable_settings3, editable_settings, {type: "textarea"});
 	$(".drawer-description.editable").editable(function(value, settings){
 		var $that = $(this);
-		$.post(ajaxpath+"?update-description=true", $.extend({description: value, id: this.id}, secdata));
+		$.post(ajaxpath+"?update-description=true", $.extend({description: value, mid: this.id}, secdata));
 		return $that.text(value).text();}, editable_settings3
 	);
 
@@ -979,6 +972,7 @@ $(function () {
 			galleryUri:				   galleryUri,
 			totalCount:				   totalMediaCount,
 			label:					   galleryLabel,
+			labelBoxClass:			   "button-tiny",
 			commentProfileLinkSel:	   'a.profile-link',
 			commentBoxSel:			   '.commentbox',
 			commentTimestampSel:	   '.comment-timestamp',
@@ -1074,10 +1068,11 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	submitFormUsingGetBind("form#add-label-form", function(data, status, xhr, form){
-		var uuid = $("form#add-label-form input[name=id]").val();
-		var labelBox = $("form#add-label-form input[name=addlabel]");
-		var label = labelBox.val();
+	submitFormBind("form#add-label-form", function(data, status, xhr, form){
+		var uuid = $("form#add-label-form input[name=id]").val(),
+			labelBox = $("form#add-label-form input[name=addlabel]"),
+			labelBoxClass = "button-tiny",
+			label = labelBox.val();
 		
 		labelBox.val("");	//clear box
 		if($.trim(label) !== "" && $.trim(data) === "true"){
@@ -1097,7 +1092,7 @@ $(function () {
 						box.find("a:last").attr("href", function(){
 							return this.href + ltrim + "&uuid=" + uuid;
 						});
-						labelsCont.append(box.show());
+						labelsCont.append(box.addClass(labelBoxClass).show());
 					}
 				}
 			}else{
@@ -1109,7 +1104,7 @@ $(function () {
 				box.find("a:last").attr("href", function(){
 					return this.href + trimed + "&uuid=" + uuid;
 				});
-				labelsCont.append(box.show());
+				labelsCont.append(box.addClass(labelBoxClass).show());
 			}
 		}
 	});
@@ -1124,45 +1119,56 @@ $(function () {
      ****************************************************/
 
 	// oembed plugin init bind
-	$(document).on("click", ".oembed-box",  function(){
+	var oembedBox = $(".oembed-box"),
+		oembedContainer = $("div#oembed-container"),
+		pform = oembedContainer.closest("form"),
+		errorbox = $(".embed-error", pform),
+		oembedPreview = oembedContainer.closest(".oembed-preview");
+		
+	oembedBox.each(function(i){
 		var that = $(this);
 		$.oembed.fetchData(this.href, function(data){
 			that.replaceWith(data.html);
 		});
-		return false;
 	});
+	
+	function clearAndCloseOembedPreview(){
+		oembedContainer.html("");
+		oembedContainer.removeData("oembed-data");
+		pform.find("input[type='text']").val("");
+		
+		oembedPreview.hide();
+	}
 
 	function onEmbedClick(that, type){
-		var container = $("div#oembed-container");
-		var pform = container.closest("form");
-		var errorbox = $(".embed-error", pform);
 		var url = $.trim($(that).prev("input").val());
-
-		container.closest(".oembed-preview").show();
+		oembedPreview.show();
+		$("img.ajaxwait", oembedPreview).show();
 		$.oembed.fetchData(url, function(data){
+			var thumb = null, bool = true;
+			
 			if (data.type !== "error" && !data.error_code) {
-				var thumb = $.oembed.getThumb(data, type);
-				var bool = true;
+				thumb = $.oembed.getThumb(data, type);
 				data.filter = null;
 				if(type && type === "photo" && data){
 					data.filter = "photo";
 					bool = data.url.match(/(jpg|png|gif|jpeg)$/i) !== null;
 				}
-
-				if(thumb && thumb.length > 0 && bool){
-					container.html(thumb);
-					container.data("oembed-data", data);
-					errorbox.text("");
-				}else{
-					container.removeData("oembed-data");
-					pform.find("input[type='text']").val("");
-					errorbox.text(lang["profile.drawer.embedly.notanimage"]);
-				}
 			}else{
-				container.removeData("oembed-data");
-				errorbox.text(lang.epicfail);
-				pform.find("input[type='text']").val("");
+				thumb = null;
+				bool = false;
 			}
+			
+			if(thumb && thumb.length > 0 && bool){
+				oembedContainer.html(thumb);
+				oembedContainer.data("oembed-data", data);
+				errorbox.text("");
+			}else{
+				errorbox.text(lang["profile.drawer.embedly.notanimage"]);
+				clearAndCloseOembedPreview();
+			}
+			
+			$("img.ajaxwait", oembedPreview).hide();
 		});
 	}
 	
@@ -1177,7 +1183,7 @@ $(function () {
 	}).prev("input").focus();
 
 	$(".cancel-embed-btn").click(function(){
-		$(this).closest(".oembed-preview").hide();
+		clearAndCloseOembedPreview();
 		return false;
 	});
 
@@ -1186,9 +1192,8 @@ $(function () {
 			$(".addvideo, .addimage").click();
 		}
 	}).submit(function(){
-		var container = $("div#oembed-container");
-		var data = container.data("oembed-data");
-		var phorm = $(this);
+		var data = oembedContainer.data("oembed-data"),
+			phorm = $(this);
 
 		if(data && data !== ""){
 			var params = {
@@ -1228,9 +1233,7 @@ $(function () {
 				}
 			}
 
-			container.html("").data("oembed-data", "");  //clear
-			container.closest(".oembed-preview").hide(); //hide buttons
-			phorm.find("input[type='text']").val("");
+			clearAndCloseOembedPreview();
 			$.post(this.action, $.extend(params, secdata), callbackfn);
 		}
 
@@ -1293,10 +1296,10 @@ $(function () {
 	}
 
 	function initPostEditor(index, elem){
-		var that = $(elem).addClass("markedUp");
-		var lastText;
-		var preview = that.nextAll("div.edit-preview");
-		var converter = new Showdown.converter();
+		var that = $(elem).addClass("markedUp"),
+			lastText,
+			preview = that.nextAll("div.edit-preview"),
+			converter = new Showdown.converter();
 
 		that.markItUp(miu_set_markdown);
 

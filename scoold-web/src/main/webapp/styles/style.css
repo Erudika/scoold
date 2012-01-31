@@ -329,6 +329,7 @@ p{ margin-bottom: 1em;}
 }
 .pictos { font-family: 'PictosRegular'; line-height: 1em; font-size: 1.2em;}
 span.pictos { cursor: default; }
+a span.pictos { cursor: inherit; }
 a.pictos:hover{text-decoration: none; color: #55AADD;}
 a.approve-answer, a.approve-translation{ color: #777777;}
 a.approve-answer:hover, a.approve-translation:hover{ color: #88AF12;}

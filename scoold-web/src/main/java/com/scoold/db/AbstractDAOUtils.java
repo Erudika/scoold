@@ -9,7 +9,6 @@ import com.scoold.core.ScooldObject;
 import com.scoold.core.Stored;
 import com.scoold.core.User;
 import com.scoold.core.Votable;
-import com.scoold.pages.BasePage;
 import com.scoold.util.HumanTime;
 import com.scoold.util.ScooldAuthModule;
 import java.io.UnsupportedEncodingException;
@@ -65,7 +64,7 @@ public abstract class AbstractDAOUtils {
 	public static HumanTime humantime = new HumanTime();
 
 	public static String MD5(String s) {
-		return ClickUtils.toMD5Hash(s);
+		return (s == null) ? "" : ClickUtils.toMD5Hash(s); 
 	}
 
 	public static String formatDate(Long timestamp, String format, Locale loc) {
@@ -470,7 +469,8 @@ public abstract class AbstractDAOUtils {
 			if (httpOnly) {
 				setRawCookie(name, value, req, res, httpOnly, false);
 			} else {
-				ClickUtils.setCookie(req, res, name, value, BasePage.SESSION_TIMEOUT_SEC, "/");
+				ClickUtils.setCookie(req, res, name, value, 
+						AbstractDAOFactory.SESSION_TIMEOUT_SEC, "/");
 			}
 		}
 	}
@@ -516,7 +516,7 @@ public abstract class AbstractDAOUtils {
 	
 	public static void setRawCookie(String name, String value, HttpServletRequest req, 
 			HttpServletResponse res, boolean httpOnly, boolean clear){
-		long exp = System.currentTimeMillis() + (BasePage.SESSION_TIMEOUT_SEC * 1000);
+		long exp = System.currentTimeMillis() + (AbstractDAOFactory.SESSION_TIMEOUT_SEC * 1000);
 		String date = clear ? "Thu, 01-Jan-1970 00:00:01" : DateFormatUtils.format(exp, 
 				"EEE, dd-MMM-yyyy HH:mm:ss", TimeZone.getTimeZone("GMT"));
 		String httponly = httpOnly ? "; HttpOnly" : "";
@@ -538,6 +538,22 @@ public abstract class AbstractDAOUtils {
 
 	public static Long toLong(MutableLong page){
 		return (page != null && page.longValue() > 1) ?	page.longValue() : null;
+	}
+	
+	public static int[] getMaxImgSize(int h, int w){
+		int[] size = {h, w};
+		int max = AbstractDAOFactory.MAX_IMG_SIZE_PX;
+		if(Math.max(h, w) > max){
+			int ratio = (100 * max) / Math.max(h, w);
+			if(h > w){
+				size[0] = max;
+				size[1] = (w * ratio) / 100;
+			}else{
+				size[0] = (h * ratio) / 100;
+				size[1] = max;
+			}
+		}
+		return size;
 	}
 	
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);
