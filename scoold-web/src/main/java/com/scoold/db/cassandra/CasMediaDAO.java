@@ -292,24 +292,22 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 	}
 
 	private void updateOrCreateLabels(Media media, Mutator<String> mut) {
-		String newLabels = media.getLabels();
-		String oldLabels = media.getOldlabels();
-		if(StringUtils.isBlank(newLabels) || newLabels.equalsIgnoreCase(oldLabels)) return;
+		String newLabels = media.getLabels() == null ? "" : media.getLabels();
+		String oldLabels = media.getOldlabels() == null ? "" : media.getOldlabels();
+		if(newLabels.equalsIgnoreCase(oldLabels)) return;
 		Map<String, Integer> newLabelIndex = new HashMap<String, Integer>();
-
+ 
 		for (String ntag : newLabels.split(",")) {
 			newLabelIndex.put(ntag.trim(), 1);
 		}
 
 		// sift out all that are unchanged
-		if(oldLabels != null){
-			for (String olabel : oldLabels.split(",")) {
-				olabel = olabel.trim();
-				if(newLabelIndex.containsKey(olabel)){
-					newLabelIndex.remove(olabel);	// no change so remove
-				}else{
-					newLabelIndex.put(olabel, -1); // tag missing so deleteRow and update count
-				}
+		for (String olabel : oldLabels.split(",")) {
+			olabel = olabel.trim();
+			if(newLabelIndex.containsKey(olabel)){
+				newLabelIndex.remove(olabel);	// no change so remove
+			}else{
+				newLabelIndex.put(olabel, -1); // tag missing so deleteRow and update count
 			}
 		}
 		//clean up the empty tag
@@ -345,7 +343,7 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 
 		int count = cdu.countColumns(key, CasDAOFactory.LABELS_MEDIA, Long.class);
 		//remove label if no media has it
-		if(count <= 0){
+		if((count - 1) <= 0){
 			// delete from labels_media
 			cdu.deleteRow(key, CasDAOFactory.LABELS_MEDIA, mut);
 			// delete from labels
@@ -354,16 +352,16 @@ public final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 		}
 	}
 
-	private void deleteLastMedia(String parentUUID, MediaType type){
-		CF<Long> cf = (type == MediaType.PHOTO) ?
-			CasDAOFactory.PHOTOS : CasDAOFactory.DRAWER;
-
-		HColumn<Long, String> lastCol = cdu.getLastColumn(parentUUID,
-					cf, Long.class, false);
-
-		if(lastCol != null)
-			delete(new Media(lastCol.getName()));
-	}
+//	private void deleteLastMedia(String parentUUID, MediaType type){
+//		CF<Long> cf = (type == MediaType.PHOTO) ?
+//			CasDAOFactory.PHOTOS : CasDAOFactory.DRAWER;
+//
+//		HColumn<Long, String> lastCol = cdu.getLastColumn(parentUUID,
+//					cf, Long.class, false);
+//
+//		if(lastCol != null)
+//			delete(new Media(lastCol.getName()));
+//	}
 
 	public void deleteAllMediaForUUID(String parentUUID) {
 //		if(true) return;

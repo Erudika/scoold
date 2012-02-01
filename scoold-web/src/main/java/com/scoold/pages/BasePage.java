@@ -395,8 +395,7 @@ public class BasePage extends Page {
 			Media currentMedia = Media.getMediaDao().read(mid);
 
 			if(!StringUtils.isBlank(label) && currentMedia != null){
-				String oldLables = currentMedia.getLabels();
-				currentMedia.setOldlabels(oldLables);
+				currentMedia.setOldlabels(currentMedia.getLabels());
 				
 				if(param("addlabel")){
 					// add multiple labels
@@ -525,7 +524,7 @@ public class BasePage extends Page {
 				}
  
 				thumbs.put(new JSONObject()
-					.put("id", photo.getId())
+					.put("id", photo.getId().toString())
 					.put("uuid", photo.getUuid())
 					.put("url", photo.getUrl())
 					.put("thumburl", photo.getThumburl())

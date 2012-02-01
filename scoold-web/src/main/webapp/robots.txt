@@ -1,0 +1,19 @@
+# scoold.com robots.txt
+
+User-agent: *
+
+Disallow: /scripts/
+Disallow: /styles/
+Disallow: /images/
+Disallow: /click/
+Disallow: /p/
+Disallow: /signup/
+Disallow: /signout/
+Disallow: /signin/
+Disallow: /search/
+Disallow: /*?getreportform
+Allow: /
+
+User-agent: Slurp
+Disallow: /
+

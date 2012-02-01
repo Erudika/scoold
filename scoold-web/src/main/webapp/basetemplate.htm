@@ -615,7 +615,6 @@
 		</div>
 
 		<div class="comments p100 mtl">
-			$commentslist
 			#paginate($pagenum.longValue() "#commentspage($commentslist)" $itemcount.longValue() "mid=$!{currentPhoto.id}&amp;parentuuid=$!{currentPhoto.uuid}" "pageless" )
 		</div>
 		
@@ -1004,7 +1003,7 @@
 			#end
 		#end
 		#if($showu)
-			<a href="$profilelink/$showu.id/#stripstr($showu.fullname)" title="Go to profile">$!showu.fullname</a>
+			<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" title="Go to profile">$!showu.fullname</a>
 		#else
 			$lang.get("profile.deleted")
 		#end
@@ -1514,7 +1513,7 @@
 								#createformfield(${form.fields.tags} "tagbox nicebox p99")
 							#end
 
-							<div class="center">
+							<div class="center mtl">
 								${form.fields.editbtn}
 								<input type="button" value="$lang.get('close')" class="button rounded3 canceledit"/>
 							</div>
@@ -1600,7 +1599,7 @@
 			#if($showrev.body)
 				#set($revHtml = $daoutils.markdownToHtml($showrev.body, $showdownJS))
 				#set($showRevBody = $daoutils.stripHtml($revHtml) )
-				<div class="newrev">$!showRevBody</div>
+				<div class="newrev mtl">$!showRevBody</div>
 				#if($showorigrev.body)
 					#set($origHtml = $daoutils.markdownToHtml($showorigrev.body, $showdownJS))
 					#set($showOrigBody = $daoutils.stripHtml($origHtml) )
@@ -1608,7 +1607,7 @@
 				#end
 			#end
 			#if($showrev.tags)
-				<div class="newrev tagsdiff">
+				<div class="newrev tagsdiff mtm">
 					#tagsbox($showrev.tags $actionlink2)					
 				</div>
 				#if($showorigrev.tags)

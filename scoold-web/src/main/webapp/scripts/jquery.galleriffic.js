@@ -79,13 +79,13 @@
 			},
 
 			getHashFromString: function(hash){
-				if (typeof hash == 'number'){return hash;}
+				if (typeof hash === 'number'){return hash;}
 				if (!hash){return -1;}
 				hash = hash.replace(/^.*#/, '');
 
 				if (isNaN(hash)) {return -1;}
 
-				return (+hash);
+				return hash;
 			},
 
 			clickHandler: function(e, link) {
@@ -93,7 +93,7 @@
 
 				if (!this.enableHistory) {
 					var hash = getHashFromString(link.href);
-					if (hash >= 0) {
+					if (hash !== "0") {
 						this.go2(hash);
 					}
 					e.preventDefault();
@@ -104,7 +104,7 @@
 			orderedData: [],
 
 			getNextPosition: function(){
-				if(this.currentPosition == this.totalCount - 1){
+				if(this.currentPosition === this.totalCount - 1){
 					return 0;
 				}else{
 					return this.currentPosition + 1;
@@ -128,41 +128,42 @@
 					$.extend(params, {label: label});
 				}
 
-				if(nextPrevAll == 1){
+				if(nextPrevAll === 1){
 					this.currentPosition = this.getNextPosition();
-				}else if(nextPrevAll == -1){
+				}else if(nextPrevAll === -1){
 					this.currentPosition = this.getPrevPosition();
 				}
 
 				var adjacentIndex = null;
 				
-				if(nextPrevAll == 1){
+				if(nextPrevAll === 1){
 					adjacentIndex = this.orderedData[this.getNextPosition()];
-				}else if(nextPrevAll == -1){
+				}else if(nextPrevAll === -1){
 					adjacentIndex = this.orderedData[this.getPrevPosition()];
 				}
 				// check if there are any more photos to preload
-				if (typeof adjacentIndex == "undefined" || adjacentIndex === null) {
+				if (typeof adjacentIndex === "undefined" || adjacentIndex === null) {
 					$.getJSON(gallery.galleryUri, params,
 						function(jsondata){
+							var i;
 							for (i = 0; i < jsondata.media.length; i++) {
 								var media = jsondata.media[i];
 								gallery.data[media.id] = media;
 							}
 
-							if(typeof gallery.orderedData[gallery.currentPosition] == "undefined"){
+							if(typeof gallery.orderedData[gallery.currentPosition] === "undefined"){
 								gallery.orderedData[gallery.currentPosition] = jsondata.media[0].id;
 							}
 
 							gallery.orderedData[gallery.currentPosition] = index;
-							if(nextPrevAll == 1){
-								if(oldIndex != null){gallery.prevIndex = oldIndex;}
+							if(nextPrevAll === 1){
+								if(oldIndex !== null){gallery.prevIndex = oldIndex;}
 								gallery.nextIndex = jsondata.media[1].id;
 								gallery.orderedData[gallery.getNextPosition()] = gallery.nextIndex;
 								gallery.preload(gallery.nextIndex);
-							}else if(nextPrevAll == -1){
+							}else if(nextPrevAll === -1){
 								gallery.prevIndex = jsondata.media[1].id;
-								if(oldIndex != null){gallery.nextIndex = oldIndex;}
+								if(oldIndex !== null){gallery.nextIndex = oldIndex;}
 								gallery.orderedData[gallery.getPrevPosition()] = gallery.prevIndex;
 								gallery.preload(gallery.prevIndex);
 							}else{
@@ -217,7 +218,7 @@
 					var commentsCont = this.$commentsContainer;
 					var comboxParent = $(this.commentBoxSel).parent("div");
 
-					var comment, div;
+					var comment, div, i;
 					commentsCont.find(gallery.commentBoxSel+":visible").remove(); // clear container
 
 					for (i = 0; i < imageData.comments.length; i++) {
@@ -272,9 +273,9 @@
 						moreLink.hide();
 					}else{
 						// pageless mode!
-						moreLink.attr("href",
-							window.location.pathname + "?parentuuid="+imageData.uuid+
-							"&mid="+imageData.id+"&page="+imageData.pagenum).show();
+						moreLink.attr("href", window.location.pathname + "?parentuuid="+
+							imageData.uuid+"&mid="+imageData.id+"&page="+imageData.pagenum)
+						.show();
 					}
 				}
 				return this;
@@ -302,9 +303,9 @@
 
 			getLabels: function(imageData){
 				if(this.$labelsContainer){
-					var labelsCont = this.$labelsContainer;
+					var labelsCont = this.$labelsContainer, i;
 					labelsCont.children(":visible").remove(); // clear container
-
+					
 					for (i = 0; i < imageData.labels.length; i++) {
 						var label = imageData.labels[i];
 						if(label !== ""){
@@ -445,9 +446,9 @@
 				this.preloadStartIndex = index;
 				this.isPreloadComplete = false;
 
-				var preloadThese = [this.prevIndex, this.nextIndex];
+				var preloadThese = [this.prevIndex, this.nextIndex], indx;
 
-				for(var indx in preloadThese){
+				for(indx in preloadThese){
 					var imageData = this.data[preloadThese[indx]];
 					if (!imageData){
 						this.isPreloadComplete = true;
@@ -557,13 +558,13 @@
 		// Now initialize the gallery
 		$.extend(this, defaults, settings);
 
-		if (this.interval)	{clearInterval(this.interval);}
+		if (this.interval) { clearInterval(this.interval); }
 		this.interval = 0;
 		this.currentIndex = null;
 		var gallery = this;
 		this.data = {};
 		
-		if(this.imageDataInit && this.imageDataInit.length == 3){
+		if(this.imageDataInit && this.imageDataInit.length === 3){
 			this.currentIndex = this.imageDataInit[0].id;
 			this.prevIndex = this.imageDataInit[1].id;
 			this.nextIndex = this.imageDataInit[2].id;

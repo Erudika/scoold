@@ -512,9 +512,9 @@ public class Media implements Votable<Long>, Commentable,
 	}
 
 	public ArrayList<Comment> getComments(MutableLong page){
-		MutableLong itemcount = new MutableLong();
-		this.comments.addAll(Comment.getCommentDao()
-				.readAllCommentsForUUID(uuid, page, itemcount));
+		MutableLong itemcount = new MutableLong(); 
+		this.comments = Comment.getCommentDao()
+				.readAllCommentsForUUID(uuid, page, itemcount);
 		commentcount = itemcount.longValue();
 		return this.comments;
 	}

@@ -63,7 +63,7 @@ table {
 	font-family: 'PictosRegular';
 	src: url('http://static.scoold.com/pictos-web.eot');
 	src: local('☺'), 
-		url('http://beta.scoold.com/styles/pictos-web.woff') format('woff'), 
+		url('http://www.scoold.com/styles/pictos-web.woff') format('woff'), 
 		url('http://static.scoold.com/pictos-web.ttf') format('truetype'), 
 		url('http://static.scoold.com/pictos-web.svg#webfontIyfZbseF') format('svg');
 	font-weight: normal;

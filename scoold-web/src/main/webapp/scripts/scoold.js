@@ -1016,8 +1016,6 @@ $(function () {
 			// hash doesn't contain the first # character.
 			if(hash) {
 				$.galleriffic.go2(gallery, hash);
-			} else {
-				$.galleriffic.go2(gallery, 0);
 			}
 
 		};
@@ -1392,45 +1390,7 @@ $(function () {
 
 			var trimed = $.trim(text);
 			if(trimed !== ""){
-				//CASE 1; <tag> bla bla </tag>
-				if(text.indexOf("<") >= 0 && text.indexOf(">") >= 0 ){
-					var theTag = $(trimed);
-					//SUB CASE 1.1: <tag> bla </tag> <tag2> bla
-					if(trimed.charAt(trimed.length -1) !== '>' || theTag.text() === ""){
-						//text before <
-						if(text.indexOf("<") < text.indexOf(">")){
-							text = text.replace(/^([^>]*)</, t1.concat("$1",t2,"<"));
-						}
-						//text between > ... <
-						text = text.replace(/>([^<>]*)</g, ">".concat(t1,"$1",t2,"<"));
-						//text after >
-						if(text.lastIndexOf(">") > text.lastIndexOf("<")){
-							text = text.replace(/>([^<]*)$/, ">".concat(t1,"$1",t2));
-						}
-
-						if(text.lastIndexOf(">") > text.lastIndexOf("<")){
-							intag = false;
-						}else{
-							intag = true;
-						}
-					}else{
-						text = t1.concat(text, t2);
-					}
-				// CASE 2: <tag bla bla="blah"
-				}else if((text.indexOf("<") >= 0 && text.indexOf(">") < 0) ||
-					(text.indexOf(">") >= 0 && text.indexOf("<") < 0)){
-					if (!done) {
-						appendMe += " "+diffMarkup(reconstruct(diffs, -1), -1);
-						appendMe += " "+diffMarkup(reconstruct(diffs, 1), 1);
-						done = true;
-					}
-					text = "";
-				//CASE 4: bla bla bla. (clean text)
-				}else if(text.indexOf(">") < 0 && text.indexOf("<") < 0){
-					if(intag === false){
-						text = t1.concat(text,t2);
-					}
-				}
+				text = t1.concat(text,t2);
 			}
 			return text;
 		}
@@ -1462,7 +1422,7 @@ $(function () {
 			dmp.diff_cleanupSemantic(d);
 			ds = diffToHtml(d, oldText, newText);
 		}
-
+		
 //		uncomment to show only changes
 //		if(ds === newText){	$(this).hide();	}
 
