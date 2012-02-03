@@ -527,15 +527,7 @@
 		totalMediaCount = $totalCount;
 		galleryUri = "$gurl";
 		galleryLabel = "$!request.getParameter('label')";
-		allLabels = "$!alllabels";
-		allLabels = allLabels.split(",");
-		//var hash = window.location.hash;
-		//if (hash !== "") {
-		//	hash = hash.replace(/^.*#/, '');
-		//	if (!isNaN(hash)){
-		//		window.location = '$gurl/'+hash;
-		//	}
-		//}
+		allLabels = [#foreach($lbl in $labelslist)#if($lbl && !$lbl.isEmpty())"$!lbl"#end#if($velocityCount < $labelslist.size()),#end#end];
 		imageDataObject = $mediaDataObject;
 	</script>
 
@@ -1003,7 +995,12 @@
 			#end
 		#end
 		#if($showu)
-			<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" title="Go to profile">$!showu.fullname</a>
+			#if($showu.fullname)
+				#set($seopsuffix = "/#stripstr($!showu.fullname)" )
+			#else
+				#set($seopsuffix = "" )
+			#end
+			<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.fullname</a>
 		#else
 			$lang.get("profile.deleted")
 		#end
@@ -1059,26 +1056,28 @@
 			<span>$lang.get("comments.hidden") &nbsp;</span>
 			<a href="#" title="$lang.get('comments.show')" class="show-comment">$lang.get("comments.show")</a>
 		#else
-			#set($hidden = "")
+			#set($hidden = "noclass")
 		#end
 
-		<div class="left">
-			<span class="lightgray pictos">w</span>
-			#set($commentAuthor = {'fullname': $!showcomment.author, 'id': $showcomment.userid})
-			#personlink($commentAuthor):
-			<span class="comment-text $hidden">$!showcomment.comment</span>
-		</div>
-		<div class="inlineblock right $hidden">
-			#votebox($showcomment "mrm")
-			<span class="comment-timestamp"><span class="pictos" title="$timestamp.trim()">t</span></span>
-			#if($showcomment == "")
-				#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
-				<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
-			#elseif($authenticated && ($showcomment.userid == $authUser.id || $request.isUserInRole("mod")))
-				<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
-			#else
-				#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
-			#end
+		<div class="$hidden">
+			<div class="left">
+				<span class="lightgray pictos">w</span>
+				#set($commentAuthor = {'fullname': $!showcomment.author, 'id': $showcomment.userid})
+				<span class="comment-author">#personlink($commentAuthor):</span>&nbsp;
+				<span class="comment-text">$!showcomment.comment</span>
+			</div>
+			<div class="inlineblock right">
+				#votebox($showcomment "mrm")
+				<span class="comment-timestamp"><span class="pictos" title="$timestamp.trim()">t</span></span>
+				#if($showcomment == "")
+					#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
+					<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
+				#elseif($authenticated && ($showcomment.userid == $authUser.id || $request.isUserInRole("mod")))
+					<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
+				#else
+					#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
+				#end
+			</div>
 		</div>
 	</div>
 #end

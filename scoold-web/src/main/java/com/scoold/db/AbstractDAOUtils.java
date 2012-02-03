@@ -276,6 +276,7 @@ public abstract class AbstractDAOUtils {
 			String tag = split[i];
 			tag = tag.replaceAll("-", " ");
 			tag = AbstractDAOUtils.stripAndTrim(tag);
+			tag = tag.replaceAll(" ", "-");
 			if(!tag.isEmpty() && !tset.contains(tag)){
 				tset.add(tag);
 				t = t.concat(tag).concat(",");

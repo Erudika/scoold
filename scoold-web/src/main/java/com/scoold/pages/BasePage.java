@@ -470,6 +470,7 @@ public class BasePage extends Page {
 						// this is used when js is off or it is a pagination request
 						commentslist = current.getComments(pagenum);
 						itemcount.setValue(current.getCommentcount());
+						labelslist = Media.getMediaDao().readAllLabelsForUUID(parentuuid);
 					}else if(!isAjaxRequest()){ 
 						setRedirect(escapeUrl);
 						return ;
@@ -481,7 +482,6 @@ public class BasePage extends Page {
 				medialist = parent.getMedia(Media.MediaType.PHOTO, label,
 						pagenum, mediacount, MAX_ITEMS_PER_PAGE, true);
 				labelslist = Media.getMediaDao().readAllLabelsForUUID(parentuuid);
-				addModel("alllabels", StringUtils.join(labelslist, ","));
 			}
 			
 			if(isAjaxRequest() && param("getimagedataobject")){
@@ -820,7 +820,7 @@ public class BasePage extends Page {
 		}
 
 		if (StringUtils.isBlank(parentuuid)) {
-			puuid = new Select("parentuuid", lang.get("posts.linkedto"), true);
+			puuid = new Select("parentuuid", lang.get("posts.selectschool"), true);
 			((Select) puuid).add(new Option("", lang.get("chooseone")));
 			for (com.scoold.core.School school : schoolsMap.values()) {
 				((Select) puuid).add(new Option(school.getUuid(), school.getName()));

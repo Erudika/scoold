@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,13 +30,11 @@ import name.aikesommer.authenticator.SimplePrincipal;
 import org.apache.click.Context;
 import org.apache.click.util.ClickUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.simple.parser.JSONParser;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
 import org.openid4java.discovery.DiscoveryInformation;
@@ -112,7 +108,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public Status authenticate(AuthenticationManager manager, AuthenticationRequest request) {
 		saveRequest(manager, request);
 
-		if(DEVEL_MODE){
+		if(DEVEL_MODE || !BooleanUtils.toBoolean(System.getProperty("com.scoold.production"))){
 			//override using facebook uid or openid
 			tryCreatingPrincipal("517966023", manager, request);
 			return Status.Success;

@@ -34,11 +34,12 @@
 		galleryUri:				   '',
 		totalCount:				   0,
 		label:					   '',
-		labelBoxClass:					   '',
+		labelBoxClass:			   '',
 		preloadAhead:              1, // Set to -1 to preload all images
 		commentProfileLinkSel:	   '',
 		commentBoxSel:		       '.commentbox',
 		commentTimestampSel:	   '',
+		commentAuthorSel:		   '',
 		commentTextSel:			   '',
 		commentFormSel:			   '',
 		commentsContainerSel:	   '',
@@ -225,9 +226,11 @@
 						comment = imageData.comments[i];
 
 						div = commentsCont.find(gallery.commentBoxSel+":first").clone();
+						// set link to profile
 						div.find(gallery.commentProfileLinkSel).attr("href", function(){
 							return this.href + comment.userid;
 						}).text(comment.author);
+						
 						if (comment.candelete === true) {
 							div.find(gallery.reportLinkSel).remove();
 							div.find(gallery.deleteCommentSel).attr("href", function(){
@@ -258,6 +261,7 @@
 						}
 
 						div.find(gallery.commentTimestampSel).text(comment.timestamp);
+						div.find(gallery.commentAuthorSel).text(comment.author+":");
 						div.find(gallery.commentTextSel).text(comment.comment);
 						div.find(gallery.votecountSel).text(comment.votes);
 						div.find(gallery.voteLinkSel).attr("href", function(){

@@ -101,7 +101,7 @@ public final class Search{
 			}
 			json = mapper.writeValueAsString(rootNode);
 		} catch (Exception ex) {
-			Logger.getLogger(QueueFactory.class.getName()).log(Level.SEVERE, null, ex);
+			logger.log(Level.SEVERE, null, ex);
 		}
 		
 		return json;
@@ -147,7 +147,7 @@ public final class Search{
 			list = (ArrayList<T>) so.readAllForKeys(keys);
 			repairIndex(clazz, list, keys, itemcount);
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 		
@@ -180,12 +180,12 @@ public final class Search{
 			SearchHits hits = response.getHits();
 			
 			for (SearchHit hit : hits) {
-				Tag tag = new Tag((String) hit.field("tag").getValue());
+				Tag tag = new Tag((String) hit.getSource().get("tag"));
 				tag.setId(NumberUtils.toLong(hit.getId()));
 				tags.add(tag);
 			}
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 		
@@ -237,7 +237,7 @@ public final class Search{
 			list = new Post().readAllForKeys(keys);
 			repairIndex(Post.class, list, keys, itemcount);
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 
@@ -274,7 +274,7 @@ public final class Search{
 			list = new Post().readAllForKeys(keys);
 			repairIndex(Post.class, list, keys, null);
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 
@@ -312,7 +312,7 @@ public final class Search{
 			list = new Post().readAllForKeys(keys);
 			repairIndex(Post.class, list, keys, itemcount);
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 
@@ -343,7 +343,7 @@ public final class Search{
 			list = new User().readAllForKeys(keys);
 			repairIndex(User.class, list, keys, null);
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 		
@@ -362,7 +362,7 @@ public final class Search{
 				.setQuery(QueryBuilders.queryString(keywords).useDisMax(true))
 				.execute().actionGet();
 		} catch (Exception e) {
-			logger.warning(e.toString());
+			logger.log(Level.WARNING, null, e);
 			refreshClient();
 		}
 		

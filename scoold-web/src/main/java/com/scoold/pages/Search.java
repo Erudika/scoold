@@ -38,7 +38,7 @@ public class Search extends BasePage{
 	public MutableLong schoolpage;
 	public MutableLong classpage;
 
-	private int max = 10;
+	private int max = MAX_ITEMS_PER_PAGE / 2;
 
 	public Search() {
 		title = lang.get("search.title");

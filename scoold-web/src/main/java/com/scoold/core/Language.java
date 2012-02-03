@@ -366,7 +366,7 @@ public final class Language {
 			.put("posts.unanswered", "Unanswered")
 			.put("posts.mostpopular", "Most popular questions")
 			.put("posts.tagged", "Questions with tag")
-			.put("posts.linkedto", "Linked to")
+			.put("posts.selectschool", "Select school")
 			.put("posts.noschools", "Questions are linked to schools. In order to ask a question you need to join at least one school.")
 			.put("posts.unloadconfirm", "Everything you've written will be lost!")
 			.put("posts.editby", "Edited by")

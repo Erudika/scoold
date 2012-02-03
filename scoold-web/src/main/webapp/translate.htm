@@ -90,7 +90,8 @@
 						#else
 							<span class="reputationbox phs rounded3">$!translationcountsmap.get($langKey)</span>
 						#end
-						<a href="$translatelink/$showLocale/$velocityCount" title="Translate this">$!daoutils.abbreviate($!deflang.get($langKey), 25)</a>
+						#set($transthis = $!deflang.get($langKey) )
+						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!daoutils.abbreviate($!transthis, 25)</a>
 					</div>
 				#end
 			</div>

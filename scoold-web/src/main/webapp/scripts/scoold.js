@@ -262,7 +262,8 @@ $(function () {
 			width: that.attr("width"),
 			matchContains: true,
 			highlight: false,
-            extraParams: params,	
+            extraParams: params,
+			autoFill: true,
 			formatItem: function(row) {
 				return row[0] + "<br/>" + row[1];
 			}
@@ -288,12 +289,34 @@ $(function () {
 			multiple: true,
 			highlight: false,
             extraParams: params,
+			autoFill: true,
 			scroll: true,
 			formatItem: function(row) {
 				return row[0];
 			}
 		});
 	}
+	
+	function autocompleteLabelBind(elem, params){
+		if(typeof allLabels !== "undefined"){
+			var that = $(elem);
+			that.attr("autocomplete", "off");
+			that.autocomplete(allLabels, {
+				minChars: 2,
+				width: that.attr("width"),
+				matchContains: true,
+				multiple: true,
+				highlight: false,
+				extraParams: params,
+				autoFill: true,
+				scroll: true,
+				formatItem: function(row) {
+					return row[0]+",";
+				}
+			});
+		}
+	}
+	
 	
 	function autocompleteUserBind(elem, params){
 		autocompleteBind(elem, params);
@@ -315,6 +338,7 @@ $(function () {
 				multiple: true,
 				highlight: false,
 				extraParams: params,
+				autoFill: true,
 				scroll: true,
 				formatItem: function(row) {
 					return row.fullname;
@@ -701,6 +725,7 @@ $(function () {
     
 	autocompleteBind("input.locationbox", {find: "locations"});
 	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
+	autocompleteLabelBind("input.addlabelbox", {find: "labels"});
 	autocompleteTagBind("input.tagbox", {find: "tags"});
 	autocompleteUserBind("input.personbox", {find: "people"});
 	autocompleteBind("input.schoolnamebox", {find: "schools"}); 
@@ -850,7 +875,7 @@ $(function () {
 	});
 
 	$(document).on("click", "a.show-comment",  function(){
-		$(this).nextAll("div:hidden").show().end().prev("span").andSelf().remove();
+		$(this).siblings("div:hidden").show().end().prev("span").andSelf().remove();
 		return false;
 	});
 
@@ -953,7 +978,7 @@ $(function () {
 	}
 
 	$(document).on("click", "a.more-link",  function(){
-		return loadMoreHandler(this, $.noop());
+		return loadMoreHandler(this, function(){});
 	});
 
 	/****************************************************
@@ -976,6 +1001,7 @@ $(function () {
 			commentProfileLinkSel:	   'a.profile-link',
 			commentBoxSel:			   '.commentbox',
 			commentTimestampSel:	   '.comment-timestamp',
+			commentAuthorSel:		   '.comment-author',
 			commentTextSel:			   '.comment-text',
 			commentFormSel:			   '.new-comment-form',
 			commentsContainerSel:	   '.comments',
@@ -1106,11 +1132,6 @@ $(function () {
 			}
 		}
 	});
-
-	if(typeof allLabels !== "undefined"){
-		$("input.addlabelbox").autocomplete(allLabels, {multiple: true, autoFill: true});
-	}
-
 
 	/****************************************************
      *                     DRAWER
