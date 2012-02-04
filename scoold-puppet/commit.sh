@@ -113,9 +113,9 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 	 	done < $FILE1
 		
 		cleanupAndExec $ZIPNAME $FILE2
-	elif [ `expr $1 : '^node-.*$'` != 0 ]; then
-		tag=$(expr $1 : '^node-\(.*\)$')	
-		count=$(expr $tag : '^[a-zA-Z]*\([0-9]*\)$')	
+	elif [ `expr "$1" : '^node-.*$'` != 0 ]; then
+		tag=$(expr "$1" : '^node-\(.*\)$')	
+		count=$(expr "$tag" : '^[a-zA-Z]*\([0-9]*\)$')	
 		i=$(ec2din --region $REGION --filter group-name=$GROUP -F "tag-value=$tag" | egrep ^INSTANCE | awk '{ print $2,$4,$15}')
 		instid=$(echo $i | awk '{ print $1 }')
 		host=$(echo $i | awk '{ print $2 }')
@@ -159,5 +159,5 @@ elif [ "$1" = "createlb" ]; then
 	$AWS_ELB_HOME/bin/elb-create-lb $LBNAME --region $REGION --availability-zones "eu-west-1a,eu-west-1b,eu-west-1c" --listener "protocol=http,lb-port=80,instance-port=8080"
 	$AWS_ELB_HOME/bin/elb-configure-healthcheck $LBNAME --region $REGION --target "HTTP:8080/" --interval 30 --timeout 3 --unhealthy-threshold 2 --healthy-threshold 2
 else
-	echo "USAGE: $0 checkdb | initdb | backupdb file | restoredb file | inites | [ init | all | node-xxx ] group"
+	echo "USAGE: $0 checkdb | initdb | backupdb file | restoredb file | esindex | esriver | createlb | [ init | all | node-xxx ] group | [ lbadd | lbremove ] instid | [ backupdb | restoredb ] S3file"
 fi

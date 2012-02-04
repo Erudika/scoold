@@ -37,8 +37,10 @@ public class Search extends BasePage{
 	public MutableLong userpage;
 	public MutableLong schoolpage;
 	public MutableLong classpage;
+	
+	public int totalCount;
 
-	private int max = MAX_ITEMS_PER_PAGE / 2;
+	private int max = 10;
 
 	public Search() {
 		title = lang.get("search.title");
@@ -59,6 +61,8 @@ public class Search extends BasePage{
 		userpage = new MutableLong(0);
 		schoolpage = new MutableLong(0);
 		classpage = new MutableLong(0);
+		
+		totalCount = 0; 
 	} 
 
 	public void onGet(){
@@ -67,26 +71,27 @@ public class Search extends BasePage{
 
 			if (showParam != null) {
 				if ("questions".equals(showParam)) {
-					questionlist = search.findByKeyword(Post.class, pagenum, questioncount, q);
+					questionlist = search.findByKeyword(Post.class, pagenum, itemcount, q);
 				} else if("feedback".equals(showParam)) {
-					feedbacklist = search.findByKeyword(Post.class, pagenum, feedbackcount, q);
+					feedbacklist = search.findByKeyword(Post.class, pagenum, itemcount, q);
 				} else if("people".equals(showParam)) {
-					userlist = search.findByKeyword(User.class, pagenum, usercount, q);
+					userlist = search.findByKeyword(User.class, pagenum, itemcount, q);
 				} else if("schools".equals(showParam)) {
-					schoollist = search.findByKeyword(School.class, pagenum, schoolcount, q);
+					schoollist = search.findByKeyword(School.class, pagenum, itemcount, q);
 				} else if("classes".equals(showParam)) {
-					classlist = search.findByKeyword(Classunit.class, pagenum, classcount, q);
+					classlist = search.findByKeyword(Classunit.class, pagenum, itemcount, q);
 				}
-			} else {				
+				totalCount = itemcount.intValue();
+			} else { 
 				questionlist = search.findByKeyword(Post.class, questionpage, questioncount, q, max);
 				feedbacklist = search.findByKeyword(Post.class, feedbackpage, feedbackcount, q, max);
 				userlist = search.findByKeyword(User.class, userpage, usercount, q, max);
 				schoollist = search.findByKeyword(School.class, schoolpage, schoolcount, q, max);
 				classlist = search.findByKeyword(Classunit.class, classpage, classcount, q, max);
+				totalCount = (questioncount.intValue() + feedbackcount.intValue() +
+						usercount.intValue() + schoolcount.intValue() + classcount.intValue());
 			}
 			
-			addModel("totalCount", (questioncount.longValue() + feedbackcount.longValue() +
-					usercount.longValue() + schoolcount.longValue() + classcount.longValue()));
 		}
 	}
 }

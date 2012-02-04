@@ -1685,7 +1685,8 @@
 #end
 ###################################
 #macro(badgebox $showbadge $num)
-	<span class="badge phs mas rounded5 inlineblock" title="$lang.get('about.badges.${showbadge}')">
+	#set($badgeinfo = $lang.get("about.badges.$showbadge") )
+	<span class="badge phs mas rounded5 inlineblock" title="$!badgeinfo">
 		<span class="pictos">S</span> 
 		#if($num && $num > 1)
 			$lang.get("$showbadge") <sup>$num</sup>

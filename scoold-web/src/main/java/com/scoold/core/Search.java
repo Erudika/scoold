@@ -113,8 +113,7 @@ public final class Search{
 		if(searchClient == null || StringUtils.isBlank(keywords))
 			return new ArrayList<T>(0);
 
-		Long p = CasDAOUtils.toLong(page);
-		int start = (p == null) ? 0 : (p.intValue() - 1) * max;
+		int start = (page == null || page.intValue() < 1) ? 0 : (page.intValue() - 1) * max;
 		// Types are used for posts: e.g. post of type answer, feedback, etc.
 		String type = clazz.getSimpleName().toLowerCase();
 		ArrayList<String> keys = new ArrayList<String>();
@@ -122,13 +121,12 @@ public final class Search{
 		
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
-				.setSearchType(SearchType.DFS_QUERY_AND_FETCH).setTypes(type)
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setTypes(type)
 				.setQuery(QueryBuilders.queryString(keywords).useDisMax(true))
 				.setFrom(start).setSize(max).setExplain(true).execute().actionGet();
 
 			SearchHits hits = response.getHits();
 			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
-			if(page != null)	page.setValue(page.longValue() + 1);
 
 			for (SearchHit hit : hits) {
 				if(clazz.equals(Post.class)){
@@ -170,6 +168,9 @@ public final class Search{
 			return new ArrayList<Tag>(0);
 
 		ArrayList<Tag> tags = new ArrayList<Tag>();
+		ArrayList<String> keysTags = new ArrayList<String>();
+		ArrayList<String> keysIds = new ArrayList<String>();
+		
 		try {
 			SearchResponse response = searchClient.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -180,10 +181,16 @@ public final class Search{
 			SearchHits hits = response.getHits();
 			
 			for (SearchHit hit : hits) {
-				Tag tag = new Tag((String) hit.getSource().get("tag"));
-				tag.setId(NumberUtils.toLong(hit.getId()));
-				tags.add(tag);
+//				Tag tag = new Tag((String) hit.getSource().get("tag"));
+//				tag.setId(NumberUtils.toLong(hit.getId()));
+//				tags.add(tag);
+				keysTags.add((String) hit.getSource().get("tag"));
+				keysIds.add(hit.getId());
 			}
+			
+			Tag tag = Tag.class.newInstance();
+			tags = tag.readAllForKeys(keysTags);
+			repairIndex(Tag.class, tags, keysIds, null);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, null, e);
 			refreshClient();
@@ -199,7 +206,7 @@ public final class Search{
 			return new ArrayList<Post>(0);
 
 		Long p = CasDAOUtils.toLong(page);
-		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
+		int start = (page == null || page.intValue() < 1) ? 0 : (page.intValue() - 1) * MAX_ITEMS;
 		
 		ArrayList<String> keys = new ArrayList<String>();
 		ArrayList<Post> list = new ArrayList<Post>();
@@ -232,7 +239,6 @@ public final class Search{
 			}
 			
 			if (itemcount != null) itemcount.setValue(hits.getTotalHits());
-			if (page != null) page.setValue(page.longValue() + 1);
 			
 			list = new Post().readAllForKeys(keys);
 			repairIndex(Post.class, list, keys, itemcount);
@@ -285,7 +291,7 @@ public final class Search{
 		if(searchClient == null) return new ArrayList<Post>(0);
 
 		Long p = CasDAOUtils.toLong(page);
-		int start = (p == null) ? 0 : (p.intValue() - 1) * MAX_ITEMS;
+		int start = (page == null || page.intValue() < 1) ? 0 : (page.intValue() - 1) * MAX_ITEMS;
 		
 		ArrayList<String> keys = new ArrayList<String>();
 		ArrayList<Post> list = new ArrayList<Post>();
@@ -307,7 +313,6 @@ public final class Search{
 			}
 			
 			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
-			if(page != null)	page.setValue(page.longValue() + 1);
 			
 			list = new Post().readAllForKeys(keys);
 			repairIndex(Post.class, list, keys, itemcount);
@@ -316,7 +321,7 @@ public final class Search{
 			refreshClient();
 		}
 
-		return new Post().readAllForKeys(keys);
+		return list;
 	}
 
 	public ArrayList<User> findUser(String keywords, int max){

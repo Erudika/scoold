@@ -57,7 +57,8 @@ import org.openid4java.message.sreg.SRegResponse;
 public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModule
 
 	// development mode => bypasses authentication if 'true'
-	private static boolean DEVEL_MODE = false;
+	private static boolean DEVEL_MODE = !BooleanUtils.
+			toBoolean(System.getProperty("com.scoold.production"));
 
 	public static final String OPENID_ACTION = "openid_auth";
 	public static final String FB_CONNECT_ACTION = "facebook_auth";
@@ -108,7 +109,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public Status authenticate(AuthenticationManager manager, AuthenticationRequest request) {
 		saveRequest(manager, request);
 
-		if(DEVEL_MODE || !BooleanUtils.toBoolean(System.getProperty("com.scoold.production"))){
+		if(DEVEL_MODE){
 			//override using facebook uid or openid
 			tryCreatingPrincipal("517966023", manager, request);
 			return Status.Success;

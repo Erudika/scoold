@@ -19,7 +19,7 @@ public class Tag implements ScooldObject, Searchable<Tag>{
 	private Long id;
 	private String uuid;
 	@Indexed
-	private String tag;
+	@Stored private String tag;
 	@Stored private Long count;
 	@Stored private Long timestamp;
 

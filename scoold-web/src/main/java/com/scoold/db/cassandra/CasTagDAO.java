@@ -66,13 +66,7 @@ public class CasTagDAO<T, PK> extends AbstractTagDAO<Tag, Long> {
 	}
 
 	public ArrayList<Tag> readAllForKeys (ArrayList<String> keys) {
-		throw new UnsupportedOperationException("not supported.");
-//		return cdu.executeOne(new Command<ArrayList<Tag>>() {
-//			public ArrayList<Tag> execute Keyspace ks) {
-//				return cdu.readAll(Tag.class, keys,
-//						CasDAOFactory.TAGS);
-//			}
-//		});
+		return cdu.readAll(Tag.class, keys, CasDAOFactory.TAGS);
 	}
 
 }

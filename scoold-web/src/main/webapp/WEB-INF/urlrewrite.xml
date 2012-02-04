@@ -137,10 +137,6 @@
         <from>^/feedback/reply/(\d+)((/?)(.*?))$</from>
         <to type="redirect">%{context-path}/feedback/$1/?write=true</to>
     </rule>
-<!--	<rule>
-        <from>^/(signin|signup|connect|signin/exit)/xd_receiver.htm$</from>
-        <to>/xd_receiver.htm</to>
-    </rule>	-->
 
 	<!-- ======== REPORTS ========== -->
 	<rule>
@@ -596,10 +592,5 @@
         <from>^/search/classes/(.*)(/?)$</from>
         <to last="true">/search.htm?q=$1&amp;show=classes</to>
     </rule>
-	<rule>
-        <from>^/search/(.+)(/?)$</from>
-        <to>/search.htm?q=$1</to>
-    </rule>
-
-
+	
 </urlrewrite>
