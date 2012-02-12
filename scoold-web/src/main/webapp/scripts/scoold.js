@@ -309,10 +309,10 @@ $(function () {
 				highlight: false,
 				extraParams: params,
 				autoFill: true,
-				scroll: true,
-				formatItem: function(row) {
-					return row[0]+",";
-				}
+				scroll: true
+			});
+			that.result(function(event, data, formatted) {
+				$(this).val(data[0]+", ");
 			});
 		}
 	}
@@ -338,17 +338,19 @@ $(function () {
 				multiple: true,
 				highlight: false,
 				extraParams: params,
-				autoFill: true,
+//				autoFill: true,
 				scroll: true,
 				formatItem: function(row) {
 					return row.fullname;
 				}
 			});
 			that.result(function(event, data, formatted) {
-				var hidden = $(this).nextAll("input:hidden");
-				var newHidden = hidden.clone();
+				var that = $(this),
+					hidden = that.nextAll("input:hidden"),
+					newHidden = hidden.clone();
 				newHidden.val(data.uuid);
 				hidden.after(newHidden);
+				that.val(data.fullname+", ");
 			});
 
 			var clear = function(e){
@@ -984,91 +986,18 @@ $(function () {
 	/****************************************************
      *                       PHOTOS
      ****************************************************/
-	//check if global variables exist
-	if((typeof totalMediaCount !== "undefined") &&
-		(typeof galleryUri !== "undefined") &&
-		(typeof imageDataObject !== "undefined") &&
-		(typeof galleryLabel !== "undefined")){
-
-		// Initialize Advanced Galleriffic Gallery
-		var gallery = $('#gallery').galleriffic({
-			delay:                     2500,
-			imageDataInit:			   imageDataObject.media,
-			galleryUri:				   galleryUri,
-			totalCount:				   totalMediaCount,
-			label:					   galleryLabel,
-			labelBoxClass:			   "button-tiny",
-			commentProfileLinkSel:	   'a.profile-link',
-			commentBoxSel:			   '.commentbox',
-			commentTimestampSel:	   '.comment-timestamp',
-			commentAuthorSel:		   '.comment-author',
-			commentTextSel:			   '.comment-text',
-			commentFormSel:			   '.new-comment-form',
-			commentsContainerSel:	   '.comments',
-			reportLinkSel:			   'a.trigger-report',
-			deleteCommentSel:		   'a.delete-comment',
-			imageContainerSel:         '#slideshow',
-			controlsContainerSel:      '#controls',
-			captionContainerSel:       '#caption',
-			labelsContainerSel:		   '#labels',
-			addLabelFormSel:		   '#add-label-form',
-			loadingContainerSel:       '#loading',
-			slideshowToggleSel:		   '.ss-controls a',
-			pageNavigationSel:		   '#pagenav',
-			titleSel:				   '.image-title',
-			captionSel:				   '.image-caption',
-			originalLinkSel:		   '.image-original',
-			voteboxSel:				   '.votebox',
-			upvoteSel:				   '.upvote',
-			downvoteSel:			   '.downvote',
-			voteLinkSel:			   '.votelink',
-			votecountSel:			   '.votecount',
-			prevLinkSel:			   'a.prev',
-			nextLinkSel:			   'a.next',
-			prevPageSel:			   'a.prevpage',
-			nextPageSel:			   'a.nextpage',
-			playLinkText:              'Play Slideshow',
-			pauseLinkText:             'Pause Slideshow',
-			enableHistory:             true,
-			autoStart:                 false
-		});
-
-		// PageLoad function
-		// This function is called when:
-		// 1. after calling $.historyInit();
-		// 2. after calling $.historyLoad();
-		// 3. after pushing "Go Back" button of a browser
-		var pl = function pageload(hash) {
-			// hash doesn't contain the first # character.
-			if(hash) {
-				$.galleriffic.go2(gallery, hash);
-			}
-
-		};
-		// Initialize history plugin.
-		// The callback is called at once by present location.hash.
-		$.history.init(pl); //, window.location.pathname);
-
-		// set onlick event for buttons using the jQuery 1.3 live method
-		$(document).on("click", "a[rel='history']",  function() {
-			var hash = this.href;
-			hash = hash.replace(/^.*#/, '');
-			// moves to a new page.
-			// pageload is called at once.
-			// hash don't contain "#", "?"
-			$.history.load(hash);
-
-			return false;
-		});
-
+	
+	if ($("#gallery").length > 0) {
+		var anext = $("a.next"),
+			aprev = $("a.prev");
+			
 		$(window).keyup(function(e){
 			if(e.keyCode === 37 || e.which === 37){
-				$("a.prev").click();
+				window.location = aprev.attr("href");
 			}else if(e.keyCode === 39 || e.which === 39){
-				$("a.next").click();
+				window.location = anext.attr("href");
 			}
 		});
-
 	}
 
 	$(document).on("click", "a.remove-label",  function(){

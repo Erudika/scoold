@@ -453,7 +453,7 @@
 			#set($label = "?mid=")
 		#end
 		<div>
-			<a class="thumb" rel="history" href="${turl}${label}${thumb.id}" title="$!thumb.title" >
+			<a class="thumb" href="${turl}${label}${thumb.id}" title="$!thumb.title" >
 				#if($thumb.thumburl && !$thumb.thumburl.isEmpty())
 					<img src="$!thumb.thumburl" alt="$!thumb.title" title="$!thumb.description" class="rounded3"/>
 				#else
@@ -524,11 +524,7 @@
 ###########################################
 #macro(gallery $photos $gurl $totalCount)
 	<script type="text/javascript">
-		totalMediaCount = $totalCount;
-		galleryUri = "$gurl";
-		galleryLabel = "$!request.getParameter('label')";
 		allLabels = [#foreach($lbl in $labelslist)#if($lbl && !$lbl.isEmpty())"$!lbl"#end#if($velocityCount < $labelslist.size()),#end#end];
-		imageDataObject = $mediaDataObject;
 	</script>
 
 	#set($showlabel = $!request.getParameter("label"))
@@ -548,13 +544,13 @@
 		<div id="gallery" class="content mtl">
 			<div id="controls" class="controls mbm line">
 				<div class="nav-controls unit size1of2 ptm">
-					<a class="prev button-small rounded3" rel="history" href="${gurl}/$!{label}$!{prevIndex}#$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
+					<a class="prev button-small rounded3" href="${gurl}/$!{label}$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
 					&nbsp;
 					<span class="ss-controls">
 						<a href="#play" class="play button-small rounded3" title="Play">&nbsp;<span class="pictos">4</span>&nbsp;</a>
 					</span>
 					&nbsp;
-					<a class="next button-small rounded3" rel="history" href="${gurl}/$!{label}$!{nextIndex}#$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
+					<a class="next button-small rounded3" href="${gurl}/$!{label}$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
 				</div>
 				<div class="unit size1of2 lastUnit r">
 					#votebox($currentPhoto "largeText")
@@ -562,14 +558,10 @@
 			</div>
 			<div class="slideshow-container center">
 				<div id="slideshow" class="slideshow">
-					<div id="loading" class="loader hide centr"></div>
-
-					<a class="advance-link" rel="history" href="${gurl}/$!{label}$!{nextIndex}#$!{nextIndex}" title="$lang.get('next')">
+					<a class="advance-link" href="${gurl}/$!{label}$!{nextIndex}" title="$lang.get('next')">
 						#set($sizearr = $daoutils.getMaxImgSize($currentPhoto.height, $currentPhoto.width) )
 						<img height="$sizearr.get(0)" width="$sizearr.get(1)" src="$currentPhoto.url" alt="$!currentPhoto.title" class="rounded3"/>
 					</a>
-
-					
 					<div id="caption" class="caption-container">
 						<span class="image-title">$!currentPhoto.title</span>
 						<span class="image-caption">$!currentPhoto.description</span>
@@ -633,10 +625,11 @@
 			<a href="#" class="jqmClose button-small rounded3">$lang.get("close")</a>
 		</div>
 	</div>
-	<form method="post" id="embed-form" action="${uri}?getmediahtmlcode=true">
+	<form method="post" id="embed-form" action="${uri}">
 		<fieldset>
 			#sectoken(false)
 			<input type="text" value="$lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
+			<input type="hidden" name="getmediahtmlcode" value="true"/>
 			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&amp;</span></a>
 			
 			<div class="red embed-error"></div>
@@ -1042,7 +1035,6 @@
 #end
 ####################################
 #macro(commentbox $showcomment)
-	#set($timestamp = "#formatdate($showcomment.timestamp 'slim')")
 	#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 	#if($request.getParameter('javax.servlet.forward.query_string'))
 		#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
@@ -1067,8 +1059,8 @@
 				<span class="comment-text">$!showcomment.comment</span>
 			</div>
 			<div class="inlineblock right">
-				#votebox($showcomment "mrm")
-				<span class="comment-timestamp"><span class="pictos" title="$timestamp.trim()">t</span></span>
+				<span class="comment-timestamp mrs"><span class="pictos">t</span> #formatdate($showcomment.timestamp '')</span>
+				#votebox($showcomment "mrs")
 				#if($showcomment == "")
 					#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
 					<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
@@ -2110,10 +2102,6 @@
 		#end
 		#stop
 
-	#elseif($request.getParameter("getimagedataobject"))
-		$!mediaDataObject
-		#stop
-
 	#elseif($request.getParameter("getmediahtmlcode"))
 		#mediabox($lastMedia)
 		#stop
@@ -2221,21 +2209,19 @@
 						#end
 						|
 						#if($authUser.countNewMessages() > 0) 
-							<span class="blue">$authUser.countNewMessages()</span> 
-							#set($msgclass = "blue") 
+							<span class="notificationbox rounded5">$authUser.countNewMessages()</span>
 						#else 
-							#set($msgclass = "gray") 
+							<span class="pictos">M</span>
 						#end
-						<span class="pictos $!msgclass">M</span> <a href="$messageslink" title="Messages">${lang.get('messages.title')}</a> |
+						<a href="$messageslink" title="Messages">${lang.get('messages.title')}</a> |
 						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">${lang.get('settings.title')}</a> |
 						#if($request.isUserInRole("mod"))
 							#if($authUser.countNewReports() > 0) 
-								<span class="blue">$authUser.countNewReports()</span> 
-								#set($repclass = "blue") 
-							#else 
-								#set($repclass = "gray") 
+								<span class="notificationbox rounded5">$authUser.countNewReports()</span>
+							#else
+								<span class="pictos">^</span>
 							#end
-							<span class="pictos $!repclass">^</span> <a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
+							<a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
 						#end
 						#if($isFBconnected) #set($logoutid = "fb-logout" ) #else #set($logoutid = "logoutbtn" )	#end
 						<span class="pictos">K</span>
@@ -2347,8 +2333,6 @@
 					{modal:			scriptslink + "/jquery.modal" + minsuffix + ".js" },
 					{jeditable:		scriptslink + "/jquery.jeditable" + minsuffix + ".js" },
 					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
-					{gallery:		scriptslink + "/jquery.galleriffic" + minsuffix + ".js" },
-					{history:		scriptslink + "/jquery.history" + minsuffix + ".js" },
 					{oembed:		scriptslink + "/jquery.oembed" + minsuffix + ".js" },
 					{markitup:		scriptslink + "/jquery.markitup" + minsuffix + ".js" },
 					{chatclient:	scriptslink + "/chatclient" + minsuffix + ".js" },

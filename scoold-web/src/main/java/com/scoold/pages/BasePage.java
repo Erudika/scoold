@@ -50,9 +50,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 /**
  *
  * @author alexb 
@@ -137,7 +134,6 @@ public class BasePage extends Page {
 	public User authUser;
 	public AbstractDAOUtils daoutils;
 	public Search search;
-	public JSONObject mediaDataObject;
 	public ArrayList<Comment> commentslist;
 	public ArrayList<Media> medialist;
 	public ArrayList<String> labelslist;
@@ -463,7 +459,6 @@ public class BasePage extends Page {
 					int nextPrevAll = NumberUtils.toInt(getParamValue("nextprevall"));
 					medialist = Media.getMediaDao().readPhotosAndCommentsForUUID(parentuuid,
 						label, index, nextPrevAll, mediacount);
-					mediaDataObject = getMediaJSONObject(medialist);
 					if(!medialist.isEmpty() && !isAjaxRequest() ){
 	//					&& param("pageparam") && param("parentuuid")
 						Media current = medialist.get(0);
@@ -473,7 +468,6 @@ public class BasePage extends Page {
 						labelslist = Media.getMediaDao().readAllLabelsForUUID(parentuuid);
 					}else if(!isAjaxRequest()){ 
 						setRedirect(escapeUrl);
-						return ;
 					}
 				}
 			} else {
@@ -483,71 +477,7 @@ public class BasePage extends Page {
 						pagenum, mediacount, MAX_ITEMS_PER_PAGE, true);
 				labelslist = Media.getMediaDao().readAllLabelsForUUID(parentuuid);
 			}
-			
-			if(isAjaxRequest() && param("getimagedataobject")){
-					//AJAX get image json data
-				setHeader("Content-Type", "application/json; charset=utf-8");
-			}
-
 		}
-		
-	}
-
-	private JSONObject getMediaJSONObject(ArrayList<Media> medialist){
-		JSONObject jsonDataObject = new JSONObject();
-		JSONArray thumbs = new JSONArray();
-		Locale loc = getContext().getLocale();
-		try {
-			for (Media photo : medialist) {
-				JSONArray comments = new JSONArray();
-				int[] size = AbstractDAOUtils.
-						getMaxImgSize(photo.getHeight(), photo.getWidth());
-				//only get first page of comments
-				for (Comment comment : photo.getComments()) {
-
-					boolean canDelete = authenticated && (
-							(comment.getUserid().equals(authUser.getId())) ||
-							inRole("mod"));
-					
-
-					comments.put(new JSONObject()
-						.put("id", comment.getId())
-						.put("uuid", comment.getUuid())
-						.put("userid", comment.getUserid())
-						.put("author", comment.getAuthor())
-						.put("votes", photo.getVotes())
-						.put("candelete", canDelete)
-						.put("comment", comment.getComment())
-						.put("timestamp", AbstractDAOUtils.formatDate(
-							comment.getTimestamp(),
-							"dd MMMM yyyy HH:mm", loc)));
-				}
- 
-				thumbs.put(new JSONObject()
-					.put("id", photo.getId().toString())
-					.put("uuid", photo.getUuid())
-					.put("url", photo.getUrl())
-					.put("thumburl", photo.getThumburl())
-					.put("userid", photo.getUserid())
-					.put("title", photo.getTitle())
-					.put("description", photo.getDescription())
-					.put("timestamp", photo.getTimestamp())
-					.put("votes", photo.getVotes())
-					.put("commentcount", photo.getCommentcount())
-					.put("comments", comments)
-					.put("height", size[0])
-					.put("width", size[1])
-					.put("pagenum", photo.getCommentpage())
-					.put("originalurl", photo.getOriginalurl())
-					.put("labels", photo.getLabelsSet()));
-			}
-			
-			jsonDataObject.put("media", thumbs);
-		} catch (JSONException ex) {
-			logger.severe(ex.toString());
-		}
-
-		return jsonDataObject;
 	}
 	
 	/****  POSTS  ****/
