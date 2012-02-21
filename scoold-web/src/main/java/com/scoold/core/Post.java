@@ -49,7 +49,6 @@ public class Post implements ScooldObject, Votable<Long>,
 	//this is the question id. 
 	//similar to parentuuid but always 
 	//shows the parent/current question id
-	@Indexed
 	@Stored private Long parentpostid;
 	@Stored private Long deletereportid;
 	@Stored private Integer oldvotes;

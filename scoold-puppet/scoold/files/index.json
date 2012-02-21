@@ -15,20 +15,10 @@
     },
 	"mappings" : {
 		"post": {
-			"_source": { "enabled": false },
-			"properties": {
-				"parentuuid": { "type": "string", "store": "yes", "index": "not_analyzed"},
-				"parentpostid": { "type": "long", "store": "yes"},
-				"title": { "type": "string", "store": "yes"}
-			}
+			"_source": { "enabled": false }
 		},
 		"feedback": {
-			"_source": { "enabled": false },
-			"properties": {
-				"parentuuid": { "type": "string", "store": "yes", "index": "not_analyzed"},
-				"parentpostid": { "type": "long", "store": "yes"},
-				"title": { "type": "string", "store": "yes"}
-			}
+			"_source": { "enabled": false }
 		},
 		"tag": {
 			"_source": { "enabled": true },
@@ -37,26 +27,13 @@
 			}
 		},
 		"classunit": {
-			"_source": { "enabled": false },
-			"properties": {		
-				"identifier": { "type": "string", "store": "yes"},
-				"gradyear": { "type": "integer", "store": "yes"}
-			}
+			"_source": { "enabled": false }
 		},
 		"user": {
-			"_source": { "enabled": false },
-			"properties": {
-				"fullname": { "type": "string", "store": "yes"},
-				"location": { "type": "string", "store": "yes"},
-				"reputation": { "type": "long", "store": "yes"}
-			}
+			"_source": { "enabled": false }
 		},
 		"school": {
-			"_source": { "enabled": false },
-			"properties": {
-				"name": { "type": "string", "store": "yes"},
-				"location": { "type": "string", "store": "yes"}
-			}
+			"_source": { "enabled": false }
 		}
 	}
 }

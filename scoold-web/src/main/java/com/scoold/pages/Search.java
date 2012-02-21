@@ -7,6 +7,7 @@ package com.scoold.pages;
 
 import com.scoold.core.Classunit;
 import com.scoold.core.Post;
+import com.scoold.core.Post.Feedback;
 import com.scoold.core.User;
 import com.scoold.core.School;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Search extends BasePage{
 	public ArrayList<Classunit> classlist;
 	public ArrayList<School> schoollist;
 	public ArrayList<Post> questionlist;
-	public ArrayList<Post> feedbacklist;
+	public ArrayList<Feedback> feedbacklist;
 	public String url;
 	
 	public MutableLong questioncount;
@@ -45,7 +46,7 @@ public class Search extends BasePage{
 	public Search() {
 		title = lang.get("search.title");
 		questionlist = new ArrayList<Post>();
-		feedbacklist = new ArrayList<Post>();
+		feedbacklist = new ArrayList<Feedback>();
 		userlist = new ArrayList<User>();
 		schoollist = new ArrayList<School>();
 		classlist = new ArrayList<Classunit>();
@@ -73,7 +74,7 @@ public class Search extends BasePage{
 				if ("questions".equals(showParam)) {
 					questionlist = search.findByKeyword(Post.class, pagenum, itemcount, q);
 				} else if("feedback".equals(showParam)) {
-					feedbacklist = search.findByKeyword(Post.class, pagenum, itemcount, q);
+					feedbacklist = search.findByKeyword(Feedback.class, pagenum, itemcount, q);
 				} else if("people".equals(showParam)) {
 					userlist = search.findByKeyword(User.class, pagenum, itemcount, q);
 				} else if("schools".equals(showParam)) {
@@ -84,7 +85,7 @@ public class Search extends BasePage{
 				totalCount = itemcount.intValue();
 			} else { 
 				questionlist = search.findByKeyword(Post.class, questionpage, questioncount, q, max);
-				feedbacklist = search.findByKeyword(Post.class, feedbackpage, feedbackcount, q, max);
+				feedbacklist = search.findByKeyword(Feedback.class, feedbackpage, feedbackcount, q, max);
 				userlist = search.findByKeyword(User.class, userpage, usercount, q, max);
 				schoollist = search.findByKeyword(School.class, schoolpage, schoolcount, q, max);
 				classlist = search.findByKeyword(Classunit.class, classpage, classcount, q, max);

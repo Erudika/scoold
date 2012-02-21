@@ -15,6 +15,8 @@ import com.scoold.util.QueueFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -116,6 +118,7 @@ public final class Search{
 		int start = (page == null || page.intValue() < 1) ? 0 : (page.intValue() - 1) * max;
 		// Types are used for posts: e.g. post of type answer, feedback, etc.
 		String type = clazz.getSimpleName().toLowerCase();
+		if(Post.class.equals(clazz.getDeclaringClass())) clazz = (Class<T>) Post.class;
 		ArrayList<String> keys = new ArrayList<String>();
 		ArrayList<T> list = new ArrayList<T>();
 		
@@ -129,20 +132,12 @@ public final class Search{
 			if(itemcount != null)	itemcount.setValue(hits.getTotalHits());
 
 			for (SearchHit hit : hits) {
-				if(clazz.equals(Post.class)){
-					SearchHitField qid = hit.field("parentpostid");
-					if(qid != null && qid.getValue() != null) {
-						keys.add(qid.getValue().toString());
-					} else {
-						keys.add(hit.getId());
-					}
-				}else{
-					keys.add(hit.getId());
-				}
+				keys.add(hit.getId());
 			}
-
+			
 			T so = clazz.newInstance();
 			list = (ArrayList<T>) so.readAllForKeys(keys);
+			fixSearchResults(clazz, list, itemcount);
 			repairIndex(clazz, list, keys, itemcount);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, null, e);
@@ -181,11 +176,11 @@ public final class Search{
 			SearchHits hits = response.getHits();
 			
 			for (SearchHit hit : hits) {
-//				Tag tag = new Tag((String) hit.getSource().get("tag"));
-//				tag.setId(NumberUtils.toLong(hit.getId()));
-//				tags.add(tag);
-				keysTags.add((String) hit.getSource().get("tag"));
-				keysIds.add(hit.getId());
+				Map<String, Object> src = hit.getSource();
+				if (src != null){
+					keysTags.add((String) src.get("tag"));
+					keysIds.add(hit.getId());
+				}
 			}
 			
 			Tag tag = Tag.class.newInstance();
@@ -391,6 +386,39 @@ public final class Search{
 		}
 		if(itemcount != null && countRemoved > 0) {
 			itemcount.setValue(itemcount.toLong() - countRemoved);
+		}
+	}
+	
+	private <T extends Searchable<?>> void fixSearchResults(Class<T> clazz, 
+			ArrayList<T> list, MutableLong itemcount){
+		if(clazz.equals(Post.class)){
+			ArrayList<String> parentKeys = new ArrayList<String>();
+			ArrayList<Post> parentPosts;
+			Map<Long, Integer> index = new HashMap<Long, Integer>(list.size());
+			int countRemoved = 0;
+			
+			for (int i = 0; i < list.size(); i++) {
+				Post post = (Post) list.get(i);
+				if(post != null && post.getParentpostid() != null){
+					if(index.containsKey(post.getParentpostid())){
+						list.remove(i);
+						countRemoved++;
+					}else{
+						parentKeys.add(post.getParentpostid().toString());
+						index.put(post.getParentpostid(), i);
+					}
+				}else{
+					index.put(post.getId(), i);
+				}
+			}
+			parentPosts = Post.getPostDao().readAllForKeys(parentKeys);
+			for (Post post : parentPosts) {
+				Integer i = index.get(post.getId());
+				if(i != null) list.set(i, (T) post);
+			}
+			if(itemcount != null && countRemoved > 0) {
+				itemcount.setValue(itemcount.toLong() - countRemoved);
+			}
 		}
 	}
 	
