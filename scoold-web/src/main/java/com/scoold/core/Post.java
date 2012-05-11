@@ -10,6 +10,8 @@ import com.scoold.db.AbstractPostDAO;
 import com.scoold.db.AbstractDAOFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.click.control.Form;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableLong;
@@ -18,50 +20,54 @@ import org.apache.commons.lang.mutable.MutableLong;
  *
  * @author alexb
  */
-public class Post implements ScooldObject, Votable<Long>,
-		Commentable, Searchable<Post>, Serializable{
+public class Post implements ScooldObject, Votable<Long>, Commentable, Serializable{
 
 	private Long id;
-	private String uuid;
-	@Indexed
 	@Stored private String body;
-	@Indexed
 	@Stored private String title;
 	@Stored private Long userid;
 	@Stored private Long timestamp;
-	@Indexed
-	@Stored private String parentuuid;
+	@Stored private Long parentid;
 	@Stored private String type;
 	@Stored private Long viewcount;
 	@Stored private Long answerid;
-	@Stored private String revisionuuid;
+	@Stored private Long revisionid;
 	@Stored private Long closerid;
-	@Indexed
 	@Stored private String tags;
-	@Indexed
 	@Stored private Long answercount;
-	@Indexed
 	@Stored private Long lastactivity;
 	@Stored private Boolean deleteme;
 	@Stored private Long lasteditby;
 	@Stored private Integer votes;
 	@Stored private Long commentcount;
-	//this is the question id. 
-	//similar to parentuuid but always 
-	//shows the parent/current question id
-	@Stored private Long parentpostid;
 	@Stored private Long deletereportid;
 	@Stored private Integer oldvotes;
-	@Stored private Long oldactivity;
+	@Stored private String oldtags;
+
+	@Stored public String classtype = Post.class.getSimpleName().toLowerCase();
 
 	private transient User author;
 	private transient User lastEditor;
 	private transient ArrayList<Comment> comments;
 	private transient Form editForm;
-	private transient  Long pagenum;
+	private transient Long pagenum;
 
 	public static enum PostType{
-		QUESTION, ANSWER, BLACKBOARD, FEEDBACK, TRANSLATION, UNKNOWN
+		QUESTION, FEEDBACK, GROUPPOST, REPLY, BLACKBOARD, UNKNOWN;
+		
+		public String toString(){
+			return super.toString().toLowerCase();
+		}
+		
+		private static final Map<String, String> posttypes = new HashMap<String, String>();
+		static {
+			for (PostType pt : PostType.class.getEnumConstants()) 
+				posttypes.put(pt.toString(), pt.toString());
+			
+		}
+		public static boolean contains(String t){
+			return (posttypes != null && posttypes.containsKey(t));
+		}
 	}
 
 	public static enum FeedbackType{
@@ -79,6 +85,12 @@ public class Post implements ScooldObject, Votable<Long>,
 				AbstractDAOFactory.getDefaultDAOFactory().getDAO(Post.class);
 	}
 
+	public Post(PostType type){
+		this();
+		this.type = type.toString();
+		updateClasstype();
+	}
+	
 	public Post(){
 		this.votes = 0;
 		this.answercount = 0L;
@@ -86,18 +98,20 @@ public class Post implements ScooldObject, Votable<Long>,
 		this.commentcount = 0L;
 		this.pagenum = 0L;
 		this.deleteme = false;
+		this.type = PostType.UNKNOWN.name();
+		updateClasstype();
 	}
 
-	public Post(Long id) {
-		this();
-		this.id = id;
+	public String getClasstype() {
+		return classtype;
 	}
-
-	public Post(String uuid) {
-		this();
-		this.uuid = uuid;		
+	
+	private void updateClasstype(){
+		this.classtype = StringUtils.isBlank(type) ? 
+				Post.class.getSimpleName().toLowerCase() : 
+				getPostType().toString();
 	}
-
+	
 	public Long getPagenum() {
 		return pagenum;
 	}
@@ -105,7 +119,15 @@ public class Post implements ScooldObject, Votable<Long>,
 	public void setPagenum(Long pagenum) {
 		this.pagenum = pagenum;
 	}
+	
+	public String getOldtags() {
+		return oldtags;
+	}
 
+	public void setOldtags(String oldtags) {
+		this.oldtags = oldtags;
+	}
+	
 	/**
 	 * Get the value of deletereportid
 	 *
@@ -122,42 +144,6 @@ public class Post implements ScooldObject, Votable<Long>,
 	 */
 	public void setDeletereportid(Long deletereportid) {
 		this.deletereportid = deletereportid;
-	}
-
-	/**
-	 * Get the value of parentpostid
-	 *
-	 * @return the value of parentpostid
-	 */
-	public Long getParentpostid() {
-		return parentpostid;
-	}
-
-	/**
-	 * Set the value of parentpostid
-	 *
-	 * @param parentpostid new value of parentpostid
-	 */
-	public void setParentpostid(Long parentpostid) {
-		this.parentpostid = parentpostid;
-	}
-
-	/**
-	 * Get the value of oldactivity
-	 *
-	 * @return the value of oldactivity
-	 */
-	public Long getOldactivity() {
-		return oldactivity;
-	}
-
-	/**
-	 * Set the value of oldactivity
-	 *
-	 * @param oldactivity new value of oldactivity
-	 */
-	public void setOldactivity(Long oldactivity) {
-		this.oldactivity = oldactivity;
 	}
 
 	/**
@@ -284,7 +270,8 @@ public class Post implements ScooldObject, Votable<Long>,
 	 * @param tags new value of tags
 	 */
 	public void setTags(String tags) {
-		this.tags = tags;
+		setOldtags(this.tags);
+		this.tags = AbstractDAOUtils.fixCSV(tags);
 	}
 
 	/**
@@ -306,21 +293,21 @@ public class Post implements ScooldObject, Votable<Long>,
 	}
 
 	/**
-	 * Get the value of revisionuuid
+	 * Get the value of revisionid
 	 *
-	 * @return the value of revisionuuid
+	 * @return the value of revisionid
 	 */
-	public String getRevisionuuid() {
-		return revisionuuid;
+	public Long getRevisionid() {
+		return revisionid;
 	}
 
 	/**
-	 * Set the value of revisionuuid
+	 * Set the value of revisionid
 	 *
-	 * @param revisionuuid new value of revisionuuid
+	 * @param revisionid new value of revisionid
 	 */
-	public void setRevisionuuid(String revisionuuid) {
-		this.revisionuuid = revisionuuid;
+	public void setRevisionid(Long revisionid) {
+		this.revisionid = revisionid;
 	}
 
 
@@ -376,42 +363,25 @@ public class Post implements ScooldObject, Votable<Long>,
 	 */
 	public void setType(String type) {
 		this.type = type;
+		updateClasstype();
 	}
 
 	/**
-	 * Get the value of uuid
+	 * Get the value of parentid
 	 *
-	 * @return the value of uuid
+	 * @return the value of parentid
 	 */
-	public String getUuid() {
-		return uuid;
+	public Long getParentid() {
+		return parentid;
 	}
 
 	/**
-	 * Set the value of uuid
+	 * Set the value of parentid
 	 *
-	 * @param uuid new value of uuid
+	 * @param parentid new value of parentid
 	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	/**
-	 * Get the value of parentuuid
-	 *
-	 * @return the value of parentuuid
-	 */
-	public String getParentuuid() {
-		return parentuuid;
-	}
-
-	/**
-	 * Set the value of parentuuid
-	 *
-	 * @param parentuuid new value of parentuuid
-	 */
-	public void setParentuuid(String parentuuid) {
-		this.parentuuid = parentuuid;
+	public void setParentid(Long parentid) {
+		this.parentid = parentid;
 	}
 
 	/**
@@ -465,6 +435,9 @@ public class Post implements ScooldObject, Votable<Long>,
 	 * @param title new value of title
 	 */
 	public void setTitle(String title) {
+		if(StringUtils.trimToNull(title) == null) return;
+		title = title.replaceAll("\\p{S}", "");
+		title = title.replaceAll("\\p{C}", "");
 		this.title = title;
 	}
 
@@ -522,16 +495,6 @@ public class Post implements ScooldObject, Votable<Long>,
 		return tags.substring(1, tags.length() - 1).replaceAll(",", ", ");
 	}
 
-	public void fixTags(){
-		tags = AbstractDAOUtils.fixCSV(tags);
-	}
-
-	public void fixTitle(){
-		if(StringUtils.trimToNull(title) == null) return;
-		title = title.replaceAll("\\p{S}", "");
-		title = title.replaceAll("\\p{C}", "");
-	}
-
 	public Long create() {
 		this.id = getPostDao().create(this);
 		return this.id;
@@ -583,7 +546,7 @@ public class Post implements ScooldObject, Votable<Long>,
 
 	public ArrayList<Comment> getComments(MutableLong page) {
 		this.comments = Comment.getCommentDao()
-				.readAllCommentsForUUID(uuid, page, new MutableLong(commentcount));
+				.readAllCommentsForID(id, page, new MutableLong(commentcount));
 		this.pagenum = page.longValue();
 		return this.comments;
 	}
@@ -597,16 +560,16 @@ public class Post implements ScooldObject, Votable<Long>,
 	}
 
 	public ArrayList<Post> getAnswers(String sortby, MutableLong page, MutableLong itemcount){
-		return getPostDao().readAllPostsForUUID(PostType.ANSWER, this.uuid,
-				sortby, page, itemcount);
+		return getPostDao().readAllPostsForID(PostType.REPLY, this.id,
+				sortby, page, itemcount, AbstractDAOFactory.MAX_ITEMS_PER_PAGE);
 	}
 
 	public ArrayList<Revision> getRevisions(MutableLong page, MutableLong itemcount){
-		return Revision.getRevisionDao().readAllRevisionsForPost(this.uuid, page, itemcount);
+		return Revision.getRevisionDao().readAllRevisionsForPost(this.id, page, itemcount);
 	}
 
-	public boolean isAnswer(){
-		return isOfType(PostType.ANSWER);
+	public boolean isReply(){
+		return isOfType(PostType.REPLY);
 	}
 
 	public boolean isQuestion(){
@@ -621,8 +584,8 @@ public class Post implements ScooldObject, Votable<Long>,
 		return isOfType(PostType.FEEDBACK);
 	}
 
-	public boolean isTranslation(){
-		return isOfType(PostType.TRANSLATION);
+	public boolean isGrouppost(){
+		return isOfType(PostType.GROUPPOST);
 	}
 
 	private boolean isOfType(PostType type){
@@ -631,20 +594,19 @@ public class Post implements ScooldObject, Votable<Long>,
 	}
 
 	public void setPostType(PostType type){
-		if(type != null) this.type = type.name();
+		if(type != null) setType(type.name());
 	}
 
 	public PostType getPostType(){
 		if(type == null) return PostType.UNKNOWN;
 		try {
-			return PostType.valueOf(type);
+			return PostType.valueOf(type.toUpperCase());
 		} catch (Exception e) {
 			return PostType.UNKNOWN;
 		}
 	}
 
 	public void updateLastActivity(){
-		setOldactivity(lastactivity);
 		setLastactivity(System.currentTimeMillis());
 	}
 
@@ -677,30 +639,4 @@ public class Post implements ScooldObject, Votable<Long>,
 		hash = 97 * hash + (this.type != null ? this.type.hashCode() : 0);
 		return hash;
 	}
-
-	public void index() {
-		Search.index(this);
-	}
-
-	public void unindex() {
-		Search.unindex(this);
-	}
-
-	public ArrayList<Post> readAllForKeys(ArrayList<String> keys) {
-		if(keys == null || keys.isEmpty()) return new ArrayList<Post> ();
-		return getPostDao().readAllForKeys(keys);
-	}
-
-	public class Question extends Post{
-		// dummy class
-	}
-
-	public class Answer extends Post{
-		// dummy class
-	}
-
-	public class Feedback extends Post{
-		// dummy class
-	}
-
 }

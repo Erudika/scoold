@@ -31,31 +31,28 @@ public class Classunit extends BasePage{
 	public com.scoold.core.Classunit showClass;
 	public ArrayList<User> peoplelist;
 	public RadioGroup radioGroup;
-	public String galleryUri;
 	public boolean canEdit;
 	public Post showPost;
 	public boolean isLinkedToMe;
 	public boolean isMine;
 
+	public String photoslink;
+	public String drawerlink;
+	
 	public Classunit(){
 		title = lang.get("class.title");
-		showClass = null;
 		
+		showClass = null;
 		Long classid = NumberUtils.toLong(getParamValue("classid"), 0);
-		String uuid = getParamValue("uuid");
 
-        if(classid.longValue() == 0L && StringUtils.isBlank(uuid)){
+        if(classid.longValue() == 0L){
 			setRedirect(classeslink);
 			return;
 		}else{
-            showClass = (classid.longValue() == 0) ?
-					com.scoold.core.Classunit.getClassUnitDao().read(uuid) :
-					com.scoold.core.Classunit.getClassUnitDao().read(classid);
+            showClass =	com.scoold.core.Classunit.getClassUnitDao().read(classid);
 
-            if(showClass != null){
+            if(showClass != null && daoutils.typesMatch(showClass)){
                 title = title + " - " + showClass.getIdentifier();
-				galleryUri = classlink.concat("/").concat(
-						showClass.getId().toString()).concat("/photos");
 			}else{
 				setRedirect(classeslink);
 				return;
@@ -63,13 +60,13 @@ public class Classunit extends BasePage{
         }
 
 		isLinkedToMe = (authenticated) ? showClass.isLinkedTo(authUser) : false;
-
-		isMine = (authenticated) ? authUser.getId().
-				equals(showClass.getUserid()) : false;
-
+		isMine = (authenticated) ? authUser.getId().equals(showClass.getUserid()) : false;
 		isMine = isMine || inRole("admin");
 
+		photoslink = classlink + "/" + showClass.getId() + "/photos";
+		drawerlink = classlink + "/" + showClass.getId() + "/drawer";
 
+		
 		if(authenticated && (isMine || authUser.hasBadge(Badge.ENTHUSIAST)
 				|| inRole("mod"))){
 			canEdit = true;
@@ -79,14 +76,14 @@ public class Classunit extends BasePage{
 
 		if("photos".equals(showParam)){
 			if(!authenticated){
-				setRedirect(classlink + "/p/" + showClass.getId() +"/photos");
+				setRedirect("/p" + photoslink);
 				return;
 			}
 			title += " - " + lang.get("photos.title");
 			if(param("label")) title += " - " + getParamValue("label");
 		}else if("drawer".equals(showParam)){
 			if(!authenticated){
-				setRedirect(classlink + "/p/" + showClass.getId() +"/drawer");
+				setRedirect("/p" + drawerlink);
 				return;
 			}
 			title += " - " + lang.get("drawer.title");
@@ -147,21 +144,20 @@ public class Classunit extends BasePage{
 				return;
 			}
 		}
-
-		if("photos".equals(showParam)){
-			processGalleryRequest(showClass, galleryUri, canEdit);
-		}else if("drawer".equals(showParam)){
-			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId()+"/drawer", canEdit);
-		}
-
 	}
 
 	public void onPost(){
-		if("photos".equals(showParam)){
-			processImageEmbedRequest(showClass, galleryUri, canEdit);
-			processGalleryRequest(showClass, galleryUri, canEdit);
+		if(param("identifier")){
+			String newIdent = getParamValue("identifier");
+			if(newIdent != null && newIdent.length() >= 4){
+				showClass.setIdentifier(newIdent);
+				showClass.update();
+			}
+		}else if("photos".equals(showParam)){
+			processImageEmbedRequest(showClass, photoslink, canEdit);
+			processGalleryRequest(showClass, photoslink, canEdit);
 		}else if("drawer".equals(showParam)) {
-			proccessDrawerRequest(showClass, classlink+"/"+showClass.getId()+"/drawer", canEdit);
+			proccessDrawerRequest(showClass, drawerlink, canEdit);
 		}else if (param("addclassmates") && isMine && isLinkedToMe) {
 			String inactive = showClass.getInactiveusers();
 			if(inactive == null) inactive = ",";
@@ -205,19 +201,12 @@ public class Classunit extends BasePage{
 				showClass.setInactiveusers(inactive);
 				showClass.update();
 			}
-			setRedirect(classlink+"/"+showClass.getId());
-			return;
+			if(!isAjaxRequest()) setRedirect(classlink+"/"+showClass.getId());
 		}else{
 			if(canEdit){
-				String identOrig = showClass.getIdentifier();
-				//update class
 				AbstractDAOUtils.populate(showClass, req.getParameterMap());
-				if(showClass.getIdentifier() == null || showClass.getIdentifier().length() <=
-						AbstractDAOFactory.MAX_IDENTIFIERS_PER_USER){
-					showClass.setIdentifier(identOrig);
-				}
-
 				showClass.update();
+				if(!isAjaxRequest()) setRedirect(classlink+"/"+showClass.getId());
 			}
 		}
 	}

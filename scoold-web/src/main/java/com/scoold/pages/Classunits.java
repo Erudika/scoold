@@ -28,19 +28,19 @@ public class Classunits extends BasePage{
 	public Map<Long, String> schoolsMap;
 	
 	public Classunits(){
-		title = lang.get("classes.title");
-		pageMacroCode = "#classespage($classlist)";
-		addModel("classesSelected", "navbtn-hover");
-		
 		if(param("create") && authenticated){
-			title += " - " + lang.get("class.create");
+			title = lang.get("classes.title") + " - " + lang.get("class.create");
 			makeforms();
+		}else{
+			title = lang.get("classes.title");
+			classlist = daoutils.readAndRepair(Classunit.class, daoutils.findQuery(
+					Classunit.classtype, pagenum, itemcount, "*"), itemcount);
 		}
+		
+		addModel("classesSelected", "navbtn-hover");
 	} 
 
 	public void onGet(){
-		classlist = Classunit.getClassUnitDao().readAllSortedBy(
-				"timestamp", pagenum, itemcount, true);
 	}
 
 	private void makeforms(){

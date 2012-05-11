@@ -7,27 +7,28 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractMessageDAO;
-import com.scoold.db.cassandra.CasDAOFactory;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
 /**
  *
  * @author alexb
  */
-public class Message implements ScooldObject{
+public class Message implements ScooldObject, Serializable{
   
     private Long id;
-	private String uuid;
-	@Stored private String touuid;
+	@Stored private Long toid;
     @Stored private Long userid;
     @Stored private Boolean isread;
     @Stored private String body;
 	@Stored private Long timestamp;
-
-	private Set<String> touuids;
+	@Stored public static String classtype = Media.class.getSimpleName().toLowerCase();
+	
+	private Set<String> toids;
 	private transient User author;
 	private transient static AbstractMessageDAO<Message, Long> mydao;
 
@@ -40,18 +41,22 @@ public class Message implements ScooldObject{
 		this(null, null, null, null);        
     }
 
-	public Message(Set<String> touuids, Long userid, Boolean isread, String body) {
-		this.touuids = touuids;
+	public Message(Set<String> toids, Long userid, Boolean isread, String body) {
+		this.toids = toids;
 		this.userid = userid;
 		this.isread = isread;
 		this.body = body;
         this.isread = false;
 	}
 
-	public Message(Long id, String touuid) {
+	public Message(Long id, Long toid) {
 		this();
 		this.id = id;
-		this.touuid = touuid;        
+		this.toid = toid;        
+	}
+
+	public String getClasstype() {
+		return classtype;
 	}
 
 	/**
@@ -73,21 +78,21 @@ public class Message implements ScooldObject{
 	}
 
 	/**
-	 * Get the value of touuid
+	 * Get the value of toid
 	 *
-	 * @return the value of touuid
+	 * @return the value of toid
 	 */
-	public String getTouuid() {
-		return touuid;
+	public Long getToid() {
+		return toid;
 	}
 
 	/**
-	 * Set the value of touuid
+	 * Set the value of toid
 	 *
-	 * @param toUserid new value of touuid
+	 * @param toUserid new value of toid
 	 */
-	public void setTouuid(String touuid) {
-		this.touuid = touuid;
+	public void setToid(Long toid) {
+		this.toid = toid;
 	}
 
     /**
@@ -144,25 +149,6 @@ public class Message implements ScooldObject{
         this.userid = userid;
     }
 
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-
 	public Long getId() {
 		return id;
 	}
@@ -178,29 +164,32 @@ public class Message implements ScooldObject{
 	}
 
 	public boolean send(){
-		if(touuids == null || touuids.isEmpty()) return false;
-		if(StringUtils.isBlank(body) || userid == null || touuids.isEmpty()) return false;
-		else if(touuids.size() > CasDAOFactory.MAX_MULTIPLE_RECIPIENTS) return false;
+		if(toids == null || toids.isEmpty()) return false;
+		if(StringUtils.isBlank(body) || userid == null || toids.isEmpty()) return false;
+		else if(toids.size() > AbstractDAOFactory.MAX_MULTIPLE_RECIPIENTS) return false;
 
 		//send to many recepients or just one
-		for (String toUUID : touuids) {
-			this.setTouuid(toUUID);
-			create();
+		for (String ts : toids) {
+			Long toID = NumberUtils.toLong(ts, 0L);
+			if(toID != 0L){
+				this.setToid(toID);
+				create();
+			}
 		}
 		
 		return true;
 	}
 
-	public static void markAllRead(String uuid){
-		getMessageDao().markAllAsReadForUUID(uuid);
+	public static void markAllRead(Long id){
+		getMessageDao().markAllAsReadForID(id);
 	}
 
-	public static void deleteAll(String parentUUID){
-		getMessageDao().deleteAllMessagesForUUID(parentUUID);
+	public static void deleteAll(Long userid){
+		getMessageDao().deleteAllMessagesForID(userid);
 	}
 
-	public static ArrayList<Message> getMessages(String parentUUID, MutableLong page, MutableLong itemcount){
-		return getMessageDao().readAllMessagesForUUID(parentUUID, page, itemcount);
+	public static ArrayList<Message> getMessages(Long userid, MutableLong page, MutableLong itemcount){
+		return getMessageDao().readAllMessagesForID(userid, page, itemcount);
 	}
 
     public Long create() {
@@ -225,7 +214,7 @@ public class Message implements ScooldObject{
 			return false;
 		}
 		final Message other = (Message) obj;
-		if (this.touuid != other.touuid && (this.touuid == null || !this.touuid.equals(other.touuid))) {
+		if (this.toid != other.toid && (this.toid == null || !this.toid.equals(other.toid))) {
 			return false;
 		}
 		if (this.userid != other.userid && (this.userid == null || !this.userid.equals(other.userid))) {
@@ -240,7 +229,7 @@ public class Message implements ScooldObject{
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 79 * hash + (this.touuid != null ? this.touuid.hashCode() : 0);
+		hash = 79 * hash + (this.toid != null ? this.toid.hashCode() : 0);
 		hash = 79 * hash + (this.userid != null ? this.userid.hashCode() : 0);
 		hash = 79 * hash + (this.body != null ? this.body.hashCode() : 0);
 		hash = 79 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);

@@ -53,6 +53,8 @@ public final class Language {
 			.put("messages.title", "Messages")
 			.put("message.title", "Message")
 			.put("classes.title", "Classes")
+			.put("groups.title", "Groups")
+			.put("group.title", "Group")
 			.put("suggest.title", "Suggestions")
 			.put("people.title", "People")
 			.put("comments.title", "Comments")
@@ -112,6 +114,7 @@ public final class Language {
 			.put("male", "Male")
 			.put("female", "Female")
 			.put("name", "Name")
+			.put("description", "Description")
 			.put("error", "Error")
 			.put("unknown", "Unknown")
 			.put("restore", "Restore")
@@ -191,6 +194,8 @@ public final class Language {
 			.put("forbidden", "You shall not pass!")
 			.put("servererror", "Critical server error.")
 			.put("sitedown", "Scoold is down. We'll be back soon.")
+			.put("maintenance", "Scoold is being fixed. Expect some downtime.")
+			.put("license", "The content on this site is licensed under a {0} license.")
 			.put("badrequest", "Bad request.")
 			.put("create", "Create")
 			.put("pause", "Pause")
@@ -201,12 +206,15 @@ public final class Language {
 			.put("points", "points")
 			.put("invalidyear", "Invalid year")
 			.put("learnmore", "Learn more")
+			.put("posts", "Posts")
 			
 			.put("humantime.s", "{0} seconds ago")
 			.put("humantime.m", "{0} minutes ago")
 			.put("humantime.h", "{0} hours ago")
 			.put("humantime.d", "{0} days ago")
-			.put("humantime.y", "{0} years ago")			
+			.put("humantime.n", "{0} months ago")
+			.put("humantime.y", "{0} years ago")
+			
 			
 			.put("school."+School.SchoolType.PRIMARY.toString(), "Primary school")
 			.put("school."+School.SchoolType.ELEMENTARY.toString(), "Elementary school")
@@ -295,6 +303,12 @@ public final class Language {
 			.put("class.copylink", "Copy and send this link to your friends")
 			.put("class.invitation", "Invitation")
 			.put("class.addclassmates", "Add your classmates")
+			
+			.put("group.create", "Create a group")
+			.put("group.image", "Group picture")
+			.put("group.members", "Group members")
+			.put("group.add", "Add people to group")
+			.put("group.changepic", "Change picture")
 
 			.put("messages.nomessages", "You have no messages.")
 			.put("messages.to", "To")
@@ -333,6 +347,7 @@ public final class Language {
 			.put("reports.all", "All reports")
 			.put("reports.school", "Schools")
 			.put("reports.classunit", "Classes")
+			.put("reports.group", "Groups")
 			.put("reports.media", "Photos and Videos")
 			.put("reports.post", "Posts")
 			.put("reports.user", "People")
@@ -371,6 +386,10 @@ public final class Language {
 			.put("posts.unloadconfirm", "Everything you've written will be lost!")
 			.put("posts.editby", "Edited by")
 			.put("posts.filtered", "Filtered")
+			.put("posts.none", "No posts.")
+			.put("posts.new", "New post")
+			.put("posts.post", "Post")
+			.put("posts.similar", "Similar posts")
 
 			.put("revisions.revision", "Revision")
 			.put("revisions.current", "This is the current revision.")
@@ -410,7 +429,7 @@ public final class Language {
 			.put("about.scoold.5", "gathering and organizing information,")
 			.put("about.scoold.6", "helping your mates and earning reputation points while doing it.")
 			.put("about.scoold.7", "Information is organized around questions. Questions can be specific or they can be in the form of a discussion on a certain topic. Below every question are the answers which are sorted by votes. The number of votes indicates the quality of both answers and questions. Almost everything posted on Scoold can be voted up (+) or down (-).")
-			.put("about.scoold.8", "Scoold has been greatly influenced by the sites of the Stack Exchange family and we have huge respect towards the guys behind them. We wanted to create a website based on their clever model but targeted towards students and teachers.")
+			.put("about.scoold.8", "Scoold has been greatly influenced by the sites of the Stack Exchange family and we have huge respect towards the guys who built them. We wanted to create a website based on their clever model but targeted towards students and teachers.")
 			
 			.put("about.questions.1", "You can ask or discuss anything about education on Scoold. For example you might ask questions about:")
 			.put("about.questions.2", "coursework or homework,")
@@ -441,6 +460,9 @@ public final class Language {
 			.put("about.classes.1", "Classes are groups of people who study or have studied together. When creating a class you should specify the year of graduation (which might be in the past) and the school associated with that class. Also you can invite your friends to join you newly created class. ")
 			.put("about.classes.2", "Every class has a blackboard where you and your classmates can write anything like important messages or reminders. There's also a chat room for each class.")
 			.put("about.classes.3", "Everyone with the 'Enthusiast' badge can write on the blackboard.")
+			
+			.put("about.groups.1", "Groups are like classes but private — the only way to join a group is to get invited by the creator of that group. As with schools, you can post questions and answers in your group but they will be visible only to the members of the group.")
+			.put("about.groups.2", "You can add as many people to a group. In order to add a person to your group you first have to add them as contact.")			
 						
 			.put("about.voterep.1", "Voting is an integral part of Scoold. If you like something useful or interesting, vote it up. Questions that are clear and well-written should also be given +1. The same goes for answers that are helpful. If something is poorly written, unclear, rude or inappropriate, vote it down.")
 			.put("about.voterep.2", "Your reputation points measure how much other people trust you and like you. Reputation is earned by posting good questions and answers. It is also awarded with certain badges.")

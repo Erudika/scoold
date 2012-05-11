@@ -16,7 +16,7 @@ import org.apache.commons.lang.mutable.MutableLong;
 public abstract class AbstractCommentDAO<T extends Comment, PK>
         implements GenericDAO<Comment, Long> {
 
-	public abstract ArrayList<T> readAllCommentsForUUID(String parentUUID, MutableLong page, MutableLong itemcount);
-	public abstract ArrayList<T> readAllCommentsForUUID(String parentUUID);
-	public abstract void deleteAllCommentsForUUID(String parentUUID);
+	public abstract ArrayList<T> readAllCommentsForID(Long parentid, MutableLong page, MutableLong itemcount);
+	public abstract ArrayList<T> readAllCommentsForID(Long parentid);
+	public abstract void deleteAllCommentsForID(Long parentid);
 }

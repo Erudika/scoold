@@ -17,7 +17,6 @@ public class Signin extends BasePage{
 	public void onGet(){
 		if (authenticated ) {
 			setRedirect(HOMEPAGE);
-			return;
 		}
 	}
 	
@@ -30,10 +29,8 @@ public class Signin extends BasePage{
 				}else{
 					setRedirect(signinlink + "?code=5&success=true");
 				}
-				return;
 			}else{
 				setRedirect(HOMEPAGE);
-				return;
 			}
         }
 	}

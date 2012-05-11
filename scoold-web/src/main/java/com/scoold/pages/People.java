@@ -19,13 +19,14 @@ public class People extends BasePage{
 
 	public People() {
 		title = lang.get("people.title");
-		pageMacroCode = "#peoplepage($userlist)";
 		addModel("peopleSelected", "navbtn-hover");
 	}
 	
 	public void onGet(){
-		String sortBy = "timestamp";
+		String sortBy = "";
 		if("rep".equals(getParamValue("sortby"))) sortBy = "reputation";
-		userlist = User.getUserDao().readAllSortedBy(sortBy, pagenum, itemcount, true);
+		userlist = daoutils.readAndRepair(User.class, daoutils.findQuery(
+					User.classtype, pagenum, itemcount, "*", sortBy, 
+					true, MAX_ITEMS_PER_PAGE), itemcount);
 	}
 }

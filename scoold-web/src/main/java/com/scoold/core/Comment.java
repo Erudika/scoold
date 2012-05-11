@@ -7,24 +7,24 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractCommentDAO;
 import com.scoold.db.AbstractDAOFactory;
+import java.io.Serializable;
 
 /**
  *
  * @author alexb
  */
-public class Comment implements ScooldObject, Votable<Long>,
-		Comparable<Comment> {
+public class Comment implements ScooldObject, Votable<Long>, Comparable<Comment>, Serializable {
 
 	private Long id;
-	private String uuid;
 	@Stored private Long userid;
 	@Stored private Long timestamp;
 	@Stored private String comment;
-	@Stored private String parentuuid;
+	@Stored private Long parentid;
 	@Stored private Boolean hidden;
 	@Stored private Integer votes;
 	@Stored private String author;
 	@Stored private String classname;
+	@Stored public static String classtype = Comment.class.getSimpleName().toLowerCase();
 
 	private transient static AbstractCommentDAO<Comment, Long> mydao;
 
@@ -37,22 +37,21 @@ public class Comment implements ScooldObject, Votable<Long>,
 		this(null, null, null);
 	}
 
-	public Comment(String uuid) {
-		this();
-		this.uuid = uuid;
-	}
-	
 	public Comment(Long id) {
 		this();
 		this.id = id;
 	}
 
-	public Comment(Long userid, String comment, String parentuuid) {
+	public Comment(Long userid, String comment, Long parentid) {
 		this.userid = userid;
 		this.comment = comment;
-		this.parentuuid = parentuuid;
+		this.parentid = parentid;
 		this.timestamp = new Long(System.currentTimeMillis()); //now
 		this.votes = 0;
+	}
+
+	public String getClasstype() {
+		return classtype;
 	}
 
 	/**
@@ -110,21 +109,21 @@ public class Comment implements ScooldObject, Votable<Long>,
 	}
 
 	/**
-	 * Get the value of parentuuid
+	 * Get the value of parentid
 	 *
-	 * @return the value of parentuuid
+	 * @return the value of parentid
 	 */
-	public String getParentuuid() {
-		return parentuuid;
+	public Long getParentid() {
+		return parentid;
 	}
 
 	/**
-	 * Set the value of parentuuid
+	 * Set the value of parentid
 	 *
-	 * @param parentuuid new value of parentuuid
+	 * @param parentid new value of parentid
 	 */
-	public void setParentuuid(String parentuuid) {
-		this.parentuuid = parentuuid;
+	public void setParentid(Long parentid) {
+		this.parentid = parentid;
 	}
 
 	/**
@@ -179,24 +178,6 @@ public class Comment implements ScooldObject, Votable<Long>,
 	 */
 	public void setUserid(Long userid) {
 		this.userid = userid;
-	}
-
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 	
 	/**
@@ -254,7 +235,7 @@ public class Comment implements ScooldObject, Votable<Long>,
 			return false;
 		}
 		final Comment other = (Comment) obj;
-		if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
+		if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
 			return false;
 		}
 		if (this.userid != other.userid && (this.userid == null || !this.userid.equals(other.userid))) {
@@ -268,7 +249,7 @@ public class Comment implements ScooldObject, Votable<Long>,
 
 	public int hashCode() {
 		int hash = 3;
-		hash = 17 * hash + (this.uuid != null ? this.uuid.hashCode() : 0);
+		hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
 		hash = 17 * hash + (this.userid != null ? this.userid.hashCode() : 0);
 		hash = 17 * hash + (this.comment != null ? this.comment.hashCode() : 0);
 		return hash;

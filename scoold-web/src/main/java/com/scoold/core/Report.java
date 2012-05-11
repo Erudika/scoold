@@ -7,12 +7,27 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractReportDAO;
 import com.scoold.db.AbstractDAOFactory;
+import java.io.Serializable;
 
 /**
  *
  * @author alexb
  */
-public class Report implements ScooldObject{
+public class Report implements ScooldObject, Serializable{
+
+	private Long id;
+	@Stored private Long parentid;
+	@Stored private String type;
+	@Stored private String description;
+	@Stored private Long userid;
+	@Stored private String classname;
+	@Stored private Long timestamp;
+	@Stored private String author;
+	@Stored private String link;
+	@Stored private String grandparentid;
+	@Stored private String solution;
+	@Stored private Boolean closed;
+	@Stored public static String classtype = Report.class.getSimpleName().toLowerCase();
 
 	public static enum ReportType{
 		SPAM, OFFENSIVE, DUPLICATE, INCORRECT, OTHER;
@@ -21,22 +36,7 @@ public class Report implements ScooldObject{
 			return super.toString().toLowerCase();
 		}
 	}
-
-	private Long id;
-	private String uuid;
-	@Stored private String parentuuid;
-	@Stored private String type;
-	@Stored private String description;
-	@Stored private Long userid;
-	@Stored private String classname;
-	@Stored private Long timestamp;
-	@Stored private String author;
-	@Stored private String link;
-	@Stored private Long parentid;
-	@Stored private String grandparentuuid;
-	@Stored private String solution;
-	@Stored private Boolean closed;
-
+	
 	private transient static AbstractReportDAO<Report, Long> mydao;
 
 	public static AbstractReportDAO<Report, Long> getReportDAO(){
@@ -53,14 +53,18 @@ public class Report implements ScooldObject{
 		this.closed = false;
 	}
 
-	public Report(String parentuuid, String type, String description,
+	public Report(Long parentid, String type, String description,
 			Long userid, String classname) {
-		this.parentuuid = parentuuid;
+		this.parentid = parentid;
 		this.type = type;
 		this.description = description;
 		this.userid = userid;
 		this.classname = classname;
 		this.closed = false;
+	}
+
+	public String getClasstype() {
+		return classtype;
 	}
 
 	/**
@@ -100,21 +104,21 @@ public class Report implements ScooldObject{
 	}
 
 	/**
-	 * Get the value of grandparentuuid
+	 * Get the value of grandparentid
 	 *
-	 * @return the value of grandparentuuid
+	 * @return the value of grandparentid
 	 */
-	public String getGrandparentuuid() {
-		return grandparentuuid;
+	public String getGrandparentid() {
+		return grandparentid;
 	}
 
 	/**
-	 * Set the value of grandparentuuid
+	 * Set the value of grandparentid
 	 *
-	 * @param grandparentuuid new value of grandparentuuid
+	 * @param grandparentid new value of grandparentid
 	 */
-	public void setGrandparentuuid(String grandparentuuid) {
-		this.grandparentuuid = grandparentuuid;
+	public void setGrandparentid(String grandparentid) {
+		this.grandparentid = grandparentid;
 	}
 
 	/**
@@ -261,42 +265,6 @@ public class Report implements ScooldObject{
 		this.type = type;
 	}
 
-	/**
-	 * Get the value of parentuuid
-	 *
-	 * @return the value of parentuuid
-	 */
-	public String getParentuuid() {
-		return parentuuid;
-	}
-
-	/**
-	 * Set the value of parentuuid
-	 *
-	 * @param parentuuid new value of parentuuid
-	 */
-	public void setParentuuid(String parentuuid) {
-		this.parentuuid = parentuuid;
-	}
-
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
 	public Long getId(){
 		return id;
 	}
@@ -318,14 +286,10 @@ public class Report implements ScooldObject{
 		getReportDAO().delete(this);
 	}
 
-	public ReportType[] getReportTypes(){
-		return ReportType.values();
-	}
-
 	public void setType(ReportType type){
 		if(type != null) this.type = type.name();
 	}
-
+	
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -334,7 +298,7 @@ public class Report implements ScooldObject{
 			return false;
 		}
 		final Report other = (Report) obj;
-		if ((this.parentuuid == null) ? (other.parentuuid != null) : !this.parentuuid.equals(other.parentuuid)) {
+		if ((this.parentid == null) ? (other.parentid != null) : !this.parentid.equals(other.parentid)) {
 			return false;
 		}
 		if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
@@ -348,7 +312,7 @@ public class Report implements ScooldObject{
 
 	public int hashCode() {
 		int hash = 5;
-		hash = 37 * hash + (this.parentuuid != null ? this.parentuuid.hashCode() : 0);
+		hash = 37 * hash + (this.parentid != null ? this.parentid.hashCode() : 0);
 		hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
 		hash = 37 * hash + (this.userid != null ? this.userid.hashCode() : 0);
 		return hash;

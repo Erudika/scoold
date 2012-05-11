@@ -1,4 +1,4 @@
-*.* @logs.loggly.com:16696
+*.* @@logs.loggly.com:25049
 
 $ModLoad imfile
 $InputFileName /var/log/elasticsearch/scoold.log
@@ -9,5 +9,5 @@ $InputRunFileMonitor
 
 $InputFilePollInterval 10
 
-if $programname == "elasticsearch" then @logs.loggly.com:16696;
+if $programname == "elasticsearch" then @@logs.loggly.com:25049;
 & ~

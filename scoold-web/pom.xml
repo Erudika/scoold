@@ -6,7 +6,7 @@
     <artifactId>scoold-web</artifactId>
     <packaging>war</packaging>
     <name>scoold-web</name>
-	<version>0.5</version>
+	<version>0.6</version>
 	
 <!--	<properties>
      OSGi bundle properties 
@@ -99,11 +99,6 @@
             <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
             <artifactId>concurrentlinkedhashmap-lru</artifactId>
             <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.stephenc.eaio-uuid</groupId>
-            <artifactId>uuid</artifactId>
-            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.perf4j</groupId>
@@ -231,7 +226,7 @@
         <dependency>
             <groupId>me.prettyprint</groupId>
             <artifactId>hector-core</artifactId>
-            <version>1.0-2</version>
+            <version>1.0-5</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>
@@ -244,19 +239,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jcl</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.8</version>
         </dependency>
         <dependency>
             <artifactId>httpcore</artifactId>
@@ -285,12 +270,17 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.18.7</version>
+            <version>0.19.2</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch-cloud-aws</artifactId>
             <version>0.18.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -415,10 +405,10 @@
 		</profile>              
     </profiles>	
     <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <netbeans.hint.j2eeVersion>1.6</netbeans.hint.j2eeVersion>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
 </project>
 

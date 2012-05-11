@@ -8,7 +8,6 @@ import com.scoold.core.User;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import java.util.ArrayList;
-import java.util.HashSet;
 import org.apache.click.control.Form;
 import org.apache.click.control.Submit;
 import org.apache.click.control.TextField;
@@ -54,7 +53,8 @@ public class Settings extends BasePage {
 		if(mail == null || mail.contains("<") || mail.contains(">") || mail.contains("\\") ||
 				!(mail.indexOf(".") > 2) && (mail.indexOf("@") > 0)){
 			changeEmailForm.getField("email").setError("signup.form.error.email");
-		}else if(User.exists(StringUtils.trim(mail))){
+		}else if(!daoutils.findTerm(User.classtype, null, null, "email", 
+				StringUtils.trim(mail)).isEmpty()){
             //Email is claimed => user exists!
             changeEmailForm.getField("email").setError(lang.get("signup.form.error.emailexists"));
         }
@@ -77,7 +77,7 @@ public class Settings extends BasePage {
 			authUser.delete();
 			clearSession();
 			redirectto = signinlink + "?code=4&success=true";
-		}else if(param("favtags") && !StringUtils.isBlank(getParamValue("favtags"))){
+		}else if(param("favtags")){
 			String cleanTags = AbstractDAOUtils.fixCSV(getParamValue("favtags"),
 					AbstractDAOFactory.MAX_FAV_TAGS);
 			authUser.setFavtags(cleanTags);

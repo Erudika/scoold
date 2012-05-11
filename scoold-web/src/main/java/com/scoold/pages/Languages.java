@@ -25,15 +25,13 @@ public class Languages extends BasePage{
 
 		addModel("allLocales", new TreeMap<String, Locale>(Language.ALL_LOCALES));
 		langProgressMap = Translation.getTranslationDao().calculateProgressForAll(lang.size());
-
 	}
 
-	public void onGet() {
+	public void onPost() {
 		if(param("setlocale")) {
 			String loc = getParamValue("setlocale");
 			setCurrentLocale(loc, true);
 			setRedirect(languageslink);
 		}
 	}
-
 }

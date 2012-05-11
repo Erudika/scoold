@@ -5,7 +5,6 @@
 
 package com.scoold.pages;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
@@ -27,12 +26,16 @@ public class Message extends BasePage{
 		if(param("id")){
 			Long id = NumberUtils.toLong(getParamValue("id"));
 			showMessage = com.scoold.core.Message.getMessageDao().read(id);
+			
+			if (showMessage == null || !daoutils.typesMatch(showMessage)) {
+				setRedirect(HOMEPAGE);
+			} else {
+				boolean isMine = authenticated && showMessage != null &&
+						showMessage.getToid().equals(authUser.getId());
 
-			boolean isMine = authenticated && showMessage != null &&
-					StringUtils.equals(showMessage.getTouuid(), authUser.getUuid());
-
-			if(isMine || inRole("admin")){
-				canEdit = true;
+				if(isMine || inRole("admin")){
+					canEdit = true;
+				}
 			}
 		}
 	}

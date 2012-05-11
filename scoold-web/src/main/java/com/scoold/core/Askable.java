@@ -12,6 +12,7 @@ import org.apache.commons.lang.mutable.MutableLong;
  *
  * @author alexb
  */
-public interface Askable<T> {
-	public ArrayList<T> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount);
+public interface Askable extends ScooldObject{
+	public <T extends ScooldObject> ArrayList<T> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount);
+	public String getName();
 }

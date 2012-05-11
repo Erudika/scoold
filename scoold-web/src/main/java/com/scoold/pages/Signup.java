@@ -9,7 +9,6 @@ import com.scoold.core.User;
 import com.scoold.core.User.Badge;
 import com.scoold.core.User.UserGroup;
 import com.scoold.core.User.UserType;
-import com.scoold.db.AbstractDAOUtils;
 import com.scoold.util.ScooldAuthModule;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
@@ -31,7 +30,7 @@ public class Signup extends BasePage{
     public Form signupForm;
 	public boolean isFacebookUser;
 	public String identString;
-	private User newUser;
+	public User newUser;
 	private static final String ADMIN_KEY = "albogdano.pip.verisignlabs.com";
 	private static final String ADMIN_FB_ID = "517966023";
     
@@ -56,8 +55,8 @@ public class Signup extends BasePage{
 		newUser = new User();
 		String n = getStateParam(ScooldAuthModule.NEW_USER_NAME);
 		String e = getStateParam(ScooldAuthModule.NEW_USER_EMAIL);
-		if(StringUtils.isBlank(n)) newUser.setFullname(n);
-		if(StringUtils.isBlank(e)) newUser.setEmail(e);
+		if(!StringUtils.isBlank(n)) newUser.setFullname(n);
+		if(!StringUtils.isBlank(e)) newUser.setEmail(e);
 			
 		String name = newUser.getFullname();
 		String thisisme = getStateParam(ScooldAuthModule.THIS_IS_ME);
@@ -118,12 +117,13 @@ public class Signup extends BasePage{
 		
         if(User.exists(StringUtils.trim(identString))){
             //Email is claimed => user exists!
-			AbstractDAOUtils.clearAuthCookie(req, getContext().getResponse());
+			ScooldAuthModule.clearAuthCookie(req, getContext().getResponse());
 			setRedirect(signinlink);
 			return false;
         }
 		
-		if(User.exists(StringUtils.trim(mail))){
+		if(!daoutils.findTerm(User.classtype, null, null, "email", 
+				StringUtils.trim(mail)).isEmpty()){
 			email.setError(lang.get("signup.form.error.emailexists"));
 		}
 		

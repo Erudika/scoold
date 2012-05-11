@@ -4,36 +4,36 @@
 		<br />
 		<div class="mvl">
 			<div class="center">
-				<div class="largeText">$lang.get("settings.delete.confirm")</div>
+				<div class="largeText">$!lang.get("settings.delete.confirm")</div>
 				<br/>
 
 				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$daoutils.MD5($authUser.id.toString())">
 					<fieldset>
 						#sectoken(false)
-						<input type="submit" value="$lang.get('delete')" class="button rounded3 mrl red"/>  &nbsp; &nbsp; &nbsp;
-						<a href="$settingslink" title="Cancel" class="button-small rounded3">$lang.get("cancel")</a>
+						<input type="submit" value="$!lang.get('delete')" class="button rounded3 mrl red"/>  &nbsp; &nbsp; &nbsp;
+						<a href="$settingslink" title="Cancel" class="button-small rounded3">$!lang.get("cancel")</a>
 					</fieldset>
 				</form>
 			</div>
 		</div>
 	#else
-		<h1><span class="pictos">y</span> $lang.get("settings.title")</h1>
+		<h1><span class="pictos">y</span> $!lang.get("settings.title")</h1>
 		<hr/>
 
-		<h2>$lang.get("settings.authentication")</h2>
+		<h2>$!lang.get("settings.authentication")</h2>
 		<div class="mvl">
-			<div class="mbm">$lang.get("settings.authentication.text")</div>
+			<div class="mbm">$!lang.get("settings.authentication.text")</div>
 
 			#if(!$openidlist.isEmpty())
 				<table class="mbm">
 					<tbody>
 						<tr>
-							<td><strong>$lang.get("settings.primaryid"):</strong></td>
+							<td><strong>$!lang.get("settings.primaryid"):</strong></td>
 							<td class="pll">#identifierbox($openidlist.get(0) $canDetachOpenid 0)</td>
 						</tr>
 						#if($openidlist.size() == 2)
 							<tr>
-								<td><strong>$lang.get("settings.secondaryid"):</strong></td>
+								<td><strong>$!lang.get("settings.secondaryid"):</strong></td>
 								<td class="pll">#identifierbox($openidlist.get(1) $canDetachOpenid 1)</td>
 							</tr>
 						#end
@@ -42,27 +42,27 @@
 			#end
 
 			#if($canAttachOpenid)
-				<a href="#" class="next-div-toggle button-small rounded3"><span class="pictos">&amp;</span> $lang.get("add")</a>
+				<a href="#" class="next-div-toggle button-small rounded3"><span class="pictos">&amp;</span> $!lang.get("add")</a>
 				<div class="hide mtm">
 					#signinbox(true)
 				</div>
 			#end
 		</div>
 
-		<h2>$lang.get("settings.tagfilter")</h2>
+		<h2>$!lang.get("settings.tagfilter")</h2>
 		<div class="mvl">
-			<div class="mbm">$lang.get("settings.tagfilter.text")</div>
+			<div class="mbm">$!lang.get("settings.tagfilter.text")</div>
 			<form method="post" action="$settingslink">
 				<fieldset>
 					#sectoken(false)
 					<input type="text" class="nicebox tagbox p50" value="$!authUser.favtagsString" name="favtags"/>
-					<input type="submit" id="add-favtag-btn" value="$lang.get('save')" class="button rounded3"/>
+					<input type="submit" id="add-favtag-btn" value="$!lang.get('save')" class="button rounded3"/>
 				</fieldset>
 			</form>
 		</div>
 
 
-		<h2>$lang.get("settings.email")</h2>
+		<h2>$!lang.get("settings.email")</h2>
 		<div class="mvl">
 			<form method="post" action="$settingslink">
 				<fieldset>
@@ -74,10 +74,10 @@
 			</form>
 		</div>
 
-		<h2>$lang.get("settings.delete")</h2>
+		<h2>$!lang.get("settings.delete")</h2>
 		<div class="mvl">
-			<div class="mbm">$lang.get("settings.delete.text")</div>
-			<a href="${settingslink}?delete=true" title="" class="button-small rounded3 redbg white"><span class="pictos">*</span> $lang.get("settings.delete")</a>
+			<div class="mbm">$!lang.get("settings.delete.text")</div>
+			<a href="${settingslink}?delete=true" title="" class="button-small rounded3 redbg white"><span class="pictos">*</span> $!lang.get("settings.delete")</a>
 		</div>
 
 	#end

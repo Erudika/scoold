@@ -7,21 +7,20 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractTagDAO;
 import com.scoold.db.AbstractDAOFactory;
-import java.util.ArrayList;
+import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 
 /**
  *
  * @author alexb
  */
-public class Tag implements ScooldObject, Searchable<Tag>{
+public class Tag implements ScooldObject, Serializable{
 
 	private Long id;
-	private String uuid;
-	@Indexed
 	@Stored private String tag;
 	@Stored private Long count;
 	@Stored private Long timestamp;
+	@Stored public static String classtype = Tag.class.getSimpleName().toLowerCase();
 
 	private transient static AbstractTagDAO<Tag, Long> mydao;
 
@@ -40,6 +39,10 @@ public class Tag implements ScooldObject, Searchable<Tag>{
 	}
 
 	public Tag(){
+	}
+
+	public String getClasstype() {
+		return classtype;
 	}
 
 	/**
@@ -97,25 +100,6 @@ public class Tag implements ScooldObject, Searchable<Tag>{
 		this.tag = tag;
 	}
 
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-
 	public Long getId(){
 		return id;
 	}
@@ -171,18 +155,5 @@ public class Tag implements ScooldObject, Searchable<Tag>{
 		int hash = 3;
 		hash = 97 * hash + (this.tag != null ? this.tag.hashCode() : 0);
 		return hash;
-	}
-
-	public void index() {
-		Search.index(this);
-	}
-
-	public void unindex() {
-		Search.unindex(this);
-	}
-
-	public ArrayList<Tag> readAllForKeys(ArrayList<String> keys) {
-		if(keys == null || keys.isEmpty()) return new ArrayList<Tag> ();
-		return getTagDao().readAllForKeys(keys);
 	}
 }

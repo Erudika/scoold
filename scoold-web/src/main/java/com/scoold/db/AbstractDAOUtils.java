@@ -5,12 +5,7 @@
 
 package com.scoold.db;
 
-import com.scoold.core.ScooldObject;
-import com.scoold.core.Stored;
-import com.scoold.core.User;
-import com.scoold.core.Votable;
-import com.scoold.util.HumanTime;
-import com.scoold.util.ScooldAuthModule;
+import com.scoold.core.*;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -50,8 +45,13 @@ import com.scoold.util.GeoNames.Style;
 import com.scoold.util.GeoNames.Toponym;
 import com.scoold.util.GeoNames.ToponymSearchCriteria;
 import com.scoold.util.GeoNames.ToponymSearchResult;
+import com.scoold.util.HumanTime;
+import com.scoold.util.ScooldAppListener;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.mutable.MutableLong;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.jsoup.Jsoup;
 
 /**
@@ -61,8 +61,9 @@ import org.jsoup.Jsoup;
 public abstract class AbstractDAOUtils {
 
 	private static final Logger logger = Logger.getLogger(AbstractDAOUtils.class.getName());
-	public static HumanTime humantime = new HumanTime();
-
+	private static Object showdownJS = ScooldAppListener.getShowdownJS();
+	private static HumanTime humantime = new HumanTime();
+		
 	public static String MD5(String s) {
 		return (s == null) ? "" : ClickUtils.toMD5Hash(s); 
 	}
@@ -79,7 +80,7 @@ public abstract class AbstractDAOUtils {
 		if (StringUtils.isBlank(classname)) return null;
 		Class<? extends ScooldObject> clazz = null;
 		classname = StringUtils.capitalize(classname);
-		classname = User.class.getPackage().getName().concat(".").concat(classname);
+		classname = ScooldObject.class.getPackage().getName().concat(".").concat(classname);
 		try {
 			clazz = (Class<? extends ScooldObject>) Class.forName(classname);
 		} catch (ClassNotFoundException ex) {
@@ -89,17 +90,17 @@ public abstract class AbstractDAOUtils {
 		return (clazz == null) ? null : AbstractDAOFactory.getDefaultDAOFactory().getDAO(clazz);
 	}
 
-	public static String markdownToHtml(String markdownString, Object showdownConverter) {
-		if (showdownConverter == null || StringUtils.isEmpty(markdownString)) return "";
+	public static String markdownToHtml(String markdownString) {
+		if (showdownJS == null || StringUtils.isEmpty(markdownString)) return "";
 
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine jsEngine = manager.getEngineByName("js");
 		try {
-			return ((Invocable) jsEngine).invokeMethod(showdownConverter, "makeHtml",
+			return ((Invocable) jsEngine).invokeMethod(showdownJS, "makeHtml",
 					markdownString) + "";
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "error while converting markdown to html", e);
-			return "[could not convert input]";
+			return "";
 		}
 	}
 	
@@ -203,6 +204,11 @@ public abstract class AbstractDAOUtils {
 		str = str.replaceAll("\\p{C}", "");
 
 		return str.trim();
+	}
+	
+	public static String spacesToDashes(String str) {
+		if (StringUtils.isBlank(str)) return "";
+		return stripAndTrim(str).replaceAll("\\p{Z}+","-").toLowerCase();
 	}
 
 	public static String formatMessage(String msg, Object... params){
@@ -339,29 +345,31 @@ public abstract class AbstractDAOUtils {
 		return sobject;
 	}
 
-	public static ScooldObject getObject(String uuid, String classname){
-		Class<? extends ScooldObject> clazz = 
-				(Class<? extends ScooldObject>) getClassname(classname);
-		ScooldObject sobject = null;
-
-		if(clazz != null){
-			sobject = (ScooldObject) AbstractDAOFactory.getDefaultDAOFactory()
-					.getDAO(clazz).read(uuid);
-		}
-		return sobject;
-	}
-
 	public static Class<?> getClassname(String classname){
 		if(StringUtils.isBlank(classname)) return null;
 		Class<?> clazz = null;
 		try {
-			clazz = Class.forName(
-					ScooldObject.class.getPackage().getName().concat(".").concat(classname));
+			clazz = Class.forName(ScooldObject.class.getPackage().getName().concat(".").
+					concat(StringUtils.capitalize(classname.toLowerCase())));
 		} catch (Exception ex) {
 			logger.severe(ex.toString());
 		}
 
 		return clazz;
+	}
+	
+	public Class<? extends ScooldObject> classtypeToClass(String classtype){
+		Class<? extends ScooldObject> clazz;
+		if (Post.PostType.contains(classtype)) {
+			clazz = Post.class;
+		} else {
+			clazz = (Class<? extends ScooldObject>) getClassname(classtype);
+		}
+		return clazz;
+	}
+	
+	public boolean typesMatch(ScooldObject so){
+		return (so == null) ? false : so.getClass().equals(classtypeToClass(so.getClasstype()));
 	}
 
 	public static HumanTime getHumanTime(){
@@ -499,22 +507,6 @@ public abstract class AbstractDAOUtils {
 		}
 	}
 	
-	public static void clearSession(HttpServletRequest req, HttpServletResponse res, 
-			boolean useSessions){
-		req.getSession().invalidate();
-		clearAuthCookie(req, res);
-	}
-	
-	public static void clearAuthCookie(HttpServletRequest req, HttpServletResponse res){
-		Cookie c = ClickUtils.getCookie(req, ScooldAuthModule.AUTH_USER);
-		if(c != null){
-			setRawCookie(ScooldAuthModule.AUTH_USER, "", req, res, true, true);
-			removeStateParam(ScooldAuthModule.IDENTIFIER, req, res, false);
-			removeStateParam(ScooldAuthModule.NEW_USER_NAME, req, res, false);
-			removeStateParam(ScooldAuthModule.NEW_USER_EMAIL, req, res, false);
-		}
-	}
-	
 	public static void setRawCookie(String name, String value, HttpServletRequest req, 
 			HttpServletResponse res, boolean httpOnly, boolean clear){
 		long exp = System.currentTimeMillis() + (AbstractDAOFactory.SESSION_TIMEOUT_SEC * 1000);
@@ -527,14 +519,6 @@ public abstract class AbstractDAOUtils {
 	
 	public static String getSystemProperty(String name){
 		return System.getProperty(name);
-	}
-	
-	public static java.util.UUID getTimeUUID() {
-		return java.util.UUID.fromString(new com.eaio.uuid.UUID().toString());
-	}
-
-	public static String getUUID() {
-		return new com.eaio.uuid.UUID().toString();
 	}
 
 	public static Long toLong(MutableLong page){
@@ -557,8 +541,57 @@ public abstract class AbstractDAOUtils {
 		return size;
 	}
 	
+	public static String getAsJSON(ScooldObject so, String type, boolean hasData){
+		String json = "";
+		if(so == null || StringUtils.isBlank(type)) return json;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode rootNode = mapper.createObjectNode(); // will be of type ObjectNode
+		
+		try {
+			((ObjectNode) rootNode).put("_id", so.getId().toString());
+			((ObjectNode) rootNode).put("_type", type);
+			((ObjectNode) rootNode).put("_index", AbstractDAOFactory.INDEX_NAME);
+			
+			if(hasData){
+				((ObjectNode) rootNode).putPOJO("_data", 
+						AbstractDAOUtils.getAnnotatedFields(so, Stored.class));
+			}
+			json = mapper.writeValueAsString(rootNode);
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+		
+		return json;
+	}
+	
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);
 	public abstract boolean voteDown(Long userid, Votable<Long> votable);
+	public abstract Long getBeanCount(String classtype);
+	
+	public abstract void setSystemColumn(String colName, String colValue, int ttl);
+	public abstract String getSystemColumn(String colName);
+	public abstract Map<String, String[]> getSystemColumns();
   
-	public abstract <T> Long getBeanCount(Class<T> clazz);
+	// search methods
+	public abstract boolean isIndexable(ScooldObject so);
+	public abstract void index(ScooldObject so, String type);
+	public abstract void unindex(ScooldObject so, String type);
+	public abstract void reindexAll();
+	public abstract void createIndex();
+	public abstract void deleteIndex();
+	public abstract boolean existsIndex();
+	public abstract <T extends ScooldObject> ArrayList<T> readAndRepair(Class<T> clazz, ArrayList<String> keys, MutableLong itemcount);
+	public abstract ArrayList<String> findTerm(String type, MutableLong page, MutableLong itemcount, String field, Object term);
+	public abstract ArrayList<String> findTerm(String type, MutableLong page, MutableLong itemcount, String field, Object term, String sortfield, boolean reverse, int max);
+	public abstract ArrayList<String> findPrefix(String type, MutableLong page, MutableLong itemcount, String field, String prefix);
+	public abstract ArrayList<String> findPrefix(String type, MutableLong page, MutableLong itemcount, String field, String prefix, String sortfield, boolean reverse, int max);
+	public abstract ArrayList<String> findQuery(String type, MutableLong page, MutableLong itemcount, String query);
+	public abstract ArrayList<String> findQuery(String type, MutableLong page, MutableLong itemcount, String query, String sortfield, boolean reverse, int max);
+	public abstract ArrayList<String> findWildcard(String type, MutableLong page, MutableLong itemcount, String field, String wildcard);
+	public abstract ArrayList<String> findWildcard(String type, MutableLong page, MutableLong itemcount, String field, String wildcard, String sortfield, boolean reverse, int max);
+	public abstract ArrayList<String> findTagged(String type, MutableLong page, MutableLong itemcount, ArrayList<String> tags);
+	public abstract ArrayList<String> findSimilar(String type, String filterKey, String[] fields, String liketext, int max);
+	public abstract ArrayList<Tag> findTags(String keywords, int max);
+	
 }

@@ -1,8 +1,4 @@
 class scoold::glassfish {
-		
-	# ------------ EDIT HERE ---------------------#
-		
-	# --------------------------------------------#
 	
 	$glassfishusr = "glassfish"
 	$glassfishhome = "/home/glassfish"	
@@ -28,7 +24,6 @@ class scoold::glassfish {
 	exec { 
 		"download-glassfish":
 			command => "sudo -u ${glassfishusr} wget --no-check-certificate -O ${gfpath} ${scoold::gflink}",
-			unless => "test -e ${gfpath}",
 			require => User[$glassfishusr],
 			before => Exec["unzip-glassfish"];
 		"remove-old-glassfish":
@@ -44,7 +39,15 @@ class scoold::glassfish {
 		"rename-glassfish":
 			command => "mv -f ${glassfishhome}/glassfish* ${gfdir}",
 			unless => "test -e ${gfdir}",
-			require => Exec["download-glassfish"]					
+			require => Exec["download-glassfish"];
+		"redirect-port-tcp":
+			command => "iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-port 8080";
+		"redirect-port-udp":
+			command => "iptables -t nat -A PREROUTING -p udp -m udp --dport 80 -j REDIRECT --to-port 8080";
+		"redirect-port-tcp-ssl":
+			command => "iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-port 8181";
+		"redirect-port-udp-ssl":
+			command => "iptables -t nat -A PREROUTING -p udp -m udp --dport 443 -j REDIRECT --to-port 8181";
 	}
 	
 	file { 
@@ -97,7 +100,7 @@ class scoold::glassfish {
 
 	exec{ 
 		"start-glassfish":
-			command => "monit; monit start glassfish",
+			command => "monit reload; monit start glassfish",
 			unless => "test -e ${glassfishhome}/glassfish.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

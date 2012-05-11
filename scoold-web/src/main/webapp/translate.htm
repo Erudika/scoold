@@ -2,7 +2,7 @@
 	#if($request.getParameter("locale"))
 		<h2>
 			<span class="pictos">G</span> 
-			<a href="$translatelink">$lang.get("translate.title")</a> /
+			<a href="$translatelink">$!lang.get("translate.title")</a> /
 			#if($request.getParameter("index"))
 				#set($indx = $showIndex + 1)
 				<a href="$translatelink/$showLocale" class="capitalize">$showLocale.getDisplayName($showLocale)</a> / #$indx
@@ -18,29 +18,29 @@
 			#set($indx = $showIndex + 1)
 			#set($nexti = $indx + 1)
 			#set($previ = $indx - 1)
-			#if($nexti > $langkeys.size()) #set($nexti = 1) #end
-			#if($previ <= 0) #set($previ = $langkeys.size()) #end
+			#if($nexti > $!langkeys.size()) #set($nexti = 1) #end
+			#if($previ <= 0) #set($previ = $!langkeys.size()) #end
 			<div class="line mediumText">
 				<div class="unit size1of3">
-					<a href="$translatelink/$showLocale/$!previ" title="Previous"><span class="pictos">[</span> $lang.get("prev")</a>
+					<a href="$translatelink/$showLocale/$!previ" title="Previous"><span class="pictos">[</span> $!lang.get("prev")</a>
 				</div>
 				<div class="unit size1of3 center">
-					<span class="reputationbox phm rounded3">$indx / $lang.size()</span>
+					<span class="reputationbox phm rounded3">$indx / $!lang.size()</span>
 				</div>
 				<div class="unit size1of3 lastUnit r">
-					<a href="$translatelink/$showLocale/$!nexti" title="Next">$lang.get("next") <span class="pictos">]</span></a>
+					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <span class="pictos">]</span></a>
 				</div>
 			</div>
 
-			#set($langkey = $langkeys.get($showIndex))
-			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$deflang.get($langkey)</div>
+			#set($!langkey = $!langkeys.get($showIndex))
+			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$deflang.get($!langkey)</div>
 			
 			<div id="translations">
-				#paginate($pagenum.longValue() "#translationspage($translationslist $approvedTransMap)" $itemcount.longValue() "" "pageless")
+				#paginate($pagenum.longValue() "\#translationspage(\$translationslist \$approvedTransMap)" $itemcount.longValue() "" "pageless")
 			</div>
 			<br />
 				
-			#if(!$approvedTransMap.containsKey($langkey)) ##|| $request.isUserInRole("admin"))
+			#if(!$approvedTransMap.containsKey($!langkey)) ##|| $request.isUserInRole("admin"))
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form" action="${thisuri}">
@@ -49,23 +49,23 @@
 							<textarea rows="2" cols="3" name="value" class="nicebox p100 rounded5"></textarea>
 							<input type="hidden" name="gettranslationhtmlcode" value="true"/>
 							<div class="center mtm">
-								<input id="add-translation-btn" type="button" value="$lang.get('add')" class="button rounded3"/> &nbsp;
-								<input id="addcont-translation-btn" type="submit" value="$lang.get('add') &amp; $lang.get('continue')" class="button rounded3"/>
+								<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="button rounded3"/> &nbsp;
+								<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="button rounded3"/>
 							</div>
 						</fieldset>
 					</form>
 				</div>
 			#end
 			
-			#if($request.isUserInRole("admin") && $approvedTransMap.containsKey($langkey))
+			#if($request.isUserInRole("admin") && $approvedTransMap.containsKey($!langkey))
 				<br />
 				<div class="line center">
 					<div class="unit size1of2 r prm">
-						<form action="$translatelink/$showLocale/?reset=$langkey" method="post">
+						<form action="$translatelink/$showLocale/?reset=$!langkey" method="post">
 							<fieldset>
 								#sectoken(false)
 								<input type="submit" value="Reset" class="button rounded3 red rusure"/>
-								<input type="hidden" name="reset" value="$langkey"/>
+								<input type="hidden" name="reset" value="$!langkey"/>
 							</fieldset>
 						</form>
 					</div>
@@ -74,7 +74,7 @@
 							<fieldset>
 								#sectoken(false)
 								<input type="submit" value="Global reset" class="button rounded3 red rusure"/>
-								<input type="hidden" name="reset" value="$langkey"/>
+								<input type="hidden" name="reset" value="$!langkey"/>
 								<input type="hidden" name="global" value="true"/>
 							</fieldset>
 						</form> 
@@ -83,14 +83,14 @@
 			#end
 		#else
 			<div class="center">
-				#foreach($langKey in $langkeys)
+				#foreach($!langKey in $!langkeys)
 					<div class="p30 inlineblock mrl l pvs">
-						#if($approvedTransMap.containsKey($langKey))							
+						#if($approvedTransMap.containsKey($!langKey))							
 							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
 						#else
-							<span class="reputationbox phs rounded3">$!translationcountsmap.get($langKey)</span>
+							<span class="reputationbox phs rounded3">$!translationcountsmap.get($!langKey)</span>
 						#end
-						#set($transthis = $!deflang.get($langKey) )
+						#set($transthis = $!deflang.get($!langKey) )
 						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!daoutils.abbreviate($!transthis, 25)</a>
 					</div>
 				#end

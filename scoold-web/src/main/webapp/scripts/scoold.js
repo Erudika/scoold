@@ -348,7 +348,7 @@ $(function () {
 				var that = $(this),
 					hidden = that.nextAll("input:hidden"),
 					newHidden = hidden.clone();
-				newHidden.val(data.uuid);
+				newHidden.val(data.id);
 				hidden.after(newHidden);
 				that.val(data.fullname+", ");
 			});
@@ -484,13 +484,6 @@ $(function () {
 		return (event.target.nodeName === "A");
 	});
 	
-	// show ajax indicator when submit is pressed
-	$(document).on("click", "input[type=submit]", function(){
-		$(this).not("input.button-link, input.search-btn").addClass("loading");
-//		$("img.ajaxwait", $(this).parent()).show();
-		return true;
-	});
-	
 	$("body").ajaxSuccess(function() {
 		clearLoading();
 	});
@@ -499,14 +492,14 @@ $(function () {
 	var color2 = "#AAAAAA";
 	$(".hintbox").focus(function(){
 		var t = $(this);
-		if(t.data("val") === ""){t.data("val", $(this).val());}
-		if(t.val() === t.data("val")){t.val("");}
+		if(t.data("value") === ""){t.data("value", $(this).val());}
+		if(t.val() === t.data("value")){t.val("");}
 		t.css("color", color1);
 	}).blur(function(){
 		var t = $(this);
-		if($.trim(t.val()) === ""){t.val(t.data("val"));
+		if($.trim(t.val()) === ""){t.val(t.data("value"));
 		t.css("color", color2);}
-	}).css("color", color2).data("val", $(this).val());
+	}).css("color", color2).data("value", $(this).val());
 
 	$("a#search-icon").click(function(){
 		$(this).closest("form").submit();
@@ -530,6 +523,37 @@ $(function () {
 		$(this).nextAll("span:first").toggle();
 		return false;
 	});
+	
+	
+	function postAsk(elem, fn, callback){
+		return areYouSure(function(){
+			$.post(elem.attr("href"), secdata, function(data){
+				callback(data);
+			});
+			fn();
+		}, rusuremsg, false);
+	}
+		
+	$(document).on("click", ".post-refresh-ask",  function(){
+		postAsk($(this), function(){}, function(){
+			window.location.reload(true);
+		});
+	});
+	
+	$(document).on("click", ".post-refresh",  function(){
+		$.post($(this).attr("href"), secdata, function(){
+			window.location.reload(true);
+		});
+	});
+	
+	$(".set-sys-param").click(function(){
+		var form = $("form#sys-param-form"), title = $(this).attr("title");
+		form.find("input[name=name]").val(title.substring(0, title.indexOf(":")));
+		form.find("input[name=value]").val(title.substring(title.indexOf(":")+1, title.length));
+		return false;
+	});
+	
+	// TODO: ^^^^^^^^^^^ USE THESE  \/ \/ \/
 	
 	/****************************************************
      *                    REPORTS
@@ -633,6 +657,7 @@ $(function () {
 	var editable_settings = {
 			submit: lang.save,
 			tooltip: lang.clickedit,
+			placeholder: lang['profile.status.txt'],
 			cssclass: "clickedit"
 		};
 
@@ -647,11 +672,9 @@ $(function () {
 		$elem.editable(function(value, settings) {
 			var $text = $elem.data("value");
 			params[param] = value;
-			if(value.length >= 3){
 				$.post(ajaxpath, params);
 				$text = $elem.text(value).text();
 				$elem.data("value", $text);
-			}
 			return $text;}, editable_settings
 		).data("value", $elem.text());
 	}
@@ -660,6 +683,8 @@ $(function () {
 	editableBind("#mystatus.editable", "status");
 	editableBind("#schoolname.editable", "name");
 	editableBind("#classname.editable", "identifier");
+	editableBind("#groupname.editable", "name");
+	editableBind("#groupdesc.editable", "description");
 	editableBind("#questiontitle.editable", "title");
 	
 	var editable_settings3 = {};
@@ -669,16 +694,6 @@ $(function () {
 		$.post(ajaxpath+"?update-description=true", $.extend({description: value, mid: this.id}, secdata));
 		return $that.text(value).text();}, editable_settings3
 	);
-
-	var editablebox = $(".editable");
-	var editableBorder = editablebox.css("border");
-	editablebox.click(function(){
-		editablebox.css("border", "3px solid white");
-//		editablebox.find("input, textarea, select").addClass("nicebox");
-	}).bind("mouseleave", function(){
-		editablebox.css("border", editableBorder);
-	});
-
 
 	/****************************************************
      *               CONTACT DETAILS
@@ -759,6 +774,24 @@ $(function () {
 		that.before(clone);
 		clone.find("input[name=fullname]").focus();
 		return false;
+	});
+	
+	/****************************************************
+     *                   GROUPS 
+	 ****************************************************/
+		
+	$(".remove-groupmember-btn").click(function(){
+		$.post(this.href, secdata);
+		var that = $(this);
+		that.closest("div.media").fadeOut("slow", function(){
+			that.remove();
+		});
+		return false;
+	});
+	
+	$(".add-groupmember-btn").click(function(){
+		var that = $(this);
+		that.closest("form").submit();
 	});
 
 	/****************************************************
@@ -930,7 +963,7 @@ $(function () {
 	$("form.new-translation-form").find("textarea").focus();
 
 	/****************************************************
-     *                       PAGES
+     *                  PAGINATION
      ****************************************************/
 	function simpleHash(s) {
 		var i, hash = 0;
@@ -941,35 +974,29 @@ $(function () {
 	}
 	
 	function loadMoreHandler(dis, callback){
-		var that = $(dis);
-		var contentDiv = that.parent("div").prev("div");
-		var href = that.attr("href");
-		var cleanHref = href.substring(0, href.lastIndexOf("page=") + 5);
-//		var page = parseInt(href.substring(href.lastIndexOf("page=") + 5));
-//		that.find("img:hidden").show();
+		var that = $(dis),
+			macroCode = that.siblings(".page-macro-code").text(),
+			contentDiv = that.parent("div").prev("div"),
+			href = that.attr("href"),
+			cleanHref = href.substring(0, href.lastIndexOf("page=") + 5);
+			
 		that.addClass("loading");
-		$.get(dis.href, function(data){
+		$.get(dis.href, {pageMacroCode: macroCode}, function(data){
 			clearLoading();
 			var trimmed = $.trim(data);
 			if(trimmed !== ""){
-				var spanBlock = data.substring(data.lastIndexOf("<span"));
-				var nextPageSpan = $(spanBlock);
-				var nextPage = parseInt(nextPageSpan.attr("class"), 10);
+				var spanBlock = trimmed.substring(trimmed.lastIndexOf("<span")),
+					nextPageSpan = $(spanBlock),
+					nextPage = parseInt(nextPageSpan.attr("class"), 10),
+					parsedData = $(trimmed);
+					
 				if(nextPageSpan && !isNaN(nextPage)){
 					that.attr("href", cleanHref + nextPage);
-					nextPageSpan.remove();
-					var lastDataHash = that.data("lastDataHash");
-					var lastNextPage = that.data("lastNextPage");
-					var dataHash = simpleHash(data);
-
-					if(lastNextPage === nextPage || dataHash === lastDataHash){
+					nextPageSpan.remove();					
+					if(parsedData.length === 1){
 						that.hide();
-						that.removeData("lastDataHash");
-						that.removeData("lastNextPage");
 					}else{
-						contentDiv.append(data);
-						that.data("lastDataHash", dataHash);
-						that.data("lastNextPage", nextPage);
+						contentDiv.append(trimmed);
 						callback(contentDiv);
 					}
 				}
@@ -1022,7 +1049,7 @@ $(function () {
 	});
 
 	submitFormBind("form#add-label-form", function(data, status, xhr, form){
-		var uuid = $("form#add-label-form input[name=id]").val(),
+		var id = $("form#add-label-form input[name=id]").val(),
 			labelBox = $("form#add-label-form input[name=addlabel]"),
 			labelBoxClass = "button-tiny",
 			label = labelBox.val();
@@ -1043,7 +1070,7 @@ $(function () {
 							return this.href + ltrim;
 						}).text(ltrim);
 						box.find("a:last").attr("href", function(){
-							return this.href + ltrim + "&uuid=" + uuid;
+							return this.href + ltrim + "&id=" + id;
 						});
 						labelsCont.append(box.addClass(labelBoxClass).show());
 					}
@@ -1055,7 +1082,7 @@ $(function () {
 					return this.href + trimed;
 				}).text(trimed);
 				box.find("a:last").attr("href", function(){
-					return this.href + trimed + "&uuid=" + uuid;
+					return this.href + trimed + "&id=" + id;
 				});
 				labelsCont.append(box.addClass(labelBoxClass).show());
 			}
@@ -1333,8 +1360,8 @@ $(function () {
 		function diffMarkup(text, op){
 			var t1,t2 = "";
 			switch (op) {
-				case 1:t1 = '&nbsp;<span class="diff-ins">';t2 = '</span>&nbsp;';break;
-				case -1:t1 = '&nbsp;<span class="diff-del">';t2 = '</span>&nbsp;';break;
+				case 1:t1 = '<span class="diff-ins">';t2 = '</span>';break;
+				case -1:t1 = '<span class="diff-del">';t2 = '</span>';break;
 				case 0:t1 = "";t2 = "";break;
 			}
 
@@ -1361,7 +1388,8 @@ $(function () {
 
 	$(".newrev").html(function(index, html){
 		var newText = html;
-		var oldText = $(this).next(".oldrev").html();
+		var dis = $(this);
+		var oldText = dis.next(".oldrev").html();
 		var ds = newText;
 
 		if(newText && oldText){
@@ -1373,11 +1401,9 @@ $(function () {
 			ds = diffToHtml(d, oldText, newText);
 		}
 		
-//		uncomment to show only changes
-//		if(ds === newText){	$(this).hide();	}
-
 		return ds;
 	});
+	
 
 	var questionFilterForm = $("form#filter-questions-form");
 	questionFilterForm.find("select").change(function(){
@@ -1561,7 +1587,7 @@ $(function () {
 				title: {required: true, minlength: 10, maxlength: 255},
 				body: {required: true, minlength: 10, maxlength: 20000},
 				tags: {required: true, tags: true},
-				parentuuid: "required"
+				parentid: "required"
 			},
 			messages: {
 				title: {required: reqmsg,
@@ -1575,7 +1601,7 @@ $(function () {
 				tags: {required: reqmsg,
 					tags: $.validator.format(tagsmsg, maxTagsS)
 				},
-				parentuuid: reqmsg
+				parentid: reqmsg
 			}
 		});
 		return form.valid();
@@ -1644,11 +1670,10 @@ $(function () {
 		form.validate({
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-				favtags: {required: true, tags2: true}
+				favtags: {tags2: true}
 			},
 			messages: {
 				favtags: {
-					required: reqmsg,
 					tags2: $.validator.format(tagsmsg, maxFavTagsS)
 				}
 			}
@@ -1694,9 +1719,27 @@ $(function () {
 
 	/********* NEW TRANSLATION FORM ************/
 	$.validator.addMethod("notEmpty", function(value, elem){
-		var datval = $(elem).data("val");
+		var datval = $(elem).data("value");
 		return this.optional(elem) || (datval !== "" && datval !== value);
 	});	
+	
+	/********* CREATE GROUP FORM ************/
+	$(document).on("click", "input#creategroup",  function(){
+		var form = $(this).closest("form");
+		form.validate({
+			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+			rules: {
+				name: {required: true, minlength: 4}
+			},
+			messages: {
+				name: {
+					required: reqmsg,
+					minlength: jQuery.format(minlenmsg)
+				}
+			}
+		});
+		return form.valid();
+	});
 
 });//end of scoold script
 

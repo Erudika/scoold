@@ -17,7 +17,7 @@ import org.apache.commons.lang.mutable.MutableLong;
 public abstract class AbstractRevisionDAO<T extends Revision, PK>
         implements GenericDAO<Revision, Long> {
 
-    public abstract ArrayList<T> readAllRevisionsForPost(String parentUUID, MutableLong page, MutableLong itemcount);
+    public abstract ArrayList<T> readAllRevisionsForPost(Long parentid, MutableLong page, MutableLong itemcount);
 	public abstract void restoreRevision(PK revisionid, Post transientPost);
-	public abstract void deleteAllRevisionsForUUID(String parentUUID);
+	public abstract void deleteAllRevisionsForID(Long parentid);
 }

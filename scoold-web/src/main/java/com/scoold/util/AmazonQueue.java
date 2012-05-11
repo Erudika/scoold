@@ -14,7 +14,7 @@ import com.amazonaws.services.sqs.model.DeleteQueueRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import com.scoold.pages.BasePage;
+import com.scoold.db.AbstractDAOFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -30,11 +30,11 @@ import org.codehaus.jackson.node.ArrayNode;
  * @author alexb
  */
 public class AmazonQueue<E extends Serializable> implements Queue<E> {
-	public static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
-	public static final String SECRETKEY = "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";
+	public static final String ACCESSKEY = System.getProperty("com.scoold.awsaccesskey");
+	public static final String SECRETKEY = System.getProperty("com.scoold.awssecretkey");
 	
-	private static final String SQS_ID = "374874639893";
-	private static final String SQS_URL = "https://eu-west-1.queue.amazonaws.com";
+	private static final String SQS_ID = System.getProperty("com.scoold.awssqsqueueid");
+	private static final String SQS_URL = System.getProperty("com.scoold.awssqsendpoint");
 	private static final int MAX_MESSAGES = 10;  //max in bulk
 	private String QUEUE_URL;
 	private AmazonSQSAsyncClient sqs;
@@ -43,7 +43,7 @@ public class AmazonQueue<E extends Serializable> implements Queue<E> {
 	
 	// This queue contains only messages in JSON format!
 	public AmazonQueue(String name){
-		if(BasePage.IN_PRODUCTION){
+		if(AbstractDAOFactory.IN_PRODUCTION){
 			sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));		
 			sqs.setEndpoint(SQS_URL);
 			QUEUE_URL = SQS_URL.concat("/").concat(SQS_ID).concat("/").concat(name);

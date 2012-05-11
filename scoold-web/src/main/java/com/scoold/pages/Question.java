@@ -12,7 +12,6 @@ import com.scoold.core.Revision;
 import com.scoold.core.User.Badge;
 import java.util.ArrayList;
 import org.apache.click.control.Form;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
@@ -31,39 +30,28 @@ public class Question extends BasePage{
 	public Form aForm;
 	public String markdownHtml;
 
-	private String actionlink;
+	private String postlink;
 
 	public Question() {
 		title = lang.get("questions.title");
 		showPost = null;
 		canEdit = false;
 		aForm = getAnswerForm(PostType.QUESTION);
-		actionlink = ""; 
+		postlink = ""; 
 
 		Long id = NumberUtils.toLong(getParamValue("id"));
 		// override id if it's an edit request
 		if(param("editpostid")){
 			id = NumberUtils.toLong(getParamValue("editpostid"));
 		}
-		String uuid = getParamValue("uuid");
 
-		String uri = (String) req.getAttribute("javax.servlet.forward.request_uri");
-		if (StringUtils.containsIgnoreCase(uri, "question")) {
-			actionlink = questionlink;
-		} else if(StringUtils.containsIgnoreCase(uri, "feedback")) {
-			actionlink = feedbacklink;
-		} else if(StringUtils.containsIgnoreCase(uri, "translate")) {
-			actionlink = translatelink;
-		}
-
-        if(id.longValue() == 0L && StringUtils.isBlank(uuid)){
-			if(!isAjaxRequest()) setRedirect(actionlink); 
+        if(id.longValue() == 0L){
+			if(!isAjaxRequest()) setRedirect(HOMEPAGE); 
 			return;
 		}else {
-            showPost = (id.longValue() == 0L) ? Post.getPostDao().read(uuid) :
-				Post.getPostDao().read(id);
+            showPost = Post.getPostDao().read(id);
 			
-			if(showPost != null){
+			if(showPost != null && daoutils.typesMatch(showPost)){
 				if(showPost.getTitle() != null)
 					title = title + " - " + showPost.getTitle();
 
@@ -83,41 +71,50 @@ public class Question extends BasePage{
 						}
 					}
 				}
-
 			}else{
-				setRedirect(actionlink);
+				setRedirect(HOMEPAGE);
 				return;
 			}
         }
-
-		if("revisions".equals(showParam)){
-			title = title + " - " + lang.get("revisions.title");
-			pageMacroCode = "#revisionspage($revisionslist $canEdit $showPost)";
-			revisionslist = showPost.getRevisions(pagenum, itemcount);
-		}
+		
+		postlink = getPostLink(showPost, false, false);
 	}
 
 	public void onGet() {
-		if(showPost != null){
-			processPostRequest(showPost, actionlink, canEdit, isMine);
-
-			if(showPost.isQuestion() || showPost.isFeedback()){
+		if("revisions".equals(showParam)){
+			title = title + " - " + lang.get("revisions.title");
+			revisionslist = showPost.getRevisions(pagenum, itemcount);
+		}else if(showPost != null){
+			if(updateViewCount(showPost)) showPost.update();
+			
+			if(daoutils.isIndexable(showPost) && !showPost.isReply()){
 				if(!isAjaxRequest()){
-					similarquestions = search.findSimilarQuestions(showPost, 15);
+					String likeTxt = showPost.getTitle().concat(" ").concat(showPost.getBody()).
+							concat(" ").concat(showPost.getTags());
+					similarquestions = daoutils.readAndRepair(Post.class, 
+							daoutils.findSimilar(showPost.getClasstype(), 
+							showPost.getId().toString(), new String[]{"title", "body", "tags"}, 
+							likeTxt, MAX_ITEMS_PER_PAGE), itemcount);
 					if(showPost.isQuestion()){
-						addModel("showSchool", School.getSchoolDao().
-								read(showPost.getParentuuid())); 
+						School s = School.getSchoolDao().read(showPost.getParentid());
+						if(s != null) addModel("showSchool", s); 
 					}
 				}
-				String sortby = "votes";
-				if("newest".equals(getParamValue("sortby"))){
-					sortby = "timestamp";
-				}
-				if(showPost.getAnswercount() > 0){
-					pageMacroCode = "#answerspage($answerslist $showPost)";
-					answerslist = showPost.getAnswers(sortby, pagenum, itemcount);
-					//get the comments for each answer
-					Post.getPostDao().readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
+				
+				if(param("getcomments") && param("parentid")){
+					Long parentid = NumberUtils.toLong(getParamValue("parentid"), 0L);
+					commentslist = com.scoold.core.Comment.getCommentDao().readAllCommentsForID(parentid,
+							pagenum, null);
+				}else{
+					String sortby = "votes";
+					if("newest".equals(getParamValue("sortby"))){
+						sortby = "";
+					}
+					if(showPost.getAnswercount() > 0){
+						answerslist = showPost.getAnswers(sortby, pagenum, itemcount);
+						//get the comments for each answer
+						Post.getPostDao().readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
+					}
 				}
 			}			
 		}
@@ -127,16 +124,17 @@ public class Question extends BasePage{
 		if(canEdit && showPost != null){
 			// attach edit form to each post
 			attachEditForm(showPost);
-			if(showPost.isQuestion() && answerslist != null){
-				for (Post answr : answerslist)
-					attachEditForm(answr);
+			if(answerslist != null && !answerslist.isEmpty()){
+				for (Post answr : answerslist) attachEditForm(answr);
 			}
 		}
 	}
 
 	public void onPost(){
 		processNewCommentRequest(showPost);
-		processPostEditRequest(showPost, actionlink, canEdit);
+		processPostEditRequest(showPost, postlink, canEdit);
+		
+		
 	}
 
 	private void attachEditForm(Post post){
@@ -146,14 +144,35 @@ public class Question extends BasePage{
 
 	public boolean onAnswerClick(){
 		if(isValidAnswerForm(aForm, showPost)){
-			processPostEditRequest(showPost, actionlink, canEdit);
+			processPostEditRequest(showPost, postlink, canEdit);
 		}
 		return false;
 	}
 
 	public boolean onPostEditClick(){
 		if(isValidPostEditForm(showPost.getEditForm())){
-			processPostEditRequest(showPost, actionlink, canEdit);
+			processPostEditRequest(showPost, postlink, canEdit);
+		}
+		return false;
+	}
+	
+	private boolean updateViewCount(Post showPost){
+		//do not count views from author
+		if(authenticated && authUser.getId().equals(showPost.getUserid())) return false;
+		// inaccurate but... KISS!
+		String list = getStateParam("postviews");
+		
+		if(list == null){			
+			list = showPost.getId().toString();
+			setStateParam("postviews", list);
+		}
+		
+		if (!list.contains(showPost.getId().toString())) {
+			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
+			showPost.setViewcount(views + 1); //increment count
+			list = list.concat(",").concat(showPost.getId().toString());
+			setStateParam("postviews", list);
+			return true;
 		}
 		return false;
 	}

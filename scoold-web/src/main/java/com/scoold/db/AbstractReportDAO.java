@@ -6,8 +6,6 @@
 package com.scoold.db;
 
 import com.scoold.core.Report;
-import java.util.ArrayList;
-import org.apache.commons.lang.mutable.MutableLong;
 
 /**
  *
@@ -15,7 +13,5 @@ import org.apache.commons.lang.mutable.MutableLong;
  */
 public abstract class AbstractReportDAO<T extends Report, PK>
 		implements GenericDAO <Report, Long>{
-
-	public abstract ArrayList<T> readAllSortedBy(String field, MutableLong page, MutableLong itemcount, boolean desc, int maxPerPage);
 
 }

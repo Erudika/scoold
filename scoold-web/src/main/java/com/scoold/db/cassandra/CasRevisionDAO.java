@@ -20,62 +20,49 @@ import org.apache.commons.lang.mutable.MutableLong;
  *
  * @author alexb
  */
-public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
+final class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 
 	private static final Logger logger = Logger.getLogger(CasRevisionDAO.class.getName());
-	private CasDAOUtils cdu = new CasDAOUtils();
+	private CasDAOUtils cdu = (CasDAOUtils) CasDAOFactory.getInstance().getDAOUtils();
 	
     public CasRevisionDAO() {
     }
 
 	public Revision read(Long id) {
-		return cdu.read(Revision.class, id.toString(), CasDAOFactory.REVISIONS);
-	}
-
-	public Revision read(String uuid) {
-		ArrayList<Revision> revision = cdu.readAll(Revision.class, uuid,
-				CasDAOFactory.REVISIONS_UUIDS, CasDAOFactory.REVISIONS, String.class,
-				null, null, null, 1, true, false, false);
-
-		if(revision == null || revision.isEmpty()) return null;
-
-		return revision.get(0);
+		return cdu.read(Revision.class, id.toString());
 	}
 
 	public Long create(Revision newInstance) {
 		Mutator<String> mut = cdu.createMutator();
-		Long id = cdu.create(newInstance, CasDAOFactory.REVISIONS, mut);
+		Long id = cdu.create(newInstance, mut);
 
 		if(id != null){
-			cdu.addInsertion(new Column<String, String>(newInstance.getUuid(),
-				CasDAOFactory.REVISIONS_UUIDS, id.toString(), id.toString()), mut);
-			cdu.addInsertion(new Column<Long, String>(newInstance.getParentuuid(),
-				CasDAOFactory.REVISIONS_PARENTUUIDS, id, id.toString()), mut);
+			cdu.addInsertion(new Column<Long, String>(newInstance.getParentid().toString(),
+				CasDAOFactory.REVISIONS_PARENTS, id, id.toString()), mut);
 		}
 		mut.execute();
 		return id;
 	}
 
 	public void update(Revision transientObject) {
-		cdu.update(transientObject, CasDAOFactory.REVISIONS);
+		cdu.update(transientObject);
 	}
 
 	public void delete(Revision persistentObject){
 		Mutator<String> mut = cdu.createMutator();
-		cdu.delete(persistentObject, CasDAOFactory.REVISIONS, mut);
+		cdu.delete(persistentObject, mut);
 
-		cdu.removeColumn(persistentObject.getParentuuid(),
-				CasDAOFactory.REVISIONS_PARENTUUIDS, persistentObject.getId());
-		cdu.deleteRow(persistentObject.getUuid(), CasDAOFactory.REVISIONS_UUIDS, mut);
+		cdu.removeColumn(persistentObject.getParentid().toString(),
+				CasDAOFactory.REVISIONS_PARENTS, persistentObject.getId());
 		
 		mut.execute();
 	}
 
-	public ArrayList<Revision> readAllRevisionsForPost (String parentUUID, MutableLong page,
+	public ArrayList<Revision> readAllRevisionsForPost (Long parentid, MutableLong page,
 			MutableLong itemcount) {
 
-		ArrayList<Revision> revlist = cdu.readAll(Revision.class, parentUUID,
-				CasDAOFactory.REVISIONS_PARENTUUIDS, CasDAOFactory.REVISIONS, Long.class,
+		ArrayList<Revision> revlist = cdu.readAll(Revision.class, null, parentid.toString(),
+				CasDAOFactory.REVISIONS_PARENTS, Long.class,
 				CasDAOUtils.toLong(page), page, itemcount,
 				CasDAOFactory.MAX_ITEMS_PER_PAGE + 1, true, false, true);
 
@@ -98,35 +85,30 @@ public class CasRevisionDAO<T, PK> extends AbstractRevisionDAO<Revision, Long> {
 			transientPost.setTags(rev.getTags());
 
 			transientPost.updateLastActivity();
-			transientPost.setRevisionuuid(rev.getUuid());
+			transientPost.setRevisionid(rev.getId());
 			//update post
-			cdu.update(transientPost, CasDAOFactory.POSTS);
+			cdu.update(transientPost);
 		}
 	}
 
-	public ArrayList<Revision> readAllSortedBy(String sortColumnFamilyName,
-			MutableLong page, MutableLong itemcount, boolean desc) {
-		throw new UnsupportedOperationException("not supported.");
-	}
-
-	public void deleteAllRevisionsForUUID(String parentUUID) {
+	public void deleteAllRevisionsForID(Long parentid) {
 		Mutator<String> mut = cdu.createMutator();
-		deleteAllRevisionsForUUID(parentUUID, mut);
+		deleteAllRevisionsForID(parentid, mut);
 		mut.execute();
 	}
 
-	protected void deleteAllRevisionsForUUID(String parentUUID, Mutator<String> mut) {
-		List<HColumn<Long, String>> keys = cdu.readRow(parentUUID,
-				CasDAOFactory.REVISIONS_PARENTUUIDS, Long.class,
+	protected void deleteAllRevisionsForID(Long parentid, Mutator<String> mut) {
+		List<HColumn<Long, String>> keys = cdu.readRow(parentid.toString(),
+				CasDAOFactory.REVISIONS_PARENTS, Long.class,
 				null, null, null, CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : keys) {
 			cdu.addDeletion(new Column<String, String>(hColumn.getName().toString(),
-					CasDAOFactory.REVISIONS), mut);
+					CasDAOFactory.OBJECTS), mut);
 		}
 
-		cdu.addDeletion(new Column<Long, String>(parentUUID,
-				CasDAOFactory.REVISIONS_PARENTUUIDS), mut);
+		cdu.addDeletion(new Column<Long, String>(parentid.toString(),
+				CasDAOFactory.REVISIONS_PARENTS), mut);
 	}
 
 }

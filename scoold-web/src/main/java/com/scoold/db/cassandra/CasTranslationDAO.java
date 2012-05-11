@@ -31,23 +31,17 @@ import org.apache.commons.lang.mutable.MutableLong;
  *
  * @author alexb
  */
-public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation, Long>{
+final class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation, Long>{
 
 	private static final Logger logger = Logger.getLogger(CasTranslationDAO.class.getName());
-	private CasDAOUtils cdu = new CasDAOUtils();
-	private String cacheKey = "Language" + AbstractDAOFactory.SEPARATOR;
+	private CasDAOUtils cdu = (CasDAOUtils) CasDAOFactory.getInstance().getDAOUtils();
+//	private String cacheKey = "Language" + AbstractDAOFactory.SEPARATOR;
 
 	public CasTranslationDAO() { }
 
 	public Translation read(Long id) {
-		return cdu.read(Translation.class, id.toString(),
-				CasDAOFactory.TRANSLATIONS);
+		return cdu.read(Translation.class, id.toString());
 	}
-
-	public Translation read(String uuid) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 
 	public Long create(Translation newInstance) {
 		if(newInstance.getUserid() == null ||
@@ -57,7 +51,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 			return null;
 
 		Mutator<String> mut = cdu.createMutator();
-		Long id = cdu.create(newInstance, CasDAOFactory.TRANSLATIONS, mut);
+		Long id = cdu.create(newInstance, mut);
 
 		if(id != null){
 			String compositeKey = newInstance.getLocale().
@@ -82,7 +76,7 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 					transientObject.getId(), transientObject.getVotes(),
 					transientObject.getOldvotes(), mut);
 
-		cdu.update(transientObject, CasDAOFactory.TRANSLATIONS, mut);
+		cdu.update(transientObject, mut);
 		
 		mut.execute();
 	}
@@ -95,16 +89,11 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 		Mutator<String> mut = cdu.createMutator();
 
 		// delete post
-		cdu.delete(persistentObject, CasDAOFactory.TRANSLATIONS, mut);
+		cdu.delete(persistentObject, mut);
 		cdu.removeNumbersortColumn(compositeKey, CasDAOFactory.LOCALES_TRANSLATIONS, id,
 				persistentObject.getVotes(), mut);
 
 		mut.execute();
-	}
-
-	public ArrayList<Translation> readAllSortedBy(String field, MutableLong page,
-			MutableLong itemcount, boolean desc) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	public ArrayList<Translation> readAllTranslationsForKey(String locale, String key,
@@ -116,16 +105,15 @@ public class CasTranslationDAO<T, PK> extends AbstractTranslationDAO<Translation
 		boolean isPageValid = pagenum != null && pagenum.longValue() > 1;
 
 		if (isPageValid) {
-			String votes = cdu.getColumn(pagenum.toString(),
-							CasDAOFactory.TRANSLATIONS, "votes");
+			String votes = cdu.getColumn(pagenum.toString(), CasDAOFactory.OBJECTS, "votes");
 			if(votes != null){
 				startKey = votes.concat(AbstractDAOFactory.SEPARATOR)
 						.concat(pagenum.toString());
 			}
 		}
 
-		return cdu.readAll(Translation.class, compositeKey, 
-				CasDAOFactory.LOCALES_TRANSLATIONS, CasDAOFactory.TRANSLATIONS,
+		return cdu.readAll(Translation.class, null, compositeKey, 
+				CasDAOFactory.LOCALES_TRANSLATIONS,
 				String.class, startKey, pagenum, itemcount,
 				CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
 	}

@@ -26,20 +26,25 @@ public class Media extends BasePage{
 		if(param("id")){
 			Long id = NumberUtils.toLong(getParamValue("id"));
 			showMedia = com.scoold.core.Media.getMediaDao().read(id);
+			
+			if(showMedia == null || !daoutils.typesMatch(showMedia)){
+				setRedirect(HOMEPAGE);
+			}else{
+				boolean isMine = authenticated && showMedia != null &&
+						showMedia.getUserid().equals(authUser.getId());
 
-			boolean isMine = authenticated && showMedia != null &&
-					showMedia.getUserid().equals(authUser.getId());
-
-			if(isMine || inRole("admin")){
-				canEdit = true;
+				if(isMine || inRole("mod")){
+					canEdit = true;
+				}
 			}
-
 		}
-
-		if(param("remove") && param("parentuuid") && canEdit){
+	}
+	
+	public void onPost(){
+		if(param("remove") && param("parentid") && canEdit){
 			Long mid = NumberUtils.toLong(getParamValue("remove"));
 			com.scoold.core.Media m = new com.scoold.core.Media();
-			m.setParentuuid(getParamValue("parentuuid"));
+			m.setParentid(NumberUtils.toLong(getParamValue("parentid")));
 			m.setId(mid);
 			m.delete();
 		}

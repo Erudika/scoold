@@ -20,6 +20,9 @@
 		"feedback": {
 			"_source": { "enabled": false }
 		},
+		"grouppost": {
+			"_source": { "enabled": false }
+		},
 		"tag": {
 			"_source": { "enabled": true },
 			"properties": {

@@ -1,21 +1,21 @@
 /*
- * Licensed to Elastic Search and Shay Banon under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. Elastic Search licenses this
- * file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+* Licensed to Elastic Search and Shay Banon under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership. Elastic Search licenses this
+* file to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 
 package org.elasticsearch.river.amazonsqs;
 
@@ -28,9 +28,9 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
 import org.elasticsearch.common.xcontent.support.XContentMapValues;
@@ -43,162 +43,173 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.elasticsearch.client.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.client.action.index.IndexRequestBuilder;
+
 
 /**
- * @author aleski
- */
+* @author aleski
+*/
 public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 
-    private final Client client;
+	private final Client client;
 	private final AmazonSQSAsyncClient sqs;
 	private final ObjectMapper mapper;
-	
 	private final String INDEX;
-    private final String ACCESSKEY;
-    private final String SECRETKEY;
-    private final String QUEUE_URL;
-    private final String REGION;
-    private final int MAX_MESSAGES;
-    private final int TIMEOUT;
-
-    private volatile boolean closed = false;
-    private volatile Thread thread;
+	private final String ACCESS_KEY;
+	private final String SECRET_KEY;
+	private final String QUEUE_URL;
+	private final String REGION;
+	private final int MAX_MESSAGES;
+	private final int TIMEOUT_SECONDS;
+	private final int DEFAULT_MAX_MESSAGES = 10;
+	private final int DEFAULT_TIMEOUT_SECONDS = 10;
+	private final String DEFAULT_INDEX = "elasticsearch";
 	
-    @SuppressWarnings({"unchecked"})
-    @Inject 
+	private volatile boolean closed = false;
+	private volatile Thread thread;
+
+	@SuppressWarnings({"unchecked"})
+	@Inject
 	public AmazonsqsRiver(RiverName riverName, RiverSettings settings, Client client) {
-        super(riverName, settings);
-        this.client = client;
-				
-        if (settings.settings().containsKey("amazonsqs")) {
-            Map<String, Object> sqsSettings = (Map<String, Object>) settings.settings().get("amazonsqs");
-            REGION = XContentMapValues.nodeStringValue(sqsSettings.get("region"), "null");
-            ACCESSKEY = XContentMapValues.nodeStringValue(sqsSettings.get("accesskey"), "null");
-            SECRETKEY = XContentMapValues.nodeStringValue(sqsSettings.get("secretkey"), "null");
-            QUEUE_URL = XContentMapValues.nodeStringValue(sqsSettings.get("queue_url"), "null");
-        } else {
-            REGION = settings.globalSettings().get("cloud.aws.region");
-            ACCESSKEY = settings.globalSettings().get("cloud.aws.access_key");
-            SECRETKEY = settings.globalSettings().get("cloud.aws.secret_key");
-            QUEUE_URL = settings.globalSettings().get("cloud.aws.sqs.queue_url");
-        }
-		
+		super(riverName, settings);
+		this.client = client;
+
+		if (settings.settings().containsKey("amazonsqs")) {
+			Map<String, Object> sqsSettings = (Map<String, Object>) settings.settings().get("amazonsqs");
+			REGION = XContentMapValues.nodeStringValue(sqsSettings.get("region"), "null");
+			ACCESS_KEY = XContentMapValues.nodeStringValue(sqsSettings.get("access_key"), "null");
+			SECRET_KEY = XContentMapValues.nodeStringValue(sqsSettings.get("secret_key"), "null");
+			QUEUE_URL = XContentMapValues.nodeStringValue(sqsSettings.get("queue_url"), "null");
+		} else {
+			REGION = settings.globalSettings().get("cloud.aws.region");
+			ACCESS_KEY = settings.globalSettings().get("cloud.aws.access_key");
+			SECRET_KEY = settings.globalSettings().get("cloud.aws.secret_key");
+			QUEUE_URL = settings.globalSettings().get("cloud.aws.sqs.queue_url");
+		}
+
 		if (settings.settings().containsKey("index")) {
 			Map<String, Object> indexSettings = (Map<String, Object>) settings.settings().get("index");
-            INDEX = XContentMapValues.nodeStringValue(indexSettings.get("index"), "elasticsearch");
-            MAX_MESSAGES = XContentMapValues.nodeIntegerValue(indexSettings.get("max_messages"), 10);
-            TIMEOUT = XContentMapValues.nodeIntegerValue(indexSettings.get("timeout_seconds"), 10);
+			INDEX = XContentMapValues.nodeStringValue(indexSettings.get("index"), DEFAULT_INDEX);
+			MAX_MESSAGES = XContentMapValues.nodeIntegerValue(indexSettings.get("max_messages"), DEFAULT_MAX_MESSAGES);
+			TIMEOUT_SECONDS = XContentMapValues.nodeIntegerValue(indexSettings.get("timeout_seconds"), DEFAULT_TIMEOUT_SECONDS);
 		} else {
-			INDEX = settings.globalSettings().get("cluster.name");
-			MAX_MESSAGES = 10;
-			TIMEOUT = 10;
+			INDEX = DEFAULT_INDEX;
+			MAX_MESSAGES = DEFAULT_MAX_MESSAGES;
+			TIMEOUT_SECONDS = DEFAULT_TIMEOUT_SECONDS;
 		}
-		
-		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));
+
+		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
 		sqs.setEndpoint("https://".concat(REGION).concat(".queue.amazonaws.com"));
 		mapper = new ObjectMapper();
-    }
+	}
 
-    public void start() {
-        logger.info("creating amazonsqs river using queue {}", QUEUE_URL);
+	public void start() {
+		logger.info("creating amazonsqs river using queue {}", QUEUE_URL);
+		thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "amazonsqs_river").newThread(new Consumer());
+		thread.start();
+	}
 
-        thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), 
-				"amazonsqs_river").newThread(new Consumer());
-        thread.start();
-    }
+	public void close() {
+		if (closed) {
+			return;
+		}
 
-    public void close() {
-        if (closed) {
-            return;
-        }
-        logger.info("closing amazonsqs river");
-        closed = true;
-        thread.interrupt();
-    }
+		logger.info("closing amazonsqs river");
+		closed = true;
+		thread.interrupt();
+	}
 
-    private class Consumer implements Runnable {
+	private class Consumer implements Runnable {
+
 		private int idleCount = 0;
-		
+
 		public void run() {
 			String id = null;	// document id
 			String type = null;	// document type
+			String indexName = null; // document index
 			Map<String, Object> data = null; // document data for indexing
-			
-            while (!closed) {
-				// pull
+
+			while (!closed) {
+				// pull messages from SQS
 				List<JsonNode> msgs = pullMessages();
-				int sleeptime = TIMEOUT * 1000;
+				int sleeptime = TIMEOUT_SECONDS * 1000;
+
 				try {
 					BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
+
 					for (JsonNode msg : msgs) {
-						if(msg.has("_id") && msg.has("_type")){
+						if (msg.has("_id") && msg.has("_type")) {
+
 							id = msg.get("_id").getTextValue();
 							type = msg.get("_type").getTextValue();
+//							//Support for dynamic indexes
+							indexName = msg.has("_index") ? msg.get("_index").getTextValue() : INDEX;
 
-							if(msg.has("_data")){
-								data = mapper.readValue(msg.get("_data"), 
-										new TypeReference<Map<String, Object>>(){});
-								bulkRequestBuilder.add(new IndexRequestBuilder(client, INDEX).
-									setId(id).setType(type).setSource(data).request());
-							}else{
-								bulkRequestBuilder.add(new DeleteRequestBuilder(client, INDEX).
-									setId(id).setType(type).request());
+							if (msg.has("_data")) {
+								data = mapper.readValue(msg.get("_data"), new TypeReference<Map<String, Object>>() {});
+								bulkRequestBuilder.add(client.prepareIndex(indexName, type, id).setSource(data).request());
+							} else {
+								bulkRequestBuilder.add(client.prepareDelete(indexName, type, id).request());
 							}
 						}
 					}
 
 					// sleep less when there are lots of messages in queue
 					// sleep more when idle
-					if(bulkRequestBuilder.numberOfActions() > 0){
+					if (bulkRequestBuilder.numberOfActions() > 0) {
+
 						BulkResponse response = bulkRequestBuilder.execute().actionGet();
 						if (response.hasFailures()) {
-							logger.warn("Bulk operation completed with errors: " + 
-									response.buildFailureMessage());
+							logger.warn("Bulk operation completed with errors: "
+									+ response.buildFailureMessage());
 						}
+
 						// many tasks in queue => throttle up
 						if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
 							sleeptime = 1000;
-						}else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
+						} else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
 							sleeptime = 100;
 						}
+
 						idleCount = 0;
-					}else{
+					} else {
 						idleCount++;
 						// no tasks in queue => throttle down
-						if(idleCount >= 3) {
-							sleeptime *= 10; 
+						if (idleCount >= 3) {
+							sleeptime *= 10;
 						}
 					}
 				} catch (Exception e) {
 					logger.error("Bulk index operation failed {}", e);
 					continue;
 				}
-				
+
 				try {
 					Thread.sleep(sleeptime);
 				} catch (InterruptedException e) {
-					if (closed) break;
+					if (closed) {
+						break;
+					}
 				}
-            }
-        }
+			}
+		}
 
 		private List<JsonNode> pullMessages() {
-			List<JsonNode> msgs = new ArrayList<JsonNode> ();
-			if(!isBlank(QUEUE_URL)){
+			List<JsonNode> msgs = new ArrayList<JsonNode>();
+
+			if (!isBlank(QUEUE_URL)) {
 				try {
 					ReceiveMessageRequest receiveReq = new ReceiveMessageRequest(QUEUE_URL);
 					receiveReq.setMaxNumberOfMessages(MAX_MESSAGES);
 					List<Message> list = sqs.receiveMessage(receiveReq).getMessages();
-					
+
 					if (list != null && !list.isEmpty()) {
 						for (Message message : list) {
-							if(!isBlank(message.getBody())){
+
+							if (!isBlank(message.getBody())) {
 								msgs.add(mapper.readTree(message.getBody()));
 							}
-							sqs.deleteMessage(new DeleteMessageRequest(QUEUE_URL, 
-									message.getReceiptHandle()));
+
+							sqs.deleteMessage(new DeleteMessageRequest(QUEUE_URL, message.getReceiptHandle()));
 						}
 					}
 				} catch (IOException ex) {
@@ -209,18 +220,17 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 					logger.error("Could not reach SQS. {}", ace.getMessage());
 				}
 			}
+
 			return msgs;
 		}
 
-		private void logException(AmazonServiceException ase){
-			logger.error("AmazonServiceException: error={}, statuscode={}, "
-				+ "awserrcode={}, errtype={}, reqid={}", 
-				new Object[]{ase.getMessage(), ase.getStatusCode(), 
-					ase.getErrorCode(), ase.getErrorType(), ase.getRequestId()});
+		private void logException(AmazonServiceException ase) {
+			logger.error("AmazonServiceException: error={}, statuscode={}, " + "awserrcode={}, errtype={}, reqid={}",
+					new Object[]{ase.getMessage(), ase.getStatusCode(), ase.getErrorCode(), ase.getErrorType(), ase.getRequestId()});
 		}
-    }
-	
-	private boolean isBlank(String str){
+	}
+
+	private boolean isBlank(String str) {
 		return str == null || str.isEmpty() || str.trim().isEmpty();
 	}
 }

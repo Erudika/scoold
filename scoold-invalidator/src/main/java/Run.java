@@ -38,9 +38,9 @@ import org.apache.commons.io.IOUtils;
 public class Run {
 
 	private static final String bucket = "com.scoold.files";
-	private static final String distributionID = "E2QTLNWMESCI9Q";
-	protected static final String ACCESSKEY = "AKIAI5WX2PJPYQEPWECQ";
-	protected static final String SECRETKEY = "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";
+	private static final String distributionID = System.getProperty("awscfdist");
+	protected static final String ACCESSKEY = System.getProperty("awsaccesskey");
+	protected static final String SECRETKEY = System.getProperty("awssecretkey");
 	private static final Logger logger = Logger.getLogger(Run.class.getName());
 	private static final BasicAWSCredentials awsCredentials = new BasicAWSCredentials(ACCESSKEY, SECRETKEY);
 	private static AmazonS3Client s3 = new AmazonS3Client(awsCredentials);

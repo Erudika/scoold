@@ -8,8 +8,8 @@ import com.scoold.core.ScooldObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import com.scoold.core.School;
-import com.scoold.core.Search;
 import com.scoold.db.AbstractDAOUtils;
+import com.scoold.util.ScooldAppListener;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,7 +33,8 @@ public class Admin extends BasePage {
 			return;
 		}
 		
-		TransportClient client = ((TransportClient) Search.getClient());
+		TransportClient client = (TransportClient) ScooldAppListener.getSearchClient();
+		
 		if(client != null){
 			addModel("esnodes", client.connectedNodes());
 			addModel("eshosts", client.transportAddresses());
@@ -42,12 +43,13 @@ public class Admin extends BasePage {
 			addModel("eshosts", "ElastiSearch not available.");
 		}
 		
-		schoolcount = daoutils.getBeanCount(School.class);
+		schoolcount = daoutils.getBeanCount(School.classtype);
+		addModel("indexExists", daoutils.existsIndex());
+		addModel("sysprops", System.getProperties());
+		addModel("syscolumns", daoutils.getSystemColumns());
 	}
-
+	
 	public void onPost() {
-		String ref = param("returnto") ? getParamValue("returnto") : adminlink;
-
 		if (param("confirmdelete")) {
 			String classname = StringUtils.capitalize(getParamValue("confirmdelete"));
 			Long id = NumberUtils.toLong(getParamValue("id"));
@@ -62,6 +64,13 @@ public class Admin extends BasePage {
 							sobject.getId()
 						});
 			}
+		} else if(param("reindex")) {
+			daoutils.reindexAll();
+		} else if(param("deleteindex")) {
+			daoutils.deleteIndex();
+		} else if(param("sysparam")) {
+			int ttl = NumberUtils.toInt(getParamValue("ttl"), 0);
+			daoutils.setSystemColumn(getParamValue("name"), getParamValue("value"), ttl);
 		} else {
 			if (param("createschools") && schoolcount == 0L) {
 				long startTime = System.nanoTime();
@@ -72,7 +81,7 @@ public class Admin extends BasePage {
 			} 
 		}
 
-		setRedirect(ref);
+		setRedirect(adminlink);
 	}
 
 	private void createSchools() {
@@ -106,95 +115,4 @@ public class Admin extends BasePage {
 			Logger.getAnonymousLogger().log(Level.SEVERE, null, ex);
 		}
 	}
-	
-//	private void filldb(){
-//		//		Client searchClient = (Client) getContext().getServletContext().
-////				getAttribute("searchClient");
-////		new DeleteIndexRequestBuilder(searchClient.admin().indices(), "scoold").execute();
-//
-//		LinkedList<User> users = new LinkedList<User>();
-//		User first = null;
-//		for (int k = 0; k < 10; k++) {
-//			User user = new User();
-//			user.setAboutme(RandomStringUtils.randomAlphabetic(55));
-//			user.setEmail(System.currentTimeMillis()+"@user.com");
-//			user.setFullname(RandomStringUtils.randomAlphabetic(5)+ " "+
-//					RandomStringUtils.randomAlphabetic(10));
-//			Long id = user.create();
-//			users.add(user);
-//			logger.log(Level.WARNING, "created user {0}", id);
-//
-//			if(k > 0){
-//				User u = users.poll();
-//				user.addContact(u);
-//				users.add(u);
-//			}else{
-//				first = user;
-//			}
-//		}
-//		User u = users.poll();
-//		first.addContact(u);
-//		users.add(u);
-//
-//		// generate schools
-//		ArrayList<School> schools = new ArrayList<School>();
-//
-//		for (int k = 0; k < 10; k++) {
-//			School school = new School();
-//			school.setName("New school " + k);
-//			school.setLocation("Sofia, Bulgaria");
-//			school.setType(School.SchoolType.HIGHSCHOOL.toString());
-//			Long id = school.create();
-//
-////			generate questions for school
-//			for (int x = 0; x < 2; x++) {
-//				Post question = new Post();
-//				question.setBody(RandomStringUtils.randomAlphabetic(20));
-//				question.setTitle(RandomStringUtils.randomAlphabetic(10));
-//				question.setTags("test, proba");
-//				question.setPostType(PostType.QUESTION);
-//				question.setUserid(users.get(getIndex1(users.size())).getId());
-//				question.setParentuuid(school.getUuid());
-//				Long qid = question.create();
-//				logger.log(Level.WARNING, "created question {0}", qid);
-//			}
-//			resetIndex1();
-//
-//			schools.add(school);
-//			logger.log(Level.WARNING, "created school {0}", id);
-//		}
-//
-////			 generate classes
-//		for (int k = 0; k < 10; k++) {
-//			Classunit classunit = new Classunit();
-//			classunit.setIdentifier(RandomStringUtils.randomAlphabetic(10));
-//			classunit.setGradyear(2011);
-//			classunit.setSchoolid(schools.get(getIndex1(schools.size())).getId());
-//			Long id = classunit.create();
-//			logger.log(Level.WARNING, "created class {0}, bbid {1}", 
-//					new Object[]{id, classunit.getBlackboardid()});
-//
-//			for (int x = 0; x < 5; x++) {
-//				classunit.linkToUser(users.get(getIndex2(users.size())).getId());
-//			}
-//		}
-//		resetIndex1();
-//		resetIndex2();
-//	}
-//
-//	int i = 0;
-//	private int getIndex1(int size){
-//		if(++i >= size) i = 0;
-//		return i;
-//	}
-//
-//	private void resetIndex1(){i = 0;}
-//
-//	int j = 0;
-//	private int getIndex2(int size){
-//		if(++j >= size) j = 0;
-//		return j;
-//	}
-//
-//	private void resetIndex2(){j = 0;}
 }

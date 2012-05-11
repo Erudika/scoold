@@ -3,9 +3,9 @@
 #macro(dayselect $class $name $selectday)
 	<select class="$class" name="$name">
 		#if($selectday == 0)  
-			<option value="" selected="selected">${lang.get("day")} &nbsp;</option>
+			<option value="" selected="selected">$!{lang.get("day")} &nbsp;</option>
 		#else
-			<option value="">${lang.get("day")} &nbsp;</option>
+			<option value="">$!{lang.get("day")} &nbsp;</option>
 		#end
 
 		#foreach ($day in [1..31])
@@ -21,9 +21,9 @@
 #macro(monthselect $class $name $selectmonth)
 	<select class="$class" name="$name">
 		#if($selectmonth == 0)
-			<option value="" selected="selected">${lang.get("month")} &nbsp;</option>
+			<option value="" selected="selected">$!{lang.get("month")} &nbsp;</option>
 		#else
-			<option value="">${lang.get("month")} &nbsp;</option>
+			<option value="">$!{lang.get("month")} &nbsp;</option>
 		#end
 
 		#foreach ($month in $daoutils.getMonths($currentLocale))
@@ -40,13 +40,13 @@
 #####################################
 #macro(yearselect $class $name $future $selectyear $firstItem)
 	<select class="$class" name="$name">
-		#if($firstItem && $firstItem == "") #set($first = $lang.get("year"))
+		#if($firstItem && $firstItem == "") #set($first = $!lang.get("year"))
 		#else	#set($first = $firstItem)	#end
 
 		#if($selectyear == 0)
 			<option value="" selected="selected">$first &nbsp;</option>
 		#else
-			<option value="">${lang.get("year")} &nbsp;</option>
+			<option value="">$!{lang.get("year")} &nbsp;</option>
 		#end
 
 		#if($future)  #set($y1 = $daoutils.currentYear + 10) #set($y2 = $y1 - 80)
@@ -97,7 +97,7 @@
 #macro(contactdetailtypestr $detailtype )
 	#if($detailtype.name() == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
 	#elseif($detailtype.name() == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
-	#elseif($detailtype.name() == "UNKNOWN") #set($showdetailstr = $lang.get("unknown") )
+	#elseif($detailtype.name() == "UNKNOWN") #set($showdetailstr = $!lang.get("unknown") )
 	#else #set($showdetailstr = $detailtype.toString() ) #end
 	$!showdetailstr
 #end
@@ -114,7 +114,7 @@
 		<td class="pll p75">
 			<span class="contact-value">$!detail.value</span>
 			<input type="hidden" name="contacts" value="$!detail"/>
-			<a href="#" class="pictos remove-contact" title="$lang.get('remove')">D</a>
+			<a href="#" class="pictos remove-contact" title="$!lang.get('remove')">D</a>
 		</td>
 	</tr>
 #end
@@ -124,45 +124,45 @@
 		<tbody>
 			#if($showUser.rawDobString && !$showUser.rawDobString.isEmpty())
 			<tr>
-				<td class="r p25">${lang.get("profile.about.age")}: </td>
+				<td class="r p25">$!{lang.get("profile.about.age")}: </td>
 				<td class="pll p75" title="#formatdate($!{showUser.dob} 'dd MMMM yyyy')">$!{showUser.age} </td>
 			</tr>
 			#end
 			#if($showUser.location && !$showUser.location.isEmpty())
 			<tr>
-				<td class="r p25">${lang.get("profile.about.location")}:</td>
+				<td class="r p25">$!{lang.get("profile.about.location")}:</td>
 				<td class="pll p75">$!{showUser.location}</td>
 			</tr>
 			#end
 			#if($showUser.ilike && !$showUser.ilike.isEmpty())
 			<tr>
-				<td class="r p25">${lang.get("profile.about.ilike")}:</td>
+				<td class="r p25">$!{lang.get("profile.about.ilike")}:</td>
 				<td class="pll p75">$!{showUser.ilike}</td>
 			</tr>
 			#end
 			#if($showUser.contacts && !$showUser.contacts.isEmpty())
 				#foreach($contact in $showUser.getAllContactDetails())
 				<tr>
-					<td class="r p25">$lang.get(${contact.type.toLowerCase()}):</td>
+					<td class="r p25">$!lang.get(${contact.type.toLowerCase()}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
 			#end
 			#if($showUser.aboutme && !$showUser.aboutme.isEmpty())
 			<tr>
-				<td class="r p25">${lang.get("profile.about.aboutme")}:</td>
+				<td class="r p25">$!{lang.get("profile.about.aboutme")}:</td>
 				<td class="pll p75">$!{showUser.aboutme}</td>
 			</tr>
 			#end
 			#if($showUser.timestamp)
 			<tr>
-				<td class="r p25">${lang.get("profile.about.membersince")}:</td>
+				<td class="r p25">$!{lang.get("profile.about.membersince")}:</td>
 				<td class="pll p75">#formatdate($!{showUser.timestamp} "dd MMMM yyyy")</td>
 			</tr>
 			#end
 			#if($showUser.lastseen)
 			<tr>
-				<td class="r p25">${lang.get("profile.about.lastseen")}:</td>
+				<td class="r p25">$!{lang.get("profile.about.lastseen")}:</td>
 				<td class="pll p75">#formatdate($!{showUser.lastseen} "")</td>
 			</tr>
 			#end
@@ -191,28 +191,28 @@
 		</div>
 
 		#if($canEdit)
-			<div class="editbox rounded5 mvl pam $hideedit">
+			<div class="editbox lightgraybg rounded5 mvl pam $hideedit">
 				<form method="post" class="school-edit-form" action="$profilelink/$!showUser.id">
 					<fieldset>
 						#sectoken(false)
 						<input type="hidden" name="sid" value="$!school.id"/>
 						<input type="hidden" name="getmyschoolscode" value="true"/>
 
-						<legend>${lang.get("profile.myschools.add.period")}:</legend>
+						<legend>$!{lang.get("profile.myschools.add.period")}:</legend>
 						<div class="line">
 							<div class="unit size1of2">
-								<label class="mrm">${lang.get("from")}</label>
+								<label class="mrm">$!{lang.get("from")}</label>
 								#yearselect("fromyear nicebox p60" "fromyear" false $!school.fromyear "")
 							</div>
 							<div class="unit size1of2 lastUnit">
-								<label class="mrm">${lang.get("to")}</label>
+								<label class="mrm">$!{lang.get("to")}</label>
 								#yearselect("toyear nicebox p60" "toyear" true $!school.toyear "")
 							</div>
 						</div>
 
 						<div class="center mtl">
-							<input type="submit" value="${lang.get('save')}" class="edit-schoolbtn button rounded3"/>
-							<input type="button" value="${lang.get('close')}" class="button rounded3 canceledit $hideview"/>
+							<input type="submit" value="$!{lang.get('save')}" class="edit-schoolbtn button rounded3"/>
+							<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit $hideview"/>
 						</div>
 					</fieldset>
 				</form>
@@ -223,7 +223,7 @@
 #####################################
 #macro(schoolaboutview )
 	#if(!$showSchool.about || $showSchool.about.trim().isEmpty() && $canEdit)
-		<a class="editlink info-placeholder largeText center inlineblock p100 rounded5 mbl" href="$schoollink/$showSchool.id/edit">$lang.get("clickedit")</a>
+		<a class="editlink info-placeholder largeText center inlineblock p100 rounded5 mbl" href="$schoollink/$showSchool.id/edit">$!lang.get("clickedit")</a>
 	#else
 		<p>$!showSchool.about</p>
 	#end
@@ -232,13 +232,13 @@
 			#if($showSchool.contacts && !$showSchool.contacts.isEmpty())
 				#foreach($contact in $showSchool.getAllContactDetails())
 				<tr>
-					<td class="r p25">$lang.get(${contact.type.toLowerCase()}):</td>
+					<td class="r p25">$!lang.get(${contact.type.toLowerCase()}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
 			#end
 			<tr>
-				<td class="r p25">${lang.get("school.created")}:</td>
+				<td class="r p25">$!{lang.get("school.created")}:</td>
 				<td class="pll p75" colspan="2">#formatdate($!showSchool.timestamp "dd MMMM yyyy")</td>
 			</tr>
 		</tbody>
@@ -247,7 +247,7 @@
 ################# MESSAGES MACROS #####################
 #macro(newmessageform $names $ids)
 	<form method="post" class="new-message-form" action="$messageslink/new">
-		<fieldset class="p100 mtl">
+		<fieldset class="p98 mtl">
 			#sectoken(false)
 			#if($names.size() == 0)
 				#set($toval = "")
@@ -260,32 +260,32 @@
 			<table>
 				<tbody>
 					<tr>
-						<th class="prm">$lang.get("messages.to"):</th>
+						<th class="prm">$!lang.get("messages.to"):</th>
 						<td class="p100">
 							<input type="text" name="to" class="contactnamebox nicebox p100 mbm" value="$!toval"/>
-							<input type="hidden" name="touuids" value=""/>
+							<input type="hidden" name="toids" value=""/>
 							<!--<input type="text" class="nicebox p90" value="$tonames"/>-->
 							#foreach($id in $ids)
-								<input type="hidden" name="touuid" value="$id"/>
+								<input type="hidden" name="toid" value="$id"/>
 							#end
 						</td>
 					</tr>
 					<tr>
-						<th class="prm">$lang.get("message.title"):</th>
+						<th class="prm">$!lang.get("message.title"):</th>
 						<td class="p100"><textarea rows="3" cols="4" class="p100 nicebox" name="body"></textarea></td>
 					</tr>
 				</tbody>
 			</table>
 			
 			<div class="center mtl">
-				<input type="submit" value="$lang.get('send')" id="sendmessage-btn" class="button rounded3 mrm"/>
-				<input type="button" value="$lang.get('close')" id="sendmessage-close" class="button rounded3 mlm"/>
+				<input type="submit" value="$!lang.get('send')" id="sendmessage-btn" class="button rounded3 mrm"/>
+				<input type="button" value="$!lang.get('close')" id="sendmessage-close" class="button rounded3 mlm"/>
 			</div>
 		</fieldset>
 	</form>
 #end
 ################# COMMENTS MACROS #####################
-#macro(newcommentform $parentuuid $hidden $uri)
+#macro(newcommentform $parentid $hidden $uri)
 	#if($uri == "")
 		#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 		#if($request.getParameter('javax.servlet.forward.query_string'))
@@ -303,11 +303,11 @@
 				<div class="line">
 					<div class="unit size4of5">
 						<textarea rows="2" cols="4" class="p100 nicebox" name="comment"></textarea>
-						<input type="hidden" name="parentuuid" value="$!parentuuid"/>
+						<input type="hidden" name="parentid" value="$!parentid"/>
 						<input type="hidden" name="getcommenthtmlcode" value="true"/>
 					</div>
 					<div class="unit size1of5 lastUnit center">
-						<input type="submit" value="$lang.get('add')" class="button rounded3 new-comment-btn"/>
+						<input type="submit" value="$!lang.get('add')" class="button rounded3 new-comment-btn"/>
 					</div>
 				</div>
 			</fieldset>
@@ -324,20 +324,20 @@
 			#if($postParentId && $postParentClass)
 				#if($postParentClass == "school")
 					#set($actionlink = "$schoollink/$!postParentId")
-					<a href="$actionlink">$lang.get("school.title")</a>
-				#elseif($postParentClass == "classunit")
-					#set($actionlink = "$classlink/$!postParentId")
-					<a href="$actionlink">$lang.get("class.title")</a>
+					<a href="$actionlink">$!lang.get("school.title")</a>
+				#elseif($postParentClass == "group")
+					#set($actionlink = "$grouplink/$!postParentId")
+					<a href="$actionlink">$!lang.get("group.title")</a>
 				#end
 			#else
 				#set($actionlink = $questionslink)
-				<a href="$actionlink">$lang.get("questions.title")</a>
+				<a href="$actionlink">$!lang.get("questions.title")</a>
 			#end
-			/ $lang.get("posts.ask")
+			/ #if($postParentClass == "group") $!lang.get("posts.new") #else $!lang.get("posts.ask") #end
 		</h2>
 	#elseif($type.equalsIgnoreCase("feedback"))
 		#set($actionlink = $feedbacklink)
-		<h2><a href="$feedbacklink">$lang.get("feedback.title")</a> / $lang.get("feedback.write")</h2>
+		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
 	#end
 	<hr />
 	<div id="questionform" class="qform $hide">
@@ -351,14 +351,14 @@
 				${form.fields.timer}
 				<div class="hide">Leave blank:</div>${form.fields.additional}
 				<input type="hidden" name="ask" value="true"/>
-				#createformfield(${form.fields.parentuuid} "nicebox p50")
-				#createformfield(${form.fields.title} "nicebox p100")
-				#createformfield(${form.fields.body} "edit-post nicebox p100 nicebox hidelabel")
+				#createformfield(${form.fields.parentid} "nicebox p50")
+				#createformfield(${form.fields.title} "nicebox p98")
+				#createformfield(${form.fields.body} "edit-post nicebox p98 nicebox hidelabel")
 				<div class="edit-preview"></div>
-				#createformfield(${form.fields.tags} "tagbox nicebox p100")
+				#createformfield(${form.fields.tags} "tagbox nicebox p98")
 
 				<div class="center mtl">
-					${form.fields.askbtn} &nbsp; <a href="$!actionlink" class="button-small rounded3">$lang.get('cancel')</a>
+					${form.fields.askbtn} &nbsp; <a href="$!actionlink" class="button-small rounded3">$!lang.get('cancel')</a>
 				</div>
 			</fieldset>
 		</form>
@@ -377,9 +377,9 @@
 			<fieldset>
 				#sectoken(false)
 				#if($showpost.isQuestion())
-					<legend>$lang.get("posts.youranswer")</legend>
-				#elseif($showpost.isFeedback())
-					<legend>$lang.get("feedback.writereply")</legend>
+					<legend>$!lang.get("posts.youranswer")</legend>
+				#else
+					<legend>$!lang.get("feedback.writereply")</legend>
 				#end
 				#renderSpecialFields($form)
 				${form.fields.timer}
@@ -387,14 +387,14 @@
 				<div class="hide">Leave blank:</div>${form.fields.additional}
 				<ol>
 					<li>
-						#createformfield(${form.fields.body} "hidelabel edit-post unload-confirm p100 nicebox")
+						#createformfield(${form.fields.body} "hidelabel edit-post unload-confirm p99 nicebox")
 						<div class="edit-preview"></div>
 					</li>
 				</ol>
 
 				<div class="center">
 					${form.fields.answerbtn}
-					<input type="button" value="$lang.get('close')" class="button rounded3 close-answer-form"/>
+					<input type="button" value="$!lang.get('close')" class="button rounded3 close-answer-form"/>
 				</div>
 			</fieldset>
 		</form>
@@ -402,12 +402,17 @@
 #end
 ###########################################
 #macro(tagsbox $tags $link)
-	#foreach($showtag in $tags.split(","))
-		#if($showtag && $showtag.trim() != "")
-			#set($showenctag = $daoutils.urlEncode($showtag))
-			<a href="$link/tag/$!showenctag" title="Posts tagged $!showtag" class="button-tiny rounded3 mrs">
-				<span class="pictos">z</span> $!showtag
-			</a>
+	#foreach($tag in $tags.split(","))
+		#if($tag && $tag.trim() != "")
+			#if($link.isEmpty())
+				<span class="button-tiny rounded3 mrs">
+					<span class="pictos">z</span> $!tag
+				</span>
+			#else
+				<a href="$link/tag/$!$daoutils.urlEncode($tag)" title="Posts tagged $!tag" class="button-tiny rounded3 mrs">
+					<span class="pictos">z</span> $!tag
+				</a>
+			#end
 		#end
 	#end
 #end
@@ -416,10 +421,10 @@
 	#if($request.getParameter("label"))
 		#set($showlabel = $request.getParameter("label"))
 		#if(!$showlabel.isEmpty()) #set($labelparam = "/?label=$daoutils.urlEncode($showlabel)") #else #set($labelparam = "") #end
-		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / <a href="${baseurl}${labelparam}"><span class="pictos">z</span> $!{showlabel} #showcount($mediacount.longValue())</a> / $lang.get("photos.gallery")</h2>
+		<h2><a href="${baseurl}">$!lang.get("photos.title")</a> / <a href="${baseurl}${labelparam}"><span class="pictos">z</span> $!{showlabel} #showcount($mediacount.longValue())</a> / $!lang.get("photos.gallery")</h2>
 	#else
 		#set($showlabel = "")
-		<h2><a href="${baseurl}">$lang.get("photos.title")</a> / $lang.get("photos.gallery") #showcount($mediacount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
+		<h2><a href="${baseurl}">$!lang.get("photos.title")</a> / $!lang.get("photos.gallery") #showcount($mediacount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
 	#end
 
 	#if($showlabel != "")
@@ -435,7 +440,7 @@
 			#oembedbox("addimage")
 		#end
 		<div id="photos" class="mvl">
-			#paginate($pagenum.longValue() "#thumbspage($medialist $showlabel)" $mediacount.longValue() "$labelparam" "pageless" )
+			#paginate($pagenum.longValue() "\#thumbspage(\$medialist \$showlabel)" $mediacount.longValue() "$labelparam" "pageless" )
 		</div>
 		<br />
 		#showlabels($labelslist $baseurl)
@@ -445,7 +450,7 @@
 #macro(thumbbox $thumb $showlabel)
 	<div class="thumb-wrap center inlineblock mrl">
 		#set($turl = $request.getAttribute("javax.servlet.forward.request_uri"))
-		#set($delturl = "${turl}/?remove=$!thumb.id&amp;parentuuid=$!thumb.parentuuid")
+		#set($delturl = "${turl}/?remove=$!thumb.id&amp;parentid=$!thumb.parentid")
 		#if($showlabel && !$showlabel.isEmpty())
 			#set($label = "?label=${showlabel}&amp;mid=")
 			#set($delturl = "${delturl}&amp;label=${showlabel}")
@@ -457,9 +462,7 @@
 				#if($thumb.thumburl && !$thumb.thumburl.isEmpty())
 					<img src="$!thumb.thumburl" alt="$!thumb.title" title="$!thumb.description" class="rounded3"/>
 				#else
-					#set($w = ($thumb.width * 25) / 100)
-					#set($h = ($thumb.height * 25) / 100)
-					<img width="$w" height="$h" src="$!thumb.url" alt="$!thumb.title" title="$!thumb.description" class="rounded3"/>
+					<img src="$!thumb.url" alt="$!thumb.title" title="$!thumb.description" class="rounded3 oembed-thumb"/>
 				#end
 			</a>
 		</div>
@@ -491,7 +494,7 @@
 #macro(showlabels $labels $url)
 	#if($labels && !$labels.isEmpty())
 		<div>
-			<h2>$lang.get("photos.labels")</h2>
+			<h2>$!lang.get("photos.labels")</h2>
 			
 			#foreach($labelshow in $labels)
 				#labelbox($labelshow $url "" false)
@@ -544,13 +547,8 @@
 		<div id="gallery" class="content mtl">
 			<div id="controls" class="controls mbm line">
 				<div class="nav-controls unit size1of2 ptm">
-					<a class="prev button-small rounded3" href="${gurl}/$!{label}$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
-					&nbsp;
-					<span class="ss-controls">
-						<a href="#play" class="play button-small rounded3" title="Play">&nbsp;<span class="pictos">4</span>&nbsp;</a>
-					</span>
-					&nbsp;
-					<a class="next button-small rounded3" href="${gurl}/$!{label}$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
+					<a class="prev button-small rounded3 mrs" href="${gurl}/$!{label}$!{prevIndex}" title="Previous">&nbsp;<span class="pictos">[</span>&nbsp;</a>
+					<a class="next button-small rounded3 mls" href="${gurl}/$!{label}$!{nextIndex}" title="Next">&nbsp;<span class="pictos">]</span>&nbsp;</a>
 				</div>
 				<div class="unit size1of2 lastUnit r">
 					#votebox($currentPhoto "largeText")
@@ -558,7 +556,7 @@
 			</div>
 			<div class="slideshow-container center">
 				<div id="slideshow" class="slideshow">
-					<a class="advance-link" href="${gurl}/$!{label}$!{nextIndex}" title="$lang.get('next')">
+					<a class="advance-link" href="${gurl}/$!{label}$!{nextIndex}" title="$!lang.get('next')">
 						#set($sizearr = $daoutils.getMaxImgSize($currentPhoto.height, $currentPhoto.width) )
 						<img height="$sizearr.get(0)" width="$sizearr.get(1)" src="$currentPhoto.url" alt="$!currentPhoto.title" class="rounded3"/>
 					</a>
@@ -568,7 +566,7 @@
 						#if(($authenticated && $currentPhoto.userid == $authUser.id) || $request.isUserInRole("mod"))
 							<span class="image-original">
 								#if($currentPhoto.originalurl)
-									<a href="$!currentPhoto.originalurl" title="View original" class="extlink">$lang.get("photos.vieworiginal")</a>
+									<a href="$!currentPhoto.originalurl" title="View original" class="extlink">$!lang.get("photos.vieworiginal")</a>
 								#end
 							</span>
 						#end
@@ -582,14 +580,14 @@
 							#labelbox("" $gurl $currentPhoto.id true)
 						</span>
 
-						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&amp;</span> $lang.get("photos.addlabels")</a>
+						<a href="#" title="Add label" class="next-div-toggle button-tiny rounded3"><span class="pictos">&amp;</span> $!lang.get("photos.addlabels")</a>
 						<div class="hide mtm">
 							<form method="post" id="add-label-form" action="$gurl">
 								<fieldset>
 									#sectoken(false)
 									<input type="text" class="addlabelbox nicebox p60" value="" name="addlabel"/>
 									<input type="hidden" name="mid" value="$currentPhoto.id"/>
-									<input type="submit" value="$lang.get('add')" class="button rounded3"/>
+									<input type="submit" value="$!lang.get('add')" class="button rounded3"/>
 								</fieldset>
 							</form>
 						</div>
@@ -599,14 +597,14 @@
 		</div>
 
 		<div class="comments p100 mtl">
-			#paginate($pagenum.longValue() "#commentspage($commentslist)" $itemcount.longValue() "mid=$!{currentPhoto.id}&amp;parentuuid=$!{currentPhoto.uuid}" "pageless" )
+			#paginate($pagenum.longValue() "\#commentspage(\$commentslist)" $itemcount.longValue() "mid=$!{currentPhoto.id}&amp;parentid=$!{currentPhoto.id}" "pageless" )
 		</div>
 		
 		<div class="center mtl">
 			#if($authenticated && $canComment)
 				#if($request.getParameter("write")) #set($hidebox = false) #else #set($hidebox = true)	#end
-				<a href="${gurl}/$!{label}$!{currentPhoto.id}?write=true" class="button-small rounded3 next-div-toggle" title="Add a comment">$lang.get("comments.write")</a>
-				#newcommentform($currentPhoto.uuid $hidebox "")
+				<a href="${gurl}/$!{label}$!{currentPhoto.id}?write=true" class="button-small rounded3 next-div-toggle" title="Add a comment">$!lang.get("comments.write")</a>
+				#newcommentform($currentPhoto.id $hidebox "")
 			#end
 		</div>
 	#end
@@ -618,17 +616,17 @@
 		<a href="http://embed.ly" class="extlink right">
 			<img src="http://embed.ly/static/images/logos/embedly-powered-small-light.png" alt="embedly"/>
 		</a>
-		<span class="mediumText">$lang.get("profile.drawer.embedly")</span>
+		<span class="mediumText">$!lang.get("profile.drawer.embedly")</span>
 		#ajaxloading(false)
 		<div class="mtl"></div>
 		<div class="center mtl">
-			<a href="#" class="jqmClose button-small rounded3">$lang.get("close")</a>
+			<a href="#" class="jqmClose button-small rounded3">$!lang.get("close")</a>
 		</div>
 	</div>
 	<form method="post" id="embed-form" action="${uri}">
 		<fieldset>
 			#sectoken(false)
-			<input type="text" value="$lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
+			<input type="text" value="$!lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
 			<input type="hidden" name="getmediahtmlcode" value="true"/>
 			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&amp;</span></a>
 			
@@ -636,101 +634,26 @@
 			<div class="hide oembed-preview pam center mtm rounded5">
 				#ajaxloading(false)
 				<div id="oembed-container" class="center">	</div>
-				<input type="submit" value="$lang.get('add')" id="embed-btn" class="button rounded3"/>
+				<input type="submit" value="$!lang.get('add')" id="embed-btn" class="button rounded3"/>
 				&nbsp;
-				<a href="#" class="cancel-embed-btn" title="$lang.get('close')">$lang.get("close")</a>
+				<a href="#" class="cancel-embed-btn" title="$!lang.get('close')">$!lang.get("close")</a>
 			</div>
 		</fieldset>
 	</form>	
 #end
-################# PAGINATION MACROS #####################
-#macro(paginate $page $body $count $params $mode)
-	
-	#set($maxPlinks = 10)
-	#set($next = $page + 1)
-	#set($prev = $page - 1)
-	#set($selectlimit = $maxPlinks / 2)
-	#set($pages = $count / $MAX_ITEMS_PER_PAGE)
-	#set($mod = $count % $MAX_ITEMS_PER_PAGE)
-	#set($pages = $daoutils.round($pages))
-	#if($mod != 0) #set($pages = $pages + 1) #end
+################# PAGINATION #####################
+#macro(paginate $page $macroCode $count $params $mode)
+	#if($pagenum.longValue() > 10000) #set($next = $page) #else #set($next = $page + 1) #end
 	#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
 	#set($classes = "pagelink button-small rounded3")
-	#set($classes2 = "darkborder phm pvs rounded3")
-
-	#if($params && !$params.isEmpty())
-		#set($reqURL = "$requri?${params}&amp;page")
-	#else
-		#set($reqURL = "$requri?page")
-	#end
-
-	## NOT NEEDED? #set($queryString = $request.queryString.replaceAll("[&\?]?page=[a-zA-Z0-9]*$",""))
-	## NOT NEEDED? #if($queryString && !$queryString.isEmpty()) #set($queryString = "$queryString&amp;page") #else #set($queryString = "page") #end
-
-	<div class="page-content">$!body</div>
-	#if($count > $MAX_ITEMS_PER_PAGE && $body && !$body.trim().isEmpty())
+	#if($params && !$params.isEmpty()) #set($reqURL = "$requri?${params}&amp;page") #else #set($reqURL = "$requri?page") #end
+	
+	<div class="page-content">#evaluate($macroCode)</div>
+	#if($count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
 		<div class="pages center mtl">
-		#if($mode == "pageless")
-			<a href="$reqURL=$!page" class="more-link $classes" title="More">$lang.get("more")</a>
-		#elseif($mode == "pageless-noajax")
-			<a href="$reqURL=$!page" class="more-link-na $classes" title="More">$lang.get("more")</a>
-		#else
-			#if($page && $page > $pages) #set($page = $pages) #end
-			#if($pages > $maxPlinks)
-				#if($page == 1)
-					<span class="$classes2">1</span>
-				#else
-					<a href="$reqURL=$prev" title="Previous page" class="$classes"><span class="pictos">[</span> $lang.get("prev")</a>
-					<a href="$reqURL=1" title="Go to page 1" class="$classes">1</a>
-				#end
-				#if($page < $selectlimit)
-					#foreach($n in [2..$selectlimit])
-						#if($n == $page)
-							<span class="$classes2">$!n</span>
-						#else
-							<a href="$reqURL=$n" title="Go to page $n" class="$classes">$!n</a>
-						#end
-					#end
-					<b>...</b>
-				#elseif($page > ($pages - $selectlimit + 1))
-					<b>...</b>
-					#set($from = $pages - $selectlimit + 1) #set($to = $pages - 1)
-					#foreach($n in [$from..$to])
-						#if($n == $page)
-							<span class="$classes2">$!n</span>
-						#else
-							<a href="$reqURL=$n" title="Go to page $n" class="$classes">$!n</a>
-						#end
-					#end
-				#else
-					<b>...</b>
-					#set($min = $page - 2) #set($max = $page + 2)
-					#foreach($n in [$min..$max])
-						#if($n == $page)
-							<span class="$classes2">$!n</span>
-						#else
-							<a href="$reqURL=$n" title="Go to page $n" class="$classes">$!n</a>
-						#end
-					#end
-					<b>...</b>
-				#end
-
-				#if($page == $pages)
-					<span class="$classes2">$!pages</span>
-				#else
-					<a href="$reqURL=$pages" title="Go to page $pages" class="$classes">$!pages</a>
-					<a href="$reqURL=$next" title="Next page" class="$classes">$lang.get("next") <span class="pictos">]</span></a>
-				#end
-			#else
-				#foreach($n in [1..$pages])
-					#if($n == $page)
-						<span class="$classes2">$!n</span>
-					#else
-						<a href="$reqURL=$n" title="Go to page $n" class="$classes">$!n</a>
-					#end
-				#end
-			#end
-		#end
+			#if($mode == "pageless") #set($classes = "$classes more-link" ) #else #set($classes = "$classes more-link-na" ) #end
+			<a href="$reqURL=$!next" class="more-link-na $classes" title="Load more">$!lang.get("more")</a>
+			<span class="hide page-macro-code">$!macroCode</span>
 		</div>
 	#end
 #end
@@ -746,7 +669,7 @@
 			
 			<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" class="$schoolthumbclass">
 				#if($showschool.iconurl && !$showschool.iconurl.isEmpty())
-					<img src="$showschool.iconurl" width="50" height="50" alt="School thumbnail"/>
+					<img src="$showschool.iconurl" alt="School thumbnail" />
 				#else
 					&nbsp;
 				#end
@@ -756,13 +679,13 @@
 			<div class="line lightgray">
 				<div class="unit size1of2">$!lang.get("school.${showschool.type}")</div>
 				<div class="unit size1of2 lastUnit r">
-					$!showschool.location</span>
+					<span>$!showschool.location</span>
 				</div>
 			</div>
 			<div class="line">
 				<div class="unit size3of4">
 					<div class="mediumText">
-						<span class="phs rounded3 reputationbox" title="$lang.get('votes')">$daoutils.abbreviateInt($!showschool.votes, 0)</span>
+						<span class="phs rounded3 reputationbox" title="$!lang.get('votes')">$daoutils.abbreviateInt($!showschool.votes, 0)</span>
 						<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" >$!{showschool.name}</a>
 					</div>
 					#if($showschool.fromyear && $showschool.fromyear != 0)
@@ -779,17 +702,17 @@
 					#if($authenticated)
 						#if($showschool.isLinkedTo($authUser))
 							<a class="button-tiny rounded3" href="$schoollink/$!showschool.id/leave/#stripstr($!showschool.name)" class="rounded3 button-tiny rusure">
-								<span class="pictos">-</span> $lang.get("leave")
+								<span class="pictos">-</span> $!lang.get("leave")
 							</a>
 						#else
 							<a class="button-tiny rounded3" href="$schoollink/$!showschool.id/join/#stripstr($!showschool.name)" class="rounded3 button-tiny">
-								<span class="pictos">+</span> $lang.get("join")
+								<span class="pictos">+</span> $!lang.get("join")
 							</a>
 						#end
 					#end
 					#if($canEdit)
 						<a href="$profilelink/$!showUser.id/schools/edit" class="editlink button-tiny rounded3">
-							<span class="pictos">W</span> $lang.get("edit")
+							<span class="pictos">W</span> $!lang.get("edit")
 						</a>
 					#end
 					#if(!$authenticated || ($authenticated && $showschool.userid != $authUser.id))
@@ -810,14 +733,14 @@
 #macro(classbox $showclass )
 	<div class="whitebox clearfix classbox media">
 		<div class="img center mls mrl">
-			<div class="lightgray">$lang.get("year")</div>
+			<div class="lightgray">$!lang.get("year")</div>
 			<span class="hugeText">$!{showclass.gradyear}</span>
 		</div>
 		<div class="bd">
 			#set($showschool = $showclass.school)
 			<div class="line lightgray">
-				<div class="unit size1of3">$lang.get("class.title")</div>
-				<div class="unit size2of3 lastUnit r" title="$lang.get('class.classmates')">
+				<div class="unit size1of3">$!lang.get("class.title")</div>
+				<div class="unit size2of3 lastUnit r" title="$!lang.get('class.classmates')">
 					<span class="pictos">g</span> $!showclass.count
 				</div>
 			</div>
@@ -832,11 +755,11 @@
 					#if($authenticated)
 						#if($showclass.isLinkedTo($authUser))
 							<a class="button-tiny rounded3" href="$classlink/$!showclass.id/leave/#stripstr($!showclass.identifier)/?left=true">
-								<span class="pictos">-</span> $lang.get("leave")
+								<span class="pictos">-</span> $!lang.get("leave")
 							</a>
 						#else
 							<a class="button-tiny rounded3" href="$classlink/$!showclass.id/join/#stripstr($!showclass.identifier)/?joined=true">
-								<span class="pictos">+</span> $lang.get("join")
+								<span class="pictos">+</span> $!lang.get("join")
 							</a>
 						#end
 					#end
@@ -861,6 +784,80 @@
 	#end
 #end
 ####################################
+#macro(groupbox $showgroup )
+	<div class="whitebox clearfix groupbox media">
+		<div class="img center mls mrl">
+			#grouppic($showgroup "small")
+		</div>
+		<div class="bd">
+			<div class="line lightgray">
+				<div class="unit size1of3">$!lang.get("group.title")</div>
+				<div class="unit size2of3 lastUnit r" title="$!lang.get('group.members')">
+					<span class="pictos">g</span> $!showgroup.count
+				</div>
+			</div>
+			<div class="line">
+				<div class="unit size3of4">
+					<div class="mediumText">
+						<a href="$grouplink/$!showgroup.id/#stripstr($!showgroup.name)">$!{showgroup.name}</a>
+					</div>
+					#if($showgroup.description && !$showgroup.description.trim().isEmpty())
+						<span>$showgroup.description</span>
+					#end
+				</div>
+				<div class="unit size1of4 lastUnit r">
+					#if($authenticated)
+						#if($showgroup.isLinkedTo($authUser) && !$showgroup.userid.equals($authUser.id))
+							<a class="button-tiny rounded3" href="$grouplink/$!showgroup.id/leave/#stripstr($!showgroup.name)/?left=true">
+								<span class="pictos">-</span> $!lang.get("leave")
+							</a>
+						#end
+					#end
+					#if(!$authenticated || ($authenticated && $showgroup.userid != $authUser.id))
+						#getreportlink($showgroup "$grouplink/$showgroup.id" "button-tiny rounded3 notext")
+					#end
+				</div>
+			</div>
+		</div>
+	</div>
+#end
+####################################
+#macro(grouppic $showgroup $large)
+	#set($hasimg = $showgroup.imageurl && $showgroup.imageurl.startsWith("http") && 
+		!$showgroup.imageurl.contains("scoold.com"))
+	#if($large && $large == "large")
+		#if($hasimg)
+			<img src="$!showgroup.imageurl" alt="Group image" class="rounded3 profile-pic-large"/>
+		#else
+			<span class="gigaText pictos groupicon-large rounded3">g</span>
+		#end
+	#else
+		#if($hasimg)
+			<img src="$!showgroup.imageurl" alt="Group image" class="profile-pic-small"/>
+		#else
+			<span class="mediumText pictos groupicon-small">g</span>
+		#end
+	#end
+#end
+####################################
+#macro(groupspage $groups)
+	#foreach($showgroup in $groups)
+		#groupbox($showgroup)
+	#end
+#end
+####################################
+#macro(groupmemberspage $members)
+	#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
+	#foreach($showmember in $members)
+		#if($showmember.id.equals($authUser.id))
+			#set($showmember.isGroupMember = false )
+		#else
+			#set($showmember.isGroupMember = true )
+		#end
+		#personbox($showmember)
+	#end
+#end
+####################################
 #macro(personbox $showFriend)
 	#if($showFriend)
 		<div class="whitebox clearfix media">
@@ -879,27 +876,31 @@
 				<div class="line">
 					<div class="unit size3of4">
 						<div class="mediumText mbs">
-							<span class="phs rounded3 reputationbox" title="$lang.get('reputation')">$daoutils.abbreviateInt($!showFriend.reputation, 0)</span>
+							<span class="phs rounded3 reputationbox" title="$!lang.get('reputation')">$daoutils.abbreviateInt($!showFriend.reputation, 0)</span>
 							<a href="$profilelink/${showFriend.id}/#stripstr($!showFriend.fullname)">$!{showFriend.fullname}</a>
 						</div>
-						#if($showFriend.status && !$showFriend.status.isEmpty())
+						#if($showFriend.status && !$showFriend.status.isEmpty() && !$showFriend.isGroupMember)
 							<div>$!{showFriend.status}</div>
 						#end
 					</div>
 					<div class="unit size1of4 lastUnit r">
-						#if($authenticated && $authUser.id != $showFriend.id)
-							#if($authUser.isFriendWith($showFriend))
-								<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove" title="Remove from contacts">
-									<span class="pictos">-</span> ${lang.get("remove")}
-								</a>
-							#else
-								<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add" title="Add to contacts">
-									<span class="pictos">+</span> $lang.get("add")
-								</a>
+						#if($showFriend.isGroupMember)
+							<a href="${uri}?remove=$showmember.id" class="remove-groupmember-btn button-small rounded3"><span class="pictos">_</span> $!lang.get("remove")</a>
+						#else
+							#if($authenticated && $authUser.id != $showFriend.id)
+								#if($authUser.isFriendWith($showFriend))
+									<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove" title="Remove from contacts">
+										<span class="pictos">-</span> $!{lang.get("remove")}
+									</a>
+								#else
+									<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add" title="Add to contacts">
+										<span class="pictos">+</span> $!lang.get("add")
+									</a>
+								#end
 							#end
-						#end
-						#if(!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
-							#getreportlink($showFriend "$profilelink/$showFriend.id" "button-tiny rounded3 notext")
+							#if(!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
+								#getreportlink($showFriend "$profilelink/$showFriend.id" "button-tiny rounded3 notext")
+							#end
 						#end
 					</div>
 				</div>
@@ -923,7 +924,7 @@
 			#if($showu)
 				<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" class="smallText">$showu.fullname</a>
 			#else
-				$lang.get("profile.deleted")
+				$!lang.get("profile.deleted")
 			#end
 			#if($showu)
 				<br />
@@ -964,11 +965,11 @@
 					$!showname
 				#end
 			</div>
-			<span class="lightgray smallText">$lang.get("invited")</span>
+			<span class="lightgray smallText">$!lang.get("invited")</span>
 			
 			#if(($authenticated && $authUser.reputation >= 20) || !$authenticated)
 				<div>
-					<a href="$classlink/p/$showclass.id/thisisme/${daoutils.urlEncode($!showname)}?thisisme=${daoutils.urlEncode($!showname)}" title="This is me!" class="button-tiny rounded3">$lang.get("profile.thisisme")</a>
+					<a href="$classlink/p/$showclass.id/thisisme/${daoutils.urlEncode($!showname)}?thisisme=${daoutils.urlEncode($!showname)}" title="This is me!" class="button-tiny rounded3">$!lang.get("profile.thisisme")</a>
 				</div>
 			#end
 		</div>
@@ -982,7 +983,7 @@
 				#if($showu.isAdmin())
 					<span class="pictos" title="Scoold developer">b</span>
 				#end
-				<span class="pictos" title="$lang.get('mod')">S</span>
+				<span class="pictos" title="$!lang.get('mod')">S</span>
 			#else
 				<span class="pictos">U</span>
 			#end
@@ -995,7 +996,7 @@
 			#end
 			<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.fullname</a>
 		#else
-			$lang.get("profile.deleted")
+			$!lang.get("profile.deleted")
 		#end
 	</span>
 #end
@@ -1045,8 +1046,8 @@
 	<div class="commentbox pas $hide">
 		#if($showcomment.hidden)
 			#set($hidden = "hide")
-			<span>$lang.get("comments.hidden") &nbsp;</span>
-			<a href="#" title="$lang.get('comments.show')" class="show-comment">$lang.get("comments.show")</a>
+			<span>$!lang.get("comments.hidden") &nbsp;</span>
+			<a href="#" title="$!lang.get('comments.show')" class="show-comment">$!lang.get("comments.show")</a>
 		#else
 			#set($hidden = "noclass")
 		#end
@@ -1058,14 +1059,14 @@
 				<span class="comment-author">#personlink($commentAuthor):</span>&nbsp;
 				<span class="comment-text">$!showcomment.comment</span>
 			</div>
-			<div class="inlineblock right">
+			<div class="inlineblock right max-width-100">
 				<span class="comment-timestamp mrs"><span class="pictos">t</span> #formatdate($showcomment.timestamp '')</span>
 				#votebox($showcomment "mrs")
 				#if($showcomment == "")
 					#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
-					<a href="${thisuri}" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
+					<a href="${thisuri}" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
 				#elseif($authenticated && ($showcomment.userid == $authUser.id || $request.isUserInRole("mod")))
-					<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$lang.get('delete')" class="red delete-comment pictos">D</a>
+					<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
 				#else
 					#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
 				#end
@@ -1090,7 +1091,7 @@
 			#end
 
 			#if($comments.size() > $count)
-				<a href="#" class="more-comments-btn button-tiny rounded3">$lang.get("more")</a>
+				<a href="#" class="more-comments-btn button-tiny rounded3">$!lang.get("more")</a>
 				<div class="hide">
 					#set($countmo = $comments.size() - 1 )
 					#foreach($c in [$count..$countmo])
@@ -1111,7 +1112,7 @@
 	<div class="drawerbox mvl pbl">
 		<div class="right">
 			#if($authenticated && ($showvideo.userid == $authUser.id || $request.isUserInRole("mod")))
-				<a href="${uri}/?remove=$!{showvideo.id}&amp;parentuuid=$!{showvideo.parentuuid}" title="Remove" class="delvideo button-small rounded3 red"><span class="pictos">*</span></a>
+				<a href="${uri}/?remove=$!{showvideo.id}&amp;parentid=$!{showvideo.parentid}" title="Remove" class="delvideo button-small rounded3 red"><span class="pictos">*</span></a>
 			#else
 				#getreportlink($showvideo "$medialink/$!showvideo.id" "button-tiny rounded3")
 			#end
@@ -1175,15 +1176,15 @@
 #macro(getreportlink $reportable $link $clazz)
 	#if($reportable)
 		#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
-		#set($href = "${requri}?getreportform=true&amp;parentid=$!reportable.id&amp;parentuuid=$!reportable.uuid&amp;classname=$!reportable.class.getSimpleName()")
+		#set($href = "${requri}?getreportform=true&amp;parentid=$!reportable.id&amp;parentid=$!reportable.id&amp;classname=$!reportable.class.getSimpleName()")
 		#if(!$link.isEmpty())
 			#set($encodedLink = $daoutils.urlEncode($link))
 			#set($href = "${href}&amp;link=$encodedLink")
 		#end
-		#if($reportable.parentuuid && !$reportable.parentuuid.isEmpty())
-			#set($href = "${href}&amp;grandparentuuid=$reportable.parentuuid")
+		#if($reportable.parentid && !$reportable.parentid.isEmpty())
+			#set($href = "${href}&amp;grandparentid=$reportable.parentid")
 		#end
-		#if($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $lang.get('report')") #end
+		#if($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $!lang.get('report')") #end
 		<a href="$!{href}" title="Report a problem" class="trigger-report $!clazz"><span class="pictos">^</span>$showtxt</a>
 	#end
 #end
@@ -1197,8 +1198,8 @@
 #macro(reportbox $showreport )
 	<div class="reportbox whitebox clearfix">
 		<div class="mediumText lightgray mbm">
-			$lang.get("reports.$!{showreport.classname.toLowerCase()}"):
-			$lang.get("reports.$!{showreport.type.toLowerCase()}")
+			$!lang.get("reports.$!{showreport.classname.toLowerCase()}"):
+			$!lang.get("reports.$!{showreport.type.toLowerCase()}")
 			<span class="right"><span class="pictos">t</span>#formatdate($!showreport.timestamp "")</span>
 		</div>
 		#if($showreport.closed)
@@ -1209,14 +1210,14 @@
 
 		<div class="pictos left mrl hugeText green $hide">3</div>
 		<div class="right">
-			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $lang.get("open")</a>
+			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $!lang.get("open")</a>
 			#if(!$showreport.closed)
-				<a href="#" class="button-medium rounded3 close-report" title="Close report"><span class="pictos">3</span> $lang.get("close")</a>
+				<a href="#" class="button-medium rounded3 close-report" title="Close report"><span class="pictos">3</span> $!lang.get("close")</a>
 			#else
-				<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="button-medium rounded3"><span class="pictos">1</span> $lang.get("reopen")</a>
+				<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="button-medium rounded3"><span class="pictos">1</span> $!lang.get("reopen")</a>
 			#end
 			#if($request.isUserInRole("admin"))
-				<a href="$reportslink/delete/$showreport.id" title="Delete" class="button-medium rounded3 red delete-report"><span class="pictos">*</span> $lang.get("delete")</a>
+				<a href="$reportslink/delete/$showreport.id" title="Delete" class="button-medium rounded3 red delete-report"><span class="pictos">*</span> $!lang.get("delete")</a>
 			#end
 		</div>
 		<div class="clearfix">
@@ -1235,15 +1236,15 @@
 			#else
 				#set($hide = "hide" )
 			#end
-			<p class="report-solution $hide"><span class="pictos lightgray" title="$lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
+			<p class="report-solution $hide"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
 		</div>
 
 		<div class="hide report-solution-box p100 mtm">
 			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
 				<fieldset>
 					#sectoken(false)
-					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox">$lang.get("reports.actionstaken")...</textarea>
-					<input class="report-solution-btn right" type="submit" value="$lang.get('save') &amp; $lang.get('close')" class="button rounded3"/>
+					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox">$!lang.get("reports.actionstaken")...</textarea>
+					<input class="report-solution-btn right" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="button rounded3"/>
 				</fieldset>
 			</form>
 		</div>
@@ -1257,16 +1258,11 @@
 #end
 ####################################
 #macro(questionbox $showpost )
-	#if($showpost.isQuestion())
-		#set($actionlink = $questionlink)
-		#set($actionlink2 = $questionslink)
-	#elseif($showpost.isFeedback())
-		#set($actionlink = $feedbacklink)
-		#set($actionlink2 = $feedbacklink)
-	#end
+	#set($actionlink = "#getpostlink($showpost false true)")
+	#set($actionlink2 = "#getpostlink($showpost true true)")
 
 	<div class="questionbox whitebox clearfix">
-		<div class="right mlm center">
+		<div class="right mlm center max-width-100">
 			#set($author = $showpost.author)
 			#tinypersonbox($author)
 			<div class="smallText">
@@ -1289,20 +1285,20 @@
 			<div class="img">
 				#if($showpost.answerid) #set($bgclass = "lightbluebg" ) #else #set($bgclass = "" ) #end
 				<div class="qstatsbox mrl pas rounded5 center $!bgclass">
-					<div class="largeText" title="$lang.get('votes')">$!daoutils.abbreviateInt($!votes, 0)</div>
+					<div class="largeText" title="$!lang.get('votes')">$!daoutils.abbreviateInt($!votes, 0)</div>
 					<div class="line">
-						<div class="unit size1of2" title="$lang.get('answers.title')">$daoutils.abbreviateInt($!answercount, 0)</div>
-						<div class="unit size1of2 lastUnit" title="$lang.get('posts.views')">$daoutils.abbreviateInt($!viewcount, 0)</div>
+						<div class="unit size1of2" title="$!lang.get('answers.title')">$daoutils.abbreviateInt($!answercount, 0)</div>
+						<div class="unit size1of2 lastUnit" title="$!lang.get('posts.views')">$daoutils.abbreviateInt($!viewcount, 0)</div>
 					</div>
 				</div>
 			</div>
 			<div class="bd">
 				#if($showpost.deleteme)
-					<span class="pictos" title="$lang.get('posts.marked')">#</span>
+					<span class="pictos red" title="$!lang.get('posts.marked')">#</span>
 				#end
 				<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 				
-				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body, $showdownJS))
+				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body))
 				#set($showBody = $daoutils.stripHtml($bodyHtml) )
 				<div>$!daoutils.abbreviate($showBody, 160)</div>
 				<div>#tagsbox($showpost.tags $actionlink2)</div>
@@ -1324,20 +1320,18 @@
 #end
 ####################################
 #macro(answerbox $showpost )
-	<div class="questionbox whitebox clearfix">
-		<div class="right p"> #set($author = $showpost.author)
-			#smallpersonbox($author)
-			#formatdate($showpost.timestamp "")
+	<div class="questionbox whitebox clearfix max-width-100">
+		<div class="right p">			
+			<span class="pictos">t</span> #formatdate($showpost.timestamp "")
 		</div>
 		<div class="p100">
 			#set($votes = $showpost.votes)
-
 			#if(!$votes) #set($votes = 0) #end
 
-			<span class="p10">$!votes</span>
+			<span class="p10 reputationbox phs mediumText rounded3 mrl">$!votes</span>
 			<span class="p70">
-				<a href="$questionlink/$showpost.parentpostid#post-$!showpost.id" title="View answer">
-					$!daoutils.abbreviate($showpost.body, 100)
+				<a href="$questionlink/$showpost.parentid#post-$!showpost.id" title="View answer">
+					#$!daoutils.abbreviate($showpost.body, 100).replaceAll('\s', ' ')
 				</a>
 			</span>
 		</div>
@@ -1345,18 +1339,14 @@
 #end
 ####################################
 #macro(postbox $showpost $parentpost)
-	#if($showpost.isAnswer())	#set($boxclass = "whitebox") #else #set($boxclass = "" ) #end
-
-	#if($showpost.isQuestion() || $showpost.isAnswer())
-		#set($actionlink = $questionlink)
-		#set($actionlink2 = $questionslink)
-	#elseif($showpost.isFeedback())
-		#set($actionlink = $feedbacklink)
-		#set($actionlink2 = $feedbacklink)
-	#end
+	#if($showpost.isReply())	#set($boxclass = "whitebox") #else #set($boxclass = "" ) #end
+	
+	#set($actionlink = "#getpostlink($showpost false true)")
+	#set($actionlink2 = "#getpostlink($showpost true true)")
+	
 	<div class="p100 postbox $boxclass">
 		#if($showpost.isBlackboard())
-			<h2 class="inline">$lang.get("blackboard.title")</h2> &nbsp;
+			<h2 class="inline">$!lang.get("blackboard.title")</h2> &nbsp;
 			#set($divposclass = "right" )
 		#else
 			#set($divposclass = "mvm" )
@@ -1364,39 +1354,35 @@
 		<div class="$!divposclass">
 			
 			#if($canEdit)
-				<a href="#" title="Edit" class="editlink button-tiny rounded3"><span class="pictos">W</span> $lang.get("edit")</a>
+				<a href="#" title="Edit" class="editlink button-tiny rounded3"><span class="pictos">W</span> $!lang.get("edit")</a>
 			#end
 
 			#if($canComment && !$showpost.isBlackboard())
-				<a href="#" class="next-div-toggle button-tiny rounded3" title="Add a comment"><span class="pictos">w</span> $lang.get("comments.write")</a>
-			#end
-
-			#if($showpost.lasteditby)
-				<a href="$postlink/$showpost.id/revisions" title="Revision history" class="button-tiny rounded3"><span class="pictos">l</span> $lang.get("revisions.title")</a>
+				<a href="#" class="next-div-toggle button-tiny rounded3" title="Add a comment"><span class="pictos">w</span> $!lang.get("comments.write")</a>
 			#end
 			
-			#if($showpost.isAnswer() && $request.isUserInRole("mod"))
-				<a href="$!questionlink/$!showpost.parentuuid" title="Go to parent question" rel="nofollow" class="button-tiny rounded3"><span class="pictos">j</span> $lang.get("posts.question")</a>
+			#if($showpost.lasteditby)
+				<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="button-tiny rounded3"><span class="pictos">l</span> $!lang.get("revisions.title")</a>
 			#end
 			
 			#if(!$showpost.isBlackboard())
 				#if($showpost.deleteme)
-					<a href="$!actionlink/$showpost.id/undelete" class="button-tiny rounded3" title="Undelete"><span class="pictos">1</span> $lang.get("undelete")</a>
+					<a href="$!actionlink/$showpost.id/undelete" class="post-refresh button-tiny rounded3" title="Undelete"><span class="pictos">1</span> $!lang.get("undelete")</a>
 				#elseif($isMine || $request.isUserInRole("mod"))
-					<a href="$questionlink/$showpost.id/delete" class="button-tiny rounded3 rusure" title="Delete"><span class="pictos">*</span> $lang.get("delete")</a>
+					<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask button-tiny rounded3" title="Delete"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
 			#end
 
 			#if($request.isUserInRole("mod") && $showpost.isQuestion())
 				#if($showPost.isClosed())
-					<a href="$questionlink/$showpost.id/close" title="Reopen" class="button-tiny rounded3"><span class="pictos">)</span> $lang.get("reopen")</a>
+					<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh button-tiny rounded3"><span class="pictos">)</span> $!lang.get("reopen")</a>
 				#else
-					<a href="$questionlink/$showpost.id/close" title="Close" class="button-tiny rounded3 rusure"><span class="pictos">(</span> $lang.get("close")</a>
+					<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask button-tiny rounded3"><span class="pictos">(</span> $!lang.get("close")</a>
 				#end
 			#end
 
 			#if($request.isUserInRole("admin") && !$showpost.isBlackboard())
-				<a href="${adminlink}?delete=post&amp;id=$showpost.id" title="Delete" class="button-tiny rounded3 red"><span class="pictos">*</span> $lang.get("delete")</a>
+				<a href="${adminlink}?delete=post&amp;id=$showpost.id" title="Delete" class="button-tiny rounded3 red"><span class="pictos">*</span> $!lang.get("delete")</a>
 			#end
 
 			#if(!$showpost.isBlackboard() && (!$authenticated || ($authenticated && $showpost.userid != $authUser.id)))
@@ -1404,18 +1390,35 @@
 			#end
 
 			#if($canComment && !$showpost.isBlackboard())
-				#newcommentform($showpost.uuid true "$questionlink/$showpost.id")
+				#newcommentform($showpost.id true "$questionlink/$showpost.id")
 			#end
 		</div>
 
 		#if(!$showpost.isBlackboard())
-			<div class="line">
+			<div class="line lightgraybg prs plm pts rounded5">
 				<div class="unit size1of2">
-					#set($author = $showpost.author)
-					#smallpersonbox($author)
+					#votebox($showpost "hugeText mtm mrl")
+					#if(!$showpost.isBlackboard())
+						<span class="right mtm">
+							#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
+							#if($approvedAnswer)
+								#set($onclass = "green")
+								#set($picon = "2")
+							#else
+								#set($onclass = "")
+								#set($picon = "3")
+							#end
+							#if($authenticated && $showpost.isReply() && $parentpost.userid.equals($authUser.id))
+								<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!onclass" title="Approve answer">$picon</a>
+							#elseif($approvedAnswer)
+								<span class="pictos megaText green">$picon</span>
+							#end
+						</span>
+					#end
 				</div>
 				<div class="unit size1of2 lastUnit r">
-					#votebox($showpost "hugeText mtm")
+					#set($author = $showpost.author)
+					#smallpersonbox($author)
 				</div>
 			</div>
 		#end
@@ -1428,30 +1431,12 @@
 			#set($bbclazz = "rounded3 pas" )
 		#end
 		<div id="$postviewid" class="viewbox $bbclazz">
-			#if(!$showpost.isBlackboard())
-				<div class="inlineblock mrl mls left">
-					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
-					#if($approvedAnswer)
-						#set($onclass = "green")
-						#set($picon = "2")
-					#else
-						#set($onclass = "")
-						#set($picon = "3")
-					#end
-					#if($authenticated && $showpost.isAnswer() && $parentpost.userid.equals($authUser.id))
-						<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!onclass" title="Approve answer">$picon</a>
-					#elseif($approvedAnswer)
-						<span class="pictos megaText green">$picon</span>
-					#end
-				</div>
-			#end
-
 			<div class="mbl pas">
-				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body, $showdownJS))
+				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body))
 				$!{bodyHtml}
 
 				#if($showpost.isBlackboard() && (!$showpost.body || $showpost.body.trim().isEmpty()))
-					<div class="center mtl mediumText">$lang.get("class.blankboard")</div>
+					<div class="center mtl mediumText">$!lang.get("class.blankboard")</div>
 				#end
 				
 				#if($showpost.tags && !$showpost.tags.isEmpty())
@@ -1464,7 +1449,7 @@
 					<div class="unit size1of3">
 						#if(!$showpost.isBlackboard())
 							<span class="pictos">p</span>
-							<strong>$lang.get("posts.posted")</strong>
+							<strong>$!lang.get("posts.posted")</strong>
 							<span class="pictos">t</span> #formatdate($showpost.timestamp "")
 						#end
 					</div>
@@ -1472,7 +1457,7 @@
 						#if($showpost.lasteditby)
 							<span class="pictos">W</span>
 							<strong>
-								<a href="$postlink/$showpost.id/revisions" title="Revision history">$lang.get("posts.editby")</a>
+								<a href="$postlink/$showpost.id/revisions" title="Revision history">$!lang.get("posts.editby")</a>
 							</strong>
 							#personlink($showpost.lastEditor) <span class="pictos">t</span> #formatdate($showpost.lastactivity "")
 						#end
@@ -1481,7 +1466,7 @@
 			#end
 		</div>
 		#if($canEdit)
-			<div class="editbox rounded5 pam hide">
+			<div class="editbox lightgraybg rounded5 pam hide">
 				#set($form = $showpost.editForm)
 				#if($form)
 					#set($editLink = $request.getAttribute("javax.servlet.forward.request_uri"))
@@ -1493,12 +1478,9 @@
 							#sectoken(false)
 							#renderSpecialFields($form)
 							${form.fields.timer}
-							#if($showpost.isAnswer())
-								<input type="hidden" name="parentpostid" value="$parentpost.id"/>
-							#end
 							<input type="hidden" name="editpostid" value="$showpost.id"/>
 							<div class="hide">Leave blank:</div>${form.fields.additional}
-							#createformfield(${form.fields.body} "hidelabel edit-post nicebox p100")
+							#createformfield(${form.fields.body} "hidelabel edit-post nicebox p99")
 							<div class="edit-preview"></div>
 							#if($showpost.isQuestion())
 								#createformfield(${form.fields.tags} "tagbox nicebox p99")
@@ -1506,7 +1488,7 @@
 
 							<div class="center mtl">
 								${form.fields.editbtn}
-								<input type="button" value="$lang.get('close')" class="button rounded3 canceledit"/>
+								<input type="button" value="$!lang.get('close')" class="button rounded3 canceledit"/>
 							</div>
 						</fieldset>
 					</form>
@@ -1516,7 +1498,7 @@
 
 		<div class="comments post-comments">
 			#if($showpost.commentcount > 0)
-				#paginate($showpost.pagenum.longValue() "#commentspagepreview($showpost.comments 2)" $showpost.commentcount "getcomments=true&amp;parentuuid=$showpost.uuid" "pageless")
+				#paginate($showpost.pagenum.longValue() "\#commentspagepreview(\$showpost.comments 2)" $showpost.commentcount "getcomments=true&amp;parentid=$showpost.id" "pageless")
 			#end
 		</div>
 	</div>
@@ -1549,32 +1531,28 @@
 #end
 ####################################
 #macro(revisionbox $showrev $showorigrev $canrestore $showpost)
-
-	#if($showpost.isQuestion() || $showpost.isAnswer())
-		#set($actionlink = $questionlink)
-		#set($actionlink2 = $questionslink)
-	#elseif($showpost.isFeedback())
-		#set($actionlink = $feedbacklink)
-		#set($actionlink2 = $feedbacklink)
-	#end
-
+	#set($actionlink = "#getpostlink($showpost false true)")
+	#set($actionlink2 = "#getpostlink($showpost true true)")
 	<div class="whitebox revisionbox">
 		<div class="line lightgraybg rounded3 pas">
 			<div class="unit size1of3">
 				#set($author = $showrev.getAuthor())
 				#smallpersonbox($author)
 			</div>
-			<div class="unit size2of3 lastUnit r">
+			<div class="unit size1of3 center">
+				<span class="lightgray mediumText">#if($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
+			</div>
+			<div class="unit size1of3 lastUnit r">
 				<div class="lightgray mediumText">
-					#if($showrev.original) $lang.get("original") #else  #$!showrev.id #end 
+					<span class="mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
 				</div>
 				<div class="mts">
-					<span class="smallText mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
-					#if($showpost.revisionuuid == $showrev.uuid)
-						<span class="pictos green largeText" title="$lang.get('revisions.current')">S</span>
+					
+					#if($showpost.revisionid == $showrev.id)
+						<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
 					#elseif($canrestore || $request.isUserInRole("mod"))
-						<a href="$!actionlink/$showrev.postid/restore/$showrev.revisionid" class="button-small rounded3 rusure" title="Restore">
-							<span class="pictos">1</span> $lang.get("restore")
+						<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask button-small rounded3" title="Restore">
+							<span class="pictos">1</span> $!lang.get("restore")
 						</a>
 					#end
 				</div>
@@ -1588,21 +1566,21 @@
 				#end
 			#end
 			#if($showrev.body)
-				#set($revHtml = $daoutils.markdownToHtml($showrev.body, $showdownJS))
+				#set($revHtml = $daoutils.markdownToHtml($showrev.body))
 				#set($showRevBody = $daoutils.stripHtml($revHtml) )
 				<div class="newrev mtl">$!showRevBody</div>
 				#if($showorigrev.body)
-					#set($origHtml = $daoutils.markdownToHtml($showorigrev.body, $showdownJS))
+					#set($origHtml = $daoutils.markdownToHtml($showorigrev.body))
 					#set($showOrigBody = $daoutils.stripHtml($origHtml) )
 					<span class="hide oldrev">$!showOrigBody</span>
 				#end
 			#end
 			#if($showrev.tags)
 				<div class="newrev tagsdiff mtm">
-					#tagsbox($showrev.tags $actionlink2)					
+					#tagsbox($showrev.tags "")
 				</div>
 				#if($showorigrev.tags)
-					<span class="hide oldrev">#tagsbox($showorigrev.tags $actionlink2)</span>
+					<span class="hide oldrev">#tagsbox($!showorigrev.tags "")</span>
 				#end
 			#end
 		</div>
@@ -1657,7 +1635,13 @@
 	<div class="inlineblock mrl mbm center langbox rounded5 $selclass">
 		<div class="mediumText mbs">
 			#if($selclass == "")
-				<a href="$languageslink/?setlocale=$!showLangKey" class="capitalize" rel="nofollow">$showLangName</a>
+				<form action="$languageslink" method="post">
+					<fieldset>
+						#sectoken(false)
+						<input type="hidden" name="setlocale" value="$!showLangKey"/>
+						<input type="submit" class="button-link capitalize" value="$showLangName"/>
+					</fieldset>
+				</form>
 			#else
 				<span class="capitalize">$!{showLangName}</span>
 			#end
@@ -1670,20 +1654,20 @@
 			#end
 			
 			#if(!$showLangKey.equals("en"))
-				<a href="$translatelink/$!showLangKey" title="${lang.get('translate.translate')}" class="button-tiny rounded3">$lang.get("translate.translate")</a>
+				<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="button-tiny rounded3">$!lang.get("translate.translate")</a>
 			#end
 		</div>
 	</div>
 #end
 ###################################
 #macro(badgebox $showbadge $num)
-	#set($badgeinfo = $lang.get("about.badges.$showbadge") )
+	#set($badgeinfo = $!lang.get("about.badges.$showbadge") )
 	<span class="badge phs mas rounded5 inlineblock" title="$!badgeinfo">
 		<span class="pictos">S</span> 
 		#if($num && $num > 1)
-			$lang.get("$showbadge") <sup>$num</sup>
+			$!lang.get("$showbadge") <sup>$num</sup>
 		#else
-			$lang.get("$showbadge")
+			$!lang.get("$showbadge")
 		#end
 	</span>
 #end
@@ -1725,10 +1709,10 @@
 ################# MISC MACROS #####################
 #macro(votebox $votable $sizeClass)
 	#if($votable == "")
-		#set($uuid = "")
+		#set($id = "")
 		#set($classname = "comment")
 	#else
-		#set($uuid = $!votable.uuid)
+		#set($id = $!votable.id)
 		#set($classname = $votable.class.simpleName.toLowerCase())
 	#end
 	#if($authenticated) #set($linkclass = "votelink") #else #set($linkclass = "") #end
@@ -1740,9 +1724,9 @@
 			<span class="votecount">$!votes</span>
 			<span class="pictos upvote lightgray" title="Vote up">+</span>			
 		#else
-			<a href="$votedownlink/$classname/$!uuid" class="pictos downvote $linkclass" title="Vote down">-</a>
+			<a href="$votedownlink/$!classname/$!id" class="pictos downvote $linkclass" title="Vote down">-</a>
 			<span class="votecount">$!votes</span>
-			<a href="$voteuplink/$classname/$!uuid" class="pictos upvote $linkclass" title="Vote up">+</a>
+			<a href="$voteuplink/$!classname/$!id" class="pictos upvote $linkclass" title="Vote up">+</a>
 		#end
 	</div>
 #end
@@ -1773,44 +1757,44 @@
 		#set($approx = $approxtime.substring(0, $lastindx))		
 		#set($sufstr = "humantime.$suffix" )
 		#if($format == "slim")
-			$!daoutils.formatMessage($lang.get($!sufstr), $!approx) [$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)]
+			$!daoutils.formatMessage($!lang.get($!sufstr), $!approx) [$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)]
 		#else
 			<span title="$daoutils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
-				$!daoutils.formatMessage($lang.get($!sufstr), $!approx)
+				$!daoutils.formatMessage($!lang.get($!sufstr), $!approx)
 			</span>
 		#end
 	#end
 #end
 #####################################
-#macro(reportform $classname $parentid $grandparentuuid $parentuuid $link)
+#macro(reportform $classname $parentid $grandparentid $parentid $link)
 	<form method="post" class="create-report-form" action="$context/?report=true">
 		<fieldset>
 			#sectoken(false)
-			<legend><span class="pictos">^</span> $lang.get("reportproblem")</legend>
-			<label class="blocklabel">$lang.get("reports.category")</label>
+			<legend><span class="pictos">^</span> $!lang.get("reportproblem")</legend>
+			<label class="blocklabel">$!lang.get("reports.category")</label>
 			<select class="nicebox p100" name="type">
-				#foreach($type in $publicReport.reportTypes)
+				#foreach($type in $reportTypes)
 					#if($type.name() == "OTHER")
-					<option selected="selected" value="$!type.name()">$lang.get("reports.$type.name().toLowerCase()")</option>
+					<option selected="selected" value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
 					#else
-					<option value="$!type.name()">$lang.get("reports.$type.name().toLowerCase()")</option>
+					<option value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
 					#end
 				#end
 			</select>
-			<label class="blocklabel">$lang.get("reports.description")</label>
-			<textarea class="p100 nicebox" cols="15" rows="5" name="description"></textarea>
+			<label class="blocklabel">$!lang.get("reports.description")</label>
+			<textarea class="p98 nicebox" cols="15" rows="5" name="description"></textarea>
 			<input type="hidden" name="parentid" value="$!parentid"/>
-			<input type="hidden" name="parentuuid" value="$!parentuuid"/>
+			<input type="hidden" name="parentid" value="$!parentid"/>
 			<input type="hidden" name="classname" value="$!classname"/>
-			#if($grandparentuuid && $grandparentuuid != "")
-				<input type="hidden" name="grandparentuuid" value="$!grandparentuuid"/>
+			#if($grandparentid && $grandparentid != "")
+				<input type="hidden" name="grandparentid" value="$!grandparentid"/>
 			#end
 			#if($link && !$link.isEmpty())
 				<input type="hidden" name="link" value="$!link"/>
 			#end
 			<div class="center mtm">
-				<input id="sendreport-btn" type="submit" value="$lang.get('send')" class="button rounded3 mrm"/>
-				<input type="button" value="$lang.get('close')" class="button rounded3 jqmClose"/>
+				<input id="sendreport-btn" type="submit" value="$!lang.get('send')" class="button rounded3 mrm"/>
+				<input type="button" value="$!lang.get('close')" class="button rounded3 jqmClose"/>
 			</div>
 		</fieldset>
 	</form>
@@ -1818,9 +1802,30 @@
 #####################################
 #macro(getmessagebox $class $text $hidden)
 #if($hidden) #set($hideclass = "hide") #else #set($hideclass = "") #end
-	<div class="messagebox $class $hideclass" title="$lang.get('click2close')">
+	<div class="messagebox $class $hideclass" title="$!lang.get('click2close')">
 		<div class="msg center">  #if($text == "") &nbsp; #else $text #end  </div>
 	</div>
+#end
+#####################################
+#macro(getpostlink $p $plural $noid)
+	#set($link = "" )
+	#if($noid) #set($pid = "" ) #else #set($pid = "/${p.id}/#stripstr($!p.title)") #end
+	#if($p)
+		#if($p.isQuestion())
+			#if($plural) #set($link = "$questionslink" ) #else #set($link = "$questionlink${pid}" ) #end
+		#elseif($p.isFeedback())
+			#if($plural) #set($link = "$feedbacklink" ) #else #set($link = "$feedbacklink${pid}" ) #end
+		#elseif($p.isGrouppost())
+			#if($plural) #set($link = "${grouplink}/${p.parentid}" ) #else #set($link = "$grouppostlink${pid}" ) #end
+		#elseif($p.isReply())
+			#set($parentp = $daoutils.getDaoInstance("post").read($p.parentid) )
+			#if($parentp) #set($link = "#getpostlink($parentp $plural $noid)" ) #end
+		#elseif($p.isBlackboard())
+			#if($noid) #set($cpid = "" ) #else #set($cpid = "/${p.parentid}" ) #end
+			#if($plural) #set($link = "$classeslink" ) #else #set($link = "${classlink}${cpid}" ) #end
+		#end
+	#end
+	$!{link}
 #end
 #####################################
 #macro(ajaxloading $hide)
@@ -1865,22 +1870,26 @@
 	
 	#if($infoStripMsg == "intro" && !$request.getParameter("code"))
 		#set($hideInfoStrip = "introBox" )
-		#set($infoStripMsg = "$lang.get('about.intro') <a href='$aboutlink'>$lang.get('learnmore')</a>" )
+		#set($infoStripMsg = "$!lang.get('about.intro') <a href='$aboutlink'>$!lang.get('learnmore')</a>" )
 		#set($infoStripClass = "" )
+	#elseif($systemMessage && !$systemMessage.isEmpty())
+		#set($hideInfoStrip = "sysmsgBox" )
+		#set($infoStripMsg = $!systemMessage )
+		#set($infoStripClass = "infoBox blue" )
 	#end
 	
 	<noscript>
 		<div class="infostrip errorBox pvm center">
-			<span class="pictos ico errorBoxIcon $!he">!</span> ${lang.get("nojavascript")}
+			<span class="pictos ico errorBoxIcon $!he">!</span> $!{lang.get("nojavascript")}
 		</div>
 	</noscript>
-	<div class="infostrip center pvm $hideInfoStrip $infoStripClass" title="$lang.get('close')">
+	<div class="infostrip center pvm $hideInfoStrip $infoStripClass" title="$!lang.get('close')">
 		#set($hs = "hide" ) #set($he = "hide" ) #set($hi = "hide" )
-		#if($infoStripClass == "successBox")
+		#if($infoStripClass.contains("successBox"))
 			#set($hs = "" ) 
-		#elseif($infoStripClass == "errorBox")
+		#elseif($infoStripClass.contains("errorBox"))
 			 #set($he = "" )
-		#elseif($infoStripClass == "infoBox")
+		#elseif($infoStripClass.contains("infoBox"))
 			#set($hi = "" )
 		#end
 		<span class="pictos ico successBoxIcon $!hs">2</span>
@@ -1889,13 +1898,13 @@
 		
 		<span class="infostrip-msg">
 			#if(!$badgelist.isEmpty())
-				#if($badgelist.size() > 1) $lang.get("newbadges") #else $lang.get("newbadge") #end
+				#if($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
 				&nbsp;
 				#foreach($badge in $badgelist)
 					#badgebox($badge 0)
 				#end					
 			#elseif($request.getParameter("code"))
-				$lang.get("msgcode.${request.getParameter('code')}")
+				$!lang.get("msgcode.${request.getParameter('code')}")
 			#else
 				$!infoStripMsg
 			#end
@@ -1903,7 +1912,7 @@
 	</div>
 #end
 #####################################
-#macro(stripstr $str )$!daoutils.stripAndTrim($str).replaceAll("\p{Z}+","-").toLowerCase()#end
+#macro(stripstr $str )$!daoutils.spacesToDashes($str)#end
 #####################################
 #macro(identifierbox $showid $canDetach $index)
 	<span>
@@ -1925,10 +1934,10 @@
 		#if($showu.isAdmin())
 			<span class="pictos" title="Scoold developer">b</span>
 		#end
-		<span class="pictos" title="$lang.get('mod')">S</span>
+		<span class="pictos" title="$!lang.get('mod')">S</span>
 	#end
 	#set($tbadge = $showu.titleBadge )
-	#if($tbadge) #set($tbadgestr = $lang.get("$tbadge") ) #else #set($tbadgestr = "" ) #end
+	#if($tbadge) #set($tbadgestr = $!lang.get("$tbadge") ) #else #set($tbadgestr = "" ) #end
 	$!tbadgestr
 #end
 #####################################
@@ -1941,11 +1950,11 @@
 	<div class="line">
 		<div class="unit size1of2 pal rightborder">
 			#if(!$attachOnly)
-				<h2 title="Signin with your account">${lang.get('signin.openid')}&nbsp;
+				<h2 title="Signin with your account">$!{lang.get('signin.openid')}&nbsp;
 					<a href="#" class="pictos next-div-toggle" title="About OpenID">?</a>
 				</h2>
 				<div class="hide mtm pvm">
-					$lang.get("signin.openid.text") <a href="http://openid.net" class="extlink">$lang.get("learnmore")</a>
+					$!lang.get("signin.openid.text") <a href="http://openid.net" class="extlink">$!lang.get("learnmore")</a>
 				</div>
 			#end			
 			#if($attachOnly) #set($oidurl = "attach_openid") #else #set($oidurl = "openid_auth") #end
@@ -1955,9 +1964,9 @@
 					<div id="openid-btns">#getopenidbtns()</div>
 					<div class="center mtl">
 						#if($attachOnly)
-							#set($submitlabel = $lang.get("add"))
+							#set($submitlabel = $!lang.get("add"))
 						#else
-							#set($submitlabel = $lang.get("signin.title"))
+							#set($submitlabel = $!lang.get("signin.title"))
 						#end						
 						<input type="submit" value="$submitlabel" class="button rounded3"/>
 					</div>
@@ -1968,10 +1977,10 @@
 		#if($attachOnly) #set($fbbtnclass = "fb-attach-btn") #else #set($fbbtnclass = "fb-login-btn") #end
 		<div class="unit size1of2 lastUnit pal center">
 			#if(!$attachOnly)
-				<h2 id="fb-login">$lang.get("signin.facebook")</h2>
+				<h2 id="fb-login">$!lang.get("signin.facebook")</h2>
 			#end
 			<div class="mvl ptl">
-				<a id="$fbbtnclass" href="#" class="rounded3 mediumText nodecoration">$lang.get("signin.title")</a>
+				<a id="$fbbtnclass" href="#" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
 			</div>
 		</div>
 	</div>
@@ -2024,8 +2033,12 @@
 #if($isAjaxRequest || false)
 	################# PAGINATION AJAX REQUESTS #################
 	#if($request.getParameter("page"))
+		#if(!$pageMacroCode || $pageMacroCode.trim().isEmpty())
+			#set($pageMacroCode = "$!request.getParameter('pageMacroCode')" )	
+		#end
 		#evaluate($pageMacroCode)
-		<span class="$!pagenum.longValue()"/>
+		#if($pagenum.longValue() > 10000) #set($pnext = $pagenum.intValue()) #else #set($pnext = $pagenum.intValue() + 1) #end
+		<span class="$!pnext"/>
 		#stop
 	#end
     ################ AUTOCOMPLETE AJAX REQUESTS ################
@@ -2038,32 +2051,26 @@
             #end
 			#stop
         #elseif($request.getParameter("find") == "schools")
-            #foreach($showschool in $search.findByKeyword("school", $q.trim(), 7))
+            #foreach($showschool in $daoutils.findByKeyword("school", $q.trim(), 7))
                 ${showschool.name}|${showschool.location}|${showschool.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "classes")
-            #foreach($showclass in $search.findByKeyword("classunit", $q.trim(), 7))
-				${showclass.identifier}|$lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |${showclass.id}
+            #foreach($showclass in $daoutils.findByKeyword("classunit", $q.trim(), 7))
+				${showclass.identifier}|$!lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |${showclass.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "tags")
-            #foreach($showtag in $search.findTag($q.trim(), 7))
+            #foreach($showtag in $daoutils.findTags($q.trim(), 7))
 				$!{showtag.tag}| |${showtag.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "people")
-            #foreach($showuser in $search.findUser($q.trim(), 7))
+            #foreach($showuser in $daoutils.findUser($q.trim(), 7))
 				$!{showuser.fullname}| |${showuser.id}
             #end
 			#stop
-
         #end
-
-		###elseif($request.getParameter("find") == "contacts")
-        ##	#foreach($showfriend in $search.findByKeyword($authUser.id, $q.trim(), 7))
-		##		$!{showfriend.fullname}|$lang.get($!{showfriend.type})|$!{showfriend.id}
-        ##    #end #stop
 	#end
     ################# SPECIAL AJAX REQUESTS #################
     #if($request.getParameter("getaboutviewcode"))
@@ -2079,8 +2086,8 @@
 		#stop
 
 	#elseif($request.getParameter("newmessage"))
-		#if($request.getParameter("toname") && $request.getParameter("touuid"))
-			#newmessageform($request.getParameterValues("toname") $request.getParameterValues("touuid"))
+		#if($request.getParameter("toname") && $request.getParameter("toid"))
+			#newmessageform($request.getParameterValues("toname") $request.getParameterValues("toid"))
 		#else
 			#newmessageform([] [])
 		#end
@@ -2098,7 +2105,7 @@
 			#set($page = $pagenum.longValue())
 		#end
 		#if($commentslist && $itemcount.longValue() && $commentslist.size() > 0)
-			#paginate($page "#commentspage($commentslist)" $itemcount.longValue() "" "pageless" )
+			#paginate($page "\#commentspage(\$commentslist)" $itemcount.longValue() "" "pageless" )
 		#end
 		#stop
 
@@ -2107,11 +2114,11 @@
 		#stop
 	
 	#elseif($request.getParameter("getreportform"))
-		#if($request.getParameter("parentid")  && $request.getParameter("parentuuid") && $request.getParameter("classname"))
+		#if($request.getParameter("parentid")  && $request.getParameter("parentid") && $request.getParameter("classname"))
 			#reportform($request.getParameter("classname") 
 				$request.getParameter("parentid")
-				$!request.getParameter("grandparentuuid")
-				$request.getParameter("parentuuid")
+				$!request.getParameter("grandparentid")
+				$request.getParameter("parentid")
 				$!request.getParameter("link"))
 		#end
 		#stop
@@ -2137,8 +2144,11 @@
 			#smallpersonbox($showAjaxUser)
 		#end
 		#stop
-
+		
 	#end
+	#stop
+	
+#elseif($request.getAttribute('javax.servlet.forward.request_uri') == "/feed.xml")
 	#stop
 #end
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -2213,22 +2223,22 @@
 						#else 
 							<span class="pictos">M</span>
 						#end
-						<a href="$messageslink" title="Messages">${lang.get('messages.title')}</a> |
-						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">${lang.get('settings.title')}</a> |
+						<a href="$messageslink" title="Messages">$!{lang.get('messages.title')}</a> |
+						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a> |
 						#if($request.isUserInRole("mod"))
 							#if($authUser.countNewReports() > 0) 
 								<span class="notificationbox rounded5">$authUser.countNewReports()</span>
 							#else
 								<span class="pictos">^</span>
 							#end
-							<a href="$reportslink" title="Reports">$lang.get("reports.title")</a> |
+							<a href="$reportslink" title="Reports">$!lang.get("reports.title")</a> |
 						#end
 						#if($isFBconnected) #set($logoutid = "fb-logout" ) #else #set($logoutid = "logoutbtn" )	#end
 						<span class="pictos">K</span>
 						<form method="post" action="$signoutlink" class="inline">
 							<fieldset class="inline">
 								#sectoken(false)
-								<input id="signout-btn" type="submit" value="$lang.get('signout')" class="bold button-link"/>
+								<input id="signout-btn" type="submit" value="$!lang.get('signout')" class="bold button-link"/>
 							</fieldset>
 						</form>
 					#else
@@ -2239,7 +2249,7 @@
 						#if($thisuri && $thisuri.startsWith($context))
 							#set($thisuri = $thisuri.replaceFirst($context, ""))
 						#end
-						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $lang.get("signin.title")</a>
+						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
 					#end
 					</div>
 				</div>
@@ -2249,10 +2259,13 @@
 					<div class="line">
 						<div class="unit size2of3">
 							<ul id="nav-list" class="left">
-								<li><a href="$questionslink" title="Questions" class="nicebtn rounded3 $!questionsSelected">$lang.get("questions.title")</a></li>
-								<li><a href="$peoplelink" title="People" class="nicebtn rounded3 $!peopleSelected">$lang.get("people.title")</a></li>
-								<li><a href="$schoolslink" title="Schools" class="nicebtn rounded3 $!schoolsSelected">$lang.get("schools.title")</a></li>
-								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!classesSelected">$lang.get("classes.title")</a></li>
+								<li><a href="$questionslink" title="Questions" class="nicebtn rounded3 $!questionsSelected">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="People" class="nicebtn rounded3 $!peopleSelected">$!lang.get("people.title")</a></li>
+								<li><a href="$schoolslink" title="Schools" class="nicebtn rounded3 $!schoolsSelected">$!lang.get("schools.title")</a></li>
+								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!classesSelected">$!lang.get("classes.title")</a></li>
+								#if($authenticated)
+									<li><a href="$groupslink" title="Groups" class="nicebtn rounded3 $!groupsSelected">$!lang.get("groups.title")</a></li>
+								#end
 							</ul>
 						</div>
 						<div class="unit size1of3 lastUnit">
@@ -2263,7 +2276,7 @@
 											#set($showSearchValue = $!request.getParameter('q'))
 											#set($hintbox = "noclass" )
 										#else
-											#set($showSearchValue = $lang.get('search.search'))
+											#set($showSearchValue = $!lang.get('search.search'))
 											#set($hintbox = "hintbox" )
 										#end
 										<input type="submit" class="pictos search-btn right" value="s"/>
@@ -2290,15 +2303,13 @@
 						<div class="clearfix">
 							<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
 							</a>
-							<div>The content on this site is licensed under a
-								<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons license</a>.
-							</div>
+							<div>$daoutils.formatMessage($!lang.get("license"), '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>')</div>
 							<ul class="inline-list">
-								<li><a href="$aboutlink" title="About">${lang.get('about.title')}</a> &bull;</li>
-								<li><a href="$feedbacklink" title="Feedback">${lang.get('feedback.title')}</a> &bull;</li>
-								<li><a href="http://blog.scoold.com" title="Blog" class="extlink">${lang.get('blog.title')}</a> &bull;</li>								
-								<li><a href="$privacylink" title="Privacy">${lang.get('privacy.title')}</a> &bull;</li>
-								<li><a href="$termslink" title="Terms">${lang.get('terms.title')}</a></li>								
+								<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
+								<li><a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a> &bull;</li>
+								<li><a href="http://blog.scoold.com" title="Blog" class="extlink">$!{lang.get('blog.title')}</a> &bull;</li>								
+								<li><a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a> &bull;</li>
+								<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a></li>								
 							</ul>
 						</div>
 					</div>
@@ -2306,7 +2317,7 @@
 					<div class="unit size1of5 lastUnit r">
 						<span class="mediumText">
 							<span class="pictos">G</span>
-							<a href="$languageslink" title="Switch to a different language" class="capitalize">
+							<a href="$!languageslink" title="Switch to a different language" class="capitalize">
 								$showCurrentLocale
 							</a>
 						</span>
@@ -2342,7 +2353,7 @@
 					{scoold:		scriptslink + "/scoold" + minsuffix + ".js" });
 			}
 			
-			var lang = {#foreach($langkey in $jslang)"$langkey":"$daoutils.escapeJavascript($lang.get($langkey))"#if($velocityCount < $jslang.size()),#end #end},
+			var lang = {#foreach($!langkey in $jslang)"$!langkey":"$daoutils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end #end},
 				sessiontimeout = $!SESSION_TIMEOUT_SEC;
 			#if($authenticated)
 				var stoken = "$sectoken", pepper = "$authUser.authstamp";

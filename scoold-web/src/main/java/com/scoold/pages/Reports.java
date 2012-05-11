@@ -10,7 +10,6 @@ import com.scoold.core.Classunit;
 import com.scoold.core.Media;
 import com.scoold.core.Report;
 import com.scoold.core.School;
-import com.scoold.db.AbstractDAOFactory;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 /**
@@ -50,20 +49,8 @@ public class Reports extends BasePage{
 				showMergeClass = Classunit.getClassUnitDao().read(id);
 			}
 		}else{
-			pageMacroCode = "#reportspage($reportslist)";
-			reportslist = Report.getReportDAO().readAllSortedBy(
-					"timestamp", pagenum,
-					itemcount, true, AbstractDAOFactory.MAX_ITEMS_PER_PAGE);
-		}
-
-		if(param("close")){
-			Report rep = Report.getReportDAO().read(NumberUtils.toLong(getParamValue("id")));
-			if(rep != null && rep.getClosed()){
-				rep.setClosed(false);
-				rep.setSolution(null);
-				rep.update();
-				setRedirect(reportslink);
-			}
+			reportslist = daoutils.readAndRepair(Report.class, daoutils.findQuery(
+					Report.classtype, pagenum, itemcount, "*"), itemcount);
 		}
 	}
 
@@ -99,6 +86,7 @@ public class Reports extends BasePage{
 					rep.update();
 				}
 			}
+			if(!isAjaxRequest()) setRedirect(reportslink);
 		}else if(param("delete") && inRole("admin")){
 			Report rep = Report.getReportDAO().read(NumberUtils.toLong(getParamValue("id")));
 			if(rep != null){

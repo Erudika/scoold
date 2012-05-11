@@ -4,8 +4,9 @@
   
 F1SUFFIX="-instances.txt"
 F2SUFFIX="-hostnames.txt"
-FILE1="web$F1SUFFIX"
-FILE2="web$F2SUFFIX"
+FILE1="glassfish$F1SUFFIX"
+FILE2="glassfish$F2SUFFIX"
+KEYS="keys.txt"
 JAUTH="jenkins-auth.txt"
 ASADMIN="sudo -u glassfish /home/glassfish/glassfish/bin/asadmin"
 LBNAME="ScooldLB"	
@@ -24,6 +25,20 @@ SUMSFILE="checksums.txt"
 PATHSFILE="filepaths.txt"
 JARPATH="../scoold-invalidator/target/scoold-invalidator-all.jar"
 CIWARPATH="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web.war"
+
+function readProp () {
+	FILE=$1
+	echo $(sed '/^\#/d' $FILE | grep "$2" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+}
+
+AWSACCESSKEY=$(readProp $KEYS "com.scoold.awsaccesskey")
+AWSSECRETKEY=$(readProp $KEYS "com.scoold.awssecretkey")
+AWSSQSENDPOINT=$(readProp $KEYS "com.scoold.awssqsendpoint")
+AWSSQSQUEUEID=$(readProp $KEYS "com.scoold.awssqsqueueid")
+FBAPPID=$(readProp $KEYS "com.scoold.fbappid")
+FBAPIKEY=$(readProp $KEYS "com.scoold.fbapikey")
+FBSECRET=$(readProp $KEYS "com.scoold.fbsecret")
+AWSCFDIST=$(readProp $KEYS "com.scoold.awscfdist")
 
 function updateJacssi () {
 	echo "Deploying javascript, css and images to CDN..."
@@ -50,9 +65,27 @@ function updateJacssi () {
 		fi
 	
 		# upload to S3		
-		java -jar $JARPATH $SUMSFILE $PATHSFILE
+		java -Dawscfdist="$AWSCFDIST" -Dawsaccesskey="$AWSACCESSKEY" -Dawssecretkey="$AWSSECRETKEY" -jar $JARPATH $SUMSFILE $PATHSFILE
 		rm -rf $JACSSIDIR
 	fi
+}
+
+function setProperties () {
+	prop1="com.scoold.workerid=$2"
+	prop2="com.scoold.production=\"true\""
+	prop3="com.scoold.dbhosts=\"$3\""
+	prop4="com.scoold.eshosts=\"$4\""
+	
+	prop5="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
+	prop6="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
+	prop7="com.scoold.awssqsendpoint=\"$AWSSQSENDPOINT\""
+	prop8="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
+	prop9="com.scoold.fbappid=\"$FBAPPID\""
+	prop10="com.scoold.fbapikey=\"$FBAPIKEY\""
+	prop11="com.scoold.fbsecret=\"$FBSECRET\""
+	prop12="com.scoold.awscfdist=\"$AWSCFDIST\""	
+
+	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10:$prop11:$prop12"
 }
 
 function deployWAR () {
@@ -61,8 +94,12 @@ function deployWAR () {
 		deffile="uploadto.txt"
 		hostsfile=$deffile
 		
-		if [ `expr "$1" : '^web[0-9]*$'` != 0 ]; then
-			host=$(ec2din --region $REGION -F "tag-value=$1" | egrep ^INSTANCE | awk '{ print $4}')
+		if [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
+			host=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=$1" | egrep ^INSTANCE | awk '{ print $4}')
+			nodeid=$(expr "$1" : '^glassfish\([0-9]*\)$')
+			dbhost1=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=cassandra1" | egrep ^INSTANCE | awk '{ print $16}')
+			eshost1=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=elasticsearch1" | egrep ^INSTANCE | awk '{ print $16}')
+			setProperties $host $nodeid $dbhost1 $eshost1
 			echo $host > $hostsfile;
 		else
 			hostsfile=$FILE2
@@ -93,20 +130,21 @@ function deployWAR () {
 	fi	
 }
 
-
-if [ -n "$1" ] && [ -n "$2" ]; then	
-	if [ "$1" = "updatejacssi" ]; then
-		updateJacssi $2
-	elif [ "$1" = "cmd" ]; then
-		if [ `expr "$2" : '^web[0-9]*$'` != 0 ] && [ -n "$3" ]; then
-			host=$(ec2din --region $REGION -F "tag-value=$2" | egrep ^INSTANCE | awk '{ print $4}')
+if [ "$1" = "updatejacssi" ]; then
+	updateJacssi $2
+elif [ "$1" = "setprops" ]; then	
+	setProperties $2 $3 $4 $5
+elif [ -n "$1" ] && [ -n "$2" ]; then	
+	if [ "$1" = "cmd" ]; then
+		if [ `expr "$2" : '^glassfish[0-9]*$'` != 0 ] && [ -n "$3" ]; then
+			host=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=$2" | egrep ^INSTANCE | awk '{ print $4}')
 			if [ -n "$host" ]; then
 				ssh -n ubuntu@$host "$ASADMIN $3"
 			fi		
 		else
 			pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"		
 		fi	
-	elif [ `expr "$1" : '^web[0-9]*$'` != 0 ]; then
+	elif [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
 		if [ -n "$4" ]; then
 			CONTEXT="--contextroot $4"
 		fi
@@ -132,24 +170,22 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 
 			OLDAPP=""
 			isok=false
-			dbhosts=$(cat "db$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
-			eshosts=$(cat "search$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
-			production="true"
-			prefix="com.scoold"
+			dbhosts=$(cat "cassandra$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
+			eshosts=$(cat "elasticsearch$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')			
 			count=1		
 			while read i; do
 				if [ -n "$i" ]; then
 					instid=$(echo $i | awk '{ print $1 }')
 					host=$(echo $i | awk '{ print $2 }')			
-
-					### STEP 2: set system properties
-					ssh -n ubuntu@$host "$ASADMIN create-system-properties $prefix.workerid=$count:$prefix.production=\"$production\":$prefix.dbhosts=\"$dbhosts\":$prefix.eshosts=\"$eshosts\""
-
+					
 					if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
 						if [ -z "$OLDAPP" ]; then
 							OLDAPP=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
 						fi
-
+						
+						### STEP 2: set system properties
+						setProperties $host $count $dbhosts $eshosts
+						
 						### STEP 3: deregister each instance from the LB, consecutively 
 						$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --quiet --instances $instid
 						sleep 10
@@ -164,11 +200,12 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 						fi
 
 						if [ "$response" = "ok" ] || [ $isok = true ]; then
+							### STEP 5.1 undeploy old application
 						    echo "OK! Undeploying old application..."
 							ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
 							isok=true
 						else
-							### STEP 5.1 REVERT back to old application
+							### STEP 4.2 REVERT back to old application
 							echo "NOT OK! Reverting back to old application..."
 							ssh -n ubuntu@$host "$ASADMIN disable $APPNAME && $ASADMIN enable $OLDAPP"
 							isok=false
@@ -185,6 +222,6 @@ if [ -n "$1" ] && [ -n "$2" ]; then
 		fi
 	fi
 else
-	echo "USAGE:  $0 [ webXXX war | war ] [ enabled context ] | updatejacssi [invalidateall] | cmd [ webXXX ] gfcommand"
+	echo "USAGE:  $0 [ glassfishXXX war | war ] [ enabled context ] | updatejacssi [invalidateall] | cmd [ webXXX ] gfcommand"
 fi
 

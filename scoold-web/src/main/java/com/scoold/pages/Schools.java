@@ -23,26 +23,28 @@ public class Schools extends BasePage{
 	public String title;
 	public ArrayList<School> topSchools;
 	public ArrayList<School> schoollist;
-	public Form createSchoolForm;
+	public Form createSchoolForm; 
 
 	public Schools() {
-		if(param("create")){
-			title = lang.get("school.create");
+		if(param("create") && authenticated){
+			title = lang.get("schools.title") + " - " + lang.get("school.create");
 			addModel("includeGMapsScripts", true);
+			makeforms();
 		}else{
 			title = lang.get("schools.title");
 			addModel("includeGMapsScripts", false);
+			
+			String sortBy = "";
+			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
+			schoollist = daoutils.readAndRepair(School.class, daoutils.findQuery(
+					School.classtype, pagenum, itemcount, "*", sortBy, 
+					true, MAX_ITEMS_PER_PAGE), itemcount);
 		}
-
-		pageMacroCode = "#schoolspage($schoollist)";
+		
 		addModel("schoolsSelected", "navbtn-hover");
-		makeforms();
 	}
 	
 	public void onGet(){
-		String sortBy = "timestamp";
-		if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-		schoollist = School.getSchoolDao().readAllSortedBy(sortBy, pagenum, itemcount, true);
 	}
 
 	private void makeforms(){

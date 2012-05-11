@@ -2,6 +2,8 @@
 *.class
 *.jar
 *.zip
+*.bak
+keys.txt
 scoold-search/dist/
 scoold-search/build/
 scoold-search/nbproject/
@@ -11,4 +13,7 @@ scoold-web/target/
 scoold-web/tmp/**
 scoold-web/src/main/webapp/WEB-INF/lib/**
 scoold-puppet/*.txt
-/scoold-invalidator/target/
+scoold-puppet/scoold/files/s3cfg.txt
+scoold-puppet/scoold/files/admin-keyfile
+scoold-puppet/scoold/files/adminpass.txt
+scoold-invalidator/target/

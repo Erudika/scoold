@@ -6,7 +6,6 @@
 package com.scoold.db;
 
 import com.scoold.core.Tag;
-import java.util.ArrayList;
 
 /**
  *
@@ -15,7 +14,5 @@ import java.util.ArrayList;
 public abstract  class AbstractTagDAO<T extends Tag, PK>
 		implements GenericDAO <Tag, Long>{
 
-	public abstract T readTag(String tag);
-	public abstract ArrayList<T> readAllForKeys(ArrayList<String> keys);
-
+	public abstract T read(String tag);
 }

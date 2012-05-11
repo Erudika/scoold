@@ -133,22 +133,22 @@ public class CasDAOUtilsTest {
 //	public void testDeleteAll() {
 //		User u = new User("batch@batch.com", true, User.UserType.STUDENT, "Batch test");
 //		cdu.create(u, USERS);
-//		cdu.putColumn(u.getUuid(), USERS_UUIDS, u.getId().toString(), u.getId());
-//		cdu.putColumn(u.getUuid(), MEDIA_PARENTUUIDS, 1234567L, 1234567L);
+//		cdu.putColumn(u.getId(), USERS_IDS, u.getId().toString(), u.getId());
+//		cdu.putColumn(u.getId(), MEDIA_PARENTIDS, 1234567L, 1234567L);
 //		cdu.putColumn(u.getEmail(), EMAILS, u.getId().toString(), u.getId());
 //
 //		Mutator<String> mut = cdu.createMutator();
 //		
 //		CasDAOUtils.addDeletion(new Column(u.getId().toString(), USERS), mut);
-//		CasDAOUtils.addDeletion(new Column(u.getUuid(), USERS_UUIDS), mut);
-//		CasDAOUtils.addDeletion(new Column(u.getUuid(), MEDIA_PARENTUUIDS), mut);
+//		CasDAOUtils.addDeletion(new Column(u.getId(), USERS_IDS), mut);
+//		CasDAOUtils.addDeletion(new Column(u.getId(), MEDIA_PARENTIDS), mut);
 //		CasDAOUtils.addDeletion(new Column(u.getEmail(), EMAILS), mut);
 //
 //		mut.execute();
 //		
 //		assertNull(cdu.read(User.class, u.getId().toString(), USERS));
-//		assertNull(cdu.getColumn(u.getUuid(), USERS_UUIDS, u.getId().toString()));
-//		assertNull(cdu.getColumn(u.getUuid(), MEDIA_PARENTUUIDS, 1234567L));
+//		assertNull(cdu.getColumn(u.getId(), USERS_IDS, u.getId().toString()));
+//		assertNull(cdu.getColumn(u.getId(), MEDIA_PARENTIDS, 1234567L));
 //		assertNull(cdu.getColumn(u.getEmail(), EMAILS, u.getId().toString()));
 //	}
 //
@@ -560,7 +560,7 @@ public class CasDAOUtilsTest {
 //		p.setBody("test");
 //		p.setTags(",test,");
 //		p.setUserid(123L);
-//		p.setUuid(cdu.getUUID());
+//		p.setId(cdu.getID());
 //		
 //		long id = 1234L;
 //		long v = 2000L;
@@ -623,20 +623,20 @@ public class CasDAOUtilsTest {
 //	}
 //
 //	/**
-//	 * Test of getTimeUUID method, of class CasDAOUtils.
+//	 * Test of getTimeID method, of class CasDAOUtils.
 //	 */ @Test
-//	public void testGetTimeUUID() {
-//		UUID u1 = cdu.getTimeUUID();
-//		UUID u2 = cdu.getTimeUUID();
+//	public void testGetTimeID() {
+//		ID u1 = cdu.getTimeID();
+//		ID u2 = cdu.getTimeID();
 //		assertFalse(u1.equals(u2));
 //	}
 //
 //	/**
-//	 * Test of getUUID method, of class CasDAOUtils.
+//	 * Test of getID method, of class CasDAOUtils.
 //	 */ @Test
-//	public void testGetUUID() {
-//		String u1 = cdu.getUUID();
-//		String u2 = cdu.getUUID();
+//	public void testGetID() {
+//		String u1 = cdu.getID();
+//		String u2 = cdu.getID();
 //		assertFalse(u1.equals(u2));
 //	}
 //
@@ -767,7 +767,7 @@ public class CasDAOUtilsTest {
 //				USERS, String.class, null, null, null, DEFAULT_LIMIT, false));
 //
 //		assertEquals(testObject.getId(), u.getId());
-//		assertEquals(testObject.getUuid(), u.getUuid());
+//		assertEquals(testObject.getId(), u.getId());
 //		assertEquals(testObject.getFullname(), u.getFullname());
 //		assertEquals(testObject.getEmail(), u.getEmail());
 //	}

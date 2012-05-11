@@ -26,6 +26,9 @@ public class Comment extends BasePage{
 		if(param("id")){
 			Long id = NumberUtils.toLong(getParamValue("id"));
 			showComment = com.scoold.core.Comment.getCommentDao().read(id);
+			if(showComment == null || !daoutils.typesMatch(showComment)){
+				setRedirect(HOMEPAGE);
+			}
 		}
 	}
 

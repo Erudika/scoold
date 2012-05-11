@@ -11,22 +11,18 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
-public class Classunit implements ScooldObject,	CanHasMedia,
-		Searchable<Classunit>, Serializable {
+public class Classunit implements ScooldObject,	CanHasMedia, Serializable {
 
     private Long id;
-	private String uuid;
-    @Indexed
 	@Stored private String identifier;
-	@Indexed
 	@Stored private Integer gradyear;
     @Stored private Long schoolid;
     @Stored private Integer yearbegin;
 	@Stored private Long timestamp;
 	@Stored private Long userid;
 	@Stored private Long blackboardid;
-	@Indexed
 	@Stored private String inactiveusers;
+	@Stored public static String classtype = Classunit.class.getSimpleName().toLowerCase();
 
 	private transient Integer count;
 	private transient School school;
@@ -44,6 +40,10 @@ public class Classunit implements ScooldObject,	CanHasMedia,
         this.id = id;
     }
 
+	public String getClasstype() {
+		return classtype;
+	}
+	
 	/**
 	 * Get the value of incativeusers
 	 *
@@ -116,24 +116,6 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 		this.timestamp = timestamp;
 	}
 
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-    
 	/**
 	 * Get the value of gradyear
 	 *
@@ -220,7 +202,7 @@ public class Classunit implements ScooldObject,	CanHasMedia,
     }
    
     public ArrayList<User> getAllUsers(MutableLong page, MutableLong itemcount){
-        return getClassUnitDao().readAllUsersForClassUnit(id, page, itemcount);
+        return User.getUserDao().readAllUsersForID(this.id, page, itemcount);
     }
         
 	public School getSchool(){
@@ -281,20 +263,12 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getMediaDao().readAllMediaForUUID(this.uuid, type, label,
+		return Media.getMediaDao().readAllMediaForID(this.id, type, label,
 				pagenum, itemcount, maxItems, reverse);
 	}
 
 	public void deleteAllMedia(){
-		Media.getMediaDao().deleteAllMediaForUUID(uuid);
-	}
-
-	public void index() {
-		Search.index(this);
-	}
-
-	public void unindex() {
-		Search.unindex(this);
+		Media.getMediaDao().deleteAllMediaForID(id);
 	}
 
 	public Set<String> getInactiveusersList(){
@@ -311,10 +285,5 @@ public class Classunit implements ScooldObject,	CanHasMedia,
 		}
 		return count;		
 	}
-
-	public ArrayList<Classunit> readAllForKeys(ArrayList<String> keys) {
-		return getClassUnitDao().readAllForKeys(keys);
-	}
-	
 }
 

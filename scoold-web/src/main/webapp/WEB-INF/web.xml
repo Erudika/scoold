@@ -137,17 +137,9 @@
         <servlet-class>org.apache.click.ClickServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
-    <servlet>
-        <servlet-name>FeedServlet</servlet-name>
-        <servlet-class>com.scoold.util.FeedServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>ClickServlet</servlet-name>
         <url-pattern>*.htm</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FeedServlet</servlet-name>
-        <url-pattern>/feed.xml</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
@@ -544,6 +536,36 @@
             <web-resource-name>Languages</web-resource-name>
             <description/>
             <url-pattern>/languages.htm</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>admin</role-name>
+            <role-name>mod</role-name>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Group</display-name>
+        <web-resource-collection>
+            <web-resource-name>Group</web-resource-name>
+            <description/>
+            <url-pattern>/group/*</url-pattern>
+            <url-pattern>/group.htm</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>admin</role-name>
+            <role-name>mod</role-name>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Groups</display-name>
+        <web-resource-collection>
+            <web-resource-name>Groups</web-resource-name>
+            <description/>
+            <url-pattern>/groups/*</url-pattern>
+            <url-pattern>/groups.htm</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>

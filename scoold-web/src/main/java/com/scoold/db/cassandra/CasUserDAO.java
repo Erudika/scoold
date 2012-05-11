@@ -1,21 +1,10 @@
 package com.scoold.db.cassandra;
 
-import com.scoold.core.Classunit;
-import com.scoold.core.Media;
-import com.scoold.core.Message;
-import com.scoold.core.Post;
-import com.scoold.core.Post.PostType;
-import com.scoold.core.School;
-import com.scoold.core.User;
+import com.scoold.core.*;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractUserDAO;
-import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
@@ -27,36 +16,18 @@ import org.apache.commons.lang.mutable.MutableLong;
  *
  * @author alexb
  */
-public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
+final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
     private static final Logger logger = Logger.getLogger(CasUserDAO.class.getName());
-	private CasDAOUtils cdu = new CasDAOUtils();
+	private CasDAOUtils cdu = (CasDAOUtils) CasDAOFactory.getInstance().getDAOUtils();
+	private CasMessageDAO<Message, Long> msgdao = new CasMessageDAO<Message, Long>();
+	private CasMediaDAO<Media, Long> mdao = new CasMediaDAO<Media, Long>();
 	
     public CasUserDAO(){
     }
 
     public User read(Long id) {
-		return cdu.read(User.class, id.toString(), CasDAOFactory.USERS);
-    }
-
-    public User readUserByEmail(String email) {
-		ArrayList<User> user = cdu.readAll(User.class, email, 
-				CasDAOFactory.EMAILS, CasDAOFactory.USERS, String.class,
-				null, null, null, 1, false, false, false);
-
-		if(user == null || user.isEmpty()) return null;
-
-		return user.get(0);
-    }
-
-    public User read(String uuid) {
-		ArrayList<User> user = cdu.readAll(User.class, uuid, 
-				CasDAOFactory.USERS_UUIDS, CasDAOFactory.USERS, String.class,
-				null, null, null, 1, true, false, false);
-
-		if(user == null || user.isEmpty()) return null;
-
-		return user.get(0);
+		return cdu.read(User.class, id.toString());
     }
 
 	public Long create(User newUser) {
@@ -64,11 +35,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
 		Mutator<String> mut = cdu.createMutator();
 		newUser.setLastseen(System.currentTimeMillis());
-		Long id = cdu.create(newUser, CasDAOFactory.USERS, mut);
-		if(id == null) return null;
-
-		cdu.addInsertion(new Column(newUser.getUuid(),
-				CasDAOFactory.USERS_UUIDS, id.toString(), id.toString()), mut);
+		Long id = cdu.create(newUser, mut);
 
 		//save auth identifier if there is one
 		String ident = newUser.getIdentifier();
@@ -76,43 +43,20 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 			attachIdentifierToUser(ident, id, mut);
 		}
 
-		if(!userExists(newUser.getEmail()) && !StringUtils.isBlank(newUser.getEmail())){
-			cdu.addInsertion(new Column(newUser.getEmail(), CasDAOFactory.EMAILS,
-					id.toString(), id.toString()), mut);
-		}
-
-		cdu.addNumbersortColumn(null, CasDAOFactory.USERS_BY_REPUTATION,
-				id, newUser.getReputation(), newUser.getOldreputation(), mut);
-
-		cdu.addTimesortColumn(null, id, CasDAOFactory.USERS_BY_TIMESTAMP, id, null, mut);
 		mut.execute();
-
-		newUser.index();
 
 		return id;
     }
 
     public void update(User transientUser) {
-		Mutator<String> mut = cdu.createMutator();
-		cdu.update(transientUser, CasDAOFactory.USERS, mut);
-
-		cdu.addNumbersortColumn(null, CasDAOFactory.USERS_BY_REPUTATION,
-				transientUser.getId(), transientUser.getReputation(),
-				transientUser.getOldreputation(), mut);
-
-		mut.execute();
-
-		transientUser.index();
+		cdu.update(transientUser);
     }
 
     public void delete(User persistentUser) {
-		//this will completely wipe off any user data from db!
-		//only admins should be able to do this
 		String uid = persistentUser.getId().toString();
-		String uuid = persistentUser.getUuid();
 
 		Mutator<String> mut = cdu.createMutator();
-		cdu.delete(persistentUser, CasDAOFactory.USERS, mut);
+		cdu.delete(persistentUser, mut);
 
 		// delete all auth keys for user
 		List<HColumn<String, String>> userAuthKeys = cdu.readRow(uid,
@@ -130,145 +74,96 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		}
 
 		cdu.addDeletions(Arrays.asList(new Column[]{
-			new Column<String, String>(persistentUser.getEmail(), CasDAOFactory.EMAILS),
 			new Column<String, String>(uid, CasDAOFactory.USER_AUTH),		
-			new Column<Long, String>(uid, CasDAOFactory.USER_SCHOOLS),		
-			new Column<Long, String>(uid, CasDAOFactory.USER_SCHOOLS),		
-			new Column<Long, String>(uid, CasDAOFactory.USER_CLASSES),		
-			new Column<Long, String>(uid, CasDAOFactory.USER_ANSWERS),		
-			new Column<Long, String>(uid, CasDAOFactory.USER_QUESTIONS),	
-			new Column<Long, String>(uid, CasDAOFactory.CONTACTS),
-			new Column<String, String>(uuid, CasDAOFactory.USERS_UUIDS)
+			new Column<Long, String>(uid, CasDAOFactory.SCHOOLS_PARENTS),		
+			new Column<Long, String>(uid, CasDAOFactory.CLASSES_PARENTS),		
+			new Column<Long, String>(uid, CasDAOFactory.USERS_PARENTS),
+			new Column<Long, String>(uid, CasDAOFactory.GROUPS_PARENTS),		
+			new Column<Long, String>(uid, CasDAOFactory.POSTS_PARENTS)		
 		}), mut);
 
 		// delete messages
-		new CasMessageDAO<Message, Long>().deleteAllMessagesForUUID(uuid, mut);
+		msgdao.deleteAllMessagesForID(persistentUser.getId(), mut);
 
 		// delete media
-		new CasMediaDAO<Media, Long>().deleteAllMediaForUUID(uuid, mut);
-
-		// clean timesort cols
-		cdu.removeTimesortColumn(null, CasDAOFactory.USERS_BY_TIMESTAMP,
-			persistentUser.getId(), mut);
-
-		// clean timesort rep sort cols
-		cdu.removeNumbersortColumn(null, CasDAOFactory.USERS_BY_REPUTATION,
-			persistentUser.getId(), persistentUser.getReputation(), mut);
-
+		mdao.deleteAllMediaForID(persistentUser.getId(), mut);
+		
 		mut.execute();
-
-		persistentUser.unindex();
-    }
-
-	public ArrayList<User> readAllSortedBy(String sortColumnFamilyName,
-			MutableLong page, MutableLong itemcount, boolean reverse){
-		return readAllSorted(sortColumnFamilyName, page, itemcount, reverse);
-	}
-
-	private <N> ArrayList<User> readAllSorted(String sortColumnFamilyName,
-			MutableLong page, MutableLong itemcount, boolean reverse){
-
-		CF<N> colFamily = null;
-		N startKey = null;
-		Class<N> colNameClass = null;
-		//check if the sort order is defined as a column family
-		if(sortColumnFamilyName.equalsIgnoreCase("timestamp")){
-			colNameClass = (Class<N>) Long.class;
-			colFamily = (CF<N>) CasDAOFactory.USERS_BY_TIMESTAMP;
-			startKey = (N) CasDAOUtils.toLong(page);
-		}else if(sortColumnFamilyName.equalsIgnoreCase("reputation")){
-			colNameClass = (Class<N>) String.class;
-			colFamily = (CF<N>) CasDAOFactory.USERS_BY_REPUTATION;
-			String rep = cdu.getColumn(page.toString(),	CasDAOFactory.USERS, "reputation");
-			if(rep != null){
-				startKey = (N) rep.concat(AbstractDAOFactory.SEPARATOR).concat(page.toString());
-			}
-		}else{
-			return new ArrayList<User>();
-		}
-
-		return cdu.readAll(User.class, CasDAOFactory.DEFAULT_KEY,
-			colFamily, CasDAOFactory.USERS, colNameClass, startKey, page, itemcount,
-			CasDAOFactory.MAX_ITEMS_PER_PAGE, reverse, false, false);
     }
 
     /**********************************************************************
-     *                  METHODS FOR READING CONTACTS
+     *                  METHODS FOR READING USERS
      **********************************************************************/
-
-    //Get all contacts for user with userid = id
-    public ArrayList<User> readAllContactsForUser(Long userid, MutableLong page,
+	
+    public ArrayList<User> readAllUsersForID(Long parentid, MutableLong page,
 			MutableLong itemcount){
+		if(parentid == null) return new ArrayList<User>();
 
-		ArrayList<String> keyz = cdu.readAllKeys(userid.toString(), CasDAOFactory.CONTACTS, 
-				Long.class, CasDAOUtils.toLong(page), page, 
-				CasDAOFactory.MAX_ITEMS_PER_PAGE, false, true);
+		ArrayList<String> keyz = cdu.readAllKeys(User.classtype, parentid.toString(), 
+				CasDAOFactory.USERS_PARENTS, Long.class, CasDAOUtils.toLong(page), 
+				page, itemcount, CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
 		
-		ArrayList<User> list = cdu.readAll(User.class, keyz, userid.toString(), CasDAOFactory.CONTACTS, 
-				CasDAOFactory.USERS, Long.class, itemcount, true);
-
-		// clean deleted contacts on read
+		ArrayList<User> list = cdu.readAll(User.class, keyz);
+		Mutator<String> mut = cdu.createMutator();
+		int countRemoved = 0;
+		
+		// read repair
 		if(list.contains(null)){
 			for (int i = 0; i < list.size(); i++) {
 				User user = list.get(i);
 				if(user == null){
 					String id = keyz.get(i);
-					
 					if(id != null){
-						deleteContactForUser(userid, new User(id));
+						cdu.addDeletion(new Column<Long, Long>(parentid.toString(), 
+								CasDAOFactory.USERS_PARENTS, NumberUtils.toLong(id), null), mut);
+						countRemoved++;
 					}
 				}
 			}
+		}
+		mut.execute();
+		list.removeAll(Collections.singleton(null));
+		
+		if(itemcount != null && countRemoved > 0) {
+			itemcount.setValue(itemcount.toLong() - countRemoved);
 		}
 		
 		return list;
     }
 
-	public boolean isFriendWith (Long userid, User contact){
+	public boolean isFriendWith (Long userid, Long contactid){
 		return cdu.existsColumn(userid.toString(),
-				CasDAOFactory.CONTACTS, contact.getId());
+				CasDAOFactory.USERS_PARENTS, contactid);
 	}
 
 	public boolean userExists (Long userid) {
-		return cdu.existsColumn(userid.toString(), 
-				CasDAOFactory.USERS, CasDAOFactory.CN_ID);
+		return cdu.existsColumn(userid.toString(), CasDAOFactory.OBJECTS, CasDAOFactory.CN_ID);
 	}
 
 	public boolean userExists (String identifier) {
 		if(StringUtils.isBlank(identifier)) return false;
-		List<?> row = null;
-		if(identifier.startsWith("http") || NumberUtils.isDigits(identifier)){
-			//identifier is an openid url
-			row = cdu.readRow(identifier, CasDAOFactory.AUTH_KEYS,
-					String.class, null, null, null, 1, true);
-		}else if(identifier.contains("@")){
-			row = cdu.readRow(identifier, CasDAOFactory.EMAILS,
-					String.class, null, null, null, 1, true);
-		}
+		List<?> row = cdu.readRow(identifier, CasDAOFactory.AUTH_KEYS,
+				String.class, null, null, null, 1, true);
 
 		return (row != null && !row.isEmpty());
 	}
 
 	public int countContacts (Long userid){
 		return cdu.countColumns(userid.toString(),
-				CasDAOFactory.CONTACTS, Long.class);
+				CasDAOFactory.USERS_PARENTS, Long.class);
 	}
 
-	public int createContactForUser (Long userid, User contact) {
+	public int createContactForUser (Long userid, Long contactid) {
 		int count = countContacts(userid);
 		if(count > CasDAOFactory.MAX_CONTACTS_PER_USER) return count;
-
-		cdu.putColumn(userid.toString(), CasDAOFactory.CONTACTS,
-				contact.getId(), contact.getUuid());
-
+		cdu.putColumn(userid.toString(), CasDAOFactory.USERS_PARENTS, contactid, contactid);
 		return ++count;
 	}
 
-	public int deleteContactForUser (Long userid, User contact) {
+	public int deleteContactForUser (Long userid, Long contactid) {
 		int count = countContacts(userid);
 
-		cdu.removeColumn(userid.toString(),
-				CasDAOFactory.CONTACTS, contact.getId());
+		cdu.removeColumn(userid.toString(), CasDAOFactory.USERS_PARENTS, contactid);
 
 		return --count;
 	}
@@ -280,8 +175,8 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     public ArrayList<Classunit> readAllClassUnitsForUser(Long userid, MutableLong page,
 			MutableLong itemcount){
 
-		return cdu.readAll(Classunit.class, userid.toString(), 
-			CasDAOFactory.USER_CLASSES, CasDAOFactory.CLASSES, Long.class,
+		return cdu.readAll(Classunit.class, null, userid.toString(), 
+			CasDAOFactory.CLASSES_PARENTS,Long.class,
 			CasDAOUtils.toLong(page), page, itemcount,
 			CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
     }
@@ -296,7 +191,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		ArrayList<String> keys = new ArrayList<String>();
 
 		List<HColumn<Long, String>> list = cdu.readRow(userid.toString(),
-				CasDAOFactory.USER_SCHOOLS, Long.class,
+				CasDAOFactory.SCHOOLS_PARENTS, Long.class,
 				CasDAOUtils.toLong(page), page, itemcount, howMany, true);
 
 		Map<Long, String> extraProps = new HashMap<Long, String>();
@@ -306,9 +201,7 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 			keys.add(hColumn.getName().toString());
 		}
 
-		ArrayList<School> schools = cdu.readAll(School.class, keys, 
-				CasDAOFactory.SCHOOLS);
-
+		ArrayList<School> schools = cdu.readAll(School.class, keys);
 
 		//assign additional properties like from/to year
 		String fyear = "0";
@@ -328,7 +221,19 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
 		return schools;
     }
+	
+	/**********************************************************************
+     *                 METHODS FOR READING GROUPS
+     **********************************************************************/
 
+    public ArrayList<Group> readAllGroupsForUser(Long userid, MutableLong page,
+			MutableLong itemcount){
+
+		return cdu.readAll(Group.class, null, userid.toString(), 
+			CasDAOFactory.GROUPS_PARENTS, Long.class,
+			CasDAOUtils.toLong(page), page, itemcount,
+			CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
+    }
 
 	/**********************************************************************
      *          METHODS FOR READING, CREATING & DELETING OPENIDs
@@ -349,9 +254,9 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     }
 
     public User readUserForIdentifier (String identifier){
-		ArrayList<User> user = cdu.readAll(User.class, identifier, 
-				CasDAOFactory.AUTH_KEYS, CasDAOFactory.USERS, String.class,
-				null, null, null, 1, true, false, false);
+		if(StringUtils.isBlank(identifier)) return null;
+		ArrayList<User> user = cdu.readAll(User.class, null, identifier, 
+				CasDAOFactory.AUTH_KEYS, String.class, null, null, null, 1, true, false, false);
 
 		if(user == null || user.isEmpty()) return null;
 
@@ -390,35 +295,12 @@ public final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 		);
     }
 
-	public ArrayList<User> readAllForKeys (ArrayList<String> keys) {
-		return cdu.readAll(User.class, keys, CasDAOFactory.USERS);
-	}
-
 	public ArrayList<String> getFavouriteTagsForUser(Long userid) {
-		String favtags = cdu.getColumn(userid.toString(),
-				CasDAOFactory.USERS, "favtags");
-
+		String favtags = cdu.getColumn(userid.toString(), CasDAOFactory.OBJECTS, "favtags");
 		User u = new User();
 		u.setFavtags(favtags);
 		return u.getFavtagsList();
 	}
 
-	public ArrayList<Post> readAllPostsForUser(Long userid, PostType type,
-			MutableLong page, MutableLong itemcount) {
-
-		CF<Long> cf = null;
-		if (type == PostType.ANSWER) {
-			cf = CasDAOFactory.USER_ANSWERS;
-		} else if(type == PostType.QUESTION) {
-			cf = CasDAOFactory.USER_QUESTIONS;
-		}else{
-			return new ArrayList<Post> ();
-		}
-
-		return cdu.readAll(Post.class, userid.toString(),
-			cf, CasDAOFactory.POSTS, Long.class,
-			CasDAOUtils.toLong(page), page, itemcount,
-			CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
-	}
 }
 

@@ -18,8 +18,8 @@ import org.apache.commons.lang.mutable.MutableLong;
 public abstract class AbstractMessageDAO<T extends Message, PK>
         implements GenericDAO<Message, Long> {
 
-	public abstract void deleteAllMessagesForUUID(String parentUUID);
-    public abstract ArrayList<T> readAllMessagesForUUID(String uuid, MutableLong page, MutableLong itemcount);
-	public abstract int countNewMessagesForUUID(String uuid);
-	public abstract void markAllAsReadForUUID(String uuid);
+	public abstract void deleteAllMessagesForID(Long parentid);
+    public abstract ArrayList<T> readAllMessagesForID(Long id, MutableLong page, MutableLong itemcount);
+	public abstract int countNewMessagesForID(Long parentid);
+	public abstract void markAllAsReadForID(Long parentid);
 }

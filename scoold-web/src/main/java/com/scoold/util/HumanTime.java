@@ -60,7 +60,7 @@ import java.util.Iterator;
  * </ul>
  * 
  * @author <a href="mailto:jb@eaio.com">Johann Burkard</a>
- * @version $Id: HumanTime.java 323 2008-10-08 19:06:22Z Johann $
+ * @version $Id: HumanTime.java 3906 2011-05-21 13:56:05Z johann $
  * @see #eval(CharSequence)
  * @see #approximately(CharSequence)
  * @see <a href="http://johannburkard.de/blog/programming/java/date-formatting-parsing-humans-humantime.html">Date Formatting and Parsing for Humans in Java with HumanTime</a>
@@ -91,6 +91,11 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
      * One day.
      */
     private static final long DAY = HOUR * 24;
+	
+    /**
+     * One month.
+     */
+    private static final long MONTH = DAY * 30;
 
     /**
      * One year.
@@ -561,147 +566,172 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //                ++parts;
 //                rounded = true;
 //                prependBlank = true;
-//            }else
-
+//            }else 
+			
 			if (d >= YEAR) {
                 a.append(floor(d, YEAR));
 //                a.append(' ');
                 a.append('y');
                 ++parts;
                 rounded = mod <= lowerCeiling(YEAR);
+				if(rounded) return a;
                 prependBlank = true;
             }
 
-            if (!rounded) {
-                d %= YEAR;
-                mod = d % DAY;
+			d %= YEAR;
+			mod = d % MONTH;
 
-//                if (mod >= upperCeiling(DAY)) {
+//                if (mod >= upperCeiling(MONTH)) {
 //                    if (prependBlank) {
 //                        a.append(' ');
 //                    }
-//                    a.append(ceil(d, DAY));
+//                    a.append(ceil(d, MONTH));
 //                    a.append(' ');
-//                    a.append('d');
+//                    a.append('n');
 //                    ++parts;
 //                    rounded = true;
 //                    prependBlank = true;
-//                }else
-
-				if (d >= DAY) {
-                    if (prependBlank) {
-                        a.append(' ');
-                    }
-                    a.append(floor(d, DAY));
+//                }else 
+			if (d >= MONTH) {
+				if (prependBlank) {
+					a.append(' ');
+				}
+				a.append(floor(d, MONTH));
 //                    a.append(' ');
-                    a.append('d');
-                    ++parts;
-                    rounded = mod <= lowerCeiling(DAY);
-                    prependBlank = true;
-                }
+				a.append('n');
+				++parts;
+				rounded = mod <= lowerCeiling(MONTH);
+				if(rounded) return a;
+				prependBlank = true;
+			}
 
-                if (parts < 2) {
-                    d %= DAY;
-                    mod = d % HOUR;
+			if(parts < 2){
+				d %= MONTH;
+				mod = d % DAY;
 
-//                    if (mod >= upperCeiling(HOUR)) {
-//                        if (prependBlank) {
-//                            a.append(' ');
-//                        }
-//                        a.append(ceil(d, HOUR));
-//                        a.append(' ');
-//                        a.append('h');
-//                        ++parts;
-//                        rounded = true;
-//                        prependBlank = true;
-//                    }else
+//					if (mod >= upperCeiling(DAY)) {
+//						if (prependBlank) {
+//							a.append(' ');
+//						}
+//						a.append(ceil(d, DAY));
+//						a.append(' ');
+//						a.append('d');
+//						++parts;
+//						rounded = true;
+//						prependBlank = true;
+//					}else 
+				if (d >= DAY) {
+					if (prependBlank) {
+						a.append(' ');
+					}
+					a.append(floor(d, DAY));
+//						a.append(' ');
+					a.append('d');
+					++parts;
+					rounded = mod <= lowerCeiling(DAY);
+					if(rounded) return a;
+					prependBlank = true;
+				}
 
+				if (parts < 2) {
+					d %= DAY;
+					mod = d % HOUR;
+
+//						if (mod >= upperCeiling(HOUR)) {
+//							if (prependBlank) {
+//								a.append(' ');
+//							}
+//							a.append(ceil(d, HOUR));
+//							a.append(' ');
+//							a.append('h');
+//							++parts;
+//							rounded = true;
+//							prependBlank = true;
+//						}else 
 					if (d >= HOUR && !rounded) {
-                        if (prependBlank) {
-                            a.append(' ');
-                        }
-                        a.append(floor(d, HOUR));
-//                        a.append(' ');
-                        a.append('h');
-                        ++parts;
-                        rounded = mod <= lowerCeiling(HOUR);
-                        prependBlank = true;
-                    }
+						if (prependBlank) {
+							a.append(' ');
+						}
+						a.append(floor(d, HOUR));
+//							a.append(' ');
+						a.append('h');
+						++parts;
+						rounded = mod <= lowerCeiling(HOUR);
+						if(rounded) return a;
+						prependBlank = true;
+					}
 
-                    if (parts < 2) {
-                        d %= HOUR;
-                        mod = d % MINUTE;
+					if (parts < 2) {
+						d %= HOUR;
+						mod = d % MINUTE;
 
-//                        if (mod >= upperCeiling(MINUTE)) {
-//                            if (prependBlank) {
-//                                a.append(' ');
-//                            }
-//                            a.append(ceil(d, MINUTE));
-//                            a.append(' ');
-//                            a.append('m');
-//                            ++parts;
-//                            rounded = true;
-//                            prependBlank = true;
-//                        }else
-
+//							if (mod >= upperCeiling(MINUTE)) {
+//								if (prependBlank) {
+//									a.append(' ');
+//								}
+//								a.append(ceil(d, MINUTE));
+//								a.append(' ');
+//								a.append('m');
+//								++parts;
+//								rounded = true;
+//								prependBlank = true;
+//							}else 
 						if (d >= MINUTE && !rounded) {
-                            if (prependBlank) {
-                                a.append(' ');
-                            }
-                            a.append(floor(d, MINUTE));
-//                            a.append(' ');
-                            a.append('m');
-                            ++parts;
-                            rounded = mod <= lowerCeiling(MINUTE);
-                            prependBlank = true;
-                        }
+							if (prependBlank) {
+								a.append(' ');
+							}
+							a.append(floor(d, MINUTE));
+//								a.append(' ');
+							a.append('m');
+							++parts;
+							rounded = mod <= lowerCeiling(MINUTE);
+							if(rounded) return a;
+							prependBlank = true;
+						}
 
-                        if (parts < 2) {
-                            d %= MINUTE;
-                            mod = d % SECOND;
+						if (parts < 2) {
+							d %= MINUTE;
+							mod = d % SECOND;
 
-//                            if (mod >= upperCeiling(SECOND)) {
-//                                if (prependBlank) {
-//                                    a.append(' ');
-//                                }
-//                                a.append(ceil(d, SECOND));
-//                                a.append(' ');
-//                                a.append('s');
-//                                ++parts;
-//                                rounded = true;
-//                                prependBlank = true;
-//                            }else
-
+//								if (mod >= upperCeiling(SECOND)) {
+//									if (prependBlank) {
+//										a.append(' ');
+//									}
+//									a.append(ceil(d, SECOND));
+//									a.append(' ');
+//									a.append('s');
+//									++parts;
+//									rounded = true;
+//									prependBlank = true;
+//								}else 
 							if (d >= SECOND && !rounded) {
-                                if (prependBlank) {
-                                    a.append(' ');
-                                }
-                                a.append(floor(d, SECOND));
-//                                a.append(' ');
-                                a.append('s');
-                                ++parts;
-                                rounded = mod <= lowerCeiling(SECOND);
-                                prependBlank = true;
-                            }
+								if (prependBlank) {
+									a.append(' ');
+								}
+								a.append(floor(d, SECOND));
+//									a.append(' ');
+								a.append('s');
+								++parts;
+								rounded = mod <= lowerCeiling(SECOND);
+								if(rounded) return a;
+								prependBlank = true;
+							}
 
-//                            if (parts < 2) {
-//                                d %= SECOND;
+//								if (parts < 2) {
+//									d %= SECOND;
 //
-//                                if (d > 0 && !rounded) {
-//                                    if (prependBlank) {
-//                                        a.append(' ');
-//                                    }
-//                                    a.append(Integer.toString((int) d));
-//                                    a.append(' ');
-//                                    a.append('m');
-//                                    a.append('s');
-//                                }
-//                            }
-
-                        }
-
-                    }
-
+//									if (d > 0 && !rounded) {
+//										if (prependBlank) {
+//											a.append(' ');
+//										}
+//										a.append(Integer.toString((int) d));
+//										a.append(' ');
+//										a.append('m');
+//										a.append('s');
+//									}
+//								}
+						}
+					}
                 }
             }
         }
@@ -724,7 +754,6 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -740,7 +769,6 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
      * 
      * @see java.lang.Object#hashCode()
      */
-    @Override
     public int hashCode() {
         return (int) (delta ^ (delta >> 32));
     }
@@ -754,7 +782,6 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
      * @see #getExactly()
      * @return a String, never <code>null</code>
      */
-    @Override
     public String toString() {
         return getExactly();
     }
@@ -775,7 +802,6 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
      * @see java.lang.Object#clone()
      * @throws CloneNotSupportedException
      */
-    @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

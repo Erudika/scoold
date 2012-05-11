@@ -10,7 +10,7 @@
 //		oembedServiceUrl: "http://oohembed.com/oohembed/",
 		oembedServiceUrl: "http://api.embed.ly/1/oembed",
 		callbackParam: "callback",
-		userAgent: "Mozilla/5.0 (compatible; Scoold/0.1; +http://erudika.com)",
+		userAgent: "Mozilla/5.0 (compatible; Scoold/0.6; +http://scoold.com)",
 
 		getThumb: function (data, filterParam) {
 			var embedElem = null,

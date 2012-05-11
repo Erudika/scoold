@@ -1,5 +1,4 @@
 [default]
-access_key = AKIAI5WX2PJPYQEPWECQ
 acl_public = False
 bucket_location = EU
 cloudfront_host = cloudfront.amazonaws.com
@@ -26,10 +25,11 @@ proxy_host =
 proxy_port = 0
 recursive = False
 recv_chunk = 4096
-secret_key = VeZ+Atr4bHjRb8GrSWZK3Uo6sGbk4z2gCT4nmX+c
 send_chunk = 4096
 simpledb_host = sdb.amazonaws.com
 skip_existing = False
 urlencoding_mode = normal
 use_https = False
 verbosity = WARNING
+access_key = 
+secret_key = 

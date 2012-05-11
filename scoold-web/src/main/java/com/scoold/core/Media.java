@@ -10,18 +10,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.lang.mutable.MutableLong;
 
-public class Media implements Votable<Long>, Commentable, 
-		ScooldObject, Serializable {
+public class Media implements Votable<Long>, Commentable, ScooldObject, Serializable {
 
     private Long id;
-	private String uuid;
 	@Stored private String type;
 	@Stored private String url;
 	@Stored private String title;
     @Stored private String description;
     @Stored private String tags;
     @Stored private Long userid;
-	@Stored private String parentuuid;
+	@Stored private Long parentid;
 	@Stored private String thumburl;
 	@Stored private Long timestamp;
 	@Stored private String labels;	// --> ,label,label,label, <--
@@ -34,22 +32,18 @@ public class Media implements Votable<Long>, Commentable,
 	@Stored private Long commentpage;
 	@Stored private String link;
 	@Stored private String oldlabels;
+	@Stored public static String classtype = Media.class.getSimpleName().toLowerCase();
 
 	private transient User author;
     private transient static AbstractMediaDAO<Media, Long> mydao;
 	private ArrayList<Comment> comments = new ArrayList<Comment>(0);
 
-	public static enum MediaType{ UNKNOWN, PHOTO, VIDEO, PRODUCT, AUDIO, TEXT, RICH };
+	public static enum MediaType{ UNKNOWN, PHOTO, RICH };
 	
     public static AbstractMediaDAO<Media, Long> getMediaDao(){
         return (mydao != null) ? mydao : (AbstractMediaDAO<Media, Long>)
 				AbstractDAOFactory.getDefaultDAOFactory().getDAO(Media.class);
     }
-
-	public Media(String uuid) {
-		this();
-		this.uuid = uuid;
-	}
     
 	public Media() {
 		this.type = MediaType.UNKNOWN.toString();
@@ -62,6 +56,10 @@ public class Media implements Votable<Long>, Commentable,
 		this.id = id;
 	}
 
+	public String getClasstype() {
+		return classtype;
+	}
+	
 	/**
 	 * Get the value of link
 	 *
@@ -226,39 +224,21 @@ public class Media implements Votable<Long>, Commentable,
 	}
 
 	/**
-	 * Get the value of parentuuid
+	 * Get the value of parentid
 	 *
-	 * @return the value of parentuuid
+	 * @return the value of parentid
 	 */
-	public String getParentuuid() {
-		return parentuuid;
+	public Long getParentid() {
+		return parentid;
 	}
 
 	/**
-	 * Set the value of parentuuid
+	 * Set the value of parentid
 	 *
-	 * @param parentuuid new value of parentuuid
+	 * @param parentid new value of parentid
 	 */
-	public void setParentuuid(String parentuuid) {
-		this.parentuuid = parentuuid;
-	}
-
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setParentid(Long parentid) {
+		this.parentid = parentid;
 	}
 	
     /**
@@ -514,7 +494,7 @@ public class Media implements Votable<Long>, Commentable,
 	public ArrayList<Comment> getComments(MutableLong page){
 		MutableLong itemcount = new MutableLong(); 
 		this.comments = Comment.getCommentDao()
-				.readAllCommentsForUUID(uuid, page, itemcount);
+				.readAllCommentsForID(id, page, itemcount);
 		commentcount = itemcount.longValue();
 		return this.comments;
 	}

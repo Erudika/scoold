@@ -13,18 +13,18 @@
 				#if($request.getParameter("e"))
 					#set($e = $request.getParameter("e"))
 					#if($e == "403")
-						<h1>$lang.get("forbidden")</h1>						
+						<h1>$!lang.get("forbidden")</h1>						
 					#elseif($e == "400")
-						<h1>$lang.get("badrequest")</h1>
+						<h1>$!lang.get("badrequest")</h1>
 					#elseif($e == "500")
-						<h1>$lang.get("servererror")</h1>
+						<h1>$!lang.get("servererror")</h1>
 					#elseif($e == "503")
-						<h1>$lang.get("sitedown")</h1>
+						<h1>$!lang.get("sitedown")</h1>
 					#else
-						<h1>$lang.get("error.title")</h1>
+						<h1>$!lang.get("error.title")</h1>
 					#end
 				#else
-					<h1>$lang.get("error.title")</h1>
+					<h1>$!lang.get("error.title")</h1>
 				#end				
 				<br />
 			</div>

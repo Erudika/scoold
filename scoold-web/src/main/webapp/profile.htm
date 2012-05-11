@@ -4,9 +4,9 @@
 			<div class="line mediumText lightgray">
 				<div class="unit size1of2">
 					#if($canEdit)
-						<div id="usertype">${lang.get($showUser.type)}</div>
+						<div id="usertype">$!{lang.get($showUser.type)}</div>
 					#else
-						<div>${lang.get($showUser.type)}</div>
+						<div>$!{lang.get($showUser.type)}</div>
 					#end
 				</div>
 				<div class="unit size1of2 lastUnit r">
@@ -14,19 +14,13 @@
 				</div>
 			</div>
 
-			#if($showUser.status && !$showUser.status.isEmpty())
-				#set($mystatus = $showUser.status)
-			#else
-				#set($mystatus = $lang.get("profile.status.txt"))
-			#end
-
 			#if($canEdit)
-				<div id="fullname" class="hugeText editable p100 mbm">$!{showUser.fullname}</div>
-				<div id="mystatus" class="editable p100">$!mystatus</div>
+				<div id="fullname" class="hugeText editable p100">$!{showUser.fullname}</div>
+				<div id="mystatus" class="editable p100">$!{showUser.status}</div>
 			#else
-				<div class="hugeText p100 mbm">$!{showUser.fullname}</div>
-				#if(($showUser.status && !$showUser.status.isEmpty()) || $authenticated)
-					<div class="p100">$!mystatus</div>
+				<div class="hugeText p100">$!{showUser.fullname}</div>
+				#if(($showUser.status && !$showUser.status.trim().isEmpty()) || $authenticated)
+					<div class="p100">$!{showUser.status}</div>
 				#end
 			#end
 		</div>
@@ -36,11 +30,11 @@
 		#if(!$isMyProfile && $authenticated)
 			<div class="mvm">
 				#if($authUser.isFriendWith($showUser))
-					<a href="$myprofilelink/remove" class="delfriend button-tiny rounded3" title="Remove from contacts"><span class="pictos">-</span> ${lang.get("delfriend")}</a>
+					<a href="$profilelink/$authUser.id/remove" class="delfriend button-tiny rounded3" title="Remove from contacts"><span class="pictos">-</span> $!{lang.get("delfriend")}</a>
 				#else
-					<a href="$myprofilelink/add" class="addfriend button-tiny rounded3" title="Add to contacts"><span class="pictos">+</span> ${lang.get("addfriend")}</a>
+					<a href="$profilelink/$authUser.id/add" class="addfriend button-tiny rounded3" title="Add to contacts"><span class="pictos">+</span> $!{lang.get("addfriend")}</a>
 				#end
-				<a href="$messageslink/new?toname=${daoutils.urlEncode($showUser.fullname)}&amp;touuid=${showUser.uuid}" class="button-tiny rounded3"><span class="pictos">M</span> $lang.get("sendmsg")</a>
+				<a href="$messageslink/new?toname=${daoutils.urlEncode($showUser.fullname)}&amp;toid=${showUser.id}" class="button-tiny rounded3"><span class="pictos">M</span> $!lang.get("sendmsg")</a>
 
 				#if($request.isUserInRole("admin"))
 					#if($showUser.isModerator())
@@ -48,7 +42,7 @@
 					#else
 						<a href="$profilelink/$showUser.id/?makemod=true" class="red button-tiny rounded3 rusure"><span class="pictos">S</span> Make mod</a>
 					#end
-					<a href="${adminlink}?delete=user&amp;id=$showUser.id" title="Delete user account" class="red button-tiny rounded3"><span class="pictos">*</span> $lang.get("delete")</a>
+					<a href="${adminlink}?delete=user&amp;id=$showUser.id" title="Delete user account" class="red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
 				
 				#getreportlink($showUser "$profilelink/$!showUser.id" "button-tiny rounded3")
@@ -58,53 +52,53 @@
 		#if($showParam)
 			####################################################################################################################
 			#if($showParam == "contacts")
-				<h2>${lang.get("contacts.title")} #showcount($itemcount.longValue())</h2>
+				<h2>$!{lang.get("contacts.title")} #showcount($itemcount.longValue())</h2>
 
 				<div id="contacts-list" class="mvm">
 					#if($contactlist.isEmpty())
-						<div class="mvl">${lang.get("profile.contacts.nocontacts")}</div>
+						<div class="mvl">$!{lang.get("profile.contacts.nocontacts")}</div>
 					#else
-						#paginate($pagenum.longValue() "#peoplepage($contactlist)" $itemcount.longValue() "" "pageless")
+						#paginate($pagenum.longValue() "\#peoplepage(\$contactlist)" $itemcount.longValue() "" "pageless")
 					#end
 				</div>
 			
 			####################################################################################################################
 			#elseif($showParam == "questions")
-				<h2>${lang.get("questions.title")} #showcount($itemcount.longValue())</h2>
+				<h2>$!{lang.get("questions.title")} #showcount($itemcount.longValue())</h2>
 
 				<div id="questions-edit">
 					#if($postlist.isEmpty())
-						<div class="mvl">${lang.get("profile.posts.noquestions")}</div>
+						<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
 					#else
-						#paginate($pagenum.longValue() "#questionspage($postlist)" $itemcount.longValue() "" "pageless")
+						#paginate($pagenum.longValue() "\#questionspage(\$postlist)" $itemcount.longValue() "" "pageless")
 					#end
 				</div>
 
 			####################################################################################################################
 			#elseif($showParam == "answers")
-				<h2>${lang.get("answers.title")} #showcount($itemcount.longValue())</h2>
+				<h2>$!{lang.get("answers.title")} #showcount($itemcount.longValue())</h2>
 
 				<div id="answers-edit">
 					#if($postlist.isEmpty())
-						<div class="mvl">${lang.get("profile.posts.noanswers")}</div>
+						<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
 					#else
-						#paginate($pagenum.longValue() "#compactanswerspage($postlist)" $itemcount.longValue() "" "pageless")
+						#paginate($pagenum.longValue() "\#compactanswerspage(\$postlist)" $itemcount.longValue() "" "pageless")
 					#end
 				</div>
 
 			####################################################################################################################
 			#elseif($showParam == "photos" && $authenticated)
-				#showphotos($myphotoslink $canEdit)
+				#showphotos($photoslink $canEdit)
 			####################################################################################################################
 			#elseif($showParam == "drawer")
-				<h2>$lang.get("drawer.title") #showcount($itemcount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
+				<h2>$!lang.get("drawer.title") #showcount($itemcount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
 				#if($canEdit)
 					#oembedbox("addvideo")
 				#end
 
 				<div id="drawer-edit">
 					<div id="drawer">
-						#paginate($pagenum.longValue() "#drawerpage($medialist)" $itemcount.longValue() "" "pageless")
+						#paginate($pagenum.longValue() "\#drawerpage(\$medialist)" $itemcount.longValue() "" "pageless")
 					</div>
 				</div>
 			#end
@@ -112,9 +106,9 @@
 		#else
 			<div id="about" class="mvl clearfix">
 				#if($canEdit)
-					<a href="$myprofilelink/$!showUser.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> ${lang.get("edit")}</a>
+					<a href="$profilelink/$authUser.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> $!{lang.get("edit")}</a>
 				#end
-				<h2>${lang.get("profile.about.title")}</h2>
+				<h2>$!{lang.get("profile.about.title")}</h2>
 				#if($request.getParameter("edit") && $authenticated)
 					#set($hideedit1 = "")
 					#set($hideview1 = "hide")
@@ -127,14 +121,14 @@
 					#showaboutview()
 				</div>
 				#if($canEdit)
-				<div id="about-edit" class="editbox rounded5 pal $hideedit1">
-					<form method="post" id="about-edit-form" action="$myprofilelink?getaboutviewcode=true">
+				<div id="about-edit" class="editbox lightgraybg rounded5 pal $hideedit1">
+					<form method="post" id="about-edit-form" action="$profilelink/$authUser.id?getaboutviewcode=true">
 						<fieldset>
 							#sectoken(false)
 							<table class="p100">
 								<tbody>
 									<tr>
-										<td class="r p25">${lang.get("signup.form.iama")}:</td>
+										<td class="r p25">$!{lang.get("signup.form.iama")}:</td>
 										<td class="pll p75">
 											<select name="type" class="nicebox">
 												#foreach($utype in ["alumnus", "student", "teacher"])
@@ -148,7 +142,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="r p25">${lang.get("profile.about.dob")}:</td>
+										<td class="r p25">$!{lang.get("profile.about.dob")}:</td>
 										<td class="pll p75">
 											#dayselect("nicebox" "dobDate" $showUser.getDobDay())
 											#monthselect("nicebox" "dobDate" $showUser.getDobMonth())
@@ -156,13 +150,13 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="r p25">${lang.get("profile.about.location")}:</td>
+										<td class="r p25">$!{lang.get("profile.about.location")}:</td>
 										<td class="pll p75">
 											<input name="location" class="locationbox nicebox p90" type="text" value="$!{showUser.location}"/>
 										</td>
 									</tr>
 									<tr>
-										<td class="r p25">${lang.get("profile.about.ilike")}:</td>
+										<td class="r p25">$!{lang.get("profile.about.ilike")}:</td>
 										<td class="pll p75">
 											<textarea id="ilike" name="ilike" rows="3" cols="30" class="p90 nicebox">$!{showUser.ilike}</textarea>
 										</td>
@@ -177,7 +171,7 @@
 										</td>
 										<td class="pll p75">
 											<input id="detail-value" type="text" value="" maxlength="255" class="nicebox p80"/>
-											<a href="#" class="button-small rounded3 add-contact mls" title="$lang.get('add')">
+											<a href="#" class="button-small rounded3 add-contact mls" title="$!lang.get('add')">
 												<span class="pictos">&amp;</span>
 											</a>
 										</td>
@@ -187,7 +181,7 @@
 										#contactdetailbox($detail)
 									#end
 									<tr>
-										<td class="r p25">${lang.get("profile.about.aboutme")}:</td>
+										<td class="r p25">$!{lang.get("profile.about.aboutme")}:</td>
 										<td class="pll p75">
 											<textarea id="aboutme" name="aboutme" rows="5" cols="30" class=" p90 nicebox">$!{showUser.aboutme}</textarea>
 										</td>
@@ -196,9 +190,9 @@
 							</table>
 							
 							<div class="center mtl">
-								<input type="submit" value="${lang.get('save')}" class="button rounded3"/>
-								<input type="button" value="${lang.get('close')}" class="button rounded3 canceledit $hideview1"/>
-								<a href="$myprofilelink" class="$hideedit1">${lang.get('close')}</a>
+								<input type="submit" value="$!{lang.get('save')}" class="button rounded3"/>
+								<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit $hideview1"/>
+								<a href="$profilelink/$authUser.id" class="$hideedit1">$!{lang.get('close')}</a>
 							</div>
 						</fieldset>
 					</form>
@@ -208,7 +202,7 @@
 
 			#set($badges = $showUser.badgesMap)
 			#if(!$badges.isEmpty())
-				<h2>$lang.get("badges.title") #showcount($!badges.size())</h2>
+				<h2>$!lang.get("badges.title") #showcount($!badges.size())</h2>
 				<div class="mvl clearfix">
 					#foreach($entry in $badges.entrySet())
 						#set($badge = $entry.key)
@@ -219,14 +213,14 @@
 			#end
 
 			#if(!$schoollist.isEmpty())
-				<h2>${lang.get("schools.title")} #showcount($!schoollist.size())</h2>
+				<h2>$!{lang.get("schools.title")} #showcount($!schoollist.size())</h2>
 				<div id="schools-edit" class="editschools mvl clearfix">
 					#myschoolspage($schoollist)
 				</div>
 			#end
 
 			#if(!$classlist.isEmpty())
-				<h2>${lang.get("classes.title")} #showcount($!classlist.size())</h2>
+				<h2>$!{lang.get("classes.title")} #showcount($!classlist.size())</h2>
 				<div id="classes-edit" class="editclasses mvl clearfix">
 					#classespage($classlist)
 				</div>
@@ -237,17 +231,18 @@
 
 	<div class="unit size1of4 lastUnit">
 		<div class="mll center">
-			<div class="mbm">
-				<img src="#profilepic($showUser false)" alt="Profile picture" class="mbm rounded3"/>
+			<div class="mbm rounded3">
+				<img src="#profilepic($showUser false)" alt="Profile picture" class="rounded3"/>
 			</div>
-			<span class="largeText reputationbox p80 phl rounded5" title="$lang.get('reputation')">$!showUser.reputation</span>
+			<span class="largeText reputationbox p80 phl rounded5" title="$!lang.get('reputation')">$!showUser.reputation</span>
 			<ul class="sidebar">
-				<li class="rounded3"><a href="$!myprofilelink/#stripstr($!showUser.fullname)">${lang.get("profile.about.title")}</a></li>
-				<li class="rounded3"><a href="$!mycontactslink/#stripstr($!showUser.fullname)">${lang.get("contacts.title")}</a></li>
-				<li class="rounded3"><a href="$!myquestionslink/#stripstr($!showUser.fullname)">${lang.get("questions.title")}</a></li>
-				<li class="rounded3"><a href="$!myanswerslink/#stripstr($!showUser.fullname)">${lang.get("answers.title")}</a></li>
-				<li class="rounded3"><a href="$!myphotoslink/#stripstr($!showUser.fullname)">${lang.get("photos.title")}</a></li>
-				<li class="rounded3"><a href="$!mydrawerlink/#stripstr($!showUser.fullname)">${lang.get("drawer.title")}</a></li>
+				#if($authenticated) #set($privatepath = "/p" ) #else #set($privatepath = "" ) #end
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/#stripstr($!showUser.fullname)">$!{lang.get("profile.about.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/contacts/#stripstr($!showUser.fullname)">$!{lang.get("contacts.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/questions/#stripstr($!showUser.fullname)">$!{lang.get("questions.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/answers/#stripstr($!showUser.fullname)">$!{lang.get("answers.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/photos/#stripstr($!showUser.fullname)">$!{lang.get("photos.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!authUser.id/drawer/#stripstr($!showUser.fullname)">$!{lang.get("drawer.title")}</a></li>
 			</ul>
 		</div>
 	</div>

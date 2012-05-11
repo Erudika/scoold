@@ -5,9 +5,11 @@
 	#end
 	<div class="mbl center">
 		#if($isFacebookUser)
-			<span id="fb-picture" class="mrl"></span>
+			<span id="fb-picture" class="rounded3 mrl"></span>
+		#elseif($newUser.email && !$newUser.email.isEmpty())
+			<img src="#profilepic($newUser true)" alt="Profile picture" class="rounded3 mrl"/>
 		#end
-		<span class="megaText">$lang.get("hello")</span>
+		<span class="megaText">$!lang.get("hello")</span>
 	</div>
 	<form method="post" id="$signupForm.id" action="$signuplink">
 		<fieldset>
@@ -25,7 +27,7 @@
 
 			<div class="center mtl">
 				${signupForm.fields.signup}
-				<div class="smallText mtm">$lang.get("signup.form.termsofuse")</div>
+				<div class="smallText mtm">$!lang.get("signup.form.termsofuse")</div>
 			</div>
 		</fieldset>
 	</form>

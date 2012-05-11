@@ -1,4 +1,4 @@
-*.* @logs.loggly.com:18670
+*.* @@logs.loggly.com:21579
 
 $ModLoad imfile
 $InputFileName /var/log/cassandra/system.log
@@ -9,5 +9,5 @@ $InputRunFileMonitor
 
 $InputFilePollInterval 10
 
-if $programname == "cassandra" then @logs.loggly.com:18670;
+if $programname == "cassandra" then @@logs.loggly.com:21579;
 & ~

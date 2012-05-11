@@ -12,16 +12,9 @@ package com.scoold.core;
 public interface Votable<PK> extends ScooldObject{
 
 	public boolean voteUp(PK userid);
-
 	public boolean voteDown(PK userid);
-
 	public Integer getVotes();
-
 	public void setVotes(Integer votes);
-
-//	public String getUuid();
-
 	public Long getUserid();
 
-//	public void update();
 }

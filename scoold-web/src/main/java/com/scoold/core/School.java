@@ -34,27 +34,21 @@ import org.jsoup.select.Elements;
  * 
  * @author alexb
  */
-public class School implements Votable<Long>, CanHasMedia,
-		Askable<Post>, Searchable<School>, ScooldObject, Serializable{
+public class School implements Votable<Long>, CanHasMedia, Askable, ScooldObject, Serializable{
 
     private Long id;
-	private String uuid;
-	@Indexed
     @Stored private String name;
-	@Indexed
     @Stored private String location;
-	@Indexed
     @Stored private String type;
     @Stored private Integer fromyear;
     @Stored private Integer toyear;
-	@Indexed
 	@Stored private String about;
 	@Stored private Long userid;
 	@Stored private Integer votes;
 	@Stored private String contacts;
 	@Stored private Long timestamp;
 	@Stored private String iconurl;
-	@Stored private Integer oldvotes;
+	@Stored public static String classtype = School.class.getSimpleName().toLowerCase();
 
 	public static enum SchoolType{
 		UNKNOWN, HIGHSCHOOL, LYCEUM, COLLEGE, THEOLOGY, SEMINARY, ACADEMY, SPECIALIZED,
@@ -85,11 +79,6 @@ public class School implements Votable<Long>, CanHasMedia,
 		httpClient = new AsyncHttpClient(builder.build());
 	}
 
-	public School(String uuid) {
-		this();
-		this.uuid = uuid;
-	}
-
 	public School() {
 		this("", SchoolType.UNKNOWN.toString(), "");
     }
@@ -106,6 +95,10 @@ public class School implements Votable<Long>, CanHasMedia,
 		this();
         this.id = id;
     }
+
+	public String getClasstype() {
+		return classtype;
+	}
 
 	public void setContacts(String contacts) {
 		this.contacts = contacts;
@@ -127,24 +120,6 @@ public class School implements Votable<Long>, CanHasMedia,
 	 */
 	public void setIconurl(String iconurl) {
 		this.iconurl = iconurl;
-	}
-
-	/**
-	 * Get the value of oldvotes
-	 *
-	 * @return the value of oldvotes
-	 */
-	public Integer getOldvotes() {
-		return oldvotes;
-	}
-
-	/**
-	 * Set the value of oldvotes
-	 *
-	 * @param oldvotes new value of oldvotes
-	 */
-	public void setOldvotes(Integer oldvotes) {
-		this.oldvotes = oldvotes;
 	}
 
 	/**
@@ -191,25 +166,6 @@ public class School implements Votable<Long>, CanHasMedia,
 	public void setUserid(Long userid) {
 		this.userid = userid;
 	}
-
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
 
 	/**
      * Get the value of id
@@ -347,22 +303,20 @@ public class School implements Votable<Long>, CanHasMedia,
 	 * @param votes new value of votes
 	 */
 	public void setVotes(Integer votes) {
-		setOldvotes(this.votes);
 		this.votes = votes;
 	}
 
 
-	public ArrayList<User> getAllUsers(MutableLong page,
-			MutableLong itemcount){
-		return getSchoolDao().readAllUsersForSchool(id, page, itemcount);
+	public ArrayList<User> getAllUsers(MutableLong page, MutableLong itemcount){
+		return User.getUserDao().readAllUsersForID(this.id, page, itemcount);
 	}
     
     public ArrayList<Classunit> getAllClassUnits(MutableLong page, MutableLong itemcount){
-        return getSchoolDao().readAllClassUnitsForSchool(id, page, itemcount);
+        return getSchoolDao().readAllClassUnitsForSchool(this.id, page, itemcount);
     }
         
     public boolean linkToUser(Long userid){
-		return getSchoolDao().createUserSchoolLink(userid, id, fromyear, toyear);
+		return getSchoolDao().createUserSchoolLink(userid, this.id, this.fromyear, this.toyear);
     }
 
     public void unlinkFromUser(Long userid){
@@ -593,12 +547,12 @@ public class School implements Votable<Long>, CanHasMedia,
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getMediaDao().readAllMediaForUUID(this.uuid, type, label,
+		return Media.getMediaDao().readAllMediaForID(this.id, type, label,
 				pagenum, itemcount, maxItems, reverse);
 	}
 
 	public void deleteAllMedia(){
-		Media.getMediaDao().deleteAllMediaForUUID(uuid);
+		Media.getMediaDao().deleteAllMediaForID(id);
 	}
 
     public boolean equals(Object obj){
@@ -625,23 +579,8 @@ public class School implements Votable<Long>, CanHasMedia,
 	}
 
 	public ArrayList<Post> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount) {
-		return Post.getPostDao().readAllPostsForUUID(PostType.QUESTION, this.uuid,
-				sortBy, pagenum, itemcount);
+		return Post.getPostDao().readAllPostsForID(PostType.QUESTION, this.id,
+				sortBy, pagenum, itemcount, AbstractDAOFactory.MAX_ITEMS_PER_PAGE);
 	}
-
-	public void index() {
-		Search.index(this);
-	}
-
-	public void unindex() {
-		Search.unindex(this);
-	}
-
-	public ArrayList<School> readAllForKeys(ArrayList<String> keys) {
-		if(keys == null || keys.isEmpty()) return new ArrayList<School> ();
-		return getSchoolDao().readAllForKeys(keys);
-	}
-
-
 }
 

@@ -1,4 +1,4 @@
-*.* @logs.loggly.com:34882
+*.* @@logs.loggly.com:29468
 
 $ModLoad imfile
 $InputFileName /home/glassfish/glassfish/glassfish/domains/domain1/logs/server.log
@@ -9,5 +9,5 @@ $InputRunFileMonitor
 
 $InputFilePollInterval 10
 
-if $programname == "glassfish" then @logs.loggly.com:34882;
+if $programname == "glassfish" then @@logs.loggly.com:29468;
 & ~

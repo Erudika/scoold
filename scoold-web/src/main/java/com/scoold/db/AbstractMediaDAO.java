@@ -19,9 +19,9 @@ import org.apache.commons.lang.mutable.MutableLong;
 public abstract class AbstractMediaDAO<T extends Media, PK>
         implements GenericDAO<Media, Long> {
 
-	public abstract ArrayList<T> readAllMediaForUUID(String uuid, MediaType type, String label, MutableLong page, MutableLong itemcount, boolean reverse);
-	public abstract ArrayList<T> readAllMediaForUUID(String uuid, MediaType type, String label, MutableLong page, MutableLong itemcount, int maxPerPage, boolean reverse);
-	public abstract ArrayList<Media> readPhotosAndCommentsForUUID(String uuid, String label, Long photoid, int nextPrevAll, MutableLong itemcount);
-	public abstract ArrayList<String> readAllLabelsForUUID(String uuid);
-	public abstract void deleteAllMediaForUUID(String uuid);
+	public abstract ArrayList<T> readAllMediaForID(Long parentid, MediaType type, String label, MutableLong page, MutableLong itemcount, boolean reverse);
+	public abstract ArrayList<T> readAllMediaForID(Long parentid, MediaType type, String label, MutableLong page, MutableLong itemcount, int maxPerPage, boolean reverse);
+	public abstract ArrayList<Media> readPhotosAndCommentsForID(Long id, String label, Long photoid, MutableLong itemcount);
+	public abstract ArrayList<String> readAllLabelsForID(Long paretid);
+	public abstract void deleteAllMediaForID(Long parentid);
 }

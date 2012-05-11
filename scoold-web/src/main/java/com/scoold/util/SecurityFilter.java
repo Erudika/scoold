@@ -134,7 +134,7 @@ public class SecurityFilter implements Filter {
 			String token = request.getParameter("stoken");
 			String salt = request.getParameter("pepper");
 			String authToken = AbstractDAOUtils.getStateParam(ScooldAuthModule.AUTH_USER, 
-					request, response, BasePage.USE_SESSIONS);
+					request, response, ScooldAuthModule.USE_SESSIONS);
 			
 			if(!StringUtils.isBlank(token) && !StringUtils.isBlank(authToken) 
 					&& !StringUtils.isBlank(salt) && token.equals(AbstractDAOUtils.

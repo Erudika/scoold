@@ -6,6 +6,7 @@
 package com.scoold.pages;
 
 import com.scoold.core.Message;
+import com.scoold.core.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,31 +21,33 @@ public class Messages extends BasePage{
 
 	public String title;
 	public ArrayList<Message> messageslist;
-
+	public ArrayList<User> contactslist;
+	
 	public Messages(){
 		title = lang.get("messages.title");
 	}
 
 	public void onGet(){
 		if(!isAjaxRequest()){
-			messageslist = Message.getMessages(authUser.getUuid(), pagenum, itemcount);
-			Message.markAllRead(authUser.getUuid());
+			messageslist = Message.getMessages(authUser.getId(), pagenum, itemcount);
+			contactslist = User.getUserDao().readAllUsersForID(authUser.getId(), null, null);
+			Message.markAllRead(authUser.getId());
 		}
 	}
 
 	public void onPost(){
 		if(param("newmessage")){
 			String message = getParamValue("body");
-			String[] uids = getContext().getRequestParameterValues("touuids");
+			String[] uids = getContext().getRequestParameterValues("toids");
 
 			if((uids == null || uids.length < 1 || StringUtils.isBlank(message))
 					&& !isAjaxRequest()){
 				setRedirect(messageslink+"/new");
 			}else{
-				HashSet<String> uuids = new HashSet<String>();
-				uuids.addAll(Arrays.asList(uids));
+				HashSet<String> ids = new HashSet<String>();
+				ids.addAll(Arrays.asList(uids));
 				
-				Message msg = new Message(uuids, authUser.getId(), false, message);
+				Message msg = new Message(ids, authUser.getId(), false, message);
 				boolean done = msg.send();
 				
 				if(!isAjaxRequest()){
@@ -54,9 +57,9 @@ public class Messages extends BasePage{
 			}
 		}else if(param("delete")){
 			Long mid = NumberUtils.toLong(getParamValue("delete"), 0);
-			new Message(mid, authUser.getUuid()).delete();
+			new Message(mid, authUser.getId()).delete();
 		}else if(param("deleteall")){
-			Message.deleteAll(authUser.getUuid());
+			Message.deleteAll(authUser.getId());
 			setRedirect(messageslink);
 			return;
 		}

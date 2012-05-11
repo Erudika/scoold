@@ -8,6 +8,7 @@ class scoold::elasticsearch {
 	$dontstart = "#do-not-start"	 	
 	$minmem = "ES_MIN_MEM="
 	$maxmem = "ES_MAX_MEM="
+	
 	$nodeid = str2int(regsubst($scoold::nodename,'^(\w+)(\d+)$','\2'))
 		
 	package { ["unzip", "curl"]: }
@@ -45,7 +46,7 @@ class scoold::elasticsearch {
 			command => "sed -e '1,/#${minmem}/ s/#${minmem}.*/${minmem}\"${scoold::esheapsize}\"/' -e '1,/#${maxmem}/ s/#${maxmem}.*/${maxmem}\"${scoold::esheapsize}\"/' -i.bak ${esdir}/bin/elasticsearch.in.sh",
 			require => Exec["rename-elasticsearch"];
 		"install-cloud-plugin":
-			command => "rm -rf ${esdir}/plugins/cloud-aws; sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install cloud-aws",
+			command => "rm -rf ${esdir}/plugins/cloud-aws; sudo -u ${elasticsearchusr} ${esdir}/bin/plugin -install ${scoold::escloudawslink}",
 			require => Exec["rename-elasticsearch"],
 			before => Exec["start-elasticsearch"];
 		"download-river":
@@ -55,16 +56,6 @@ class scoold::elasticsearch {
 	}
 
 	line { 
-		"limits.conf1":
-			ensure => present,		
-			file => "/etc/security/limits.conf",
-			line => "${elasticsearchusr} - nofile 64000",
-			require => User[$elasticsearchusr];
-		"limits.conf2":
-			ensure => present,		
-			file => "/etc/security/limits.conf",
-			line => "${elasticsearchusr} - memlock unlimited",
-			require => User[$elasticsearchusr];
 		"serverflag":
 			ensure => present,
 			file => "${esdir}/bin/elasticsearch.in.sh",
@@ -109,7 +100,7 @@ class scoold::elasticsearch {
 	
 	exec { 		
 		"start-elasticsearch":
-			command => "monit; monit start elasticsearch",
+			command => "monit reload; monit start elasticsearch",
 			unless => "test -e ${elasticsearchhome}/elasticsearch.pid";
 		"configure-rsyslog":
 			command => "echo '${logconf}' | tee -a /etc/rsyslog.conf && service rsyslog restart",

@@ -136,7 +136,7 @@
 
 			send: function(msg) {
 				var chatnode = this;
-				// TODO: could use POST but jsonp lib doesn't support it!
+				// this could use POST but jsonp lib doesn't support it!
 				return chatnode.request("/send", {
 					data: {				
 						userid: userid,

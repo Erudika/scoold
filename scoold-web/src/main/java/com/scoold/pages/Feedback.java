@@ -22,7 +22,6 @@ public class Feedback <P extends Post> extends BasePage{
 
 	public Feedback(){
 		title = lang.get("feedback.title");
-		pageMacroCode = "#questionspage($feedbacklist)";
 
 		if(param("write")){
 			title += " - " + lang.get("feedback.write");
@@ -35,23 +34,25 @@ public class Feedback <P extends Post> extends BasePage{
 			String tag = getParamValue("tag");
 			ArrayList<String> tags = new ArrayList<String>();
 			tags.add(tag);
-			feedbacklist = search.findPostsForTags(PostType.FEEDBACK,
-					tags, pagenum, itemcount);
+			feedbacklist = daoutils.readAndRepair(Post.class, daoutils.findTagged(
+					PostType.FEEDBACK.toString(), pagenum, itemcount, tags), itemcount);
 		} else if(param("search")){
 			feedbacklist = new ArrayList<Post> ();
-			feedbacklist.addAll(search.findByKeyword(Post.Feedback.class,
-					pagenum, itemcount, getParamValue("search")));
+			feedbacklist.addAll(daoutils.readAndRepair(Post.class, daoutils.findQuery(
+					PostType.FEEDBACK.toString(), pagenum, itemcount, 
+					getParamValue("search")), itemcount));
 		} else {
-			String sortBy = "timestamp";
+			String sortBy = "";
 			if("activity".equals(getParamValue("sortby"))){
 				sortBy = "lastactivity";
 			} else if ("votes".equals(getParamValue("sortby"))){
 				sortBy = "votes";
 			}
 
-			feedbacklist = Post.getPostDao().
-					readFeedbackSortedBy(sortBy, pagenum, itemcount, true);
-		}
+			feedbacklist = daoutils.readAndRepair(Post.class, daoutils.findQuery(
+					PostType.FEEDBACK.toString(), pagenum, itemcount, "*", sortBy, 
+					true, MAX_ITEMS_PER_PAGE), itemcount);
+		}		
 	}
 
 	public boolean onAskClick(){

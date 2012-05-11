@@ -2,12 +2,12 @@
     <div class="unit size3of4">
 		<div id="school-head">
 			<div class="mediumText lightgray">
-				${lang.get("school.${showSchool.type}")}
+				$!{lang.get("school.${showSchool.type}")}
 				<span id="schoollocation" class="right">$!{showSchool.location}</span>
 			</div>
 
-			#if($request.isUserInRole("mod"))
-				<div id="schoolname" class="largeText editable inlineblock p99">$!{showSchool.name}</div>
+			#if($isMine || $request.isUserInRole("mod"))
+				<div id="schoolname" class="largeText editable p100">$!{showSchool.name}</div>
 			#else
 				<div class="largeText">$!{showSchool.name}</div>
 			#end
@@ -17,16 +17,16 @@
 			<div class="mvm">
 				#if($authenticated)
 					#if($isLinkedToMe)
-						<a href="$schoollink/$!showSchool.id/leave/#stripstr($!showSchool.name)" class="rusure button-tiny rounded3"><span class="pictos">-</span> $lang.get("leave")</a>
-						<a href="$schoollink/$!showSchool.id/ask" class="button-tiny rounded3" title="Ask a question"><span class="pictos">p</span> ${lang.get('posts.ask')}</a>
+						<a href="$schoollink/$!showSchool.id/ask" class="button-tiny rounded3" title="Ask a question"><span class="pictos">p</span> $!{lang.get('posts.ask')}</a>
+						<a href="$schoollink/$!showSchool.id/leave/#stripstr($!showSchool.name)" class="rusure button-tiny rounded3"><span class="pictos">-</span> $!lang.get("leave")</a>
 					#else
-						<a href="$schoollink/$!showSchool.id/join/#stripstr($!showSchool.name)" class="button-tiny rounded3"><span class="pictos">+</span> $lang.get("join")</a>
+						<a href="$schoollink/$!showSchool.id/join/#stripstr($!showSchool.name)" class="button-tiny rounded3"><span class="pictos">+</span> $!lang.get("join")</a>
 					#end
 				#end
 
 				#if($request.isUserInRole("admin"))
-					<a href="${reportslink}?merge=school&amp;id=$showSchool.id" title="Merge schools" class="red button-tiny rounded3"><span class="pictos">|</span> $lang.get("merge")</a>
-					<a href="${adminlink}?delete=school&amp;id=$showSchool.id" title="Delete school" class="red button-tiny rounded3"><span class="pictos">*</span> $lang.get("delete")</a>
+					<a href="${reportslink}?merge=school&amp;id=$showSchool.id" title="Merge schools" class="red button-tiny rounded3"><span class="pictos">|</span> $!lang.get("merge")</a>
+					<a href="${adminlink}?delete=school&amp;id=$showSchool.id" title="Delete school" class="red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
 
 				#getreportlink($showSchool "$schoollink/$!showSchool.id" "button-tiny rounded3")
@@ -35,27 +35,27 @@
 
 		#if($showParam)
 			#if($showParam == "classes")
-				<h2>$lang.get("classes.title") #showcount($itemcount.longValue())</h2>
+				<h2>$!lang.get("classes.title") #showcount($itemcount.longValue())</h2>
 				#if($itemcount.longValue() == 0)
-					<div class="mvl">$lang.get("school.noclasses")</div>
+					<div class="mvl">$!lang.get("school.noclasses")</div>
 				#else
-					#paginate($pagenum.longValue() "#classespage($classeslist)" $itemcount.longValue() "" "pageless")
+					#paginate($pagenum.longValue() "\#classespage(\$classeslist)" $itemcount.longValue() "" "pageless")
 				#end
 
 			#elseif($showParam == "people")
-				<h2>$lang.get("people.title") #showcount($itemcount.longValue())</h2>
+				<h2>$!lang.get("people.title") #showcount($itemcount.longValue())</h2>
 				
 				#if($itemcount.longValue() == 0)
-					<div class="mvl">$lang.get("school.nopeople") </div>
+					<div class="mvl">$!lang.get("school.nopeople") </div>
 				#else
-					#paginate($pagenum.longValue() "#peoplepage($peoplelist)" $itemcount.longValue() "" "pageless")
+					#paginate($pagenum.longValue() "\#peoplepage(\$peoplelist)" $itemcount.longValue() "" "pageless")
 				#end
 
 			#elseif($showParam == "photos")
-				#showphotos($myphotoslink $canEdit)
+				#showphotos($photoslink $canEdit)
 
 			#elseif($showParam == "drawer")
-				<h2>$lang.get("drawer.title") #showcount($itemcount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
+				<h2>$!lang.get("drawer.title") \#showcount(\$itemcount.longValue()) <a href="#" class="pictos trigger-embedly-services">?</a></h2>
 
 				#if($canEdit)
 					#oembedbox("addvideo")
@@ -63,7 +63,7 @@
 
 				<div id="drawer-edit">
 					<div id="drawer">
-						#paginate($pagenum.longValue() "#drawerpage($medialist)" $itemcount.longValue() "" "pageless")
+						#paginate($pagenum.longValue() "\#drawerpage(\$medialist)" $itemcount.longValue() "" "pageless")
 					</div>
 				</div>
 			#end
@@ -71,9 +71,9 @@
 
         <div id="about" class="mvm clearfix">
             #if($canEdit)
-				<a href="$schoollink/$!showSchool.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> ${lang.get("edit")}</a>
+				<a href="$schoollink/$!showSchool.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> $!{lang.get("edit")}</a>
             #end
-            <h2>${lang.get("profile.title")}</h2>
+            <h2>$!{lang.get("profile.title")}</h2>
             #if($request.getParameter("edit") && $authenticated)
                 #set($hideedit1 = "")
                 #set($hideview1 = "hide")
@@ -86,7 +86,7 @@
                 #schoolaboutview()
             </div>
             #if($canEdit)
-            <div class="editbox rounded5 pal $hideedit1">
+            <div class="editbox lightgraybg rounded5 pal $hideedit1">
                 <form method="post" id="school-about-edit-form" action="$schoollink/$!showSchool.id?getschoolaboutviewcode=true">
                     <fieldset>
 						#sectoken(false)
@@ -94,15 +94,15 @@
 							<tbody>
 								<tr>
 									<td class="p100" colspan="2">
-										<label class="bold">${lang.get("school.someinfo")}</label>
+										<label class="bold">$!{lang.get("school.someinfo")}</label>
 										<textarea name="about" rows="5" cols="30" class="p99 nicebox mbm">$!{showSchool.about}</textarea>
 									</td>
 								</tr>						
 								<tr>
-									<td class="r p25">${lang.get("profile.myschools.create.type")}:</td>
+									<td class="r p25">$!{lang.get("profile.myschools.create.type")}:</td>
 									<td class="pll p75">
 										<select name="type" class="nicebox">
-											#foreach($stype in $showSchool.getSchoolTypeMap($lang).entrySet())
+											#foreach($stype in $showSchool.getSchoolTypeMap($!lang).entrySet())
 												#if($stype.key == $showSchool.type)
 													<option selected="selected" value="$stype.key">$!{stype.value} &nbsp;</option>
 												#else
@@ -113,15 +113,15 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="r p25">${lang.get("profile.about.location")}:</td>
+									<td class="r p25">$!{lang.get("profile.about.location")}:</td>
 									<td class="pll p75">
 										<input name="location" type="text" value="$!showSchool.location" maxlength="255" class="locationbox nicebox p85"/>
-										&nbsp;<a href="#" class="next-div-toggle bold">$lang.get("map")</a>
+										&nbsp;<a href="#" class="next-div-toggle bold">$!lang.get("map")</a>
 									</td>
 								</tr>
 								<tr>
 									<td class="p100" colspan="2">
-										<div id="map-canvas" class="gmap hide p100 mvs center">$lang.get("loading")</div>
+										<div id="map-canvas" class="gmap hide p100 mvs center">$!lang.get("loading")</div>
 									</td>
 								</tr>
 								<tr>
@@ -134,7 +134,7 @@
 									</td>
 									<td class="pll p75">
 										<input id="detail-value" type="text" value="" maxlength="255" class="nicebox p85"/>
-										<a href="#" class="pictos add-contact largeText pls" title="$lang.get('add')">+</a>
+										<a href="#" class="pictos add-contact largeText pls" title="$!lang.get('add')">+</a>
 									</td>
 								</tr>
 								#contactdetailbox("")
@@ -145,9 +145,9 @@
 						</table>
 
 						<div class="center mtl">
-                            <input type="submit" value="${lang.get('save')}" class="button rounded3"/>
-                            <input type="button" value="${lang.get('close')}" class="button rounded3 canceledit $hideview1"/>
-                            <a href="$schoollink/$showSchool.id" class="$hideedit1">${lang.get('close')}</a>
+                            <input type="submit" value="$!{lang.get('save')}" class="button rounded3"/>
+                            <input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit $hideview1"/>
+                            <a href="$schoollink/$showSchool.id" class="$hideedit1">$!{lang.get('close')}</a>
                         </div>
                     </fieldset>
                 </form>
@@ -156,14 +156,14 @@
         </div>
 
 		#if(!$questionslist.isEmpty())
-			<h2>$lang.get("questions.title") #showcount($itemcount.longValue())</h2>
+			<h2>$!lang.get("questions.title") #showcount($itemcount.longValue())</h2>
 			
 			#set($sortarr = {'votes': "", 'newest': "", 'activity': ""} )
 			#setsortbyselection($sortarr 'newest')
 			<div class="mvm">
-				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)/?sortby=activity" class="button-tiny rounded3 $sortarr.activity">$lang.get("posts.updated")</a>
-				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)/?sortby=votes" class="button-tiny rounded3 $sortarr.votes">$lang.get("votes")</a>
-				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)" class="button-tiny rounded3 $sortarr.newest">$lang.get("newest")</a>
+				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)/?sortby=lastactivity" class="button-tiny rounded3 $sortarr.activity">$!lang.get("posts.updated")</a>
+				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)/?sortby=votes" class="button-tiny rounded3 $sortarr.votes">$!lang.get("votes")</a>
+				<a href="$schoollink/$showSchool.id/questions/#stripstr($!showSchool.name)" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
 			</div>
 
 			#if($request.getParameter("sortby"))
@@ -171,34 +171,35 @@
 			#else
 				#set($extraParam = "")
 			#end
-			#paginate($pagenum.longValue() "#questionspage($questionslist)" $itemcount.longValue() $extraParam "pageless")
+			
+			#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $itemcount.longValue() $extraParam "pageless")
 		#end
 
 		#end ##end of sub-page switch
     </div>
 
 	<div class="unit size1of4 lastUnit">
-		<div id="school-nav" class="center mll">
+		<div id="school-nav" class="center mlm">
 			#if($showSchool.iconurl && !$showSchool.iconurl.isEmpty())
 				#set($spclass = "school-icon" )
 			#else
 				#set($spclass = "school-pic inlineblock" )
 			#end
 			
-			<div class="mbm $spclass">
+			<div class="mbm rounded3 $spclass">
 				#if($showSchool.iconurl && !$showSchool.iconurl.isEmpty())
-					<img src="$showSchool.iconurl" alt="School picture"/>
+					<img src="$showSchool.iconurl" alt="School picture" class="rounded3"/>
 				#else
 					&nbsp;
 				#end
 			</div>
 			#votebox($showSchool "hugeText")
 			<ul class="sidebar">
-				<li class="rounded3"><a href="$schoollink/$!showSchool.id/#stripstr($!showSchool.name)">${lang.get("profile.title")}</a></li>
-				<li class="rounded3"><a href="$schoollink/$!showSchool.id/people/#stripstr($!showSchool.name)">${lang.get("people.title")}</a></li>
-				<li class="rounded3"><a href="$schoollink/$!showSchool.id/classes/#stripstr($!showSchool.name)">${lang.get("classes.title")}</a></li>
-				<li class="rounded3"><a href="$schoollink/$!showSchool.id/photos/#stripstr($!showSchool.name)">${lang.get("photos.title")}</a></li>
-				<li class="rounded3"><a href="$schoollink/$!showSchool.id/drawer/#stripstr($!showSchool.name)">${lang.get("drawer.title")}</a></li>
+				<li class="rounded3"><a href="$schoollink/$!showSchool.id/#stripstr($!showSchool.name)">$!{lang.get("profile.title")}</a></li>
+				<li class="rounded3"><a href="$schoollink/$!showSchool.id/people/#stripstr($!showSchool.name)">$!{lang.get("people.title")}</a></li>
+				<li class="rounded3"><a href="$schoollink/$!showSchool.id/classes/#stripstr($!showSchool.name)">$!{lang.get("classes.title")}</a></li>
+				<li class="rounded3"><a href="$schoollink/$!showSchool.id/photos/#stripstr($!showSchool.name)">$!{lang.get("photos.title")}</a></li>
+				<li class="rounded3"><a href="$schoollink/$!showSchool.id/drawer/#stripstr($!showSchool.name)">$!{lang.get("drawer.title")}</a></li>
 			</ul>
 		</div>
     </div>

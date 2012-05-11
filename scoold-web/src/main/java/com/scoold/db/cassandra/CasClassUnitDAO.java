@@ -3,84 +3,62 @@ package com.scoold.db.cassandra;
 import com.scoold.core.Classunit;
 import com.scoold.core.Media;
 import com.scoold.core.Post;
-import com.scoold.core.User;
 import com.scoold.db.AbstractClassUnitDAO;
-import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
-import org.apache.commons.lang.mutable.MutableLong;
 
 /**
  *
  * @author alexb
  */
-public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit, Long>{
+final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit, Long>{
 
     private static final Logger logger = Logger.getLogger(CasClassUnitDAO.class.getName());
-	private CasDAOUtils cdu = new CasDAOUtils();
+	private CasDAOUtils cdu = (CasDAOUtils) CasDAOFactory.getInstance().getDAOUtils();
+	private CasMediaDAO<Media, Long> mdao = new CasMediaDAO<Media, Long>();
 	
     public CasClassUnitDAO () {
 	}
 
     public Classunit read(Long id) {
-		return cdu.read(Classunit.class, id.toString(), CasDAOFactory.CLASSES);
-    }
-
-    public Classunit read(String uuid) {
-		ArrayList<Classunit> classunit = cdu.readAll(Classunit.class, uuid, 
-			CasDAOFactory.CLASSES_UUIDS, CasDAOFactory.CLASSES, String.class,
-			null, null, null, 1, true, false, false);
-
-		if(classunit == null || classunit.isEmpty()) return null;
-
-		return classunit.get(0);
+		return cdu.read(Classunit.class, id.toString());
     }
 
     public Long create(Classunit newClassUnit) {
-		Long id = cdu.getNewId();
+		Long id = newClassUnit.getId() != null ? newClassUnit.getId() : cdu.getNewId();
 		newClassUnit.setId(id);
-		newClassUnit.setUuid(CasDAOUtils.getUUID());
 		
 		// attach a new clean blackboard to class
-		Post bb = new Post();
-		bb.setPostType(Post.PostType.BLACKBOARD);		
-		bb.setTitle("Blackboard");
+		Post bb = new Post(Post.PostType.BLACKBOARD);
+//		bb.setTitle("Blackboard");
 		bb.setBody(" ");
-		bb.setParentuuid(newClassUnit.getUuid());
+		bb.setUserid(newClassUnit.getUserid());
+		bb.setParentid(newClassUnit.getId());
 
-		CasPostDAO<Post, Long> pdao = new CasPostDAO<Post, Long>();
 		Mutator<String> mut = cdu.createMutator();
 
-		Long bbid = pdao.create(bb);
+		Long bbid = cdu.create(bb, mut);
 		newClassUnit.setBlackboardid(bbid);
 
-		cdu.create(newClassUnit, CasDAOFactory.CLASSES, mut);
-
-		cdu.addInsertion(new Column<String, String>(newClassUnit.getUuid(),
-				CasDAOFactory.CLASSES_UUIDS, id.toString(), id.toString()), mut);
+		cdu.create(newClassUnit, mut);
 		cdu.addInsertion(new Column<Long, String>(newClassUnit.getSchoolid().toString(),
-				CasDAOFactory.SCHOOL_CLASSES, id, id.toString()), mut);
+				CasDAOFactory.CLASSES_PARENTS, id, id.toString()), mut);
 
 		// auto add to my classes
 		cdu.addInsertions(getClassLinkColumnsWithChecks(newClassUnit.getUserid(),
 				newClassUnit), mut);
 
-		cdu.addTimesortColumn(null, id,	CasDAOFactory.CLASSES_BY_TIMESTAMP, id, null, mut);
-
 		mut.execute();
 		
-		newClassUnit.index();
-
 		return id;
     }
 
     public void update(Classunit transientClassUnit) {
-		cdu.update(transientClassUnit, CasDAOFactory.CLASSES);
-		transientClassUnit.index();
+		cdu.update(transientClassUnit);
     }
 
     public void delete(Classunit persistentClassUnit) {
@@ -90,69 +68,34 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
     }
 
 	protected void deleteClass(Classunit persistentClassUnit, Mutator<String> mut){
-		String uuid = persistentClassUnit.getUuid();
 		Long id = persistentClassUnit.getId();
 
-		CasPostDAO<Post, Long> pdao = new CasPostDAO<Post, Long>();
-		Post bb = pdao.read(persistentClassUnit.getBlackboardid());
-		if(bb != null) pdao.delete(bb);
+		Post bb = cdu.read(Post.class, persistentClassUnit.getBlackboardid().toString());
+		if(bb != null) cdu.delete(bb, mut);
 
-		cdu.delete(persistentClassUnit, CasDAOFactory.CLASSES, mut);
+		cdu.delete(persistentClassUnit, mut);
 
 		cdu.addDeletion(new Column<Long, String>(persistentClassUnit.getSchoolid().toString(),
-				CasDAOFactory.SCHOOL_CLASSES, id, null), mut);
-
-		cdu.removeTimesortColumn(null, CasDAOFactory.CLASSES_BY_TIMESTAMP, id, mut);
+				CasDAOFactory.CLASSES_PARENTS, id, null), mut);
 
 		// remove any references of this class in profile pages
 		List<HColumn<Long, String>> userids = cdu.readRow(id.toString(),
-				CasDAOFactory.CLASS_USERS, Long.class, null, null, null,
+				CasDAOFactory.USERS_PARENTS, Long.class, null, null, null,
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : userids) {
 			cdu.addDeletion(new Column<Long, String>(hColumn.getName().toString(),
-					CasDAOFactory.USER_CLASSES, id, null), mut);
+					CasDAOFactory.CLASSES_PARENTS, id, null), mut);
 		}
 
-		cdu.addDeletion(new Column<Long, String>(id.toString(), CasDAOFactory.CLASS_USERS), mut);
-		cdu.addDeletion(new Column<String, String>(uuid, CasDAOFactory.CLASSES_UUIDS), mut);
-
-		// delete all media for class
-		CasMediaDAO<Media, Long> mdao = new CasMediaDAO<Media, Long>();
-		mdao.deleteAllMediaForUUID(uuid, mut);
-
-		persistentClassUnit.unindex();
-	}
-
-    public ArrayList<User> readAllUsersForClassUnit (Long classid, MutableLong page,
-			MutableLong itemcount){
-		return cdu.readAll(User.class, classid.toString(),
-			CasDAOFactory.CLASS_USERS, CasDAOFactory.USERS, Long.class,
-			CasDAOUtils.toLong(page), page, itemcount,
-			CasDAOFactory.MAX_ITEMS_PER_PAGE, true, false, true);
-    }
-
-	public ArrayList<Classunit> readAllSortedBy (String sortColumnFamilyName,
-			MutableLong page, MutableLong itemcount, boolean reverse){
-
-		CF<Long> colFamily = null;
-		//check if the sort order is defined as a column family
-		if(sortColumnFamilyName.equalsIgnoreCase("timestamp")){
-			colFamily = CasDAOFactory.CLASSES_BY_TIMESTAMP;
-		}else{
-			return new ArrayList<Classunit>();
-		}
+		cdu.addDeletion(new Column<Long, String>(id.toString(), CasDAOFactory.USERS_PARENTS), mut);
 		
-		return cdu.readAll(Classunit.class, CasDAOFactory.DEFAULT_KEY, 
-			colFamily, CasDAOFactory.CLASSES, Long.class, CasDAOUtils.toLong(page),
-			page, itemcount, CasDAOFactory.MAX_ITEMS_PER_PAGE, reverse, false, false);
+		mdao.deleteAllMediaForID(id, mut);
 	}
 
 	public boolean createUserClassLink (Long userid, Classunit klass){
-		Mutator<String> mut = cdu.createMutator();
 		List<Column> list = getClassLinkColumnsWithChecks(userid, klass);
-		cdu.addInsertions(list, mut);
-		mut.execute();
+		cdu.batchPut(list);
 
 		return !list.isEmpty();
     }
@@ -160,10 +103,14 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 	private List<Column> getClassLinkColumnsWithChecks(Long userid, Classunit klass){
 		ArrayList<Column> list = new ArrayList<Column>();
 		if(klass.getId() != null && !isLinkedToUser(klass.getId(), userid)){
-			int count = cdu.countColumns(userid.toString(),
-					CasDAOFactory.USER_CLASSES, Long.class);
+			int count1 = cdu.countColumns(userid.toString(),
+					CasDAOFactory.CLASSES_PARENTS, Long.class);
+			
+			int count2 = cdu.countColumns(userid.toString(),
+					CasDAOFactory.SCHOOLS_PARENTS, Long.class);
 
-			if(count < CasDAOFactory.MAX_CLASSES_PER_USER)	{
+			if(count1 < CasDAOFactory.MAX_CLASSES_PER_USER && 
+					count2 < CasDAOFactory.MAX_SCHOOLS_PER_USER) {
 				list.addAll(getClassLinkColumnsOnly(userid, klass.getId()));
 				list.addAll(CasSchoolDAO.getSchoolLinkColumns(userid,
 						klass.getSchoolid(), 0, 0));
@@ -176,9 +123,9 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 	private List<Column> getClassLinkColumnsOnly(Long userid, Long classid){
 		ArrayList<Column> list = new ArrayList<Column>();
 		list.add(new Column<Long, String>(userid.toString(),
-				CasDAOFactory.USER_CLASSES, classid, classid.toString()));
+				CasDAOFactory.CLASSES_PARENTS, classid, classid.toString()));
 		list.add(new Column<Long, String>(classid.toString(),
-				CasDAOFactory.CLASS_USERS, userid, userid.toString()));
+				CasDAOFactory.USERS_PARENTS, userid, userid.toString()));
 		return list;
 	}
 
@@ -186,36 +133,29 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 		ArrayList<Column> list = new ArrayList<Column>();
 
 		list.add(new Column<Long, String>(userid.toString(),
-				CasDAOFactory.USER_CLASSES, classid, classid.toString()));
+				CasDAOFactory.CLASSES_PARENTS, classid, classid.toString()));
 		list.add(new Column<Long, String>(classid.toString(),
-				CasDAOFactory.CLASS_USERS, userid, userid.toString()));
+				CasDAOFactory.USERS_PARENTS, userid, userid.toString()));
 		cdu.batchRemove(list);
     }
 
 	public boolean isLinkedToUser (Long classid, Long userid) {
-		return cdu.existsColumn(classid.toString(),
-			CasDAOFactory.CLASS_USERS, userid);
-	}
-
-	public ArrayList<Classunit> readLatestClasses (int howMany) {
-		return cdu.readAll(Classunit.class, CasDAOFactory.DEFAULT_KEY,  
-			CasDAOFactory.CLASSES_BY_TIMESTAMP,CasDAOFactory.CLASSES, Long.class,
-			null, null, null, howMany, true, false, false);
+		return cdu.existsColumn(classid.toString(),	CasDAOFactory.USERS_PARENTS, userid);
 	}
 
 	public boolean classExists (Long classid) {
 		return cdu.existsColumn(classid.toString(),
-				CasDAOFactory.CLASSES, CasDAOFactory.CN_ID);
+				CasDAOFactory.OBJECTS, CasDAOFactory.CN_ID);
 	}
 
 	public boolean mergeClasses (Long primaryClassid, Long duplicateClassid){
 		Classunit primaryClass = cdu.read(Classunit.class,
-						primaryClassid.toString(), CasDAOFactory.CLASSES);
+						primaryClassid.toString());
 		Classunit duplicateClass = cdu.read(Classunit.class,
-						duplicateClassid.toString(), CasDAOFactory.CLASSES);
+						duplicateClassid.toString());
 
-		String primaryUuid = primaryClass.getUuid();
-		String duplicateUuid = duplicateClass.getUuid();
+		String primaryId = primaryClass.getId().toString();
+		String duplicateId = duplicateClass.getId().toString();
 
 		if(primaryClass == null || duplicateClass == null) return false;
 		else if(!duplicateClass.getSchoolid().equals(primaryClass.getSchoolid())) return false;
@@ -224,7 +164,7 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 		// STEP 1:
 		// Move every user to the primary class
 		List<HColumn<Long, String>> userids = cdu.readRow(duplicateClassid.toString(),
-				CasDAOFactory.CLASS_USERS, Long.class, null, null, null,
+				CasDAOFactory.USERS_PARENTS, Long.class, null, null, null,
 				CasDAOFactory.DEFAULT_LIMIT, false);
 
 		for (HColumn<Long, String> hColumn : userids) {
@@ -235,41 +175,34 @@ public final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit
 
 		// STEP 2:
 		// move media to primary class
-		List<HColumn<Long, String>> photoids = cdu.readRow(duplicateUuid,
-				CasDAOFactory.PHOTOS, Long.class, null, null, null,
-				CasDAOFactory.DEFAULT_LIMIT, false);
-
-		for (HColumn<Long, String> hColumn : photoids) {
-			cdu.addInsertion(new Column<Long, String>(primaryUuid,
-					CasDAOFactory.PHOTOS, hColumn.getName(), hColumn.getValue()), mut);
+		ArrayList<Media> photos = mdao.readAllMediaForID(duplicateClass.getId(), 
+				Media.MediaType.PHOTO, null, null, null, true);
+		
+		for (Media photo : photos) {
+			cdu.addInsertion(new Column<Long, String>(primaryId, CasDAOFactory.MEDIA_PARENTS, 
+					photo.getId(), photo.getId().toString()), mut);
 		}
 
-		List<HColumn<Long, String>> drawerids = cdu.readRow(duplicateUuid,
-				CasDAOFactory.DRAWER, Long.class, null, null, null,
-				CasDAOFactory.DEFAULT_LIMIT, false);
+		ArrayList<Media> riches = mdao.readAllMediaForID(duplicateClass.getId(), 
+				Media.MediaType.RICH, null, null, null, true);
 
-		for (HColumn<Long, String> hColumn : drawerids) {
-			cdu.addInsertion(new Column<Long, String>(primaryUuid,
-					CasDAOFactory.DRAWER, hColumn.getName(), hColumn.getValue()), mut);
+		for (Media rich : riches) {
+			cdu.addInsertion(new Column<Long, String>(primaryId, CasDAOFactory.MEDIA_PARENTS, 
+					rich.getId(), rich.getId().toString()), mut);
 		}
 
 		// STEP 3:
 		// delete duplicate
-		cdu.delete(duplicateClass, CasDAOFactory.CLASSES, mut);
+		cdu.delete(duplicateClass, mut);
 
 		mut.execute();
 
 		return true;
 	}
 
-	public ArrayList<Classunit> readAllForKeys (ArrayList<String> keys) {
-		return cdu.readAll(Classunit.class, keys,
-				CasDAOFactory.CLASSES);
-	}
-
 	public int countUsersForClassUnit(Long classid) {
 		return cdu.countColumns(classid.toString(),
-				CasDAOFactory.CLASS_USERS, Long.class);
+				CasDAOFactory.USERS_PARENTS, Long.class);
 	}
 
 }

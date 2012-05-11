@@ -70,7 +70,11 @@
         <from>^/translate/(\w+)/(\d+)(/?)$</from>
         <to>/translate.htm?locale=$1&amp;index=$2</to>
     </rule>
-
+	<!-- ======== FEED ========== -->
+	<rule>
+        <from>^/feed.xml$</from>
+        <to>/search.htm?feed=true</to>
+    </rule>
 	<!-- ======== FEEDBACK ========== -->
 	<rule>
         <from>^/feedback(/?)$</from>
@@ -96,10 +100,6 @@
 	<rule>
         <from>^/feedback/(\d+)(/?)$</from>
         <to>/question.htm?id=$1</to>
-    </rule>
-	<rule>
-        <from>^/feedback/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
-        <to>/question.htm?uuid=$1</to>
     </rule>
 	<rule>
         <from>^/feedback/(\d+)/delete(/?)$</from>
@@ -196,11 +196,6 @@
     </rule>
 
 	<rule>
-        <from>^/comment/(.[^/]+)(/?)$</from>
-        <to>/?show=comment&amp;uuid=$1</to>
-    </rule>
-
-	<rule>
         <from>^/delete/comment/(\d+)(/?)$</from>
         <to>/?show=comment&amp;delete=$1</to>
     </rule>
@@ -215,33 +210,18 @@
     </rule>
 
 	<rule>
-        <from>^/voteup/(\w+)/(.[^/]+)(/?)$</from>
-        <to>/?voteup=true&amp;classname=$1&amp;uuid=$2</to>
+        <from>^/voteup/(\w+)/(\d+)(/?)$</from>
+        <to>/?voteup=true&amp;classname=$1&amp;id=$2</to>
     </rule>
 	<rule>
-        <from>^/votedown/(\w+)/(.[^/]+)(/?)$</from>
-        <to>/?votedown=true&amp;classname=$1&amp;uuid=$2</to>
+        <from>^/votedown/(\w+)/(\d+)(/?)$</from>
+        <to>/?votedown=true&amp;classname=$1&amp;id=$2</to>
     </rule>
-
-	<!--
-	<rule>
-        <from>^/photo/(.[^/]+)(/?)$</from>
-        <to>/index.htm?show=photo&amp;uuid=$1</to>
-    </rule>
-	<rule>
-        <from>^/video/(.[^/]+)(/?)$</from>
-        <to>/index.htm?show=video&amp;uuid=$1</to>
-    </rule>-->
-
 
     <!-- ======== PROFILE ========== -->
     <rule>
         <from>^/profile(/?)$</from>
         <to>/profile.htm</to>
-    </rule>
-	<rule>
-        <from>^/profile/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
-        <to>/profile.htm?uuid=$1</to>
     </rule>
     <rule>
         <from>^/profile/(\d+)(/?)$</from>
@@ -312,10 +292,6 @@
 
     <!-- ======== SCHOOLS ========== -->
 
-	<rule>
-        <from>^/school/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
-        <to>/school.htm?uuid=$1</to>
-    </rule>
     <rule>
         <from>^/school/(\d+)(/?)$</from>
         <to>/school.htm?schoolid=$1</to>
@@ -399,10 +375,6 @@
 	<rule>
         <from>^/class/(\d+)(/?)$</from>
         <to>/classunit.htm?classid=$1</to>
-    </rule>
-	<rule>
-        <from>^/class/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
-        <to>/classunit.htm?uuid=$1</to>
     </rule>
 	<rule>
         <from>^/class/(\d+)/addclassmates(/?)$</from>
@@ -498,10 +470,6 @@
         <to>/question.htm?id=$1</to>
     </rule>
 	<rule>
-        <from>^/question/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(/?)$</from>
-        <to>/question.htm?uuid=$1</to>
-    </rule>
-	<rule>
         <from>^/question/(\d+)/delete(/?)$</from>
         <to>/question.htm?id=$1&amp;delete=true</to>
     </rule>
@@ -556,7 +524,7 @@
     </rule>
 	<!--SEO URLs-->
 	<rule>
-        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^undelete][^undelete][^approve][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
+        <from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^delete][^undelete][^approve][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
         <to>/question.htm?id=$1</to>
     </rule>
 
@@ -566,6 +534,40 @@
         <to type="redirect">%{context-path}/question/$1/?write=true</to>
     </rule>
 
+	<!-- ======== GROUPS ========== -->
+
+	<rule>
+        <from>^/group/(\d+)(/?)$</from>
+        <to>/group.htm?groupid=$1</to>
+    </rule>
+	<rule>
+        <from>^/group/(\d+)/members((/?)(.*?))$</from>
+        <to>/group.htm?groupid=$1&amp;show=members</to>
+    </rule>
+	
+	<rule>
+        <from>^/group/(\d+)/post((/?)(.*?))$</from>
+        <to>/questions.htm?groupid=$1&amp;ask=true</to>
+    </rule>
+	<rule>
+        <from>^/group/post/(\d+)/*.*(/?)$</from>
+        <to>/question.htm?id=$1</to>
+    </rule>
+	
+	<rule>
+        <from>^/groups(/?)$</from>
+        <to>/groups.htm</to>
+    </rule>
+	<rule>
+        <from>^/groups/create(/?)$</from>
+        <to>/groups.htm?create=true</to>
+    </rule>
+	
+	<!--SEO URLs-->
+	<rule>
+        <from>^/group/(\d+)/([^delete][^votes][^post][^updated][^members])*.*(/?)$</from>
+        <to>/group.htm?groupid=$1</to>
+    </rule>
 
 	<!-- ======== SEARCH ========== -->
 	<rule>

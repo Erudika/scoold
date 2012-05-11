@@ -7,15 +7,15 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractTranslationDAO;
+import java.io.Serializable;
 
 /**
  *
  * @author alexb
  */
-public class Translation implements Votable<Long>, ScooldObject{
+public class Translation implements Votable<Long>, ScooldObject, Serializable{
 
 	private Long id;
-	private String uuid;
 	@Stored private String locale;
 	@Stored private String key;
 	@Stored private String value;
@@ -23,6 +23,7 @@ public class Translation implements Votable<Long>, ScooldObject{
 	@Stored private Long userid;
 	@Stored private Long timestamp;
 	@Stored private Integer oldvotes;
+	@Stored public static String classtype = Translation.class.getSimpleName().toLowerCase();
 
 	private transient User author;
 
@@ -48,13 +49,9 @@ public class Translation implements Votable<Long>, ScooldObject{
 		this.value = value;
 		this.votes = 0;
 	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	
+	public String getClasstype() {
+		return classtype;
 	}
 
 	public String getValue() {

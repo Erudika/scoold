@@ -35,18 +35,18 @@ public class Profile extends BasePage{
 	public ArrayList<Classunit> classlist;
 	public ArrayList<Post> postlist;
 	public boolean ADMIN_INIT = true;
-
 	private boolean isMyid;
+	
+	public String photoslink;
+	public String drawerlink;
 
     public Profile(){
         title = lang.get("profile.title");
 		contactDetailTypes = getContactDetailTypeArray();
 		canEdit = false;
 		isMyid = false;
-
 		Long authid = authUser != null ? authUser.getId() : 0L;
 		Long showuid = NumberUtils.toLong(getParamValue("id"), authid);
-		String uuid = getParamValue("uuid");
 
 		isMyid = authenticated && showuid.equals(authid);
 
@@ -54,13 +54,12 @@ public class Profile extends BasePage{
 			//requested userid !exists or = my userid => show my profile
 			showUser = authUser;
 			isMyProfile = true;
-		}else if(showuid.longValue() != 0 || !StringUtils.isBlank(uuid)){
-			showUser = (showuid.longValue() == 0) ? User.getUserDao().read(uuid) :
-				User.getUserDao().read(showuid);
+		}else if(showuid.longValue() != 0){
+			showUser = User.getUserDao().read(showuid);
 			isMyProfile = false;
 		}
 
-		if (showUser == null) {
+		if (showUser == null || !daoutils.typesMatch(showUser)) {
 			setRedirect(profilelink);
 			return;
 		}
@@ -69,42 +68,29 @@ public class Profile extends BasePage{
 			canEdit = true;
 		}
 
-		myprofilelink = profilelink + "/" + showUser.getId();
-		mycontactslink = myprofilelink + "/contacts";
-		myquestionslink = myprofilelink + "/questions";
-		myanswerslink = myprofilelink + "/answers";
-		myphotoslink = myprofilelink + "/photos";
-		mydrawerlink = myprofilelink + "/drawer";
-
-		if(!authenticated){
-			myphotoslink = profilelink + "/p/" + showUser.getId() + "/photos";
-			mydrawerlink = profilelink + "/p/" + showUser.getId() + "/drawer";
-		}
-
 		title = lang.get("profile.title") + " - " + showUser.getFullname();
+		photoslink = profilelink + "/" + showUser.getId() + "/photos";
+		drawerlink = profilelink + "/" + showUser.getId() + "/drawer";
 
 		if ("contacts".equals(showParam)){
 			title += " - " + lang.get("contacts.title");
 			contactlist = showUser.getAllContacts(pagenum, itemcount);
-			pageMacroCode = "#peoplepage($contactlist)";
 		} else if("questions".equals(showParam)) {
 			title += " - " + lang.get("questions.title");
 			postlist = showUser.getAllQuestions(pagenum, itemcount);
-			pageMacroCode = "#questionspage($postlist)";
 		} else if("answers".equals(showParam)) {
 			title += " - " + lang.get("answers.title");
 			postlist = showUser.getAllAnswers(pagenum, itemcount);
-			pageMacroCode = "#compactanswerspage($postlist)";
 		} else if("photos".equals(showParam)) {
 			if(!authenticated){
-				setRedirect(myphotoslink);
+				setRedirect("/p" + photoslink);
 				return;
 			}
 			title += " - " + lang.get("photos.title");
 			if(param("label")) title += " - " + getParamValue("label");
 		} else if("drawer".equals(showParam)) {
 			if(!authenticated){
-				setRedirect(mydrawerlink);
+				setRedirect("/p" + drawerlink);
 				return;
 			}
 			title += " - " + lang.get("drawer.title");
@@ -121,12 +107,6 @@ public class Profile extends BasePage{
     public void onGet(){
 		if(!authenticated || showUser == null) return;
 		
-		if("photos".equals(showParam)){
-			processGalleryRequest(showUser, myphotoslink, canEdit);
-		}else if("drawer".equals(showParam)){
-			proccessDrawerRequest(showUser, mydrawerlink, canEdit);
-		}
-
 		if(!isMyProfile){
 			if(param("makemod") && inRole("admin")){
 				boolean makemod = Boolean.parseBoolean(getParamValue("makemod"));
@@ -149,10 +129,10 @@ public class Profile extends BasePage{
     public void onPost(){
 		if(canEdit){
 			if("photos".equals(showParam)){
-				processImageEmbedRequest(showUser, myphotoslink, canEdit);
-				processGalleryRequest(showUser, myphotoslink, canEdit);
+				processImageEmbedRequest(showUser, photoslink, canEdit);
+				processGalleryRequest(showUser, photoslink, canEdit);
 			}else if("drawer".equals(showParam)) {
-				proccessDrawerRequest(showUser, mydrawerlink, canEdit);
+				proccessDrawerRequest(showUser, drawerlink, canEdit);
 			}
 			
 			if(param("fullname")){

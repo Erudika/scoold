@@ -7,25 +7,25 @@ package com.scoold.core;
 
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractRevisionDAO;
+import java.io.Serializable;
 
 
 /**
  *
  * @author alexb
  */
-public class Revision implements ScooldObject{
+public class Revision implements ScooldObject, Serializable{
 
-	private Long revisionid;
-	private String uuid;
+	private Long id;
 	@Stored private String body;
 	@Stored private String description;
 	@Stored private Long timestamp;
 	@Stored private Long userid;
-	@Stored private Long postid;
 	@Stored private String title;
 	@Stored private String tags;
 	@Stored private Boolean original;
-	@Stored private String parentuuid;
+	@Stored private Long parentid;
+	@Stored public static String classtype = Revision.class.getSimpleName().toLowerCase();
 
 	private transient User author;
 	private transient static AbstractRevisionDAO<Revision, Long> mydao;
@@ -38,31 +38,30 @@ public class Revision implements ScooldObject{
 	public Revision() {
 	}
 
-	public Revision(Long userid, Long postid) {
-		this.userid = userid;
-		this.postid = postid;
+	public Revision(Long id) {
+		this.id = id;
 	}
 
-	public Revision(Long revisionid) {
-		this.revisionid = revisionid;
-	}
-
-	/**
-	 * Get the value of parentuuid
-	 *
-	 * @return the value of parentuuid
-	 */
-	public String getParentuuid() {
-		return parentuuid;
+	public String getClasstype() {
+		return classtype;
 	}
 
 	/**
-	 * Set the value of parentuuid
+	 * Get the value of parentid
 	 *
-	 * @param parentuuid new value of parentuuid
+	 * @return the value of parentid
 	 */
-	public void setParentuuid(String parentuuid) {
-		this.parentuuid = parentuuid;
+	public Long getParentid() {
+		return parentid;
+	}
+
+	/**
+	 * Set the value of parentid
+	 *
+	 * @param parentid new value of parentid
+	 */
+	public void setParentid(Long parentid) {
+		this.parentid = parentid;
 	}
 
 	/**
@@ -81,24 +80,6 @@ public class Revision implements ScooldObject{
 	 */
 	public void setOriginal(Boolean original) {
 		this.original = original;
-	}
-
-	/**
-	 * Get the value of uuid
-	 *
-	 * @return the value of uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
-
-	/**
-	 * Set the value of uuid
-	 *
-	 * @param uuid new value of uuid
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	/**
@@ -136,24 +117,6 @@ public class Revision implements ScooldObject{
 	 */
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	/**
-	 * Get the value of postid
-	 *
-	 * @return the value of postid
-	 */
-	public Long getPostid() {
-		return postid;
-	}
-
-	/**
-	 * Set the value of postid
-	 *
-	 * @param postid new value of postid
-	 */
-	public void setPostid(Long postid) {
-		this.postid = postid;
 	}
 
 	/**
@@ -227,36 +190,18 @@ public class Revision implements ScooldObject{
 	public void setBody(String body) {
 		this.body = body;
 	}
-
-	/**
-	 * Get the value of revisionid
-	 *
-	 * @return the value of revisionid
-	 */
-	public Long getRevisionid() {
-		return revisionid;
-	}
-
-	/**
-	 * Set the value of revisionid
-	 *
-	 * @param revisionid new value of revisionid
-	 */
-	public void setRevisionid(Long revisionid) {
-		this.revisionid = revisionid;
-	}
-
+	
 	public Long getId(){
-		return revisionid;
+		return id;
 	}
 
 	public void setId(Long id){
-		this.revisionid = id;
+		this.id = id;
 	}
 
 	public Long create() {
-		this.revisionid = getRevisionDao().create(this);
-		return this.revisionid;
+		this.id = getRevisionDao().create(this);
+		return this.id;
 	}
 
 	public void update() {
@@ -278,9 +223,10 @@ public class Revision implements ScooldObject{
 		if (revUserid == null) {
 			revUserid = post.getUserid();
 		}
-		Revision postrev = new Revision(revUserid, post.getId());
-		postrev.setParentuuid(post.getUuid());
-		postrev.setUuid(post.getRevisionuuid());
+		Revision postrev = new Revision();
+//		postrev.setId(post.getRevisionid());
+		postrev.setUserid(revUserid);
+		postrev.setParentid(post.getId());
 		postrev.setTitle(post.getTitle());
 		postrev.setBody(post.getBody());
 		postrev.setTags(post.getTags());

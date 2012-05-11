@@ -1,10 +1,6 @@
-#set($list = $authUser.userDao.readAllContactsForUser($authUser.id, null, null))
-
 <div id="messages">
-	
-	<a href="$messageslink/new" class="button-small right next-div-toggle rounded3" title="New message">$lang.get("sendmsg")</a>
-	
-	<h2><span class="pictos">M</span> $lang.get("messages.title") #showcount($itemcount.longValue())</h2>
+	<a href="$messageslink/new" class="button-small right next-div-toggle rounded3" title="New message">$!lang.get("sendmsg")</a>
+	<h2><span class="pictos">M</span> $!lang.get("messages.title") #showcount($itemcount.longValue())</h2>
 	<hr/>
 	
 	#if($request.getParameter("newmessage"))
@@ -14,22 +10,22 @@
 	#end
 
 	<div class="newmessage $hide">
-		#if($list && !$list.isEmpty())
-			#if($request.getParameter("toname") && $request.getParameter("touuid"))
-				#newmessageform($request.getParameterValues("toname") $request.getParameterValues("touuid"))
+		#if($contactslist && !$contactslist.isEmpty())
+			#if($request.getParameter("toname") && $request.getParameter("toid"))
+				#newmessageform($request.getParameterValues("toname") $request.getParameterValues("toid"))
 			#else
 				#newmessageform([] [])
 			#end
 		#else
-			<h2 class="center lightborder rounded3 pam mtl">$lang.get("messages.nocontacts")</h2>
+			<h2 class="center lightborder rounded3 pam mtl">$!lang.get("messages.nocontacts")</h2>
 		#end
 	</div>
 
 	<div id="all-messages">
 		#if($messageslist.isEmpty())
-			<h2 class="center mtl">$lang.get("messages.nomessages")</h2>
+			<h2 class="center mtl">$!lang.get("messages.nomessages")</h2>
 		#else
-			#paginate($pagenum.longValue() "#messagespage($messageslist)" $itemcount.longValue() "" "pageless")
+			#paginate($pagenum.longValue() "\#messagespage(\$messageslist)" $itemcount.longValue() "" "pageless")
 		#end		
 	</div>
 	<div class="right">
@@ -37,7 +33,7 @@
 			<form method="post" action="$messageslink/delete/all" class="delete-all-messages-form">
 				<fieldset>
 					#sectoken(false)
-					<input type="submit" value="$lang.get('deleteall')" class="button rounded3 red rusure"/>
+					<input type="submit" value="$!lang.get('deleteall')" class="button rounded3 red rusure"/>
 				</fieldset>
 			</form>
 		#end
@@ -45,5 +41,5 @@
 </div>
 
 <script type="text/javascript">
-	var contacts = [#foreach($contact in $list){uuid: "$contact.uuid", fullname: "$contact.fullname"}#if($velocityCount < $list.size()),#end #end];
+	var contacts = [#foreach($contact in $contactslist){id: "$contact.id", fullname: "$contact.fullname"}#if($velocityCount < $contactslist.size()),#end #end];
 </script>

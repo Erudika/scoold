@@ -352,7 +352,7 @@ discovery.ec2.groups: elasticsearch
 # discovery.zen.ping.unicast.hosts: ["192.168.0.10:9300", "192.168.0.10:9301", "192.168.0.10:9302"]
 
 cloud.aws.region: eu-west-1
-cloud.aws.access_key: AKIAI5WX2PJPYQEPWECQ
-cloud.aws.secret_key: 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
-cloud.aws.sqs.queue_url: https://eu-west-1.queue.amazonaws.com/374874639893/ScooldIndex
+cloud.aws.access_key: 
+cloud.aws.secret_key: 
+cloud.aws.sqs.queue_url: 
 

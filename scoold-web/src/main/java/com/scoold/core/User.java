@@ -11,40 +11,27 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
-
-public class User implements ScooldObject, Comparable<User>, 
-		CanHasMedia, Searchable<User>, Serializable{
+public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serializable{
 
     private Long id;
-	private String uuid;
-	@Indexed
     @Stored private String fullname;
     @Stored private String email;
     @Stored private Boolean active;
     @Stored private Long lastseen;
     @Stored private Long timestamp;
-	@Indexed
     @Stored private String type;
-	@Stored private Long locktill;
 	@Stored private String groups;
-    @Indexed
 	@Stored private String location;
 	@Stored private Long dob;
-	@Indexed
     @Stored private String status;
-	@Indexed
     @Stored private String ilike;
-	@Indexed
     @Stored private String aboutme;
-	@Indexed
 	@Stored private String badges;
 	@Stored private Long upvotes;
 	@Stored private Long downvotes;
 	@Stored private Long comments;
-	@Indexed
 	@Stored private Long reputation;
 	@Stored private String contacts;
 	@Stored private String identifier;
@@ -53,11 +40,11 @@ public class User implements ScooldObject, Comparable<User>,
 	@Stored private String newbadges;
 	@Stored private Long authstamp;
 	@Stored private Long oldreputation;
+	@Stored public static String classtype = User.class.getSimpleName().toLowerCase();
 
-	private Integer newmessages;
-	private Integer newreports;
-	
-	private MutableLong reportcount = new MutableLong(0L);
+	private transient Integer newmessages;
+	private transient Integer newreports;
+	private transient boolean isGroupMember;
 
 	public static enum UserGroup{
 		ALUMNI, STUDENTS, TEACHERS, ADMINS, MODS;
@@ -177,11 +164,6 @@ public class User implements ScooldObject, Comparable<User>,
 		this.groups = getUserType(this.type).toGroupString();
 	}
 
-	public User(String uuid) {
-		this();
-		this.uuid = uuid;		
-	}
-
 	public User (Long id){
 		this();
 		this.id = id;		
@@ -194,7 +176,19 @@ public class User implements ScooldObject, Comparable<User>,
         this.active = active;
 		this.type =  type.toString();
     }
-		
+
+	public String getClasstype() {
+		return classtype;
+	}
+	
+	public boolean isIsGroupMember() {
+		return isGroupMember;
+	}
+
+	public void setIsGroupMember(boolean isGroupMember) {
+		this.isGroupMember = isGroupMember;
+	}
+	
 	public Long getAuthstamp() {
 		return authstamp;
 	}
@@ -241,22 +235,6 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public Long getLocktill() {
-		return locktill;
-	}
-
-	public void setLocktill(Long locktill) {
-		this.locktill = locktill;
 	}
 
     public Boolean getActive () {
@@ -523,14 +501,20 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public ArrayList<Post> getAllQuestions(MutableLong pagenum, MutableLong itemcount){
 		if(id == null) return new ArrayList<Post> ();
-		return getUserDao().readAllPostsForUser(id,
-				Post.PostType.QUESTION, pagenum, itemcount);
+		return getPostsForUser(Post.PostType.QUESTION, pagenum, itemcount);
 	}
 
 	public ArrayList<Post> getAllAnswers(MutableLong pagenum, MutableLong itemcount){
 		if(id == null) return new ArrayList<Post> ();
-		return getUserDao().readAllPostsForUser(id,
-				Post.PostType.ANSWER, pagenum, itemcount);
+		return getPostsForUser(Post.PostType.REPLY, pagenum, itemcount);
+	}
+	
+	private ArrayList<Post> getPostsForUser(Post.PostType type, MutableLong pagenum, MutableLong itemcount){
+		ArrayList<String> keys = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+				findTerm(type.toString(), pagenum, itemcount, "userid", 
+					this.id, "votes", true, AbstractDAOFactory.MAX_ITEMS_PER_PAGE);
+		return AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+				readAndRepair(Post.class, keys, itemcount);
 	}
 
 	public String getFavtagsString(){
@@ -722,12 +706,12 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getMediaDao().readAllMediaForUUID(this.uuid, type, label,
+		return Media.getMediaDao().readAllMediaForID(this.id, type, label,
 				pagenum, itemcount, maxItems, reverse);
 	}
 
 	public void deleteAllMedia(){
-		Media.getMediaDao().deleteAllMediaForUUID(uuid);
+		Media.getMediaDao().deleteAllMediaForID(id);
 	}
     
 	private UserType getUserType(String type){
@@ -750,15 +734,15 @@ public class User implements ScooldObject, Comparable<User>,
     }
        
     public int addContact(User contact){
-        return getUserDao().createContactForUser(this.id, contact);
+        return getUserDao().createContactForUser(this.id, contact.getId());
     }    
     
     public int removeContact(User contact){
-        return getUserDao().deleteContactForUser(this.id, contact);
+        return getUserDao().deleteContactForUser(this.id, contact.getId());
     }
 	
     public ArrayList<User> getAllContacts(MutableLong page, MutableLong itemcount){
-        return getUserDao().readAllContactsForUser(this.id,page, itemcount);
+        return getUserDao().readAllUsersForID(this.id, page, itemcount);
     }
 
     public ArrayList<Classunit> getAllClassUnits(MutableLong page, MutableLong itemcount){
@@ -772,20 +756,24 @@ public class User implements ScooldObject, Comparable<User>,
     public ArrayList<School> getAllSchools(MutableLong page, MutableLong itemcount){
         return getAllSchools(page, itemcount, AbstractDAOFactory.MAX_ITEMS_PER_PAGE);
     }
+	
+    public ArrayList<Group> getAllGroups(MutableLong page, MutableLong itemcount){
+        return getUserDao().readAllGroupsForUser(this.id, page, itemcount);
+    }
    
     public ArrayList<Message> getAllMessages(MutableLong page, MutableLong itemcount){
-        return Message.getMessageDao().readAllMessagesForUUID(uuid, page, itemcount);
+        return Message.getMessageDao().readAllMessagesForID(id, page, itemcount);
     }
         
     public void deleteAllMessages(){
-        Message.getMessageDao().deleteAllMessagesForUUID(uuid);
+        Message.getMessageDao().deleteAllMessagesForID(id);
     }
     
     public boolean isFriendWith(User user){
 		if(user == null) return false;
 		else if(user.getId().equals(this.id)) return true;
 		
-        return getUserDao().isFriendWith(this.id, user);
+        return getUserDao().isFriendWith(this.id, user.getId());
     }
 
 	public Map<Long, String> getSimpleSchoolsMap(){
@@ -806,6 +794,23 @@ public class User implements ScooldObject, Comparable<User>,
         }
 		return m;
 	}
+	
+	public Map<Long, String> getSimpleGroupsMap(){
+		Map<Long, String> m = new HashMap<Long, String>();
+        for(Group group : this.getAllGroups(null, null)){
+			m.put(group.getId(), group.getName());
+        }		
+		return m;
+	}
+	
+	public Map<Long, Group> getGroupsMap(){
+		Map<Long, Group> m = new HashMap<Long, Group>();
+
+        for(Group group : this.getAllGroups(null, null)){
+			m.put(group.getId(), group);
+        }
+		return m;
+	}
     
     public static User getUser(Long uid){
 		if(uid == null) return null;
@@ -814,16 +819,7 @@ public class User implements ScooldObject, Comparable<User>,
     }
 
     public static User getUser(String identifier){
-		if(StringUtils.isBlank(identifier)) return null;
-			if(identifier.startsWith("http") || NumberUtils.isDigits(identifier)){
-				//identifier is an openid url
-				return getUserDao().readUserForIdentifier(identifier);
-			}else if(identifier.contains("@")){
-				//identifier is an email
-				return getUserDao().readUserByEmail(identifier);
-		}else{
-			return null;
-		}
+		return getUserDao().readUserForIdentifier(identifier);
     }
 
 	public boolean isFacebookUser(){
@@ -861,15 +857,15 @@ public class User implements ScooldObject, Comparable<User>,
 
 	public int countNewMessages(){
 		if(newmessages == null)
-			newmessages = Message.getMessageDao().countNewMessagesForUUID(uuid);
+			newmessages = Message.getMessageDao().countNewMessagesForID(id);
 		return newmessages;
 	}
 	
 	public int countNewReports(){
 		if(!isModerator()) return 0;
 		if(newreports == null)
-			newreports = AbstractDAOFactory.getDefaultDAOFactory().
-					getDAOUtils().getBeanCount(Report.class).intValue();
+			newreports = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+					getBeanCount(Report.classtype).intValue();
 			
 		return newreports;
 	}
@@ -905,19 +901,5 @@ public class User implements ScooldObject, Comparable<User>,
 
 		return deptComp;
 	}
-
-	public void index() {
-		Search.index(this);
-	}
-
-	public void unindex() {
-		Search.unindex(this);
-	}
-
-	public ArrayList<User> readAllForKeys(ArrayList<String> keys) {
-		if(keys == null || keys.isEmpty()) return new ArrayList<User> ();
-		return getUserDao().readAllForKeys(keys);
-	}
-
 }
 

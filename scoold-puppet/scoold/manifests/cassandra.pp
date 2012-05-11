@@ -7,6 +7,8 @@ class scoold::cassandra {
 	$casconf = "${casdir}/conf/cassandra.yaml"	
 	$mhs = "MAX_HEAP_SIZE="
 	$hns = "HEAP_NEWSIZE="
+	$xssmin = "-Xss"
+	$cachesize = "row_cache_size_in_mb:"
 	$itok = "initial_token:" 
 	$cname = "cluster_name:"
 	$abst = "auto_bootstrap:"
@@ -74,28 +76,31 @@ class scoold::cassandra {
 			command => "sed -e '1,/${rpcaddr}/ s/${rpcaddr}.*/${rpcaddr} 0\\.0\\.0\\.0/' -i.bak ${casconf}",
 			require => Exec["rename-cassandra"],
 			before => Exec["start-cassandra"];	
-		"set-compation-throughput": 
+		"set-compaction-throughput": 
 			command => "sed -e '1,/${comptmbps}/ s/${comptmbps}.*/${comptmbps} 1/' -i.bak ${casconf}",
 			require => Exec["rename-cassandra"],
-			before => Exec["start-cassandra"],
-			onlyif => "test '${scoold::inproduction}' = 'false'";
+			before => Exec["start-cassandra"];
 		"set-concurrent-reads": 
 			command => "sed -e '1,/${concreads}/ s/${concreads}.*/${concreads} 16/' -i.bak ${casconf}",
 			require => Exec["rename-cassandra"],
-			before => Exec["start-cassandra"],
-			onlyif => "test '${scoold::inproduction}' = 'false'";		
+			before => Exec["start-cassandra"];
 		"set-concurrent-writes": 
 			command => "sed -e '1,/${concwrites}/ s/${concwrites}.*/${concwrites} 8/' -i.bak ${casconf}",
 			require => Exec["rename-cassandra"],
-			before => Exec["start-cassandra"],
-			onlyif => "test '${scoold::inproduction}' = 'false'";
+			before => Exec["start-cassandra"];
+		"set-rowcache-size": 
+			command => "sed -e '1,/${cachesize}/ s/${cachesize}.*/${cachesize} 200/' -i.bak ${casconf}",
+			require => Exec["rename-cassandra"],
+			before => Exec["start-cassandra"];
 		"download-jna":
 			command => "sudo -u ${cassandrausr} wget --no-check-certificate -O ${casdir}/lib/jna.jar ${scoold::jnalink}",
 			require => Exec["rename-cassandra"],
 			before => Exec["start-cassandra"];
+		"set-min-xss": 
+			command => "sed -e '1,/${xssmin}/ s/${xssmin}.*k/${xssmin}256k/' -i.bak ${casdir}/conf/cassandra-env.sh",
+			require => Exec["rename-cassandra"],
+			before => Exec["start-cassandra"]
 	}
-
-
 
 	# if not in production JVM MEM values are auto calculated and set by cassandra env script
 	if $scoold::inproduction {		
@@ -107,19 +112,6 @@ class scoold::cassandra {
 			require => Exec["rename-cassandra"],
 			before => Exec["start-cassandra"]
 		}
-	}
-
-	line { 
-		"limits.conf1":
-			ensure => present,		
-			file => "/etc/security/limits.conf",
-			line => "${cassandrausr} soft memlock unlimited",
-			require => User[$cassandrausr];
-		"limits.conf2":
-			ensure => present,		
-			file => "/etc/security/limits.conf",
-			line => "${cassandrausr} hard memlock unlimited",
-			require => User[$cassandrausr];
 	}
 	
 	file { 			
@@ -190,7 +182,7 @@ class scoold::cassandra {
 		
 	exec { 
 		"start-cassandra":
-			command => "monit; monit start cassandra",
+			command => "monit reload; monit start cassandra",
 			unless => "test -e ${cassandrahome}/cassandra.pid", 
 			require => Exec["set-cluster-name"];
 		"configure-rsyslog":

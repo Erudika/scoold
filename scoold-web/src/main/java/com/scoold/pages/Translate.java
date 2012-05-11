@@ -61,7 +61,6 @@ public class Translate extends BasePage{
 			}
 		}else{
 			setRedirect(languageslink);
-			return;
 		}
 	}
 	 
@@ -76,7 +75,6 @@ public class Translate extends BasePage{
 				// this is what is currently shown for translation
 				String langkey = langkeys.get(showIndex);
 				
-				pageMacroCode = "#translationspage($translationslist $approvedTransMap)";
 				translationslist = Translation.getTranslationDao().
 								readAllTranslationsForKey(showLocale.getLanguage(),
 								langkey, pagenum, itemcount);

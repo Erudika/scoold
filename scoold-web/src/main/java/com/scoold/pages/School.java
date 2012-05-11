@@ -9,12 +9,9 @@ import com.scoold.core.Classunit;
 import com.scoold.core.User;
 import com.scoold.core.ContactDetail.ContactDetailType;
 import com.scoold.core.Post;
-import com.scoold.core.Post.PostType;
 import com.scoold.core.User.Badge;
 import com.scoold.db.AbstractDAOUtils;
 import java.util.ArrayList;
-import org.apache.click.control.Form;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
@@ -30,45 +27,39 @@ public class School extends BasePage{
 	public ArrayList<User> peoplelist;
 	public ArrayList<Classunit> classeslist;
 	public ArrayList<Post> questionslist;
-	public Form qForm;
-	public String galleryUri;
 	public boolean isLinkedToMe;
 	public boolean isMine;
+	
+	public String photoslink;
+	public String drawerlink;
 
     public School() {
         title = lang.get("school.title");
 		
 		showSchool = null;
 		contactDetailTypes = getContactDetailTypeArray();
-		Long schoolid = NumberUtils.toLong(getParamValue("schoolid"));
-		String uuid = getParamValue("uuid");
+		Long schoolid = NumberUtils.toLong(getParamValue("schoolid"), 0);
 
-        if(schoolid.longValue() == 0L && StringUtils.isBlank(uuid)){
+        if(schoolid.longValue() == 0L){
 			setRedirect(schoolslink);
 			return;
 		}else{
-            showSchool = (schoolid.longValue() == 0L) ?
-				com.scoold.core.School.getSchoolDao().read(uuid) :
-				com.scoold.core.School.getSchoolDao().read(schoolid);
+            showSchool = com.scoold.core.School.getSchoolDao().read(schoolid);
 
-            if(showSchool != null){
+            if(showSchool != null && daoutils.typesMatch(showSchool)){
                 title = title + " - " + showSchool.getName();
-				galleryUri = schoollink.concat("/").concat(
-						showSchool.getId().toString()).concat("/photos");
             }else{
 				setRedirect(schoolslink);
 				return;
 			}
         }
-
-		qForm = getQuestionForm(showSchool.getUuid(), null);
-
+		
 		isLinkedToMe = (authenticated) ? showSchool.isLinkedTo(authUser) : false;
-
-		isMine = (authenticated) ? authUser.getId().
-				equals(showSchool.getUserid()) : false;
-
+		isMine = (authenticated) ? authUser.getId().equals(showSchool.getUserid()) : false;
 		isMine = isMine || inRole("admin");
+		
+		photoslink = schoollink + "/" + showSchool.getId() + "/photos";
+		drawerlink = schoollink + "/" + showSchool.getId() + "/drawer";
 
 		if(authenticated && (isMine || authUser.hasBadge(Badge.ENTHUSIAST)
 				|| inRole("mod"))){
@@ -81,46 +72,32 @@ public class School extends BasePage{
 			//get all classes
 			classeslist = showSchool.getAllClassUnits(pagenum, itemcount);
 			title = title + " - " + lang.get("classes.title");
-			pageMacroCode = "#classespage($classeslist)";
 		}else if ("people".equals(showParam)) {
 			peoplelist = showSchool.getAllUsers(pagenum, itemcount);
 			title = title + " - " + lang.get("people.title");
-			pageMacroCode = "#peoplepage($peoplelist)";
 		} else if("photos".equals(showParam)){
 			if(!authenticated){
-				setRedirect(schoollink + "/p/" + showSchool.getId() + "/photos");
+				setRedirect("/p" + photoslink);
 				return;
 			}
 			title = title + " - " + lang.get("photos.title");
 			if(param("label")) title += " - " + getParamValue("label");
 		} else if("drawer".equals(showParam)){
 			if(!authenticated){
-				setRedirect(schoollink + "/p/" + showSchool.getId() + "/drawer");
+				setRedirect("/p" + drawerlink);
 				return;
 			}
 			title += " - " + lang.get("drawer.title");
 		} else {
-			String sortBy = "timestamp";
+			String sortBy = "";
 			if("activity".equals(getParamValue("sortby"))) sortBy = "lastactivity";
 			else if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-
 			questionslist = showSchool.getQuestions(sortBy, pagenum, itemcount);
 			addModel("includeGMapsScripts", true);
 		}
     }
 
     public void onGet(){
-        if(showSchool == null){
-			setRedirect(schoolslink);
-			return;
-		}
-
-		if("photos".equals(showParam)){
-			processGalleryRequest(showSchool, galleryUri, canEdit);
-		}else if("drawer".equals(showParam)){
-			proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer", canEdit);
-		}
-
 		if(!authenticated) return;
 
 		if(param("join") && !showSchool.isLinkedTo(authUser)){
@@ -137,19 +114,23 @@ public class School extends BasePage{
 			//delete school from user
 			showSchool.unlinkFromUser(authUser.getId());
 			isLinkedToMe = false;
-			if(!isAjaxRequest())
-				setRedirect(schoollink+"/"+showSchool.getId()+"?code=10");
+			if(!isAjaxRequest()) setRedirect(schoollink+"/"+showSchool.getId()+"?code=10");
 		}
-
 	}
 
     public void onPost(){
 		if(canEdit){
-			if("photos".equals(showParam)){
-				processImageEmbedRequest(showSchool, galleryUri, canEdit);
-				processGalleryRequest(showSchool, galleryUri, canEdit);
+			if(param("name")){
+				String newName = getParamValue("name");
+				if(newName != null && newName.length() >= 4){
+					showSchool.setName(newName);
+					showSchool.update();
+				}
+			}else if("photos".equals(showParam)){
+				processImageEmbedRequest(showSchool, photoslink, canEdit);
+				processGalleryRequest(showSchool, photoslink, canEdit);
 			}else if("drawer".equals(showParam)){
-				proccessDrawerRequest(showSchool, schoollink+"/"+showSchool.getId()+"/drawer", canEdit);
+				proccessDrawerRequest(showSchool, drawerlink, canEdit);
 			}else{
 				String snameOrig = showSchool.getName();
 				//update school
@@ -158,14 +139,9 @@ public class School extends BasePage{
 					showSchool.setName(snameOrig);
 				}
 				showSchool.update();
+				if(!isAjaxRequest()) setRedirect(schoollink+"/"+showSchool.getId());
 			}
 		}
     }
 
-	public boolean onAskClick(){
-		if(isValidQuestionForm(qForm)){
-			createAndGoToPost(PostType.QUESTION);
-		}
-		return false;
-	}
 }

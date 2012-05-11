@@ -18,10 +18,6 @@ public abstract class AbstractPostDAO <T extends Post, PK>
 		implements GenericDAO <Post, Long>{
 
 	public abstract boolean updateAndCreateRevision(T transientPost, T originalPost);
-	public abstract ArrayList<T> readAllPostsForUUID(PostType type, String uuid, String field, MutableLong page, MutableLong itemcount);
-	public abstract ArrayList<T> readAllForKeys(ArrayList<String> keys);
-	public abstract <N> ArrayList<T> readFeedbackSortedBy(String sortField, MutableLong page, MutableLong itemcount, boolean reverse);
-
+	public abstract ArrayList<T> readAllPostsForID(PostType type, Long id, String field, MutableLong page, MutableLong itemcount, int max);
 	public abstract void readAllCommentsForPosts(ArrayList<T> list, int maxPerPage);
-	public abstract void deleteAllAnswersForUUID(String parentUUID);
 }
