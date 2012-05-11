@@ -30,9 +30,8 @@ import org.codehaus.jackson.node.ArrayNode;
  * @author alexb
  */
 public class AmazonQueue<E extends Serializable> implements Queue<E> {
-	public static final String ACCESSKEY = System.getProperty("com.scoold.awsaccesskey");
-	public static final String SECRETKEY = System.getProperty("com.scoold.awssecretkey");
-	
+	private static final String ACCESSKEY = System.getProperty("com.scoold.awsaccesskey");
+	private static final String SECRETKEY = System.getProperty("com.scoold.awssecretkey");
 	private static final String SQS_ID = System.getProperty("com.scoold.awssqsqueueid");
 	private static final String SQS_URL = System.getProperty("com.scoold.awssqsendpoint");
 	private static final int MAX_MESSAGES = 10;  //max in bulk

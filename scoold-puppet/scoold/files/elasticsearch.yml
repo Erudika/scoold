@@ -328,8 +328,8 @@ network.bind_host: 0.0.0.0
 network.publish_host: _ec2:privateIpv4_
 network.tcp.keep_alive: true
     
-index.number_of_shards: 6
-index.number_of_replicas: 1
+index.number_of_shards: 4
+index.number_of_replicas: 0
 
 path.data: /var/lib/elasticsearch/data
 path.work: /var/lib/elasticsearch/work

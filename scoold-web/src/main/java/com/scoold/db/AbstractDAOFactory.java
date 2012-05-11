@@ -11,7 +11,7 @@ public abstract class AbstractDAOFactory {
 	public static final int MAX_COLUMNS = 1024;
 	public static final int VOTE_LOCKED_FOR_SEC = 4*7*24*60*60; //1 month in seconds
 	public static final long VOTE_LOCK_AFTER_SEC = 2*60; //2 minutes in ms
-	public static final int MAX_ITEMS_PER_PAGE = 3;
+	public static final int MAX_ITEMS_PER_PAGE = 30;
 	public static final int MAX_CONTACTS_PER_USER = 2000;
 	public static final int MAX_SCHOOLS_PER_USER = 50;
 	public static final int MAX_CLASSES_PER_USER = 100;

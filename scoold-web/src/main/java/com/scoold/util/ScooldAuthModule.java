@@ -30,7 +30,6 @@ import name.aikesommer.authenticator.SimplePrincipal;
 import org.apache.click.Context;
 import org.apache.click.util.ClickUtils;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonNode;
@@ -57,8 +56,8 @@ import org.openid4java.message.sreg.SRegResponse;
 public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModule
 
 	// development mode => bypasses authentication if 'true'
-	private static boolean DEVEL_MODE = !BooleanUtils.
-			toBoolean(System.getProperty("com.scoold.production"));
+	private static boolean DEVEL_MODE = false; //!BooleanUtils.
+			//toBoolean(System.getProperty("com.scoold.production"));
 
 	public static final boolean USE_SESSIONS = false;
 	public static final String OPENID_ACTION = "openid_auth";

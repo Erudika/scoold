@@ -71,20 +71,29 @@ function updateJacssi () {
 }
 
 function setProperties () {
+	dbhosts=$3
+	eshosts=$4
+	if [ -z "$3" ]; then
+		dbhosts=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=cassandra1" | egrep ^INSTANCE | awk '{ print $16}')
+	fi	
+	if [ -z "$4" ]; then
+		eshosts=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=elasticsearch1" | egrep ^INSTANCE | awk '{ print $16}')
+	fi
+	
 	prop1="com.scoold.workerid=$2"
 	prop2="com.scoold.production=\"true\""
-	prop3="com.scoold.dbhosts=\"$3\""
-	prop4="com.scoold.eshosts=\"$4\""
+	prop3="com.scoold.dbhosts=\"$dbhosts\""
+	prop4="com.scoold.eshosts=\"$eshosts\""
 	
 	prop5="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
 	prop6="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
-	prop7="com.scoold.awssqsendpoint=\"$AWSSQSENDPOINT\""
+	prop7="com.scoold.awssqsendpoint=\"$(echo $AWSSQSENDPOINT | sed 's/:/\\\:/g')\""
 	prop8="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
 	prop9="com.scoold.fbappid=\"$FBAPPID\""
 	prop10="com.scoold.fbapikey=\"$FBAPIKEY\""
 	prop11="com.scoold.fbsecret=\"$FBSECRET\""
 	prop12="com.scoold.awscfdist=\"$AWSCFDIST\""	
-
+	
 	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10:$prop11:$prop12"
 }
 
@@ -97,9 +106,7 @@ function deployWAR () {
 		if [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
 			host=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=$1" | egrep ^INSTANCE | awk '{ print $4}')
 			nodeid=$(expr "$1" : '^glassfish\([0-9]*\)$')
-			dbhost1=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=cassandra1" | egrep ^INSTANCE | awk '{ print $16}')
-			eshost1=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=elasticsearch1" | egrep ^INSTANCE | awk '{ print $16}')
-			setProperties $host $nodeid $dbhost1 $eshost1
+			setProperties $host $nodeid
 			echo $host > $hostsfile;
 		else
 			hostsfile=$FILE2
@@ -222,6 +229,6 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 		fi
 	fi
 else
-	echo "USAGE:  $0 [ glassfishXXX war | war ] [ enabled context ] | updatejacssi [invalidateall] | cmd [ webXXX ] gfcommand"
+	echo "USAGE:  $0 [ glassfishXXX war | war  [ enabled context ]] | updatejacssi [invalidateall] | cmd [ glassfishXXX ] gfcommand"
 fi
 
