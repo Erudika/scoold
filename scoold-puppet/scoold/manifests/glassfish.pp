@@ -59,6 +59,14 @@ class scoold::glassfish {
 			group => $glassfishusr, 
 			require => Exec["rename-glassfish"],
 			before => Exec["start-glassfish"];
+		"${gfdomain}/config/default-web.xml":
+			ensure => file,
+			source => "puppet:///modules/scoold/default-web.xml",
+			mode => 644,
+			owner => $glassfishusr,
+			group => $glassfishusr, 
+			require => Exec["rename-glassfish"],
+			before => Exec["start-glassfish"];
 		"${gfdomain}/config/admin-keyfile":
 			ensure => file,
 			source => "puppet:///modules/scoold/admin-keyfile",

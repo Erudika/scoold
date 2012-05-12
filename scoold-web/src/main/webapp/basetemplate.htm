@@ -402,15 +402,15 @@
 #end
 ###########################################
 #macro(tagsbox $tags $link)
-	#foreach($tag in $tags.split(","))
-		#if($tag && $tag.trim() != "")
+	#foreach($showtag in $tags.split(","))
+		#if($showtag && $showtag.trim() != "")
 			#if($link.isEmpty())
 				<span class="button-tiny rounded3 mrs">
-					<span class="pictos">z</span> $!tag
+					<span class="pictos">z</span> $!showtag
 				</span>
 			#else
-				<a href="$link/tag/$!$daoutils.urlEncode($tag)" title="Posts tagged $!tag" class="button-tiny rounded3 mrs">
-					<span class="pictos">z</span> $!tag
+				<a href="$link/tag/$!daoutils.urlEncode($showtag)" title="Posts tagged $!showtag" class="button-tiny rounded3 mrs">
+					<span class="pictos">z</span> $!showtag
 				</a>
 			#end
 		#end

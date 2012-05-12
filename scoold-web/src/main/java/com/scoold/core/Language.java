@@ -462,7 +462,7 @@ public final class Language {
 			.put("about.classes.3", "Everyone with the 'Enthusiast' badge can write on the blackboard.")
 			
 			.put("about.groups.1", "Groups are like classes but private — the only way to join a group is to get invited by the creator of that group. As with schools, you can post questions and answers in your group but they will be visible only to the members of the group.")
-			.put("about.groups.2", "You can add as many people to a group. In order to add a person to your group you first have to add them as contact.")			
+			.put("about.groups.2", "You can add as many people to a group as you wish. In order to add a person to your group you first have to add them as contact.")			
 						
 			.put("about.voterep.1", "Voting is an integral part of Scoold. If you like something useful or interesting, vote it up. Questions that are clear and well-written should also be given +1. The same goes for answers that are helpful. If something is poorly written, unclear, rude or inappropriate, vote it down.")
 			.put("about.voterep.2", "Your reputation points measure how much other people trust you and like you. Reputation is earned by posting good questions and answers. It is also awarded with certain badges.")

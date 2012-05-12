@@ -98,19 +98,25 @@ function setProperties () {
 }
 
 function deployWAR () {
-	# params $1=MULTI, $2=WAR, $3=ENABLED, $4=CONTEXT
+	# params $1=MULTI, $2=WAR, $3=ENABLED, $4=OLDAPP
 	if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
-		deffile="uploadto.txt"
-		hostsfile=$deffile
+		host=$1
+		oldapp="$4"
+		prefix=""
 		
 		if [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
 			host=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=$1" | egrep ^INSTANCE | awk '{ print $4}')
 			nodeid=$(expr "$1" : '^glassfish\([0-9]*\)$')
-			setProperties $host $nodeid
-			echo $host > $hostsfile;
-		else
-			hostsfile=$FILE2
+			if [ -z "$4" ]; then
+				oldapp=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
+			fi			
 		fi
+		
+		if [ "$3" = "true" ]; then
+			prefix="$ASADMIN undeploy $oldapp &&"
+		fi
+		
+		setProperties $host $nodeid
 		
 		if [ "$2" = "jenkins" ]; then
 			auth=""
@@ -126,14 +132,9 @@ function deployWAR () {
 			APPNAME=$(expr "$filename" : '\(.*\)\.war$')
 			fetchwar="echo -n 'Uploading war file...'"
 			pssh/bin/pscp -h $hostsfile -l ubuntu $2 $warpath
-			echo -n 'Done.'
 		fi
 		
-		pssh/bin/pssh -h $hostsfile -l ubuntu -t 0 -i "$fetchwar && chmod 755 $warpath && $ASADMIN deploy --enabled=$3 $4 --name $APPNAME $warpath; rm $warpath"
-		
-		if [ -f $deffile ]; then
-			rm $deffile
-		fi
+		ssh -n ubuntu@$host "$fetchwar && chmod 755 $warpath &&  $prefix $ASADMIN deploy --force --enabled=$3 --name $APPNAME $warpath; rm $warpath"
 	fi	
 }
 
@@ -152,10 +153,7 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 			pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"		
 		fi	
 	elif [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
-		if [ -n "$4" ]; then
-			CONTEXT="--contextroot $4"
-		fi
-		deployWAR $1 $2 $3 $CONTEXT
+		deployWAR $1 $2 $3 $4
 	else
 		if [ "$2" !=  "true" ] && [ "$2" !=  "false" ]; then
 			CONTEXT="--contextroot $2"
@@ -172,9 +170,6 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 
 			updateJacssi
 
-			### STEP 1: deploy .war file to all servers	(enabled if deployed for the first time, disabled otherwise)			
-			deployWAR "all" $1 $ENABLED $CONTEXT
-
 			OLDAPP=""
 			isok=false
 			dbhosts=$(cat "cassandra$F1SUFFIX" | awk '{ print $3"," }' | tr -d "\n" | sed 's/,$//g')
@@ -184,24 +179,24 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 				if [ -n "$i" ]; then
 					instid=$(echo $i | awk '{ print $1 }')
 					host=$(echo $i | awk '{ print $2 }')			
+
+					if [ -z "$OLDAPP" ]; then
+						OLDAPP=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
+					fi
 					
-					if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then					
-						if [ -z "$OLDAPP" ]; then
-							OLDAPP=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
-						fi
-						
-						### STEP 2: set system properties
-						setProperties $host $count $dbhosts $eshosts
-						
-						### STEP 3: deregister each instance from the LB, consecutively 
+					### STEP 1: deploy .war file to all servers	(enabled if deployed for the first time, disabled otherwise)			
+					deployWAR $host $1 $ENABLED $OLDAPP
+					
+					if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then							
+						### STEP 2: deregister each instance from the LB, consecutively 
 						$AWS_ELB_HOME/bin/elb-deregister-instances-from-lb $LBNAME --region $REGION --quiet --instances $instid
 						sleep 10
 
-						### STEP 4: disable old deployed application and enable new application
+						### STEP 3: disable old deployed application and enable new application
 						ssh -n ubuntu@$host "$ASADMIN disable $OLDAPP && $ASADMIN enable $APPNAME"
 
 						if [ $isok = false ]; then
-							### STEP 5: TEST, TEST, TEST! then continue
+							### STEP 4: TEST, TEST, TEST! then continue
 							echo "TEST NOW! => $host"
 							read -p "'ok' to confirm > " response < /dev/tty
 						fi
@@ -212,7 +207,7 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 							ssh -n ubuntu@$host "$ASADMIN undeploy $OLDAPP"
 							isok=true
 						else
-							### STEP 4.2 REVERT back to old application
+							### STEP 5.2 REVERT back to old application
 							echo "NOT OK! Reverting back to old application..."
 							ssh -n ubuntu@$host "$ASADMIN disable $APPNAME && $ASADMIN enable $OLDAPP"
 							isok=false
