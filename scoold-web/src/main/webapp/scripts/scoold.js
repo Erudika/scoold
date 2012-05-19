@@ -112,7 +112,7 @@ $(function () {
 					if (response.authResponse) {
 						window.location = actionurl;
 					}
-				});
+				}, {scope: 'email'});
 			}
 		});
 	}
@@ -130,18 +130,18 @@ $(function () {
 	var fbPicture = $("#fb-picture"),
 		fbName = $("#fb-name"),
 		fbNames = $(".fb-name");
-	
 	if(fbPicture.length || fbName.length){
 		FB.getLoginStatus(function(response) {
 			if (response.status === 'connected') {
 				FB.api({
 					method: 'fql.query',
-					query: 'SELECT name, pic_small, url FROM profile WHERE id=' + response.session.uid
+					query: 'SELECT uid, name, pic_small, email FROM user WHERE uid=' + response.authResponse.userID
 				}, function(response) {
 					var user = response[0];
 					fbPicture.html('<img src="' + user.pic_small + '" alt="'+user.name+'"/>');
-					fbName.html('<a href="' + user.url + '" class="extlink">' + user.name + '</a>');
+					fbName.text(user.name + " #" + user.uid);
 					$('input.fb-name-box').val(user.name);
+					$('input.fb-email-box').val(user.email);
 				});
 			}
 		});

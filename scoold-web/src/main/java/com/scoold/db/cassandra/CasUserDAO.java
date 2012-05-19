@@ -32,13 +32,16 @@ final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
 	public Long create(User newUser) {
 		if(newUser == null) return null;
+		//save auth identifier if there is one
+		String ident = newUser.getIdentifier();
+		// check if identifier is claimed
+		User u = readUserForIdentifier(ident);
+		if(u != null) return null;
 
 		Mutator<String> mut = cdu.createMutator();
 		newUser.setLastseen(System.currentTimeMillis());
 		Long id = cdu.create(newUser, mut);
-
-		//save auth identifier if there is one
-		String ident = newUser.getIdentifier();
+		
 		if(!StringUtils.isBlank(ident)){
 			attachIdentifierToUser(ident, id, mut);
 		}

@@ -1917,11 +1917,11 @@
 #macro(identifierbox $showid $canDetach $index)
 	<span>
 		#if($showid.startsWith("http"))
-			<span class="openid-icon-small" title="OpenID">&nbsp;</span>&nbsp;
+			<span class="openid-icon-small" title="OpenID">&nbsp;</span> 
 			<tt>$showid</tt>
 		#else
-			<span class="facebook-icon-small" title="Facebook">&nbsp;</span>&nbsp;
-			<span id="fb-name">Facebook #$!showid</span>
+			<span class="facebook-icon-small" title="Facebook">&nbsp;</span> 
+			<span id="fb-name">#$!showid</span>
 		#end
 		#if($canDetach)
 			<a href="${settingslink}?detachid=$index" title="Remove" class="delopenid nodecoration red"><span class="pictos">D</span></a>
@@ -2206,6 +2206,11 @@
 					<div class="left">
 						<a id="logo" href="$!prefix">$APPNAME</a> 
 						#if($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
+						#if(!$IN_PRODUCTION && !$IN_DEVELOPMENT) 
+							<code class="red pictos" title="Environment not configured properly!">!</code> 
+						#elseif($IN_DEVELOPMENT)
+							<code class="blue pictos" title="Development mode">b</code> 
+						#end						
 					</div>
 					<div id="topnav" class="right mtl">
 					#if($authenticated)

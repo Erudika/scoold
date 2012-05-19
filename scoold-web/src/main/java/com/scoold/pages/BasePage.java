@@ -58,6 +58,7 @@ public class BasePage extends Page {
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = ScooldAuthModule.USE_SESSIONS;
 	public static final boolean IN_PRODUCTION = AbstractDAOFactory.IN_PRODUCTION;
+	public static final boolean IN_DEVELOPMENT = AbstractDAOFactory.IN_DEVELOPMENT;
 	public static final int MAX_ITEMS_PER_PAGE = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	public static final int SESSION_TIMEOUT_SEC = AbstractDAOFactory.SESSION_TIMEOUT_SEC;
 	public static final long ONE_YEAR = 365L*24L*60L*60L*1000L;
@@ -66,7 +67,6 @@ public class BasePage extends Page {
 	
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String FB_APP_ID = ScooldAuthModule.FB_APP_ID;
-	public static final String FB_API_KEY = ScooldAuthModule.FB_API_KEY;
 	public static final Logger logger = Logger.getLogger(BasePage.class.getName());
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";

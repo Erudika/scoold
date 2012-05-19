@@ -55,10 +55,6 @@ import org.openid4java.message.sreg.SRegResponse;
  */
 public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModule
 
-	// development mode => bypasses authentication if 'true'
-	private static boolean DEVEL_MODE = false; //!BooleanUtils.
-			//toBoolean(System.getProperty("com.scoold.production"));
-
 	public static final boolean USE_SESSIONS = false;
 	public static final String OPENID_ACTION = "openid_auth";
 	public static final String FB_CONNECT_ACTION = "facebook_auth";
@@ -76,7 +72,6 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public static final String OPENID = "openid";
 	public static final String FACEBOOK = "facebook";
 	public static final String FB_APP_ID = System.getProperty("com.scoold.fbappid");
-	public static final String FB_API_KEY = System.getProperty("com.scoold.fbapikey");
 	private static final String FB_SECRET = System.getProperty("com.scoold.fbsecret");
 	public static final String CONSUMER_MANAGER = "consumer-manager";
 //	public static final String DISCOVERY_INFO = "discovery-info";
@@ -111,7 +106,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			return expiredResponse(request);
 		}
 		
-		if(DEVEL_MODE && request.isMandatory()){
+		// development mode => bypasses authentication if 'true'
+		if(AbstractDAOFactory.IN_DEVELOPMENT && request.isMandatory()){
 			//override using facebook uid or openid
 			tryCreatingPrincipal("517966023", manager, request);
 			return Status.Success;

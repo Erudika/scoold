@@ -48,6 +48,8 @@ public abstract class AbstractDAOFactory {
 	
 	public static final boolean IN_PRODUCTION = 
 			BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
+	public static final boolean IN_DEVELOPMENT = 
+			BooleanUtils.toBoolean(System.getProperty("com.scoold.development"));
 
 	public static enum FactoryType {
 //		MYSQL,

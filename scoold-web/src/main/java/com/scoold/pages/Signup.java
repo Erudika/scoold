@@ -31,7 +31,6 @@ public class Signup extends BasePage{
 	public boolean isFacebookUser;
 	public String identString;
 	public User newUser;
-	private static final String ADMIN_KEY = "albogdano.pip.verisignlabs.com";
 	private static final String ADMIN_FB_ID = "517966023";
     
     public Signup() {
@@ -43,12 +42,9 @@ public class Signup extends BasePage{
 
 		if (authenticated) {
 			setRedirect(HOMEPAGE);
-			return;
 		}else if(identString == null) {
             setRedirect(signinlink);
-			return;
         }
-
     }
     
     private void makeForm(){
@@ -142,7 +138,7 @@ public class Signup extends BasePage{
 				newUser.setType(getParamValue("type"));				
 				newUser.setIdentifier(identString);
 
-				if (identString.contains(ADMIN_KEY) || identString.equals(ADMIN_FB_ID)){
+				if (identString.equals(ADMIN_FB_ID)){
 					newUser.setGroups(UserGroup.ADMINS.toString());
 				}
 				

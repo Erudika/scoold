@@ -6,7 +6,7 @@
 	<div class="mbl center">
 		#if($isFacebookUser)
 			<span id="fb-picture" class="rounded3 mrl"></span>
-		#elseif($newUser.email && !$newUser.email.isEmpty())
+		#else
 			<img src="#profilepic($newUser true)" alt="Profile picture" class="rounded3 mrl"/>
 		#end
 		<span class="megaText">$!lang.get("hello")</span>
@@ -22,7 +22,7 @@
 			#end
 
 			#createformfield(${signupForm.fields.fullname} "fb-name-box nicebox p100 mbl")
-			#createformfield(${signupForm.fields.email} "nicebox p100 mbl")
+			#createformfield(${signupForm.fields.email} "fb-email-box nicebox p100 mbl")
 			#createformfield(${signupForm.fields.type} "nicebox p100")
 
 			<div class="center mtl">
