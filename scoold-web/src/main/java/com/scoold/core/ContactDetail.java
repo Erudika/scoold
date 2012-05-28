@@ -94,8 +94,9 @@ public class ContactDetail {
 		if(StringUtils.isBlank(details)) return list;
 		for (String detail : details.split(SEPARATOR)) {
 			String[] twoParts = detail.split(",");
-			if(twoParts.length != 2) continue;
-			list.add(new ContactDetail(twoParts[0], twoParts[1]));
+			if(twoParts.length == 2){
+				list.add(new ContactDetail(twoParts[0], twoParts[1]));
+			}
 		}
 		return list;
 	}

@@ -15,13 +15,13 @@
 			<hr/>
 
 			<div class="mvm">
-				#if($authenticated)
-					#if($isLinkedToMe)
-						<a href="$schoollink/$!showSchool.id/ask" class="button-tiny rounded3" title="Ask a question"><span class="pictos">p</span> $!{lang.get('posts.ask')}</a>
-						<a href="$schoollink/$!showSchool.id/leave/#stripstr($!showSchool.name)" class="rusure button-tiny rounded3"><span class="pictos">-</span> $!lang.get("leave")</a>
-					#else
-						<a href="$schoollink/$!showSchool.id/join/#stripstr($!showSchool.name)" class="button-tiny rounded3"><span class="pictos">+</span> $!lang.get("join")</a>
-					#end
+				#if($authenticated) #set($plink = "" ) #else #set($plink = "/p" ) #end
+				
+				#if($isLinkedToMe)
+					<a href="$schoollink/$!showSchool.id/ask" class="button-tiny rounded3" title="Ask a question"><span class="pictos">p</span> $!{lang.get('posts.ask')}</a>
+					<a href="$schoollink/$!showSchool.id/leave/#stripstr($!showSchool.name)" class="rusure button-tiny rounded3"><span class="pictos">-</span> $!lang.get("leave")</a>
+				#else
+					<a href="$plink$schoollink/$!showSchool.id/join/#stripstr($!showSchool.name)" class="button-tiny rounded3"><span class="pictos">+</span> $!lang.get("join")</a>
 				#end
 
 				#if($request.isUserInRole("admin"))

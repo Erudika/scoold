@@ -25,7 +25,7 @@ $(function () {
 			pepper: (typeof pepper !== "undefined" ? pepper : null)};
 
 	/**************************
-	 *  Google Maps API v3.3
+	 *    Google Maps API
 	 **************************/
 	if(mapCanvas.length){
 		var geocoder = new google.maps.Geocoder(),
@@ -36,12 +36,13 @@ $(function () {
 			sublocality = "",
 			country = "",	
 			map = new google.maps.Map(mapCanvas.get(0), {
-			zoom: 3,
-			center: myLatlng,
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			mapTypeControl: false,
-			streetViewControl: false
+				zoom: 3,
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				mapTypeControl: false,
+				streetViewControl: false
 		});
+		
 		google.maps.event.addListener(map, 'click', function(event) {
 			map.setCenter(event.latLng);
 			marker.setPosition(event.latLng);

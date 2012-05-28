@@ -123,46 +123,46 @@ public abstract class AbstractDAOUtils {
 				String[] values = paramMap.get(param);
 				String value = values[0];
 				// filter out any params that are different from the core params
-				if(!fields.containsKey(param)) continue;
-				if (StringUtils.containsIgnoreCase(param, "date") &&
-						!StringUtils.equals(param, "update")) {
-					
-					//a special case of multi-value param - date
-					param = StringUtils.replace(param.toLowerCase(), "date", "", 1);
-					Long dateval = null;
-					if (values.length == 3 && StringUtils.isNotEmpty(values[2]) &&
-							StringUtils.isNotEmpty(values[1]) &&
-							StringUtils.isNotEmpty(values[0])) {
+				if(fields.containsKey(param)){
+					if (StringUtils.containsIgnoreCase(param, "date") &&
+							!StringUtils.equals(param, "update")) {
 
-						String date = values[2] + "-" + values[1] + "-" + values[0];
+						//a special case of multi-value param - date
+						param = StringUtils.replace(param.toLowerCase(), "date", "", 1);
+						Long dateval = null;
+						if (values.length == 3 && StringUtils.isNotEmpty(values[2]) &&
+								StringUtils.isNotEmpty(values[1]) &&
+								StringUtils.isNotEmpty(values[0])) {
+
+							String date = values[2] + "-" + values[1] + "-" + values[0];
+							//set property WITHOUT CONVERSION
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							dateval = sdf.parse(date).getTime();
+						}
 						//set property WITHOUT CONVERSION
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-						dateval = sdf.parse(date).getTime();
-					}
-					//set property WITHOUT CONVERSION
-					PropertyUtils.setProperty(transObject, param, dateval);
-					continue;
-				} else if (StringUtils.equalsIgnoreCase(param, "contacts")) {
-					//a special case of multi-value param - contacts
-					String contacts = "";
-					int max = (values.length > AbstractDAOFactory.MAX_CONTACT_DETAILS) ?
-						AbstractDAOFactory.MAX_CONTACT_DETAILS : values.length;
-					for (int i = 0; i < max; i++) {
-						String contact = values[i];
-						if (!StringUtils.isBlank(contact)) {
-							String[] tuParts = contact.split(",");
-							if (tuParts.length == 2) {
-								tuParts[1] = tuParts[1].replaceAll(";", "");
-								contacts += tuParts[0] + "," + tuParts[1] + ";";
+						PropertyUtils.setProperty(transObject, param, dateval);
+					} else if (StringUtils.equalsIgnoreCase(param, "contacts")) {
+						//a special case of multi-value param - contacts
+						String contacts = "";
+						int max = (values.length > AbstractDAOFactory.MAX_CONTACT_DETAILS) ?
+							AbstractDAOFactory.MAX_CONTACT_DETAILS : values.length;
+						for (int i = 0; i < max; i++) {
+							String contact = values[i];
+							if (!StringUtils.isBlank(contact)) {
+								String[] tuParts = contact.split(",");
+								if (tuParts.length == 2) {
+									tuParts[1] = tuParts[1].replaceAll(";", "");
+									contacts += tuParts[0] + "," + tuParts[1] + ";";
+								}
 							}
 						}
+						contacts = StringUtils.removeEnd(contacts, ";");
+						PropertyUtils.setProperty(transObject, param, contacts);
+					}else{
+						//set property WITH CONVERSION
+						BeanUtils.setProperty(transObject, param, value);
 					}
-					contacts = StringUtils.removeEnd(contacts, ";");
-					PropertyUtils.setProperty(transObject, param, contacts);
-					continue;
 				}
-				//set property WITH CONVERSION
-				BeanUtils.setProperty(transObject, param, value);
 			}
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, null, ex);
@@ -315,8 +315,9 @@ public abstract class AbstractDAOUtils {
 		decPlaces = (int) Math.pow(10, decPlaces);
 		// Enumerate number abbreviations
 		String[] abbrev = {"K", "M", "B", "T"};
+		boolean done = false;
 		// Go through the array backwards, so we do the largest first
-		for (int i = abbrev.length - 1; i >= 0; i--) {
+		for (int i = abbrev.length - 1; i >= 0 && !done; i--) {
 			// Convert array index to "1000", "1000000", etc
 			int size = (int) Math.pow(10, (i + 1) * 3);
 			// If the number is bigger or equal do the abbreviation
@@ -327,7 +328,7 @@ public abstract class AbstractDAOUtils {
 				// Add the letter for the abbreviation
 				abbrevn = number + abbrev[i];
 				// We are done... stop
-				break;
+				done = true;
 			}
 		}
 		return abbrevn;
@@ -441,24 +442,22 @@ public abstract class AbstractDAOUtils {
 	}
 
 	public static boolean endsWithAny(String ext, String[] string) {
-		if(ext == null || ext.trim().isEmpty() || string == null) return false;
+		if(StringUtils.isBlank(ext) || string == null) return false;
 		boolean res = false;
 		for (String string1 : string) {
 			if(ext.endsWith(string1)){
 				res = true;
-				break;
 			}
 		}		
 		return res;
 	}
 	
 	public static boolean containsAny(String ext, String[] string) {
-		if(ext == null || ext.trim().isEmpty() || string == null) return false;
+		if(StringUtils.isBlank(ext) || string == null) return false;
 		boolean res = false;
 		for (String string1 : string) {
 			if(StringUtils.contains(ext, string1)){
 				res = true;
-				break;
 			}
 		}		
 		return res;

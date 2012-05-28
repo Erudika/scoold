@@ -394,7 +394,7 @@
 									<target>
 										<echo message="------ PRODUCTION MODE ------"/>
 										<delete file="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
-										<copy file="${project.basedir}/src/main/resources/click.xml" tofile="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
+										<copy file="${project.basedir}/src/main/resources/click-prod.xml" tofile="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
 									</target>
 								</configuration>
 							</execution>
@@ -402,7 +402,39 @@
 					</plugin>					
 				</plugins>
 			</build>
-		</profile>              
+		</profile>
+		<profile>
+            <id>indev</id>
+            <activation>
+				<property>
+					<name>development</name>
+					<value>true</value>
+				</property>
+            </activation>
+			<build>
+				<plugins>
+					 <plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo message="------ DEVELOPMENT MODE ------"/>
+										<delete file="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
+										<copy file="${project.basedir}/src/main/resources/click-dev.xml" tofile="${project.basedir}/src/main/webapp/WEB-INF/click.xml"/>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>					
+				</plugins>
+			</build>
+		</profile>
     </profiles>	
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

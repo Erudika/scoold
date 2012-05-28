@@ -15,16 +15,17 @@ CONTEXT=""
 ENABLED="false"
 VERSION=$(date +%F-%H%M%S)
 APPNAME="scoold-web-$VERSION"
-BUCKET="com.scoold.files"
-CSSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/styles"
-JSDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/scripts"
-IMGDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/images"
-JACSSIDIR="/Users/alexb/Desktop/scoold/scoold-web/target/scoold-web/jacssi"
+WARFILE="scoold-web.war"
+BUCKET="com.scoold.glassfish"
+CSSDIR="../scoold-web/target/scoold-web/styles"
+JSDIR="../scoold-web/target/scoold-web/scripts"
+IMGDIR="../scoold-web/target/scoold-web/images"
+JACSSIDIR="../scoold-web/target/scoold-web/jacssi"
 HOMEDIR="/home/ubuntu/"
 SUMSFILE="checksums.txt"
 PATHSFILE="filepaths.txt"
 JARPATH="../scoold-invalidator/target/scoold-invalidator-all.jar"
-CIWARPATH="https://erudika.ci.cloudbees.com/job/scoold/ws/scoold-web/target/scoold-web.war"
+CIWARPATH="https://s3-eu-west-1.amazonaws.com/$BUCKET/"
 
 function readProp () {
 	FILE=$1
@@ -90,51 +91,49 @@ function setProperties () {
 	prop7="com.scoold.awssqsendpoint=\"$(echo $AWSSQSENDPOINT | sed 's/:/\\\:/g')\""
 	prop8="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
 	prop9="com.scoold.fbappid=\"$FBAPPID\""
-	prop10="com.scoold.fbapikey=\"$FBAPIKEY\""
-	prop11="com.scoold.fbsecret=\"$FBSECRET\""
-	prop12="com.scoold.awscfdist=\"$AWSCFDIST\""	
+	prop10="com.scoold.fbsecret=\"$FBSECRET\""
+	prop11="com.scoold.awscfdist=\"$AWSCFDIST\""	
 	
-	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10:$prop11:$prop12"
+	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10:$prop11"
+}
+
+function uploadWAR () {
+	if [ -f $1 ]; then
+		filesum=$(md5 -q $1)
+		warurl="s3://$BUCKET/$filesum.war"
+		# delete all files in bucket
+		for war in $(s3cmd ls s3://$BUCKET | awk '{print $4}'); do
+			s3cmd del $war
+		done
+		echo "Uploading $filesum.war to S3... $warurl"
+		s3cmd -P put $1 $warurl
+	fi
 }
 
 function deployWAR () {
-	# params $1=MULTI, $2=WAR, $3=ENABLED, $4=OLDAPP
-	if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
+	# params $1=HOST, $2=ENABLED, $3=OLDAPP
+	if [ -n "$1" ] && [ -n "$2" ]; then
 		host=$1
-		oldapp="$4"
+		oldapp="$3"
 		prefix=""
 		
 		if [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
 			host=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=$1" | egrep ^INSTANCE | awk '{ print $4}')
 			nodeid=$(expr "$1" : '^glassfish\([0-9]*\)$')
-			if [ -z "$4" ]; then
-				oldapp=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")
+			if [ -z "$3" ]; then
+				oldapp=$(ssh -n ubuntu@$host "$ASADMIN list-applications --type web --long | grep enabled | awk '{ print \$1 }'")				
 			fi			
 		fi
 		
-		if [ "$3" = "true" ]; then
-			prefix="$ASADMIN undeploy $oldapp &&"
+		if [ "$2" = "true" ] && [ -n "$oldapp" ]; then
+			prefix="$ASADMIN undeploy $oldapp;"
 		fi
+				
+		setProperties $host $nodeid		
 		
-		setProperties $host $nodeid
-		
-		if [ "$2" = "jenkins" ]; then
-			auth=""
-			if [ -e $JAUTH ]; then
-				auth="-u $(cat $JAUTH)"
-			fi
-			filename=$(expr "$CIWARPATH" : '.*/\(.*\)$')
-			warpath="$HOMEDIR$filename"
-			fetchwar="curl -s $auth -o $warpath $CIWARPATH"
-		else
-			filename=$(expr "$2" : '.*/\(.*\)$')
-			warpath="$HOMEDIR$filename"
-			APPNAME=$(expr "$filename" : '\(.*\)\.war$')
-			fetchwar="echo -n 'Uploading war file...'"
-			pssh/bin/pscp -h $hostsfile -l ubuntu $2 $warpath
-		fi
-		
-		ssh -n ubuntu@$host "$fetchwar && chmod 755 $warpath &&  $prefix $ASADMIN deploy --force --enabled=$3 --name $APPNAME $warpath; rm $warpath"
+		warpath="$HOMEDIR$WARFILE"
+		WARURL="$CIWARPATH$(expr `s3cmd ls s3://$BUCKET | awk '{print $4}'` : '.*/\(.*\)$')"
+		ssh -n ubuntu@$host "wget -q -O $warpath $WARURL && chmod 755 $warpath && $prefix $ASADMIN deploy --force --enabled=$2 --name $APPNAME $warpath && rm $warpath"
 	fi	
 }
 
@@ -153,7 +152,9 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 			pssh/bin/pssh -h $FILE2 -l ubuntu -t 0 -i "$ASADMIN $2"		
 		fi	
 	elif [ `expr "$1" : '^glassfish[0-9]*$'` != 0 ]; then
-		deployWAR $1 $2 $3 $4
+		updateJacssi
+		uploadWAR $2
+		deployWAR $1 $3 $4
 	else
 		if [ "$2" !=  "true" ] && [ "$2" !=  "false" ]; then
 			CONTEXT="--contextroot $2"
@@ -169,6 +170,7 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 			echo "Deploying '$APPNAME' [enabled=$ENABLED]"
 
 			updateJacssi
+			uploadWAR $1
 
 			OLDAPP=""
 			isok=false
@@ -185,7 +187,7 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 					fi
 					
 					### STEP 1: deploy .war file to all servers	(enabled if deployed for the first time, disabled otherwise)			
-					deployWAR $host $1 $ENABLED $OLDAPP
+					deployWAR $host $ENABLED $OLDAPP
 					
 					if [ "$ENABLED" = "false" ] && [ -n "$host" ]; then							
 						### STEP 2: deregister each instance from the LB, consecutively 
@@ -224,6 +226,6 @@ elif [ -n "$1" ] && [ -n "$2" ]; then
 		fi
 	fi
 else
-	echo "USAGE:  $0 [ glassfishXXX war | war  [ enabled context ]] | updatejacssi [invalidateall] | cmd [ glassfishXXX ] gfcommand"
+	echo "USAGE:  $0 glassfishXXX warfile enabled [context] | updatejacssi [invalidateall] | cmd [ glassfishXXX ] gfcommand"
 fi
 

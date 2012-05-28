@@ -52,11 +52,11 @@ public class Translate extends BasePage{
 			}
 			
 			if(param("index")){
-				showIndex = NumberUtils.toInt(getParamValue("index"), 0);
-				if(showIndex < 0 || showIndex > langkeys.size()){
+				showIndex = NumberUtils.toInt(getParamValue("index"), 1) - 1;
+				if(showIndex <= 0){
 					showIndex = 0;
-				}else if(showIndex > 0){
-					showIndex--;
+				}else if(showIndex >= langkeys.size()){
+					showIndex = langkeys.size() - 1;
 				}
 			}
 		}else{
@@ -97,8 +97,7 @@ public class Translate extends BasePage{
 				addModel("newtranslation", trans);
 			}
 			if(!isAjaxRequest()){
-				int nexti = getNextIndex(showIndex) + 1;
-				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+nexti);
+				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex));
 			}
 		}else if(param("reset") && inRole("admin")){
 			String key = getParamValue("reset");
@@ -145,16 +144,18 @@ public class Translate extends BasePage{
 	}
 	
 	private int getNextIndex(int start){
-		if(approvedTransMap.size() == langkeys.size()) return (start + 1);
-
-		int i = (start == langkeys.size() - 1) ? 0 : (start + 1);
-		while(approvedTransMap.containsKey(langkeys.get(i))){
-			i++;
-			if(i >= langkeys.size()) i = 0;
-			if(i == start) break;
+		if(start < 0) start = 0;
+		if(start >= approvedTransMap.size()) start = approvedTransMap.size() - 1;
+		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);
+		
+		// if there are untranslated strings go directly there
+		if(approvedTransMap.size() != langkeys.size()){
+			while(approvedTransMap.containsKey(langkeys.get(nexti))){
+				nexti = (nexti + 1) >= langkeys.size() ? 0 : (nexti + 1);
+			}
 		}
 
-		return i == start ? ++i : i;
+		return nexti;
 	}
 
 }

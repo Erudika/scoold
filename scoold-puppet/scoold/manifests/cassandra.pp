@@ -119,18 +119,21 @@ class scoold::cassandra {
 			ensure => file,
 			source => "puppet:///modules/scoold/backupdb.sh",
 			owner => $cassandrausr,
+			group => $cassandrausr,
 			mode => 700,
 			require => User[$cassandrausr];
 		"${cassandrahome}/restoredb.sh":
 			ensure => file,
 			source => "puppet:///modules/scoold/restoredb.sh",
 			owner => $cassandrausr,
+			group => $cassandrausr,
 			mode => 700,
 			require => User[$cassandrausr];
 		"${cassandrahome}/.s3cfg":
 			ensure => file,
 			source => "puppet:///modules/scoold/s3cfg.txt",
 			owner => $cassandrausr,
+			group => $cassandrausr,
 			mode => 600,
 			require => User[$cassandrausr];
 	}	

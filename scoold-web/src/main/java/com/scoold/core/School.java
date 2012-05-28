@@ -339,10 +339,11 @@ public class School implements Votable<Long>, CanHasMedia, Askable, ScooldObject
 		if(lang == null) return st;
 		
         for(SchoolType s : starr){
-			if(s == SchoolType.UNKNOWN) continue;
-			String locs = lang.get("school."+s.toString());
-			if(locs == null) locs = s.toString();
-            st.put(s.toString(), locs);
+			if(s != SchoolType.UNKNOWN){
+				String locs = lang.get("school."+s.toString());
+				if(locs == null) locs = s.toString();
+				st.put(s.toString(), locs);
+			}
         }
 		//st.remove(0);	// removes "unknown" from the list
         return st;

@@ -13,7 +13,6 @@ scoold-web/target/
 scoold-web/tmp/**
 scoold-web/src/main/webapp/WEB-INF/lib/**
 scoold-puppet/*.txt
-scoold-puppet/scoold/files/s3cfg.txt
 scoold-puppet/scoold/files/admin-keyfile
 scoold-puppet/scoold/files/adminpass.txt
 scoold-invalidator/target/

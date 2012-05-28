@@ -93,23 +93,22 @@ public class Admin extends BasePage {
 			List<String> lines = FileUtils.readLines(file, "UTF-8");
 
 			for (String line : lines) {
-				if (StringUtils.isBlank(line)) {
-					continue;
-				}
-				School s = new School();
-				line = line.trim();
+				if (!StringUtils.isBlank(line)) {
+					School s = new School();
+					line = line.trim();
 
-				String[] starr = line.split("\\|");
-				s.setType(starr[0]);
-				s.setName(starr[1]);
-				s.setLocation(starr[2]);
-				if (starr.length > 3) {
-					s.setContacts(starr[3]);
+					String[] starr = line.split("\\|");
+					s.setType(starr[0]);
+					s.setName(starr[1]);
+					s.setLocation(starr[2]);
+					if (starr.length > 3) {
+						s.setContacts(starr[3]);
+					}
+					Long id = s.create();
+					Logger.getLogger(Admin.class.getName()).log(
+							Level.INFO, "{0}. created school {1} in {2}", new Object[]{i, id, starr[2]});
+					i++;
 				}
-				Long id = s.create();
-				Logger.getLogger(Admin.class.getName()).log(
-						Level.INFO, "{0}. created school {1} in {2}", new Object[]{i, id, starr[2]});
-				i++;
 			}
 		} catch (Exception ex) {
 			Logger.getAnonymousLogger().log(Level.SEVERE, null, ex);

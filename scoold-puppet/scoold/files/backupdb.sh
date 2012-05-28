@@ -18,7 +18,7 @@ if [ -e $DIR1 ] && [ -e $DIR2 ]; then
 	# gzip snapshot
 	tar czf $FILE -C $DIR1 .
 	# upload to S3
-	s3cmd --rr -c /home/cassandra/.s3cfg put $FILE s3://$BUCKET
+	s3cmd -c /home/cassandra/.s3cfg put $FILE s3://$BUCKET
 	# clean up
 	rm $FILE
 fi

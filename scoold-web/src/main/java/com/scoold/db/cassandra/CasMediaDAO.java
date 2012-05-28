@@ -196,16 +196,17 @@ final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 		HashSet<Long> mids = new HashSet<Long>(3);
 		// read comments for every photo in list
 		for (Media photo : photos) {
-			if(mids.contains(photo.getId())) continue;
-			MutableLong commentCount = new MutableLong(0);
-			MutableLong commentPage = new MutableLong(0);
-			ArrayList<Comment> comments = cdao.readAllCommentsForID(photo.getId(), 
-					commentPage, commentCount);
+			if(!mids.contains(photo.getId())){
+				MutableLong commentCount = new MutableLong(0);
+				MutableLong commentPage = new MutableLong(0);
+				ArrayList<Comment> comments = cdao.readAllCommentsForID(photo.getId(), 
+						commentPage, commentCount);
 
-			photo.setComments(comments);
-			photo.setCommentcount(commentCount.longValue());
-			photo.setCommentpage(commentPage.longValue());
-			mids.add(photo.getId());
+				photo.setComments(comments);
+				photo.setCommentcount(commentCount.longValue());
+				photo.setCommentpage(commentPage.longValue());
+				mids.add(photo.getId());
+			}
 		}
 
 		return photos;

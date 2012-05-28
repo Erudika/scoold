@@ -643,13 +643,14 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				List<HColumn<String, String>> cols = row.getColumnSlice().getColumns();
 				if(cols != null && !cols.isEmpty()){
 					HColumn<String, String> ctype = row.getColumnSlice().getColumnByName("classtype");
-					if(ctype == null) continue;
-					String classtype = ctype.getValue();
-					if(searchables.containsKey(classtype)){
-						Map<String, Object> data = AbstractDAOUtils.getAnnotatedFields(
-								fromColumns(classtypeToClass(classtype), cols), Stored.class);
-						brb.add(searchClient.prepareIndex(name, classtype, row.getKey()).
-								setSource(data));
+					if(ctype != null){
+						String classtype = ctype.getValue();
+						if(searchables.containsKey(classtype)){
+							Map<String, Object> data = AbstractDAOUtils.getAnnotatedFields(
+									fromColumns(classtypeToClass(classtype), cols), Stored.class);
+							brb.add(searchClient.prepareIndex(name, classtype, row.getKey()).
+									setSource(data));
+						}
 					}
 				}
 			}
@@ -717,10 +718,12 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			ArrayList<String> keys, MutableLong itemcount){
 		ArrayList<T> results = readAll(clazz, keys);
 		if(!results.isEmpty()){
-			for (T t : results) {
+			boolean done = false;
+			for (int i = 0; i < results.size() && !done; i++) {
+				T t = results.get(i);
 				if(t != null){
 					repairIndex(t.getClasstype(), results, keys, itemcount);
-					break;
+					done = true;
 				}
 			}
 		}
