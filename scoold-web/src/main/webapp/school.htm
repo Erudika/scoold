@@ -116,12 +116,12 @@
 									<td class="r p25">$!{lang.get("profile.about.location")}:</td>
 									<td class="pll p75">
 										<input name="location" type="text" value="$!showSchool.location" maxlength="255" class="locationbox nicebox p85"/>
-										&nbsp;<a href="#" class="next-div-toggle bold">$!lang.get("map")</a>
+										&nbsp;<a href="#" class="map-div-toggle bold">$!lang.get("map")</a>
 									</td>
 								</tr>
 								<tr>
 									<td class="p100" colspan="2">
-										<div id="map-canvas" class="gmap hide p100 mvs center">$!lang.get("loading")</div>
+										<div id="map-canvas" class="gmap hide p100 mvs center">#ajaxloading(false)</div>
 									</td>
 								</tr>
 								<tr>
@@ -151,7 +151,7 @@
                         </div>
                     </fieldset>
                 </form>
-            </div>
+            </div>			
             #end
         </div>
 

@@ -17,5 +17,5 @@
 			debug           Yes 	No          DEBUG           ERROR
 			trace           Yes 	No          TRACE           WARN -->
 
-	<mode value="trace"/>
+	<mode value="debug"/>
 </click-app>  

@@ -27,21 +27,37 @@ $(function () {
 	/**************************
 	 *    Google Maps API
 	 **************************/
-	if(mapCanvas.length){
+	
+	function initMap(elem){
 		var geocoder = new google.maps.Geocoder(),
 			myLatlng = new google.maps.LatLng(42.6975, 23.3241),
 			marker = new google.maps.Marker({}),
 			locbox = $("input.locationbox"),
 			locality = "",
 			sublocality = "",
-			country = "",	
-			map = new google.maps.Map(mapCanvas.get(0), {
-				zoom: 3,
-				center: myLatlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				mapTypeControl: false,
-				streetViewControl: false
-		});
+			country = "",
+			mapElem = elem || mapCanvas.get(0),
+			mapZoom = 3,
+			mapMarker = new google.maps.Marker({visible: false}),
+			map = new google.maps.Map(mapElem, {
+					zoom: mapZoom,
+					center: myLatlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					mapTypeControl: false,
+					streetViewControl: false
+			});
+			
+		if (locbox.length && $.trim(locbox.val()) !== "") {
+			geocoder.geocode({address: locbox.val()}, function(results, status){
+				if(status === google.maps.GeocoderStatus.OK && results.length && results.length > 0){
+					var latlng = results[0].geometry.location;
+					mapMarker = new google.maps.Marker({position: latlng, visible: true});
+					mapMarker.setMap(map);		
+					map.setCenter(latlng);
+					map.setZoom(7);
+				}
+			});
+		}
 		
 		google.maps.event.addListener(map, 'click', function(event) {
 			map.setCenter(event.latLng);
@@ -53,26 +69,28 @@ $(function () {
 					locbox.val("");
 				} else {
 					if(results.length && results.length > 0){
-						var h = 0;
+						var h = 0,
+							country = "",
+							locality = "",
+							sublocality = "";
+							
 						for (h = 0; h < results.length; h++) {
 							var arr = results[h].address_components, i;
 							for (i = 0; i < arr.length; i++) {
 								var type = $.trim(arr[i].types[0]);
 								var name = arr[i].long_name;
 								if(type === "country"){
-									country = name;
-								}else if(type === "locality"){
-									locality = name;
-								}else if(type === "sublocality"){
-									sublocality = name;
+									country = name || "";
 								}
-							}
-							if(country !== "" && locality !== "" && sublocality !== ""){
-								break;
+								if(type === "locality"){
+									locality = name || "";
+								}
+								if(type === "sublocality"){
+									sublocality = name || "";
+								}
 							}
 						}
 					}
-
 					var found = "";
 					
 					if(sublocality !== "" && country !== ""){
@@ -88,6 +106,21 @@ $(function () {
 			});
 		});
 	}
+	
+	if(mapCanvas.length){
+		if(mapCanvas.is(":visible")){
+			initMap();
+		}
+	}
+	
+	$(".map-div-toggle").click(function(){
+		if (mapCanvas.is(":visible")) {
+			mapCanvas.html("").hide(0, initMap);
+		} else {
+			mapCanvas.show(0, initMap);
+		}
+		return false;
+	});
 
 	/****************************************************
      *            FACEBOOK API FUNCTIONS
