@@ -82,9 +82,9 @@ public class Search extends BasePage{
 	}
 	
 	public void onGet(){
-		if(param("q")){
+		if(param("q") && !StringUtils.isBlank(getParamValue("q"))){
 			String query = getParamValue("q");
-
+			
 			if (showParam != null) {
 				if ("questions".equals(showParam)) {
 					questionlist = daoutils.readAndRepair(Post.class, daoutils.findQuery(

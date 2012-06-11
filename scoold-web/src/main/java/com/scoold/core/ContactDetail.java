@@ -38,8 +38,8 @@ public class ContactDetail {
 				case YAHOO: return "Yahoo!";
 				case ICQ: return "ICQ";
 				case EBUDDY: return "eBuddy";
+				default: return UNKNOWN.toString().toLowerCase();
 			}
-			return UNKNOWN.toString().toLowerCase();
 		}
 	};
 
@@ -112,8 +112,8 @@ public class ContactDetail {
 	}
 
 	public String toString() {
-		if(this.type == null) this.type = ContactDetailType.UNKNOWN.name();
-		if(this.value == null) return null;
+		if(this.type == null || this.value == null) 
+			this.type = ContactDetailType.UNKNOWN.name();
 		return type+","+value;
 	}
 

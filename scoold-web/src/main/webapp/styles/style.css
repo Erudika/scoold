@@ -6,7 +6,7 @@
 
 /* v1.0 | 20080212  Eric Mayer Reset */
 
-html, body, div, span, applet, object, iframe,
+/*html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, font, img, ins, kbd, q, s, samp,
@@ -38,12 +38,10 @@ q:before, q:after {
 	content: none;
 }
 
-/* remember to define focus styles! */
 :focus {
 	outline: 0;
 }
 
-/* remember to highlight inserts somehow! */
 ins {
 	text-decoration: none;
 }
@@ -51,11 +49,120 @@ del {
 	text-decoration: line-through;
 }
 
-/* tables still need 'cellspacing="0"' in the markup */
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+	list-style: none;
 }
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, nav, section { 
+	display: block; 
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+:focus {
+	outline: 0;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+mark {
+    background-color:#ff9;
+    color:#000; 
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+hr {
+    display:block;
+    height:1px;
+    border:0;   
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+/* -- HTML5 boilerplate extras -- */
+html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+html, button, input, select, textarea { font-family: sans-serif; color: #222222; }
+body { margin: 0; font-size: 1em; line-height: 1.4; }
+audio, canvas, video { display: inline-block; *display: inline; *zoom: 1; }
+audio:not([controls]) { display: none; }
+[hidden] { display: none; }
+input[type="checkbox"], input[type="radio"] { box-sizing: border-box; padding: 0; *width: 13px; *height: 13px; }
+input[type="search"] { -webkit-appearance: textfield; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box; }
+input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+button, input, select, textarea { font-size: 100%; margin: 0; vertical-align: baseline; *vertical-align: middle; }
+button, input { line-height: normal; }
+button, input[type="button"], input[type="reset"], input[type="submit"] { cursor: pointer; -webkit-appearance: button; *overflow: visible; }
+button[disabled], input[disabled] { cursor: default; }
+button::-moz-focus-inner, input::-moz-focus-inner { border: 0; padding: 0; }
+textarea { overflow: auto; vertical-align: top; resize: vertical; }
 
 /* -- MAIN -- */
 
@@ -121,7 +228,6 @@ body {
 }
 #nav{
 	height: 45px;
-	width: 100%;
 }
 #nav-list{
 	display: inline;
@@ -176,7 +282,7 @@ tr { border-bottom: 5px solid transparent; }
 td { vertical-align: middle;}
 
 /* -- IMAGES -- */
-img { border: none; }
+img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle;  }
 img.noborder { border: 0px; outline: 0px;}
 img.align-center, img[align="center"] { margin: 0 auto;}
 img.align-right, img[align="right"] { float: right; margin-left: 20px;}
@@ -189,7 +295,8 @@ img.profile-pic-small{ height: 50px; width: auto;}
 /* -- LINKS -- */
 a, input.button-link {	color: #5397CC; text-decoration: none;}
 a:visited { color: #7799AA; } /*#2266BB*/
-a:hover, a:active, input.button-link:hover { text-decoration: underline;}
+a:hover, a:active, input.button-link:hover { text-decoration: underline; outline: 0;}
+a:focus { outline: thin dotted; }
 a.nodecoration { text-decoration: none; }
 a.nodecoration:hover{ text-decoration: none;}
 a.button-small, a.button-tiny, a.button-medium, a.button-large, form.clickedit button,
@@ -296,6 +403,7 @@ input.search-btn{
 	width: 23px;
 	cursor: pointer; 
 	font-size: 1em;
+	float: right;
 }
 form.clickedit input, form.clickedit textarea{
 	width: 100%;
@@ -354,8 +462,8 @@ pre, code, .chat-msg{
 }
 .whitebox{
 	position: relative;
-	border-bottom: 2px dashed #CCCCCC;
-	padding: 10px 0;
+/*	border-bottom: 2px dashed #CCCCCC;*/
+	padding-bottom: 10px;
 	margin-bottom: 10px;
 }
 .greybox{
@@ -460,6 +568,7 @@ input.openidbox{ padding-left: 35px; }
 .groupicon-small{ width: 50px; height: 50px; font-size: 3em; padding: 0 5px; background-color: #CCCCCC; color: white;}
 .editable input {width: 98% !important;}
 .max-width-100{ max-width: 100px; }
+.identkey{ min-width: 45px;}
 .loading, .ac_loading, div.loader{ 
 	background-image: url(http://static.scoold.com/indicator.gif); 
 }
@@ -810,14 +919,14 @@ a.openidbtn-small {
 .size1of1{float:none;}
 .size1of2{width:50%;}
 .size1of3{width:33.33333%;}
-.size2of3{width:66.66666%;}
 .size1of4{width:25%;}
-.size3of4{width:75%;}
 .size1of5{width:20%;}
+.size1of6{width:16.66666%;}
+.size2of3{width:66.66666%;}
 .size2of5{width:40%;}
+.size3of4{width:75%;}
 .size3of5{width:60%;}
 .size4of5{width:80%;}
-.size1of6{width:16.66666%;}
 .size5of6{width:83.33333%;}
 .lastUnit{
 	display:table-cell;

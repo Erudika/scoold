@@ -11,10 +11,12 @@ import com.scoold.core.Report;
 import com.scoold.core.School;
 import com.scoold.core.Group;
 import com.scoold.core.User.Badge;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import java.util.ArrayList;
 import java.util.Map;
 import org.apache.click.control.Form;
+import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -106,6 +108,19 @@ public class Questions extends BasePage{
 				}
 			}
 			addModel("tagFilterOn", authenticated && authUser.hasFavtags());
+		}
+		
+		if(param("mobile")){
+			String m = getParamValue("mobile");
+			if ("true".equals(m)) {
+				setStateParam(MOBILE_COOKIE, "true");
+				ClickUtils.setCookie(req, getContext().getResponse(), MOBILE_COOKIE, "true", 
+						AbstractDAOFactory.SESSION_TIMEOUT_SEC * 365, "/");
+			} else {
+				ClickUtils.setCookie(req, getContext().getResponse(), MOBILE_COOKIE, "", 0, "/");
+			}
+			if(!isAjaxRequest()) 
+				setRedirect(HOMEPAGE);
 		}
 	}
 

@@ -19,6 +19,7 @@ import org.apache.commons.lang.mutable.MutableLong;
  * @author alexb
  */
 public class Message implements ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
   
     private Long id;
 	@Stored private Long toid;
@@ -26,7 +27,7 @@ public class Message implements ScooldObject, Serializable{
     @Stored private Boolean isread;
     @Stored private String body;
 	@Stored private Long timestamp;
-	@Stored public static String classtype = Media.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Media.class.getSimpleName().toLowerCase();
 	
 	private Set<String> toids;
 	private transient User author;
@@ -217,7 +218,7 @@ public class Message implements ScooldObject, Serializable{
 		if (this.toid != other.toid && (this.toid == null || !this.toid.equals(other.toid))) {
 			return false;
 		}
-		if (this.userid != other.userid && (this.userid == null || !this.userid.equals(other.userid))) {
+		if (this.userid == null || !this.userid.equals(other.userid)) {
 			return false;
 		}
 		if ((this.body == null) ? (other.body != null) : !this.body.equals(other.body)) {

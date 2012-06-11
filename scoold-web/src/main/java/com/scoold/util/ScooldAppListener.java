@@ -42,7 +42,7 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine jsEngine = manager.getEngineByName("js");
 		try{
-			jsEngine.eval(new InputStreamReader(sc.getResourceAsStream("/scripts/showdown.js")));
+			jsEngine.eval(new InputStreamReader(sc.getResourceAsStream("/scripts/showdown.js"), "UTF8"));
 			showdownJS = jsEngine.eval("new Showdown.converter()");
 		}catch (Exception e){
 			logger.log(Level.SEVERE, "could not create showdown converter", e);

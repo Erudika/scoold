@@ -17,6 +17,7 @@ import org.apache.commons.lang.mutable.MutableLong;
  * @author alexb
  */
 public class Group implements Askable, ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private Long userid;
@@ -24,7 +25,7 @@ public class Group implements Askable, ScooldObject, Serializable{
 	@Stored private String description;
 	@Stored private String imageurl;
 	@Stored private Long timestamp;
-	@Stored public static String classtype = Group.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Group.class.getSimpleName().toLowerCase();
 	
 	private transient Integer count;
 	private transient static AbstractGroupDAO<Group, Long> mydao;
@@ -217,7 +218,7 @@ public class Group implements Askable, ScooldObject, Serializable{
 			return false;
 		}
 		final Group other = (Group) obj;
-		if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+		if (this.id == null || !this.id.equals(other.id)) {
 			return false;
 		}
 		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {

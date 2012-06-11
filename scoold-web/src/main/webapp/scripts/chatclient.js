@@ -235,22 +235,20 @@
 		})
 		// Auto scroll list to bottom
 		.bind("join msg", function(event, message) {
-			// auto scroll if we're within 50 pixels of the bottom
-			if(!$membersbox.data("user-"+message.userid)){
+			var uidclass = ".user-"+message.userid;
+			if(!$membersbox.has(uidclass).length){
 				$.get(chatnode.contextpath+"/profile/"+message.userid+"/?getsmallpersonbox=true", function(data){
 					$membersbox.append(data);
 				});
-				// prevent duplicates
-				$membersbox.data("user-"+message.userid, true);
 				// auto-expire after 5 min
 				setTimeout(function(){
-					$("#user-"+message.userid, $membersbox).remove();
-					$membersbox.removeData("user-"+message.userid);						
+					$(uidclass, $membersbox).remove();
 				},chatnode.autoExpireAfter * 1000);
 			}
+			
+			// auto scroll if we're within 50 pixels of the bottom
 			if (chatnode.logCont.scrollTop() + 100 >=
 				chatnode.logCont[0].scrollHeight - chatnode.logCont.height()) {
-				
 				window.setTimeout(function() {
 					chatnode.logCont.scrollTop(chatnode.logCont[0].scrollHeight);
 				}, 10);

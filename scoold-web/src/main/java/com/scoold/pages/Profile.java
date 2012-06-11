@@ -27,7 +27,7 @@ public class Profile extends BasePage{
     public String title;
     public boolean isMyProfile;
 	public boolean canEdit;
-    public ToponymSearchResult locationSearchResult;
+    public transient ToponymSearchResult locationSearchResult;
 	public User showUser;
 	public ArrayList<ContactDetailType> contactDetailTypes;
 	public ArrayList<User> contactlist;

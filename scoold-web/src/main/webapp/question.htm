@@ -24,7 +24,7 @@
 			#end			
 			<div class="line mediumText lightgray">
 				<div class="unit size1of2">$!posttype</div>
-				<div class="unit size1of2 lastUnit r">
+				<div class="unit size1of2 lastUnit r $!mobilehide">
 					#if($showPost.deleteme)
 						<span class="pictos" title="$!lang.get('posts.marked')">#</span> $!lang.get("posts.marked")
 					#else
@@ -109,7 +109,7 @@
 			</div>
 		#end
 	</div>
-	<div class="unit size1of5 lastUnit r">
+	<div class="unit size1of5 lastUnit r $!mobilehide">
 		<div class="thickborder p85 mbl pas rounded5 center right">
 			<div class="hugeText" title="$!lang.get('votes')">$!showPost.votes</div>
 			<div>$!lang.get('votes')</div>

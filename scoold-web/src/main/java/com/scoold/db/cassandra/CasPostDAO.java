@@ -218,6 +218,7 @@ final class CasPostDAO<T, PK> extends AbstractPostDAO<Post, Long>{
 						}
 					}
 					break;
+				default: break;
 			}
 		}
 	}

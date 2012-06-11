@@ -15,12 +15,13 @@ import org.apache.commons.lang.StringUtils;
  * @author alexb
  */
 public class Tag implements ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private String tag;
 	@Stored private Long count;
 	@Stored private Long timestamp;
-	@Stored public static String classtype = Tag.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Tag.class.getSimpleName().toLowerCase();
 
 	private transient static AbstractTagDAO<Tag, Long> mydao;
 

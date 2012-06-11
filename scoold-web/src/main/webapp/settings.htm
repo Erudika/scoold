@@ -6,7 +6,6 @@
 			<div class="center">
 				<div class="largeText">$!lang.get("settings.delete.confirm")</div>
 				<br/>
-
 				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$daoutils.MD5($authUser.id.toString())">
 					<fieldset>
 						#sectoken(false)
@@ -28,12 +27,12 @@
 				<table class="mbm">
 					<tbody>
 						<tr>
-							<td><strong>$!lang.get("settings.primaryid"):</strong></td>
+							<td class="identkey"><span class="pictos" title="$!lang.get('settings.primaryid')">K</span> 1:</strong></td>
 							<td class="pll">#identifierbox($openidlist.get(0) $canDetachOpenid 0)</td>
 						</tr>
 						#if($openidlist.size() == 2)
 							<tr>
-								<td><strong>$!lang.get("settings.secondaryid"):</strong></td>
+								<td><span class="pictos" title="$!lang.get('settings.secondaryid')">K</span> 2:</strong></td>
 								<td class="pll">#identifierbox($openidlist.get(1) $canDetachOpenid 1)</td>
 							</tr>
 						#end
@@ -60,7 +59,6 @@
 				</fieldset>
 			</form>
 		</div>
-
 
 		<h2>$!lang.get("settings.email")</h2>
 		<div class="mvl">

@@ -35,6 +35,7 @@ import org.jsoup.select.Elements;
  * @author alexb
  */
 public class School implements Votable<Long>, CanHasMedia, Askable, ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
 
     private Long id;
     @Stored private String name;
@@ -48,7 +49,7 @@ public class School implements Votable<Long>, CanHasMedia, Askable, ScooldObject
 	@Stored private String contacts;
 	@Stored private Long timestamp;
 	@Stored private String iconurl;
-	@Stored public static String classtype = School.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = School.class.getSimpleName().toLowerCase();
 
 	public static enum SchoolType{
 		UNKNOWN, HIGHSCHOOL, LYCEUM, COLLEGE, THEOLOGY, SEMINARY, ACADEMY, SPECIALIZED,

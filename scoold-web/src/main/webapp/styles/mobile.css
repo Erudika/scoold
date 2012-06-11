@@ -1,0 +1,194 @@
+/*
+ * Mobile style sheet for scoold.com
+ * author: Alexander Bogdanovski
+ * (CC) BY-SA
+*/
+
+/* -- MAIN -- */
+/*
+* {
+	float: none;
+}*/
+
+html {
+    -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+}
+
+body {
+	font-size: 100%;
+	font-family: 'Trebuchet MS', Verdana, sans-serif;
+    background-color: #EFEFEF;
+    color: #444444;
+}
+
+.mediumText{
+	font-size: 100%;
+}
+
+h2 {
+	font-size: 130%;
+}
+
+.hugeText:not(.votebox){
+	font-size: 150%;
+}
+
+.line, body, .container {
+	width: 100%;
+	min-width: 0;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.size1of2, .size1of3, .size1of4, .size1of5, 
+.size1of6, .size2of3, .size2of5, .size3of4, 
+.size3of5, .size4of5, .size5of6{
+	width: auto;
+	float: none;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#header .container, #nav .container, #footer .container{
+	text-align: center;
+	margin: 0 auto;
+}
+
+#nav{ height: auto; }
+#nav-list{ margin: 7px 0; }
+.nicebtn, .nicebtn:visited {
+	width: 100%;
+	font-size: 1.4em; 
+	padding: 7px 0; 
+	margin: 5px 0;
+	border-bottom: 2px solid transparent;
+}
+.nicebtn:hover { border-bottom: 2px solid transparent; text-decoration: none; }
+.navbtn-hover { text-decoration: none; border-bottom: 2px solid #333333; }
+.introBox{ display: none; }
+.ads{ display: none; }
+.left, .right, .l, .r {	float: none; text-align: inherit;}
+
+#logo {
+	float: none;
+	margin: 0 auto;
+}
+
+#search{
+	margin: 0 auto;
+}
+#search-box{
+	float: left;
+}
+
+#header{ 
+	height: auto; 
+}
+
+#topnav{
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+.logosup{
+	display: none;
+}
+
+.qstatsbox{
+	font-size: small;
+    width: 44px;
+	padding: 0;
+	margin-right: 10px;
+}
+
+.whitebox, .postbox{
+	font-size: 90%;
+}
+
+.whitebox{
+	margin-bottom: 5px;
+	padding-bottom: 5px;
+}
+
+.unit.hide{
+	display: none;
+}
+
+.postbox .votebox{
+	float: left;
+}
+
+.right.button-small, .mobile-nav-toggle, .postbox .userbox, span.right, a.right, .page-content .lastUnit.r{
+	float: right;
+}
+
+.unit{
+	float: none;
+}
+
+.bd.hide{
+	display: none;
+}
+
+.userbox{
+	width: 55px;
+}
+
+#privacy, #terms, #about, #settings, #reports, .newrev{
+	padding: 0 10px;
+}
+
+a.button-tiny, span.button-tiny{
+    font-size: 0.9em;
+    padding: 0 3px;
+	line-height: 1.6em;
+}
+
+.revisionbox .userbox {
+	float: left;
+	margin-right: 0px;
+}
+
+a.trigger-report{
+	display: none;
+}
+
+.profile-pic{
+	width: 90%;
+	height: auto;
+}
+
+.badge{
+	font-size: 0.7em;
+	padding: 0 5px;
+	margin: 0 2px 0 0;
+}
+
+.markItUpHeader ul .markItUpSeparator{
+	margin: 0;
+	display: none;
+	padding: 0;
+}
+
+.markItUpHeader ul a{
+	width: 14px;
+}
+
+a.openidbtn-large{
+	display: block;
+	float: none;
+}
+
+#openid-btns .openidbtn-large{
+	text-align: center;
+	margin: 5px auto;
+}
+
+.rightborder{
+	border: none;
+}

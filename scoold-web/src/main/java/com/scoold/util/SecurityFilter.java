@@ -6,7 +6,6 @@ package com.scoold.util;
 
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
-import com.scoold.pages.BasePage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,10 +18,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.click.util.ClickUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -52,8 +49,8 @@ public class SecurityFilter implements Filter {
 	// ips
 	private Map<String, Boolean> blacklist_ips = new HashMap<String, Boolean>();	//ip addresses
 //	private boolean ratelimit;
-	private int MAX_HITS = 100;
-	private int MAX_PERIOD = 30;
+//	private int MAX_HITS = 100;
+//	private int MAX_PERIOD = 30;
 	private static final String HITS_KEY = "SecurityFilter.hits";
 	private static final String PERIOD_KEY = "SecurityFilter.period";
 	private static final String TIMES_KEY = "SecurityFilter.times";
@@ -73,14 +70,14 @@ public class SecurityFilter implements Filter {
 //			blacklist_ips.put("", true);
 		}
 
-		String initParameterHits = filterConfig.getInitParameter(HITS_KEY);
-		if (initParameterHits != null) {
-				MAX_HITS = Integer.parseInt(initParameterHits);
-		}
-		String initParameterPeriod = filterConfig.getInitParameter(PERIOD_KEY);
-		if (initParameterPeriod != null) {
-				MAX_PERIOD = Integer.parseInt(initParameterPeriod);
-		}
+//		String initParameterHits = filterConfig.getInitParameter(HITS_KEY);
+//		if (initParameterHits != null) {
+//				MAX_HITS = Integer.parseInt(initParameterHits);
+//		}
+//		String initParameterPeriod = filterConfig.getInitParameter(PERIOD_KEY);
+//		if (initParameterPeriod != null) {
+//				MAX_PERIOD = Integer.parseInt(initParameterPeriod);
+//		}
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp,
@@ -239,56 +236,55 @@ public class SecurityFilter implements Filter {
 		response.addHeader("Expires", "0");
 	}
 
-
-	private final class RequestWrapper extends HttpServletRequestWrapper {
-
-		public RequestWrapper(HttpServletRequest servletRequest) {
-			super(servletRequest);
-		}
-
-		public String[] getParameterValues(String parameter) {
-
-			String[] values = super.getParameterValues(parameter);
-			if (values == null) {
-				return null;
-			}
-			int count = values.length;
-			String[] encodedValues = new String[count];
-			for (int i = 0; i < count; i++) {
-				encodedValues[i] = cleanXSS(values[i]);
-			}
-			return encodedValues;
-		}
-
-		public String getParameter(String parameter) {
-			String value = super.getParameter(parameter);
-			if (value == null) {
-				return null;
-			}
-			return cleanXSS(value);
-		}
-
-		public String getHeader(String name) {
-			String value = super.getHeader(name);
-			if (value == null) {
-				return null;
-			}
-			return cleanXSS(value);
-
-		}
-
-		private String cleanXSS(String value) {
-			//You'll need to remove the spaces from the html entities below
-//			value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-//			value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-//			value = value.replaceAll("'", "& #39;");
-//			value = value.replaceAll("eval\\((.*)\\)", "");
-//			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
-//			value = value.replaceAll("script", "");
-			value = StringEscapeUtils.escapeHtml(value);
-			value = StringEscapeUtils.escapeJavaScript(value);
-			return value;
-		}
-	}
+//	private final class RequestWrapper extends HttpServletRequestWrapper {
+//
+//		public RequestWrapper(HttpServletRequest servletRequest) {
+//			super(servletRequest);
+//		}
+//
+//		public String[] getParameterValues(String parameter) {
+//
+//			String[] values = super.getParameterValues(parameter);
+//			if (values == null) {
+//				return null;
+//			}
+//			int count = values.length;
+//			String[] encodedValues = new String[count];
+//			for (int i = 0; i < count; i++) {
+//				encodedValues[i] = cleanXSS(values[i]);
+//			}
+//			return encodedValues;
+//		}
+//
+//		public String getParameter(String parameter) {
+//			String value = super.getParameter(parameter);
+//			if (value == null) {
+//				return null;
+//			}
+//			return cleanXSS(value);
+//		}
+//
+//		public String getHeader(String name) {
+//			String value = super.getHeader(name);
+//			if (value == null) {
+//				return null;
+//			}
+//			return cleanXSS(value);
+//
+//		}
+//
+//		private String cleanXSS(String value) {
+//			//You'll need to remove the spaces from the html entities below
+////			value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
+////			value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
+////			value = value.replaceAll("'", "& #39;");
+////			value = value.replaceAll("eval\\((.*)\\)", "");
+////			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+////			value = value.replaceAll("script", "");
+//			value = StringEscapeUtils.escapeHtml(value);
+//			value = StringEscapeUtils.escapeJavaScript(value);
+//			return value;
+//		}
+//	}
 
 }

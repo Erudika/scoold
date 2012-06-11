@@ -49,10 +49,10 @@ final class CasMessageDAO<T, PK> extends AbstractMessageDAO<Message, Long> {
 
 		Mutator<String> mut = cdu.createMutator();
 		Long id = cdu.create(newMessage, mut);
-		String idstr = id.toString();
-		String newMsgColumn = parentid.toString().concat(newMsgColumnSuffix);
 
 		if(id != null){
+			String idstr = id.toString();
+			String newMsgColumn = parentid.toString().concat(newMsgColumnSuffix);
 			cdu.addInsertions(Arrays.asList(new Column[]{
 				new Column(newMsgColumn, CasDAOFactory.MESSAGES_PARENTS, id, idstr),
 				new Column(parentid.toString(), CasDAOFactory.MESSAGES_PARENTS, id, idstr)

@@ -1,0 +1,43 @@
+                                    ._      ._                             
+       ____   ____   ___    ___    / / ____/ /    ____   ___     ___ __ 
+     / ___/ / ___/ / __ \ / __ \  / / / __  /   / ___/ / __ \  / __ `__ \
+    (__  ) / /__  / /_/ // /_/ / / / / /_/ /   / /__  / /_/ / / / / / / /
+   /____/  \___/  \____/ \____/ /_/  \__,_/ () \___/  \____/ /_/ /_/ /_/ 
+
+
+/* TEAM */
+	
+   Creator: Alex Bogdanovski
+   Contact: alex [at] erudika.com
+   Twitter: @albogdano
+   From: Sofia, Bulgaria
+
+/* THANKS */
+
+   Inspiration & Help: StackOverflow.com
+   Site: http://www.stackoverflow.com
+   From: USA
+
+   Logo design: Dimo Trifonov
+   Twitter: @denull
+   From: Lyaskovets, Bulgaria
+
+   Support: Mom, Dad, Annie, Yana
+	
+/* SITE */
+	
+   Last update: 2012/06/08
+   Language: English, etc.
+   Standards: HTML5, CSS3, JavaScript
+   IDE: NetBeans, TextMate
+   Components: jQuery (clientside), Java (serverside), JavaScript (node.js chat server)
+   Software: Apache Click, Apache Cassandra, ElasticSearch, GlassFish
+   Fonts: Pictos Font
+
+
+    ___________
+   |.--.   .--.|
+   | || |-| () |
+   |`--'   `--'|
+   |    ___    |  
+    \_________/

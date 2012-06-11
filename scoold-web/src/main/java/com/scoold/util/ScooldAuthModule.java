@@ -8,11 +8,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Mac;
@@ -216,9 +213,8 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		if (USE_SESSIONS) {
 			SimplePrincipal.setPrincipal(req, sp);
 		} else {
-			String userid = sp.getName();
-			
-			if(sp != null && !StringUtils.isBlank(userid) && !sp.getGroups().isEmpty()){
+			if(sp != null && !StringUtils.isBlank(sp.getName()) && !sp.getGroups().isEmpty()){
+				String userid = sp.getName();
 				String authKey = AbstractDAOUtils.MD5(timestamp.toString().
 						concat(AbstractDAOFactory.SEPARATOR).concat(userid));
 				String auth = userid.concat(AbstractDAOFactory.SEPARATOR).concat(authKey);
@@ -239,15 +235,15 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			String[] parts = cookie.split("\\.");
 			byte[] sig = Base64.decodeBase64(parts[0]);
 			byte[] json = Base64.decodeBase64(parts[1]);
-			byte[] plaintext = parts[1].getBytes();	// careful, we compute against the base64 encoded version
+			byte[] plaintext = parts[1].getBytes("UTF8");	// careful, we compute against the base64 encoded version
 			
-			JsonNode root = mapper.readTree(new String(json));
+			JsonNode root = mapper.readTree(new String(json, "UTF8"));
 			JsonNode alg = root.get("algorithm");
 			if(alg != null){
 				// "HMAC-SHA256" doesn't work, but "HMACSHA256" does.
 				String algorithm = alg.getTextValue().replace("-", "");
 
-				SecretKey secret = new SecretKeySpec(FB_SECRET.getBytes(), algorithm);
+				SecretKey secret = new SecretKeySpec(FB_SECRET.getBytes("UTF8"), algorithm);
 
 				Mac mac = Mac.getInstance(algorithm);
 				mac.init(secret);
@@ -294,7 +290,9 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				if(!StringUtils.isBlank(thisisme)){
 					try {
 						thisisme = URLDecoder.decode(thisisme, "UTF-8");
-					} catch (UnsupportedEncodingException ex) {}
+					} catch (UnsupportedEncodingException ex) {
+						logger.log(Level.WARNING, null, ex.toString());
+					}
 					AbstractDAOUtils.setStateParam(THIS_IS_ME, thisisme, req, res, USE_SESSIONS);
 				}
 			}
@@ -406,10 +404,12 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		StringBuilder sb = new StringBuilder(baseUrl);
 		sb.append("?");
 		try {
-			for (Object paramKey : paramMap.keySet()) {
+			for (Iterator it = paramMap.entrySet().iterator(); it.hasNext();) {
+				Entry ks = (Entry) it.next();
+				Object paramKey = ks.getKey();
+				String paramValue = (String) ks.getValue();
 				sb.append(paramKey);
 				sb.append("=");
-				String paramValue = (String) paramMap.get(paramKey);
 				sb.append(URLEncoder.encode(paramValue, "UTF-8"));
 				sb.append("&");
 			}
@@ -654,7 +654,9 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		try {
 			request.getHttpServletResponse().sendError(HttpServletResponse.SC_UNAUTHORIZED, 
 					lang.get("sessiontimeout"));
-		} catch (Exception ex) { }
+		} catch (Exception ex) { 
+			logger.log(Level.WARNING, null, ex.toString());
+		}
 		return Status.None;
 	}
 	

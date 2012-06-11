@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
 public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serializable{
+	private static final long serialVersionUID = 1L;
 
     private Long id;
     @Stored private String fullname;
@@ -40,7 +41,7 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 	@Stored private String newbadges;
 	@Stored private Long authstamp;
 	@Stored private Long oldreputation;
-	@Stored public static String classtype = User.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = User.class.getSimpleName().toLowerCase();
 
 	private transient Integer newmessages;
 	private transient Integer newreports;
@@ -161,7 +162,7 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 		this.comments = 0L;
 		this.reputation = 0L;
 		this.photos = 0L;
-		this.groups = getUserType(this.type).toGroupString();
+		this.groups = UserGroup.STUDENTS.toString();
 	}
 
 	public User (Long id){

@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.mutable.MutableLong;
 
 public class Media implements Votable<Long>, Commentable, ScooldObject, Serializable {
+	private static final long serialVersionUID = 1L;
 
     private Long id;
 	@Stored private String type;
@@ -32,7 +33,7 @@ public class Media implements Votable<Long>, Commentable, ScooldObject, Serializ
 	@Stored private Long commentpage;
 	@Stored private String link;
 	@Stored private String oldlabels;
-	@Stored public static String classtype = Media.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Media.class.getSimpleName().toLowerCase();
 
 	private transient User author;
     private transient static AbstractMediaDAO<Media, Long> mydao;

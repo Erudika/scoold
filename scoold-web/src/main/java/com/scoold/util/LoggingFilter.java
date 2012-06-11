@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -44,7 +43,7 @@ public class LoggingFilter implements Filter {
 		}
 
 		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) resp;
+//		HttpServletResponse response = (HttpServletResponse) resp;
 		
 		if(request.getRemoteUser() != null){
 			String user = request.getRemoteUser();

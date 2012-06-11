@@ -22,7 +22,6 @@ public class Reports extends BasePage{
 	public School showMergeSchool;
 	public Classunit showMergeClass;
 	public String showclassname;
-	public final int maxPreviewReports = 2;
 	public Media showmedia;
 	public ArrayList<Report> reportslist;
 

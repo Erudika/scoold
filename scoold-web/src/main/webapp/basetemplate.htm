@@ -1,7 +1,7 @@
 ##if($request.method == "POST") #stop #end
 ################# DEFINE MACROS ################################################
 #macro(dayselect $class $name $selectday)
-	<select class="$class" name="$name">
+	<select class="${class}" name="$name">
 		#if($selectday == 0)  
 			<option value="" selected="selected">$!{lang.get("day")} &nbsp;</option>
 		#else
@@ -19,7 +19,7 @@
 #end
 #####################################
 #macro(monthselect $class $name $selectmonth)
-	<select class="$class" name="$name">
+	<select class="${class}" name="$name">
 		#if($selectmonth == 0)
 			<option value="" selected="selected">$!{lang.get("month")} &nbsp;</option>
 		#else
@@ -39,7 +39,7 @@
 #end
 #####################################
 #macro(yearselect $class $name $future $selectyear $firstItem)
-	<select class="$class" name="$name">
+	<select class="${class}" name="$name">
 		#if($firstItem && $firstItem == "") #set($first = $!lang.get("year"))
 		#else	#set($first = $firstItem)	#end
 
@@ -95,25 +95,21 @@
 #end
 #####################################
 #macro(contactdetailtypestr $detailtype )
-	#if($detailtype.name() == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
-	#elseif($detailtype.name() == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
-	#elseif($detailtype.name() == "UNKNOWN") #set($showdetailstr = $!lang.get("unknown") )
-	#else #set($showdetailstr = $detailtype.toString() ) #end
-	$!showdetailstr
+	#if($detailtype && $detailtype != "")
+	#if($detailtype == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
+	#elseif($detailtype == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
+	#elseif($detailtype == "UNKNOWN") #set($showdetailstr = $!lang.get("unknown") )
+	#else #set($showdetailstr = $detailtype) #end
+	$!{showdetailstr}#end
 #end
 #####################################
 #macro(contactdetailbox $showdetail )
-	#if($showdetail == "")
-		#set($hide = "hide" )
-	#else
-		#set($hide = "" )
-	#end
-	
-	<tr class="detailbox $hide">
-		<td class="r p25 contact-type">#contactdetailtypestr($showdetail.getContactDetailType()):</td>
+	#if(!$showdetail || $showdetail == "") #set($hide = "hide" ) #else #set($hide = "" ) #end
+	<tr class="detailbox ${hide}">
+		<td class="r p25 contact-type">#contactdetailtypestr($!showdetail.type):</td>
 		<td class="pll p75">
-			<span class="contact-value">$!detail.value</span>
-			<input type="hidden" name="contacts" value="$!detail"/>
+			<span class="contact-value">$!showdetail.value</span>
+			<input type="hidden" name="contacts" value="$!showdetail"/>
 			<a href="#" class="pictos remove-contact" title="$!lang.get('remove')">D</a>
 		</td>
 	</tr>
@@ -142,7 +138,7 @@
 			#end
 			#if($showUser.contacts && !$showUser.contacts.isEmpty())
 				#foreach($contact in $showUser.getAllContactDetails())
-				<tr>
+				<tr>					
 					<td class="r p25">$!lang.get(${contact.type.toLowerCase()}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
@@ -186,12 +182,12 @@
 			#set($hideview = "")
 		#end
 
-		<div class="viewbox $hideview">
+		<div class="viewbox ${hideview}">
 			#schoolbox($school true)
 		</div>
 
 		#if($canEdit)
-			<div class="editbox lightgraybg rounded5 mvl pam $hideedit">
+			<div class="editbox lightgraybg rounded5 mvl pam ${hideedit}">
 				<form method="post" class="school-edit-form" action="$profilelink/$!showUser.id">
 					<fieldset>
 						#sectoken(false)
@@ -212,7 +208,7 @@
 
 						<div class="center mtl">
 							<input type="submit" value="$!{lang.get('save')}" class="edit-schoolbtn button rounded3"/>
-							<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit $hideview"/>
+							<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit ${hideview}"/>
 						</div>
 					</fieldset>
 				</form>
@@ -296,7 +292,7 @@
 	#end
 
 	#if($hidden) #set($hide = "hide") #else	#set($hide = "") #end
-	<div class="newcommentform mvm $hide">
+	<div class="newcommentform mvm ${hide}">
 		<form method="post" class="new-comment-form" action="${thisuri}">
 			<fieldset>
 				#sectoken(false)
@@ -340,7 +336,7 @@
 		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
 	#end
 	<hr />
-	<div id="questionform" class="qform $hide">
+	<div id="questionform" class="qform ${hide}">
 		<form method="post" id="$form.id" action="$thisuri">
 			#if ($form.error)
 				#getmessagebox("errorBox" $form.error false)
@@ -369,7 +365,7 @@
 	#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 
 	#if($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
-	<div class="$hide">
+	<div class="${hide}">
 		<form method="post" id="$form.id" action="$thisuri">
 			#if($form.error)
 				#getmessagebox("errorBox" $form.error false)
@@ -516,9 +512,9 @@
 		#set($showlabelenc = $daoutils.urlEncode($labelshow) )
 	#end
 	
-	<span class="labelbox rounded3 mrs $!lboxclass">
+	<span class="labelbox rounded3 mrs $!{lboxclass}">
 		<span class="pictos">z</span>
-		<a href="${url}?label=$!{showlabelenc}" class="$!labelclass" title="$!labelshow">$!labelshow</a>
+		<a href="${url}?label=$!{showlabelenc}" class="$!{labelclass}" title="$!labelshow">$!labelshow</a>
 		#if($showx)
 			<a href="${url}?mid=$!{mid}&amp;removelabel=$!{showlabelenc}" title="Remove label" class="remove-label"><span class="pictos">D</span></a>
 		#end
@@ -628,7 +624,7 @@
 			#sectoken(false)
 			<input type="text" value="$!lang.get('profile.drawer.share')" name="url" class="nicebox hintbox p90"/>
 			<input type="hidden" name="getmediahtmlcode" value="true"/>
-			<a href="#" class="button-small rounded3 mls $btnclass"><span class="pictos">&amp;</span></a>
+			<a href="#" class="button-small rounded3 mls ${btnclass}"><span class="pictos">&amp;</span></a>
 			
 			<div class="red embed-error"></div>
 			<div class="hide oembed-preview pam center mtm rounded5">
@@ -652,7 +648,7 @@
 	#if($count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
 		<div class="pages center mtl">
 			#if($mode == "pageless") #set($classes = "$classes more-link" ) #else #set($classes = "$classes more-link-na" ) #end
-			<a href="$reqURL=$!next" class="more-link-na $classes" title="Load more">$!lang.get("more")</a>
+			<a href="$reqURL=$!next" class="more-link-na ${classes}" title="Load more">$!lang.get("more")</a>
 			<span class="hide page-macro-code">$!macroCode</span>
 		</div>
 	#end
@@ -667,7 +663,7 @@
 				#set($schoolthumbclass = "school-pic-thumb inlineblock" )
 			#end
 			
-			<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" class="$schoolthumbclass">
+			<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" class="${schoolthumbclass}">
 				#if($showschool.iconurl && !$showschool.iconurl.isEmpty())
 					<img src="$showschool.iconurl" alt="School thumbnail" />
 				#else
@@ -740,7 +736,7 @@
 			#set($showschool = $showclass.school)
 			<div class="line lightgray">
 				<div class="unit size1of3">$!lang.get("class.title")</div>
-				<div class="unit size2of3 lastUnit r" title="$!lang.get('class.classmates')">
+				<div class="unit size2of3 lastUnit r ${mobilehide}" title="$!lang.get('class.classmates')">
 					<span class="pictos">g</span> $!showclass.count
 				</div>
 			</div>
@@ -898,9 +894,7 @@
 									</a>
 								#end
 							#end
-							#if(!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
-								#getreportlink($showFriend "$profilelink/$showFriend.id" "button-tiny rounded3 notext")
-							#end
+							#if(!$authenticated || ($authenticated && $showFriend.id != $authUser.id))#getreportlink($showFriend "$profilelink/$showFriend.id" "button-tiny rounded3 notext")#end
 						#end
 					</div>
 				</div>
@@ -910,7 +904,7 @@
 #end
 ####################################
 #macro(smallpersonbox $showu)
-	<div id="user-$!{showu.id}" class="userbox media pas inlineblock">
+	<div class="userbox media pas inlineblock user-$!{showu.id}">
 		<div class="img mrm center">
 			#if($showu)
 				<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" title="$!showu.fullname">
@@ -920,7 +914,7 @@
 				<img src="#profilepic($!showu true)" width="50" height="50" alt="Profile picture"/>
 			#end
 		</div>
-		<div class="bd">
+		<div class="bd $!{mobilehide}">
 			#if($showu)
 				<a href="$profilelink/$!showu.id/#stripstr($!showu.fullname)" class="smallText">$showu.fullname</a>
 			#else
@@ -1010,7 +1004,7 @@
 #macro(messagebox $showmsg)
 	#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
 	#if($showmsg.isread) #set($gclass = "" ) #else #set($gclass = "lightbluebg" ) #end
-	<div class="whitebox clearfix $gclass">
+	<div class="whitebox clearfix ${gclass}">
 		<table>
 			<tbody>
 				<tr>
@@ -1043,7 +1037,7 @@
 	#if($thisuri.contains("?"))	#set($amp = "&amp;") #else #set($amp = "?") #end
 	
 	#if($showcomment == "")	#set($hide = "hide") #else #set($hide = "clearfix")	#end
-	<div class="commentbox pas $hide">
+	<div class="commentbox pas ${hide}">
 		#if($showcomment.hidden)
 			#set($hidden = "hide")
 			<span>$!lang.get("comments.hidden") &nbsp;</span>
@@ -1052,7 +1046,7 @@
 			#set($hidden = "noclass")
 		#end
 
-		<div class="$hidden">
+		<div class="${hidden}">
 			<div class="left">
 				<span class="lightgray pictos">w</span>
 				#set($commentAuthor = {'fullname': $!showcomment.author, 'id': $showcomment.userid})
@@ -1142,7 +1136,7 @@
 		#end
 
 		#if($showvideo.thumburl)
-			<a href="$!embedlink" title="$!showvideo.title" class="extlink $!oembedclass">
+			<a href="$!embedlink" title="$!showvideo.title" class="extlink $!{oembedclass}">
 				<img src="$!showvideo.thumburl" alt="$!showvideo.title" />
 			</a>
 		#else
@@ -1185,7 +1179,7 @@
 			#set($href = "${href}&amp;grandparentid=$reportable.parentid")
 		#end
 		#if($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $!lang.get('report')") #end
-		<a href="$!{href}" title="Report a problem" class="trigger-report $!clazz"><span class="pictos">^</span>$showtxt</a>
+		<a href="$!{href}" title="Report a problem" class="trigger-report $!{clazz}"><span class="pictos">^</span>$showtxt</a>
 	#end
 #end
 ####################################
@@ -1208,7 +1202,7 @@
 			#set($hide = "hide" )
 		#end
 
-		<div class="pictos left mrl hugeText green $hide">3</div>
+		<div class="pictos left mrl hugeText green ${hide}">3</div>
 		<div class="right">
 			<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $!lang.get("open")</a>
 			#if(!$showreport.closed)
@@ -1236,7 +1230,7 @@
 			#else
 				#set($hide = "hide" )
 			#end
-			<p class="report-solution $hide"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
+			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
 		</div>
 
 		<div class="hide report-solution-box p100 mtm">
@@ -1262,10 +1256,10 @@
 	#set($actionlink2 = "#getpostlink($showpost true true)")
 
 	<div class="questionbox whitebox clearfix">
-		<div class="right mlm center max-width-100">
+		<div class="right mlm center max-width-100 $!{mobilehide}">
 			#set($author = $showpost.author)
 			#tinypersonbox($author)
-			<div class="smallText">
+			<div class="smallText lightgray">
 				<span class="pictos">t</span>
 				#formatdate($showpost.timestamp "")
 			</div>
@@ -1284,7 +1278,7 @@
 			
 			<div class="img">
 				#if($showpost.answerid) #set($bgclass = "lightbluebg" ) #else #set($bgclass = "" ) #end
-				<div class="qstatsbox mrl pas rounded5 center $!bgclass">
+				<div class="qstatsbox mrl pas rounded5 center $!{bgclass}">
 					<div class="largeText" title="$!lang.get('votes')">$!daoutils.abbreviateInt($!votes, 0)</div>
 					<div class="line">
 						<div class="unit size1of2" title="$!lang.get('answers.title')">$daoutils.abbreviateInt($!answercount, 0)</div>
@@ -1344,14 +1338,14 @@
 	#set($actionlink = "#getpostlink($showpost false true)")
 	#set($actionlink2 = "#getpostlink($showpost true true)")
 	
-	<div class="p100 postbox $boxclass">
+	<div class="p100 postbox ${boxclass}">
 		#if($showpost.isBlackboard())
 			<h2 class="inline">$!lang.get("blackboard.title")</h2> &nbsp;
 			#set($divposclass = "right" )
 		#else
-			#set($divposclass = "mvm" )
+			#set($divposclass = "mbm" )
 		#end
-		<div class="$!divposclass">
+		<div class="$!{divposclass}">
 			
 			#if($canEdit)
 				<a href="#" title="Edit" class="editlink button-tiny rounded3"><span class="pictos">W</span> $!lang.get("edit")</a>
@@ -1409,7 +1403,7 @@
 								#set($picon = "3")
 							#end
 							#if($authenticated && $showpost.isReply() && $parentpost.userid.equals($authUser.id))
-								<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!onclass" title="Approve answer">$picon</a>
+								<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!{onclass}" title="Approve answer">$picon</a>
 							#elseif($approvedAnswer)
 								<span class="pictos megaText green">$picon</span>
 							#end
@@ -1430,7 +1424,7 @@
 			#set($postviewid = "blackboard" )
 			#set($bbclazz = "rounded3 pas" )
 		#end
-		<div id="$postviewid" class="viewbox $bbclazz">
+		<div id="${postviewid}" class="viewbox ${bbclazz}">
 			<div class="mbl pas">
 				#set($bodyHtml = $daoutils.markdownToHtml($showpost.body))
 				$!{bodyHtml}
@@ -1540,14 +1534,13 @@
 				#smallpersonbox($author)
 			</div>
 			<div class="unit size1of3 center">
-				<span class="lightgray mediumText">#if($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
+				<span class="lightgray mediumText ${mobilehide}">#if($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
 			</div>
 			<div class="unit size1of3 lastUnit r">
 				<div class="lightgray mediumText">
 					<span class="mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
 				</div>
-				<div class="mts">
-					
+				<div class="mts">					
 					#if($showpost.revisionid == $showrev.id)
 						<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
 					#elseif($canrestore || $request.isUserInRole("mod"))
@@ -1609,7 +1602,7 @@
 					#set($onclass = "")
 					#set($picon = "3")
 				#end
-				<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!onclass" title="Approve">$picon</a>				
+				<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!{onclass}" title="Approve">$picon</a>				
 				&nbsp;
 			#end
 			#votebox($showtrans "mediumText")
@@ -1632,7 +1625,7 @@
 ###################################
 #macro(langbox $showLangKey $showLangName $progress  )
 	#if($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang rounded5") #else #set($selclass = "") #end
-	<div class="inlineblock mrl mbm center langbox rounded5 $selclass">
+	<div class="inlineblock mrl mbm center langbox rounded5 ${selclass}">
 		<div class="mediumText mbs">
 			#if($selclass == "")
 				<form action="$languageslink" method="post">
@@ -1718,15 +1711,15 @@
 	#if($authenticated) #set($linkclass = "votelink") #else #set($linkclass = "") #end
 	#if($votable.votes)	#set($votes = $votable.votes) #else #set($votes = 0) #end
 
-	<div class="votebox inlineblock $sizeClass">
+	<div class="votebox ${sizeClass}">
 		#if($votable && $authenticated && $votable.userid.longValue() == $authUser.id.longValue())
 			<span class="pictos downvote lightgray" title="Vote down">-</span>
 			<span class="votecount">$!votes</span>
 			<span class="pictos upvote lightgray" title="Vote up">+</span>			
 		#else
-			<a href="$votedownlink/$!classname/$!id" class="pictos downvote $linkclass" title="Vote down">-</a>
+			<a href="$votedownlink/$!classname/$!id" class="pictos downvote ${linkclass}" title="Vote down">-</a>
 			<span class="votecount">$!votes</span>
-			<a href="$voteuplink/$!classname/$!id" class="pictos upvote $linkclass" title="Vote up">+</a>
+			<a href="$voteuplink/$!classname/$!id" class="pictos upvote ${linkclass}" title="Vote up">+</a>
 		#end
 	</div>
 #end
@@ -1740,7 +1733,7 @@
 	#elseif(!$class.contains("hidelabel") && !$field.isHidden())
 		#if($field.label && !$field.label.isEmpty()) <label class="blocklabel">$!{field.label}: </label>#end
 	#end
-	<span class="error $!hideme">$!{field.error}</span>
+	<span class="error $!{hideme}">$!{field.error}</span>
 	$!{field}
 	#end
 #end
@@ -1802,7 +1795,7 @@
 #####################################
 #macro(getmessagebox $class $text $hidden)
 #if($hidden) #set($hideclass = "hide") #else #set($hideclass = "") #end
-	<div class="messagebox $class $hideclass" title="$!lang.get('click2close')">
+	<div class="messagebox ${class} ${hideclass}" title="$!lang.get('click2close')">
 		<div class="msg center">  #if($text == "") &nbsp; #else $text #end  </div>
 	</div>
 #end
@@ -1830,28 +1823,16 @@
 #####################################
 #macro(ajaxloading $hide)
 	#if($hide) #set($hidden = "hide") #else #set($hidden = "") #end
-	<img src="$imageslink/indicator.gif" alt="loading" class="ajaxwait vertcenter $!hidden"/>
+	<img src="$imageslink/indicator.gif" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
 #end
 #####################################
 #macro(profilepic $user $thumb)
-	#set($picurl = "http://www.gravatar.com/avatar/?d=mm")
-	#if($user)
-		#if($thumb)
-			#if($user.isFacebookUser())
-				#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=square")
-			#else
-				#set($picurl = "http://www.gravatar.com/avatar/$!{daoutils.MD5($user.email)}?size=50&amp;d=mm&amp;r=pg")
-			#end
-		#else
-			#if($user.isFacebookUser())
-				#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=large")
-			#else
-				#set($picurl = "http://www.gravatar.com/avatar/$!{daoutils.MD5($user.email)}?size=200&amp;d=mm&amp;r=pg")
-			#end
-		#end
-	#end
-	$!picurl
-#end
+#set($picurl = "http://www.gravatar.com/avatar/?d=mm")
+#if($user)#if($thumb)#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=square")
+#else#set($picurl = "http://www.gravatar.com/avatar/$!{daoutils.MD5($user.email)}?size=50&amp;d=mm&amp;r=pg")#end
+#else#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=large")
+#else#set($picurl = "http://www.gravatar.com/avatar/$!{daoutils.MD5($user.email)}?size=200&amp;d=mm&amp;r=pg")#end#end#end
+$!picurl#end
 #####################################
 #macro(infostrip )
 	#if($request.getParameter("success"))
@@ -1880,10 +1861,10 @@
 	
 	<noscript>
 		<div class="infostrip errorBox pvm center">
-			<span class="pictos ico errorBoxIcon $!he">!</span> $!{lang.get("nojavascript")}
+			<span class="pictos ico errorBoxIcon $!{he}">!</span> $!{lang.get("nojavascript")}
 		</div>
 	</noscript>
-	<div class="infostrip center pvm $hideInfoStrip $infoStripClass" title="$!lang.get('close')">
+	<div class="infostrip center pvm ${hideInfoStrip} ${infoStripClass}" title="$!lang.get('close')">
 		#set($hs = "hide" ) #set($he = "hide" ) #set($hi = "hide" )
 		#if($infoStripClass.contains("successBox"))
 			#set($hs = "" ) 
@@ -1892,9 +1873,9 @@
 		#elseif($infoStripClass.contains("infoBox"))
 			#set($hi = "" )
 		#end
-		<span class="pictos ico successBoxIcon $!hs">2</span>
-		<span class="pictos ico errorBoxIcon $!he">!</span>
-		<span class="pictos ico infoBoxIcon  $!hi">i</span>
+		<span class="pictos ico successBoxIcon $!{hs}">2</span>
+		<span class="pictos ico errorBoxIcon $!{he}">!</span>
+		<span class="pictos ico infoBoxIcon  $!{hi}">i</span>
 		
 		<span class="infostrip-msg">
 			#if(!$badgelist.isEmpty())
@@ -1918,7 +1899,13 @@
 	<span>
 		#if($showid.startsWith("http"))
 			<span class="openid-icon-small" title="OpenID">&nbsp;</span> 
-			<tt>$showid</tt>
+				<span>
+					#if($isMobile)
+						$daoutils.abbreviate($!showid, 20)
+					#else
+						$!showid
+					#end
+				</span>
 		#else
 			<span class="facebook-icon-small" title="Facebook">&nbsp;</span> 
 			<span id="fb-name">#$!showid</span>
@@ -1944,6 +1931,24 @@
 #macro(setsortbyselection $paramMap $defkey )
 	#set($sbparam = $request.getParameter("sortby")) #set($sbclazz = "button-tiny-selected" )
 	#if($sbparam && !$sbparam.isEmpty()) #set($paramMap[$sbparam] = $sbclazz) #else #set($paramMap[$defkey] = $sbclazz) #end
+#end
+#####################################
+#macro(searchbox )
+<div id="search" class="rounded3 right">
+	<form method="get" id="search-form" action="$searchlink">
+		<fieldset>
+			#if($request.getParameter("q"))
+				#set($showSearchValue = $!request.getParameter('q'))
+				#set($hintbox = "noclass" )
+			#else
+				#set($showSearchValue = $!lang.get('search.search'))
+				#set($hintbox = "hintbox" )
+			#end
+			<input type="submit" class="pictos search-btn" value="s"/>
+			<input id="search-box" type="search" class="$!{hintbox}" name="q" value="$showSearchValue"/>
+		</fieldset>
+	</form>
+</div>
 #end
 #####################################
 #macro(signinbox $attachOnly )
@@ -1980,10 +1985,47 @@
 				<h2 id="fb-login">$!lang.get("signin.facebook")</h2>
 			#end
 			<div class="mvl ptl">
-				<a id="$fbbtnclass" href="#" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
+				<a id="${fbbtnclass}" href="#" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
 			</div>
 		</div>
 	</div>
+#end
+#####################################
+#macro(mobilehead )
+	<link href="$styleslink/mobile.css" rel="stylesheet"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<script type="text/javascript">
+		if( !window.location.hash && window.addEventListener ){
+			window.addEventListener("load", function() {
+				setTimeout(function(){
+					window.scrollTo(0, 0);
+				}, 0);
+			});
+			window.addEventListener("orientationchange", function() {
+				setTimeout(function(){
+					window.scrollTo(0, 0);
+				}, 0);
+			});					
+		}
+	</script>
+#end
+#####################################
+#macro(fontfix )
+	#if(!$IN_PRODUCTION)
+		<style type="text/css">
+			@font-face {
+				font-family: 'PictosRegular';
+				src: url('$!context/styles/pictos-web.eot');
+				src:  local('☺'), 
+					url('$!context/styles/pictos-web.woff') format('woff'),
+					url('$!context/styles/pictos-web.ttf') format('truetype'),
+					url('$!context/styles/pictos-web-webfont.svg#webfontIyfZbseF') format('svg');
+				font-weight: normal;
+				font-style: normal;
+			}
+		</style>
+	#end
 #end
 #####################################
 #macro(sectoken $bare)
@@ -2021,13 +2063,14 @@
 <!--		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
 		<img src="http://placehold.it/220x125" width="220" height="125" alt="ad"/>
 		<img src="http://placehold.it/220x420" width="220" height="420" alt="ad"/>-->
-
-	<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
-		<img src="http://placehold.it/180x150/efefef/444444&amp;text=Your+ad+here" width="180" height="150" alt="ad" class="rounded3"/>
-	</a>
-	<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
-		<img src="http://placehold.it/160x600/efefef/444444&amp;text=Your+ad+here" width="160" height="600" alt="ad" class="rounded3"/>
-	</a>
+	<div class="ads">
+		<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
+			<img src="http://placehold.it/180x150/efefef/444444&amp;text=Your+ad+here" width="180" height="150" alt="ad" class="rounded3 mbs"/>
+		</a>
+		<a href="http://www.adbrite.com/mb/commerce/purchase_form.php?opid=2026171&amp;afsid=1">
+			<img src="http://placehold.it/160x600/efefef/444444&amp;text=Your+ad+here" width="160" height="600" alt="ad" class="rounded3"/>
+		</a>
+	</div>
 #end
 ################# END MACROS ###################################################
 #if($isAjaxRequest || false)
@@ -2038,7 +2081,7 @@
 		#end
 		#evaluate($pageMacroCode)
 		#if($pagenum.longValue() > 10000) #set($pnext = $pagenum.intValue()) #else #set($pnext = $pagenum.intValue() + 1) #end
-		<span class="$!pnext"/>
+		<span class="$!{pnext}"/>
 		#stop
 	#end
     ################ AUTOCOMPLETE AJAX REQUESTS ################
@@ -2047,27 +2090,27 @@
 		#set($q = $request.getParameter("q"))
         #if($request.getParameter("find") == "locations")
             #foreach($location in $daoutils.readLocationForKeyword($q.trim()))
-                ${location.name}, ${location.countryName}| ${location.adminName1} |${location.geoNameId}
+                $!{location.name}, $!{location.countryName}| $!{location.adminName1} |$!{location.geoNameId}
             #end
 			#stop
         #elseif($request.getParameter("find") == "schools")
-            #foreach($showschool in $daoutils.findByKeyword("school", $q.trim(), 7))
-                ${showschool.name}|${showschool.location}|${showschool.id}
+            #foreach($showschool in $daoutils.readAndRepair("school", $daoutils.findQuery("school", $pagenum, $itemcount, $q.trim())))
+                ${showschool.name}|${showschool.location}|$!{showschool.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "classes")
-            #foreach($showclass in $daoutils.findByKeyword("classunit", $q.trim(), 7))
-				${showclass.identifier}|$!lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |${showclass.id}
+            #foreach($showclass in $daoutils.readAndRepair("classunit", $daoutils.findQuery("classunit", $pagenum, $itemcount, $q.trim())))
+				${showclass.identifier}|$!lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |$!{showclass.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "tags")
             #foreach($showtag in $daoutils.findTags($q.trim(), 7))
-				$!{showtag.tag}| |${showtag.id}
+				$!{showtag.tag}| |$!{showtag.id}
             #end
 			#stop
 		#elseif($request.getParameter("find") == "people")
-            #foreach($showuser in $daoutils.findUser($q.trim(), 7))
-				$!{showuser.fullname}| |${showuser.id}
+            #foreach($showuser in $daoutils.readAndRepair("user", $daoutils.findQuery("user", $pagenum, $itemcount, $q.trim())))
+				$!{showuser.fullname}| |$!{showuser.id}
             #end
 			#stop
         #end
@@ -2151,11 +2194,11 @@
 #elseif($request.getAttribute('javax.servlet.forward.request_uri') == "/feed.xml")
 	#stop
 #end
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$currentLocale.language">
+<!DOCTYPE html>
+<html lang="$currentLocale.language">
     <head>
 		#basichead($!DESCRIPTION $!KEYWORDS)
+		#if($isMobile)#mobilehead()#end
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
 		#if($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
@@ -2167,20 +2210,7 @@
 		#if($includeGMapsScripts && $includeGMapsScripts == true)
 			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U&amp;sensor=false"></script>
 		#end
-		#if(!$IN_PRODUCTION)
-			<style type="text/css">
-				@font-face {
-					font-family: 'PictosRegular';
-					src: url('$!context/styles/pictos-web.eot');
-					src:  local('☺'), 
-						url('$!context/styles/pictos-web.woff') format('woff'),
-						url('$!context/styles/pictos-web.ttf') format('truetype'),
-						url('$!context/styles/pictos-web-webfont.svg#webfontIyfZbseF') format('svg');
-					font-weight: normal;
-					font-style: normal;
-				}
-			</style>
-		#end
+		#fontfix()
 	</head>
     <body>
 		#if($includeFBscripts)
@@ -2204,15 +2234,18 @@
 			<div id="header" class="ptm">
 				<div class="container">
 					<div class="left">
+						#if($isMobile)<a href="#" class="next-div-toggle mobile-nav-toggle button-small rounded3 mrm">&dtrif;</a>#end
 						<a id="logo" href="$!prefix">$APPNAME</a> 
-						#if($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
-						#if(!$IN_PRODUCTION && !$IN_DEVELOPMENT) 
-							<code class="red pictos" title="Environment not configured properly!">!</code> 
-						#elseif($IN_DEVELOPMENT)
-							<code class="blue pictos" title="Development mode">b</code> 
-						#end						
+						<span class="logosup">
+							#if($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
+							#if(!$IN_PRODUCTION && !$IN_DEVELOPMENT) 
+								<code class="red pictos" title="Environment not configured properly!">!</code> 
+							#elseif($IN_DEVELOPMENT)
+								<code class="blue pictos" title="Development mode">b</code> 
+							#end						
+						</span>
 					</div>
-					<div id="topnav" class="right mtl">
+					<div id="topnav" class="right mtl $!{mobilehide}">
 					#if($authenticated)
 						#if($isFBconnected)
 							<span class="facebook-icon-small" title="You are signed via Facebook">&nbsp;</span>
@@ -2256,39 +2289,33 @@
 						#end
 						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
 					#end
+					
+					#if($isMobile)
+						<div class="mtm">
+							#searchbox()
+						</div>
+					#end
 					</div>
 				</div>
 			</div>
-			<div id="nav" class="mediumText">
+			<div id="nav" class="mediumText p100">
 				<div class="container">
 					<div class="line">
 						<div class="unit size2of3">
 							<ul id="nav-list" class="left">
-								<li><a href="$questionslink" title="Questions" class="nicebtn rounded3 $!questionsSelected">$!lang.get("questions.title")</a></li>
-								<li><a href="$peoplelink" title="People" class="nicebtn rounded3 $!peopleSelected">$!lang.get("people.title")</a></li>
-								<li><a href="$schoolslink" title="Schools" class="nicebtn rounded3 $!schoolsSelected">$!lang.get("schools.title")</a></li>
-								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!classesSelected">$!lang.get("classes.title")</a></li>
+								<li><a href="$questionslink" title="Questions" class="nicebtn rounded3 $!{questionsSelected}">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="People" class="nicebtn rounded3 $!{peopleSelected}">$!lang.get("people.title")</a></li>
+								<li><a href="$schoolslink" title="Schools" class="nicebtn rounded3 $!{schoolsSelected}">$!lang.get("schools.title")</a></li>
+								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!{classesSelected}">$!lang.get("classes.title")</a></li>
 								#if($authenticated)
-									<li><a href="$groupslink" title="Groups" class="nicebtn rounded3 $!groupsSelected">$!lang.get("groups.title")</a></li>
+									<li><a href="$groupslink" title="Groups" class="nicebtn rounded3 $!{groupsSelected}">$!lang.get("groups.title")</a></li>
 								#end
 							</ul>
 						</div>
 						<div class="unit size1of3 lastUnit">
-							<div id="search" class="rounded3 prs right">
-								<form method="get" id="search-form" action="$searchlink">
-									<fieldset>
-										#if($request.getParameter("q"))
-											#set($showSearchValue = $!request.getParameter('q'))
-											#set($hintbox = "noclass" )
-										#else
-											#set($showSearchValue = $!lang.get('search.search'))
-											#set($hintbox = "hintbox" )
-										#end
-										<input type="submit" class="pictos search-btn right" value="s"/>
-										<input id="search-box" type="text" class="$!hintbox" name="q" value="$showSearchValue"/>
-									</fieldset>
-								</form>
-							</div>
+							#if(!$isMobile)
+								#searchbox()
+							#end
 						</div>
 					</div>
 				</div>
@@ -2302,23 +2329,30 @@
 		
         <div id="footer" class="mtl">
             <div class="container">
-
 				<div class="line">
 					<div class="unit size4of5">
 						<div class="clearfix">
 							<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
 							</a>
 							<div>$daoutils.formatMessage($!lang.get("license"), '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>')</div>
+							#if($isMobile)<br/>#end
 							<ul class="inline-list">
 								<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
 								<li><a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a> &bull;</li>
 								<li><a href="http://blog.scoold.com" title="Blog" class="extlink">$!{lang.get('blog.title')}</a> &bull;</li>								
 								<li><a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a> &bull;</li>
-								<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a></li>								
+								<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a> &bull;</li>
+								<li>
+									#if($isMobile)
+										<a href="$context/?mobile=false" title="Classic layout">$!{lang.get('classic')}</a>
+									#else
+										<a href="$context/?mobile=true" title="Mobile layout">$!{lang.get('mobile')}</a> 
+									#end
+								</li>
 							</ul>
 						</div>
 					</div>
-
+					#if($isMobile)<br/>#end
 					<div class="unit size1of5 lastUnit r">
 						<span class="mediumText">
 							<span class="pictos">G</span>
@@ -2327,6 +2361,7 @@
 							</a>
 						</span>
 					</div>
+					#if($isMobile)<br/>#end
 				</div>
             </div>
         </div>

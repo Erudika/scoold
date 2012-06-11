@@ -66,11 +66,12 @@ public class BasePage extends Page {
 	public static final String AUTH_USER = ScooldAuthModule.AUTH_USER;
 	
 	public static final String FEED_KEY_SALT = ":scoold";
+	public static final String MOBILE_COOKIE = "scoold-mobile";
 	public static final String FB_APP_ID = ScooldAuthModule.FB_APP_ID;
 	public static final Logger logger = Logger.getLogger(BasePage.class.getName());
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
-	public final String localeCookieName = APPNAME + "-locale";
+	public final String localeCookieName = APPNAME.toLowerCase() + "-locale";
 	public final String messageslink = prefix + "messages";
 	public final String schoolslink = prefix + "schools";
 	public final String peoplelink = prefix + "people";
@@ -121,11 +122,12 @@ public class BasePage extends Page {
 	public String infoStripMsg = "";
 	public boolean authenticated;
 	public boolean canComment;
-	public HttpServletRequest req;
+	public transient HttpServletRequest req;
 	public boolean isFBconnected;
 	public boolean includeFBscripts;
+	public boolean isMobile;
 	public User authUser;
-	public AbstractDAOUtils daoutils;
+	public transient AbstractDAOUtils daoutils;
 	public ArrayList<Comment> commentslist;
 	public ArrayList<Media> medialist;
 	public ArrayList<String> labelslist;
@@ -151,10 +153,12 @@ public class BasePage extends Page {
 		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
 		commentslist = new ArrayList<Comment> ();
 		badgelist = new ArrayList<String> (); 
+		isMobile = "true".equals(getStateParam(MOBILE_COOKIE));
 		if(authenticated && !StringUtils.isBlank(authUser.getNewbadges())){
 			badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
 			authUser.setNewbadges("none");
 		}
+		addModel("mobilehide", (isMobile ? "hide" : "noclass"));
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
 		addModel("systemMessage", StringUtils.trimToEmpty(daoutils.
@@ -629,7 +633,7 @@ public class BasePage extends Page {
 				PostType.GROUPPOST : PostType.QUESTION;
 		Form qForm = getPostForm(type, "qForm", "ask-question-form");
 		Field pid = null;
-		Long parentID = selectedId == null ? 0L : selectedId;
+		Long parentID = selectedId == null ? Long.valueOf(0L) : selectedId;
 		addModel("postParentClass", clazz.getSimpleName().toLowerCase());
 		
 //		Askable selected = askablesMap.get(parentID);
@@ -833,8 +837,8 @@ public class BasePage extends Page {
 	public final boolean isValidAnswerForm(Form aForm, Post showPost){
 		int timer = 5*1000; // 5 sec
 
-        String body = aForm.getFieldValue("body");
-        String tags = aForm.getFieldValue("tags");
+//        String body = aForm.getFieldValue("body");
+//        String tags = aForm.getFieldValue("tags");
 		String additional = aForm.getFieldValue("additional");
 		String time = aForm.getFieldValue("timer");
 
@@ -881,7 +885,7 @@ public class BasePage extends Page {
 		boolean result = false;
 		if(votable != null && authenticated && votable != null){
 			User author = User.getUser(votable.getUserid());
-			Integer votes = (votable.getVotes() == null) ? 0 : votable.getVotes();
+			Integer votes = (votable.getVotes() == null) ? Integer.valueOf(0) : votable.getVotes();
 
 			if(param("voteup")){
 				result = votable.voteUp(authUser.getId());
@@ -1127,10 +1131,10 @@ public class BasePage extends Page {
 		}
 	};
 
-	public static String DESCRIPTION = "Scoold is friendly place where students and teachers "
+	public static final String DESCRIPTION = "Scoold is friendly place where students and teachers "
 			+ "can help each other and talk about anything related to education.";
 	
-	public static String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, "
+	public static final String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, "
 			+ "schools, students, classmates, alumni, teachers, contacts, social, "
 			+ "network, classes, classroom, education";
 }

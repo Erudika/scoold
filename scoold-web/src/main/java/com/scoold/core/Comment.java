@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @author alexb
  */
 public class Comment implements ScooldObject, Votable<Long>, Comparable<Comment>, Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private Long userid;
@@ -24,7 +25,7 @@ public class Comment implements ScooldObject, Votable<Long>, Comparable<Comment>
 	@Stored private Integer votes;
 	@Stored private String author;
 	@Stored private String classname;
-	@Stored public static String classtype = Comment.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Comment.class.getSimpleName().toLowerCase();
 
 	private transient static AbstractCommentDAO<Comment, Long> mydao;
 
@@ -46,7 +47,7 @@ public class Comment implements ScooldObject, Votable<Long>, Comparable<Comment>
 		this.userid = userid;
 		this.comment = comment;
 		this.parentid = parentid;
-		this.timestamp = new Long(System.currentTimeMillis()); //now
+		this.timestamp = Long.valueOf(System.currentTimeMillis()); //now
 		this.votes = 0;
 	}
 
@@ -238,7 +239,7 @@ public class Comment implements ScooldObject, Votable<Long>, Comparable<Comment>
 		if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
 			return false;
 		}
-		if (this.userid != other.userid && (this.userid == null || !this.userid.equals(other.userid))) {
+		if (this.userid == null || !this.userid.equals(other.userid)) {
 			return false;
 		}		
 		if ((this.comment == null) ? (other.comment != null) : !this.comment.equals(other.comment)) {

@@ -45,7 +45,7 @@ function updateJacssi () {
 	echo "Deploying javascript, css and images to CDN..."
 	### copy javascript, css, images to S3				
 	if [ -d $CSSDIR ] && [ -d $JSDIR ] && [ -d $IMGDIR ]; then
-		dirlist="$CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $IMGDIR/*.gif $IMGDIR/*.png"
+		dirlist="$CSSDIR/*min.css $CSSDIR/pictos* $JSDIR/*min.js $IMGDIR/*.gif $IMGDIR/*.png $IMGDIR/*.ico"
 		rm -rf $SUMSFILE $PATHSFILE &> /dev/null
 		if [ ! -d $JACSSIDIR ]; then
 			mkdir $JACSSIDIR

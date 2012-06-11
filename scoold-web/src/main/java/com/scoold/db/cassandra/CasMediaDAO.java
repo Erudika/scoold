@@ -244,6 +244,7 @@ final class CasMediaDAO<T, PK> extends AbstractMediaDAO<Media, Long> {
 					// label removed so update
 					deleteLabel(label.getKey(), media.getId(), media.getParentid(), mut);
 					break;
+				default: break;
 			}
 		}
 	}

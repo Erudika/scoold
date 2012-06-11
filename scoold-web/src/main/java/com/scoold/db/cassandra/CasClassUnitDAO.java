@@ -153,12 +153,12 @@ final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit, Long>
 						primaryClassid.toString());
 		Classunit duplicateClass = cdu.read(Classunit.class,
 						duplicateClassid.toString());
+		
+		if(primaryClass == null || duplicateClass == null) return false;
+		else if(!duplicateClass.getSchoolid().equals(primaryClass.getSchoolid())) return false;
 
 		String primaryId = primaryClass.getId().toString();
 		String duplicateId = duplicateClass.getId().toString();
-
-		if(primaryClass == null || duplicateClass == null) return false;
-		else if(!duplicateClass.getSchoolid().equals(primaryClass.getSchoolid())) return false;
 
 		Mutator<String> mut = cdu.createMutator();
 		// STEP 1:

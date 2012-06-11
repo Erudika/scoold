@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @author alexb
  */
 public class Translation implements Votable<Long>, ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private String locale;
@@ -23,7 +24,7 @@ public class Translation implements Votable<Long>, ScooldObject, Serializable{
 	@Stored private Long userid;
 	@Stored private Long timestamp;
 	@Stored private Integer oldvotes;
-	@Stored public static String classtype = Translation.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Translation.class.getSimpleName().toLowerCase();
 
 	private transient User author;
 

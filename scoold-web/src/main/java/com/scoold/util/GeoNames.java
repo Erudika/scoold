@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Marc Wick, geonames.org
+ * Copyright 2008-2012 Marc Wick, geonames.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -37,13 +39,9 @@ import java.util.logging.Logger;
 
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
 /**
  * provides static methods to access the <a
  * href="http://www.geonames.org/export/ws-overview.html">GeoNames web
@@ -61,7 +59,7 @@ public class GeoNames {
 
 	private static Logger logger = Logger.getLogger("org.geonames");
 
-	private static String USER_AGENT = "gnwsc/1.1.3";
+	private static String USER_AGENT = "gnwsc/1.1.6";
 
 	private static boolean isAndroid = false;
 
@@ -219,49 +217,118 @@ public class GeoNames {
 	 * @throws IOException
 	 */
 	private static InputStream connect(String url) throws IOException {
+		int status = 0;
 		String currentlyActiveServer = getCurrentlyActiveServer();
 		try {
 			long begin = System.currentTimeMillis();
-			URLConnection conn = new URL(currentlyActiveServer + url)
-					.openConnection();
-			conn.setConnectTimeout(connectTimeOut);
-			conn.setReadTimeout(readTimeOut);
-			conn.setRequestProperty("User-Agent", USER_AGENT);
-			InputStream in = conn.getInputStream();
-			long elapsedTime = System.currentTimeMillis() - begin;
-			averageConnectTime = (averageConnectTime * (averageSampleSize - 1) + elapsedTime)
-					/ averageSampleSize;
-			// if the average elapsed time is too long we switch server
-			if (geoNamesServerFailover != null && averageConnectTime > 5000
-					&& !currentlyActiveServer.equals(geoNamesServerFailover)) {
-				timeOfLastFailureMainServer = System.currentTimeMillis();
-			}
-			return in;
-		} catch (IOException e) {
-			// we cannot reach the server
-			logger.log(Level.WARNING, "problems connecting to geonames server "
-					+ currentlyActiveServer, e);
-			// is a failover server defined?
-			if (geoNamesServerFailover == null
-			// is it different from the one we are using?
-					|| currentlyActiveServer.equals(geoNamesServerFailover)) {
-				if (currentlyActiveServer.equals(geoNamesServerFailover)) {
-					// failover server is not accessible, we throw exception
-					// and switch back to main server.
-					timeOfLastFailureMainServer = 0;
+			HttpURLConnection httpConnection = (HttpURLConnection) new URL(
+					currentlyActiveServer + url).openConnection();
+			httpConnection.setConnectTimeout(connectTimeOut);
+			httpConnection.setReadTimeout(readTimeOut);
+			httpConnection.setRequestProperty("User-Agent", USER_AGENT);
+			InputStream in = httpConnection.getInputStream();
+			status = httpConnection.getResponseCode();
+
+			if (status == 200) {
+				long elapsedTime = System.currentTimeMillis() - begin;
+				averageConnectTime = (averageConnectTime
+						* (averageSampleSize - 1) + elapsedTime)
+						/ averageSampleSize;
+				// if the average elapsed time is too long we switch server
+				if (geoNamesServerFailover != null
+						&& averageConnectTime > 5000
+						&& !currentlyActiveServer
+								.equals(geoNamesServerFailover)) {
+					timeOfLastFailureMainServer = System.currentTimeMillis();
 				}
-				throw e;
+				return in;
 			}
-			timeOfLastFailureMainServer = System.currentTimeMillis();
-			logger.info("trying to connect to failover server "
-					+ geoNamesServerFailover);
-			// try failover server
-			URLConnection conn = new URL(geoNamesServerFailover + url)
-					.openConnection();
-			conn.setRequestProperty("User-Agent", USER_AGENT
-					+ " failover from " + geoNamesServer);
-			InputStream in = conn.getInputStream();
-			return in;
+		} catch (IOException e) {
+			return tryFailoverServer(url, currentlyActiveServer, 0, e);
+		}
+		// we only get here if we had a statuscode <> 200
+		IOException ioException = new IOException("status code " + status
+				+ " for " + url);
+		return tryFailoverServer(url, currentlyActiveServer, status,
+				ioException);
+	}
+
+	private static synchronized InputStream tryFailoverServer(String url,
+			String currentlyActiveServer, int status, IOException e)
+			throws MalformedURLException, IOException {
+		// we cannot reach the server
+		logger.log(Level.WARNING, "problems connecting to geonames server "
+				+ currentlyActiveServer, e);
+		// is a failover server defined?
+		if (geoNamesServerFailover == null
+		// is it different from the one we are using?
+				|| currentlyActiveServer.equals(geoNamesServerFailover)) {
+			if (currentlyActiveServer.equals(geoNamesServerFailover)) {
+				// failover server is not accessible, we throw exception
+				// and switch back to main server.
+				timeOfLastFailureMainServer = 0;
+			}
+			throw e;
+		}
+		timeOfLastFailureMainServer = System.currentTimeMillis();
+		logger.info("trying to connect to failover server "
+				+ geoNamesServerFailover);
+		// try failover server
+		URLConnection conn = new URL(geoNamesServerFailover + url)
+				.openConnection();
+		String userAgent = USER_AGENT + " failover from " + geoNamesServer;
+		if (status != 0) {
+			userAgent += " " + status;
+		}
+		conn.setRequestProperty("User-Agent", userAgent);
+		InputStream in = conn.getInputStream();
+		return in;
+	}
+
+	private static Element connectAndParse(String url)
+			throws GeoNamesException, IOException, JDOMException {
+		SAXBuilder parser = new SAXBuilder();
+		Document doc = parser.build(connect(url));
+		try {
+			Element root = rootAndCheckException(doc);
+			return root;
+		} catch (GeoNamesException geoNamesException) {
+			if (geoNamesException.getExceptionCode() == 13
+					|| (geoNamesException.getMessage() != null && geoNamesException
+							.getMessage()
+							.indexOf(
+									"canceling statement due to statement timeout") > -1)) {
+				String currentlyActiveServer = getCurrentlyActiveServer();
+				if (geoNamesServerFailover != null
+						&& !currentlyActiveServer
+								.equals(geoNamesServerFailover)) {
+					timeOfLastFailureMainServer = System.currentTimeMillis();
+					doc = parser.build(connect(url));
+					Element root = rootAndCheckException(doc);
+					return root;
+				}
+			}
+			throw geoNamesException;
+		}
+	}
+
+	private static Element rootAndCheckException(Document doc)
+			throws GeoNamesException {
+		Element root = doc.getRootElement();
+		checkException(root);
+		return root;
+	}
+
+	private static void checkException(Element root) throws GeoNamesException {
+		Element message = root.getChild("status");
+		if (message != null) {
+			int code = 0;
+			try {
+				code = Integer.parseInt(message.getAttributeValue("value"));
+			} catch (NumberFormatException numberFormatException) {
+			}
+			throw new GeoNamesException(code,
+					message.getAttributeValue("message"));
 		}
 	}
 
@@ -487,10 +554,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("code")) {
 			Element codeElement = (Element) obj;
 			PostalCode code = new PostalCode();
@@ -559,10 +623,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("code")) {
 			Element codeElement = (Element) obj;
 			PostalCode code = new PostalCode();
@@ -623,10 +684,7 @@ public class GeoNames {
 		url = addUserName(url);
 		url = addDefaultStyle(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("geoname")) {
 			Element toponymElement = (Element) obj;
 			Toponym toponym = getToponymFromElement(toponymElement);
@@ -693,10 +751,7 @@ public class GeoNames {
 		url = addUserName(url);
 		url = addDefaultStyle(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("geoname")) {
 			Element toponymElement = (Element) obj;
 			Toponym toponym = getToponymFromElement(toponymElement);
@@ -704,6 +759,39 @@ public class GeoNames {
 		}
 
 		return places;
+	}
+
+	/**
+	 * 
+	 * @param geoNameId
+	 * @param language
+	 *            - optional
+	 * @param style
+	 *            - optional
+	 * @return the toponym for the geoNameId
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public static Toponym get(int geoNameId, String language, String style)
+			throws IOException, Exception {
+		String url = "/get?";
+
+		url += "geonameId=" + geoNameId;
+
+		if (language != null) {
+			url = url + "&lang=" + language;
+		}
+
+		if (style != null) {
+			url = url + "&style=" + style;
+		} else {
+			url = addDefaultStyle(url);
+		}
+		url = addUserName(url);
+
+		Element root = connectAndParse(url);
+		Toponym toponym = getToponymFromElement(root);
+		return toponym;
 	}
 
 	public static Address findNearestAddress(double latitude, double longitude)
@@ -715,10 +803,7 @@ public class GeoNames {
 		url = url + "&lng=" + longitude;
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("address")) {
 			Element codeElement = (Element) obj;
 			Address address = new Address();
@@ -766,10 +851,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("intersection")) {
 			Element e = (Element) obj;
 			Intersection intersection = new Intersection();
@@ -817,10 +899,7 @@ public class GeoNames {
 
 		List<StreetSegment> segments = new ArrayList<StreetSegment>();
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("streetSegment")) {
 			Element e = (Element) obj;
 			StreetSegment streetSegment = new StreetSegment();
@@ -865,10 +944,7 @@ public class GeoNames {
 
 		List<StreetSegment> segments = new ArrayList<StreetSegment>();
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("streetSegment")) {
 			Element e = (Element) obj;
 			StreetSegment streetSegment = new StreetSegment();
@@ -1057,11 +1133,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
-
+		Element root = connectAndParse(url);
 		searchResult.totalResultsCount = Integer.parseInt(root
 				.getChildText("totalResultsCount"));
 		searchResult.setStyle(Style.valueOf(root.getAttributeValue("style")));
@@ -1104,11 +1176,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
-
+		Element root = connectAndParse(url);
 		searchResult.totalResultsCount = Integer.parseInt(root
 				.getChildText("totalResultsCount"));
 		searchResult.setStyle(Style.valueOf(root.getAttributeValue("style")));
@@ -1150,11 +1218,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
-
+		Element root = connectAndParse(url);
 		searchResult.totalResultsCount = Integer.parseInt(root
 				.getChildText("totalResultsCount"));
 		searchResult.setStyle(Style.valueOf(root.getAttributeValue("style")));
@@ -1199,11 +1263,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
-
+		Element root = connectAndParse(url);
 		List<Toponym> toponyms = new ArrayList<Toponym>();
 		for (Object obj : root.getChildren("geoname")) {
 			Element toponymElement = (Element) obj;
@@ -1232,30 +1292,7 @@ public class GeoNames {
 		}
 		url = url + "&tag=" + tagsCommaseparated;
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
-	}
-
-	private static Element rootAndCheckException(Document doc)
-			throws GeoNamesException {
-		Element root = doc.getRootElement();
-		checkException(root);
-		return root;
-	}
-
-	private static void checkException(Element root) throws GeoNamesException {
-		Element message = root.getChild("status");
-		if (message != null) {
-			int code = 0;
-			try {
-				code = Integer.parseInt(message.getAttributeValue("value"));
-			} catch (NumberFormatException numberFormatException) {
-			}
-			throw new GeoNamesException(code,
-					message.getAttributeValue("message"));
-		}
+		Element root = connectAndParse(url);
 	}
 
 	/**
@@ -1279,10 +1316,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("entry")) {
 			Element wikipediaArticleElement = (Element) obj;
 			WikipediaArticle wikipediaArticle = getWikipediaArticleFromElement(wikipediaArticleElement);
@@ -1313,10 +1347,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("entry")) {
 			Element wikipediaArticleElement = (Element) obj;
 			WikipediaArticle wikipediaArticle = getWikipediaArticleFromElement(wikipediaArticleElement);
@@ -1369,10 +1400,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("entry")) {
 			Element wikipediaArticleElement = (Element) obj;
 			WikipediaArticle wikipediaArticle = getWikipediaArticleFromElement(wikipediaArticleElement);
@@ -1400,7 +1428,7 @@ public class GeoNames {
 		String url = "/gtopo30?lat=" + latitude + "&lng=" + longitude;
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		String gtopo30 = in.readLine();
 		in.close();
 		return Integer.parseInt(gtopo30);
@@ -1424,7 +1452,7 @@ public class GeoNames {
 		String url = "/srtm3?lat=" + latitude + "&lng=" + longitude;
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		String srtm3 = in.readLine();
 		in.close();
 		return Integer.parseInt(srtm3);
@@ -1445,7 +1473,7 @@ public class GeoNames {
 		String url = "/srtm3?lats=" + lats + "&lngs=" + lngs;
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		for (int i = 0; i < elevation.length; i++) {
 			String srtm3 = in.readLine();
 			elevation[i] = Integer.parseInt(srtm3);
@@ -1459,7 +1487,7 @@ public class GeoNames {
 		String url = "/astergdem?lat=" + latitude + "&lng=" + longitude;
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		String astergdem = in.readLine();
 		in.close();
 		return Integer.parseInt(astergdem);
@@ -1480,7 +1508,7 @@ public class GeoNames {
 		String url = "/astergdem?lats=" + lats + "&lngs=" + lngs;
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		for (int i = 0; i < elevation.length; i++) {
 			String astergdem = in.readLine();
 			elevation[i] = Integer.parseInt(astergdem);
@@ -1521,7 +1549,7 @@ public class GeoNames {
 		}
 		url = addUserName(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				connect(url)));
+				connect(url), "UTF8"));
 		String cc = in.readLine();
 		in.close();
 		if (cc != null && cc.length() == 2) {
@@ -1548,10 +1576,7 @@ public class GeoNames {
 		url = url + "&lng=" + longitude;
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("timezone")) {
 			Element codeElement = (Element) obj;
 			Timezone timezone = new Timezone();
@@ -1604,10 +1629,7 @@ public class GeoNames {
 		url = url + "&lng=" + longitude;
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("observation")) {
 			Element weatherObservationElement = (Element) obj;
 			WeatherObservation weatherObservation = getWeatherObservationFromElement(weatherObservationElement);
@@ -1625,10 +1647,7 @@ public class GeoNames {
 		url = url + "&ICAO=" + icaoCode;
 		url = addUserName(url);
 
-		SAXBuilder parser = new SAXBuilder();
-		Document doc = parser.build(connect(url));
-
-		Element root = rootAndCheckException(doc);
+		Element root = connectAndParse(url);
 		for (Object obj : root.getChildren("observation")) {
 			Element weatherObservationElement = (Element) obj;
 			WeatherObservation weatherObservation = getWeatherObservationFromElement(weatherObservationElement);
@@ -1777,969 +1796,123 @@ public class GeoNames {
 
 
 	/**
-	 * @author marc
-	 * 
-	 */
-	public static class TextSummaryExtractor {
+	* a street address
+	* 
+	* @author Mark Thomas
+	* 
+	*/
+	public static class Address extends PostalCode {
+
+		private String street;
+
+		private String streetNumber;
+
+		private String mtfcc;
 
 		/**
-		 * extract a text summary from a wikipedia article. The wikipedia markup is
-		 * removed. The length of the summary is equal or lower the length of the
-		 * parameter. The extractor tries to end the summary at a fullstop. It stops
-		 * at a new paragraph.
-		 * 
-		 * @param pText
-		 * @param length
-		 * @return
-		 */
-		public static String extractSummary(String pText, int length) {
-			return extractSummary(pText, length, true);
+		* @return the street
+		*/
+		public String getStreet() {
+			return street;
 		}
 
-		public static String extractSummary(String pText, int length,
-				boolean stopAtParagraph) {
-			if (pText == null) {
+		/**
+		* @param street
+		*            the street to set
+		*/
+		public void setStreet(String street) {
+			this.street = street;
+		}
+
+		/**
+		* @return the streetNumber
+		*/
+		public String getStreetNumber() {
+			return streetNumber;
+		}
+
+		/**
+		* @param streetNumber
+		*            the streetNumber to set
+		*/
+		public void setStreetNumber(String streetNumber) {
+			this.streetNumber = streetNumber;
+		}
+
+		/**
+		* @return the mtfcc
+		*/
+		public String getMtfcc() {
+			return mtfcc;
+		}
+
+		/**
+		* @param mtfcc
+		*            the mtfcc to set
+		*/
+		public void setMtfcc(String mtfcc) {
+			this.mtfcc = mtfcc;
+		}
+
+	}
+
+	/**
+	* Enumeration for the GeoNames feature classes A,H,L,P,R,S,T,U,V
+	* 
+	* @author marc
+	* 
+	*/
+	public enum FeatureClass {
+		/**
+		* Administrative Boundary Features
+		*/
+		A,
+		/**
+		* Hydrographic Features
+		*/
+		H,
+		/**
+		* Area Features
+		*/
+		L,
+		/**
+		* Populated Place Features
+		*/
+		P,
+		/**
+		* Road / Railroad Features
+		*/
+		R,
+		/**
+		* Spot Features
+		*/
+		S,
+		/**
+		* Hypsographic Features
+		*/
+		T,
+		/**
+		* Undersea Features
+		*/
+		U,
+		/**
+		* Vegetation Features
+		*/
+		V;
+
+		public static FeatureClass fromValue(String value) {
+			if (value == null || "".equals(value)) {
 				return null;
 			}
-
-			// remove all wikipedia markup (paragraphs are kept)
-			//
-			StringBuilder summary = new StringBuilder();
-			int idx = 0;
-
-			// loop over all characters in input string
-			while (idx > -1 && (summary.length() < 50 + 2 * length || length == 0)
-					&& idx < pText.length()) {
-				// get next chacter
-				char c = pText.charAt(idx);
-
-				if (c == '{') {
-					// skip template and set idx to end of template
-					int endidx = skipTemplate(pText, idx);
-					// do we have an audio template?
-					if (pText.toLowerCase().indexOf("{{audio") == idx) {
-						int begLabelIdx = pText.lastIndexOf("|", endidx);
-						if (begLabelIdx > -1) {
-							String label = pText.substring(begLabelIdx + 1,
-									endidx - 2).trim();
-							summary.append(label);
-						}
-					}
-					// skip template and set idx to end of template
-					idx = endidx;
-					continue;
-				} else if (c == '<') {
-					// is it a html comment
-					if (pText.length() > idx + 1 && pText.charAt(idx + 1) == '!') {
-						// skip html comment
-						idx = skipHTMLComment(pText, idx);
-						continue;
-					} else {
-						// html element starts here, skip it, set idx to end of html
-						// element
-						idx = skipHTMLElement(pText, idx);
-						continue;
-					}
-				} else if (c == '[') {
-
-					// look ahead to see whether we have a link
-					if (pText.charAt(idx + 1) == '[') {
-						// we have two square brackets "[[" (link)
-
-						// get the end of the double square bracket
-						int endOfLink = pText.indexOf("]]", idx);
-
-						// image link ?
-						int colon = pText.indexOf(":", idx);
-						if (colon > -1 && colon < endOfLink) {
-							// image link contains a caption which might contain
-							// a link within the link
-							idx = findEndOfLink(pText, idx);
-							continue;
-						}
-
-						int beginAnchor = pText.indexOf("|", idx);
-						if (beginAnchor > -1 && beginAnchor < endOfLink) {
-							idx = beginAnchor + 1;
-						} else {
-							idx = idx + 2;
-						}
-						continue;
-					} else {
-						// next character is not a square brackets and thus a
-						// reference link to be removed
-						// get the end of the square bracket
-						int endOfLink = pText.indexOf("]", idx);
-						if (endOfLink > -1) {
-							idx = endOfLink + 1;
-							continue;
-						}
-					}
-				} else if (c == ']') {
-					// look ahead
-					if (idx + 1 < pText.length() && pText.charAt(idx + 1) == ']') {
-						idx = idx + 2;
-						continue;
-					}
-				}
-
-				summary.append(c);
-				idx++;
-			}
-
-			String textString = removeIndentAtBeginning(summary.toString());
-			// remove markup 
-			textString = removeMarkup(textString);
-			// remove empty parenthesis
-			textString = textString.replaceAll("\\([^\\w]*\\)", "");
-			// remove comma in front of parenthesis
-			textString = textString.replaceAll("\\([, ]*", "(");
-			textString = textString.replaceAll("[, ]*\\)", ")");
-
-			textString = removeWhiteSpace(
-					textString.replaceAll("\r", " ").replaceAll("\n", " ")
-							.replaceAll("\t", " ")).trim();
-			textString = removeBold(textString);
-			textString = removeItalic(textString);
-			// remove punctuation in the beginning (erroneous templates)
-			textString = textString.replaceFirst("^([\\p{Punct} ])*", "");
-
-			// convert 'non breaking html spaces' into blanks. But preserve them
-			// (don't remove white space)
-			textString = textString.replaceAll("&nbsp;", " ");
-			textString = textString.replaceAll("\\( ", "(");
-			textString = textString.replaceAll(" \\)", ")");
-
-			// find full stop near length of text
-			int endOfTextIdx = textString.length();
-
-			if (stopAtParagraph) {
-				// only look at first paragraph for summary
-				int paragraph = textString.indexOf("==");
-				if (paragraph > 10) {
-					endOfTextIdx = paragraph;
-				}
-			}
-
-			//
-			if (endOfTextIdx < 20 || endOfTextIdx > length) {
-				endOfTextIdx = textString.lastIndexOf(".", length);
-				if (endOfTextIdx < 0.7 * length) {
-					endOfTextIdx = textString.lastIndexOf(" ", length);
-				}
-			}
-
-			// add elipsis if we have shortened the article
-			if (endOfTextIdx > -1 && endOfTextIdx < textString.length()) {
-				textString = textString.substring(0, endOfTextIdx) + " (...)";
-			}
-
-			// trim trailing spaces and return
-			return textString.trim();
-		}
-
-		/**
-		 * skips templates in wikipedia markup. Templates are enclosed within braces
-		 * {}. There might be nested templates within an other template.
-		 * 
-		 * @param pText
-		 *            : the wikipedia text with templates
-		 * @param pIdx
-		 *            , pos in text to start with, MUST be a {
-		 * @return the idx into the text where the template ends, or the last
-		 *         character in the text if it does not properly end.
-		 */
-		static int skipTemplate(String pText, int pIdx) {
-			// make sure we start with opening braces
-			if (pText.charAt(pIdx) != '{') {
-				return pIdx;
-			}
-
-			// counter for the braces we have opened, braces might be recursive
-			// we use an iterative implementation, since it is a tiny little bit
-			// faster
-			int numOpenings = 1;
-			// start with the next character
-			int idx = pIdx + 1;
-			// loop over the text starting from the next character till the end of
-			// the template or the end of the text
-			while (numOpenings > 0 && pText.length() > idx) {
-				if (pText.charAt(idx) == '{') {
-					numOpenings++;
-				} else if (pText.charAt(idx) == '}') {
-					numOpenings--;
-				}
-				idx++;
-			}
-			return idx;
-		}
-
-		/**
-		 * @param pText
-		 * @param pIdx
-		 *            , pos in text to start with, MUST be a {
-		 * @return
-		 */
-		static int skipHTMLElement(String pText, int pIdx) {
-			if (pText.charAt(pIdx) != '<') {
-				return pIdx;
-			}
-
-			int numOpenings = 1;
-			int idx = pIdx + 1;
-			while (numOpenings > 0 && pText.length() > idx) {
-				if (pText.charAt(idx) == '<') {
-					numOpenings++;
-				} else if (pText.charAt(idx) == '>') {
-					numOpenings--;
-				}
-				idx++;
-			}
-			return idx;
-		}
-
-	/**
-		 * @param pText
-		 * @param pIdx,
-		 *            pos in text to start with, MUST be a '<'
-		 * @return
-		 */
-		static int skipHTMLComment(String pText, int pIdx) {
-			if (pText.charAt(pIdx) != '<' && pText.charAt(pIdx + 1) != '!') {
-				return pIdx;
-			}
-
-			int idx = pIdx;
-			while ((idx = pText.indexOf('-', idx)) > -1) {
-				if (pText.length() < idx + 2) {
-					return pText.length();
-				}
-				if (pText.charAt(idx) == '-' && pText.charAt(idx + 1) == '-'
-						&& pText.charAt(idx + 2) == '>') {
-					return idx + 3;
-				}
-				idx++;
-			}
-			return idx;
-		}
-
-		private static String removeIndentAtBeginning(String pText) {
-			pText = pText.trim();
-			if (pText.startsWith(":")) {
-				int lineFeed = pText.indexOf("\n");
-				if (lineFeed > -1) {
-					pText = pText.substring(lineFeed + 1);
-				} else {
-					// we may already have removed the linefeed
-					// check for italics
-					if (pText.startsWith(":''")) {
-						int italic = pText.indexOf("''", 3);
-						if (italic > -1) {
-							pText = pText.substring(italic + 2);
-						}
-					}
-				}
-			}
-			return pText;
-		}
-
-		private static int findEndOfLink(String pText, int pIdx) {
-			int end = pText.indexOf("]]", pIdx);
-			if (end == -1) {
-				return pIdx;
-			}
-
-			int idx = pIdx;
-			int openingIdx = pText.indexOf("[[", idx + 2);
-			while (openingIdx > -1 && openingIdx < end) {
-				idx = end;
-				end = pText.indexOf("]]", end + 2);
-				openingIdx = pText.indexOf("[[", idx);
-			}
-			if (end != -1) {
-				idx = end;
-			}
-			return idx;
-		}
-
-		/**
-		 * removes sequences of whitespace and keeps only one whitespace character
-		 * 
-		 * @param pString
-		 * @return
-		 */
-		public static String removeWhiteSpace(String pString) {
-			StringBuffer buf = new StringBuffer();
-			char[] chars = pString.toCharArray();
-			int counter = 0;
-			for (int i = 0; i < chars.length; i++) {
-				if (chars[i] == ' ') {
-					if (counter == 0) {
-						buf.append(chars[i]);
-					}
-					counter++;
-				} else {
-					buf.append(chars[i]);
-					counter = 0;
-				}
-			}
-			return buf.toString();
-		}
-
-		public static String removeBold(String pString) {
-			return pString.replaceAll("'''", "");
-		}
-
-		public static String removeItalic(String pString) {
-			return pString.replaceAll("''", "");
-		}
-
-		public static String removeMarkup(String pString) {
-			String newString = pString;
-			String[] terms = { "__NOTOC__" };
-			for (String term : terms) {
-				newString = newString.replaceAll(term, "");
-			}
-			return newString;
-		}
-
-	}
-
-	
-	/**
-	 * @author marc
-	 * @since 16.02.2011
-	 * 
-	 */
-	public static class DistanceOrder implements Comparator<WikipediaArticle> {
-		private double latitude;
-		private double longitude;
-
-		public DistanceOrder(double pLat, double pLng) {
-			latitude = pLat;
-			longitude = pLng;
-		}
-
-		public int compare(WikipediaArticle o1, WikipediaArticle o2) {
-			double dist1 = dist(o1);
-			double dist2 = dist(o2);
-			return Double.compare(dist1, dist2);
-		}
-
-		private double dist(WikipediaArticle o) {
-			return Distance.distanceKM(latitude, longitude, o.getLatitude(), o
-					.getLongitude());
-		}
-
-	}
-
-
-	/**
-	 * Distance calculations.
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static class Distance {
-
-		/**
-		 * mean radius = 6372.0
-		 * 
-		 * The Earth's equatorial radius = 6335.437 km.
-		 * 
-		 * The Earth's polar radius = 6399.592 km.
-		 * 
-		 * 
-		 */
-		public static final double EARTH_RADIUS_KM = 6372.0;
-
-		/**
-		 * statute miles
-		 */
-		public static final double EARTH_RADIUS_MILES = 3963.0;
-
-		/**
-		 * http://mathworld.wolfram.com/GreatCircle.html
-		 * 
-		 * and
-		 * 
-		 * http://www.mathforum.com/library/drmath/view/51711.html
-		 * 
-		 * @return
-		 */
-		public static double distance(double lat1, double lng1, double lat2,
-				double lng2, char unit, int numberOfDigits) {
-			double a1 = Math.toRadians(lat1);
-			double b1 = Math.toRadians(lng1);
-			double a2 = Math.toRadians(lat2);
-			double b2 = Math.toRadians(lng2);
-			double d = Math.acos(Math.cos(a1) * Math.cos(b1) * Math.cos(a2)
-					* Math.cos(b2) + Math.cos(a1) * Math.sin(b1) * Math.cos(a2)
-					* Math.sin(b2) + Math.sin(a1) * Math.sin(a2));
-
-			double dist = 0;
-			if (unit == 'M') {
-				dist = d * EARTH_RADIUS_MILES;
-			} else {
-				dist = d * EARTH_RADIUS_KM;
-			}
-
-			if (Double.isNaN(dist)) {
-				// use pytagoras for very small distances,
-				dist = Math.sqrt(Math.pow(Math.abs(lat1 - lat2), 2)
-						+ Math.pow(Math.abs(lng1 - lng2), 2));
-				// as rule of thumb multiply with 110km =1 degree
-				if (unit == 'M') {
-					dist *= 69;
-				} else {
-					dist *= 110;
-				}
-			}
-
-			if (numberOfDigits == 0) {
-				dist = (int) dist;
-			} else if (numberOfDigits > 0) {
-				double factor = Math.pow(10, numberOfDigits);
-				dist = Math.floor(dist * factor) / factor;
-			}
-			return dist;
-		}
-
-		public static double distanceKM(double lat1, double lng1, double lat2,
-				double lng2) {
-			return distance(lat1, lng1, lat2, lng2, 'K', 3);
-		}
-
-		public static double distanceMiles(double lat1, double lng1, double lat2,
-				double lng2) {
-			return distance(lat1, lng1, lat2, lng2, 'M', 3);
+			return valueOf(value);
 		}
 	}
 
-
 	/**
-	 * compass bearing from the first point to the second point in degrees.
-	 * 
-	 * @author Marc Wick
-	 */
-	public static class Bearing {
-
-		/**
-		 * Returns the direction from the first point to the second point in
-		 * degrees. The direction is the clockwise angle between the magnetic north
-		 * and the direction from point1 to point2
-		 * 
-		 * @param lat1
-		 * @param lng1
-		 * @param lat2
-		 * @param lng2
-		 * @return
-		 */
-		// http://www.movable-type.co.uk/scripts/latlong.html
-		public static double calculateBearing(double lat1, double lng1,
-				double lat2, double lng2) {
-			double dLon = toRadians(lng2 - lng1);
-			lat1 = toRadians(lat1);
-			lat2 = toRadians(lat2);
-			double y = sin(dLon) * cos(lat2);
-			double x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
-			double brng = toDegrees(atan2(y, x));
-			return (brng + 360) % 360;
-		}
-	}
-
-
-
-	/**
-	 * a wikipedia article
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static class WikipediaArticle {
-
-		private String language;
-
-		private String title;
-
-		private String summary;
-
-		private String wikipediaUrl;
-
-		private String feature;
-
-		private int population;
-
-		private Integer elevation;
-
-		private double latitude;
-
-		private double longitude;
-
-		private String thumbnailImg;
-
-		private int rank;
-
-		/**
-		 * @return Returns the elevation.
-		 */
-		public Integer getElevation() {
-			return elevation;
-		}
-
-		/**
-		 * @param elevation
-		 *            The elevation to set.
-		 */
-		public void setElevation(int elevation) {
-			this.elevation = elevation;
-		}
-
-		/**
-		 * @return Returns the feature.
-		 */
-		public String getFeature() {
-			return feature;
-		}
-
-		/**
-		 * @param feature
-		 *            The feature to set.
-		 */
-		public void setFeature(String feature) {
-			this.feature = feature;
-		}
-
-		/**
-		 * @return Returns the language.
-		 */
-		public String getLanguage() {
-			return language;
-		}
-
-		/**
-		 * @param language
-		 *            The language to set.
-		 */
-		public void setLanguage(String language) {
-			this.language = language;
-		}
-
-		/**
-		 * @return Returns the latitude.
-		 */
-		public double getLatitude() {
-			return latitude;
-		}
-
-		/**
-		 * @param latitude
-		 *            The latitude to set.
-		 */
-		public void setLatitude(double latitude) {
-			this.latitude = latitude;
-		}
-
-		/**
-		 * @return Returns the longitude.
-		 */
-		public double getLongitude() {
-			return longitude;
-		}
-
-		/**
-		 * @param longitude
-		 *            The longitude to set.
-		 */
-		public void setLongitude(double longitude) {
-			this.longitude = longitude;
-		}
-
-		/**
-		 * @return Returns the population.
-		 */
-		public int getPopulation() {
-			return population;
-		}
-
-		/**
-		 * @param population
-		 *            The population to set.
-		 */
-		public void setPopulation(int population) {
-			this.population = population;
-		}
-
-		/**
-		 * @return Returns the summary.
-		 */
-		public String getSummary() {
-			return summary;
-		}
-
-		/**
-		 * @param summary
-		 *            The summary to set.
-		 */
-		public void setSummary(String summary) {
-			this.summary = summary;
-		}
-
-		/**
-		 * @return Returns the title.
-		 */
-		public String getTitle() {
-			return title;
-		}
-
-		/**
-		 * @param title
-		 *            The title to set.
-		 */
-		public void setTitle(String title) {
-			this.title = title;
-		}
-
-		/**
-		 * @return Returns the wikipediaUrl.
-		 */
-		public String getWikipediaUrl() {
-			if (wikipediaUrl == null || GeoNames.isAndroid()) {
-				String urlTitle = title.replace(' ', '_');
-				try {
-					urlTitle = URLEncoder.encode(urlTitle, "UTF8");
-				} catch (UnsupportedEncodingException ex) {
-				}
-				String lang = language;
-				if (GeoNames.isAndroid()) {
-					lang += ".m";
-				}
-				return "http://" + lang + ".wikipedia.org/wiki/" + urlTitle;
-			}
-			return wikipediaUrl;
-		}
-
-		/**
-		 * @param wikipediaUrl
-		 *            The wikipediaUrl to set.
-		 */
-		public void setWikipediaUrl(String wikipediaURL) {
-			this.wikipediaUrl = wikipediaURL;
-		}
-
-		/**
-		 * @return the thumbnailImg
-		 */
-		public String getThumbnailImg() {
-			return thumbnailImg;
-		}
-
-		/**
-		 * @param thumbnailImg
-		 *            the thumbnailImg to set
-		 */
-		public void setThumbnailImg(String thumbnailImg) {
-			this.thumbnailImg = thumbnailImg;
-		}
-
-		/**
-		 * @return the rank
-		 */
-		public int getRank() {
-			return rank;
-		}
-
-		/**
-		 * @param rank
-		 *            the rank to set
-		 */
-		public void setRank(int rank) {
-			this.rank = rank;
-		}
-
-		public final static Comparator ELEVATION_ORDER = new Comparator<WikipediaArticle>() {
-			public int compare(WikipediaArticle o1, WikipediaArticle o2) {
-				return Double.compare(o2.elevation, o1.elevation);
-			}
-		};
-
-		public final static Comparator RANK_ORDER = new Comparator<WikipediaArticle>() {
-			public int compare(WikipediaArticle o1, WikipediaArticle o2) {
-				return Double.compare(o2.rank, o1.rank);
-			}
-		};
-	}
-
-
-	/**
-	 * @author marc
-	 * @since 25.11.2010
-	 * 
-	 */
-	public static class WeatherObservation {
-		private String observation;
-		private Date observationTime;
-		private String stationName;
-		private String icaoCode;
-		private String countryCode;
-		private Integer elevation;
-		private double latitude;
-		private double longitude;
-		private double temperature;
-		private double dewPoint;
-		private double humidity;
-		private String clouds;
-		private String weatherCondition;
-		private String windSpeed;
-
-		/**
-		 * @return the observation
-		 */
-		public String getObservation() {
-			return observation;
-		}
-
-		/**
-		 * @param observation
-		 *            the observation to set
-		 */
-		public void setObservation(String observation) {
-			this.observation = observation;
-		}
-
-		/**
-		 * @return the observationTime
-		 */
-		public Date getObservationTime() {
-			return observationTime;
-		}
-
-		/**
-		 * @param observationTime
-		 *            the observationTime to set
-		 */
-		public void setObservationTime(Date observationTime) {
-			this.observationTime = observationTime;
-		}
-
-		/**
-		 * @return the stationName
-		 */
-		public String getStationName() {
-			return stationName;
-		}
-
-		/**
-		 * @param stationName
-		 *            the stationName to set
-		 */
-		public void setStationName(String stationName) {
-			this.stationName = stationName;
-		}
-
-		/**
-		 * @return the icaoCode
-		 */
-		public String getIcaoCode() {
-			return icaoCode;
-		}
-
-		/**
-		 * @param icaoCode
-		 *            the icaoCode to set
-		 */
-		public void setIcaoCode(String icaoCode) {
-			this.icaoCode = icaoCode;
-		}
-
-		/**
-		 * @return the countryCode
-		 */
-		public String getCountryCode() {
-			return countryCode;
-		}
-
-		/**
-		 * @param countryCode
-		 *            the countryCode to set
-		 */
-		public void setCountryCode(String countryCode) {
-			this.countryCode = countryCode;
-		}
-
-		/**
-		 * @return the elevation
-		 */
-		public Integer getElevation() {
-			return elevation;
-		}
-
-		/**
-		 * @param elevation
-		 *            the elevation to set
-		 */
-		public void setElevation(Integer elevation) {
-			this.elevation = elevation;
-		}
-
-		/**
-		 * @return the latitude
-		 */
-		public double getLatitude() {
-			return latitude;
-		}
-
-		/**
-		 * @param latitude
-		 *            the latitude to set
-		 */
-		public void setLatitude(double latitude) {
-			this.latitude = latitude;
-		}
-
-		/**
-		 * @return the longitude
-		 */
-		public double getLongitude() {
-			return longitude;
-		}
-
-		/**
-		 * @param longitude
-		 *            the longitude to set
-		 */
-		public void setLongitude(double longitude) {
-			this.longitude = longitude;
-		}
-
-		/**
-		 * @return the temperature
-		 */
-		public double getTemperature() {
-			return temperature;
-		}
-
-		/**
-		 * @param temperature
-		 *            the temperature to set
-		 */
-		public void setTemperature(double temperature) {
-			this.temperature = temperature;
-		}
-
-		/**
-		 * @return the dewPoint
-		 */
-		public double getDewPoint() {
-			return dewPoint;
-		}
-
-		/**
-		 * @param dewPoint
-		 *            the dewPoint to set
-		 */
-		public void setDewPoint(double dewPoint) {
-			this.dewPoint = dewPoint;
-		}
-
-		/**
-		 * @return the humidity
-		 */
-		public double getHumidity() {
-			return humidity;
-		}
-
-		/**
-		 * @param humidity
-		 *            the humidity to set
-		 */
-		public void setHumidity(double humidity) {
-			this.humidity = humidity;
-		}
-
-		/**
-		 * @return the clouds
-		 */
-		public String getClouds() {
-			return clouds;
-		}
-
-		/**
-		 * @param clouds
-		 *            the clouds to set
-		 */
-		public void setClouds(String clouds) {
-			this.clouds = clouds;
-		}
-
-		/**
-		 * @return the weatherCondition
-		 */
-		public String getWeatherCondition() {
-			return weatherCondition;
-		}
-
-		/**
-		 * @param weatherCondition
-		 *            the weatherCondition to set
-		 */
-		public void setWeatherCondition(String weatherCondition) {
-			this.weatherCondition = weatherCondition;
-		}
-
-		/**
-		 * @return the windSpeed
-		 */
-		public String getWindSpeed() {
-			return windSpeed;
-		}
-
-		/**
-		 * @param windSpeed
-		 *            the windSpeed to set
-		 */
-		public void setWindSpeed(String windSpeed) {
-			this.windSpeed = windSpeed;
-		}
-
-	}
-
-	
-
-	/**
-	 * is thrown when the search criteria is initialized with obviously invalid parameters,
-	 * such as an invalid country code.
-	 * 
-	 * @author marc
-	 * 
-	 */
-	public static class InvalidParameterException extends GeoNamesException {
-
-		public InvalidParameterException(String msg) {
-			super(msg);
-		}
-
-	}
-
-	/**
-	 * Is thrown when trying to access a field that has not been set as the style
-	 * for the request was not sufficiently verbose to return this information.
-	 * 
-	 * @author marc
-	 * 
-	 */
-	public static class InsufficientStyleException extends GeoNamesException {
-		public InsufficientStyleException(String msg) {
-			super(msg);
-		}
-	}
-
-
-	/**
-	 * @author marc
-	 * @since 20.01.2011
-	 * 
-	 */
+	* @author marc
+	* @since 20.01.2011
+	* 
+	*/
 	public static class GeoNamesException extends Exception {
 
 		private static final long serialVersionUID = 746586385626445380L;
@@ -2758,659 +1931,40 @@ public class GeoNames {
 		}
 
 		/**
-		 * @return the message
-		 */
+		* @return the message
+		*/
 		public String getMessage() {
 			return message;
 		}
 
 		/**
-		 * @return the exceptionCode
-		 */
+		* @return the exceptionCode
+		*/
 		public int getExceptionCode() {
 			return exceptionCode;
 		}
 
 	}
-	
-	/**
-	 * Enumeration for the GeoNames feature classes A,H,L,P,R,S,T,U,V
-	 * 
-	 * @author marc
-	 * 
-	 */
-	public static enum FeatureClass {
-		/**
-		 * Administrative Boundary Features
-		 */
-		A,
-		/**
-		 * Hydrographic Features
-		 */
-		H,
-		/**
-		 * Area Features
-		 */
-		L,
-		/**
-		 * Populated Place Features
-		 */
-		P,
-		/**
-		 * Road / Railroad Features
-		 */
-		R,
-		/**
-		 * Spot Features
-		 */
-		S,
-		/**
-		 * Hypsographic Features
-		 */
-		T,
-		/**
-		 * Undersea Features
-		 */
-		U,
-		/**
-		 * Vegetation Features
-		 */
-		V;
 
-		public static FeatureClass fromValue(String value) {
-			if (value == null || "".equals(value)) {
-				return null;
-			}
-			return valueOf(value);
+	/**
+	* Is thrown when trying to access a field that has not been set as the style
+	* for the request was not sufficiently verbose to return this information.
+	* 
+	* @author marc
+	* 
+	*/
+	public static class InsufficientStyleException extends GeoNamesException {
+		public InsufficientStyleException(String msg) {
+			super(msg);
 		}
 	}
 
 	/**
-	 * search criteria for web services returning toponyms.
-	 * 
-	 * The string parameters do not have to be utf8 encoded. The encoding is done
-	 * transparently in the call to the web service.
-	 * 
-	 * The main parameter for the search over all fields is the 'q' parameter.
-	 * 
-	 * @see GeoNames#search
-	 * 
-	 * @see <a href="http://www.geonames.org/export/geonames-search.html">search
-	 *      webservice documentation< /a>
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static class ToponymSearchCriteria {
-
-		private String q;
-
-		private String countryCode;
-
-		private String countryBias;
-
-		private String continentCode;
-
-		private String name;
-
-		private String nameEquals;
-
-		private String nameStartsWith;
-
-		private String tag;
-
-		private String language;
-
-		private Style style;
-
-		private FeatureClass featureClass;
-
-		private String[] featureCodes;
-
-		private String adminCode1;
-
-		private String adminCode2;
-
-		private String adminCode3;
-
-		private String adminCode4;
-
-		private int maxRows;
-
-		private int startRow;
-
-		/**
-		 * @return Returns the ISO 3166-1-alpha-2 countryCode.
-		 */
-		public String getCountryCode() {
-			return countryCode;
-		}
-
-		/**
-		 * @param countryCode
-		 *            The ISO 3166-1-alpha-2 countryCode to set.
-		 */
-		public void setCountryCode(String countryCode)
-				throws InvalidParameterException {
-			if (countryCode != null && countryCode.length() != 2) {
-				throw new InvalidParameterException("invalid country code "
-						+ countryCode);
-			}
-			this.countryCode = countryCode;
-		}
-
-		/**
-		 * @return the countryBias
-		 */
-		public String getCountryBias() {
-			return countryBias;
-		}
-
-		/**
-		 * @param countryBias
-		 *            the countryBias to set
-		 */
-		public void setCountryBias(String countryBias) {
-			this.countryBias = countryBias;
-		}
-
-		/**
-		 * @return the continentCode
-		 */
-		public String getContinentCode() {
-			return continentCode;
-		}
-
-		/**
-		 * @param continentCode
-		 *            the continentCode to set
-		 */
-		public void setContinentCode(String continentCode) {
-			this.continentCode = continentCode;
-		}
-
-		/**
-		 * @return Returns the nameEquals.
-		 */
-		public String getNameEquals() {
-			return nameEquals;
-		}
-
-		/**
-		 * @param nameEquals
-		 *            The nameEquals to set.
-		 */
-		public void setNameEquals(String exactName) {
-			this.nameEquals = exactName;
-		}
-
-		/**
-		 * @return Returns the featureCodes.
-		 */
-		public String[] getFeatureCodes() {
-			return featureCodes;
-		}
-
-		/**
-		 * @param featureCodes
-		 *            The featureCodes to set.
-		 */
-		public void setFeatureCodes(String[] featureCodes) {
-			this.featureCodes = featureCodes;
-		}
-
-		public void setFeatureCode(String featureCode) {
-			this.featureCodes = new String[] { featureCode };
-		}
-
-		/**
-		 * @return Returns the language.
-		 */
-		public String getLanguage() {
-			return language;
-		}
-
-		/**
-		 * @param language
-		 *            The language to set.
-		 */
-		public void setLanguage(String language) {
-			this.language = language;
-		}
-
-		/**
-		 * @return Returns the maxRows.
-		 */
-		public int getMaxRows() {
-			return maxRows;
-		}
-
-		/**
-		 * @param maxRows
-		 *            The maxRows to set.
-		 */
-		public void setMaxRows(int maxRows) {
-			this.maxRows = maxRows;
-		}
-
-		/**
-		 * @return Returns the name.
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * search over the name field only.
-		 * 
-		 * @param name
-		 *            The name to set.
-		 */
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		/**
-		 * @return Returns the q.
-		 */
-		public String getQ() {
-			return q;
-		}
-
-		/**
-		 * The main search term. The search is executed over all fields (place name,
-		 * country name, admin names, etc)
-		 * 
-		 * @param q
-		 *            The q to set.
-		 */
-		public void setQ(String q) {
-			this.q = q;
-		}
-
-		/**
-		 * @return Returns the startRow.
-		 */
-		public int getStartRow() {
-			return startRow;
-		}
-
-		/**
-		 * @param startRow
-		 *            The startRow to set.
-		 */
-		public void setStartRow(int startRow) {
-			this.startRow = startRow;
-		}
-
-		/**
-		 * @return Returns the style.
-		 */
-		public Style getStyle() {
-			return style;
-		}
-
-		/**
-		 * @param style
-		 *            The style to set.
-		 */
-		public void setStyle(Style style) {
-			this.style = style;
-		}
-
-		/**
-		 * @return Returns the tag.
-		 */
-		public String getTag() {
-			return tag;
-		}
-
-		/**
-		 * @param tag
-		 *            The tag to set.
-		 */
-		public void setTag(String tag) {
-			this.tag = tag;
-		}
-
-		/**
-		 * @return Returns the nameStartsWith.
-		 */
-		public String getNameStartsWith() {
-			return nameStartsWith;
-		}
-
-		/**
-		 * @param nameStartsWith
-		 *            The nameStartsWith to set.
-		 */
-		public void setNameStartsWith(String nameStartsWith) {
-			this.nameStartsWith = nameStartsWith;
-		}
-
-		/**
-		 * @return the featureClass
-		 */
-		public FeatureClass getFeatureClass() {
-			return featureClass;
-		}
-
-		/**
-		 * @param featureClass
-		 *            the featureClass to set
-		 */
-		public void setFeatureClass(FeatureClass featureClass) {
-			this.featureClass = featureClass;
-		}
-
-		/**
-		 * @return the adminCode1
-		 */
-		public String getAdminCode1() {
-			return adminCode1;
-		}
-
-		/**
-		 * @param adminCode1
-		 *            the adminCode1 to set
-		 */
-		public void setAdminCode1(String adminCode1) {
-			this.adminCode1 = adminCode1;
-		}
-
-		/**
-		 * @return the adminCode2
-		 */
-		public String getAdminCode2() {
-			return adminCode2;
-		}
-
-		/**
-		 * @param adminCode2
-		 *            the adminCode2 to set
-		 */
-		public void setAdminCode2(String adminCode2) {
-			this.adminCode2 = adminCode2;
-		}
-
-		/**
-		 * @return the adminCode3
-		 */
-		public String getAdminCode3() {
-			return adminCode3;
-		}
-
-		/**
-		 * @param adminCode3
-		 *            the adminCode3 to set
-		 */
-		public void setAdminCode3(String adminCode3) {
-			this.adminCode3 = adminCode3;
-		}
-
-		public String getAdminCode4() {
-			return adminCode4;
-		}
-
-		public void setAdminCode4(String adminCode4) {
-			this.adminCode4 = adminCode4;
-		}
-
-	}
-
-
-
-	/**
-	 * search criteria for web services returning postal codes
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static class PostalCodeSearchCriteria {
-
-		private String postalCode;
-
-		private String placeName;
-
-		private String adminCode1;
-
-		private String countryCode;
-
-		private String countryBias;
-
-		private Double latitude;
-
-		private Double longitude;
-
-		private double radius;
-
-		private Style style;
-
-		private int maxRows;
-
-		private int startRow;
-
-		private boolean isOROperator = false;
-
-		private Boolean isReduced;
-
-		/**
-		 * @return Returns the style.
-		 */
-		public Style getStyle() {
-			return style;
-		}
-
-		/**
-		 * @param style
-		 *            The style to set.
-		 */
-		public void setStyle(Style style) {
-			this.style = style;
-		}
-
-		/**
-		 * @return Returns the ISO 3166-1-alpha-2 countryCode.
-		 */
-		public String getCountryCode() {
-			return countryCode;
-		}
-
-		/**
-		 * @param countryCode
-		 *            The ISO 3166-1-alpha-2 countryCode to set.
-		 */
-		public void setCountryCode(String countryCode)
-				throws InvalidParameterException {
-			if (countryCode != null && countryCode.length() != 2) {
-				throw new InvalidParameterException("invalid country code "
-						+ countryCode);
-			}
-			this.countryCode = countryCode;
-		}
-
-		/**
-		 * @return Returns the latitude.
-		 */
-		public Double getLatitude() {
-			return latitude;
-		}
-
-		/**
-		 * @param latitude
-		 *            The latitude to set.
-		 */
-		public void setLatitude(double latitude) throws InvalidParameterException {
-			if (latitude > 90.0 || latitude < -90.0) {
-				throw new InvalidParameterException("invalid latitude " + latitude);
-			}
-			this.latitude = new Double(latitude);
-		}
-
-		/**
-		 * @return Returns the longitude.
-		 */
-		public Double getLongitude() {
-			return longitude;
-		}
-
-		/**
-		 * @param longitude
-		 *            The longitude to set.
-		 */
-		public void setLongitude(double longitude) throws InvalidParameterException {
-			if (longitude > 180.0 || longitude < -180.0) {
-				throw new InvalidParameterException("invalid longitude "
-						+ longitude);
-			}
-			this.longitude = new Double(longitude);
-		}
-
-		/**
-		 * @return Returns the placeName.
-		 */
-		public String getPlaceName() {
-			return placeName;
-		}
-
-		/**
-		 * @param placeName
-		 *            The placeName to set.
-		 */
-		public void setPlaceName(String placeName) {
-			this.placeName = placeName;
-		}
-
-		/**
-		 * @return Returns the postalCode.
-		 */
-		public String getPostalCode() {
-			return postalCode;
-		}
-
-		/**
-		 * @param postalCode
-		 *            The postalCode to set.
-		 */
-		public void setPostalCode(String postalCode) {
-			this.postalCode = postalCode;
-		}
-
-		/**
-		 * @return the maxRows
-		 */
-		public int getMaxRows() {
-			return maxRows;
-		}
-
-		/**
-		 * @param maxRows
-		 *            the maxRows to set
-		 */
-		public void setMaxRows(int maxRows) {
-			this.maxRows = maxRows;
-		}
-
-		/**
-		 * @param isOROperator
-		 *            the isOROperator to set
-		 */
-		public void setOROperator(boolean isOROperator) {
-			this.isOROperator = isOROperator;
-		}
-
-		/**
-		 * @return the isOROperator
-		 */
-		public boolean isOROperator() {
-			return isOROperator;
-		}
-
-		/**
-		 * @return the adminCode1
-		 */
-		public String getAdminCode1() {
-			return adminCode1;
-		}
-
-		/**
-		 * @param adminCode1
-		 *            the adminCode1 to set
-		 */
-		public void setAdminCode1(String adminCode1) {
-			this.adminCode1 = adminCode1;
-		}
-
-		/**
-		 * the radius in km to be used for reverse geocoding.
-		 * 
-		 * @param radius
-		 *            the radius to set
-		 */
-		public void setRadius(double radius) {
-			this.radius = radius;
-		}
-
-		/**
-		 * @return the radius
-		 */
-		public double getRadius() {
-			return radius;
-		}
-
-		/**
-		 * @return the countryBias
-		 */
-		public String getCountryBias() {
-			return countryBias;
-		}
-
-		/**
-		 * @param countryBias
-		 *            the countryBias to set
-		 */
-		public void setCountryBias(String countryBias) {
-			this.countryBias = countryBias;
-		}
-
-		/**
-		 * @return the startRow
-		 */
-		public int getStartRow() {
-			return startRow;
-		}
-
-		/**
-		 * @param startRow
-		 *            the startRow to set
-		 */
-		public void setStartRow(int startRow) {
-			this.startRow = startRow;
-		}
-
-		/**
-		 * @return the isReduced
-		 */
-		public Boolean isReduced() {
-			return isReduced;
-		}
-
-		/**
-		 * @param isReduced
-		 *            the isReduced to set
-		 */
-		public void setIsReduced(Boolean isReduced) {
-			this.isReduced = isReduced;
-		}
-
-	}
-
-	/**
-	 * an intersection between two streets
-	 * 
-	 * @author Mark Thomas
-	 * 
-	 */
+	* an intersection between two streets
+	* 
+	* @author Mark Thomas
+	* 
+	*/
 	public static class Intersection {
 		private String street2;
 
@@ -3506,13 +2060,27 @@ public class GeoNames {
 
 	}
 
+	/**
+	* is thrown when the search criteria is initialized with obviously invalid parameters,
+	* such as an invalid country code.
+	* 
+	* @author marc
+	* 
+	*/
+	public static class InvalidParameterException extends GeoNamesException {
+
+		public InvalidParameterException(String msg) {
+			super(msg);
+		}
+
+	}
 
 	/**
-	 * a postal code
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
+	* a postal code
+	* 
+	* @author marc@geonames
+	* 
+	*/
 	public static class PostalCode {
 
 		private String postalCode;
@@ -3536,169 +2104,434 @@ public class GeoNames {
 		private double distance;
 
 		/**
-		 * @return Returns the distance.
-		 */
+		* @return Returns the distance.
+		*/
 		public double getDistance() {
 			return distance;
 		}
 
 		/**
-		 * @param distance
-		 *            The distance to set.
-		 */
+		* @param distance
+		*            The distance to set.
+		*/
 		public void setDistance(double distance) {
 			this.distance = distance;
 		}
 
 		/**
-		 * @return Returns the adminCode1.
-		 */
+		* @return Returns the adminCode1.
+		*/
 		public String getAdminCode1() {
 			return adminCode1;
 		}
 
 		/**
-		 * @param adminCode1
-		 *            The adminCode1 to set.
-		 */
+		* @param adminCode1
+		*            The adminCode1 to set.
+		*/
 		public void setAdminCode1(String adminCode1) {
 			this.adminCode1 = adminCode1;
 		}
 
 		/**
-		 * @return Returns the adminCode2.
-		 */
+		* @return Returns the adminCode2.
+		*/
 		public String getAdminCode2() {
 			return adminCode2;
 		}
 
 		/**
-		 * @param adminCode2
-		 *            The adminCode2 to set.
-		 */
+		* @param adminCode2
+		*            The adminCode2 to set.
+		*/
 		public void setAdminCode2(String adminCode2) {
 			this.adminCode2 = adminCode2;
 		}
 
 		/**
-		 * @return Returns the adminName1.
-		 */
+		* @return Returns the adminName1.
+		*/
 		public String getAdminName1() {
 			return adminName1;
 		}
 
 		/**
-		 * @param adminName1
-		 *            The adminName1 to set.
-		 */
+		* @param adminName1
+		*            The adminName1 to set.
+		*/
 		public void setAdminName1(String adminName1) {
 			this.adminName1 = adminName1;
 		}
 
 		/**
-		 * @return Returns the adminName2.
-		 */
+		* @return Returns the adminName2.
+		*/
 		public String getAdminName2() {
 			return adminName2;
 		}
 
 		/**
-		 * @param adminName2
-		 *            The adminName2 to set.
-		 */
+		* @param adminName2
+		*            The adminName2 to set.
+		*/
 		public void setAdminName2(String adminName2) {
 			this.adminName2 = adminName2;
 		}
 
 		/**
-		 * @return Returns the ISO 3166-1-alpha-2 countryCode.
-		 */
+		* @return Returns the ISO 3166-1-alpha-2 countryCode.
+		*/
 		public String getCountryCode() {
 			return countryCode;
 		}
 
 		/**
-		 * @param countryCode
-		 *            The ISO 3166-1-alpha-2 countryCode to set.
-		 */
+		* @param countryCode
+		*            The ISO 3166-1-alpha-2 countryCode to set.
+		*/
 		public void setCountryCode(String countryCode) {
 			this.countryCode = countryCode;
 		}
 
 		/**
-		 * latitude in WGS84
-		 * 
-		 * @return Returns the latitude.
-		 */
+		* latitude in WGS84
+		* 
+		* @return Returns the latitude.
+		*/
 		public double getLatitude() {
 			return latitude;
 		}
 
 		/**
-		 * @param latitude
-		 *            The latitude to set.
-		 */
+		* @param latitude
+		*            The latitude to set.
+		*/
 		public void setLatitude(double latitude) {
 			this.latitude = latitude;
 		}
 
 		/**
-		 * longitude in WGS84
-		 * 
-		 * @return Returns the longitude.
-		 */
+		* longitude in WGS84
+		* 
+		* @return Returns the longitude.
+		*/
 		public double getLongitude() {
 			return longitude;
 		}
 
 		/**
-		 * @param longitude
-		 *            The longitude to set.
-		 */
+		* @param longitude
+		*            The longitude to set.
+		*/
 		public void setLongitude(double longitude) {
 			this.longitude = longitude;
 		}
 
 		/**
-		 * @return Returns the placeName.
-		 */
+		* @return Returns the placeName.
+		*/
 		public String getPlaceName() {
 			return placeName;
 		}
 
 		/**
-		 * @param placeName
-		 *            The placeName to set.
-		 */
+		* @param placeName
+		*            The placeName to set.
+		*/
 		public void setPlaceName(String placeName) {
 			this.placeName = placeName;
 		}
 
 		/**
-		 * @return Returns the postalCode.
-		 */
+		* @return Returns the postalCode.
+		*/
 		public String getPostalCode() {
 			return postalCode;
 		}
 
 		/**
-		 * @param postalCode
-		 *            The postalCode to set.
-		 */
+		* @param postalCode
+		*            The postalCode to set.
+		*/
 		public void setPostalCode(String postalCode) {
 			this.postalCode = postalCode;
 		}
 
 	}
 
+	/**
+	* search criteria for web services returning postal codes
+	* 
+	* @author marc@geonames
+	* 
+	*/
+	public static class PostalCodeSearchCriteria {
+
+		private String postalCode;
+
+		private String placeName;
+
+		private String adminCode1;
+
+		private String countryCode;
+
+		private String countryBias;
+
+		private Double latitude;
+
+		private Double longitude;
+
+		private double radius;
+
+		private Style style;
+
+		private int maxRows;
+
+		private int startRow;
+
+		private boolean isOROperator = false;
+
+		private Boolean isReduced;
+
+		/**
+		* @return Returns the style.
+		*/
+		public Style getStyle() {
+			return style;
+		}
+
+		/**
+		* @param style
+		*            The style to set.
+		*/
+		public void setStyle(Style style) {
+			this.style = style;
+		}
+
+		/**
+		* @return Returns the ISO 3166-1-alpha-2 countryCode.
+		*/
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		/**
+		* @param countryCode
+		*            The ISO 3166-1-alpha-2 countryCode to set.
+		*/
+		public void setCountryCode(String countryCode)
+				throws InvalidParameterException {
+			if (countryCode != null && countryCode.length() != 2) {
+				throw new InvalidParameterException("invalid country code "
+						+ countryCode);
+			}
+			this.countryCode = countryCode;
+		}
+
+		/**
+		* @return Returns the latitude.
+		*/
+		public Double getLatitude() {
+			return latitude;
+		}
+
+		/**
+		* @param latitude
+		*            The latitude to set.
+		*/
+		public void setLatitude(double latitude) throws InvalidParameterException {
+			if (latitude > 90.0 || latitude < -90.0) {
+				throw new InvalidParameterException("invalid latitude " + latitude);
+			}
+			this.latitude = new Double(latitude);
+		}
+
+		/**
+		* @return Returns the longitude.
+		*/
+		public Double getLongitude() {
+			return longitude;
+		}
+
+		/**
+		* @param longitude
+		*            The longitude to set.
+		*/
+		public void setLongitude(double longitude) throws InvalidParameterException {
+			if (longitude > 180.0 || longitude < -180.0) {
+				throw new InvalidParameterException("invalid longitude "
+						+ longitude);
+			}
+			this.longitude = new Double(longitude);
+		}
+
+		/**
+		* @return Returns the placeName.
+		*/
+		public String getPlaceName() {
+			return placeName;
+		}
+
+		/**
+		* @param placeName
+		*            The placeName to set.
+		*/
+		public void setPlaceName(String placeName) {
+			this.placeName = placeName;
+		}
+
+		/**
+		* @return Returns the postalCode.
+		*/
+		public String getPostalCode() {
+			return postalCode;
+		}
+
+		/**
+		* @param postalCode
+		*            The postalCode to set.
+		*/
+		public void setPostalCode(String postalCode) {
+			this.postalCode = postalCode;
+		}
+
+		/**
+		* @return the maxRows
+		*/
+		public int getMaxRows() {
+			return maxRows;
+		}
+
+		/**
+		* @param maxRows
+		*            the maxRows to set
+		*/
+		public void setMaxRows(int maxRows) {
+			this.maxRows = maxRows;
+		}
+
+		/**
+		* @param isOROperator
+		*            the isOROperator to set
+		*/
+		public void setOROperator(boolean isOROperator) {
+			this.isOROperator = isOROperator;
+		}
+
+		/**
+		* @return the isOROperator
+		*/
+		public boolean isOROperator() {
+			return isOROperator;
+		}
+
+		/**
+		* @return the adminCode1
+		*/
+		public String getAdminCode1() {
+			return adminCode1;
+		}
+
+		/**
+		* @param adminCode1
+		*            the adminCode1 to set
+		*/
+		public void setAdminCode1(String adminCode1) {
+			this.adminCode1 = adminCode1;
+		}
+
+		/**
+		* the radius in km to be used for reverse geocoding.
+		* 
+		* @param radius
+		*            the radius to set
+		*/
+		public void setRadius(double radius) {
+			this.radius = radius;
+		}
+
+		/**
+		* @return the radius
+		*/
+		public double getRadius() {
+			return radius;
+		}
+
+		/**
+		* @return the countryBias
+		*/
+		public String getCountryBias() {
+			return countryBias;
+		}
+
+		/**
+		* @param countryBias
+		*            the countryBias to set
+		*/
+		public void setCountryBias(String countryBias) {
+			this.countryBias = countryBias;
+		}
+
+		/**
+		* @return the startRow
+		*/
+		public int getStartRow() {
+			return startRow;
+		}
+
+		/**
+		* @param startRow
+		*            the startRow to set
+		*/
+		public void setStartRow(int startRow) {
+			this.startRow = startRow;
+		}
+
+		/**
+		* @return the isReduced
+		*/
+		public Boolean isReduced() {
+			return isReduced;
+		}
+
+		/**
+		* @param isReduced
+		*            the isReduced to set
+		*/
+		public void setIsReduced(Boolean isReduced) {
+			this.isReduced = isReduced;
+		}
+
+	}
 
 	/**
-	 * a street line segment. Includes house number information for the beginning
-	 * and end of the line as well as right and left hand side of the line.
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
+	* @author marc
+	* @since 23.07.2011
+	* 
+	*/
+	public static class Run {
+
+		/**
+		* @param args
+		* @throws Exception
+		* @throws IOException
+		*/
+		public static void main(String[] args) throws IOException, Exception {
+			GeoNames.setUserName("marc");
+			WeatherObservation weatherObservation = GeoNames.findNearByWeather(
+					47.4, 8.5);
+			System.out.println(weatherObservation.getObservationTime());
+		}
+
+	}
+
+	/**
+	* a street line segment. Includes house number information for the beginning
+	* and end of the line as well as right and left hand side of the line.
+	* 
+	* @author marc@geonames
+	* 
+	*/
 	public static class StreetSegment extends PostalCode {
 
 		private double[] latArray;
@@ -3706,299 +2539,174 @@ public class GeoNames {
 		private double[] lngArray;
 
 		/**
-		 * census feature class codes see
-		 * http://www.geonames.org/maps/Census-Feature-Class-Codes.txt
-		 */
+		* census feature class codes see
+		* http://www.geonames.org/maps/Census-Feature-Class-Codes.txt
+		*/
 		private String cfcc;
 
 		private String name;
 
 		/**
-		 * from address left
-		 */
+		* from address left
+		*/
 		private String fraddl;
 
 		/**
-		 * from address right
-		 */
+		* from address right
+		*/
 		private String fraddr;
 
 		/**
-		 * to address left
-		 */
+		* to address left
+		*/
 		private String toaddl;
 
 		/**
-		 * to address right
-		 */
+		* to address right
+		*/
 		private String toaddr;
 
 		/**
-		 * @return the latArray
-		 */
+		* @return the latArray
+		*/
 		public double[] getLatArray() {
 			return latArray;
 		}
 
 		/**
-		 * @param latArray
-		 *            the latArray to set
-		 */
+		* @param latArray
+		*            the latArray to set
+		*/
 		public void setLatArray(double[] latArray) {
 			this.latArray = latArray;
 		}
 
 		/**
-		 * @return the lngArray
-		 */
+		* @return the lngArray
+		*/
 		public double[] getLngArray() {
 			return lngArray;
 		}
 
 		/**
-		 * @param lngArray
-		 *            the lngArray to set
-		 */
+		* @param lngArray
+		*            the lngArray to set
+		*/
 		public void setLngArray(double[] lngArray) {
 			this.lngArray = lngArray;
 		}
 
 		/**
-		 * @return the cfcc
-		 */
+		* @return the cfcc
+		*/
 		public String getCfcc() {
 			return cfcc;
 		}
 
 		/**
-		 * @param cfcc
-		 *            the cfcc to set
-		 */
+		* @param cfcc
+		*            the cfcc to set
+		*/
 		public void setCfcc(String cfcc) {
 			this.cfcc = cfcc;
 		}
 
 		/**
-		 * @return the name
-		 */
+		* @return the name
+		*/
 		public String getName() {
 			return name;
 		}
 
 		/**
-		 * @param name
-		 *            the name to set
-		 */
+		* @param name
+		*            the name to set
+		*/
 		public void setName(String name) {
 			this.name = name;
 		}
 
 		/**
-		 * @return the fraddl
-		 */
+		* @return the fraddl
+		*/
 		public String getFraddl() {
 			return fraddl;
 		}
 
 		/**
-		 * @param fraddl
-		 *            the fraddl to set
-		 */
+		* @param fraddl
+		*            the fraddl to set
+		*/
 		public void setFraddl(String fraddl) {
 			this.fraddl = fraddl;
 		}
 
 		/**
-		 * @return the fraddr
-		 */
+		* @return the fraddr
+		*/
 		public String getFraddr() {
 			return fraddr;
 		}
 
 		/**
-		 * @param fraddr
-		 *            the fraddr to set
-		 */
+		* @param fraddr
+		*            the fraddr to set
+		*/
 		public void setFraddr(String fraddr) {
 			this.fraddr = fraddr;
 		}
 
 		/**
-		 * @return the toaddl
-		 */
+		* @return the toaddl
+		*/
 		public String getToaddl() {
 			return toaddl;
 		}
 
 		/**
-		 * @param toaddl
-		 *            the toaddl to set
-		 */
+		* @param toaddl
+		*            the toaddl to set
+		*/
 		public void setToaddl(String toaddl) {
 			this.toaddl = toaddl;
 		}
 
 		/**
-		 * @return the toaddr
-		 */
+		* @return the toaddr
+		*/
 		public String getToaddr() {
 			return toaddr;
 		}
 
 		/**
-		 * @param toaddr
-		 *            the toaddr to set
-		 */
+		* @param toaddr
+		*            the toaddr to set
+		*/
 		public void setToaddr(String toaddr) {
 			this.toaddr = toaddr;
 		}
 
 	}
 
-
 	/**
-	 * a toponym search result as returned by the geonames webservice.
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static class ToponymSearchResult {
-
-		List<Toponym> toponyms = new ArrayList<Toponym>();
-
-		int totalResultsCount;
-
-		Style style;
-
-		/**
-		 * @return Returns the toponyms.
-		 */
-		public List<Toponym> getToponyms() {
-			return toponyms;
-		}
-
-		/**
-		 * @param toponyms
-		 *            The toponyms to set.
-		 */
-		public void setToponyms(List<Toponym> toponyms) {
-			this.toponyms = toponyms;
-		}
-
-		/**
-		 * @return Returns the totalResultsCount.
-		 */
-		public int getTotalResultsCount() {
-			return totalResultsCount;
-		}
-
-		/**
-		 * @param totalResultsCount
-		 *            The totalResultsCount to set.
-		 */
-		public void setTotalResultsCount(int totalResultsCount) {
-			this.totalResultsCount = totalResultsCount;
-		}
-
-		/**
-		 * @return the style
-		 */
-		public Style getStyle() {
-			return style;
-		}
-
-		/**
-		 * @param style the style to set
-		 */
-		public void setStyle(Style style) {
-			this.style = style;
-		}
-
-	}
-	
-	
-	/**
-	 * Enumeration for style parameter specifying the verbosity of geonames web
-	 * services
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
-	public static enum Style {
+	* Enumeration for style parameter specifying the verbosity of geonames web
+	* services
+	* 
+	* @author marc@geonames
+	* 
+	*/
+	public enum Style {
 		SHORT, MEDIUM, LONG, FULL
 	}
 
-	
 	/**
-	 * a street address
-	 * 
-	 * @author Mark Thomas
-	 * 
-	 */
-	public static class Address extends PostalCode {
-
-		private String street;
-
-		private String streetNumber;
-
-		private String mtfcc;
-
-		/**
-		 * @return the street
-		 */
-		public String getStreet() {
-			return street;
-		}
-
-		/**
-		 * @param street
-		 *            the street to set
-		 */
-		public void setStreet(String street) {
-			this.street = street;
-		}
-
-		/**
-		 * @return the streetNumber
-		 */
-		public String getStreetNumber() {
-			return streetNumber;
-		}
-
-		/**
-		 * @param streetNumber
-		 *            the streetNumber to set
-		 */
-		public void setStreetNumber(String streetNumber) {
-			this.streetNumber = streetNumber;
-		}
-
-		/**
-		 * @return the mtfcc
-		 */
-		public String getMtfcc() {
-			return mtfcc;
-		}
-
-		/**
-		 * @param mtfcc
-		 *            the mtfcc to set
-		 */
-		public void setMtfcc(String mtfcc) {
-			this.mtfcc = mtfcc;
-		}
-
-	}
-
-
-	/**
-	 * gmtOffset and dstOffset are computed on the server with the
-	 * {@link java.util.TimeZone} and included in the web service as not all
-	 * geonames users are using java.
-	 * 
-	 * @author marc
-	 * 
-	 */
+	* gmtOffset and dstOffset are computed on the server with the
+	* {@link java.util.TimeZone} and included in the web service as not all
+	* geonames users are using java.
+	* 
+	* @author marc
+	* 
+	*/
 	public static class Timezone {
 
 		private String timezoneId;
@@ -4014,130 +2722,129 @@ public class GeoNames {
 		private double dstOffset;
 
 		/**
-		 * the dstOffset as of first of July of current year
-		 * 
-		 * @return the dstOffset
-		 */
+		* the dstOffset as of first of July of current year
+		* 
+		* @return the dstOffset
+		*/
 		@Deprecated
 		public double getDstOffset() {
 			return dstOffset;
 		}
 
 		/**
-		 * @param dstOffset
-		 *            the dstOffset to set
-		 */
+		* @param dstOffset
+		*            the dstOffset to set
+		*/
 		public void setDstOffset(double dstOffset) {
 			this.dstOffset = dstOffset;
 		}
 
 		/**
-		 * the gmtOffset as of first of January of current year
-		 * 
-		 * @return the gmtOffset
-		 */
+		* the gmtOffset as of first of January of current year
+		* 
+		* @return the gmtOffset
+		*/
 		@Deprecated
 		public double getGmtOffset() {
 			return gmtOffset;
 		}
 
 		/**
-		 * @param gmtOffset
-		 *            the gmtOffset to set
-		 */
+		* @param gmtOffset
+		*            the gmtOffset to set
+		*/
 		public void setGmtOffset(double gmtOffset) {
 			this.gmtOffset = gmtOffset;
 		}
 
 		/**
-		 * the timezoneId (example : "Pacific/Honolulu")
-		 * 
-		 * see also {@link java.util.TimeZone} and
-		 * http://www.twinsun.com/tz/tz-link.htm
-		 * 
-		 * @return the timezoneId
-		 */
+		* the timezoneId (example : "Pacific/Honolulu")
+		* 
+		* see also {@link java.util.TimeZone} and
+		* http://www.twinsun.com/tz/tz-link.htm
+		* 
+		* @return the timezoneId
+		*/
 		public String getTimezoneId() {
 			return timezoneId;
 		}
 
 		/**
-		 * @param timezoneId
-		 *            the timezoneId to set
-		 */
+		* @param timezoneId
+		*            the timezoneId to set
+		*/
 		public void setTimezoneId(String timezoneId) {
 			this.timezoneId = timezoneId;
 		}
 
 		/**
-		 * @return the countryCode
-		 */
+		* @return the countryCode
+		*/
 		public String getCountryCode() {
 			return countryCode;
 		}
 
 		/**
-		 * @param countryCode
-		 *            the countryCode to set
-		 */
+		* @param countryCode
+		*            the countryCode to set
+		*/
 		public void setCountryCode(String countryCode) {
 			this.countryCode = countryCode;
 		}
 
 		/**
-		 * @return the time
-		 */
+		* @return the time
+		*/
 		public Date getTime() {
 			return time;
 		}
 
 		/**
-		 * @param time
-		 *            the time to set
-		 */
+		* @param time
+		*            the time to set
+		*/
 		public void setTime(Date time) {
 			this.time = time;
 		}
 
 		/**
-		 * @return the sunrise
-		 */
+		* @return the sunrise
+		*/
 		public Date getSunrise() {
 			return sunrise;
 		}
 
 		/**
-		 * @param sunrise
-		 *            the sunrise to set
-		 */
+		* @param sunrise
+		*            the sunrise to set
+		*/
 		public void setSunrise(Date sunrise) {
 			this.sunrise = sunrise;
 		}
 
 		/**
-		 * @return the sunset
-		 */
+		* @return the sunset
+		*/
 		public Date getSunset() {
 			return sunset;
 		}
 
 		/**
-		 * @param sunset
-		 *            the sunset to set
-		 */
+		* @param sunset
+		*            the sunset to set
+		*/
 		public void setSunset(Date sunset) {
 			this.sunset = sunset;
 		}
 
 	}
 
-
 	/**
-	 * a GeoNames toponym
-	 * 
-	 * @author marc@geonames
-	 * 
-	 */
+	* a GeoNames toponym
+	* 
+	* @author marc@geonames
+	* 
+	*/
 	public static class Toponym {
 
 		private int geoNameId;
@@ -4185,38 +2892,38 @@ public class GeoNames {
 		private Style style;
 
 		/**
-		 * @return the continentCode
-		 */
+		* @return the continentCode
+		*/
 		public String getContinentCode() {
 			return continentCode;
 		}
 
 		/**
-		 * @param continentCode
-		 *            the continentCode to set
-		 */
+		* @param continentCode
+		*            the continentCode to set
+		*/
 		public void setContinentCode(String continentCode) {
 			this.continentCode = continentCode;
 		}
 
 		/**
-		 * @return Returns the ISO 3166-1-alpha-2 countryCode.
-		 */
+		* @return Returns the ISO 3166-1-alpha-2 countryCode.
+		*/
 		public String getCountryCode() {
 			return countryCode;
 		}
 
 		/**
-		 * @param countryCode
-		 *            The ISO 3166-1-alpha-2 countryCode to set.
-		 */
+		* @param countryCode
+		*            The ISO 3166-1-alpha-2 countryCode to set.
+		*/
 		public void setCountryCode(String countryCode) {
 			this.countryCode = countryCode;
 		}
 
 		/**
-		 * @return Returns the elevation in meter.
-		 */
+		* @return Returns the elevation in meter.
+		*/
 		public Integer getElevation() throws InsufficientStyleException {
 			if (elevation == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4227,101 +2934,101 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param elevation
-		 *            The elevation im meter to set.
-		 */
+		* @param elevation
+		*            The elevation im meter to set.
+		*/
 		public void setElevation(Integer elevation) {
 			this.elevation = elevation;
 		}
 
 		/**
-		 * the feature class {@link FeatureClass}
-		 * 
-		 * @see <a href="http://www.geonames.org/export/codes.html">GeoNames Feature
-		 *      Codes</a>
-		 * @return Returns the featureClass.
-		 */
+		* the feature class {@link FeatureClass}
+		* 
+		* @see <a href="http://www.geonames.org/export/codes.html">GeoNames Feature
+		*      Codes</a>
+		* @return Returns the featureClass.
+		*/
 		public FeatureClass getFeatureClass() {
 			return featureClass;
 		}
 
 		/**
-		 * @param featureClass
-		 *            The featureClass to set.
-		 */
+		* @param featureClass
+		*            The featureClass to set.
+		*/
 		public void setFeatureClass(FeatureClass featureClass) {
 			this.featureClass = featureClass;
 		}
 
 		/**
-		 * @see <a href="http://www.geonames.org/export/codes.html">GeoNames Feature
-		 *      Codes</a>
-		 * @return Returns the featureCode.
-		 */
+		* @see <a href="http://www.geonames.org/export/codes.html">GeoNames Feature
+		*      Codes</a>
+		* @return Returns the featureCode.
+		*/
 		public String getFeatureCode() {
 			return featureCode;
 		}
 
 		/**
-		 * @param featureCode
-		 *            The featureCode to set.
-		 */
+		* @param featureCode
+		*            The featureCode to set.
+		*/
 		public void setFeatureCode(String featureCode) {
 			this.featureCode = featureCode;
 		}
 
 		/**
-		 * latitude in decimal degrees (wgs84)
-		 * 
-		 * @return Returns the latitude.
-		 */
+		* latitude in decimal degrees (wgs84)
+		* 
+		* @return Returns the latitude.
+		*/
 		public double getLatitude() {
 			return latitude;
 		}
 
 		/**
-		 * @param latitude
-		 *            The latitude to set.
-		 */
+		* @param latitude
+		*            The latitude to set.
+		*/
 		public void setLatitude(double latitude) {
 			this.latitude = latitude;
 		}
 
 		/**
-		 * longitude in decimal degrees (wgs84)
-		 * 
-		 * @return Returns the longitude.
-		 */
+		* longitude in decimal degrees (wgs84)
+		* 
+		* @return Returns the longitude.
+		*/
 		public double getLongitude() {
 			return longitude;
 		}
 
 		/**
-		 * @param longitude
-		 *            The longitude to set.
-		 */
+		* @param longitude
+		*            The longitude to set.
+		*/
 		public void setLongitude(double longitude) {
 			this.longitude = longitude;
 		}
 
 		/**
-		 * @return Returns the name.
-		 */
+		* @return Returns the name.
+		*/
 		public String getName() {
 			return name;
 		}
 
 		/**
-		 * @param name
-		 *            The name to set.
-		 */
+		* @param name
+		*            The name to set.
+		*/
 		public void setName(String name) {
 			this.name = name;
 		}
 
 		/**
-		 * @return Returns the population.
-		 */
+		* @return Returns the population.
+		*/
 		public Long getPopulation() throws InsufficientStyleException {
 			if (population == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4332,78 +3039,78 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param population
-		 *            The population to set.
-		 */
+		* @param population
+		*            The population to set.
+		*/
 		public void setPopulation(Long population) {
 			this.population = population;
 		}
 
 		/**
-		 * @return Returns the geoNameId.
-		 */
+		* @return Returns the geoNameId.
+		*/
 		public int getGeoNameId() {
 			return geoNameId;
 		}
 
 		/**
-		 * @param geoNameId
-		 *            The geoNameId to set.
-		 */
+		* @param geoNameId
+		*            The geoNameId to set.
+		*/
 		public void setGeoNameId(int geonameId) {
 			this.geoNameId = geonameId;
 		}
 
 		/**
-		 * @return Returns the featureClassName.
-		 */
+		* @return Returns the featureClassName.
+		*/
 		public String getFeatureClassName() {
 			return featureClassName;
 		}
 
 		/**
-		 * @param featureClassName
-		 *            The featureClassName to set.
-		 */
+		* @param featureClassName
+		*            The featureClassName to set.
+		*/
 		public void setFeatureClassName(String featureClassName) {
 			this.featureClassName = featureClassName;
 		}
 
 		/**
-		 * @return Returns the featureCodeName.
-		 */
+		* @return Returns the featureCodeName.
+		*/
 		public String getFeatureCodeName() {
 			return featureCodeName;
 		}
 
 		/**
-		 * @param featureCodeName
-		 *            The featureCodeName to set.
-		 */
+		* @param featureCodeName
+		*            The featureCodeName to set.
+		*/
 		public void setFeatureCodeName(String featureCodeName) {
 			this.featureCodeName = featureCodeName;
 		}
 
 		/**
-		 * @return Returns the countryName.
-		 */
+		* @return Returns the countryName.
+		*/
 		public String getCountryName() {
 			return countryName;
 		}
 
 		/**
-		 * @param countryName
-		 *            The countryName to set.
-		 */
+		* @param countryName
+		*            The countryName to set.
+		*/
 		public void setCountryName(String countryName) {
 			this.countryName = countryName;
 		}
 
 		/**
-		 * alternate names of this place as comma separated list
-		 * 
-		 * @return the alternateNames as comma separated list
-		 */
+		* alternate names of this place as comma separated list
+		* 
+		* @return the alternateNames as comma separated list
+		*/
 		public String getAlternateNames() throws InsufficientStyleException {
 			if (alternateNames == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4414,9 +3121,9 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param alternateNames
-		 *            the alternateNames to set
-		 */
+		* @param alternateNames
+		*            the alternateNames to set
+		*/
 		public void setAlternateNames(String alternateNames) {
 			this.alternateNames = alternateNames;
 		}
@@ -4439,8 +3146,8 @@ public class GeoNames {
 		}
 
 		/**
-		 * @return the adminCode1
-		 */
+		* @return the adminCode1
+		*/
 		public String getAdminCode1() throws InsufficientStyleException {
 			if (adminCode1 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4451,16 +3158,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminCode1
-		 *            the adminCode1 to set
-		 */
+		* @param adminCode1
+		*            the adminCode1 to set
+		*/
 		public void setAdminCode1(String adminCode1) {
 			this.adminCode1 = adminCode1;
 		}
 
 		/**
-		 * @return the adminCode2
-		 */
+		* @return the adminCode2
+		*/
 		public String getAdminCode2() throws InsufficientStyleException {
 			if (adminCode2 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4471,16 +3178,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminCode2
-		 *            the adminCode2 to set
-		 */
+		* @param adminCode2
+		*            the adminCode2 to set
+		*/
 		public void setAdminCode2(String adminCode2) {
 			this.adminCode2 = adminCode2;
 		}
 
 		/**
-		 * @return the adminCode3
-		 */
+		* @return the adminCode3
+		*/
 		public String getAdminCode3() throws InsufficientStyleException {
 			if (adminCode3 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4491,16 +3198,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminCode3
-		 *            the adminCode3 to set
-		 */
+		* @param adminCode3
+		*            the adminCode3 to set
+		*/
 		public void setAdminCode3(String adminCode3) {
 			this.adminCode3 = adminCode3;
 		}
 
 		/**
-		 * @return the adminCode4
-		 */
+		* @return the adminCode4
+		*/
 		public String getAdminCode4() throws InsufficientStyleException {
 			if (adminCode4 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4511,16 +3218,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminCode4
-		 *            the adminCode4 to set
-		 */
+		* @param adminCode4
+		*            the adminCode4 to set
+		*/
 		public void setAdminCode4(String adminCode4) {
 			this.adminCode4 = adminCode4;
 		}
 
 		/**
-		 * @return the timezone
-		 */
+		* @return the timezone
+		*/
 		public Timezone getTimezone() throws InsufficientStyleException {
 			if (timezone == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4531,16 +3238,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param timezone
-		 *            the timezone to set
-		 */
+		* @param timezone
+		*            the timezone to set
+		*/
 		public void setTimezone(Timezone timezone) {
 			this.timezone = timezone;
 		}
 
 		/**
-		 * @return the adminName1
-		 */
+		* @return the adminName1
+		*/
 		public String getAdminName1() throws InsufficientStyleException {
 			if (adminName1 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4551,16 +3258,16 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminName1
-		 *            the adminName1 to set
-		 */
+		* @param adminName1
+		*            the adminName1 to set
+		*/
 		public void setAdminName1(String adminName1) {
 			this.adminName1 = adminName1;
 		}
 
 		/**
-		 * @return the adminName2
-		 */
+		* @return the adminName2
+		*/
 		public String getAdminName2() throws InsufficientStyleException {
 			if (adminName2 == null && style != null
 					&& Style.LONG.compareTo(style) > 0) {
@@ -4571,29 +3278,874 @@ public class GeoNames {
 		}
 
 		/**
-		 * @param adminName2
-		 *            the adminName2 to set
-		 */
+		* @param adminName2
+		*            the adminName2 to set
+		*/
 		public void setAdminName2(String adminName2) {
 			this.adminName2 = adminName2;
 		}
 
 		/**
-		 * @return the style used when calling the web service that returned this
-		 *         toponym.
-		 */
+		* @return the style used when calling the web service that returned this
+		*         toponym.
+		*/
 		public Style getStyle() {
 			return style;
 		}
 
 		/**
-		 * @param style
-		 *            the style to set
-		 */
+		* @param style
+		*            the style to set
+		*/
 		public void setStyle(Style style) {
 			this.style = style;
 		}
 
 	}
 
+	/**
+	* search criteria for web services returning toponyms.
+	* 
+	* The string parameters do not have to be utf8 encoded. The encoding is done
+	* transparently in the call to the web service.
+	* 
+	* The main parameter for the search over all fields is the 'q' parameter.
+	* 
+	* @see GeoNames#search
+	* 
+	* @see <a href="http://www.geonames.org/export/geonames-search.html">search
+	*      webservice documentation< /a>
+	* 
+	* @author marc@geonames
+	* 
+	*/
+	public static class ToponymSearchCriteria {
+
+		private String q;
+
+		private String countryCode;
+
+		private String countryBias;
+
+		private String continentCode;
+
+		private String name;
+
+		private String nameEquals;
+
+		private String nameStartsWith;
+
+		private String tag;
+
+		private String language;
+
+		private Style style;
+
+		private FeatureClass featureClass;
+
+		private String[] featureCodes;
+
+		private String adminCode1;
+
+		private String adminCode2;
+
+		private String adminCode3;
+
+		private String adminCode4;
+
+		private int maxRows;
+
+		private int startRow;
+
+		/**
+		* @return Returns the ISO 3166-1-alpha-2 countryCode.
+		*/
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		/**
+		* @param countryCode
+		*            The ISO 3166-1-alpha-2 countryCode to set.
+		*/
+		public void setCountryCode(String countryCode)
+				throws InvalidParameterException {
+			if (countryCode != null && countryCode.length() != 2) {
+				throw new InvalidParameterException("invalid country code "
+						+ countryCode);
+			}
+			this.countryCode = countryCode;
+		}
+
+		/**
+		* @return the countryBias
+		*/
+		public String getCountryBias() {
+			return countryBias;
+		}
+
+		/**
+		* @param countryBias
+		*            the countryBias to set
+		*/
+		public void setCountryBias(String countryBias) {
+			this.countryBias = countryBias;
+		}
+
+		/**
+		* @return the continentCode
+		*/
+		public String getContinentCode() {
+			return continentCode;
+		}
+
+		/**
+		* @param continentCode
+		*            the continentCode to set
+		*/
+		public void setContinentCode(String continentCode) {
+			this.continentCode = continentCode;
+		}
+
+		/**
+		* @return Returns the nameEquals.
+		*/
+		public String getNameEquals() {
+			return nameEquals;
+		}
+
+		/**
+		* @param nameEquals
+		*            The nameEquals to set.
+		*/
+		public void setNameEquals(String exactName) {
+			this.nameEquals = exactName;
+		}
+
+		/**
+		* @return Returns the featureCodes.
+		*/
+		public String[] getFeatureCodes() {
+			return featureCodes;
+		}
+
+		/**
+		* @param featureCodes
+		*            The featureCodes to set.
+		*/
+		public void setFeatureCodes(String[] featureCodes) {
+			this.featureCodes = featureCodes;
+		}
+
+		public void setFeatureCode(String featureCode) {
+			this.featureCodes = new String[] { featureCode };
+		}
+
+		/**
+		* @return Returns the language.
+		*/
+		public String getLanguage() {
+			return language;
+		}
+
+		/**
+		* @param language
+		*            The language to set.
+		*/
+		public void setLanguage(String language) {
+			this.language = language;
+		}
+
+		/**
+		* @return Returns the maxRows.
+		*/
+		public int getMaxRows() {
+			return maxRows;
+		}
+
+		/**
+		* @param maxRows
+		*            The maxRows to set.
+		*/
+		public void setMaxRows(int maxRows) {
+			this.maxRows = maxRows;
+		}
+
+		/**
+		* @return Returns the name.
+		*/
+		public String getName() {
+			return name;
+		}
+
+		/**
+		* search over the name field only.
+		* 
+		* @param name
+		*            The name to set.
+		*/
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		/**
+		* @return Returns the q.
+		*/
+		public String getQ() {
+			return q;
+		}
+
+		/**
+		* The main search term. The search is executed over all fields (place name,
+		* country name, admin names, etc)
+		* 
+		* @param q
+		*            The q to set.
+		*/
+		public void setQ(String q) {
+			this.q = q;
+		}
+
+		/**
+		* @return Returns the startRow.
+		*/
+		public int getStartRow() {
+			return startRow;
+		}
+
+		/**
+		* @param startRow
+		*            The startRow to set.
+		*/
+		public void setStartRow(int startRow) {
+			this.startRow = startRow;
+		}
+
+		/**
+		* @return Returns the style.
+		*/
+		public Style getStyle() {
+			return style;
+		}
+
+		/**
+		* @param style
+		*            The style to set.
+		*/
+		public void setStyle(Style style) {
+			this.style = style;
+		}
+
+		/**
+		* @return Returns the tag.
+		*/
+		public String getTag() {
+			return tag;
+		}
+
+		/**
+		* @param tag
+		*            The tag to set.
+		*/
+		public void setTag(String tag) {
+			this.tag = tag;
+		}
+
+		/**
+		* @return Returns the nameStartsWith.
+		*/
+		public String getNameStartsWith() {
+			return nameStartsWith;
+		}
+
+		/**
+		* @param nameStartsWith
+		*            The nameStartsWith to set.
+		*/
+		public void setNameStartsWith(String nameStartsWith) {
+			this.nameStartsWith = nameStartsWith;
+		}
+
+		/**
+		* @return the featureClass
+		*/
+		public FeatureClass getFeatureClass() {
+			return featureClass;
+		}
+
+		/**
+		* @param featureClass
+		*            the featureClass to set
+		*/
+		public void setFeatureClass(FeatureClass featureClass) {
+			this.featureClass = featureClass;
+		}
+
+		/**
+		* @return the adminCode1
+		*/
+		public String getAdminCode1() {
+			return adminCode1;
+		}
+
+		/**
+		* @param adminCode1
+		*            the adminCode1 to set
+		*/
+		public void setAdminCode1(String adminCode1) {
+			this.adminCode1 = adminCode1;
+		}
+
+		/**
+		* @return the adminCode2
+		*/
+		public String getAdminCode2() {
+			return adminCode2;
+		}
+
+		/**
+		* @param adminCode2
+		*            the adminCode2 to set
+		*/
+		public void setAdminCode2(String adminCode2) {
+			this.adminCode2 = adminCode2;
+		}
+
+		/**
+		* @return the adminCode3
+		*/
+		public String getAdminCode3() {
+			return adminCode3;
+		}
+
+		/**
+		* @param adminCode3
+		*            the adminCode3 to set
+		*/
+		public void setAdminCode3(String adminCode3) {
+			this.adminCode3 = adminCode3;
+		}
+
+		public String getAdminCode4() {
+			return adminCode4;
+		}
+
+		public void setAdminCode4(String adminCode4) {
+			this.adminCode4 = adminCode4;
+		}
+
+	}
+
+	/**
+	* a toponym search result as returned by the geonames webservice.
+	* 
+	* @author marc@geonames
+	* 
+	*/
+	public static class ToponymSearchResult {
+
+		List<Toponym> toponyms = new ArrayList<Toponym>();
+
+		int totalResultsCount;
+
+		Style style;
+
+		/**
+		* @return Returns the toponyms.
+		*/
+		public List<Toponym> getToponyms() {
+			return toponyms;
+		}
+
+		/**
+		* @param toponyms
+		*            The toponyms to set.
+		*/
+		public void setToponyms(List<Toponym> toponyms) {
+			this.toponyms = toponyms;
+		}
+
+		/**
+		* @return Returns the totalResultsCount.
+		*/
+		public int getTotalResultsCount() {
+			return totalResultsCount;
+		}
+
+		/**
+		* @param totalResultsCount
+		*            The totalResultsCount to set.
+		*/
+		public void setTotalResultsCount(int totalResultsCount) {
+			this.totalResultsCount = totalResultsCount;
+		}
+
+		/**
+		* @return the style
+		*/
+		public Style getStyle() {
+			return style;
+		}
+
+		/**
+		* @param style the style to set
+		*/
+		public void setStyle(Style style) {
+			this.style = style;
+		}
+
+	}
+
+	/**
+	* @author marc
+	* @since 25.11.2010
+	* 
+	*/
+	public static class WeatherObservation {
+		private String observation;
+		private Date observationTime;
+		private String stationName;
+		private String icaoCode;
+		private String countryCode;
+		private Integer elevation;
+		private double latitude;
+		private double longitude;
+		private double temperature;
+		private double dewPoint;
+		private double humidity;
+		private String clouds;
+		private String weatherCondition;
+		private String windSpeed;
+
+		/**
+		* @return the observation
+		*/
+		public String getObservation() {
+			return observation;
+		}
+
+		/**
+		* @param observation
+		*            the observation to set
+		*/
+		public void setObservation(String observation) {
+			this.observation = observation;
+		}
+
+		/**
+		* @return the observationTime
+		*/
+		public Date getObservationTime() {
+			return observationTime;
+		}
+
+		/**
+		* @param observationTime
+		*            the observationTime to set
+		*/
+		public void setObservationTime(Date observationTime) {
+			this.observationTime = observationTime;
+		}
+
+		/**
+		* @return the stationName
+		*/
+		public String getStationName() {
+			return stationName;
+		}
+
+		/**
+		* @param stationName
+		*            the stationName to set
+		*/
+		public void setStationName(String stationName) {
+			this.stationName = stationName;
+		}
+
+		/**
+		* @return the icaoCode
+		*/
+		public String getIcaoCode() {
+			return icaoCode;
+		}
+
+		/**
+		* @param icaoCode
+		*            the icaoCode to set
+		*/
+		public void setIcaoCode(String icaoCode) {
+			this.icaoCode = icaoCode;
+		}
+
+		/**
+		* @return the countryCode
+		*/
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		/**
+		* @param countryCode
+		*            the countryCode to set
+		*/
+		public void setCountryCode(String countryCode) {
+			this.countryCode = countryCode;
+		}
+
+		/**
+		* @return the elevation
+		*/
+		public Integer getElevation() {
+			return elevation;
+		}
+
+		/**
+		* @param elevation
+		*            the elevation to set
+		*/
+		public void setElevation(Integer elevation) {
+			this.elevation = elevation;
+		}
+
+		/**
+		* @return the latitude
+		*/
+		public double getLatitude() {
+			return latitude;
+		}
+
+		/**
+		* @param latitude
+		*            the latitude to set
+		*/
+		public void setLatitude(double latitude) {
+			this.latitude = latitude;
+		}
+
+		/**
+		* @return the longitude
+		*/
+		public double getLongitude() {
+			return longitude;
+		}
+
+		/**
+		* @param longitude
+		*            the longitude to set
+		*/
+		public void setLongitude(double longitude) {
+			this.longitude = longitude;
+		}
+
+		/**
+		* @return the temperature
+		*/
+		public double getTemperature() {
+			return temperature;
+		}
+
+		/**
+		* @param temperature
+		*            the temperature to set
+		*/
+		public void setTemperature(double temperature) {
+			this.temperature = temperature;
+		}
+
+		/**
+		* @return the dewPoint
+		*/
+		public double getDewPoint() {
+			return dewPoint;
+		}
+
+		/**
+		* @param dewPoint
+		*            the dewPoint to set
+		*/
+		public void setDewPoint(double dewPoint) {
+			this.dewPoint = dewPoint;
+		}
+
+		/**
+		* @return the humidity
+		*/
+		public double getHumidity() {
+			return humidity;
+		}
+
+		/**
+		* @param humidity
+		*            the humidity to set
+		*/
+		public void setHumidity(double humidity) {
+			this.humidity = humidity;
+		}
+
+		/**
+		* @return the clouds
+		*/
+		public String getClouds() {
+			return clouds;
+		}
+
+		/**
+		* @param clouds
+		*            the clouds to set
+		*/
+		public void setClouds(String clouds) {
+			this.clouds = clouds;
+		}
+
+		/**
+		* @return the weatherCondition
+		*/
+		public String getWeatherCondition() {
+			return weatherCondition;
+		}
+
+		/**
+		* @param weatherCondition
+		*            the weatherCondition to set
+		*/
+		public void setWeatherCondition(String weatherCondition) {
+			this.weatherCondition = weatherCondition;
+		}
+
+		/**
+		* @return the windSpeed
+		*/
+		public String getWindSpeed() {
+			return windSpeed;
+		}
+
+		/**
+		* @param windSpeed
+		*            the windSpeed to set
+		*/
+		public void setWindSpeed(String windSpeed) {
+			this.windSpeed = windSpeed;
+		}
+
+	}
+
+	/**
+	* a wikipedia article
+	* 
+	* @author marc@geonames
+	* 
+	*/
+	public static class WikipediaArticle {
+
+		private String language;
+
+		private String title;
+
+		private String summary;
+
+		private String wikipediaUrl;
+
+		private String feature;
+
+		private int population;
+
+		private Integer elevation;
+
+		private double latitude;
+
+		private double longitude;
+
+		private String thumbnailImg;
+
+		private int rank;
+
+		/**
+		* @return Returns the elevation.
+		*/
+		public Integer getElevation() {
+			return elevation;
+		}
+
+		/**
+		* @param elevation
+		*            The elevation to set.
+		*/
+		public void setElevation(int elevation) {
+			this.elevation = elevation;
+		}
+
+		/**
+		* @return Returns the feature.
+		*/
+		public String getFeature() {
+			return feature;
+		}
+
+		/**
+		* @param feature
+		*            The feature to set.
+		*/
+		public void setFeature(String feature) {
+			this.feature = feature;
+		}
+
+		/**
+		* @return Returns the language.
+		*/
+		public String getLanguage() {
+			return language;
+		}
+
+		/**
+		* @param language
+		*            The language to set.
+		*/
+		public void setLanguage(String language) {
+			this.language = language;
+		}
+
+		/**
+		* @return Returns the latitude.
+		*/
+		public double getLatitude() {
+			return latitude;
+		}
+
+		/**
+		* @param latitude
+		*            The latitude to set.
+		*/
+		public void setLatitude(double latitude) {
+			this.latitude = latitude;
+		}
+
+		/**
+		* @return Returns the longitude.
+		*/
+		public double getLongitude() {
+			return longitude;
+		}
+
+		/**
+		* @param longitude
+		*            The longitude to set.
+		*/
+		public void setLongitude(double longitude) {
+			this.longitude = longitude;
+		}
+
+		/**
+		* @return Returns the population.
+		*/
+		public int getPopulation() {
+			return population;
+		}
+
+		/**
+		* @param population
+		*            The population to set.
+		*/
+		public void setPopulation(int population) {
+			this.population = population;
+		}
+
+		/**
+		* @return Returns the summary.
+		*/
+		public String getSummary() {
+			return summary;
+		}
+
+		/**
+		* @param summary
+		*            The summary to set.
+		*/
+		public void setSummary(String summary) {
+			this.summary = summary;
+		}
+
+		/**
+		* @return Returns the title.
+		*/
+		public String getTitle() {
+			return title;
+		}
+
+		/**
+		* @param title
+		*            The title to set.
+		*/
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		/**
+		* @return Returns the wikipediaUrl.
+		*/
+		public String getWikipediaUrl() {
+			if (wikipediaUrl == null || GeoNames.isAndroid()) {
+				String urlTitle = title.replace(' ', '_');
+				try {
+					urlTitle = URLEncoder.encode(urlTitle, "UTF8");
+				} catch (UnsupportedEncodingException ex) {
+				}
+				String lang = language;
+				if (GeoNames.isAndroid()) {
+					lang += ".m";
+				}
+				return "http://" + lang + ".wikipedia.org/wiki/" + urlTitle;
+			}
+			return wikipediaUrl;
+		}
+
+		/**
+		* @param wikipediaUrl
+		*            The wikipediaUrl to set.
+		*/
+		public void setWikipediaUrl(String wikipediaURL) {
+			this.wikipediaUrl = wikipediaURL;
+		}
+
+		/**
+		* @return the thumbnailImg
+		*/
+		public String getThumbnailImg() {
+			return thumbnailImg;
+		}
+
+		/**
+		* @param thumbnailImg
+		*            the thumbnailImg to set
+		*/
+		public void setThumbnailImg(String thumbnailImg) {
+			this.thumbnailImg = thumbnailImg;
+		}
+
+		/**
+		* @return the rank
+		*/
+		public int getRank() {
+			return rank;
+		}
+
+		/**
+		* @param rank
+		*            the rank to set
+		*/
+		public void setRank(int rank) {
+			this.rank = rank;
+		}
+
+		public final static Comparator<WikipediaArticle> ELEVATION_ORDER = new Comparator<WikipediaArticle>() {
+			public int compare(WikipediaArticle o1, WikipediaArticle o2) {
+				return Double.compare(o2.elevation, o1.elevation);
+			}
+		};
+
+		public final static Comparator<WikipediaArticle> RANK_ORDER = new Comparator<WikipediaArticle>() {
+			public int compare(WikipediaArticle o1, WikipediaArticle o2) {
+				return Double.compare(o2.rank, o1.rank);
+			}
+		};
+	}
 }

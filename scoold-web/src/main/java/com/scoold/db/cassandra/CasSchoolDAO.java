@@ -101,8 +101,8 @@ final class CasSchoolDAO<T, PK> extends AbstractSchoolDAO<School, Long> {
 	protected static List<Column> getSchoolLinkColumns(Long userid, Long id,
 			Integer from, Integer to){
 		int min = 1900; int max = 3000;
-		Integer fyear = (from == null || from < min || from > max) ? 0 : from;
-		Integer tyear = (to == null || to < min || to > max) ? 0 : to;
+		Integer fyear = (from == null || from < min || from > max) ? Integer.valueOf(0) : from;
+		Integer tyear = (to == null || to < min || to > max) ? Integer.valueOf(0) : to;
 		
 		// format: [id -> "fromyear=0:toyear=2000"]
 		String linkDetails = "fromyear=".concat(fyear.toString()).

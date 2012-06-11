@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @author alexb
  */
 public class Report implements ScooldObject, Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private Long parentid;
@@ -27,7 +28,7 @@ public class Report implements ScooldObject, Serializable{
 	@Stored private String grandparentid;
 	@Stored private String solution;
 	@Stored private Boolean closed;
-	@Stored public static String classtype = Report.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Report.class.getSimpleName().toLowerCase();
 
 	public static enum ReportType{
 		SPAM, OFFENSIVE, DUPLICATE, INCORRECT, OTHER;
@@ -304,7 +305,7 @@ public class Report implements ScooldObject, Serializable{
 		if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
 			return false;
 		}
-		if (this.userid != other.userid && (this.userid == null || !this.userid.equals(other.userid))) {
+		if (this.userid == null || !this.userid.equals(other.userid)) {
 			return false;
 		}
 		return true;

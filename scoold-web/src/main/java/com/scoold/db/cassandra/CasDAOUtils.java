@@ -217,8 +217,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public <CV, N, SUBN> CV getColumn(String key, CF<N> cf, N colName) {
-		if(StringUtils.isBlank(key) || cf == null || colName == null || colName == null) 
-			return null;
+		if(StringUtils.isBlank(key) || cf == null || colName == null) return null;
 		HColumn<N, String> col = getHColumn(key, cf, colName);
 		return (col != null) ? (CV) col.getValue() : null;
 	}
@@ -473,7 +472,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	}
 	
 	public <T extends ScooldObject> ArrayList<T> readAll(Class<T> clazz, List<String> keys){
-		if(keys == null || keys.isEmpty() ) return new ArrayList<T>();
+		if(keys == null || keys.isEmpty() || clazz == null) return new ArrayList<T>();
 		
 		CF<String> cf = CasDAOFactory.OBJECTS;
 		ArrayList<T> list = new ArrayList<T>(keys.size());
@@ -511,8 +510,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 
 		QueryResult<CqlRows<String, String, String>> result = cqlQuery.execute();
 		CqlRows<String, String, String> rows = result.get();
-		List<Row<String, String, String>> list = rows.getList();
-		return rows == null ? new ArrayList<Row<String, String, String>> () : list;
+		return rows == null ? new ArrayList<Row<String, String, String>> () : rows.getList();
 	}
 	
 	public List<Row<String, String, String>> readAll(){
@@ -714,6 +712,10 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		return exists;
 	}
 	
+	public <T extends ScooldObject> ArrayList<T> readAndRepair(String clazz, ArrayList<String> keys){
+		return readAndRepair((Class<T>) getClassname(clazz), keys, null);
+	}
+	
 	public <T extends ScooldObject> ArrayList<T> readAndRepair(Class<T> clazz, 
 			ArrayList<String> keys, MutableLong itemcount){
 		ArrayList<T> results = readAll(clazz, keys);
@@ -868,7 +870,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				String id = keys.get(i);
 				if(id == null){
 					brb.add(searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, 
-							type, id).request());
+							type, null).request());
 					countRemoved++;
 				}
 			}
@@ -910,7 +912,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 
 		// if vote exists check timestamp for recent correction,
 		// otherwise insert new vote
-		Integer votes = (votable.getVotes() == null) ? 0 : votable.getVotes();
+		Integer votes = (votable.getVotes() == null) ? Integer.valueOf(0) : votable.getVotes();
 		Integer newVotes = votes;
 
 		if (vote != null){

@@ -207,6 +207,8 @@ public final class Language {
 			.put("invalidyear", "Invalid year")
 			.put("learnmore", "Learn more")
 			.put("posts", "Posts")
+			.put("mobile", "Mobile")
+			.put("classic", "Classic")
 			
 			.put("humantime.s", "{0} seconds ago")
 			.put("humantime.m", "{0} minutes ago")

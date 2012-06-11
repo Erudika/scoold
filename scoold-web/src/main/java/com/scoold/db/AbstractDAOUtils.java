@@ -119,8 +119,9 @@ public abstract class AbstractDAOUtils {
 		HashMap<String, Object> fields = getAnnotatedFields(transObject, Stored.class);
 		// populate an object with converted param values from param map.
 		try {
-			for (String param : paramMap.keySet()) {
-				String[] values = paramMap.get(param);
+			for (Map.Entry<String, String[]> ks : paramMap.entrySet()) {
+				String param = ks.getKey();
+				String[] values = ks.getValue();
 				String value = values[0];
 				// filter out any params that are different from the core params
 				if(fields.containsKey(param)){
@@ -152,7 +153,8 @@ public abstract class AbstractDAOUtils {
 								String[] tuParts = contact.split(",");
 								if (tuParts.length == 2) {
 									tuParts[1] = tuParts[1].replaceAll(";", "");
-									contacts += tuParts[0] + "," + tuParts[1] + ";";
+									contacts = contacts.concat(tuParts[0]).concat(",").
+											concat(tuParts[1]).concat(";");
 								}
 							}
 						}
@@ -580,6 +582,7 @@ public abstract class AbstractDAOUtils {
 	public abstract void createIndex();
 	public abstract void deleteIndex();
 	public abstract boolean existsIndex();
+	public abstract <T extends ScooldObject> ArrayList<T> readAndRepair(String clazz, ArrayList<String> keys);
 	public abstract <T extends ScooldObject> ArrayList<T> readAndRepair(Class<T> clazz, ArrayList<String> keys, MutableLong itemcount);
 	public abstract ArrayList<String> findTerm(String type, MutableLong page, MutableLong itemcount, String field, Object term);
 	public abstract ArrayList<String> findTerm(String type, MutableLong page, MutableLong itemcount, String field, Object term, String sortfield, boolean reverse, int max);

@@ -125,7 +125,7 @@ $(function () {
 	/****************************************************
      *            FACEBOOK API FUNCTIONS
      ****************************************************/
-
+	
 	var fbauthurl = "facebook_auth";
 	var fbattachurl = "attach_facebook";
 
@@ -164,6 +164,7 @@ $(function () {
 	var fbPicture = $("#fb-picture"),
 		fbName = $("#fb-name"),
 		fbNames = $(".fb-name");
+		
 	if(fbPicture.length || fbName.length){
 		FB.getLoginStatus(function(response) {
 			if (response.status === 'connected') {

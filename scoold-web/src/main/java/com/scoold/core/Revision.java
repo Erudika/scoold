@@ -25,7 +25,7 @@ public class Revision implements ScooldObject, Serializable{
 	@Stored private String tags;
 	@Stored private Boolean original;
 	@Stored private Long parentid;
-	@Stored public static String classtype = Revision.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Revision.class.getSimpleName().toLowerCase();
 
 	private transient User author;
 	private transient static AbstractRevisionDAO<Revision, Long> mydao;
@@ -250,7 +250,7 @@ public class Revision implements ScooldObject, Serializable{
 		if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
 			return false;
 		}
-		if (this.timestamp != other.timestamp && (this.timestamp == null || !this.timestamp.equals(other.timestamp))) {
+		if (this.timestamp == null || !this.timestamp.equals(other.timestamp)) {
 			return false;
 		}
 		return true;

@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
 public class Classunit implements ScooldObject,	CanHasMedia, Serializable {
+	private static final long serialVersionUID = 1L;
 
     private Long id;
 	@Stored private String identifier;
@@ -22,7 +23,7 @@ public class Classunit implements ScooldObject,	CanHasMedia, Serializable {
 	@Stored private Long userid;
 	@Stored private Long blackboardid;
 	@Stored private String inactiveusers;
-	@Stored public static String classtype = Classunit.class.getSimpleName().toLowerCase();
+	@Stored public static final String classtype = Classunit.class.getSimpleName().toLowerCase();
 
 	private transient Integer count;
 	private transient School school;

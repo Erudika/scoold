@@ -21,6 +21,7 @@ import org.apache.commons.lang.mutable.MutableLong;
  * @author alexb
  */
 public class Post implements ScooldObject, Votable<Long>, Commentable, Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	@Stored private String body;
