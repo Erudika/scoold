@@ -1992,23 +1992,25 @@ $!picurl#end
 #end
 #####################################
 #macro(mobilehead )
-	<link href="$styleslink/mobile.css" rel="stylesheet"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<script type="text/javascript">
-		if( !window.location.hash && window.addEventListener ){
-			window.addEventListener("load", function() {
-				setTimeout(function(){
-					window.scrollTo(0, 0);
-				}, 0);
-			});
-			window.addEventListener("orientationchange", function() {
-				setTimeout(function(){
-					window.scrollTo(0, 0);
-				}, 0);
-			});					
-		}
-	</script>
+	#if($isMobile)
+		<link href="$styleslink/mobile$!{minsuffix}.css" rel="stylesheet"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<script type="text/javascript">
+			if( !window.location.hash && window.addEventListener ){
+				window.addEventListener("load", function() {
+					setTimeout(function(){
+						window.scrollTo(0, 0);
+					}, 0);
+				});
+				window.addEventListener("orientationchange", function() {
+					setTimeout(function(){
+						window.scrollTo(0, 0);
+					}, 0);
+				});					
+			}
+		</script>
+	#end
 #end
 #####################################
 #macro(fontfix )
@@ -2198,7 +2200,7 @@ $!picurl#end
 <html lang="$currentLocale.language">
     <head>
 		#basichead($!DESCRIPTION $!KEYWORDS)
-		#if($isMobile)#mobilehead()#end
+		#mobilehead()
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
 		#if($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
