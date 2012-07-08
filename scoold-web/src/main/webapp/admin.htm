@@ -78,22 +78,37 @@
 		</div>
 		<br />
 		
-		<form action="$adminlink" method="post" class="mrl">
-			<fieldset>
-			#sectoken(false)
-			<span class="mediumText">Search index:</span>
-			#if($indexExists)
-				<span class="pictos green mrl mediumText">2</span>
-				<input type="hidden" name="deleteindex" value="true"/>
-				<input type="submit" value="Delete index" class="button rounded3 red rusure"/>
-			#else
-				<span class="pictos red mrl mediumText">D</span>
-				<input type="hidden" name="reindex" value="true"/>
-				<input type="submit" value="Rebuild index" class="button rounded3 rusure"/>
-			#end
-			</fieldset>
-		</form>
+		<h2>Search</h2>
 		
+		<table class="p100">
+			<tbody>
+				<tr>
+					<td class="p20 l"><strong>index: </strong></td>
+					<td class="p80">
+						$!esindex 
+						<form action="$adminlink" method="post" class="mrl">
+							<fieldset>
+							#sectoken(false)
+							#if($indexExists)
+								<span class="pictos green mrl mediumText">2</span>
+								<input type="hidden" name="deleteindex" value="true"/>
+								<input type="submit" value="Delete index" class="button rounded3 red rusure"/>
+							#else
+								<span class="pictos red mrl mediumText">D</span>
+								<input type="hidden" name="reindex" value="true"/>
+								<input type="submit" value="Rebuild index" class="button rounded3 rusure"/>
+							#end
+							</fieldset>
+						</form>
+					</td>
+				</tr>
+				<tr>
+					<td class="p20 l"><strong>hosts: </strong></td>
+					<td class="p80">$!eshosts</td>
+				</tr>
+			</tbody>
+		</table>
+
 		#if($schoolcount == 0)
 			<br />
 			<br />
@@ -118,15 +133,7 @@
 						<td class="p20 l"><strong>$showprop</strong></td>
 						<td class="p80">$!daoutils.getSystemProperty($showprop)</td>
 					</tr>
-				#end
-				<tr>
-					<td class="p20 l"><strong>ElasticSearch nodes</strong></td>
-					<td class="p80">$!esnodes</td>
-				</tr>
-				<tr>
-					<td class="p20 l"><strong>ElasticSearch hosts</strong></td>
-					<td class="p80">$!eshosts</td>
-				</tr>
+				#end				
 				</tbody>
 			</table>
 		#end

@@ -39,8 +39,6 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 	@Stored private Long photos;
 	@Stored private String favtags;
 	@Stored private String newbadges;
-	@Stored private Long authstamp;
-	@Stored private Long oldreputation;
 	@Stored public static final String classtype = User.class.getSimpleName().toLowerCase();
 
 	private transient Integer newmessages;
@@ -190,14 +188,6 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 		this.isGroupMember = isGroupMember;
 	}
 	
-	public Long getAuthstamp() {
-		return authstamp;
-	}
-
-	public void setAuthstamp(Long authstamp) {
-		this.authstamp = authstamp;
-	}
-	
 	public String getNewbadges() {
 		return newbadges;
 	}
@@ -220,14 +210,6 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 
 	public void setPhotos(Long photos) {
 		this.photos = photos;
-	}
-
-	public Long getOldreputation() {
-		return oldreputation;
-	}
-
-	public void setOldreputation(Long oldreputation) {
-		this.oldreputation = oldreputation;
 	}
 
 	public String getIdentifier() {
@@ -542,13 +524,11 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 	}
 
 	public void addRep(int rep){
-		oldreputation = reputation;
 		if(reputation == null ) reputation = 0L;
 		reputation += rep;
 	}
 
 	public void removeRep(int rep){
-		oldreputation = reputation;
 		if(reputation == null ) reputation = 0L;
 		reputation -= rep;
  		if(reputation < 0) reputation = 0L;

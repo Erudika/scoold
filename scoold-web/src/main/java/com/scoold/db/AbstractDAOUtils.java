@@ -361,7 +361,7 @@ public abstract class AbstractDAOUtils {
 		return clazz;
 	}
 	
-	public Class<? extends ScooldObject> classtypeToClass(String classtype){
+	public static Class<? extends ScooldObject> classtypeToClass(String classtype){
 		Class<? extends ScooldObject> clazz;
 		if (Post.PostType.contains(classtype)) {
 			clazz = Post.class;
@@ -573,6 +573,8 @@ public abstract class AbstractDAOUtils {
 	public abstract void setSystemColumn(String colName, String colValue, int ttl);
 	public abstract String getSystemColumn(String colName);
 	public abstract Map<String, String[]> getSystemColumns();
+	public abstract Long getAuthstamp(String ident);
+	public abstract void setAuthstamp(String ident, Long authstamp);
   
 	// search methods
 	public abstract boolean isIndexable(ScooldObject so);

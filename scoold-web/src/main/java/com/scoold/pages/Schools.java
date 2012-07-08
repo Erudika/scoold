@@ -33,18 +33,19 @@ public class Schools extends BasePage{
 		}else{
 			title = lang.get("schools.title");
 			addModel("includeGMapsScripts", false);
-			
-			String sortBy = "";
-			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-			schoollist = daoutils.readAndRepair(School.class, daoutils.findQuery(
-					School.classtype, pagenum, itemcount, "*", sortBy, 
-					true, MAX_ITEMS_PER_PAGE), itemcount);
 		}
 		
 		addModel("schoolsSelected", "navbtn-hover");
 	}
 	
 	public void onGet(){
+		if (!param("create")) {
+			String sortBy = "";
+			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
+			schoollist = daoutils.readAndRepair(School.class, daoutils.findQuery(
+					School.classtype, pagenum, itemcount, "*", sortBy, 
+					true, MAX_ITEMS_PER_PAGE), itemcount);
+		}
 	}
 
 	private void makeforms(){

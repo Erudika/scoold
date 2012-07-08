@@ -33,14 +33,16 @@ public class Classunits extends BasePage{
 			makeforms();
 		}else{
 			title = lang.get("classes.title");
-			classlist = daoutils.readAndRepair(Classunit.class, daoutils.findQuery(
-					Classunit.classtype, pagenum, itemcount, "*"), itemcount);
 		}
 		
 		addModel("classesSelected", "navbtn-hover");
 	} 
 
 	public void onGet(){
+		if(!param("create")){
+			classlist = daoutils.readAndRepair(Classunit.class, daoutils.findQuery(
+					Classunit.classtype, pagenum, itemcount, "*"), itemcount);
+		}
 	}
 
 	private void makeforms(){

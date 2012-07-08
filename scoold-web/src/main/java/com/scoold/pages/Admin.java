@@ -8,6 +8,7 @@ import com.scoold.core.ScooldObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import com.scoold.core.School;
+import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.util.ScooldAppListener;
 import java.io.File;
@@ -36,15 +37,14 @@ public class Admin extends BasePage {
 		TransportClient client = (TransportClient) ScooldAppListener.getSearchClient();
 		
 		if(client != null){
-			addModel("esnodes", client.connectedNodes());
 			addModel("eshosts", client.transportAddresses());
 		}else{
-			addModel("esnodes", "ElastiSearch not available.");
 			addModel("eshosts", "ElastiSearch not available.");
 		}
 		
 		schoolcount = daoutils.getBeanCount(School.classtype);
 		addModel("indexExists", daoutils.existsIndex());
+		addModel("esindex", AbstractDAOFactory.INDEX_NAME);
 		addModel("sysprops", System.getProperties());
 		addModel("syscolumns", daoutils.getSystemColumns());
 	}

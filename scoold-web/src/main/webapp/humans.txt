@@ -10,17 +10,14 @@
    Creator: Alex Bogdanovski
    Contact: alex [at] erudika.com
    Twitter: @albogdano
-   From: Sofia, Bulgaria
 
 /* THANKS */
 
    Inspiration & Help: StackOverflow.com
    Site: http://www.stackoverflow.com
-   From: USA
 
    Logo design: Dimo Trifonov
    Twitter: @denull
-   From: Lyaskovets, Bulgaria
 
    Support: Mom, Dad, Annie, Yana
 	
@@ -28,11 +25,11 @@
 	
    Last update: 2012/06/08
    Language: English, etc.
-   Standards: HTML5, CSS3, JavaScript
+   Standards: HTML5, CSS3, OpenID, OpenSearch, RSS
    IDE: NetBeans, TextMate
-   Components: jQuery (clientside), Java (serverside), JavaScript (node.js chat server)
+   Components: JS, CSS, HTML5 (clientside), Java (serverside), JavaScript (node.js chat server)
    Software: Apache Click, Apache Cassandra, ElasticSearch, GlassFish
-   Fonts: Pictos Font
+   Fonts: Pictos
 
 
     ___________
@@ -40,4 +37,4 @@
    | || |-| () |
    |`--'   `--'|
    |    ___    |  
-    \_________/
+   \___________/

@@ -183,15 +183,17 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 				
 				Long uid = NumberUtils.toLong(tuparts[0], 0L);
 				String savedKey = tuparts[1];
-				User u = null;
+				User user = null;
 				
 				if(uid.longValue() != 0L){
-					u = User.getUser(uid);
+					user = User.getUser(uid);
 				}
 				
-				if(u != null && u.getAuthstamp() != null){
-					String[] groups = StringUtils.split(u.getGroups(), ',');
-					Long authstamp = u.getAuthstamp();
+				Long authstamp = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+						getAuthstamp(user.getIdentifier());
+				
+				if(user != null && authstamp.longValue() != 0L){
+					String[] groups = StringUtils.split(user.getGroups(), ',');
 					long now = System.currentTimeMillis() ;
 					long expires = authstamp + (AbstractDAOFactory.SESSION_TIMEOUT_SEC * 1000);
 
@@ -308,13 +310,15 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			if (authUser.getActive()) {
 				//update lastseen
 				authUser.setLastseen(System.currentTimeMillis());
-				authUser.setAuthstamp(authUser.getLastseen());
 				authUser.setIdentifier(identifier);
 				authUser.update();
-			
+
+				Long authstamp = authUser.getLastseen();
+				AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+						setAuthstamp(identifier, authstamp);
+				
 				setPrincipal(new SimplePrincipal(authUser.getId().toString(), 
-						StringUtils.split(authUser.getGroups(), ',')), 
-						authUser.getAuthstamp(), req, res);
+						StringUtils.split(authUser.getGroups(), ',')), authstamp, req, res);
 				
 				//FINALLY: success. send back to request
 				redirectToRequest(manager, request);

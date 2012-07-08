@@ -40,6 +40,7 @@ public abstract class AbstractDAOFactory {
 
 	// column names and keys
 	public static final String CN_COUNTS_COUNT = "count";
+	public static final String CN_AUTHSTAMP = "authstamp";
 	public static final String DEFAULT_COUNTER_KEY = "Counter1";
 	public static final String CN_ID = "id";
 	public static final String DEFAULT_KEY = "key";

@@ -156,7 +156,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		
 		T so = fromColumns(clazz, cols);
 		
-		return so.getId() != null ? so : null;
+		return so != null ? so : null;
 	}
 	
 	public void update(ScooldObject so){
@@ -169,7 +169,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		update(null, so, mut);
 	}
 
-	public <SN> void update(String key, ScooldObject so, Mutator<String> mut){
+	public void update(String key, ScooldObject so, Mutator<String> mut){
 		if(so == null) return;
 		String kee = (key == null) ? so.getId().toString() : key;
 		storeBean(kee, so, false, mut);		
@@ -187,7 +187,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		delete(null, so, mut);
 	}
 	
-	public <SN> void delete(String key, ScooldObject so, Mutator<String> mut){
+	public void delete(String key, ScooldObject so, Mutator<String> mut){
 		if(so == null) return ;
 		String kee = (key == null) ? so.getId().toString() : key;
 		unstoreBean(kee, so, mut);
@@ -216,10 +216,10 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		mutator.discardPendingMutations();
 	}
 
-	public <CV, N, SUBN> CV getColumn(String key, CF<N> cf, N colName) {
+	public <N> String getColumn(String key, CF<N> cf, N colName) {
 		if(StringUtils.isBlank(key) || cf == null || colName == null) return null;
 		HColumn<N, String> col = getHColumn(key, cf, colName);
-		return (col != null) ? (CV) col.getValue() : null;
+		return (col != null) ? col.getValue() : null;
 	}
 	
 	public Long getCounterColumn(String key){
@@ -493,7 +493,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			
 			for (Row<String, String, String> row : q.execute().get()) {
 				T so = fromColumns(clazz, row.getColumnSlice().getColumns());
-				if (so.getId() != null){
+				if (so != null){
 					list.set(index.get(row.getKey()), so);
 				}
 			}
@@ -969,6 +969,14 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		return map;
 	}
 	
+	public Long getAuthstamp(String identifier){
+		return NumberUtils.toLong(getColumn(identifier, CasDAOFactory.AUTH_KEYS, CasDAOFactory.CN_AUTHSTAMP), 0L);
+	}
+	
+	public void setAuthstamp(String identifier, Long authstamp){
+		putColumn(identifier, CasDAOFactory.AUTH_KEYS, CasDAOFactory.CN_AUTHSTAMP, authstamp);
+	}
+	
 	protected static long convertMsTimeToCasTime(Keyspace ks, long ms){
 		long t1 = ks.createClock();
 		long t2 = System.currentTimeMillis();
@@ -985,7 +993,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		}
 	}
 
-	private <SN> void storeBean(String key, ScooldObject so, boolean creation, Mutator<String> mut){
+	private void storeBean(String key, ScooldObject so, boolean creation, Mutator<String> mut){
 		if(so == null) return;
 		CF<String> cf = CasDAOFactory.OBJECTS;
 		Long id = so.getId();
@@ -1010,7 +1018,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		updateBeanCount(so.getClasstype(), false, mut);
 	}
 
-	private <SN> void unstoreBean(String key, ScooldObject so, Mutator<String> mut){
+	private void unstoreBean(String key, ScooldObject so, Mutator<String> mut){
 		if(so == null) return;
 		CF<String> cf = CasDAOFactory.OBJECTS;
 		deleteRow(key, cf, mut);
@@ -1104,7 +1112,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	
 	private <T extends ScooldObject> T fromColumns(Class<T> clazz,
 			List<HColumn<String, String>> cols) {
-		if (cols == null ) 	return null;
+		if (cols == null || cols.isEmpty())	return null;
 
 		T transObject = null;
 		try {
