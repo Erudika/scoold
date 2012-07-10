@@ -82,7 +82,6 @@ function setProperties () {
 	fi
 	
 	prop1="com.scoold.workerid=$2"
-	prop2="com.scoold.production=\"true\""
 	prop3="com.scoold.dbhosts=\"$dbhosts\""
 	prop4="com.scoold.eshosts=\"$eshosts\""
 	

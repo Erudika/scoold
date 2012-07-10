@@ -10,6 +10,9 @@
 	<pages package="com.scoold.pages" automapping="true" autobinding="public" >
 		<excludes pattern="basetemplate.htm"/>
 	</pages>
+	<headers>
+		<header name="Cache-Control" value="public, max-age=120, must-revalidate"/>
+	</headers>
 	 <!--   mode      autoload  templ.caching  Click log lvl  Velocity log lvl
 			production  	No  	Yes         WARN            ERROR
 			profile         No      Yes         INFO            ERROR

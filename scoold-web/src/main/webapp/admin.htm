@@ -85,10 +85,10 @@
 				<tr>
 					<td class="p20 l"><strong>index: </strong></td>
 					<td class="p80">
-						$!esindex 
 						<form action="$adminlink" method="post" class="mrl">
 							<fieldset>
 							#sectoken(false)
+							<span>$!esindex </span>
 							#if($indexExists)
 								<span class="pictos green mrl mediumText">2</span>
 								<input type="hidden" name="deleteindex" value="true"/>
@@ -128,7 +128,7 @@
 			<br />
 			<table class="p100">
 				<tbody>
-				#foreach($showprop in ["com.scoold.workerid", "com.scoold.production", "com.scoold.dbhosts", "com.scoold.eshosts"])
+				#foreach($showprop in ["com.scoold.workerid", "com.scoold.dbhosts", "com.scoold.eshosts"])
 					<tr>
 						<td class="p20 l"><strong>$showprop</strong></td>
 						<td class="p80">$!daoutils.getSystemProperty($showprop)</td>

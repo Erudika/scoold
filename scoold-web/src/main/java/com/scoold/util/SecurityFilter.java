@@ -9,8 +9,6 @@ import com.scoold.db.AbstractDAOUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -35,7 +33,6 @@ public class SecurityFilter implements Filter {
 	// configured.
 	private FilterConfig filterConfig = null;
 	//comma separated bad useragents
-//	private String[] safe_extensions = {".png",".jpg",".jpeg",".css",".js",".ico",".gif", ".eot", ".woff", ".ttf", ".svg", ".htc"};
 	private String[] blacklist_useragents =
 		{"java","jakarta","idbot","id-search","user-agent","compatible ;","ibwww",
 		 "lwp-trivial","curl","PHP/","urllib","GT::WWW","Snoopy","MFC_Tear_Sample",
@@ -44,16 +41,6 @@ public class SecurityFilter implements Filter {
 		 "PleaseCrawl","WEP Search","Wells Search II","Missigua Locator",
 		 "ISC Systems iRc Search 2.1","Microsoft URL Control","Indy Library",
 		 "ia_archiver","heritrix","larbin","Nutch,ConveraCrawler"};
-	//hostnames
-	private String[] blacklist_hosts = {}; 
-	// ips
-	private Map<String, Boolean> blacklist_ips = new HashMap<String, Boolean>();	//ip addresses
-//	private boolean ratelimit;
-//	private int MAX_HITS = 100;
-//	private int MAX_PERIOD = 30;
-	private static final String HITS_KEY = "SecurityFilter.hits";
-	private static final String PERIOD_KEY = "SecurityFilter.period";
-	private static final String TIMES_KEY = "SecurityFilter.times";
 
 	public SecurityFilter() {
 	}
@@ -67,17 +54,7 @@ public class SecurityFilter implements Filter {
 			if (debug) {
 				log("SecurityFilter:Initializing filter");
 			}
-//			blacklist_ips.put("", true);
 		}
-
-//		String initParameterHits = filterConfig.getInitParameter(HITS_KEY);
-//		if (initParameterHits != null) {
-//				MAX_HITS = Integer.parseInt(initParameterHits);
-//		}
-//		String initParameterPeriod = filterConfig.getInitParameter(PERIOD_KEY);
-//		if (initParameterPeriod != null) {
-//				MAX_PERIOD = Integer.parseInt(initParameterPeriod);
-//		}
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp,
@@ -86,45 +63,6 @@ public class SecurityFilter implements Filter {
 		
 		final HttpServletRequest request = (HttpServletRequest) req;
 		final HttpServletResponse response = (HttpServletResponse) resp;
-//		final String address = request.getRemoteAddr();
-//		final String host = request.getRemoteHost();
-//		final String userAgent = request.getHeader("User-Agent");
-		
-//		if(!request.getRequestURI().contains("error")){
-//			if(StringUtils.isBlank(userAgent) || isBlocked(host, address, userAgent)){
-//				//BLOCK!
-//				forbidden(response, host, address, userAgent);
-//				return ;
-//			}
-//		}
-//
-//		if (!StringUtils.endsWithAny(request.getRequestURI(), safe_extensions)) {
-//			if (session != null) {
-//				synchronized (session.getId().intern()) {
-//					LinkedBlockingDeque<Long> times = getSessionAttribute(session, TIMES_KEY);
-//					if (times == null) {
-//						times = new LinkedBlockingDeque<Long>();
-//						session.setAttribute(TIMES_KEY, times);
-//					}
-//					final long currentTimeMillis = System.currentTimeMillis();
-//					times.push(Long.valueOf(currentTimeMillis));
-//					final long cutoff = currentTimeMillis - (MAX_PERIOD * 1000);
-//					Long oldest = times.peekLast();
-//					while (oldest != null && oldest.longValue() < cutoff) {
-//						times.removeLast();
-//						oldest = times.peekLast();
-//					}
-//					if (times.size() > MAX_HITS) {
-//						addResponseHeaderNoCache(response);
-//						response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-//								"Slow down, robot! Try again in "+ MAX_PERIOD + " seconds.");
-//						log("ratelimit: "+host+"/"+address+" ("+userAgent+")");
-//						return;
-//					}
-//				}
-//			}
-//		}
-
 		
 		// anti-CSRF token validation
 		if(request.getMethod().equals("POST") && !StringUtils.isBlank(request.getRemoteUser())){
@@ -137,17 +75,12 @@ public class SecurityFilter implements Filter {
 					&& !StringUtils.isBlank(salt) && token.equals(AbstractDAOUtils.
 					MD5(authToken.concat(AbstractDAOFactory.SEPARATOR).concat(salt)))){
 				
-				// Uncomment to enable XSS Filter for all req params
-				//chain.doFilter(new RequestWrapper(request), response);
 				chain.doFilter(request, response);
 			}else{
 				badrequest(response, request.getRemoteHost(), request.getRemoteAddr(), 
 						request.getHeader("User-Agent"), ClickUtils.isAjaxRequest(request));
-				return ;
 			}
 		}else{
-			// Uncomment to enable XSS Filter for all req params
-			//chain.doFilter(new RequestWrapper(request), response);
 			chain.doFilter(request, response);
 		}
 	}
@@ -222,69 +155,4 @@ public class SecurityFilter implements Filter {
 	public void log(String msg) {
 		filterConfig.getServletContext().log(msg);
 	}
-
-	private boolean isBlocked(String host, String address, String useragent) {
-		return AbstractDAOUtils.containsAny(useragent, blacklist_useragents) ||
-			AbstractDAOUtils.containsAny(host, blacklist_hosts) ||
-			blacklist_ips.containsKey(address);
-	}
-
-	private void addResponseHeaderNoCache(final HttpServletResponse response) {
-		response.addHeader("Cache-Control",	"no-store, no-cache, must-revalidate, "
-				+ "max-stale=0, max-age=0, post-check=0, pre-check=0");
-		response.addHeader("Pragma", "no-cache");
-		response.addHeader("Expires", "0");
-	}
-
-//	private final class RequestWrapper extends HttpServletRequestWrapper {
-//
-//		public RequestWrapper(HttpServletRequest servletRequest) {
-//			super(servletRequest);
-//		}
-//
-//		public String[] getParameterValues(String parameter) {
-//
-//			String[] values = super.getParameterValues(parameter);
-//			if (values == null) {
-//				return null;
-//			}
-//			int count = values.length;
-//			String[] encodedValues = new String[count];
-//			for (int i = 0; i < count; i++) {
-//				encodedValues[i] = cleanXSS(values[i]);
-//			}
-//			return encodedValues;
-//		}
-//
-//		public String getParameter(String parameter) {
-//			String value = super.getParameter(parameter);
-//			if (value == null) {
-//				return null;
-//			}
-//			return cleanXSS(value);
-//		}
-//
-//		public String getHeader(String name) {
-//			String value = super.getHeader(name);
-//			if (value == null) {
-//				return null;
-//			}
-//			return cleanXSS(value);
-//
-//		}
-//
-//		private String cleanXSS(String value) {
-//			//You'll need to remove the spaces from the html entities below
-////			value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-////			value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-////			value = value.replaceAll("'", "& #39;");
-////			value = value.replaceAll("eval\\((.*)\\)", "");
-////			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
-////			value = value.replaceAll("script", "");
-//			value = StringEscapeUtils.escapeHtml(value);
-//			value = StringEscapeUtils.escapeJavaScript(value);
-//			return value;
-//		}
-//	}
-
 }

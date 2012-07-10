@@ -195,7 +195,7 @@ public class BasePage extends Page {
 					authUser.update();
 				}
 			}
-			isFBconnected = authUser != null && !authUser.getIdentifier().startsWith("http");
+			isFBconnected = authUser != null && authUser.isFacebookUser();
 			AbstractDAOUtils.removeStateParam("intro", req, getContext().getResponse(), false);
 			infoStripMsg = "";
 		} else {

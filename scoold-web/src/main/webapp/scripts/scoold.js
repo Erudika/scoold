@@ -588,7 +588,7 @@ $(function () {
 		return false;
 	});
 	
-	// TODO: ^^^^^^^^^^^ USE THESE  \/ \/ \/
+	// TODO: ^^^^^^^^^^^ USE the new postAsk code on THESE  \/ \/ \/
 	
 	/****************************************************
      *                    REPORTS

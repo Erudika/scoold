@@ -47,10 +47,8 @@ public abstract class AbstractDAOFactory {
 	public static final String SYSTEM_OBJECTS_KEY = "1";
 	public static final String SYSTEM_MESSAGE_KEY = "system-message";
 	
-	public static final boolean IN_PRODUCTION = 
-			BooleanUtils.toBoolean(System.getProperty("com.scoold.production"));
-	public static final boolean IN_DEVELOPMENT = 
-			BooleanUtils.toBoolean(System.getProperty("com.scoold.development"));
+	public static final boolean IN_DEVELOPMENT = "debug".equals(System.getProperty("click.mode"));
+	public static final boolean IN_PRODUCTION = !IN_DEVELOPMENT;
 
 	public static enum FactoryType {
 //		MYSQL,

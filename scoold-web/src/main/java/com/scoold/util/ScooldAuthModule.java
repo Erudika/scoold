@@ -189,19 +189,21 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 					user = User.getUser(uid);
 				}
 				
-				Long authstamp = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
-						getAuthstamp(user.getIdentifier());
-				
-				if(user != null && authstamp.longValue() != 0L){
-					String[] groups = StringUtils.split(user.getGroups(), ',');
-					long now = System.currentTimeMillis() ;
-					long expires = authstamp + (AbstractDAOFactory.SESSION_TIMEOUT_SEC * 1000);
+				if(user != null){
+					Long authstamp = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+							getAuthstamp(user.getIdentifier());
 
-					String authKey = AbstractDAOUtils.MD5(authstamp.toString().
-							concat(AbstractDAOFactory.SEPARATOR).concat(uid.toString()));
+					if(user != null && authstamp.longValue() != 0L){
+						String[] groups = StringUtils.split(user.getGroups(), ',');
+						long now = System.currentTimeMillis() ;
+						long expires = authstamp + (AbstractDAOFactory.SESSION_TIMEOUT_SEC * 1000);
 
-					if (now <= expires && authKey.equals(savedKey)) {
-						return new SimplePrincipal(uid.toString(), groups);
+						String authKey = AbstractDAOUtils.MD5(authstamp.toString().
+								concat(AbstractDAOFactory.SEPARATOR).concat(uid.toString()));
+
+						if (now <= expires && authKey.equals(savedKey)) {
+							return new SimplePrincipal(uid.toString(), groups);
+						}
 					}
 				}
 				clearAuthCookie(req, res);

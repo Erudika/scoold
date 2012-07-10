@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.mutable.MutableLong;
 
 public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serializable{
@@ -804,7 +805,7 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
     }
 
 	public boolean isFacebookUser(){
-		return identifier != null && !identifier.startsWith("http");
+		return identifier != null && NumberUtils.isDigits(identifier);
 	}
 
 	public static boolean exists(Long uid){

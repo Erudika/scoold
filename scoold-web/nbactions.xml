@@ -13,8 +13,8 @@
         <action>
             <actionName>run</actionName>
             <goals>
-                <goal>compile</goal>
-                <goal>war:inplace</goal>
+                <goal>package</goal>
+                <goal>war:exploded</goal>
                 
                 
             </goals>
@@ -23,9 +23,6 @@
                 <netbeans.deploy>true</netbeans.deploy>
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
             </properties>
-            <activatedProfiles>
-                <activatedProfile>indev</activatedProfile>
-            </activatedProfiles>
         </action>
         <action>
             <actionName>build-with-dependencies</actionName>
@@ -59,9 +56,6 @@
             <properties>
                 <maven.test.skip>true</maven.test.skip>
             </properties>
-            <activatedProfiles>
-                <activatedProfile>inprod</activatedProfile>
-            </activatedProfiles>
         </action>
         <action>
             <actionName>profile</actionName>
