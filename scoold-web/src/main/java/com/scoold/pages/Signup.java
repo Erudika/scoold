@@ -46,7 +46,7 @@ public class Signup extends BasePage{
         }else if(User.exists(StringUtils.trim(identString))){
             //RARE CASE! Identifier is claimed => user exists! 
 			ScooldAuthModule.clearAuthCookie(req, getContext().getResponse());
-			setRedirect(signinlink);
+			setRedirect(signinlink + "?code=2&error=true");
         }
     }
     

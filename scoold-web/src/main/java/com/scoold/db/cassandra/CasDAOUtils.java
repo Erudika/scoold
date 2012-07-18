@@ -497,9 +497,10 @@ final class CasDAOUtils extends AbstractDAOUtils {
 					list.set(index.get(row.getKey()), so);
 				}
 			}
+			list.remove(null);		
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, null, e);
-		}
+		}		
 		return list;
 	}
 
