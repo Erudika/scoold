@@ -542,7 +542,7 @@ public abstract class AbstractDAOUtils {
 		return size;
 	}
 	
-	public static String getAsJSON(ScooldObject so, String type, boolean hasData){
+	public static String toIndexableJSON(ScooldObject so, String type, boolean hasData){
 		String json = "";
 		if(so == null || StringUtils.isBlank(type)) return json;
 		

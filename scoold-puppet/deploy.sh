@@ -82,18 +82,18 @@ function setProperties () {
 	fi
 	
 	prop1="com.scoold.workerid=$2"
-	prop3="com.scoold.dbhosts=\"$dbhosts\""
-	prop4="com.scoold.eshosts=\"$eshosts\""
+	prop2="com.scoold.dbhosts=\"$dbhosts\""
+	prop3="com.scoold.eshosts=\"$eshosts\""
 	
-	prop5="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
-	prop6="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
-	prop7="com.scoold.awssqsendpoint=\"$(echo $AWSSQSENDPOINT | sed 's/:/\\\:/g')\""
-	prop8="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
-	prop9="com.scoold.fbappid=\"$FBAPPID\""
-	prop10="com.scoold.fbsecret=\"$FBSECRET\""
-	prop11="com.scoold.awscfdist=\"$AWSCFDIST\""	
+	prop4="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
+	prop5="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
+	prop6="com.scoold.awssqsendpoint=\"$(echo $AWSSQSENDPOINT | sed 's/:/\\\:/g')\""
+	prop7="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
+	prop8="com.scoold.fbappid=\"$FBAPPID\""
+	prop9="com.scoold.fbsecret=\"$FBSECRET\""
+	prop10="com.scoold.awscfdist=\"$AWSCFDIST\""	
 	
-	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10:$prop11"
+	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10"
 }
 
 function uploadWAR () {

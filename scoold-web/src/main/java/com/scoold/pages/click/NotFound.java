@@ -7,6 +7,7 @@ package com.scoold.pages.click;
 
 import com.scoold.core.Language;
 import com.scoold.pages.BasePage;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.click.Page;
 
@@ -20,14 +21,15 @@ public class NotFound extends Page{
 	public Map<String, String> lang;
 
 	public NotFound() {
-		lang = Language.readLanguage(getContext().getLocale());
+		Locale loc = Language.getProperLocale(getContext().getRequest().getLocale().getLanguage());
+		lang = Language.readLanguage(loc);
         title = lang.get("notfound.title");
 		
 		addModel("APPNAME", BasePage.APPNAME);
 		addModel("DESCRIPTION", BasePage.DESCRIPTION);
 		addModel("KEYWORDS", BasePage.KEYWORDS);
 		addModel("CDN_URL", BasePage.CDN_URL);
-		addModel("currentLocale", getContext().getLocale());
+		addModel("currentLocale", loc);
 		addModel("IN_PRODUCTION", BasePage.IN_PRODUCTION);
 	}
 

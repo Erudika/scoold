@@ -592,7 +592,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				}
 			};
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
@@ -604,30 +604,30 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		if(so == null) return;
 		if(StringUtils.isBlank(type)) type = so.getClasstype();
 		try {
-			String data = getAsJSON(so, type, true);
-			if (AbstractDAOFactory.IN_PRODUCTION) {
-				QueueFactory.getDefaultQueue().push(data);
-			} else {
+//			String data = toIndexableJSON(so, type, true);
+//			if (AbstractDAOFactory.IN_PRODUCTION) {
+//				QueueFactory.getDefaultQueue().push(data);
+//			} else {
 				searchClient.prepareIndex(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).				
 					setSource(AbstractDAOUtils.getAnnotatedFields(so, Stored.class)).execute();
-			}
+//			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
 	public void unindex(ScooldObject so, String type){
 		if(so == null || StringUtils.isBlank(type)) return;
 		try{
-			String data = getAsJSON(so, type, false);
-			if (AbstractDAOFactory.IN_PRODUCTION) {
-				QueueFactory.getDefaultQueue().push(data);
-			} else {
+//			String data = toIndexableJSON(so, type, false);
+//			if (AbstractDAOFactory.IN_PRODUCTION) {
+//				QueueFactory.getDefaultQueue().push(data);
+//			} else {
 				searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).
 					setType(type).execute();
-			}
+//			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
@@ -654,7 +654,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			}
 			brb.execute();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
@@ -685,7 +685,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 
 			create.execute().actionGet();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
@@ -696,7 +696,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				searchClient.admin().indices().prepareDelete(name).execute();
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 	}
 	
@@ -707,7 +707,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			exists = searchClient.admin().indices().prepareExists(name).execute().
 					actionGet().exists();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 		return exists;
 	}
@@ -822,7 +822,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 		
 		return keys;
@@ -855,7 +855,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				keys.add(hit.getId());
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, null, e);
+			logger.warning(e.getMessage());
 		}
 		
 		return keys;

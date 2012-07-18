@@ -68,10 +68,10 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	public static final String THIS_IS_ME = "this-is-me";
 	public static final String OPENID = "openid";
 	public static final String FACEBOOK = "facebook";
+	public static final String CONSUMER_MANAGER = "consumer-manager";
+	public static final String ADMIN_FB_ID = "517966023";
 	public static final String FB_APP_ID = System.getProperty("com.scoold.fbappid");
 	private static final String FB_SECRET = System.getProperty("com.scoold.fbsecret");
-	public static final String CONSUMER_MANAGER = "consumer-manager";
-//	public static final String DISCOVERY_INFO = "discovery-info";
 	
 	private static final String SIGNIN_PAGE = "/signin";
 	private static final String SIGNUP_PAGE = "/signup";

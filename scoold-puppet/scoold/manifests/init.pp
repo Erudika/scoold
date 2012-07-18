@@ -14,7 +14,7 @@ class scoold {
 	$group = regsubst($nodename,'^(\w+)(\d+)$','\1')
 	
 	#### Cassandra ####	
-	$casver = "1.1.0"
+	$casver = "1.1.2"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "https://github.com/downloads/twall/jna/jna.jar"
 	$dbheapsize = "6G" # memory of m1.large
@@ -27,7 +27,7 @@ class scoold {
 	$gfcluster = "scoold" 
 		 
 	#### Elasticsearch ####
-	$esver = "0.19.3"
+	$esver = "0.19.8"
 	$esriverver = "1.2"
 	$escloudawsver = "1.5.0"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"

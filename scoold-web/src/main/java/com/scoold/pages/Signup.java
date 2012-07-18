@@ -31,7 +31,6 @@ public class Signup extends BasePage{
 	public boolean isFacebookUser;
 	public String identString;
 	public User newUser;
-	private static final String ADMIN_FB_ID = "517966023";
     
     public Signup() {
         title = lang.get("signup.title");
@@ -44,6 +43,10 @@ public class Signup extends BasePage{
 			setRedirect(HOMEPAGE);
 		}else if(identString == null) {
             setRedirect(signinlink);
+        }else if(User.exists(StringUtils.trim(identString))){
+            //RARE CASE! Identifier is claimed => user exists! 
+			ScooldAuthModule.clearAuthCookie(req, getContext().getResponse());
+			setRedirect(signinlink);
         }
     }
     
@@ -111,13 +114,6 @@ public class Signup extends BasePage{
 			email.setError(lang.get("signup.form.error.email"));
 		}		
 		
-        if(User.exists(StringUtils.trim(identString))){
-            //Email is claimed => user exists!
-			ScooldAuthModule.clearAuthCookie(req, getContext().getResponse());
-			setRedirect(signinlink);
-			return false;
-        }
-		
 		if(!daoutils.findTerm(User.classtype, null, null, "email", 
 				StringUtils.trim(mail)).isEmpty()){
 			email.setError(lang.get("signup.form.error.emailexists"));
@@ -138,7 +134,7 @@ public class Signup extends BasePage{
 				newUser.setType(getParamValue("type"));				
 				newUser.setIdentifier(identString);
 
-				if (identString.equals(ADMIN_FB_ID)){
+				if (identString.equals(ScooldAuthModule.ADMIN_FB_ID)){
 					newUser.setGroups(UserGroup.ADMINS.toString());
 				}
 				

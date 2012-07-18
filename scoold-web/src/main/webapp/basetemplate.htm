@@ -284,7 +284,7 @@
 #macro(newcommentform $parentid $hidden $uri)
 	#if($uri == "")
 		#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-		#if($request.getParameter('javax.servlet.forward.query_string'))
+		#if($request.getAttribute('javax.servlet.forward.query_string'))
 			#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
 		#end
 	#else
@@ -975,7 +975,7 @@
 		#if($showu.groups && !$showu.groups.isEmpty())
 			#if($showu.isModerator())
 				#if($showu.isAdmin())
-					<span class="pictos" title="Scoold developer">b</span>
+					<span class="pictos" title="$!APPNAME developer">b</span>
 				#end
 				<span class="pictos" title="$!lang.get('mod')">S</span>
 			#else
@@ -1031,7 +1031,7 @@
 ####################################
 #macro(commentbox $showcomment)
 	#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-	#if($request.getParameter('javax.servlet.forward.query_string'))
+	#if($request.getAttribute('javax.servlet.forward.query_string'))
 		#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
 	#end
 	#if($thisuri.contains("?"))	#set($amp = "&amp;") #else #set($amp = "?") #end
@@ -1843,7 +1843,7 @@ $!picurl#end
 		#set($infoStripClass = "infoBox" )
 	#end
 	
-	#if($infoStripMsg.isEmpty() && !$request.getParameter("code") && $badgelist.isEmpty())
+	#if((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
 		#set($hideInfoStrip = "hide")
 	#else
 		#set($hideInfoStrip = "")
@@ -1919,7 +1919,7 @@ $!picurl#end
 #macro(usertitlebadge $showu)
 	#if($showu.isModerator())
 		#if($showu.isAdmin())
-			<span class="pictos" title="Scoold developer">b</span>
+			<span class="pictos" title="$!APPNAME developer">b</span>
 		#end
 		<span class="pictos" title="$!lang.get('mod')">S</span>
 	#end
@@ -2283,13 +2283,18 @@ $!picurl#end
 						</form>
 					#else
 						#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-						#if($request.getParameter('javax.servlet.forward.query_string'))
+						#if($request.getAttribute('javax.servlet.forward.query_string'))
 							#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
 						#end
 						#if($thisuri && $thisuri.startsWith($context))
 							#set($thisuri = $thisuri.replaceFirst($context, ""))
 						#end
-						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
+						#if($HOMEPAGE == $thisuri)
+							#set($silink = $signinlink )
+						#else
+							#set($silink = "$context/p$!{thisuri}" )
+						#end
+						<a href="$!silink" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
 					#end
 					
 					#if($isMobile)

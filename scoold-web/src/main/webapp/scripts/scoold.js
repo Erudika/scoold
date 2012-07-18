@@ -1000,13 +1000,6 @@ $(function () {
 	/****************************************************
      *                  PAGINATION
      ****************************************************/
-	function simpleHash(s) {
-		var i, hash = 0;
-		for (i = 0; i < s.length; i++) {
-			hash += (s[i].charCodeAt() * (i+1));
-		}
-		return Math.abs(hash);
-	}
 	
 	function loadMoreHandler(dis, callback){
 		var that = $(dis),

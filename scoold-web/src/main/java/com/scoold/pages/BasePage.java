@@ -224,7 +224,7 @@ public class BasePage extends Page {
 	public final void setCurrentLocale(String langname, boolean setCookie) {
 		Locale loc = Language.getProperLocale(langname);
 		addModel("showCurrentLocale", loc.getDisplayLanguage(loc));
-		getContext().setLocale(loc);
+//		getContext().setLocale(loc);
 		lang = Language.readLanguage(loc);
 
 		if(setCookie){

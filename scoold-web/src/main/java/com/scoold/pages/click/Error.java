@@ -9,6 +9,7 @@ import com.scoold.core.Language;
 import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.pages.BasePage;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.click.util.ErrorPage;
 
@@ -24,7 +25,8 @@ public class Error extends ErrorPage {
 
     public Error() {
 		daoutils = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils();
-		lang = Language.readLanguage(getContext().getLocale());
+		Locale loc = Language.getProperLocale(getContext().getRequest().getLocale().getLanguage());
+		lang = Language.readLanguage(loc);
         title = lang.get("error.title");
 		
 		addModel("APPNAME", BasePage.APPNAME);

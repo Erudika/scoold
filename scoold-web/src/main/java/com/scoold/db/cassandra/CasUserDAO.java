@@ -135,11 +135,13 @@ final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
     }
 
 	public boolean isFriendWith (Long userid, Long contactid){
+		if(userid == null) return false;
 		return cdu.existsColumn(userid.toString(),
 				CasDAOFactory.USERS_PARENTS, contactid);
 	}
 
 	public boolean userExists (Long userid) {
+		if(userid == null) return false;
 		return cdu.existsColumn(userid.toString(), CasDAOFactory.OBJECTS, CasDAOFactory.CN_ID);
 	}
 
@@ -150,8 +152,9 @@ final class CasUserDAO<T, PK> extends AbstractUserDAO<User, Long>{
 
 		return (row != null && !row.isEmpty());
 	}
-
+	
 	public int countContacts (Long userid){
+		if(userid == null) return 0;
 		return cdu.countColumns(userid.toString(),
 				CasDAOFactory.USERS_PARENTS, Long.class);
 	}
