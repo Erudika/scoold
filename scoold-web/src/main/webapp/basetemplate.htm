@@ -2033,7 +2033,7 @@ $!picurl#end
 #macro(sectoken $bare)
 	#if($authenticated)
 		#set($authToken = $daoutils.getStateParam($AUTH_USER, $request, $request.response, $USE_SESSIONS) )
-		#set($authSalt = "$authUser.authstamp" )
+		#set($authSalt = "$!daoutils.getAuthstamp($!authUser.identifier)" )
 		#set($secToken = $daoutils.MD5($authToken.concat($SEPARATOR).concat($authSalt)) )
 		#if($bare && $bare == true)$secToken#else
 			<input type="hidden" name="stoken" value="$!secToken"/>
@@ -2273,7 +2273,6 @@ $!picurl#end
 							#end
 							<a href="$reportslink" title="Reports">$!lang.get("reports.title")</a> |
 						#end
-						#if($isFBconnected) #set($logoutid = "fb-logout" ) #else #set($logoutid = "logoutbtn" )	#end
 						<span class="pictos">K</span>
 						<form method="post" action="$signoutlink" class="inline">
 							<fieldset class="inline">

@@ -593,7 +593,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				}
 			};
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -613,7 +613,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 					setSource(AbstractDAOUtils.getAnnotatedFields(so, Stored.class)).execute();
 //			}
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -628,7 +628,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 					setType(type).execute();
 //			}
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -655,7 +655,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			}
 			brb.execute();
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -686,7 +686,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 
 			create.execute().actionGet();
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -697,7 +697,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				searchClient.admin().indices().prepareDelete(name).execute();
 			}
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 	}
 	
@@ -708,7 +708,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			exists = searchClient.admin().indices().prepareExists(name).execute().
 					actionGet().exists();
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 		return exists;
 	}
@@ -823,7 +823,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				}
 			}
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 		
 		return keys;
@@ -856,7 +856,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				keys.add(hit.getId());
 			}
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.warning(e.toString());
 		}
 		
 		return keys;
