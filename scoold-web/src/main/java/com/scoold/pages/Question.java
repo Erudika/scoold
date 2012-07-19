@@ -81,42 +81,44 @@ public class Question extends BasePage{
 	}
 
 	public void onGet() {
-		if("revisions".equals(showParam)){
-			title = title + " - " + lang.get("revisions.title");
-			revisionslist = showPost.getRevisions(pagenum, itemcount);
-		}else if(showPost != null){
-			if(updateViewCount(showPost)) showPost.update();
-			
-			if(daoutils.isIndexable(showPost) && !showPost.isReply()){
-				if(!isAjaxRequest()){
-					String likeTxt = showPost.getTitle().concat(" ").concat(showPost.getBody()).
-							concat(" ").concat(showPost.getTags());
-					similarquestions = daoutils.readAndRepair(Post.class, 
-							daoutils.findSimilar(showPost.getClasstype(), 
-							showPost.getId().toString(), new String[]{"title", "body", "tags"}, 
-							likeTxt, MAX_ITEMS_PER_PAGE), itemcount);
-					if(showPost.isQuestion()){
-						School s = School.getSchoolDao().read(showPost.getParentid());
-						if(s != null) addModel("showSchool", s); 
+		if(showPost != null){
+			if("revisions".equals(showParam)){
+				title = title + " - " + lang.get("revisions.title");
+				revisionslist = showPost.getRevisions(pagenum, itemcount);
+			}else{
+				if(updateViewCount(showPost)) showPost.update();
+
+				if(daoutils.isIndexable(showPost) && !showPost.isReply()){
+					if(!isAjaxRequest()){
+						String likeTxt = showPost.getTitle().concat(" ").concat(showPost.getBody()).
+								concat(" ").concat(showPost.getTags());
+						similarquestions = daoutils.readAndRepair(Post.class, 
+								daoutils.findSimilar(showPost.getClasstype(), 
+								showPost.getId().toString(), new String[]{"title", "body", "tags"}, 
+								likeTxt, MAX_ITEMS_PER_PAGE), itemcount);
+						if(showPost.isQuestion()){
+							School s = School.getSchoolDao().read(showPost.getParentid());
+							if(s != null) addModel("showSchool", s); 
+						}
 					}
-				}
-				
-				if(param("getcomments") && param("parentid")){
-					Long parentid = NumberUtils.toLong(getParamValue("parentid"), 0L);
-					commentslist = com.scoold.core.Comment.getCommentDao().readAllCommentsForID(parentid,
-							pagenum, null);
-				}else{
-					String sortby = "votes";
-					if("newest".equals(getParamValue("sortby"))){
-						sortby = "";
+
+					if(param("getcomments") && param("parentid")){
+						Long parentid = NumberUtils.toLong(getParamValue("parentid"), 0L);
+						commentslist = com.scoold.core.Comment.getCommentDao().readAllCommentsForID(parentid,
+								pagenum, null);
+					}else{
+						String sortby = "votes";
+						if("newest".equals(getParamValue("sortby"))){
+							sortby = "";
+						}
+						if(showPost.getAnswercount() > 0){
+							answerslist = showPost.getAnswers(sortby, pagenum, itemcount);
+							//get the comments for each answer
+							Post.getPostDao().readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
+						}
 					}
-					if(showPost.getAnswercount() > 0){
-						answerslist = showPost.getAnswers(sortby, pagenum, itemcount);
-						//get the comments for each answer
-						Post.getPostDao().readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
-					}
-				}
-			}			
+				}			
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ package com.scoold.pages;
 import com.scoold.core.School;
 import com.scoold.db.AbstractDAOUtils;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import org.apache.click.control.Form;
 import org.apache.click.control.Option;
 import org.apache.click.control.Select;
@@ -42,6 +43,9 @@ public class Schools extends BasePage{
 		if (!param("create")) {
 			String sortBy = "";
 			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
+			logger.log(Level.WARNING, "DEBUG: {0}, {1}, {2}?{3}", 
+					new Object[]{req.getRemoteAddr(), req.getRemoteHost(), 
+						req.getRequestURI(), req.getQueryString()});
 			schoollist = daoutils.readAndRepair(School.class, daoutils.findQuery(
 					School.classtype, pagenum, itemcount, "*", sortBy, 
 					true, MAX_ITEMS_PER_PAGE), itemcount);

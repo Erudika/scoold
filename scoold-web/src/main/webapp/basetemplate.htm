@@ -2289,12 +2289,7 @@ $!picurl#end
 						#if($thisuri && $thisuri.startsWith($context))
 							#set($thisuri = $thisuri.replaceFirst($context, ""))
 						#end
-						#if($HOMEPAGE == $thisuri)
-							#set($silink = $signinlink )
-						#else
-							#set($silink = "$context/p$!{thisuri}" )
-						#end
-						<a href="$!silink" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
+						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
 					#end
 					
 					#if($isMobile)
