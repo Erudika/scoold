@@ -2,13 +2,12 @@ package com.scoold.db;
 
 import com.scoold.core.ScooldObject;
 import com.scoold.db.cassandra.CasDAOFactory;
-import org.apache.commons.lang.BooleanUtils;
 
 public abstract class AbstractDAOFactory {
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 	// GLOBAL LIMITS
-	public static final int MAX_COLUMNS = 1024;
+	public static final int MAX_PAGES = 10000;
 	public static final int VOTE_LOCKED_FOR_SEC = 4*7*24*60*60; //1 month in seconds
 	public static final long VOTE_LOCK_AFTER_SEC = 2*60; //2 minutes in ms
 	public static final int MAX_ITEMS_PER_PAGE = 30;
@@ -17,7 +16,7 @@ public abstract class AbstractDAOFactory {
 	public static final int MAX_CLASSES_PER_USER = 100;
 	public static final int MAX_GROUPS_PER_USER = 2000;
 	public static final int MAX_MEDIA_PER_ID = 2000;
-	public static final int MAX_COMMENTS_PER_ID = MAX_COLUMNS;
+	public static final int MAX_COMMENTS_PER_ID = 1000;
 	public static final int MAX_TEXT_LENGTH = 20000;
 	public static final int MAX_TEXT_LENGTH_SHORT = 5000;
 	public static final int MAX_MESSAGES_PER_USER = 5000;

@@ -114,7 +114,7 @@ public class Tag implements ScooldObject, Serializable{
 	}
 
 	public void decrementCount(){
-		if(this.count == 1)
+		if(this.count <= 1)
 			delete();
 		else	
 			this.count--;

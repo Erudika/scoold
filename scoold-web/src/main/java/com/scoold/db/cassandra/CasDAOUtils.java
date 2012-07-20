@@ -10,7 +10,6 @@ import com.scoold.db.AbstractDAOFactory;
 import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOFactory.CF;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
-import com.scoold.util.QueueFactory;
 import com.scoold.util.ScooldAppListener;
 import java.util.*;
 import java.util.Map.Entry;
@@ -806,6 +805,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		ArrayList<Tag> keys = new ArrayList<Tag>();
 		if(StringUtils.isBlank(keyword)) return keys;
 		String type = Tag.classtype;
+		max = (max < 1 || max > MAX_ITEMS) ? 10 : max;
 		
 		SearchResponse response = searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
 			.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setTypes(type)
@@ -842,7 +842,8 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		ArrayList<String> keys = new ArrayList<String>();
 		if(StringUtils.isBlank(type) || query == null) return keys;
 		if(sort == null) sort = SortBuilders.fieldSort("timestamp").order(SortOrder.DESC);
-		int start = (page == null || page.intValue() < 1) ? 0 : (page.intValue() - 1) * max;
+		int start = (page == null || page.intValue() < 1 || 
+				page.intValue() > AbstractDAOFactory.MAX_PAGES) ? 0 : (page.intValue() - 1) * max;
 		
 		try{
 			SearchResponse response = searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
@@ -1028,7 +1029,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	
 	private void initIdGen(){
 		String workerID = System.getProperty("com.scoold.workerid");
-		workerId = NumberUtils.toLong(workerID, maxWorkerId + 1);
+		workerId = NumberUtils.toLong(workerID, 1);
 				
 		if (workerId > maxWorkerId || workerId < 0) {
 			workerId = new Random().nextInt((int) maxWorkerId + 1);
