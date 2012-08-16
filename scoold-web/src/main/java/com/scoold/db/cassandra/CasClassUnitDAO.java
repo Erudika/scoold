@@ -4,12 +4,21 @@ import com.scoold.core.Classunit;
 import com.scoold.core.Media;
 import com.scoold.core.Post;
 import com.scoold.db.AbstractClassUnitDAO;
+import com.scoold.db.AbstractDAOUtils;
 import com.scoold.db.cassandra.CasDAOFactory.Column;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.mutation.Mutator;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -203,6 +212,68 @@ final class CasClassUnitDAO<T, PK> extends AbstractClassUnitDAO<Classunit, Long>
 	public int countUsersForClassUnit(Long classid) {
 		return cdu.countColumns(classid.toString(),
 				CasDAOFactory.USERS_PARENTS, Long.class);
+	}
+
+	public String sendChat(Long primaryClassid, String chat) {
+		if(primaryClassid == null || StringUtils.isBlank(chat)) return "[]";
+		String chad = receiveChat(primaryClassid);
+		try {
+			StringBuilder sb = new StringBuilder("[");
+			JSONArray arr = new JSONArray(chad);
+			int start = (arr.length() >= CasDAOFactory.MAX_ITEMS_PER_PAGE) ? 1 : 0;
+			
+			for (int i = start; i < arr.length(); i++) {
+				JSONObject object = arr.getJSONObject(i);
+				sb.append(object.toString()).append(",");
+			}	
+			
+			sb.append(chat);			
+			sb.append("]");
+			chad = sb.toString().replaceAll(",]", "]");
+		} catch (JSONException ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+		
+		cdu.putColumn(primaryClassid.toString(), CasDAOFactory.OBJECTS, "chat", chad);
+		return chad;
+		
+//		if(primaryClassid == null || StringUtils.isBlank(chat)) return "[]";
+//		String chad = receiveChat(primaryClassid);
+//		try {
+//			StringBuilder sb = new StringBuilder("[");
+//			JSONArray arr = new JSONArray(chad);
+//			ArrayList<String> list = new ArrayList<String>();
+//			TreeMap<Long, String> map = new TreeMap<Long, String>();
+//			JSONObject obj = new JSONObject(chat);
+//			map.put(obj.getLong("stamp"), chat);
+//			
+//			for (int i = 0; i < arr.length(); i++) {
+//				JSONObject object = arr.getJSONObject(i);
+//				map.put(object.getLong("stamp"), object.toString());				
+//			}			
+//			
+//			if(arr.length() >= CasDAOFactory.MAX_ITEMS_PER_PAGE){
+//				list.addAll(map.values());
+//				list.remove(0);
+//			}
+//			
+//			for (String string : list) {
+//				sb.append(string).append(",");
+//			}
+//			sb.append("]");
+//			chad = sb.toString().replaceAll(",]", "]");
+//		} catch (JSONException ex) {
+//			logger.log(Level.SEVERE, null, ex);
+//		}
+//		
+//		cdu.putColumn(primaryClassid.toString(), CasDAOFactory.OBJECTS, "chat", chad);
+//		return chad;
+	}
+
+	public String receiveChat(Long primaryClassid) {
+		String chat = cdu.getColumn(primaryClassid.toString(), CasDAOFactory.OBJECTS, "chat");
+		if(StringUtils.isBlank(chat)) chat = "[]";
+		return chat;
 	}
 
 }

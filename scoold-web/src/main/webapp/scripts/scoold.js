@@ -833,27 +833,34 @@ $(function () {
      *						 CHAT
 	 ****************************************************/
 
-	var chatbox = $("#chat");
-	if (chatbox.length > 0) {
-//		var chatServerHost = "http://localhost:8001/chat";
-		var chatServerHost = "http://a1x.no.de:8001/chat";
-		var channelname = chatbox.children("#channel").text();
-		var nickname = chatbox.children("#nickname").text();
-		var userid = chatbox.children("#userid").text();
-		
-		//node chat client init
-		chatbox.nodechat(nickname, channelname, userid, {
-			serverUrl: chatServerHost,
-			userJoinText: lang["class.chat.userin"],
-			userLeaveText: lang["class.chat.userout"],
-			connectionErrorText: lang["class.chat.connection.error"],
-			pollingErrorText: lang["class.chat.polling.error"],
-			reconnectErrorText: lang["class.chat.reconnect.error"]
-		}).find("a#chat-send-msg").click(function(){
-			$(this).closest("form").submit();
-			return false;
-		});
+	var chatlog = $("#chat-log");
+	var chatmessage = $("input#chat-message");
+	var timeout = 1000;
+	
+	function chatPoll(){
+		setTimeout(function(){
+			$.get(ajaxpath, {receivechat: true}, function(data){
+				chatlog.html(data);
+				timeout = 30 * 1000;
+				chatPoll();
+			})
+		}, timeout);
 	}
+	
+	if(chatlog.length){
+		chatPoll();
+	}
+	
+	submitFormBind("form#chat-form", function(data, status, xhr, form){
+		chatlog.html(data);
+		chatmessage.val("");
+	});
+	
+	$("a#chat-send-msg").click(function(){
+		$(this).closest("form").submit();
+		chatmessage.val("");
+		return false;
+	});
 
 	/****************************************************
      *                    MODAL DIALOGS

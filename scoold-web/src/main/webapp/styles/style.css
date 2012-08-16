@@ -449,17 +449,6 @@ pre, code, .chat-msg{
 	font-family: Monaco, Consolas,Menlo,"Lucida Console","Liberation Mono",
 		"DejaVu Sans Mono","Bitstream Vera Sans Mono","Courier New",monospace,serif;
 }
-.chat-system-msg span{ color: #777777; font-style:italic;}
-.chat-nick{ color: #222222; }
-.chat-time{ color: #777777; }
-.chat-msg{ font-size: 0.8em; line-height: 1.2em;}
-.chat-text{ text-indent: 10%;}
-.chatbox{
-	height: 350px;
-	overflow: auto;
-	border: 2px solid #CCCCCC;
-	padding: 7px;
-}
 .whitebox{
 	position: relative;
 /*	border-bottom: 2px dashed #CCCCCC;*/

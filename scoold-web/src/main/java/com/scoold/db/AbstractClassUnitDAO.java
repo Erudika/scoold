@@ -18,4 +18,6 @@ public abstract class AbstractClassUnitDAO<T extends Classunit, PK>
 	public abstract boolean isLinkedToUser(PK classid, PK userid);
 	public abstract boolean classExists(PK classid);
 	public abstract boolean mergeClasses(PK primaryClassid, PK duplicateClassid);
+	public abstract String sendChat(PK primaryClassid, String chat);
+	public abstract String receiveChat(PK primaryClassid);
 }

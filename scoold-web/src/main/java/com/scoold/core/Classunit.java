@@ -23,6 +23,7 @@ public class Classunit implements ScooldObject,	CanHasMedia, Serializable {
 	@Stored private Long userid;
 	@Stored private Long blackboardid;
 	@Stored private String inactiveusers;
+	@Stored private String chat;	// JSON ARRAY [{id: id, msg: msg}, ...]
 	@Stored public static final String classtype = Classunit.class.getSimpleName().toLowerCase();
 
 	private transient Integer count;
@@ -37,9 +38,18 @@ public class Classunit implements ScooldObject,	CanHasMedia, Serializable {
     public Classunit() {
 		this.identifier = "";
     }
+	
     public Classunit(Long id) {
         this.id = id;
     }
+	
+	public String getChat() {
+		return chat;
+	}
+
+	public void setChat(String chat) {
+		this.chat = chat;
+	}
 
 	public String getClasstype() {
 		return classtype;

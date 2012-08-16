@@ -31,8 +31,8 @@ import org.elasticsearch.node.NodeBuilder;
 public class ScooldAppListener implements ServletContextListener, HttpSessionListener {
 
 	private static final Logger logger = Logger.getLogger(ScooldAppListener.class.getName());
-    private static Client searchClient;
-	private static Object showdownJS;
+    public static Client searchClient;
+	public static Object showdownJS;
 			
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext sc = sce.getServletContext();		
@@ -80,12 +80,4 @@ public class ScooldAppListener implements ServletContextListener, HttpSessionLis
 	
 	public void sessionCreated(HttpSessionEvent se) { }
 	public void sessionDestroyed(HttpSessionEvent se) { }
-
-	public static Client getSearchClient() {
-		return searchClient;
-	}
-	
-	public static Object getShowdownJS(){
-		return showdownJS;
-	}
 }

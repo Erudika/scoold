@@ -61,7 +61,6 @@ import org.jsoup.Jsoup;
 public abstract class AbstractDAOUtils {
 
 	private static final Logger logger = Logger.getLogger(AbstractDAOUtils.class.getName());
-	private static Object showdownJS = ScooldAppListener.getShowdownJS();
 	private static HumanTime humantime = new HumanTime();
 		
 	public static String MD5(String s) {
@@ -91,12 +90,12 @@ public abstract class AbstractDAOUtils {
 	}
 
 	public static String markdownToHtml(String markdownString) {
-		if (showdownJS == null || StringUtils.isEmpty(markdownString)) return "";
+		if (ScooldAppListener.showdownJS == null || StringUtils.isEmpty(markdownString)) return "";
 
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine jsEngine = manager.getEngineByName("js");
 		try {
-			return ((Invocable) jsEngine).invokeMethod(showdownJS, "makeHtml",
+			return ((Invocable) jsEngine).invokeMethod(ScooldAppListener.showdownJS, "makeHtml",
 					markdownString) + "";
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "error while converting markdown to html", e);

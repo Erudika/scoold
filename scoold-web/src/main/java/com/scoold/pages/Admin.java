@@ -34,7 +34,7 @@ public class Admin extends BasePage {
 			return;
 		}
 		
-		TransportClient client = (TransportClient) ScooldAppListener.getSearchClient();
+		TransportClient client = (TransportClient) ScooldAppListener.searchClient;
 		
 		if(client != null){
 			addModel("eshosts", client.transportAddresses());

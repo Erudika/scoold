@@ -60,7 +60,6 @@ import org.elasticsearch.search.sort.SortOrder;
 final class CasDAOUtils extends AbstractDAOUtils {
 	
 	private static final Logger logger = Logger.getLogger(CasDAOUtils.class.getName());
-	private static Client searchClient = ScooldAppListener.getSearchClient();
 	private Serializer<String> strser = getSerializer(String.class);
 	private static final int MAX_ITEMS = AbstractDAOFactory.MAX_ITEMS_PER_PAGE;
 	private static final long TIMER_OFFSET = 1310084584692L;
@@ -608,7 +607,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 //			if (AbstractDAOFactory.IN_PRODUCTION) {
 //				QueueFactory.getDefaultQueue().push(data);
 //			} else {
-				searchClient.prepareIndex(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).				
+				ScooldAppListener.searchClient.prepareIndex(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).				
 					setSource(AbstractDAOUtils.getAnnotatedFields(so, Stored.class)).execute();
 //			}
 		} catch (Exception e) {
@@ -623,7 +622,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 //			if (AbstractDAOFactory.IN_PRODUCTION) {
 //				QueueFactory.getDefaultQueue().push(data);
 //			} else {
-				searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).
+				ScooldAppListener.searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, type, so.getId().toString()).
 					setType(type).execute();
 //			}
 		} catch (Exception e) {
@@ -636,7 +635,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		if(!existsIndex()) createIndex();
 		
 		try {
-			BulkRequestBuilder brb = searchClient.prepareBulk();
+			BulkRequestBuilder brb = ScooldAppListener.searchClient.prepareBulk();
 			for (Row<String, String, String> row : readAll()) {
 				List<HColumn<String, String>> cols = row.getColumnSlice().getColumns();
 				if(cols != null && !cols.isEmpty()){
@@ -646,7 +645,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 						if(searchables.containsKey(classtype)){
 							Map<String, Object> data = AbstractDAOUtils.getAnnotatedFields(
 									fromColumns(classtypeToClass(classtype), cols), Stored.class);
-							brb.add(searchClient.prepareIndex(name, classtype, row.getKey()).
+							brb.add(ScooldAppListener.searchClient.prepareIndex(name, classtype, row.getKey()).
 									setSource(data));
 						}
 					}
@@ -676,7 +675,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 					"norwegian", "persian", "portuguese", "romanian", "russian", "spanish", 
 					"swedish", "turkish"); 
 
-			CreateIndexRequestBuilder create = searchClient.admin().indices().prepareCreate(name).
+			CreateIndexRequestBuilder create = ScooldAppListener.searchClient.admin().indices().prepareCreate(name).
 					setSettings(nb.settings().build());
 
 			for (Entry<String, XContentBuilder> searchable : searchables.entrySet()) {
@@ -693,7 +692,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		try {
 			String name = AbstractDAOFactory.INDEX_NAME;
 			if(existsIndex()){
-				searchClient.admin().indices().prepareDelete(name).execute();
+				ScooldAppListener.searchClient.admin().indices().prepareDelete(name).execute();
 			}
 		} catch (Exception e) {
 			logger.warning(e.toString());
@@ -704,7 +703,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		boolean exists = false;
 		try {
 			String name = AbstractDAOFactory.INDEX_NAME;
-			exists = searchClient.admin().indices().prepareExists(name).execute().
+			exists = ScooldAppListener.searchClient.admin().indices().prepareExists(name).execute().
 					actionGet().exists();
 		} catch (Exception e) {
 			logger.warning(e.toString());
@@ -807,7 +806,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		String type = Tag.classtype;
 		max = (max < 1 || max > MAX_ITEMS) ? 10 : max;
 		
-		SearchResponse response = searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
+		SearchResponse response = ScooldAppListener.searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
 			.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setTypes(type)
 			.setQuery(QueryBuilders.wildcardQuery("tag", keyword.concat("*")))
 			.addSort(SortBuilders.fieldSort("count").order(SortOrder.DESC))
@@ -846,7 +845,7 @@ final class CasDAOUtils extends AbstractDAOUtils {
 				page.intValue() > AbstractDAOFactory.MAX_PAGES) ? 0 : (page.intValue() - 1) * max;
 		
 		try{
-			SearchResponse response = searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
+			SearchResponse response = ScooldAppListener.searchClient.prepareSearch(AbstractDAOFactory.INDEX_NAME)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setTypes(type)
 				.setQuery(query).addSort(sort).setFrom(start).setSize(max).execute().actionGet();
 
@@ -867,11 +866,11 @@ final class CasDAOUtils extends AbstractDAOUtils {
 			ArrayList<String> keys, MutableLong itemcount) {
 		int countRemoved = 0;
 		if(list.contains(null)){
-			BulkRequestBuilder brb = searchClient.prepareBulk();
+			BulkRequestBuilder brb = ScooldAppListener.searchClient.prepareBulk();
 			for (int i = 0; i < list.size(); i++) {
 				String id = keys.get(i);
 				if(id == null){
-					brb.add(searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, 
+					brb.add(ScooldAppListener.searchClient.prepareDelete(AbstractDAOFactory.INDEX_NAME, 
 							type, null).request());
 					countRemoved++;
 				}

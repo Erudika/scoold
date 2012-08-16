@@ -66,20 +66,15 @@
 				<h2>$!lang.get("class.chat")</h2>
 
 				<div id="chat">
-					<span id="channel" class="hide">class$!{showClass.id}</span>
-					<span id="nickname" class="hide">$!authUser.fullname</span>
-					<span id="userid" class="hide">$!authUser.id</span>
-					<div id="chat-log" class="chatbox mbs rounded3"></div>
+					<div id="chat-log" class="mbl"></div>
 
-					<form method="get" id="chat-form" action="$classlink/$showClass.id">
+					<form method="get" id="chat-form" action="$classlink/$showClass.id?sendchat=true">
 						<fieldset>
+							#sectoken(false)
 							<input type="text" name="message" value="" id="chat-message" class="p93 nicebox"/>
 							<a id="chat-send-msg" href="#" class="button-small rounded3"><span class="pictos">w</span></a>
 						</fieldset>
 					</form>
-					<br />
-					<h2>$!lang.get("class.chat.whoshere")</h2>
-					<div id="chat-members"></div>
 				</div>
 
 			#elseif($showParam == "invite" && $isLinkedToMe && $isMine)

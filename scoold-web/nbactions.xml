@@ -14,7 +14,7 @@
             <actionName>run</actionName>
             <goals>
                 <goal>package</goal>
-                <goal>war:exploded</goal>
+                <goal>war:inplace</goal>
                 
                 
             </goals>

@@ -16,9 +16,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.click.control.RadioGroup;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -142,6 +147,9 @@ public class Classunit extends BasePage{
 					setRedirect(classlink+"/"+showClass.getId());
 				}
 				return;
+			}else if(param("receivechat")){
+				chatJSONResponse(com.scoold.core.Classunit.getClassUnitDao().
+						receiveChat(showClass.getId()));
 			}
 		}
 	}
@@ -202,6 +210,9 @@ public class Classunit extends BasePage{
 				showClass.update();
 			}
 			if(!isAjaxRequest()) setRedirect(classlink+"/"+showClass.getId());
+		}else if (param("sendchat")) {
+			chatJSONResponse(com.scoold.core.Classunit.getClassUnitDao().
+					sendChat(showClass.getId(), getJSONMessage(getParamValue("message"))));
 		}else{
 			if(canEdit){
 				AbstractDAOUtils.populate(showClass, req.getParameterMap());
@@ -229,6 +240,36 @@ public class Classunit extends BasePage{
 		TimerTask mailtask = new MailTask(users, body, subject);
 		Timer timer = new Timer();
 		timer.schedule(mailtask, after10sec);
+	}
+	
+	private void chatJSONResponse(String chat){
+		try {
+			ArrayList<Object> list = new ArrayList<Object>(); 
+			JSONArray arr = new JSONArray(chat);
+			for (int i = 0; i < arr.length(); i++) {
+				list.add(arr.get(i));
+			}
+			addModel("chatMessages", list);
+			getContext().getResponse().setContentType("application/json");
+			getContext().getResponse().setCharacterEncoding("UTF-8");
+		} catch (JSONException ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+	}
+	
+	private String getJSONMessage(String msg){
+		JSONObject jo = new JSONObject();
+		try {
+			jo.put("id", authUser.getId());
+			jo.put("fullname", authUser.getFullname());
+			jo.put("groups", authUser.getGroups());
+			jo.put("message", msg);
+			jo.put("stamp", System.currentTimeMillis());
+		} catch (JSONException ex) {
+			logger.log(Level.SEVERE, null, ex);
+		}
+		
+		return jo.toString();
 	}
 
 }

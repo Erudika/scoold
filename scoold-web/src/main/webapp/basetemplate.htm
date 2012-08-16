@@ -973,12 +973,12 @@
 #macro(personlink $showu)
 	<span>
 		#if($showu.groups && !$showu.groups.isEmpty())
-			#if($showu.isModerator())
-				#if($showu.isAdmin())
-					<span class="pictos" title="$!APPNAME developer">b</span>
-				#end
+			#if($showu.groups == "mods")
 				<span class="pictos" title="$!lang.get('mod')">S</span>
-			#else
+			#elseif($showu.groups == "admins")
+				<span class="pictos" title="$!APPNAME developer">b</span>
+				<span class="pictos" title="$!lang.get('mod')">S</span>
+			#else			
 				<span class="pictos">U</span>
 			#end
 		#end
@@ -1933,6 +1933,15 @@ $!picurl#end
 	#if($sbparam && !$sbparam.isEmpty()) #set($paramMap[$sbparam] = $sbclazz) #else #set($paramMap[$defkey] = $sbclazz) #end
 #end
 #####################################
+#macro(chatmessages $msgs)
+	#foreach($msg in $msgs)
+		<div class="stamp-$!msg.stamp">
+			#personlink($msg): $!msg.message 
+			<span class="right smallText lightgray">#formatdate($!{msg.stamp} "")</span>
+		</div>
+	#end
+#end
+#####################################
 #macro(searchbox )
 <div id="search" class="rounded3 right">
 	<form method="get" id="search-form" action="$searchlink">
@@ -2190,6 +2199,10 @@ $!picurl#end
 		#end
 		#stop
 		
+	#elseif($request.getParameter("sendchat") || $request.getParameter("receivechat"))
+		#chatmessages($chatMessages)
+		#stop
+		
 	#end
 	#stop
 	
@@ -2387,7 +2400,6 @@ $!picurl#end
 					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
 					{oembed:		scriptslink + "/jquery.oembed" + minsuffix + ".js" },
 					{markitup:		scriptslink + "/jquery.markitup" + minsuffix + ".js" },
-					{chatclient:	scriptslink + "/chatclient" + minsuffix + ".js" },
 					{miuicons:		scriptslink + "/miu.set.markdown" + minsuffix + ".js" },
 					{showdown:		scriptslink + "/showdown" + minsuffix + ".js" },
 					{diff:			scriptslink + "/diff_match_patch" + minsuffix + ".js" },
