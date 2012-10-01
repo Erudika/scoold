@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.click.control.RadioGroup;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;

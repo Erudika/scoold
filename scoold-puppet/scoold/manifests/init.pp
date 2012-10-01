@@ -14,7 +14,7 @@ class scoold {
 	$group = regsubst($nodename,'^(\w+)(\d+)$','\1')
 	
 	#### Cassandra ####	
-	$casver = "1.1.2"
+	$casver = "1.1.5"
 	$caslink = "http://www.eu.apache.org/dist/cassandra/${casver}/apache-cassandra-${casver}-bin.tar.gz"
 	$jnalink = "https://github.com/downloads/twall/jna/jna.jar"
 	$dbheapsize = "6G" # memory of m1.large
@@ -22,14 +22,14 @@ class scoold {
 	$dbcluster = "scoold"
 	
 	#### Glassfish ####
-	$gfver = "3.1.2"
+	$gfver = "3.1.2.2"
 	$gflink = "http://dlc.sun.com.edgesuite.net/glassfish/${gfver}/release/glassfish-${gfver}.zip"	
 	$gfcluster = "scoold" 
 		 
 	#### Elasticsearch ####
-	$esver = "0.19.8"
+	$esver = "0.19.9"
 	$esriverver = "1.2"
-	$escloudawsver = "1.5.0"
+	$escloudawsver = "1.9.0"
 	$eslink = "https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-${esver}.zip"
 	$escloudawslink = "elasticsearch/elasticsearch-cloud-aws/${escloudawsver}"
 	$esriverlink = "aleski/elasticsearch-river-amazonsqs/${esriverver}"

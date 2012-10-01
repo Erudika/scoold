@@ -14,6 +14,7 @@ export DEBIAN_FRONTEND=noninteractive
 # ln -s -b /usr/lib/jvm/jre1.6.0_32/bin/java /usr/bin/java
 
 # JAVA 7
+echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 add-apt-repository -y ppa:webupd8team/java
 
 # update + upgrade system
@@ -34,6 +35,10 @@ maxfiles=64000
 echo "session required pam_limits.so" >> /etc/pam.d/common-session
 echo "* - memlock $maxmem" >> /etc/security/limits.conf
 echo "* - nofile $maxfiles" >> /etc/security/limits.conf
+
+# preserve iptables rules on reboot
+echo "pre-up iptables-restore < /etc/iptables.rules" >> /etc/network/interfaces
+iptables-save -c > /etc/iptables.rules
 
 # config monit
 sed -e "1,/START=no/ s/START=no/START=yes/" -i.bak /etc/default/monit

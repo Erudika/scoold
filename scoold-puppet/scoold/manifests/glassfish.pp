@@ -40,14 +40,12 @@ class scoold::glassfish {
 			command => "mv -f ${glassfishhome}/glassfish* ${gfdir}",
 			unless => "test -e ${gfdir}",
 			require => Exec["download-glassfish"];
-		"redirect-port-tcp":
-			command => "iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-port 8080";
-		"redirect-port-udp":
-			command => "iptables -t nat -A PREROUTING -p udp -m udp --dport 80 -j REDIRECT --to-port 8080";
-		"redirect-port-tcp-ssl":
-			command => "iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-port 8181";
-		"redirect-port-udp-ssl":
-			command => "iptables -t nat -A PREROUTING -p udp -m udp --dport 443 -j REDIRECT --to-port 8181";
+		"iptables-rules":
+			command => "iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-port 8080;
+				iptables -t nat -A PREROUTING -p udp -m udp --dport 80 -j REDIRECT --to-port 8080;
+				iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-port 8181;
+				iptables -t nat -A PREROUTING -p udp -m udp --dport 443 -j REDIRECT --to-port 8181;
+				iptables-save -c > /etc/iptables.rules";
 	}
 	
 	file { 
@@ -67,34 +65,34 @@ class scoold::glassfish {
 			group => $glassfishusr, 
 			require => Exec["rename-glassfish"],
 			before => Exec["start-glassfish"];
-		"${gfdomain}/config/admin-keyfile":
-			ensure => file,
-			source => "puppet:///modules/scoold/admin-keyfile",
-			mode => 644,
-			owner => $glassfishusr,
-			group => $glassfishusr, 
-			require => Exec["rename-glassfish"],
-			before => Exec["start-glassfish"];		
-		"/etc/init/${glassfishusr}.conf":
-			ensure => file,
-			source => "puppet:///modules/scoold/glassfish.conf",
-			owner => root,
-			mode => 644,
-			before => Exec["start-glassfish"];
+		# "${gfdomain}/config/admin-keyfile":
+		# 	ensure => file,
+		# 	source => "puppet:///modules/scoold/admin-keyfile",
+		# 	mode => 644,
+		# 	owner => $glassfishusr,
+		# 	group => $glassfishusr, 
+		# 	require => Exec["rename-glassfish"],
+		# 	before => Exec["start-glassfish"];		
+		# "${glassfishhome}/.asadminpass":
+		# 	ensure => file,
+		# 	source => "puppet:///modules/scoold/adminpass.txt",
+		#	mode => 644,
+		# 	owner => $glassfishusr,
+		# 	group => $glassfishusr,
+		# 	require => Exec["rename-glassfish"];
+		# "/etc/init/${glassfishusr}.conf":
+		#	ensure => file,
+		#	source => "puppet:///modules/scoold/glassfish.conf",
+		#	owner => root,
+		#	mode => 644,
+		#	before => Exec["start-glassfish"];
 		"${glassfishhome}/gfsec.sh":
 			ensure => file,
 			source => "puppet:///modules/scoold/gfsec.sh",
 			owner => $glassfishusr,
 			group => $glassfishusr,
 			mode => 744,
-			require => Exec["rename-glassfish"]; 
-		"${glassfishhome}/.asadminpass":
-			ensure => file,
-			source => "puppet:///modules/scoold/adminpass.txt",
-			owner => $glassfishusr,
-			group => $glassfishusr,
-			mode => 644,
-			require => Exec["rename-glassfish"];
+			require => Exec["rename-glassfish"];		
 		"${gfdomain}/docroot/index.html":
 			ensure => file, 
 			source => "puppet:///modules/scoold/index.html",

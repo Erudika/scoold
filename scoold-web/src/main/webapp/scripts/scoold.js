@@ -137,27 +137,41 @@ $(function () {
 		});
 	}
 	
-	function fbAuthAction(actionurl){
-		FB.getLoginStatus(function(response) {
-			if (response.status === 'connected') {
-				window.location = actionurl;
-			}else{
-				FB.login(function(response) {
-					if (response.authResponse) {
-						window.location = actionurl;
-					}
-				}, {scope: 'email'});
-			}
-		});
-	}
+//	function fbAuthAction(actionurl){
+//		console.log("fbAuthAction start");
+//		FB.getLoginStatus(function(response) {
+//			console.log("fbAuthAction callback", response);
+//			if (response.status === 'connected') {
+//				console.log("fbAuthAction success");
+//				window.location = actionurl;
+//			}else{
+//				console.log("fbAuthAction failure");
+//				FB.login(function(response) {
+//					console.log("fbAuthAction login ", response);
+//					if (response.authResponse) {
+//						console.log("fbAuthAction failure, success");
+//						window.location = actionurl;
+//					}
+//				}, {scope: 'email'});
+//			}
+//		}, true);
+//	}
 
 	$("#fb-login-btn").click(function(){
-		fbAuthAction(fbauthurl);
+		FB.login(function(response) {
+			if (response.authResponse) {
+				window.location = fbauthurl;
+			}
+		}, {scope: 'email'});
 		return false;
 	});
 
 	$("#fb-attach-btn").click(function(){
-		fbAuthAction(fbattachurl);
+		FB.login(function(response) {
+			if (response.authResponse) {
+				window.location = fbattachurl;
+			}
+		}, {scope: 'email'});
 		return false;
 	});
 

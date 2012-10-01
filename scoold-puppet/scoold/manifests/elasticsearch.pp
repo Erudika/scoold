@@ -73,12 +73,12 @@ class scoold::elasticsearch {
 		    recurse => true,
 		    mode => 755,
 		    require => Exec["rename-elasticsearch"];
-		"/etc/init/${elasticsearchusr}.conf":
-			ensure => file,
-			source => "puppet:///modules/scoold/elasticsearch.conf",
-			owner => root,
-			mode => 644,
-			before => Exec["start-elasticsearch"];
+		# "/etc/init/${elasticsearchusr}.conf":
+		# 			ensure => file,
+		# 			source => "puppet:///modules/scoold/elasticsearch.conf",
+		# 			owner => root,
+		# 			mode => 644,
+		# 			before => Exec["start-elasticsearch"];
 		"${esdir}/config/index.json":
 			ensure => file,
 			source => "puppet:///modules/scoold/index.json",

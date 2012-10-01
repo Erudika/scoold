@@ -4,6 +4,7 @@ import com.amazonaws.services.cloudfront.AmazonCloudFrontClient;
 import com.amazonaws.services.cloudfront.model.CreateInvalidationRequest;
 import com.amazonaws.services.cloudfront.model.CreateInvalidationResult;
 import com.amazonaws.services.cloudfront.model.InvalidationBatch;
+import com.amazonaws.services.cloudfront.model.Paths;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -108,12 +109,13 @@ public class Run {
 				List<S3ObjectSummary> list = ol.getObjectSummaries();
 				keys = new ArrayList<String>();				
 				for (S3ObjectSummary s3ObjectSummary : list) {
-					keys.add("/"+s3ObjectSummary.getKey());					
+					keys.add("/"+s3ObjectSummary.getKey());
 				}
 			}		
 			System.out.println("invalidating " + keys);
 			
-			InvalidationBatch batch = new InvalidationBatch(keys, "" + System.currentTimeMillis());
+			Paths paths = new Paths().withItems(keys);
+			InvalidationBatch batch = new InvalidationBatch(paths, "" + System.currentTimeMillis());
 			CreateInvalidationResult cir = cf.createInvalidation(new CreateInvalidationRequest(distributionID, batch));
 			System.out.println("invalidation request status: " + cir.getInvalidation().getStatus());
 			ok = true;

@@ -173,12 +173,12 @@ class scoold::cassandra {
 		    recurse => true,
 		    mode => 755,
 		    require => Exec["rename-cassandra"];
-		"/etc/init/cassandra.conf":
-			ensure => file,
-			source => "puppet:///modules/scoold/cassandra.conf",
-			owner => root,
-			mode => 644,
-			before => Exec["start-cassandra"];		
+		# "/etc/init/cassandra.conf":
+		# 			ensure => file,
+		# 			source => "puppet:///modules/scoold/cassandra.conf",
+		# 			owner => root,
+		# 			mode => 644,
+		# 			before => Exec["start-cassandra"];		
 	}
 		
 	$logconf = file("/usr/share/puppet/modules/scoold/files/rsyslog-cassandra.txt")	
