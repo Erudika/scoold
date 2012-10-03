@@ -163,11 +163,7 @@ public class Question extends BasePage{
 		if(authenticated && authUser.getId().equals(showPost.getUserid())) return false;
 		// inaccurate but... KISS!
 		String list = getStateParam("postviews");
-		
-		if(list == null){			
-			list = showPost.getId().toString();
-			setStateParam("postviews", list);
-		}
+		if(list == null) list = "";
 		
 		if (!list.contains(showPost.getId().toString())) {
 			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
