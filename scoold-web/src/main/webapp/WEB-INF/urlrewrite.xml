@@ -53,6 +53,10 @@
         <from>^/privacy(/?)$</from>
         <to>/privacy.htm</to>
     </rule>
+	<rule>
+        <from>^/favicon.ico$</from>
+        <to>/images/favicon.ico</to>
+    </rule>
 	<!-- ======== LANGUAGES ========== -->
 	<rule>
         <from>^/languages(/?)$</from>

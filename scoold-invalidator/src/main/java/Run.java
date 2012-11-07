@@ -7,7 +7,6 @@ import com.amazonaws.services.cloudfront.model.InvalidationBatch;
 import com.amazonaws.services.cloudfront.model.Paths;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -115,6 +114,7 @@ public class Run {
 			System.out.println("invalidating " + keys);
 			
 			Paths paths = new Paths().withItems(keys);
+			paths.setQuantity(keys.size());
 			InvalidationBatch batch = new InvalidationBatch(paths, "" + System.currentTimeMillis());
 			CreateInvalidationResult cir = cf.createInvalidation(new CreateInvalidationRequest(distributionID, batch));
 			System.out.println("invalidation request status: " + cir.getInvalidation().getStatus());
@@ -129,8 +129,7 @@ public class Run {
 	private static S3Object getS3Object(String name){
 		S3Object so = null;
 		try {
-			GetObjectRequest gor = new GetObjectRequest(bucket, name);
-			so = s3.getObject(gor);
+			so = s3.getObject(bucket, name);
 		} catch (Exception e) {}
 		return so;
 	}

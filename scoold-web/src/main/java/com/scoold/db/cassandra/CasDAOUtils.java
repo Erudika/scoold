@@ -41,7 +41,6 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.*;
@@ -220,11 +219,11 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		return (col != null) ? col.getValue() : null;
 	}
 	
-	public Long getCounterColumn(String key){
-		if(StringUtils.isBlank(key)) return null;
-		HCounterColumn<String> col = getHCounterColumn(key);
-		return (col != null) ? col.getValue() : 0L;
-	}
+//	public Long getCounterColumn(String key){
+//		if(StringUtils.isBlank(key)) return null;
+//		HCounterColumn<String> col = getHCounterColumn(key);
+//		return (col != null) ? col.getValue() : 0L;
+//	}
 
 	public <N> void removeColumn(String key, CF<N> cf, N colName) {
 		if(StringUtils.isBlank(key) || cf == null) return;
@@ -315,19 +314,19 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		return col;
 	}
 	
-	public HCounterColumn<String> getHCounterColumn(String key){
-		CounterQuery<String, String> cq = null;
-		try {
-			cq = HFactory.createCounterColumnQuery(keyspace, 
-					strser, strser);
-			cq.setColumnFamily(CasDAOFactory.COUNTERS.getName());
-			cq.setKey(key);
-			cq.setName(CasDAOFactory.CN_COUNTS_COUNT);
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
-		}
-		return (cq == null) ? null : cq.execute().get();
-	}
+//	public HCounterColumn<String> getHCounterColumn(String key){
+//		CounterQuery<String, String> cq = null;
+//		try {
+//			cq = HFactory.createCounterColumnQuery(keyspace, 
+//					strser, strser);
+//			cq.setColumnFamily(CasDAOFactory.COUNTERS.getName());
+//			cq.setKey(key);
+//			cq.setName(CasDAOFactory.CN_COUNTS_COUNT);
+//		} catch (Exception e) {
+//			logger.log(Level.SEVERE, null, e);
+//		}
+//		return (cq == null) ? null : cq.execute().get();
+//	}
 
 	/********************************************
 	 *				ROW FUNCTIONS
@@ -541,18 +540,19 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	}
 
 	public Long getBeanCount(String classtype){
-		return getCounterColumn(classtype);
+		return ScooldAppListener.searchClient.prepareCount(AbstractDAOFactory.INDEX_NAME).
+				setTypes(classtype).execute().actionGet().count();
 	}
 
-	protected void updateBeanCount(String classtype, boolean decrement, Mutator<String> mut){
-		if (decrement) {
-			mutator.decrementCounter(classtype, CasDAOFactory.COUNTERS.getName(), 
-					CasDAOFactory.CN_COUNTS_COUNT, 1);
-		} else {
-			mutator.incrementCounter(classtype, CasDAOFactory.COUNTERS.getName(), 
-					CasDAOFactory.CN_COUNTS_COUNT, 1);
-		}
-	}
+//	protected void updateBeanCount(String classtype, boolean decrement, Mutator<String> mut){
+//		if (decrement) {
+//			mutator.decrementCounter(classtype, CasDAOFactory.COUNTERS.getName(), 
+//					CasDAOFactory.CN_COUNTS_COUNT, 1);
+//		} else {
+//			mutator.incrementCounter(classtype, CasDAOFactory.COUNTERS.getName(), 
+//					CasDAOFactory.CN_COUNTS_COUNT, 1);
+//		}
+//	}
 	
 	/********************************************
 	 *				SEARCH FUNCTIONS
@@ -718,15 +718,8 @@ final class CasDAOUtils extends AbstractDAOUtils {
 	public <T extends ScooldObject> ArrayList<T> readAndRepair(Class<T> clazz, 
 			ArrayList<String> keys, MutableLong itemcount){
 		ArrayList<T> results = readAll(clazz, keys);
-		if(!results.isEmpty()){
-			boolean done = false;
-			for (int i = 0; i < results.size() && !done; i++) {
-				T t = results.get(i);
-				if(t != null){
-					repairIndex(t.getClasstype(), results, keys, itemcount);
-					done = true;
-				}
-			}
+		if(!results.isEmpty() && results.contains(null)){
+			repairIndex(clazz.getSimpleName().toLowerCase(), results, keys, itemcount);
 		}
 		return results;
 	}
@@ -1016,14 +1009,14 @@ final class CasDAOUtils extends AbstractDAOUtils {
 		}
 
 		//update count
-		updateBeanCount(so.getClasstype(), false, mut);
+//		updateBeanCount(so.getClasstype(), false, mut);
 	}
 
 	private void unstoreBean(String key, ScooldObject so, Mutator<String> mut){
 		if(so == null) return;
 		CF<String> cf = CasDAOFactory.OBJECTS;
 		deleteRow(key, cf, mut);
-		updateBeanCount(so.getClasstype(), true, mut);
+//		updateBeanCount(so.getClasstype(), true, mut);
 	}
 	
 	private void initIdGen(){

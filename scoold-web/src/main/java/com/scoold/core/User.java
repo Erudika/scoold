@@ -45,6 +45,7 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 	private transient Integer newmessages;
 	private transient Integer newreports;
 	private transient boolean isGroupMember;
+	private transient Long authstamp;
 
 	public static enum UserGroup{
 		ALUMNI, STUDENTS, TEACHERS, ADMINS, MODS;
@@ -850,6 +851,13 @@ public class User implements ScooldObject, Comparable<User>, CanHasMedia, Serial
 					getBeanCount(Report.classtype).intValue();
 			
 		return newreports;
+	}
+	
+	public Long getAuthstamp(){
+		if(authstamp == null)
+			authstamp = AbstractDAOFactory.getDefaultDAOFactory().getDAOUtils().
+					getAuthstamp(this.identifier);
+		return authstamp;
 	}
 
 	public boolean equals(Object obj) {

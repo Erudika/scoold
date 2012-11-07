@@ -168,7 +168,8 @@ public class Question extends BasePage{
 		if (!list.contains(showPost.getId().toString())) {
 			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 			showPost.setViewcount(views + 1); //increment count
-			list = list.concat(",").concat(showPost.getId().toString());
+			if(!list.isEmpty() && !list.endsWith(",")) list = list.concat(",");
+			list = list.concat(showPost.getId().toString());
 			setStateParam("postviews", list);
 			return true;
 		}

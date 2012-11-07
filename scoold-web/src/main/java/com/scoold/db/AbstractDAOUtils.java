@@ -63,6 +63,14 @@ public abstract class AbstractDAOUtils {
 	private static final Logger logger = Logger.getLogger(AbstractDAOUtils.class.getName());
 	private static HumanTime humantime = new HumanTime();
 		
+	private static final Map<String, Locale> COUNTRY_TO_LOCALE_MAP = new HashMap<String, Locale>();
+	static {
+		Locale[] locales = Locale.getAvailableLocales();
+		for (Locale l : locales) {
+			COUNTRY_TO_LOCALE_MAP.put(l.getCountry(), l);
+		}
+	}
+	
 	public static String MD5(String s) {
 		return (s == null) ? "" : ClickUtils.toMD5Hash(s); 
 	}
@@ -563,6 +571,10 @@ public abstract class AbstractDAOUtils {
 		}
 		
 		return json;
+	}
+	
+	public static Locale getLocaleForCountry(String countryCode){
+		return COUNTRY_TO_LOCALE_MAP.get(countryCode);
 	}
 	
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);

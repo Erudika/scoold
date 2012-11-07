@@ -1230,15 +1230,15 @@
 			#else
 				#set($hide = "hide" )
 			#end
-			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span>$showreport.solution</span></p>
+			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span class="report-solution-text">$!showreport.solution</span></p>
 		</div>
 
-		<div class="hide report-solution-box p100 mtm">
+		<div class="hide report-solution-box p100 mtm center">
 			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
 				<fieldset>
 					#sectoken(false)
-					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox">$!lang.get("reports.actionstaken")...</textarea>
-					<input class="report-solution-btn right" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="button rounded3"/>
+					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+					<input class="report-solution-btn" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="button rounded3"/>
 				</fieldset>
 			</form>
 		</div>
@@ -1823,7 +1823,7 @@
 #####################################
 #macro(ajaxloading $hide)
 	#if($hide) #set($hidden = "hide") #else #set($hidden = "") #end
-	<img src="$imageslink/indicator.gif" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
+	<img src="$imageslink/indicator.gif" width="16" height="16" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
 #end
 #####################################
 #macro(profilepic $user $thumb)
@@ -2042,7 +2042,7 @@ $!picurl#end
 #macro(sectoken $bare)
 	#if($authenticated)
 		#set($authToken = $daoutils.getStateParam($AUTH_USER, $request, $request.response, $USE_SESSIONS) )
-		#set($authSalt = "$!daoutils.getAuthstamp($!authUser.identifier)" )
+		#set($authSalt = "$!authUser.authstamp" )
 		#set($secToken = $daoutils.MD5($authToken.concat($SEPARATOR).concat($authSalt)) )
 		#if($bare && $bare == true)$secToken#else
 			<input type="hidden" name="stoken" value="$!secToken"/>
@@ -2408,9 +2408,10 @@ $!picurl#end
 			}
 			
 			var lang = {#foreach($!langkey in $jslang)"$!langkey":"$daoutils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end #end},
-				sessiontimeout = $!SESSION_TIMEOUT_SEC;
+				sessiontimeout = $!SESSION_TIMEOUT_SEC,
+				userip = "$!userip";
 			#if($authenticated)
-				var stoken = "$sectoken", pepper = "$authUser.authstamp";
+				var stoken = "$!sectoken", pepper = "$!authUser.authstamp";
 			#end
 			loadScripts("$!{scriptslink}", "$!{minsuffix}");
 			/* ]]> */

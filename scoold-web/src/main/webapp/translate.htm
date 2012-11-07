@@ -32,8 +32,8 @@
 				</div>
 			</div>
 
-			#set($!langkey = $!langkeys.get($showIndex))
-			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$deflang.get($!langkey)</div>
+			#set($langkey = $!langkeys.get($showIndex))
+			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$!deflang.get($!langkey)</div>
 			
 			<div id="translations">
 				#paginate($pagenum.longValue() "\#translationspage(\$translationslist \$approvedTransMap)" $itemcount.longValue() "" "pageless")

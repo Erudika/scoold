@@ -105,6 +105,10 @@ function setProperties () {
 	if [ -z "$4" ]; then
 		eshosts=$(ec2din --region $REGION --filter "instance-state-name=running" -F "tag-value=elasticsearch1" | egrep ^INSTANCE | awk '{ print $16}')
 	fi
+	if [ -z "$eshosts" ]; then
+		eshosts=$dbhosts
+	fi
+	
 	
 	prop1="com.scoold.workerid=$2"
 	prop2="com.scoold.dbhosts=\"$dbhosts\""
@@ -122,7 +126,7 @@ function setProperties () {
 }
 
 function uploadWAR () {
-	if [ -f $1 ]; then
+	if [ -f $1 ] && [ "$1" != "s3" ]; then
 		filesum=$(md5 -q $1)
 		warurl="s3://$BUCKET/$filesum.war"
 		# delete all files in bucket

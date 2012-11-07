@@ -27,7 +27,7 @@
    Language: English, etc.
    Standards: HTML5, CSS3, OpenID, OpenSearch, RSS
    IDE: NetBeans, TextMate
-   Components: JS, CSS, HTML5 (clientside), Java (serverside), JavaScript (node.js chat server)
+   Components: JS, CSS, HTML5 (clientside), Java (serverside)
    Software: Apache Click, Apache Cassandra, ElasticSearch, GlassFish
    Fonts: Pictos
 

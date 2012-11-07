@@ -158,6 +158,7 @@ public class BasePage extends Page {
 			badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
 			authUser.setNewbadges("none");
 		}
+		addModel("userip", req.getRemoteAddr());
 		addModel("mobilehide", (isMobile ? "hide" : "noclass"));
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
@@ -213,8 +214,10 @@ public class BasePage extends Page {
 
 	private void initLanguage() {
 		String cookieLoc = ClickUtils.getCookieValue(req, localeCookieName);
-		Locale loc = Language.getProperLocale(req.getLocale().getLanguage());
-		String langname = (cookieLoc != null) ? cookieLoc : loc.getLanguage();
+		Locale requestLocale = Language.getProperLocale(req.getLocale().getLanguage());
+		String langFromLocation = getLanguageFromLocation();
+		String langname = (cookieLoc != null) ? cookieLoc : (langFromLocation != null) ? 
+				langFromLocation : requestLocale.getLanguage();
 		//locale cookie set?
 		setCurrentLocale(langname, false);
 	}
@@ -236,6 +239,22 @@ public class BasePage extends Page {
 		setFBLocale(langname);
 		addModel("currentLocale", loc);
 	}
+	
+	private String getLanguageFromLocation(){
+		String language = null;
+		try {
+			String country = ClickUtils.getCookieValue(req, APPNAME.toLowerCase()+"-country");
+			if(country != null){
+				Locale loc = AbstractDAOUtils.getLocaleForCountry(country.toUpperCase());
+				if (loc != null) {
+					language = loc.getLanguage();
+				}
+			}
+		} catch(Exception exc){}
+		
+		return language;
+    }
+	
 
 	private void setFBLocale(String langname){
 		// get fb lang js file in the selected locale

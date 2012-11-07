@@ -7,6 +7,8 @@
 $(function () {
 	"use strict";
 	var ajaxpath = window.location.pathname,
+		ipdbkey = "da8cac8c9dd7287636b06a0421c0efa05872f65f70d3902e927cf66f530b9fd6",
+		ipdburl = "http://api.ipinfodb.com/v3/ip-city/?key="+ipdbkey+"&format=json&callback=?&ip=",
 		infobox = $("div.infostrip"),
 		hideMsgBoxAfter = 10 * 1000, //10 sec
 		mapCanvas = $("div#map-canvas"),
@@ -121,6 +123,20 @@ $(function () {
 		}
 		return false;
 	});
+	
+	(function getLocation(){
+		try {
+			if (typeof userip !== "undefined" && userip !== "") {
+				$.getJSON(ipdburl + "83.228.10.64", function(data){
+					if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
+						var found = data.cityName + ", " + data.countryName;
+						found = found.toLowerCase();
+						createCookie("scoold-country", data.countryCode);
+					}
+				});
+			}
+		} catch(err) {}
+	}());
 
 	/****************************************************
      *            FACEBOOK API FUNCTIONS
@@ -625,9 +641,10 @@ $(function () {
 	submitFormBind("form.report-solution-form", function(data, status, xhr, form){
 		var dis = $(form);
 		var parent = dis.closest(".reportbox");
-		$(".report-solution", parent).show().children("span").text(dis.find("textarea").val());
+		$(".report-solution", parent).show().children("span.report-solution-text").text(dis.find("textarea").val());
 		$("a.close-report", parent).hide();
 		$("div:hidden:first", parent).show();
+		$(".report-solution-box").hide();
 		clearForm(form);
 	});
 

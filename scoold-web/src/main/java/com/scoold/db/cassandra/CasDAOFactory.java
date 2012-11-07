@@ -30,7 +30,7 @@ public final class CasDAOFactory extends AbstractDAOFactory{
 	public static final CF<Long> GROUPS_PARENTS = new CF<Long>("GroupsParents");
 	
 	// misc
-	public static final CF<String> COUNTERS = new CF<String>("Counters");
+//	public static final CF<String> COUNTERS = new CF<String>("Counters");
 	public static final CF<String> VOTES = new CF<String>("Votes");
 	public static final CF<String> AUTH_KEYS = new CF<String>("AuthKeys");
 	public static final CF<String> USER_AUTH = new CF<String>("UserAuth");
