@@ -334,7 +334,7 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 	private static String buildAuthRequestUrl(String suppliedIdentifier,
 			HttpServletRequest httpReq, HttpServletResponse httpRes, ConsumerManager consmanager) {
 
-		if (suppliedIdentifier == null) {
+		if (suppliedIdentifier == null || !AbstractDAOUtils.isValidURL(suppliedIdentifier)) {
 			return null;
 		}
 
@@ -566,6 +566,9 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 			String openidFromUser = request.getParameter(OPENID_IDENTIFIER);
 
 			if (openidFromUser != null) {
+				if (!AbstractDAOUtils.isValidURL(openidFromUser)) {
+					return Status.Failure;
+				}
 				// Coming from signin page? get identifier and redirect to OIDP
 				//prepare oidp url for openid auth. request
 				//1.discovery of OP server

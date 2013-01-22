@@ -234,6 +234,7 @@ body {
 }
 #nav-list li {
 	display: inline;
+	list-style: none;
 	margin-right: 10px;
 }
 #content{
@@ -509,6 +510,7 @@ input.openidbox{ padding-left: 35px; }
 .red{ color: #BB1111 !important;}
 .redbg{ background: #BB1111 !important;}
 .green{ color: #88AF12 !important; }
+.orange{ color: #FF9D00 !important; }
 .blue{ color: #33AAFF !important; }
 .white{ color: white !important; }
 .gray{ color: #777777 !important; }
@@ -558,7 +560,7 @@ input.openidbox{ padding-left: 35px; }
 .max-width-100{ max-width: 100px; }
 .identkey{ min-width: 45px;}
 .loading, .ac_loading, div.loader{ 
-	background-image: url(http://static.scoold.com/indicator.gif); 
+	background-image: url('data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA='); 
 }
 .loading{ 
 	background-position: 5px 50%; 
@@ -581,6 +583,7 @@ input.openidbox{ padding-left: 35px; }
     margin: 7px;
     padding: 4px;
 	font-size: 1.4em;
+	list-style: none;
 }
 .langbox { 
 	width:185px;
@@ -624,7 +627,7 @@ input.openidbox{ padding-left: 35px; }
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon, #fb-login-btn{
-	background-image: url(http://static.scoold.com/sprites.png);
+	background-image: url('http://static.scoold.com/sprites.png');
 	background-repeat: no-repeat;
     overflow: hidden;
 }
@@ -711,7 +714,7 @@ div.jqmConfirmContent{	padding: 15px 0;}
 	width:60px;
 	height:12px;
 	margin: 0 auto;
-	background: #EEEEEE url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 3px 3px;
+	background: #EEEEEE url('http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png') no-repeat scroll 3px 3px;
 	background-position: 50% 4px;
 	cursor: s-resize;
 	border-color: #DDDDDD;
@@ -720,14 +723,14 @@ div.jqmConfirmContent{	padding: 15px 0;}
 }
 /***************************************************************************************/
 /* first row of buttons */
-.markItUpHeader ul li	{
+.markItUpHeader ul li{
 	list-style:none;
 	float:left;
 	position:relative;
 }
 .markItUpHeader ul li:hover > ul{display:block;}
 li.markItUpDropMenu, li.markItUpDropMenu:hover {
-	background:url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png) no-repeat scroll 19px -119px transparent;
+	background:url('http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png') no-repeat scroll 19px -119px transparent;
 }
 .markItUpHeader ul .markItUpDropMenu li { margin-right:0px;}
 /* next rows of buttons */
@@ -796,7 +799,7 @@ li.markItUpDropMenu:hover {
 	background-image:url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
 }*/
 .markItUpButton a {
-	background-image:url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png);	/* Yeah, this line here! */
+	background-image:url('http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png');	/* Yeah, this line here! */
 	height:16px;				/* Matches the size of the icons. */
 	width:16px;				/* Matches the size of the icons. */
 }

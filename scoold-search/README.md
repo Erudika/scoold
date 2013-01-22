@@ -18,12 +18,16 @@ If `_index` is missing it will fallback to the index that was initially configur
 
 The fields `_id` and `_type` are required.
 
+Throttling is used when the queue starts to fill up. If the river keeps getting zero messages, it slows down the requests.
+
 To configure put this in your `elasticsearch.yml`:
 
     cloud.aws.region: AWS REGION
     cloud.aws.access_key: AWS ACCESS KEY
     cloud.aws.secret_key: AWS SECRET KEY
     cloud.aws.sqs.queue_url: AWS QUEUE URL
+    cloud.aws.throttling: (true by default)
+    cloud.aws.debug: (false by default)
 
 Or use river configuration:
 
@@ -43,4 +47,4 @@ Or use river configuration:
 
     }'
 
-In order to install the plugin, simply run: `bin/plugin -install aleski/elasticsearch-river-amazonsqs/1.2`.
+In order to install the plugin, simply run: `bin/plugin -install albogdano/elasticsearch-river-amazonsqs/1.2.1`.

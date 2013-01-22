@@ -72,6 +72,7 @@ public class BasePage extends Page {
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
 	public final String localeCookieName = APPNAME.toLowerCase() + "-locale";
+	public final String countryCookieName = APPNAME.toLowerCase() + "-country";
 	public final String messageslink = prefix + "messages";
 	public final String schoolslink = prefix + "schools";
 	public final String peoplelink = prefix + "people";
@@ -243,7 +244,7 @@ public class BasePage extends Page {
 	private String getLanguageFromLocation(){
 		String language = null;
 		try {
-			String country = ClickUtils.getCookieValue(req, APPNAME.toLowerCase()+"-country");
+			String country = ClickUtils.getCookieValue(req, countryCookieName);
 			if(country != null){
 				Locale loc = AbstractDAOUtils.getLocaleForCountry(country.toUpperCase());
 				if (loc != null) {
@@ -254,7 +255,6 @@ public class BasePage extends Page {
 		
 		return language;
     }
-	
 
 	private void setFBLocale(String langname){
 		// get fb lang js file in the selected locale
@@ -996,24 +996,8 @@ public class BasePage extends Page {
 	}
 
 	public String getPostLink(Post p, boolean plural, boolean noid){
-		if(p == null) return "";
-		String ptitle = AbstractDAOUtils.spacesToDashes(p.getTitle());
-		String pid = (noid ? "" : "/"+p.getId()+"/"+ ptitle);
-		if (p.isQuestion()) {
-			return plural ? questionslink : questionlink + pid;
-		} else if(p.isFeedback()) {
-			return plural ? feedbacklink : feedbacklink + pid;
-		} else if(p.isGrouppost()){
-			return plural ? grouplink+"/"+p.getParentid() : grouppostlink + pid;
-		} else if(p.isReply()){
-			Post parentp = Post.getPostDao().read(p.getParentid());
-			if(parentp != null){
-				return getPostLink(parentp, plural, noid);
-			}
-		}else if(p.isBlackboard()){
-			return plural ? classeslink : classlink + (noid ? "" : "/" + p.getParentid());
-		}
-		return "";
+		return AbstractDAOUtils.getPostLink(p, plural, noid, questionslink, questionlink, 
+				feedbacklink, grouplink, grouppostlink, classeslink, classlink);
 	}
 	
 	public final int getIndexInBounds(int index, int count){

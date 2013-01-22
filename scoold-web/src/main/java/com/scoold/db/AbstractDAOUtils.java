@@ -486,8 +486,7 @@ public abstract class AbstractDAOUtils {
 			if (httpOnly) {
 				setRawCookie(name, value, req, res, httpOnly, false);
 			} else {
-				ClickUtils.setCookie(req, res, name, value, 
-						AbstractDAOFactory.SESSION_TIMEOUT_SEC, "/");
+				ClickUtils.setCookie(req, res, name, value, AbstractDAOFactory.SESSION_TIMEOUT_SEC, "/");
 			}
 		}
 	}
@@ -511,7 +510,7 @@ public abstract class AbstractDAOUtils {
 			session.removeAttribute(name);
 		} else {
 			Cookie c = ClickUtils.getCookie(req, name);
-			if(c != null) ClickUtils.setCookie(req, res, name, "", 0, c.getPath());
+			if(c != null) ClickUtils.setCookie(req, res, name, "", 0, "/");
 		}
 	}
 	
@@ -575,6 +574,30 @@ public abstract class AbstractDAOUtils {
 	
 	public static Locale getLocaleForCountry(String countryCode){
 		return COUNTRY_TO_LOCALE_MAP.get(countryCode);
+	}
+	
+	public static String getPostLink(Post p, boolean plural, boolean noid, 
+			String questionslink, String questionlink, String feedbacklink, 
+			String grouplink, String grouppostlink, String classeslink, String classlink){
+		if(p == null) return "";
+		String ptitle = AbstractDAOUtils.spacesToDashes(p.getTitle());
+		String pid = (noid ? "" : "/"+p.getId()+"/"+ ptitle);
+		if (p.isQuestion()) {
+			return plural ? questionslink : questionlink + pid;
+		} else if(p.isFeedback()) {
+			return plural ? feedbacklink : feedbacklink + pid;
+		} else if(p.isGrouppost()){
+			return plural ? grouplink+"/"+p.getParentid() : grouppostlink + pid;
+		} else if(p.isReply()){
+			Post parentp = Post.getPostDao().read(p.getParentid());
+			if(parentp != null){
+				return getPostLink(parentp, plural, noid, questionslink, questionlink, 
+						feedbacklink, grouplink, grouppostlink, classeslink, classlink);
+			}
+		}else if(p.isBlackboard()){
+			return plural ? classeslink : classlink + (noid ? "" : "/" + p.getParentid());
+		}
+		return "";
 	}
 	
 	public abstract boolean voteUp(Long userid, Votable<Long> votable);

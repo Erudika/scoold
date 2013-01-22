@@ -1,27 +1,45 @@
-/**
-    Head JS     The only script in your <HEAD>
-    Copyright   Tero Piirainen (tipiirai)
-    License     MIT / http://bit.ly/mit-license
-    Version     0.96
+﻿/*!
+ * HeadJS     The only script in your <HEAD>    
+ * Author     Tero Piirainen  (tipiirai)
+ * Maintainer Robert Hoffmann (itechnology)
+ * License    MIT / http://bit.ly/mit-license
+ *
+ * Version 0.98
+ * http://headjs.com
+ */
+; (function (win, undefined) {
+    "use strict";
 
-    http://headjs.com
-*/
-(function(doc) {
+    // gt, gte, lt, lte, eq breakpoints would have been more simple to write as ['gt','gte','lt','lte','eq']
+    // but then we would have had to loop over the collection on each resize() event,
+    // a simple object with a direct access to true/false is therefore much more efficient
+    var doc   = win.document,
+        nav   = win.navigator,
+        loc   = win.location,
+        html  = doc.documentElement,
+        klass = [],
+        conf  = {
+            screens   : [240, 320, 480, 640, 768, 800, 1024, 1280, 1440, 1680, 1920],            
+            screensCss: { "gt": true, "gte": false, "lt": true, "lte": false, "eq": false },
+            browsers  : [
+                          { ie     : { min: 6, max: 10 } }
+                       //,{ chrome : { min: 8, max: 24 } }
+                       //,{ ff     : { min: 3, max: 19 } }
+                       //,{ ios    : { min: 3, max:  6 } }
+                       //,{ android: { min: 2, max:  4 } }
+                       //,{ webkit : { min: 9, max: 12 } }
+                       //,{ opera  : { min: 9, max: 12 } }
+                        ],
+            browserCss: { "gt": true, "gte": false, "lt": true, "lte": false, "eq": true },
+            section   : "-section",
+            page      : "-page",
+            head      : "head"
+        };
 
-    var html = doc.documentElement,
-         conf = {
-            screens: [320, 480, 640, 768, 1024, 1280, 1440, 1680, 1920],
-            section: "-section",
-            page: "-page",
-            head: "head"
-         },
-         klass = [];
-
-
-    if (window.head_conf) {
-        for (var key in head_conf) {
-            if (head_conf[key] !== undefined) {
-                conf[key] = head_conf[key];
+    if (win.head_conf) {
+        for (var item in win.head_conf) {
+            if (win.head_conf[item] !== undefined) {
+                conf[item] = win.head_conf[item];
             }
         }
     }
@@ -36,26 +54,26 @@
     }
 
     function each(arr, fn) {
-        for (var i = 0, arr_length = arr.length; i < arr_length; i++) {
+        for (var i = 0, l = arr.length; i < l; i++) {
             fn.call(arr, arr[i], i);
         }
     }
 
     // API
-    var api = window[conf.head] = function() {
+    var api = win[conf.head] = function () {
         api.ready.apply(null, arguments);
     };
 
-    api.feature = function(key, enabled, queue) {
+    api.feature = function (key, enabled, queue) {
 
         // internal: apply all classes
         if (!key) {
-            html.className += ' ' + klass.join( ' ' );
+            html.className += ' ' + klass.join(' ');
             klass = [];
-            return;
+            return api;
         }
 
-        if (Object.prototype.toString.call(enabled) == '[object Function]') {
+        if (Object.prototype.toString.call(enabled) === '[object Function]') {
             enabled = enabled.call();
         }
 
@@ -72,119 +90,250 @@
         return api;
     };
 
+    // no queue here, so we can remove any eventual pre-existing no-js class
+    api.feature("js", true);
+
     // browser type & version
-    var ua = navigator.userAgent.toLowerCase();
+    var ua     = nav.userAgent.toLowerCase(),
+        mobile = /mobile|midp/.test(ua);
 
-    ua = /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
-        /(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
-        /(msie) ([\w.]+)/.exec( ua ) ||
-        !/compatible/.test( ua ) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) || [];
+    // useful for enabling/disabling feature (we can consider a desktop navigator to have more cpu/gpu power)        
+    api.feature("mobile" , mobile , true);
+    api.feature("desktop", !mobile, true);
+
+    // http://www.zytrax.com/tech/web/browser_ids.htm
+    // http://www.zytrax.com/tech/web/mobile_ids.html
+    ua = /(chrome|firefox)[ \/]([\w.]+)/.exec(ua) || // Chrome & Firefox
+         /(iphone|ipad|ipod)(?:.*version)?[ \/]([\w.]+)/.exec(ua) || // Mobile IOS
+         /(android)(?:.*version)?[ \/]([\w.]+)/.exec(ua) || // Mobile Webkit
+         /(webkit|opera)(?:.*version)?[ \/]([\w.]+)/.exec(ua) || // Safari & Opera
+         /(msie) ([\w.]+)/.exec(ua) || [];
 
 
-    if (ua[1] == 'msie') {
-        ua[1] = 'ie';
-        ua[2] = document.documentMode || ua[2];
+    var browser = ua[1],
+        version = parseFloat(ua[2]);    
+    
+    switch (browser) {
+        case 'msie':
+            browser = 'ie';
+            version = doc.documentMode || version;
+            break;
+
+        case 'firefox':
+            browser = 'ff';
+            break;
+
+        case 'ipod':
+        case 'ipad':
+        case 'iphone':
+            browser = 'ios';
+            break;
+
+        case 'webkit':
+            browser = 'safari';
+            break;
     }
 
-    pushClass(ua[1]);
 
-    api.browser = { version: ua[2] };
-    api.browser[ua[1]] = true;
+    // Browser vendor and version
+    api.browser = {
+        name   : browser,
+        version: version
+    };
+    api.browser[browser] = true;
 
-    // IE specific
-    if (api.browser.ie) {
+    for (var i = 0, l = conf.browsers.length; i < l; i++) {
+        for (var key in conf.browsers[i]) {            
+            if (browser === key) {
+                pushClass(key);
 
-        pushClass("ie" + parseFloat(ua[2]));
+                var min = conf.browsers[i][key].min;
+                var max = conf.browsers[i][key].max;
 
-        // IE versions
-        for (var ver = 3; ver < 11; ver++) {
-            if (parseFloat(ua[2]) < ver) { pushClass("lt-ie" + ver); }
+                for (var v = min; v <= max; v++) {
+                    if (version > v) {
+                        if (conf.browserCss["gt"])
+                            pushClass("gt-" + key + v);
+
+                        if (conf.browserCss["gte"])
+                            pushClass("gte-" + key + v);
+        }
+                    
+                    else if (version < v) {
+                        if (conf.browserCss["lt"])
+                            pushClass("lt-" + key + v);
+                        
+                        if (conf.browserCss["lte"])
+                            pushClass("lte-" + key + v);
         }
 
-        // HTML5 support
-        each("abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video".split("|"), function(el) {
+                    else if (version === v) {
+                        if (conf.browserCss["lte"])
+                            pushClass("lte-" + key + v);
+                        
+                        if (conf.browserCss["eq"])
+                            pushClass("eq-" + key + v);
+
+                        if (conf.browserCss["gte"])
+                            pushClass("gte-" + key + v);
+                    }
+                }
+            }
+            else {
+                pushClass('no-' + key);
+            }
+        }
+    }
+
+
+    // IE lt9 specific
+    if (browser === "ie" && version < 9) {
+        // HTML5 support : you still need to add html5 css initialization styles to your site
+        // See: assets/html5.css
+        each("abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video".split("|"), function (el) {
             doc.createElement(el);
         });
-                
     }
-    
+
 
     // CSS "router"
-    each(location.pathname.split("/"), function(el, i) {
-
+    each(loc.pathname.split("/"), function (el, i) {
         if (this.length > 2 && this[i + 1] !== undefined) {
-            if (i) { pushClass(this.slice(1, i+1).join("-") + conf.section); }
-
+            if (i) {
+                pushClass(this.slice(1, i + 1).join("-").toLowerCase() + conf.section);
+            }
         } else {
-
             // pageId
             var id = el || "index", index = id.indexOf(".");
-            if (index > 0) { id = id.substring(0, index); }
-            html.id = id + conf.page;
+            if (index > 0) {
+                id = id.substring(0, index);
+            }
+
+            html.id = id.toLowerCase() + conf.page;
 
             // on root?
-            if (!i) { pushClass("root" + conf.section); }
-      }
+            if (!i) {
+                pushClass("root" + conf.section);
+            }
+        }
     });
 
 
-    // screen resolution: w-100, lt-480, lt-1024 ...
+    // basic screen info
+    api.screen = {
+        height: win.screen.height,
+        width : win.screen.width
+    };
+
+    // viewport resolutions: w-100, lt-480, lt-1024 ...
     function screenSize() {
-        var w = window.outerWidth || html.clientWidth;
+        // remove earlier sizes
+        html.className = html.className.replace(/ (w-|eq-|gt-|gte-|lt-|lte-|portrait|no-portrait|landscape|no-landscape)\d+/g, "");
 
-        // remove earlier widths
-        html.className = html.className.replace(/ (w|lt)-\d+/g, "");
+        // Viewport width
+        var iw = win.innerWidth || html.clientWidth,
+            ow = win.outerWidth || win.screen.width;
+        
+        api.screen['innerWidth'] = iw;
+        api.screen['outerWidth'] = ow;
+        
+        // for debugging purposes, not really useful for anything else
+        pushClass("w-" + iw);
 
-        // add new ones
-        pushClass("w-" + Math.round(w / 100) * 100);
+        each(conf.screens, function (width) {
+            if (iw > width) {
+                if (conf.screensCss["gt"])
+                    pushClass("gt-" + width);
+                
+                if (conf.screensCss["gte"])
+                    pushClass("gte-" + width);
+            }
 
-        each(conf.screens, function(width) {
-            if (w <= width) { pushClass("lt-" + width); }
+            else if (iw < width) {
+                if (conf.screensCss["lt"])
+                    pushClass("lt-" + width);
+                
+                if (conf.screensCss["lte"])
+                    pushClass("lte-" + width);
+            }
+
+            else if (iw === width) {
+                if (conf.screensCss["lte"])
+                    pushClass("lte-" + width);
+
+                if (conf.screensCss["eq"])
+                    pushClass("e-q" + width);
+
+                if (conf.screensCss["gte"])
+                    pushClass("gte-" + width);
+            }
         });
+        
 
-        api.feature();
+        // Viewport height
+        var ih = win.innerHeight || html.clientHeight,
+            oh = win.outerHeight || win.screen.height;
+
+        api.screen['innerHeight'] = ih;
+        api.screen['outerHeight'] = oh;
+             
+        // no need for onChange event to detect this
+        api.feature("portrait" , (ih > iw));
+        api.feature("landscape", (ih < iw));
     }
 
     screenSize();
-    window.onresize = screenSize;
 
-    api.feature("js", true).feature();
+    // Throttle navigators from triggering too many resize events
+    var resizeId = 0;
+    function onResize() {
+        win.clearTimeout(resizeId);
+        resizeId = win.setTimeout(screenSize, 100);
+    }
 
-})(document);
+    // Manually attach, as to not overwrite existing handler
+    if (win.addEventListener) {
+        win.addEventListener("resize", onResize, false);
 
+    } else {
+        win.attachEvent("onresize", onResize);
+    }
+})(window);
 
-/**
-    Head JS     The only script in your <HEAD>
-    Copyright   Tero Piirainen (tipiirai)
-    License     MIT / http://bit.ly/mit-license
-    Version     0.96
+/*!
+ * HeadJS     The only script in your <HEAD>    
+ * Author     Tero Piirainen  (tipiirai)
+ * Maintainer Robert Hoffmann (itechnology)
+ * License    MIT / http://bit.ly/mit-license
+ *
+ * Version 0.98
+ * http://headjs.com
+ */
+;(function(win, undefined) {
+    "use strict";
 
-    http://headjs.com
-*/
-(function() {
-    /*
-        To add a new test:
+    var doc = win.document,
+        /*
+            To add a new test:
 
-        head.feature("video", function() {
-            var tag = document.createElement('video');
-            return !!tag.canPlayType;
-        });
+            head.feature("video", function() {
+                var tag = document.createElement('video');
+                return !!tag.canPlayType;
+            });
 
-        Good place to grab more tests
+            Good place to grab more tests
 
-        https://github.com/Modernizr/Modernizr/blob/master/modernizr.js
-    */
+            https://github.com/Modernizr/Modernizr/blob/master/modernizr.js
+        */
 
-
-    /* CSS modernizer */
-    var el = document.createElement("i"),
-         style = el.style,
-         prefs = ' -o- -moz- -ms- -webkit- -khtml- '.split(' '),
+        /* CSS modernizer */
+         el       = doc.createElement("i"),
+         style    = el.style,
+         prefs    = ' -o- -moz- -ms- -webkit- -khtml- '.split(' '),
          domPrefs = 'Webkit Moz O ms Khtml'.split(' '),
 
-         head_var = window.head_conf && head_conf.head || "head",
-         api = window[head_var];
-
+         headVar = win.head_conf && win.head_conf.head || "head",
+         api     = win[headVar];
 
      // Thanks Paul Irish!
     function testProps(props) {
@@ -198,17 +347,16 @@
 
     function testAll(prop) {
         var camel = prop.charAt(0).toUpperCase() + prop.substr(1),
-             props   = (prop + ' ' + domPrefs.join(camel + ' ') + camel).split(' ');
+            props = (prop + ' ' + domPrefs.join(camel + ' ') + camel).split(' ');
 
         return !!testProps(props);
     }
 
     var tests = {
-
         gradient: function() {
             var s1 = 'background-image:',
-                 s2 = 'gradient(linear,left top,right bottom,from(#9f9),to(#fff));',
-                 s3 = 'linear-gradient(left top,#eee,#fff);';
+                s2 = 'gradient(linear,left top,right bottom,from(#9f9),to(#fff));',
+                s3 = 'linear-gradient(left top,#eee,#fff);';
 
             style.cssText = (s1 + prefs.join(s2 + s1) + prefs.join(s3 + s1)).slice(0,-s1.length);
             return !!style.backgroundImage;
@@ -255,28 +403,45 @@
         csstransitions: function() {
             return testAll("transition");
         },
+        touch: function () {
+            return 'ontouchstart' in win;
+        },
+        retina: function () {
+            return (win.devicePixelRatio > 1);
+        },        
 
         /*
             font-face support. Uses browser sniffing but is synchronous.
-
             http://paulirish.com/2009/font-face-feature-detection/
         */
         fontface: function() {
-            var ua = navigator.userAgent, parsed;
+            var browser = api.browser.name, version = api.browser.version;
 
-            if (/*@cc_on@if(@_jscript_version>=5)!@end@*/0)
-                return true;
-                
-            if (parsed = ua.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/))
-                return parsed[1] >= '4.0.249.4' || 1 * parsed[1].split(".")[0] > 5;
-            if ((parsed = ua.match(/Safari\/(\d+\.\d+)/)) && !/iPhone/.test(ua))
-                return parsed[1] >= '525.13';
-            if (/Opera/.test({}.toString.call(window.opera)))
-                return opera.version() >= '10.00';
-            if (parsed = ua.match(/rv:(\d+\.\d+\.\d+)[^b].*Gecko\//))
-                return parsed[1] >= '1.9.1';
+            switch (browser) {
+                case "ie":
+                    return version >= 9;
 
-            return false;
+                case "chrome":
+                    return version >= 13;
+
+                case "ff":
+                    return version >= 6;
+
+                case "ios":
+                    return version >= 5;
+
+                case "android":
+                    return false;
+
+                case "webkit":
+                    return version >= 5.1;
+
+                case "opera":
+                    return version >= 10;
+
+                default:
+                    return false;
+            }
         }
     };
 
@@ -290,59 +455,63 @@
     // enable features at once
     api.feature();
 
-})();
+})(window);
+/*!
+ * HeadJS     The only script in your <HEAD>    
+ * Author     Tero Piirainen  (tipiirai)
+ * Maintainer Robert Hoffmann (itechnology)
+ * License    MIT / http://bit.ly/mit-license
+ *
+ * Version 0.98
+ * http://headjs.com
+ */
+; (function (win, undefined) {
+    "use strict";
 
-
-/**
-    Head JS     The only script in your <HEAD>
-    Copyright   Tero Piirainen (tipiirai)
-    License     MIT / http://bit.ly/mit-license
-    Version     0.96
-
-    http://headjs.com
-*/
-(function(doc) {
-
-    var head = doc.documentElement,
+    var doc = win.document,
+        domWaiters = [],
+        queue      = [], // waiters for the "head ready" event
+        handlers   = {}, // user functions waiting for events
+        scripts    = {}, // loadable scripts in different states
+        isAsync    = "async" in doc.createElement("script") || "MozAppearance" in doc.documentElement.style || win.opera,
         isHeadReady,
         isDomReady,
-        domWaiters = [],
-        queue = [],        // waiters for the "head ready" event
-        handlers = {},     // user functions waiting for events
-        scripts = {},      // loadable scripts in different states
-        isAsync = doc.createElement("script").async === true || "MozAppearance" in doc.documentElement.style || window.opera;
 
+        /*** public API ***/
+        headVar = win.head_conf && win.head_conf.head || "head",
+        api     = win[headVar] = (win[headVar] || function () { api.ready.apply(null, arguments); }),
 
-    /*** public API ***/
-    var head_var = window.head_conf && head_conf.head || "head",
-         api = window[head_var] = (window[head_var] || function() { api.ready.apply(null, arguments); });
-
-    // states
-    var PRELOADED = 1,
-        PRELOADING = 2,
-        LOADING = 3,
-        LOADED = 4;
-
+        // states
+        PRELOADING = 1,
+        PRELOADED  = 2,
+        LOADING    = 3,
+        LOADED     = 4;
 
     // Method 1: simply load and let browser take care of ordering
     if (isAsync) {
-
-        api.js = function() {
-
+        api.load = function () {
+            ///<summary>
+            /// INFO: use cases
+            ///    head.load("http://domain.com/file.js","http://domain.com/file.js", callBack)
+            ///    head.load({ label1: "http://domain.com/file.js" }, { label2: "http://domain.com/file.js" }, callBack)
+            ///</summary> 
             var args = arguments,
-                 fn = args[args.length -1],
-                 els = {};
+                 callback = args[args.length - 1],
+                 items = {};
 
-            if (!isFunc(fn)) { fn = null; }
+            if (!isFunction(callback)) {
+                callback = null;
+            }
 
-            each(args, function(el, i) {
+            each(args, function (item, i) {
+                if (item !== callback) {
+                    item = getScript(item);
+                    items[item.name] = item;
 
-                if (el != fn) {
-                    el = getScript(el);
-                    els[el.name] = el;
-
-                    load(el, fn && i == args.length -2 ? function() {
-                        if (allLoaded(els)) { one(fn); }
+                    load(item, callback && i === args.length - 2 ? function () {
+                        if (allLoaded(items)) {
+                            one(callback);
+                        }
 
                     } : null);
                 }
@@ -352,41 +521,44 @@
         };
 
 
-    // Method 2: preload with text/cache hack
+        // Method 2: preload with text/cache hack
     } else {
-
-        api.js = function() {
-
+        api.load = function () {
             var args = arguments,
                 rest = [].slice.call(args, 1),
                 next = rest[0];
 
             // wait for a while. immediate execution causes some browsers to ignore caching
             if (!isHeadReady) {
-                queue.push(function()  {
-                    api.js.apply(null, args);
+                queue.push(function () {
+                    api.load.apply(null, args);
                 });
+
                 return api;
             }
 
             // multiple arguments
             if (next) {
-
-                // load
-                each(rest, function(el) {
-                    if (!isFunc(el)) {
-                        preload(getScript(el));
+                /* Preload with text/cache hack (not good!)
+                 * http://blog.getify.com/on-script-loaders/
+                 * http://www.nczonline.net/blog/2010/12/21/thoughts-on-script-loaders/
+                 * If caching is not configured correctly on the server, then scripts will load twice !
+                 **************************************************************************************/
+                each(rest, function (item) {
+                    if (!isFunction(item)) {
+                        preLoad(getScript(item));
                     }
                 });
 
                 // execute
-                load(getScript(args[0]), isFunc(next) ? next : function() {
-                    api.js.apply(null, rest);
+                load(getScript(args[0]), isFunction(next) ? next : function () {
+                    api.load.apply(null, rest);
                 });
 
 
-            // single script
-            } else {
+                // single script
+            }
+            else {
                 load(getScript(args[0]));
             }
 
@@ -394,45 +566,115 @@
         };
     }
 
-    api.ready = function(key, fn) {
+    // INFO: for retro compatibility
+    api.js = api.load;
+    
+    api.test = function (test, success, failure, callback) {
+        ///<summary>
+        /// INFO: use cases:
+        ///    head.test(condition, null       , "file.NOk" , callback);
+        ///    head.test(condition, "fileOk.js", null       , callback);        
+        ///    head.test(condition, "fileOk.js", "file.NOk" , callback);
+        ///    head.test(condition, "fileOk.js", ["file.NOk", "file.NOk"], callback);
+        ///    head.test({
+        ///               test    : condition,
+        ///               success : [{ label1: "file1Ok.js"  }, { label2: "file2Ok.js" }],
+        ///               failure : [{ label1: "file1NOk.js" }, { label2: "file2NOk.js" }],
+        ///               callback: callback
+        ///    );  
+        ///    head.test({
+        ///               test    : condition,
+        ///               success : ["file1Ok.js" , "file2Ok.js"],
+        ///               failure : ["file1NOk.js", "file2NOk.js"],
+        ///               callback: callback
+        ///    );         
+        ///</summary>    
+        var obj = (typeof test === 'object') ? test : {
+            test: test,
+            success: !!success ? isArray(success) ? success : [success] : false,
+            failure: !!failure ? isArray(failure) ? failure : [failure] : false,
+            callback: callback || noop
+        };
+
+        // Test Passed ?
+        var passed = !!obj.test;
+
+        // Do we have a success case
+        if (passed && !!obj.success) {
+            obj.success.push(obj.callback);
+            api.load.apply(null, obj.success);
+        }
+            // Do we have a fail case
+        else if (!passed && !!obj.failure) {
+            obj.failure.push(obj.callback);
+            api.load.apply(null, obj.failure);
+        }
+        else {
+            callback();
+        }
+
+        return api;
+    };
+
+    api.ready = function (key, callback) {
+        ///<summary>
+        /// INFO: use cases:
+        ///    head.ready(callBack)
+        ///    head.ready(document , callBack)
+        ///    head.ready("file.js", callBack);
+        ///    head.ready("label"  , callBack);        
+        ///</summary>
 
         // DOM ready check: head.ready(document, function() { });
-        if (key == doc) {
-            if (isDomReady) { one(fn);  }
-            else { domWaiters.push(fn); }
+        if (key === doc) {
+            if (isDomReady) {
+                one(callback);
+            }
+            else {
+                domWaiters.push(callback);
+            }
+
             return api;
         }
 
         // shift arguments
-        if (isFunc(key)) {
-            fn = key;
+        if (isFunction(key)) {
+            callback = key;
             key = "ALL";
-        }    
+        }
 
         // make sure arguments are sane
-        if (typeof key != 'string' || !isFunc(fn)) { return api; }
+        if (typeof key !== 'string' || !isFunction(callback)) {
+            return api;
+        }
 
+        // This can also be called when we trigger events based on filenames & labels
         var script = scripts[key];
-        
+
         // script already loaded --> execute and return
-        if (script && script.state == LOADED || key == 'ALL' && allLoaded() && isDomReady) {
-            one(fn);
+        if (script && script.state === LOADED || key === 'ALL' && allLoaded() && isDomReady) {
+            one(callback);
             return api;
         }
 
         var arr = handlers[key];
-        if (!arr) { arr = handlers[key] = [fn]; }
-        else { arr.push(fn); }
+        if (!arr) {
+            arr = handlers[key] = [callback];
+        }
+        else {
+            arr.push(callback);
+        }
+
         return api;
     };
 
 
     // perform this when DOM is ready
-    api.ready(doc, function() {
+    api.ready(doc, function () {
 
         if (allLoaded()) {
-            each(handlers.ALL, function(fn) {
-                one(fn);
+            each(handlers.ALL, function (callback) {
+                one(callback);
             });
         }
 
@@ -442,227 +684,380 @@
     });
 
 
-    /*** private functions ***/
-    
-    
-    // call function once
-    function one(fn) {
-        if (fn._done) { return; }
-        fn();
-        fn._done = 1;
+    /* private functions
+    *********************/
+    function noop() {
+        // does nothing
     }
 
-
-    function toLabel(url) {
-        var els = url.split("/"),
-             name = els[els.length -1],
-             i = name.indexOf("?");
-
-        return i != -1 ? name.substring(0, i) : name;
-    }
-
-
-    function getScript(url) {
-
-        var script;
-
-        if (typeof url == 'object') {
-            for (var key in url) {
-                if (url[key]) {
-                    script = { name: key, url: url[key] };
-                }
-            }
-        } else {
-            script = { name: toLabel(url),  url: url };
+    function each(arr, callback) {
+        if (!arr) {
+            return;
         }
 
+        // arguments special type
+        if (typeof arr === 'object') {
+            arr = [].slice.call(arr);
+        }
+
+        // do the job
+        for (var i = 0, l = arr.length; i < l; i++) {
+            callback.call(arr, arr[i], i);
+        }
+    }
+
+    /* A must read: http://bonsaiden.github.com/JavaScript-Garden
+     ************************************************************/
+    function is(type, obj) {
+        var clas = Object.prototype.toString.call(obj).slice(8, -1);
+        return obj !== undefined && obj !== null && clas === type;
+    }
+
+    function isFunction(item) {
+        return is("Function", item);
+    }
+
+    function isArray(item) {
+        return is("Array", item);
+    }
+
+    function toLabel(url) {
+        ///<summary>Converts a url to a file label</summary>
+        var items = url.split("/"),
+             name = items[items.length - 1],
+             i = name.indexOf("?");
+
+        return i !== -1 ? name.substring(0, i) : name;
+    }
+
+    // INFO: this look like a "im triggering callbacks all over the place, but only wanna run it one time function" ..should try to make everything work without it if possible
+    // INFO: Even better. Look into promises/defered's like jQuery is doing
+    function one(callback) {
+        ///<summary>Execute a callback only once</summary>
+        callback = callback || noop;
+
+        if (callback._done) {
+            return;
+        }
+
+        callback();
+        callback._done = 1;
+    }
+
+    function getScript(item) {
+        ///<summary>
+        /// Gets a script in the form of
+        /// { 
+        ///     name: label,
+        ///     url : url
+        /// }
+        ///</summary>
+        var script = {};
+
+        if (typeof item === 'object') {
+            for (var label in item) {
+                if (!!item[label]) {
+                    script = {
+                        name: label,
+                        url: item[label]
+                    };
+                }
+            }
+        }
+        else {
+            script = {
+                name: toLabel(item),
+                url: item
+            };
+        }
+
+        // is the item already existant
         var existing = scripts[script.name];
-        if (existing && existing.url === script.url) { return existing; }
+        if (existing && existing.url === script.url) {
+            return existing;
+        }
 
         scripts[script.name] = script;
         return script;
     }
 
+    function allLoaded(items) {
+        items = items || scripts;
 
-    function each(arr, fn) {
-        if (!arr) { return; }
-
-        // arguments special type
-        if (typeof arr == 'object') { arr = [].slice.call(arr); }
-
-        // do the job
-        for (var i = 0; i < arr.length; i++) {
-            fn.call(arr, arr[i], i);
-        }
-    }
-
-    function isFunc(el) {
-        return Object.prototype.toString.call(el) == '[object Function]';
-    }
-
-    function allLoaded(els) {
-
-        els = els || scripts;
-
-        var loaded;
-        
-        for (var name in els) {
-            if (els.hasOwnProperty(name) && els[name].state != LOADED) { return false; }
-            loaded = true;
+        for (var name in items) {
+            if (items.hasOwnProperty(name) && items[name].state !== LOADED) {
+                return false;
+            }
         }
         
-        return loaded;
+        return true;
     }
 
 
     function onPreload(script) {
         script.state = PRELOADED;
 
-        each(script.onpreload, function(el) {
-            el.call();
+        each(script.onpreload, function (afterPreload) {
+            afterPreload.call();
         });
     }
 
-    function preload(script, callback) {
-
+    function preLoad(script, callback) {
         if (script.state === undefined) {
 
             script.state = PRELOADING;
             script.onpreload = [];
 
-            scriptTag({ src: script.url, type: 'cache'}, function()  {
+            scriptTag({ src: script.url, type: 'cache' }, function () {
                 onPreload(script);
             });
         }
     }
 
     function load(script, callback) {
+        ///<summary>Used with normal loading logic</summary>
+        callback = callback || noop;
 
-        if (script.state == LOADED) {
-            return callback && callback();
+        if (script.state === LOADED) {
+            callback();
+            return;
         }
 
-        if (script.state == LOADING) {
-            return api.ready(script.name, callback);
+        // INFO: why would we trigger a ready event when its not really loaded yet ?
+        if (script.state === LOADING) {
+            api.ready(script.name, callback);
+            return;
         }
 
-        if (script.state == PRELOADING) {
-            return script.onpreload.push(function() {
+        if (script.state === PRELOADING) {
+            script.onpreload.push(function () {
                 load(script, callback);
             });
+            return;
         }
 
         script.state = LOADING;
 
-        scriptTag(script.url, function() {
-
+        scriptTag(script.url, function () {
             script.state = LOADED;
-
-            if (callback) { callback(); }
+            callback();
 
             // handlers for this script
-            each(handlers[script.name], function(fn) {
+            each(handlers[script.name], function (fn) {
                 one(fn);
             });
 
-            // everything ready
-            if (allLoaded() && isDomReady) {
-                each(handlers.ALL, function(fn) {
+            // dom is ready & no scripts are queued for loading
+            // INFO: shouldn't we be doing the same test above ?
+            if (isDomReady && allLoaded()) {
+                each(handlers.ALL, function (fn) {
                     one(fn);
                 });
             }
         });
     }
-
-
+    
     function scriptTag(src, callback) {
+        var s;
 
-        var s = doc.createElement('script');
-        s.type = 'text/' + (src.type || 'javascript');
-        s.src = src.src || src;
-        s.async = false;
+        if (/\.css[^\.]*$/.test(src)) {
+            s      = doc.createElement('link');
+            s.type = 'text/' + (src.type || 'css');
+            s.rel  = 'stylesheet';
+            s.href = src.src || src;
+        }
+        else {
+            s      = doc.createElement('script');
+            s.type = 'text/' + (src.type || 'javascript');
+            s.src  = src.src || src;
+        }
 
-        s.onreadystatechange = s.onload = function() {
-
-            var state = s.readyState;
-
-            if (!callback.done && (!state || /loaded|complete/.test(state))) {
-                callback.done = true;
-                callback();
-            }
-        };
-
-        // use body if available. more safe in IE
-        (doc.body || head).appendChild(s);
+        loadAsset(s, callback);
     }
 
-    /*
-        The much desired DOM ready check
-        Thanks to jQuery and http://javascript.nwbox.com/IEContentLoaded/
-    */
+    /* Parts inspired from: https://github.com/cujojs/curl
+    ******************************************************/
+    function loadAsset(s, callback) {
+        callback = callback || noop;
 
-    function fireReady() {
+        s.onload  = s.onreadystatechange = process;
+        s.onerror = error;
+
+        /* Good read, but doesn't give much hope !
+         * http://blog.getify.com/on-script-loaders/
+         * http://www.nczonline.net/blog/2010/12/21/thoughts-on-script-loaders/
+         * https://hacks.mozilla.org/2009/06/defer/
+         */
+
+        // ASYNC: load in parellel and execute as soon as possible
+        s.async = false;
+        // DEFER: load in parallel but maintain execution order
+        s.defer = false;
+
+        function error(event) {
+            // need some more detailed error handling here
+
+            // release event listeners
+            s.onload = s.onreadystatechange = s.onerror = null;
+
+            // do callback
+            callback();
+        }
+
+        function process(event) {
+            event = event || win.event;
+
+            // IE 7/8 (2 events on 1st load)
+            // 1) event.type = readystatechange, s.readyState = loading
+            // 2) event.type = readystatechange, s.readyState = loaded
+
+            // IE 7/8 (1 event on reload)
+            // 1) event.type = readystatechange, s.readyState = complete 
+
+            // event.type === 'readystatechange' && /loaded|complete/.test(s.readyState)
+
+            // IE 9 (3 events on 1st load)
+            // 1) event.type = readystatechange, s.readyState = loading
+            // 2) event.type = readystatechange, s.readyState = loaded
+            // 3) event.type = load            , s.readyState = loaded
+
+            // IE 9 (2 events on reload)
+            // 1) event.type = readystatechange, s.readyState = complete 
+            // 2) event.type = load            , s.readyState = complete 
+
+            // event.type === 'load'             && /loaded|complete/.test(s.readyState)
+            // event.type === 'readystatechange' && /loaded|complete/.test(s.readyState)
+
+            // IE 10 (3 events on 1st load)
+            // 1) event.type = readystatechange, s.readyState = loading
+            // 2) event.type = load            , s.readyState = complete
+            // 3) event.type = readystatechange, s.readyState = loaded
+
+            // IE 10 (3 events on reload)
+            // 1) event.type = readystatechange, s.readyState = loaded
+            // 2) event.type = load            , s.readyState = complete
+            // 3) event.type = readystatechange, s.readyState = complete 
+
+            // event.type === 'load'             && /loaded|complete/.test(s.readyState)
+            // event.type === 'readystatechange' && /complete/.test(s.readyState)
+
+            // Other Browsers (1 event on 1st load)
+            // 1) event.type = load, s.readyState = undefined
+
+            // Other Browsers (1 event on reload)
+            // 1) event.type = load, s.readyState = undefined            
+
+            // event.type == 'load' && s.readyState = undefined
+
+
+            // IE: i hate you, i hate you, i hate you !
+            // I'm sure there are somekind of internal jokes going on at MS, where they break something and have a laugh while we pull our hair out
+            if (event.type === 'load' || /loaded|complete/.test(s.readyState) && doc.documentMode < 9) {
+                // release event listeners               
+                s.onload = s.onreadystatechange = s.onerror = null;
+                // do callback
+                callback();
+            }
+
+            // emulates error on browsers that don't create an exception
+            // INFO: timeout not clearing ..why ?
+            //s.timeout = win.setTimeout(function () {
+            //    error({ type: "timeout" });
+            //}, 7000);
+        }
+
+        // use insertBefore to keep IE from throwing Operation Aborted (thx Bryan Forbes!)
+        var head = doc['head'] || doc.getElementsByTagName('head')[0];
+        // but insert at end of head, because otherwise if it is a stylesheet, it will not ovverride values
+        head.insertBefore(s, head.lastChild);
+    }
+
+    /* Mix of stuff from jQuery & IEContentLoaded
+     * http://dev.w3.org/html5/spec/the-end.html#the-end
+     ***************************************************/
+    function domReady() {
+        // Make sure body exists, at least, in case IE gets a little overzealous (jQuery ticket #5443).
+        if (!doc.body) {
+            // let's not get nasty by setting a timeout too small.. (loop mania guaranteed if scripts are queued)
+            win.clearTimeout(api.readyTimeout);
+            api.readyTimeout = win.setTimeout(domReady, 50);
+            return;
+        }
+
         if (!isDomReady) {
             isDomReady = true;
-            each(domWaiters, function(fn) {
+            each(domWaiters, function (fn) {
                 one(fn);
             });
         }
     }
 
-    // W3C
-    if (window.addEventListener) {
-        doc.addEventListener("DOMContentLoaded", fireReady, false);
+    function domContentLoaded() {
+        // W3C
+        if (doc.addEventListener) {
+            doc.removeEventListener("DOMContentLoaded", domContentLoaded, false);
+            domReady();
+        }
 
-        // fallback. this is always called
-        window.addEventListener("load", fireReady, false);
+        // IE
+        else if (doc.readyState === "complete") {
+            // we're here because readyState === "complete" in oldIE
+            // which is good enough for us to call the dom ready!            
+            doc.detachEvent("onreadystatechange", domContentLoaded);
+            domReady();
+        }
+    };
+
+    // Catch cases where ready() is called after the browser event has already occurred.
+    // we once tried to use readyState "interactive" here, but it caused issues like the one
+    // discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15    
+    if (doc.readyState === "complete") {
+        domReady();
+    }
+
+    // W3C
+    else if (doc.addEventListener) {
+        doc.addEventListener("DOMContentLoaded", domContentLoaded, false);
+
+        // A fallback to window.onload, that will always work
+        win.addEventListener("load", domReady, false);
+    }
 
     // IE
-    } else if (window.attachEvent) {
+    else {
+        // Ensure firing before onload, maybe late but safe also for iframes
+        doc.attachEvent("onreadystatechange", domContentLoaded);
 
-        // for iframes
-        doc.attachEvent("onreadystatechange", function()  {
-            if (doc.readyState === "complete" ) {
-                fireReady();
-            }
-        });
+        // A fallback to window.onload, that will always work
+        win.attachEvent("onload", domReady);
 
-
-        // avoid frames with different domains issue
-        var frameElement = 1;
+        // If IE and not a frame
+        // continually check to see if the document is ready
+        var top = false;
 
         try {
-            frameElement = window.frameElement;
+            top = win.frameElement == null && doc.documentElement;
+        } catch (e) { }
 
-        } catch(e) {}
+        if (top && top.doScroll) {
+            (function doScrollCheck() {
+                if (!isDomReady) {
+                    try {
+                        // Use the trick by Diego Perini
+                        // http://javascript.nwbox.com/IEContentLoaded/
+                        top.doScroll("left");
+                    } catch (error) {
+                        // let's not get nasty by setting a timeout too small.. (loop mania guaranteed if scripts are queued)
+                        win.clearTimeout(api.readyTimeout);
+                        api.readyTimeout = win.setTimeout(doScrollCheck, 50);
+                        return;
+                    }
 
-
-        if (!frameElement && head.doScroll) {
-
-            (function() {
-                try {
-                    head.doScroll("left");
-                    fireReady();
-
-                } catch(e) {
-                    setTimeout(arguments.callee, 1);
-                    return;
+                    // and execute any waiting functions
+                    domReady();
                 }
             })();
         }
-
-        // fallback
-        window.attachEvent("onload", fireReady);
-    }
-
-
-    // enable document.readyState for Firefox <= 3.5
-    if (!doc.readyState && doc.addEventListener) {
-        doc.readyState = "loading";
-        doc.addEventListener("DOMContentLoaded", handler = function () {
-            doc.removeEventListener("DOMContentLoaded", handler, false);
-            doc.readyState = "complete";
-        }, false);
     }
 
     /*
@@ -671,11 +1066,12 @@
 
         https://github.com/headjs/headjs/issues/closed#issue/83
     */
-    setTimeout(function() {
+    setTimeout(function () {
         isHeadReady = true;
-        each(queue, function(fn) { fn(); });
+        each(queue, function (fn) {
+            fn();
+        });
 
     }, 300);
 
-})(document);
-
+})(window);

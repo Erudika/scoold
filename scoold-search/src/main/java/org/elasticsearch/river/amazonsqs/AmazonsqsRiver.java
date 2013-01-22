@@ -59,10 +59,14 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 	private final String QUEUE_URL;
 	private final String REGION;
 	private final int MAX_MESSAGES;
-	private final int TIMEOUT_SECONDS;
+	private final int TIMEOUT;      // in seconds
+	private final boolean SHOULD_THROTTLE;
+	private final boolean DEBUG;
 	private final int DEFAULT_MAX_MESSAGES = 10;
-	private final int DEFAULT_TIMEOUT_SECONDS = 10;
+	private final int DEFAULT_TIMEOUT = 10;	// in seconds
 	private final String DEFAULT_INDEX = "elasticsearch";
+    private final boolean DEFAULT_THROTTLE = true;
+    private final boolean DEFAULT_DEBUG = false;
 	
 	private volatile boolean closed = false;
 	private volatile Thread thread;
@@ -85,25 +89,35 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 			SECRET_KEY = settings.globalSettings().get("cloud.aws.secret_key");
 			QUEUE_URL = settings.globalSettings().get("cloud.aws.sqs.queue_url");
 		}
+		SHOULD_THROTTLE = settings.globalSettings().getAsBoolean("cloud.aws.throttling", DEFAULT_THROTTLE);
+		DEBUG = settings.globalSettings().getAsBoolean("cloud.aws.debug", DEFAULT_DEBUG);
 
 		if (settings.settings().containsKey("index")) {
 			Map<String, Object> indexSettings = (Map<String, Object>) settings.settings().get("index");
 			INDEX = XContentMapValues.nodeStringValue(indexSettings.get("index"), DEFAULT_INDEX);
 			MAX_MESSAGES = XContentMapValues.nodeIntegerValue(indexSettings.get("max_messages"), DEFAULT_MAX_MESSAGES);
-			TIMEOUT_SECONDS = XContentMapValues.nodeIntegerValue(indexSettings.get("timeout_seconds"), DEFAULT_TIMEOUT_SECONDS);
+			TIMEOUT = XContentMapValues.nodeIntegerValue(indexSettings.get("timeout_seconds"), DEFAULT_TIMEOUT);
 		} else {
 			INDEX = DEFAULT_INDEX;
 			MAX_MESSAGES = DEFAULT_MAX_MESSAGES;
-			TIMEOUT_SECONDS = DEFAULT_TIMEOUT_SECONDS;
+			TIMEOUT = DEFAULT_TIMEOUT;
 		}
-
+		
+		String endpoint = "https://sqs.".concat(REGION).concat(".amazonaws.com");
 		sqs = new AmazonSQSAsyncClient(new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
-		sqs.setEndpoint("https://".concat(REGION).concat(".queue.amazonaws.com"));
+		sqs.setEndpoint(endpoint);
+
+		if (DEBUG) {
+			logger.info("Setting AWS Credentials to: "
+				.concat("access_key(****").concat(ACCESS_KEY.substring(ACCESS_KEY.length() - 4)).concat(" length: ").concat(ACCESS_KEY.length() + "); ")
+				.concat("secret_key(****").concat(SECRET_KEY.substring(SECRET_KEY.length() - 4)).concat(SECRET_KEY.length() + "); ")
+				.concat("Endpoint: (").concat(endpoint).concat("); "));
+		}
 		mapper = new ObjectMapper();
 	}
 
 	public void start() {
-		logger.info("creating amazonsqs river using queue {}", QUEUE_URL);
+		logger.info("creating amazonsqs river using queue {} (reindex timeout: {}s)", QUEUE_URL, TIMEOUT);
 		thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "amazonsqs_river").newThread(new Consumer());
 		thread.start();
 	}
@@ -127,11 +141,16 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 			String type = null;	// document type
 			String indexName = null; // document index
 			Map<String, Object> data = null; // document data for indexing
-
+			int defaultSleeptime = TIMEOUT * 1000;
+			int sleeptime = defaultSleeptime;
+			
 			while (!closed) {
 				// pull messages from SQS
 				List<JsonNode> msgs = pullMessages();
-				int sleeptime = TIMEOUT_SECONDS * 1000;
+
+				if (DEBUG) {
+					logger.info("Scanning for messages...");
+				}
 
 				try {
 					BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
@@ -163,19 +182,28 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 									+ response.buildFailureMessage());
 						}
 
-						// many tasks in queue => throttle up
-						if (bulkRequestBuilder.numberOfActions() >= (MAX_MESSAGES / 2)) {
-							sleeptime = 1000;
-						} else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
-							sleeptime = 100;
+						if (SHOULD_THROTTLE){
+							if (bulkRequestBuilder.numberOfActions() > 0) {
+								// some tasks in queue => throttle up
+								sleeptime = 1000;
+							} else if (bulkRequestBuilder.numberOfActions() == MAX_MESSAGES) {
+								// many tasks in queue => throttle up more
+								sleeptime = 100;
+							}
+						} else {
+							sleeptime = defaultSleeptime;
 						}
 
 						idleCount = 0;
 					} else {
 						idleCount++;
 						// no tasks in queue => throttle down
-						if (idleCount >= 3) {
-							sleeptime *= 10;
+						if (SHOULD_THROTTLE) {
+							if (idleCount >= 3) {
+								sleeptime *= 10;
+							}
+						} else {
+							sleeptime = defaultSleeptime;
 						}
 					}
 				} catch (Exception e) {
@@ -184,9 +212,15 @@ public class AmazonsqsRiver extends AbstractRiverComponent implements River {
 				}
 
 				try {
+					if (DEBUG) {
+						logger.info("Sleeping for {}ms", sleeptime);
+					}
 					Thread.sleep(sleeptime);
 				} catch (InterruptedException e) {
 					if (closed) {
+						if (DEBUG) {
+							logger.info("Scanning done.");
+						}
 						break;
 					}
 				}

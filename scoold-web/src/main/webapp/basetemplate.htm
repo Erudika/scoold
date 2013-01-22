@@ -1640,11 +1640,8 @@
 			#end
 		</div>
 		<div>
-			#if($progress != 100)
-				<span class="reputationbox rounded3 phs" title="$!{progress}%">$!{progress}%</span>
-			#else
-				<span class="reputationbox rounded3 phs" title="100%"><span class="pictos">3</span></span>
-			#end
+			#if($progress >= 90) #set($gclass = "green" )#elseif($progress >= 50)#set($gclass = "orange" )#else #set($gclass = "red" )#end
+			<span class="reputationbox rounded3 phs $!{gclass}" title="$!{progress}%">$!{progress}%</span>
 			
 			#if(!$showLangKey.equals("en"))
 				<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="button-tiny rounded3">$!lang.get("translate.translate")</a>
@@ -1800,30 +1797,11 @@
 	</div>
 #end
 #####################################
-#macro(getpostlink $p $plural $noid)
-	#set($link = "" )
-	#if($noid) #set($pid = "" ) #else #set($pid = "/${p.id}/#stripstr($!p.title)") #end
-	#if($p)
-		#if($p.isQuestion())
-			#if($plural) #set($link = "$questionslink" ) #else #set($link = "$questionlink${pid}" ) #end
-		#elseif($p.isFeedback())
-			#if($plural) #set($link = "$feedbacklink" ) #else #set($link = "$feedbacklink${pid}" ) #end
-		#elseif($p.isGrouppost())
-			#if($plural) #set($link = "${grouplink}/${p.parentid}" ) #else #set($link = "$grouppostlink${pid}" ) #end
-		#elseif($p.isReply())
-			#set($parentp = $daoutils.getDaoInstance("post").read($p.parentid) )
-			#if($parentp) #set($link = "#getpostlink($parentp $plural $noid)" ) #end
-		#elseif($p.isBlackboard())
-			#if($noid) #set($cpid = "" ) #else #set($cpid = "/${p.parentid}" ) #end
-			#if($plural) #set($link = "$classeslink" ) #else #set($link = "${classlink}${cpid}" ) #end
-		#end
-	#end
-	$!{link}
-#end
+#macro(getpostlink $p $plural $noid)$daoutils.getPostLink($p,$plural,$noid,$questionslink,$questionlink,$feedbacklink,$grouplink,$grouppostlink,$classeslink,$classlink)#end
 #####################################
 #macro(ajaxloading $hide)
 	#if($hide) #set($hidden = "hide") #else #set($hidden = "") #end
-	<img src="$imageslink/indicator.gif" width="16" height="16" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
+	<img src="data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA=" width="16" height="16" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
 #end
 #####################################
 #macro(profilepic $user $thumb)
@@ -1893,7 +1871,7 @@ $!picurl#end
 	</div>
 #end
 #####################################
-#macro(stripstr $str )$!daoutils.spacesToDashes($str)#end
+#macro(stripstr $str )$!daoutils.urlEncode($!daoutils.spacesToDashes($str))#end
 #####################################
 #macro(identifierbox $showid $canDetach $index)
 	<span>
@@ -2290,7 +2268,7 @@ $!picurl#end
 						<form method="post" action="$signoutlink" class="inline">
 							<fieldset class="inline">
 								#sectoken(false)
-								<input id="signout-btn" type="submit" value="$!lang.get('signout')" class="bold button-link"/>
+								<input type="submit" value="$!lang.get('signout')" class="bold button-link"/>
 							</fieldset>
 						</form>
 					#else
@@ -2394,8 +2372,8 @@ $!picurl#end
 			/* <![CDATA[ */
 			function loadScripts(scriptslink, minsuffix) {
 				head.js (
-					{jquery:		"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js" },
-					{validate:		"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" },
+					{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" },
+					{validate:		"http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js" },
 					{modal:			scriptslink + "/jquery.modal" + minsuffix + ".js" },
 					{jeditable:		scriptslink + "/jquery.jeditable" + minsuffix + ".js" },
 					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
