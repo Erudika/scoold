@@ -13,7 +13,7 @@
 
 /* THANKS */
 
-   Inspiration & Help: StackOverflow.com
+   Inspiration & Help: StackOverflow and the StackExchange family
    Site: http://www.stackoverflow.com
 
    Logo design: Dimo Trifonov
@@ -28,7 +28,7 @@
    Standards: HTML5, CSS3, OpenID, OpenSearch, RSS
    IDE: NetBeans, TextMate
    Components: JS, CSS, HTML5 (clientside), Java (serverside)
-   Software: Apache Click, Apache Cassandra, ElasticSearch, GlassFish
+   Software: Apache Click, Apache Cassandra + Hector, ElasticSearch, GlassFish, jQuery
    Fonts: Pictos
 
 

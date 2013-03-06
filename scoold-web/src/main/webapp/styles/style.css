@@ -476,6 +476,7 @@ input.openidbox{ padding-left: 35px; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }
 .oembed-preview{ border: 2px dashed #CCCCCC;}
+.oembed-preview *{max-width: 100%; height: auto; width: auto;}
 .commentbox{ font-size: small; border-top: 1px dashed #CCCCCC; }
 .translationbox{ border-top: 1px dashed #CCCCCC; }
 .hidden{ opacity: 0; }

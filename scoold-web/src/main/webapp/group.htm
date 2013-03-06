@@ -55,7 +55,7 @@
 			</div>
 			
 			#if($request.getParameter("changepic")) #set($hide = "noclass" ) #else #set($hide = "hide" ) #end
-			<div id="group-picture-url" class="mvm $!hide">
+			<div id="group-picture-url" class="mvm $!{hide}">
 				<form action="$grouplink/$!showGroup.id" method="post">
 					<fieldset>
 						#sectoken(false)
@@ -84,9 +84,9 @@
 				<div id="group-members" class="mtl">
 					#paginate($pagenum.longValue() "\#groupmemberspage(\$memberslist)" $itemcount.longValue() "" "pageless")
 				</div>
-				
+				#set($contactsjs = "#contactsjs($contactslist)" )
 				<script type="text/javascript">
-					var contacts = [#foreach($contact in $contactslist){id: "$contact.id", fullname: "$contact.fullname"}#if($velocityCount < $contactslist.size()),#end #end];
+					var contacts = [$contactsjs];
 				</script>
 			#end
 		#else			

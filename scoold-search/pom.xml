@@ -9,11 +9,6 @@
 
 	<repositories>
 		<repository>
-			<id>java.net2</id>
-			<name>Repository hosting the jee6 artifacts</name>
-			<url>http://download.java.net/maven/2</url>
-		</repository>
-		<repository>
 			<id>kungfu</id>
 			<url>http://maven.kungfuters.org/content/repositories/public/</url>
 		</repository>
@@ -41,7 +36,7 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
-			<version>1.3.26</version>
+			<version>1.3.32</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jackson-core-asl</artifactId>
@@ -57,7 +52,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.20.2</version>
+			<version>0.20.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>

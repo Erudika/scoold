@@ -107,6 +107,12 @@ public class Profile extends BasePage{
     public void onGet(){
 		if(!authenticated || showUser == null) return;
 		
+		if ("photos".equals(showParam)) {
+			processGalleryRequest(showUser, photoslink, canEdit);
+		} else if("drawer".equals(showParam)) {
+			proccessDrawerRequest(showUser, drawerlink, canEdit);
+		}
+		
 		if(!isMyProfile){
 			if(param("makemod") && inRole("admin")){
 				boolean makemod = Boolean.parseBoolean(getParamValue("makemod"));

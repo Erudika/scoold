@@ -514,7 +514,7 @@ public final class Language {
 			.build();
 	
 	public static Map<String, String> readLanguage(Locale loc){
-		if(loc == null) return null;
+		if(loc == null) return getDefaultLanguage();
 		else if(loc.getLanguage().equals("en")) return getDefaultLanguage();
 		else if(!ALL_LOCALES.containsKey(loc.getLanguage())) loc = ALL_LOCALES.get("en");
 		return Translation.getTranslationDao().readLanguage(loc);

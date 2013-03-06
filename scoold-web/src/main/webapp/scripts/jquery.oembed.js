@@ -74,10 +74,8 @@
 						data.html = code;
 						callback(data);
 					}
-
 				}
 			});
-
 		},
 
 		getRequestUrl: function(externalUrl) {

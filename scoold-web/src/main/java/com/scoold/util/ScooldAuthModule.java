@@ -342,7 +342,6 @@ public class ScooldAuthModule extends PluggableAuthenticator { //ServletAuthModu
 		try {
 			// configure the return_to URL where your application will receive
 			// the authentication responses from the OpenID provider
-			//String returnToUrl = "http://localhost:8080"+BasePage.HOMEPAGE;
 			String returnToUrl = httpReq.getRequestURL().toString() + "?return=true";
 
 			// perform discovery on the user-supplied identifier

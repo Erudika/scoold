@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.click.Page;
@@ -185,32 +186,40 @@ public class BasePage extends Page {
 	
 	private void checkAuth() {	
 		isFBconnected = false;
-		if (req.getRemoteUser() != null) {
-			authenticated = true;
-			String uid = req.getRemoteUser();
-			if (authUser == null) {
-				authUser = User.getUser(NumberUtils.toLong(uid, 0));
-				long delta = System.currentTimeMillis() - authUser.getLastseen();
-				if(delta > 2 * 60 * 60 * 1000){
-					// last seen 2 hours ago -> update
-					authUser.setLastseen(System.currentTimeMillis());
-					authUser.update();
+		try {
+			if (req.getRemoteUser() != null) {
+				String uid = req.getRemoteUser();
+				if (authUser == null) {
+					authUser = User.getUser(NumberUtils.toLong(uid, 0));
+					long delta = System.currentTimeMillis() - authUser.getLastseen();
+					if(delta > 2 * 60 * 60 * 1000){
+						// last seen 2 hours ago -> update
+						authUser.setLastseen(System.currentTimeMillis());
+						authUser.update();
+					}
 				}
-			}
-			isFBconnected = authUser != null && authUser.isFacebookUser();
-			AbstractDAOUtils.removeStateParam("intro", req, getContext().getResponse(), false);
-			infoStripMsg = "";
-		} else {
-			authenticated = false;
-			String intro = AbstractDAOUtils.getStateParam("intro", 
-					req, getContext().getResponse(), false);
-			infoStripMsg = "intro";
-			if ("0".equals(intro)) {
+				isFBconnected = authUser != null && authUser.isFacebookUser();
+				AbstractDAOUtils.removeStateParam("intro", req, getContext().getResponse(), false);
 				infoStripMsg = "";
-			}else{
-				AbstractDAOUtils.setStateParam("intro", "1", req, getContext().getResponse(), false);
-			}
-		} 
+				authenticated = true;
+			} else {
+				String intro = AbstractDAOUtils.getStateParam("intro", 
+						req, getContext().getResponse(), false);
+				infoStripMsg = "intro";
+				if ("0".equals(intro)) {
+					infoStripMsg = "";
+				}else{
+					AbstractDAOUtils.setStateParam("intro", "1", req, getContext().getResponse(), false);
+				}
+				authenticated = false;
+			} 
+		} catch (Exception e) {
+			authenticated = false;
+			logger.log(Level.WARNING, "CheckAuth failed for {0}: {1}", new Object[]{req.getRemoteUser(), e});
+			clearSession();
+			setRedirect(HOMEPAGE);
+			
+		}
 	}
 
 	private void initLanguage() {

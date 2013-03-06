@@ -99,16 +99,16 @@
 	#if($detailtype == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
 	#elseif($detailtype == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
 	#elseif($detailtype == "UNKNOWN") #set($showdetailstr = $!lang.get("unknown") )
-	#else #set($showdetailstr = $detailtype) #end
+	#else #set($showdetailstr = $detailtype.toLowerCase()) #end
 	$!{showdetailstr}#end
 #end
 #####################################
 #macro(contactdetailbox $showdetail )
 	#if(!$showdetail || $showdetail == "") #set($hide = "hide" ) #else #set($hide = "" ) #end
 	<tr class="detailbox ${hide}">
-		<td class="r p25 contact-type">#contactdetailtypestr($!showdetail.type):</td>
+		<td class="r p25 contact-type capitalize">#contactdetailtypestr($!showdetail.type):</td>
 		<td class="pll p75">
-			<span class="contact-value">$!showdetail.value</span>
+			<span class="contact-value">#getcontactlinkcode($!showdetail)</span>
 			<input type="hidden" name="contacts" value="$!showdetail"/>
 			<a href="#" class="pictos remove-contact" title="$!lang.get('remove')">D</a>
 		</td>
@@ -139,7 +139,7 @@
 			#if($showUser.contacts && !$showUser.contacts.isEmpty())
 				#foreach($contact in $showUser.getAllContactDetails())
 				<tr>					
-					<td class="r p25">$!lang.get(${contact.type.toLowerCase()}):</td>
+					<td class="r p25 capitalize">#contactdetailtypestr(${contact.type}):</td>
 					<td class="pll p75">#getcontactlinkcode($!contact)</td>
 				</tr>
 				#end
@@ -444,7 +444,7 @@
 #end
 ####################################
 #macro(thumbbox $thumb $showlabel)
-	<div class="thumb-wrap center inlineblock mrl">
+	<div class="thumb-wrap center inlineblock mrs mbl">
 		#set($turl = $request.getAttribute("javax.servlet.forward.request_uri"))
 		#set($delturl = "${turl}/?remove=$!thumb.id&amp;parentid=$!thumb.parentid")
 		#if($showlabel && !$showlabel.isEmpty())
@@ -456,7 +456,7 @@
 		<div>
 			<a class="thumb" href="${turl}${label}${thumb.id}" title="$!thumb.title" >
 				#if($thumb.thumburl && !$thumb.thumburl.isEmpty())
-					<img src="$!thumb.thumburl" alt="$!thumb.title" title="$!thumb.description" class="rounded3"/>
+					<img src="$!thumb.thumburl" alt="$!thumb.title" title="$!thumb.description" class="rounded3 oembed-thumb"/>
 				#else
 					<img src="$!thumb.url" alt="$!thumb.title" title="$!thumb.description" class="rounded3 oembed-thumb"/>
 				#end
@@ -521,9 +521,12 @@
 	</span>
 #end
 ###########################################
+#macro(labelsjs $labels )#foreach($lbl in $labels)#if($lbl && !$lbl.isEmpty())"$!lbl"#end#if($velocityCount < $labelslist.size()),#end#end#end
+###########################################
 #macro(gallery $photos $gurl $totalCount)
+	#set($labelsjs = "#labelsjs($labelslist)" )
 	<script type="text/javascript">
-		allLabels = [#foreach($lbl in $labelslist)#if($lbl && !$lbl.isEmpty())"$!lbl"#end#if($velocityCount < $labelslist.size()),#end#end];
+		allLabels = [$labelsjs];
 	</script>
 
 	#set($showlabel = $!request.getParameter("label"))
@@ -853,6 +856,8 @@
 		#personbox($showmember)
 	#end
 #end
+####################################
+#macro(contactsjs $contacts )#foreach($contact in $contacts){id:"$contact.id", fullname:"$contact.fullname"}#if($velocityCount < $contactslist.size()),#end#end#end
 ####################################
 #macro(personbox $showFriend)
 	#if($showFriend)
@@ -1623,6 +1628,13 @@
 	</div>
 #end
 ###################################
+#set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
+			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
+			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
+			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
+			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","invalidyear"])
+#macro(langjs ){#foreach($!langkey in $jslang)"$!langkey":"$daoutils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end #end}#end
+###################################
 #macro(langbox $showLangKey $showLangName $progress  )
 	#if($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang rounded5") #else #set($selclass = "") #end
 	<div class="inlineblock mrl mbm center langbox rounded5 ${selclass}">
@@ -2360,14 +2372,7 @@ $!picurl#end
 		
 		#set($sectoken = "#sectoken(true)")
 		#set($sectoken = $sectoken.trim())
-		
-		#set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
-			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
-			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
-			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
-			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","invalidyear"])
-			
-		
+		#set($langjs = "#langjs()")
 		<script type="text/javascript">
 			/* <![CDATA[ */
 			function loadScripts(scriptslink, minsuffix) {
@@ -2385,13 +2390,12 @@ $!picurl#end
 					{scoold:		scriptslink + "/scoold" + minsuffix + ".js" });
 			}
 			
-			var lang = {#foreach($!langkey in $jslang)"$!langkey":"$daoutils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end #end},
-				sessiontimeout = $!SESSION_TIMEOUT_SEC,
-				userip = "$!userip";
-			#if($authenticated)
-				var stoken = "$!sectoken", pepper = "$!authUser.authstamp";
-			#end
-			loadScripts("$!{scriptslink}", "$!{minsuffix}");
+			var lang = $langjs,
+				sessiontimeout = $SESSION_TIMEOUT_SEC,
+				userip = "$!userip",
+				stoken = "$!sectoken", 
+				pepper = "$!authUser.authstamp";
+			loadScripts("$!scriptslink", "$!minsuffix");
 			/* ]]> */
 		</script>
     </body>

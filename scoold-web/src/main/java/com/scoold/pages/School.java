@@ -98,8 +98,14 @@ public class School extends BasePage{
     }
 
     public void onGet(){
-		if(!authenticated) return;
+		if(!authenticated || showSchool == null) return;
 
+		if ("photos".equals(showParam)) {
+			processGalleryRequest(showSchool, photoslink, canEdit);
+		} else if("drawer".equals(showParam)) {
+			proccessDrawerRequest(showSchool, drawerlink, canEdit);
+		}
+		
 		if(param("join") && !showSchool.isLinkedTo(authUser)){
 			//add school to user
 			boolean linked = showSchool.linkToUser(authUser.getId());
@@ -110,7 +116,7 @@ public class School extends BasePage{
 				if(!addBadgeOnce(Badge.BACKTOSCHOOL, true) && !isAjaxRequest())
 					setRedirect(schoollink+"/"+showSchool.getId()+"?code=11&success=true");
 			}
-		}else if(param("leave") && showSchool.isLinkedTo(authUser)){
+		}else if(param("leave") && showSchool.isLinkedTo(authUser)){ 
 			//delete school from user
 			showSchool.unlinkFromUser(authUser.getId());
 			isLinkedToMe = false;

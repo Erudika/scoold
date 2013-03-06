@@ -9,7 +9,7 @@
 		#set($hide = "hide")
 	#end
 
-	<div class="newmessage $hide">
+	<div class="newmessage ${hide}">
 		#if($contactslist && !$contactslist.isEmpty())
 			#if($request.getParameter("toname") && $request.getParameter("toid"))
 				#newmessageform($request.getParameterValues("toname") $request.getParameterValues("toid"))
@@ -40,6 +40,7 @@
 	</div>	
 </div>
 
-<script type="text/javascript">
-	var contacts = [#foreach($contact in $contactslist){id: "$contact.id", fullname: "$contact.fullname"}#if($velocityCount < $contactslist.size()),#end #end];
+#set($contactsjs = "#contactsjs($contactslist)" )
+<script type="text/javascript">	
+	var contacts = [$contactsjs];
 </script>

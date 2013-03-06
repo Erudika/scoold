@@ -4,6 +4,7 @@
 *.zip
 *.bak
 keys.txt
+rebel.xml
 scoold-search/dist/
 scoold-search/build/
 scoold-search/nbproject/

@@ -411,11 +411,10 @@ $(function () {
 			});
 			that.result(function(event, data, formatted) {
 				var that = $(this),
-					hidden = that.nextAll("input:hidden"),
+					hidden = that.nextAll("input:hidden:first"),
 					newHidden = hidden.clone();
 				newHidden.val(data.id);
 				hidden.after(newHidden);
-				that.val(data.fullname+", ");
 			});
 
 			var clear = function(e){
@@ -781,7 +780,7 @@ $(function () {
 		var type = $("select#detail-type option:selected").text();
 		var typeRaw = $("select#detail-type").val();
 		if($.trim(val) !== ""){
-			var clonable = txtbox.closest("tr").nextAll(".detailbox:hidden");
+			var clonable = txtbox.closest("tr").nextAll(".detailbox:hidden:first");
 			var box = clonable.clone();
 			val = val.replace(/[;,]/gi, "");
 			box.find(".contact-type").text(type+":");
@@ -1182,7 +1181,7 @@ $(function () {
 	}
 
 	function onEmbedClick(that, type){
-		var url = $.trim($(that).prev("input").val());
+		var url = $.trim($(that).siblings("input[type=text]").val());
 		oembedPreview.show();
 		$("img.ajaxwait", oembedPreview).show();
 		$.oembed.fetchData(url, function(data){
@@ -1238,6 +1237,7 @@ $(function () {
 
 		if(data && data !== ""){
 			var params = {
+				getmediahtmlcode: true,
 				url: data.url,
 				link: this.url.value,
 				thumburl: data.thumbnail_url,

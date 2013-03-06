@@ -114,42 +114,48 @@ public class Classunit extends BasePage{
 	}
 
 	public void onGet(){
-		if(authenticated){
-			if(param("join")){
-				showClass.linkToUser(authUser.getId());
-				isLinkedToMe = true;
-				peoplelist.add(authUser);
-				if(!addBadgeOnce(Badge.FIRSTCLASS, true) && !isAjaxRequest())
-					setRedirect(classlink+"/"+showClass.getId()+"?code=14&success=true");
-			}else if(param("leave")){
-				showClass.unlinkFromUser(authUser.getId());
-				isLinkedToMe = false;
-				peoplelist.remove(authUser);
-				if(!isAjaxRequest())
-					setRedirect(classlink+"/"+showClass.getId()+"?code=15");
-			}else if(param("thisisme")){
-				// allow new users to click on "this is me" and users with 20+ rep
-				if(authUser.getReputation() >= 20 || authUser.getTimestamp() <
-						(System.currentTimeMillis() + 24*60*60*1000)){ // regged within 1 day
-					String name = getParamValue("thisisme");
-					String newInactive = showClass.getInactiveusers();
-					if(!StringUtils.isBlank(name) && !StringUtils.isBlank(newInactive)){
-						name = ",".concat(name).concat(",");
-						newInactive = newInactive.replaceFirst(name, "");
-						showClass.setInactiveusers(StringUtils.trimToNull(newInactive));
-						showClass.update();
-					}
+		if(!authenticated || showClass == null) return;
+		
+		if ("photos".equals(showParam)) {
+			processGalleryRequest(showClass, photoslink, canEdit);
+		} else if("drawer".equals(showParam)) {
+			proccessDrawerRequest(showClass, drawerlink, canEdit);
+		}
+
+		if(param("join")){
+			showClass.linkToUser(authUser.getId());
+			isLinkedToMe = true;
+			peoplelist.add(authUser);
+			if(!addBadgeOnce(Badge.FIRSTCLASS, true) && !isAjaxRequest())
+				setRedirect(classlink+"/"+showClass.getId()+"?code=14&success=true");
+		}else if(param("leave")){
+			showClass.unlinkFromUser(authUser.getId());
+			isLinkedToMe = false;
+			peoplelist.remove(authUser);
+			if(!isAjaxRequest())
+				setRedirect(classlink+"/"+showClass.getId()+"?code=15");
+		}else if(param("thisisme")){
+			// allow new users to click on "this is me" and users with 20+ rep
+			if(authUser.getReputation() >= 20 || authUser.getTimestamp() <
+					(System.currentTimeMillis() + 24*60*60*1000)){ // regged within 1 day
+				String name = getParamValue("thisisme");
+				String newInactive = showClass.getInactiveusers();
+				if(!StringUtils.isBlank(name) && !StringUtils.isBlank(newInactive)){
+					name = ",".concat(name).concat(",");
+					newInactive = newInactive.replaceFirst(name, "");
+					showClass.setInactiveusers(StringUtils.trimToNull(newInactive));
+					showClass.update();
 				}
-				if (!isLinkedToMe) {
-					setRedirect(classlink+"/"+showClass.getId()+"/join");
-				} else {
-					setRedirect(classlink+"/"+showClass.getId());
-				}
-				return;
-			}else if(param("receivechat")){
-				chatJSONResponse(com.scoold.core.Classunit.getClassUnitDao().
-						receiveChat(showClass.getId()));
 			}
+			if (!isLinkedToMe) {
+				setRedirect(classlink+"/"+showClass.getId()+"/join");
+			} else {
+				setRedirect(classlink+"/"+showClass.getId());
+			}
+			return;
+		}else if(param("receivechat")){
+			chatJSONResponse(com.scoold.core.Classunit.getClassUnitDao().
+					receiveChat(showClass.getId()));
 		}
 	}
 
