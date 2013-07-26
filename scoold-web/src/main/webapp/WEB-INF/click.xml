@@ -7,7 +7,7 @@
 <!--	<headers>
 		<header name="Content-Type" value="text/html;charset=UTF-8"/>
 	</headers>-->
-	<pages package="com.scoold.pages" automapping="true" autobinding="public" >
+	<pages package="com.erudika.scoold.pages" automapping="true" autobinding="public" >
 		<excludes pattern="basetemplate.htm"/>
 	</pages>
 <!--	<headers>

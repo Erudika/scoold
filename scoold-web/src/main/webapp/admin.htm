@@ -131,7 +131,7 @@
 				#foreach($showprop in ["com.scoold.workerid", "com.scoold.dbhosts", "com.scoold.eshosts"])
 					<tr>
 						<td class="p20 l"><strong>$showprop</strong></td>
-						<td class="p80">$!daoutils.getSystemProperty($showprop)</td>
+						<td class="p80">$!utils.getSystemProperty($showprop)</td>
 					</tr>
 				#end				
 				</tbody>
@@ -146,7 +146,7 @@
 				#foreach($key in ["java.vm.name", "java.version", "java.vendor", "java.vm.specification.vendor", "user.timezone", "os.arch", "file.encoding"])
 					<tr>
 						<td class="p25">$key: </td>
-						<td class="pll p75">$!daoutils.getSystemProperty($key) </td>
+						<td class="pll p75">$!utils.getSystemProperty($key) </td>
 					</tr>
 				#end
 			</tbody>

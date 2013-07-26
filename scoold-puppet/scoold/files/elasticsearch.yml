@@ -325,7 +325,7 @@ cluster.name: scoold
 #node.river: amazonsqs
   
 network.bind_host: 0.0.0.0
-network.publish_host: _ec2:privateIpv4_
+network.publish_host: _ec2_
 network.tcp.keep_alive: true
     
 index.number_of_shards: 4

@@ -15,10 +15,10 @@
 			</div>
 
 			#if($canEdit)
-				<div id="fullname" class="hugeText editable p100">$!{showUser.fullname}</div>
+				<div id="name" class="hugeText editable p100">$!{showUser.name}</div>
 				<div id="mystatus" class="editable p100">$!{showUser.status}</div>
 			#else
-				<div class="hugeText p100">$!{showUser.fullname}</div>
+				<div class="hugeText p100">$!{showUser.name}</div>
 				#if(($showUser.status && !$showUser.status.trim().isEmpty()) || $authenticated)
 					<div class="p100">$!{showUser.status}</div>
 				#end
@@ -34,7 +34,7 @@
 				#else
 					<a href="$profilelink/$authUser.id/add" class="addfriend button-tiny rounded3" title="Add to contacts"><span class="pictos">+</span> $!{lang.get("addfriend")}</a>
 				#end
-				<a href="$messageslink/new?toname=${daoutils.urlEncode($showUser.fullname)}&amp;toid=${showUser.id}" class="button-tiny rounded3"><span class="pictos">M</span> $!lang.get("sendmsg")</a>
+				<a href="$messageslink/new?toname=${utils.urlEncode($showUser.name)}&amp;toid=${showUser.id}" class="button-tiny rounded3"><span class="pictos">M</span> $!lang.get("sendmsg")</a>
 
 				#if($request.isUserInRole("admin"))
 					#if($showUser.isModerator())
@@ -144,9 +144,9 @@
 									<tr>
 										<td class="r p25">$!{lang.get("profile.about.dob")}:</td>
 										<td class="pll p75">
-											#dayselect("nicebox" "dobDate" $showUser.getDobDay())
-											#monthselect("nicebox" "dobDate" $showUser.getDobMonth())
-											#yearselect("nicebox" "dobDate" false $showUser.getDobYear() "")
+											#dayselect("nicebox" "dobday" $showUser.dobday)
+											#monthselect("nicebox" "dobmonth" $showUser.dobmonth)
+											#yearselect("nicebox" "dobyear" false $showUser.dobyear "")
 										</td>
 									</tr>
 									<tr>
@@ -237,12 +237,12 @@
 			<span class="largeText reputationbox p80 phl rounded5" title="$!lang.get('reputation')">$!showUser.reputation</span>
 			<ul class="sidebar">
 				#if($authenticated) #set($privatepath = "/p" ) #else #set($privatepath = "" ) #end
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/#stripstr($!showUser.fullname)">$!{lang.get("profile.about.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/contacts/#stripstr($!showUser.fullname)">$!{lang.get("contacts.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/questions/#stripstr($!showUser.fullname)">$!{lang.get("questions.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/answers/#stripstr($!showUser.fullname)">$!{lang.get("answers.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/photos/#stripstr($!showUser.fullname)">$!{lang.get("photos.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/drawer/#stripstr($!showUser.fullname)">$!{lang.get("drawer.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/#stripstr($!showUser.name)">$!{lang.get("profile.about.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/contacts/#stripstr($!showUser.name)">$!{lang.get("contacts.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/questions/#stripstr($!showUser.name)">$!{lang.get("questions.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/answers/#stripstr($!showUser.name)">$!{lang.get("answers.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/photos/#stripstr($!showUser.name)">$!{lang.get("photos.title")}</a></li>
+				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/drawer/#stripstr($!showUser.name)">$!{lang.get("drawer.title")}</a></li>
 			</ul>
 		</div>
 	</div>

@@ -370,7 +370,6 @@ form label.blocklabel {
 }
 form label{	margin-right: 10px;}
 form fieldset li {  list-style: none;  padding: 5px;  margin: 0;}
-form label {  width: 150px; /* Width of labels */  font-size: 1.1em;}
 input.nicebox, form.clickedit input {
 	padding: 3px 0;
 }

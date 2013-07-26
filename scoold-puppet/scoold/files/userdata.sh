@@ -45,5 +45,10 @@ sed -e "1,/START=no/ s/START=no/START=yes/" -i.bak /etc/default/monit
 sed -e "1,/set -e/ s/set -e/set -e; ulimit -l $maxmem; ulimit -n $maxfiles/" -i.bak /etc/init.d/monit
 # service monit restart
 
+# set daily time sync
+echo "ntpdate ntp.ubuntu.com" > /etc/cron.daily/ntpdate
+chmod 755 /etc/cron.daily/ntpdate
+ntpdate ntp.ubuntu.com
+
 # finish
 reboot now

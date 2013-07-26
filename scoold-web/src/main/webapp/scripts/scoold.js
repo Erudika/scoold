@@ -362,27 +362,6 @@ $(function () {
 		});
 	}
 	
-	function autocompleteLabelBind(elem, params){
-		if(typeof allLabels !== "undefined"){
-			var that = $(elem);
-			that.attr("autocomplete", "off");
-			that.autocomplete(allLabels, {
-				minChars: 2,
-				width: that.attr("width"),
-				matchContains: true,
-				multiple: true,
-				highlight: false,
-				extraParams: params,
-				autoFill: true,
-				scroll: true
-			});
-			that.result(function(event, data, formatted) {
-				$(this).val(data[0]+", ");
-			});
-		}
-	}
-	
-	
 	function autocompleteUserBind(elem, params){
 		autocompleteBind(elem, params);
 		$(elem).keypress(function(e){
@@ -406,7 +385,7 @@ $(function () {
 //				autoFill: true,
 				scroll: true,
 				formatItem: function(row) {
-					return row.fullname;
+					return row.name;
 				}
 			});
 			that.result(function(event, data, formatted) {
@@ -744,7 +723,7 @@ $(function () {
 		).data("value", $elem.text());
 	}
 
-	editableBind("#fullname.editable", "fullname");
+	editableBind("#name.editable", "name");
 	editableBind("#mystatus.editable", "status");
 	editableBind("#schoolname.editable", "name");
 	editableBind("#classname.editable", "identifier");
@@ -807,7 +786,6 @@ $(function () {
     
 	autocompleteBind("input.locationbox", {find: "locations"});
 	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
-	autocompleteLabelBind("input.addlabelbox", {find: "labels"});
 	autocompleteTagBind("input.tagbox", {find: "tags"});
 	autocompleteUserBind("input.personbox", {find: "people"});
 	autocompleteBind("input.schoolnamebox", {find: "schools"}); 
@@ -837,7 +815,7 @@ $(function () {
 		var clone = that.prev("div").clone();
 		clone.find("input").val("");
 		that.before(clone);
-		clone.find("input[name=fullname]").focus();
+		clone.find("input[name=name]").focus();
 		return false;
 	});
 	
@@ -1111,47 +1089,6 @@ $(function () {
 			});
 			$.post(that.attr("href"), secdata);
 		}, rusuremsg, false);
-	});
-
-	submitFormBind("form#add-label-form", function(data, status, xhr, form){
-		var id = $("form#add-label-form input[name=id]").val(),
-			labelBox = $("form#add-label-form input[name=addlabel]"),
-			labelBoxClass = "button-tiny",
-			label = labelBox.val();
-		
-		labelBox.val("");	//clear box
-		if($.trim(label) !== "" && $.trim(data) === "true"){
-			var labelsCont = $("#labels");
-			var box;
-			if(label.indexOf(",") >= 0){
-				var labels = label.split(","), i;
-				
-				for (i = 0; i<labels.length; i++) {
-					var ltrim = labels[i];
-					ltrim = $.trim(ltrim);
-					if(ltrim !== ""){
-						box = labelsCont.children(":hidden:first").clone();
-						box.find("a:first").attr("href", function(){
-							return this.href + ltrim;
-						}).text(ltrim);
-						box.find("a:last").attr("href", function(){
-							return this.href + ltrim + "&id=" + id;
-						});
-						labelsCont.append(box.addClass(labelBoxClass).show());
-					}
-				}
-			}else{
-				var trimed = $.trim(label);
-				box = labelsCont.children(":hidden:first").clone();
-				box.find("a:first").attr("href", function(){
-					return this.href + trimed;
-				}).text(trimed);
-				box.find("a:last").attr("href", function(){
-					return this.href + trimed + "&id=" + id;
-				});
-				labelsCont.append(box.addClass(labelBoxClass).show());
-			}
-		}
 	});
 
 	/****************************************************
@@ -1541,11 +1478,11 @@ $(function () {
 			onsubmit: true,
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-				fullname: {required: true, minlength: 4},
+				name: {required: true, minlength: 4},
                 email: {required: true, email: true}
 			},
 			messages: {
-				fullname: {
+				name: {
 					required: reqmsg,
 					maxlength: jQuery.format(maxlenmsg),
 					minlength: jQuery.format(minlenmsg)
@@ -1598,7 +1535,7 @@ $(function () {
 			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
 				gradyear: {required: true, digits: true},
-				schoolid: "required",
+				parentid: "required",
 				identifier: {required: true, minlength: 4}
 			},
 			messages: {
@@ -1606,7 +1543,7 @@ $(function () {
 					required: reqmsg,
 					digits: digitsmsg
 				},
-				schoolid: reqmsg,
+				parentid: reqmsg,
 				identifier: {
 					required: reqmsg,
 					minlength: jQuery.format(minlenmsg)
@@ -1622,7 +1559,7 @@ $(function () {
 		form.validate({
             highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
 			rules: {
-                fullname: {required: true, minlength: 3, maxlength: 255},
+                name: {required: true, minlength: 3, maxlength: 255},
 				email: {
 					required: false, email: true
 				}
@@ -1631,7 +1568,7 @@ $(function () {
 				email: {
 					email: emailmsg
 				},
-				fullname: {
+				name: {
 					required: reqmsg,
 					maxlength: jQuery.format(maxlenmsg),
 					minlength: jQuery.format(minlenmsg)

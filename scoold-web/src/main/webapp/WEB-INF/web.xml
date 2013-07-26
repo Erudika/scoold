@@ -4,7 +4,7 @@
     <display-name>scoold</display-name>
     <filter>
         <filter-name>LoggingFilter</filter-name>
-        <filter-class>com.scoold.util.LoggingFilter</filter-class>
+        <filter-class>com.erudika.scoold.util.LoggingFilter</filter-class>
         <init-param>
             <description>logging level</description>
             <param-name>level</param-name>
@@ -12,9 +12,9 @@
         </init-param>
     </filter>
     <filter>
-        <description>blacklists etc.</description>
+        <description>Security filter</description>
         <filter-name>SecurityFilter</filter-name>
-        <filter-class>com.scoold.util.SecurityFilter</filter-class>
+        <filter-class>com.erudika.para.security.SecurityFilter</filter-class>
     </filter>
     <filter>
         <filter-name>UrlRewriteFilter</filter-name>
@@ -35,27 +35,7 @@
             <param-name>statusEnabledOnHosts</param-name>
             <param-value>localhost</param-value>
         </init-param>
-    </filter>
-    <filter>
-        <filter-name>AttachIdentifierFilter</filter-name>
-        <filter-class>com.scoold.util.AttachIdentifierFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AttachIdentifierFilter</filter-name>
-        <url-pattern>/attach_facebook</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AttachIdentifierFilter</filter-name>
-        <url-pattern>/attach_openid</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
+    </filter>    
     <filter-mapping>
         <filter-name>SecurityFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -130,7 +110,7 @@
     </filter-mapping>
     <listener>
         <description>ServletContextListener, HttpSessionListener</description>
-        <listener-class>com.scoold.util.ScooldAppListener</listener-class>
+        <listener-class>com.erudika.para.utils.AppListener</listener-class>
     </listener>
     <servlet>
         <servlet-name>ClickServlet</servlet-name>
@@ -589,7 +569,7 @@
     <filter>
         <description>css caching</description>
         <filter-name>cssCache</filter-name>
-        <filter-class>com.scoold.util.CacheFilter</filter-class>
+        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
         <init-param>
             <description>14 days</description>
             <param-name>expirationTime</param-name>
@@ -603,7 +583,7 @@
     <filter>
         <description>image caching</description>
         <filter-name>imageCache</filter-name>
-        <filter-class>com.scoold.util.CacheFilter</filter-class>
+        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
         <init-param>
             <description>30 days</description>
             <param-name>expirationTime</param-name>
@@ -617,7 +597,7 @@
     <filter>
         <description>javascript caching</description>
         <filter-name>jsCache</filter-name>
-        <filter-class>com.scoold.util.CacheFilter</filter-class>
+        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
         <init-param>
             <description>14 days</description>
             <param-name>expirationTime</param-name>
@@ -628,10 +608,4 @@
             <param-value>private</param-value>
         </init-param>
     </filter>
-    <resource-ref>
-        <res-ref-name>mail/scoold</res-ref-name>
-        <res-type>javax.mail.Session</res-type>
-        <res-auth>Container</res-auth>
-        <res-sharing-scope>Shareable</res-sharing-scope>
-    </resource-ref>
 </web-app>

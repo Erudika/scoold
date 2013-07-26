@@ -47,7 +47,7 @@ public class CasDAOUtilsTest {
 //	/**
 //	 * Test of create method, of class CasDAOUtils.
 //	 */ @Test
-//	public void testCreate_ScooldObject_CasDAOFactoryCF() {
+//	public void testCreate_PObject_CasDAOFactoryCF() {
 //		Long result = cdu.create(testObject, USERS);
 //		assertTrue(result > 0L);
 //
@@ -85,12 +85,12 @@ public class CasDAOUtilsTest {
 //	/**
 //	 * Test of update method, of class CasDAOUtils.
 //	 */ @Test
-//	public void testUpdate_ScooldObject_CasDAOFactoryCF() {
+//	public void testUpdate_PObject_CasDAOFactoryCF() {
 //		String newName = RandomStringUtils.randomAlphabetic(10);
 //		testObject.setFullname(newName);
 //		cdu.update(testObject, USERS);
 //		User out = cdu.read(User.class, testObject.getId().toString(), USERS);
-//		assertEquals(newName, out.getFullname());
+//		assertEquals(newName, out.getName());
 //	}
 //
 //	/**
@@ -104,13 +104,13 @@ public class CasDAOUtilsTest {
 //		cdu.update(key, testObject, USERS, mut);
 //		mut.execute();
 //		User out = cdu.read(User.class, key, USERS);
-//		assertEquals(newName, out.getFullname());
+//		assertEquals(newName, out.getName());
 //	}
 //
 //	/**
 //	 * Test of delete method, of class CasDAOUtils.
 //	 */ @Test
-//	public void testDelete_ScooldObject_CasDAOFactoryCF() {
+//	public void testDelete_PObject_CasDAOFactoryCF() {
 //		cdu.delete(testObject, USERS);
 //		assertNull(cdu.read(User.class, testObject.getId().toString(), USERS));
 //	}
@@ -184,7 +184,7 @@ public class CasDAOUtilsTest {
 //		String key = "";
 //		SCF<SN, SUBN> cf = null;
 //		Object colName = null;
-//		List<HColumn<SUBN, String>> colValue = null;
+//		List<HColumn<SUBN>> colValue = null;
 //		putSuperColumn(key, cf, colName, colValue);
 //		fail("The test case is a prototype.");
 //	}
@@ -308,7 +308,7 @@ public class CasDAOUtilsTest {
 //		System.out.println("createRow");
 //		String key = "";
 //		CF<N> cf = null;
-//		List<HColumn<N, String>> row = null;
+//		List<HColumn<N>> row = null;
 //		String expResult = "";
 //		String result = createRow(key, cf, row);
 //		assertEquals(expResult, result);
@@ -322,7 +322,7 @@ public class CasDAOUtilsTest {
 //		System.out.println("createSuperRow");
 //		String key = "";
 //		SCF<SN, SUBN> cf = null;
-//		List<HSuperColumn<SN, SUBN, String>> row = null;
+//		List<HSuperColumn<SN, SUBN>> row = null;
 //		String expResult = "";
 //		String result = createSuperRow(key, cf, row);
 //		assertEquals(expResult, result);
@@ -562,7 +562,7 @@ public class CasDAOUtilsTest {
 //		p.setUserid(123L);
 //		p.setId(cdu.getID());
 //		
-//		long id = 1234L;
+//		String id = 1234L;
 //		long v = 2000L;
 //		long vla = cdu.convertMsTimeToCasTime(cdu.getKeyspace(), v); // ms
 //		int vlfs = 5; // s
@@ -570,7 +570,7 @@ public class CasDAOUtilsTest {
 //		CasDAOUtils cdu = new CasDAOUtils();
 //
 //		assertTrue(p.getVotes() == 0);
-//		assertFalse(cdu.vote(p.getUserid(), p, true, vla, vlfs));
+//		assertFalse(cdu.vote(p.getCreatorid(), p, true, vla, vlfs));
 //
 //		assertTrue(cdu.vote(id, p, true, vla, vlfs));	//1+
 //		assertTrue(p.getVotes() == 1);
@@ -616,9 +616,9 @@ public class CasDAOUtilsTest {
 //	 * Test of getNewId method, of class CasDAOUtils.
 //	 */ @Test
 //	public void testGetNewId() {
-//		long id1 = cdu.getNewId();
-//		long id2 = cdu.getNewId();
-//		long id3 = cdu.getNewId();
+//		String id1 = cdu.getNewId();
+//		String id2 = cdu.getNewId();
+//		String id3 = cdu.getNewId();
 //		assertFalse(id1 == id2 || id1 == id3 || id2 == id3);
 //	}
 //
@@ -663,11 +663,11 @@ public class CasDAOUtilsTest {
 //
 //		assertNotNull(cdu.getColumn(DEFAULT_KEY, USERS_BY_TIMESTAMP, now));
 //
-//		HColumn<Long, String> last = cdu.getLastColumn(DEFAULT_KEY,
-//				USERS_BY_TIMESTAMP, Long.class, false);
+//		HColumn<String, String> last = cdu.getLastColumn(DEFAULT_KEY,
+//				USERS_BY_TIMESTAMP, String.class, false);
 //
-//		HColumn<Long, String> first = cdu.getLastColumn(DEFAULT_KEY,
-//				USERS_BY_TIMESTAMP, Long.class, true);
+//		HColumn<String, String> first = cdu.getLastColumn(DEFAULT_KEY,
+//				USERS_BY_TIMESTAMP, String.class, true);
 //
 //		assertEquals(Long.toString(k1), last.getValue());
 //		assertEquals(Long.toString(k3), first.getValue());
@@ -680,10 +680,10 @@ public class CasDAOUtilsTest {
 //	 * Test of addNumbersortColumn method, of class CasDAOUtils.
 //	 */ @Test
 //	public void testAddNumbersortColumn() {
-//		String compositeKey1 = "100".concat(AbstractDAOFactory.SEPARATOR).concat("1231");
-//		String compositeKey2 = "200".concat(AbstractDAOFactory.SEPARATOR).concat("1232");
-//		String compositeKey3 = "300".concat(AbstractDAOFactory.SEPARATOR).concat("1233");
-//		String compositeKey4 = "400".concat(AbstractDAOFactory.SEPARATOR).concat("1234");
+//		String compositeKey1 = "100".concat(Utils.SEPARATOR).concat("1231");
+//		String compositeKey2 = "200".concat(Utils.SEPARATOR).concat("1232");
+//		String compositeKey3 = "300".concat(Utils.SEPARATOR).concat("1233");
+//		String compositeKey4 = "400".concat(Utils.SEPARATOR).concat("1234");
 //		int max = 3;
 //		Mutator<String> mut = cdu.createMutator();
 //
@@ -717,10 +717,10 @@ public class CasDAOUtilsTest {
 //	 */ @Test
 //	public void testGetLastSuperColumn() {
 //		String key = "testkey";
-//		SCF<Long, String> cf = new SCF<Long, String>("Super1");
+//		SCF<String, String> cf = new SCF<String, String>("Super1");
 //		Class<String> subColClass = String.class;
 //		Serializer<String> strser = cdu.getSerializer(String.class);
-//		Serializer<Long> lser = cdu.getSerializer(Long.class);
+//		Serializer<String> lser = cdu.getSerializer(String.class);
 //		List<HColumn<String, String>> list = new ArrayList<HColumn<String, String>>();
 //		list.add(HFactory.createColumn("test1", "test1", strser, strser));
 //		list.add(HFactory.createColumn("test2", "test2", strser, strser));
@@ -734,19 +734,19 @@ public class CasDAOUtilsTest {
 //		assertNotNull(cdu.getSuperColumn(key, cf, 3L, subColClass));
 //
 //		HSuperColumn<?,?,?> last = HFactory.createSuperColumn(1L, list, lser, strser, strser);
-//		assertEquals(last.getName(), cdu.getLastSuperColumn(key, cf, Long.class, subColClass, false).getName());
+//		assertEquals(last.getName(), cdu.getLastSuperColumn(key, cf, String.class, subColClass, false).getName());
 //
 //		cdu.removeSuperColumn(key, cf, 1L);
 //		assertNull(cdu.getSuperColumn(key, cf, 1L, subColClass));
-//		assertTrue(cdu.countSuperColumns(key, cf, Long.class) == 2);
+//		assertTrue(cdu.countSuperColumns(key, cf, String.class) == 2);
 //
 //		cdu.removeSuperColumn(key, cf, 2L);
 //		assertNull(cdu.getSuperColumn(key, cf, 2L, subColClass));
-//		assertTrue(cdu.countSuperColumns(key, cf, Long.class) == 1);
+//		assertTrue(cdu.countSuperColumns(key, cf, String.class) == 1);
 //
 //		cdu.removeSuperColumn(key, cf, 3L);
 //		assertNull(cdu.getSuperColumn(key, cf, 3L, subColClass));
-//		assertTrue(cdu.countSuperColumns(key, cf, Long.class) == 0);
+//		assertTrue(cdu.countSuperColumns(key, cf, String.class) == 0);
 //	}
 
 
@@ -768,7 +768,7 @@ public class CasDAOUtilsTest {
 //
 //		assertEquals(testObject.getId(), u.getId());
 //		assertEquals(testObject.getId(), u.getId());
-//		assertEquals(testObject.getFullname(), u.getFullname());
+//		assertEquals(testObject.getName(), u.getName());
 //		assertEquals(testObject.getEmail(), u.getEmail());
 //	}
 

@@ -90,7 +90,7 @@
 						<h2>
 							<span class="pictos">(</span> $!lang.get("posts.closed")
 							#if($request.isUserInRole("mod"))
-								#if($showPost.closerid == 0)
+								#if($showPost.closerid == "0")
 									#set($closer = $APPNAME)
 								#else
 								#set($closer = "<a href='$profilelink/$!showPost.closerid' title='Go to profile'>$!lang.get('mod')</a>")

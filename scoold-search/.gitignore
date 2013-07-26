@@ -1,7 +1,0 @@
-.DS_Store
-*.class
-*.jar
-*.zip
-target/**
-catalog.xml
-nbactions.xml

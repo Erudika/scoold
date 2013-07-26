@@ -92,7 +92,7 @@ commitlog_sync: periodic
 # milliseconds.
 commitlog_sync_period_in_ms: 10000
 
-# any class that implements the SeedProvider interface and has a constructor that takes a Map<String, String> of
+# any class that implements the SeedProvider interface and has a constructor that takes a Map<String> of
 # parameters will do.
 seed_provider:
     # Addresses of hosts that are deemed contact points. 

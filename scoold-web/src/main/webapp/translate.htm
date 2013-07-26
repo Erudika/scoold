@@ -40,7 +40,7 @@
 			</div>
 			<br />
 				
-			#if(!$approvedTransMap.containsKey($!langkey)) ##|| $request.isUserInRole("admin"))
+			#if(!$approvedTransMap.contains($!langkey)) ##|| $request.isUserInRole("admin"))
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form" action="${thisuri}">
@@ -57,7 +57,7 @@
 				</div>
 			#end
 			
-			#if($request.isUserInRole("admin") && $approvedTransMap.containsKey($!langkey))
+			#if($request.isUserInRole("admin") && $approvedTransMap.contains($!langkey))
 				<br />
 				<div class="line center">
 					<div class="unit size1of2 r prm">
@@ -85,13 +85,11 @@
 			<div class="center">
 				#foreach($!langKey in $!langkeys)
 					<div class="p30 inlineblock mrl l pvs">
-						#if($approvedTransMap.containsKey($!langKey))							
+						#if($approvedTransMap.contains($!langKey))							
 							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
-						#else
-							<span class="reputationbox phs rounded3">$!translationcountsmap.get($!langKey)</span>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )
-						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!daoutils.abbreviate($!transthis, 25)</a>
+						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!utils.abbreviate($!transthis, 25)</a>
 					</div>
 				#end
 			</div>

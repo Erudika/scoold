@@ -6,7 +6,7 @@
 			<div class="center">
 				<div class="largeText">$!lang.get("settings.delete.confirm")</div>
 				<br/>
-				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$daoutils.MD5($authUser.id.toString())">
+				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$utils.MD5($authUser.id.toString())">
 					<fieldset>
 						#sectoken(false)
 						<input type="submit" value="$!lang.get('delete')" class="button rounded3 mrl red"/>  &nbsp; &nbsp; &nbsp;
