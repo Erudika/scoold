@@ -7,7 +7,6 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
 import com.erudika.para.utils.Utils;
-import com.erudika.para.utils.Search;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.School;
@@ -23,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Questions extends BasePage{
 
@@ -59,7 +58,7 @@ public class Questions extends BasePage{
 				String tag = getParamValue("tag");
 				ArrayList<String> tags = new ArrayList<String>();
 				tags.add(tag);
-				questionslist = Search.findTagged(type, pagenum, itemcount, tags);
+				questionslist = search.findTagged(type, pagenum, itemcount, tags);
 			}else if(param("schoolid")) {
 				String sid = getParamValue("schoolid");
 				School school = dao.read(sid);
@@ -83,16 +82,16 @@ public class Questions extends BasePage{
 				}
 			} else {
 				if("activity".equals(getParamValue("sortby"))){
-					questionslist = Search.findQuery(type, pagenum, itemcount, "*", "lastactivity", true, MAX_ITEMS_PER_PAGE);
+					questionslist = search.findQuery(type, pagenum, itemcount, "*", "lastactivity", true, MAX_ITEMS_PER_PAGE);
 				} else if ("votes".equals(getParamValue("sortby"))){
-					questionslist = Search.findQuery(type, pagenum, itemcount, "*", "votes", true, MAX_ITEMS_PER_PAGE);
+					questionslist = search.findQuery(type, pagenum, itemcount, "*", "votes", true, MAX_ITEMS_PER_PAGE);
 				}else if("unanswered".equals(getParamValue("sortby"))){
-					questionslist = Search.findTerm(type, pagenum, itemcount, "answercount", 0L);
+					questionslist = search.findTerm(type, pagenum, itemcount, "answercount", 0L);
 				}else{
 					if(authenticated && authUser.hasFavtags()){
-						questionslist = Search.findTagged(type, pagenum, itemcount, authUser.getFavtagsList());
+						questionslist = search.findTagged(type, pagenum, itemcount, authUser.getFavtagsList());
 					}else{
-						questionslist = Search.findQuery(type, pagenum, itemcount, "*");
+						questionslist = search.findQuery(type, pagenum, itemcount, "*");
 					}
 				}
 			}

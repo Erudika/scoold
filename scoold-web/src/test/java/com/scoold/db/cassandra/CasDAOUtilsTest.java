@@ -8,7 +8,7 @@ package com.scoold.db.cassandra;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class CasDAOUtilsTest {
 

@@ -36,11 +36,11 @@
 			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$!deflang.get($!langkey)</div>
 			
 			<div id="translations">
-				#paginate($pagenum.longValue() "\#translationspage(\$translationslist \$approvedTransMap)" $itemcount.longValue() "" "pageless")
+				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.longValue() "" "pageless")
 			</div>
 			<br />
 				
-			#if(!$approvedTransMap.contains($!langkey)) ##|| $request.isUserInRole("admin"))
+			#if(!$isTranslated)
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form" action="${thisuri}">
@@ -57,7 +57,7 @@
 				</div>
 			#end
 			
-			#if($request.isUserInRole("admin") && $approvedTransMap.contains($!langkey))
+			#if($request.isUserInRole("admin") && $isTranslated)
 				<br />
 				<div class="line center">
 					<div class="unit size1of2 r prm">
@@ -85,7 +85,7 @@
 			<div class="center">
 				#foreach($!langKey in $!langkeys)
 					<div class="p30 inlineblock mrl l pvs">
-						#if($approvedTransMap.contains($!langKey))							
+						#if($isTranslated)							
 							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )

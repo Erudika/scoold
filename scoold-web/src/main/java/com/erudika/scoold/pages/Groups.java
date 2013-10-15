@@ -12,7 +12,7 @@ import org.apache.click.control.*;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Groups extends BasePage{
 	

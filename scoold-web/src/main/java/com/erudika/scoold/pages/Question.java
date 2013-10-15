@@ -5,22 +5,20 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
+import com.erudika.para.persistence.DAO;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.School;
 import com.erudika.scoold.core.Revision;
-import com.erudika.scoold.core.Tag;
 import com.erudika.scoold.core.User.Badge;
 import static com.erudika.scoold.pages.BasePage.MAX_ITEMS_PER_PAGE;
 import java.util.ArrayList;
 import org.apache.click.control.Form;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Question extends BasePage{
 
@@ -94,10 +92,11 @@ public class Question extends BasePage{
 
 				if(!showPost.isReply()){
 					if(!isAjaxRequest()){
-						String likeTxt = showPost.getTitle().concat(" ").concat(showPost.getBody()).
-								concat(" ").concat(showPost.getTags());
-						similarquestions = Search.findSimilar(showPost.getClassname(), showPost.getId().toString(), 
-								new String[]{"title", "body", "tags"}, likeTxt, MAX_ITEMS_PER_PAGE);
+						String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
+						if(StringUtils.isBlank(likeTxt)){
+							similarquestions = search.findSimilar(showPost.getClassname(), showPost.getId().toString(), 
+									new String[]{"title", "body", "tags"}, likeTxt, MAX_ITEMS_PER_PAGE);
+						}
 						if(showPost.isQuestion()){
 							School s = dao.read(showPost.getParentid());
 							if(s != null) addModel("showSchool", s); 

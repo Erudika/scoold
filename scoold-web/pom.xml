@@ -1,61 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
 	<modelVersion>4.0.0</modelVersion>
+    
     <groupId>com.erudika</groupId>
     <artifactId>scoold-web</artifactId>
+	<version>0.8</version>
     <packaging>war</packaging>
-    <name>scoold-web</name>
-	<version>0.7</version>
 	
-<!--	<properties>
-     OSGi bundle properties 
-		<bundle.symbolicName>com.erudika.scoold</bundle.symbolicName>
-		<bundle.namespace>com.erudika</bundle.namespace>
-	</properties>-->
-	<pluginRepositories>
-		<pluginRepository>
-			<name>oss.sonatype.org</name>
-			<id>oss.sonatype.org</id>
-			<url>http://oss.sonatype.org/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
-    <repositories>
-        <repository>
-            <id>kungfu</id>
-            <url>http://maven.kungfuters.org/content/repositories/public/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>http://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
-		<repository>
-            <id>authenticroast-releases</id>
-            <url>http://authenticroast.googlecode.com/svn/maven2/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <name>scoold-web</name>
+	
+	<properties>
+		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
+    </properties>
+	
     <dependencies>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.tuckey</groupId>
-            <artifactId>urlrewritefilter</artifactId>
-            <version>4.0.4</version>
-        </dependency>        
         <dependency>
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>
@@ -67,30 +28,14 @@
             <version>2.3.0</version>
         </dependency>
         <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
             <version>1.7.18</version>
         </dependency>
         <dependency>
-            <groupId>org.hectorclient</groupId>
-            <artifactId>hector-core</artifactId>
-            <version>1.1-4</version>
-        </dependency>
-        <dependency>
-            <groupId>oro</groupId>
-            <artifactId>oro</artifactId>
-            <version>2.0.8</version>
-        </dependency>
-        <dependency>
             <groupId>com.erudika</groupId>
             <artifactId>para</artifactId>
             <version>0.2</version>
-			<scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -98,6 +43,8 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
+		
+		<!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -105,6 +52,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+	
     <build>
         <plugins>
             <plugin>
@@ -152,11 +100,25 @@
 			</plugin>
         </plugins>
         <finalName>scoold-web</finalName>
-    </build>    
-    <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
-    </properties>
+    </build>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<name>oss.sonatype.org</name>
+			<id>oss.sonatype.org</id>
+			<url>http://oss.sonatype.org/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
+    
+	<repositories>
+        <repository>
+            <id>kungfu</id>
+            <url>http://maven.kungfuters.org/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>http://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>		
+    </repositories>
 </project>
 

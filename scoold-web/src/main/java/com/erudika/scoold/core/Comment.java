@@ -6,22 +6,20 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.persistence.DAO;
 import com.erudika.scoold.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Comment extends PObject implements Comparable<Comment> {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String comment;
 	@Stored private Boolean hidden;
-	@Stored private Integer votes;
 	@Stored private String author;
 
 	public Comment() {
@@ -38,7 +36,6 @@ public class Comment extends PObject implements Comparable<Comment> {
 		this.comment = comment;
 		setParentid(parentid);
 		setTimestamp(System.currentTimeMillis()); //now
-		this.votes = 0;
 	}
 
 	public String getAuthor() {
@@ -65,17 +62,9 @@ public class Comment extends PObject implements Comparable<Comment> {
 		this.comment = comment;
 	}
 
-	public Integer getVotes() {
-		return votes;
-	}
-
-	public void setVotes(Integer votes) {
-		this.votes = votes;
-	}
-	
 	public String create() {
 		if(StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
-		int count = Search.getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
+		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
 		if(count > Constants.MAX_COMMENTS_PER_ID) return null;
 		return super.create();
 	}

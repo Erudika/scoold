@@ -6,7 +6,6 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Search;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.School;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import org.apache.click.control.TextField;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Schools extends BasePage{
 
@@ -44,7 +43,7 @@ public class Schools extends BasePage{
 		if (!param("create")) {
 			String sortBy = "";
 			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-			schoollist = Search.findQuery(PObject.classname(School.class), pagenum, itemcount, 
+			schoollist = search.findQuery(PObject.classname(School.class), pagenum, itemcount, 
 					"*", sortBy, true, MAX_ITEMS_PER_PAGE);
 		}
 	}

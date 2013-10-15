@@ -6,26 +6,23 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
 import com.erudika.para.utils.Utils;
-import com.erudika.para.utils.Search;
+import com.erudika.para.search.ElasticSearch;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.click.control.Form;
 import org.apache.click.control.Submit;
 import org.apache.click.control.TextField;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  *
- * @author alexb 
+ * @author Alex Bogdanovski <albogdano@me.com> 
  */
 public class Settings extends BasePage {
 
 	public String title;
 	public ArrayList<String> openidlist;
-	public Form changeEmailForm;
 	public boolean canDetachOpenid;
 	public boolean canAttachOpenid;
 
@@ -35,40 +32,8 @@ public class Settings extends BasePage {
 		sortIdentifiers(authUser.getIdentifiers());
 		canDetachOpenid = canDetachOpenid();
 		canAttachOpenid = canAttachOpenid();
-		changeEmailForm = new Form();
-
-		TextField email = new TextField("email", true);
-		email.setMinLength(5);
-		email.setMaxLength(250);
-		email.setLabel("");
-		email.setValue(authUser.getEmail());
-
-		Submit s = new Submit("save", lang.get("save"), this, "onSaveClick");
-		s.setAttribute("class", "button rounded3");
-		s.setId("change-email-btn");
-
-		changeEmailForm.add(email);
-		changeEmailForm.add(s);
 	}
-
-	public boolean onSaveClick() {
-		String mail = changeEmailForm.getFieldValue("email");
-		if(mail == null || mail.contains("<") || mail.contains(">") || mail.contains("\\") ||
-				!(mail.indexOf(".") > 2) && (mail.indexOf("@") > 0)){
-			changeEmailForm.getField("email").setError("signup.form.error.email");
-		}else if(!Search.findTerm(PObject.classname(User.class), null, null, "email", StringUtils.trim(mail)).isEmpty()){
-            //Email is claimed => user exists!
-            changeEmailForm.getField("email").setError(lang.get("signup.form.error.emailexists"));
-        }
-		if (changeEmailForm.isValid()) {
-			authUser.setEmail(getParamValue("email"));
-			authUser.update();
-			changeEmailForm.clearValues();
-			setRedirect(settingslink);
-		}
-		return false;
-	}
-
+	
 	public void onPost(){
 		// check if the checksum is the same as the one in the link
 		String redirectto = settingslink;
@@ -81,14 +46,17 @@ public class Settings extends BasePage {
 			authUser.setFavtags(cleanTags);
 			authUser.update();
 		}else if (param("detachid") && canDetachOpenid) {
-			int oid = NumberUtils.toInt(getParamValue("detachid"), 10);
-
-			if (oid == 0 || oid == 1) {
-				authUser.detachIdentifier(openidlist.get(oid));
-				openidlist.remove(oid);
+			String ident = getParamValue("detachid");
+			if(!StringUtils.isBlank(ident)){
+				authUser.detachIdentifier(ident);
+				openidlist.remove(ident);
 				canAttachOpenid = canAttachOpenid();
 				canDetachOpenid = canDetachOpenid();
 			}
+		}else if(param("email")){
+			String newEmail = getParamValue("email");
+			authUser.setEmail(newEmail);
+			authUser.update();
 		}
 
 		if(!isAjaxRequest())
@@ -99,16 +67,12 @@ public class Settings extends BasePage {
 		openidlist = new ArrayList<String>();
 		if(list != null && list.size() > 0){
 			String id1 = authUser.getIdentifier();
-			if(list.contains(id1)){
-				openidlist.add(id1);
-			}else{
-				openidlist.add(list.get(0));
-			}
-
-			if(list.size() > 1){
-				list.remove(id1);
-				String id2 = list.get(0);
-				openidlist.add(id2);
+			openidlist.add(id1);
+			
+			for (String ident : list) {
+				if(!ident.equals(id1)){
+					openidlist.add(ident);
+				}
 			}
 		}
 	}

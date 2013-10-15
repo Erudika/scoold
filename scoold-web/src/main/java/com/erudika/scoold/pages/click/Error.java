@@ -10,22 +10,24 @@ import com.erudika.para.utils.Utils;
 import com.erudika.scoold.pages.BasePage;
 import java.util.Locale;
 import java.util.Map;
+import javax.inject.Inject;
 import org.apache.click.util.ErrorPage;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Error extends ErrorPage {
 
     public String title;
 	public Map<String, String> lang;
-	public Utils utils;
+	public Utils utils = Utils.getInstance();
 
+	@Inject LanguageUtils langutils;
+	
     public Error() {
-		utils = Utils.getInstance();
-		Locale loc = LanguageUtils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
-		lang = LanguageUtils.readLanguage(loc.getLanguage());
+		Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
+		lang = langutils.readLanguage(loc.getLanguage());
         title = lang.get("error.title");
 		
 		addModel("APPNAME", BasePage.APPNAME);

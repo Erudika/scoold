@@ -24,7 +24,7 @@ public class Signin extends BasePage{
 		if (authenticated ) {
 			if(param("signout")){
 				clearSession();
-				if (isFBconnected) {
+				if (authUser.isFacebookUser()) {
 					setRedirect(signinlink + "?code=5&success=true&fblogout=true");
 				}else{
 					setRedirect(signinlink + "?code=5&success=true");

@@ -25,61 +25,7 @@
 	<h1><span class="pictos">e</span> Admin</h1>
 	<hr />
 	<div>
-		<h2>System parameters</h2>
-		#if(!$syscolumns.isEmpty())
-			<table class="p100 mtl">
-				<tbody>
-					<tr><th> Name </th><th> Value </th><th> TTL </th></tr>
-					#foreach($entry in $syscolumns.entrySet())
-						<tr class="mvm">
-							<td class="p30">$!entry.key </td>
-							<td class="p50">$!entry.value[0] </td>
-							<td class="p10">$!entry.value[1] </td>
-							<td class="p10 r">
-								<form method="post" action="$adminlink">
-									<fieldset>
-										#sectoken(false)
-										<input type="hidden" name="sysparam" value="true"/>
-										<input type="hidden" name="name" value="$!entry.key"/>
-										<input type="submit" value="*" class="button rounded3 rusure pictos"/>
-									</fieldset>
-								</form>
-							</td>
-						</tr>
-					#end
-				</tbody>
-			</table>
-		#end
-		<br />
-		<form id="sys-param-form" action="$adminlink" method="post" class="lightgraybg rounded5 pam">
-			<fieldset>
-				#sectoken(false)
-				<div class="line center">
-					<div class="unit size1of5">
-						<label class="blocklabel">Name</label>
-						<input type="text" name="name" value="" class="nicebox p90"/>
-					</div>
-					<div class="unit size3of5">
-						<label class="blocklabel">Value</label>
-						<input type="text" name="value" value="" class="nicebox p90"/>
-					</div>
-					<div class="unit size1of5 lastUnit">
-						<label class="blocklabel">TTL</label>
-						<input type="text" name="ttl" value="" class="nicebox p90"/>
-					</div>
-					<br />
-					<input type="hidden" name="sysparam" value="true"/>
-					<input type="submit" value="Set parameter" class="button rounded3"/>
-				</div>
-			</fieldset>
-		</form>
-		<div class="center mvm">
-			<a href="#" title="system-message:$lang.get('maintenance')" class="set-sys-param">Maintenance</a>
-		</div>
-		<br />
-		
-		<h2>Search</h2>
-		
+		<h2>Search</h2>		
 		<table class="p100">
 			<tbody>
 				<tr>
@@ -87,39 +33,39 @@
 					<td class="p80">
 						<form action="$adminlink" method="post" class="mrl">
 							<fieldset>
-							#sectoken(false)
-							<span>$!esindex </span>
-							#if($indexExists)
-								<span class="pictos green mrl mediumText">2</span>
-								<input type="hidden" name="deleteindex" value="true"/>
-								<input type="submit" value="Delete index" class="button rounded3 red rusure"/>
-							#else
-								<span class="pictos red mrl mediumText">D</span>
-								<input type="hidden" name="reindex" value="true"/>
-								<input type="submit" value="Rebuild index" class="button rounded3 rusure"/>
-							#end
+								#sectoken(false)
+								<span>$!esindex </span>
+								#if($indexExists)
+									<span class="pictos green mrl mediumText">2</span>
+								#else
+									<span class="pictos red mrl mediumText">D</span>
+								#end
+								<input type="submit" value="Delete index" name="deleteindex" class="button rounded3 red rusure"/>
+								<input type="submit" value="Rebuild index" name="rebuildindex" class="button rounded3 rusure"/>
+								<input type="submit" value="Optimize index" name="optimizeindex" class="button rounded3 rusure"/>
 							</fieldset>
 						</form>
 					</td>
 				</tr>
 				<tr>
-					<td class="p20 l"><strong>hosts: </strong></td>
-					<td class="p80">$!eshosts</td>
+					<td class="p20 l"><strong>Metadata: </strong></td>
+					<td class="p80">
+						<table>
+						#foreach($entry in $eshosts.entrySet())
+							<tr>
+								<td>
+									<strong>$entry.key</strong> 
+								</td>
+								<td>
+									<code>$entry.value</code> 
+								</td>
+							</tr>
+						#end
+						</table>
+					</td>
 				</tr>
 			</tbody>
 		</table>
-
-		#if($schoolcount == 0)
-			<br />
-			<br />
-			<form method="post" action="$adminlink">
-				<fieldset>
-					#sectoken(false)
-					<input type="hidden" name="createschools" value="true"/>
-					<input type="submit" value="Create schools" class="button rounded3 rusure"/>
-				</fieldset>
-			</form>
-		#end
 
 		#if($IN_PRODUCTION)
 			<br />
@@ -128,7 +74,7 @@
 			<br />
 			<table class="p100">
 				<tbody>
-				#foreach($showprop in ["com.scoold.workerid", "com.scoold.dbhosts", "com.scoold.eshosts"])
+				#foreach($showprop in ["com.scoold.workerid", "com.scoold.eshosts"])
 					<tr>
 						<td class="p20 l"><strong>$showprop</strong></td>
 						<td class="p80">$!utils.getSystemProperty($showprop)</td>

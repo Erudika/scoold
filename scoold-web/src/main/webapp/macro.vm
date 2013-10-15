@@ -1,5 +1,5 @@
 #macro(basichead $showdesc $showkeyw)
-	#if($title && !$title.isEmpty()) #set($titlestr = "- $!title" )	#else #set($titlestr = "" ) #end
+	#if($title && !$title.isEmpty()) #set($_titlestr = "- $!title" )	#else #set($_titlestr = "" ) #end
 	#if($IN_PRODUCTION) 
 		#set($slink = $CDN_URL) 
 		#set($ilink = $CDN_URL) 
@@ -9,7 +9,7 @@
 		#set($ilink = "$context/images") 
 		#set($minsuffix = "") 
 	#end
-	<title>$APPNAME $!titlestr </title>
+	<title>$APPNAME $!_titlestr </title>
 	<meta charset="utf-8"/>
 	<link href="$ilink/logosq.png" rel="image_src"/>
 	<link href="$ilink/logosq.png" rel="apple-touch-icon"/>

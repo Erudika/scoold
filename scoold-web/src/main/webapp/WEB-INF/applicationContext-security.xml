@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                    http://www.springframework.org/schema/security 
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd" xmlns:util="http://www.springframework.org/schema/util">
+
+	<http security-context-repository-ref="hazelcastSecurityContextRepository" pattern="/images/**" security="none" />
+	<http security-context-repository-ref="hazelcastSecurityContextRepository" pattern="/styles/**" security="none" />
+	<http security-context-repository-ref="hazelcastSecurityContextRepository" pattern="/scripts/**" security="none" />
+<!--	<http security-context-repository-ref="hazelcastSecurityContextRepository" pattern="/signin" security="none" />
+	<http security-context-repository-ref="hazelcastSecurityContextRepository" pattern="/signup" security="none" />-->
+	
+	<http auto-config="false" security-context-repository-ref="hazelcastSecurityContextRepository" 
+		  access-denied-page="/403" disable-url-rewriting="true" create-session="never" entry-point-ref="entry-point">
+		<!--<intercept-url pattern="/*.htm" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />-->
+		<intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/votedown/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/voteup/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/delete/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/settings/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/reports/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN, ROLE_MOD" />
+		<intercept-url pattern="/message/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/messages" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/media/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/comment/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/profile" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/profile/photos/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/profile/p/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/class/p/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/school/p/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/schools/create/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/classes/create/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/question/answer/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/questions/ask/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/feedback/write/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/feedback/reply/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/translate/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/group/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		<intercept-url pattern="/groups/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" />
+		
+		<!--<intercept-url pattern="/admin/**" access="ROLE_ADMIN" />-->
+		<intercept-url pattern="/p/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN"/>
+		<!--<intercept-url pattern="/**" access="ROLE_USER, ROLE_MOD, ROLE_ADMIN" method="POST"/>-->
+		<custom-filter position="PRE_AUTH_FILTER" ref="facebook-auth" />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="password-auth" />
+		<custom-filter position="BASIC_AUTH_FILTER" ref="openid-auth" />
+		<custom-filter position="REMEMBER_ME_FILTER" ref="security-filter" />
+		<!--<custom-filter position="SECURITY_CONTEXT_FILTER" ref="securityContextPersistenceFilter" />-->
+		<!--<session-management session-fixation-protection="none" />-->
+	</http>
+	
+	<beans:bean id="entry-point" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/signin"/>
+	</beans:bean>
+	
+	<beans:bean id="hazelcastSecurityContextRepository" class="com.erudika.para.security.AuthModule.HazelcastSecurityContextRepository"/>
+		
+	<authentication-manager alias="auth-man">
+		<authentication-provider ref="openid-provider"/>
+	</authentication-manager>
+	
+	<beans:bean id="openid-auth" class="com.erudika.para.security.AuthModule">
+		<beans:property name="authenticationManager" ref="auth-man"/>
+		<beans:property name="filterProcessesUrl" value="/openid_auth"/>
+		<beans:property name="consumer">
+			<beans:bean class="org.springframework.security.openid.OpenID4JavaConsumer">
+				<beans:constructor-arg name="attributesToFetchFactory">
+					<beans:bean id="openid-attributes" class="com.erudika.para.security.AuthModule.DefaultAxFetchListFactory"/>
+				</beans:constructor-arg>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="returnToUrlParameters">
+			<util:set><beans:value>returnto</beans:value></util:set>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler" ref="success-handler" />
+		<beans:property name="authenticationFailureHandler" ref="failure-handler" />
+	</beans:bean> 
+	
+	<beans:bean id="password-auth" class="com.erudika.para.security.AuthModule">
+		<beans:property name="authenticationManager" ref="auth-man"/>
+		<beans:property name="filterProcessesUrl" value="/password_auth"/>
+		<beans:property name="authenticationSuccessHandler" ref="success-handler" />
+		<beans:property name="authenticationFailureHandler" ref="failure-handler" />
+	</beans:bean> 
+	
+	<beans:bean id="facebook-auth" class="com.erudika.para.security.AuthModule">
+		<beans:property name="authenticationManager" ref="auth-man"/>
+		<beans:property name="filterProcessesUrl" value="/facebook_auth"/>
+		<beans:property name="authenticationSuccessHandler" ref="success-handler" />
+		<beans:property name="authenticationFailureHandler" ref="failure-handler" />
+	</beans:bean> 
+
+	<beans:bean id="security-filter" class="com.erudika.para.security.SecurityFilter"/>
+	
+	<beans:bean id="openid-provider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
+		<beans:property name="authenticationUserDetailsService">
+			<beans:bean id="user-service" class="com.erudika.para.security.AuthModule.StandardUserService"/>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="failure-handler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/signin?code=3&amp;error=true"/>
+	</beans:bean>
+	
+	<beans:bean id="success-handler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/"/>
+		<!--<beans:property name="useReferer" value="true"/>-->
+		<beans:property name="targetUrlParameter" value="returnto"/>
+	</beans:bean>
+	
+	<global-method-security secured-annotations="enabled" />	
+</beans:beans>

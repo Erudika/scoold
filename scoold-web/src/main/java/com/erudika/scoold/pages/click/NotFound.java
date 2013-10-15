@@ -9,20 +9,23 @@ import com.erudika.para.i18n.LanguageUtils;
 import com.erudika.scoold.pages.BasePage;
 import java.util.Locale;
 import java.util.Map;
+import javax.inject.Inject;
 import org.apache.click.Page;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class NotFound extends Page{
 
 	public String title;
 	public Map<String, String> lang;
 
+	@Inject LanguageUtils langutils;
+	
 	public NotFound() {
-		Locale loc = LanguageUtils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
-		lang = LanguageUtils.readLanguage(loc.getLanguage());
+		Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
+		lang = langutils.readLanguage(loc.getLanguage());
         title = lang.get("notfound.title");
 		
 		addModel("APPNAME", BasePage.APPNAME);

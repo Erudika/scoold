@@ -1234,8 +1234,7 @@
 				#end
 				<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 				
-				#set($bodyHtml = $utils.markdownToHtml($showpost.body))
-				#set($showBody = $utils.stripHtml($bodyHtml) )
+				#set($showBody = $utils.stripHtml($utils.markdownToHtml($showpost.body)) )
 				<div>$!utils.abbreviate($showBody, 160)</div>
 				<div>#tagsbox($showpost.tags $actionlink2)</div>
 			</div>
@@ -1368,8 +1367,8 @@
 		#end
 		<div id="${postviewid}" class="viewbox ${bbclazz}">
 			<div class="mbl pas">
-				#set($bodyHtml = $utils.markdownToHtml($showpost.body))
-				$!{bodyHtml}
+				#set($_bodyHtml = $utils.markdownToHtml("$showpost.body"))
+				$!{_bodyHtml}
 
 				#if($showpost.isBlackboard() && (!$showpost.body || $showpost.body.trim().isEmpty()))
 					<div class="center mtl mediumText">$!lang.get("class.blankboard")</div>
@@ -1566,10 +1565,10 @@
 #end
 ###################################
 #set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher", 
-			"student","profile.status.txt","profile.status.update","profile.status.txt","class.chat.userin",
-			"class.chat.userout","class.chat.connection.error","class.chat.polling.error","class.chat.reconnect.error",
-			"more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength",
-			"tags.toomany","close", "save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","invalidyear"])
+			"student","profile.status.txt","class.chat.userin",	"class.chat.userout","class.chat.connection.error",
+			"class.chat.polling.error","class.chat.reconnect.error", "more","posts.unloadconfirm",
+			"signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close", 
+			"save", "clickedit","profile.drawer.embedly.notanimage","profile.drawer.embedly.photosaved","invalidyear"])
 #macro(langjs ){#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end #end}#end
 ###################################
 #macro(langbox $showLangKey $showLangName $progress  )
@@ -1670,6 +1669,9 @@
 	</div>
 #end
 #####################################
+########### DELETE
+########### DELETE
+########### DELETE
 #macro(createformfield $field $class)
 #if($field)
 	#if(!$class.isEmpty())  $field.setAttribute("class", $class)  #end
@@ -1682,6 +1684,17 @@
 	<span class="error $!{hideme}">$!{field.error}</span>
 	$!{field}
 	#end
+#end
+########### DELETE
+########### DELETE
+########### DELETE
+###################################
+#macro(formvc $ctype)
+<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)"/>
+#end
+###################################
+#macro(formvj $ctype $fields)
+<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled"/>
 #end
 #####################################
 #macro(formatdate $date $format)
@@ -1755,9 +1768,9 @@
 #####################################
 #macro(profilepic $user $thumb)
 #set($picurl = "http://www.gravatar.com/avatar/?d=mm")
-#if($user)#if($thumb)#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=square")
+#if($user)#if($thumb)#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=square")
 #else#set($picurl = "http://www.gravatar.com/avatar/$!{utils.MD5($user.email)}?size=50&amp;d=mm&amp;r=pg")#end
-#else#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier}/picture?type=large")
+#else#if($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=large")
 #else#set($picurl = "http://www.gravatar.com/avatar/$!{utils.MD5($user.email)}?size=200&amp;d=mm&amp;r=pg")#end#end#end
 $!picurl#end
 #####################################
@@ -1804,6 +1817,8 @@ $!picurl#end
 		<span class="pictos ico errorBoxIcon $!{he}">!</span>
 		<span class="pictos ico infoBoxIcon  $!{hi}">i</span>
 		
+		#set($_infoStripMsg = $infoStripMsg )
+		
 		<span class="infostrip-msg">
 			#if(!$badgelist.isEmpty())
 				#if($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
@@ -1814,7 +1829,7 @@ $!picurl#end
 			#elseif($request.getParameter("code"))
 				$!lang.get("msgcode.${request.getParameter('code')}")
 			#else
-				$!infoStripMsg
+				$!_infoStripMsg
 			#end
 		</span>
 	</div>
@@ -1822,23 +1837,26 @@ $!picurl#end
 #####################################
 #macro(stripstr $str )$!utils.urlEncode($!utils.spacesToDashes($str))#end
 #####################################
-#macro(identifierbox $showid $canDetach $index)
+#macro(identifierbox $showid $canDetach)
 	<span>
 		#if($showid.startsWith("http"))
 			<span class="openid-icon-small" title="OpenID">&nbsp;</span> 
-				<span>
-					#if($isMobile)
-						$utils.abbreviate($!showid, 20)
-					#else
-						$!showid
-					#end
-				</span>
-		#else
+			<span>
+				#if($isMobile)
+					$utils.abbreviate($!showid, 20)
+				#else
+					$!showid
+				#end
+			</span>
+		#elseif($showid.startsWith("fb:"))
 			<span class="facebook-icon-small" title="Facebook">&nbsp;</span> 
-			<span id="fb-name">#$!showid</span>
+			<span id="fb-name">$!showid</span>
+		#else
+			<span title="Email">@</span> 
+			<span>$!showid</span>
 		#end
 		#if($canDetach)
-			<a href="${settingslink}?detachid=$index" title="Remove" class="delopenid nodecoration red"><span class="pictos">D</span></a>
+			<a href="${settingslink}?detachid=$showid" title="Remove" class="delopenid nodecoration red"><span class="pictos">D</span></a>
 		#end
 	</span>
 #end
@@ -1899,6 +1917,7 @@ $!picurl#end
 				</div>
 			#end			
 			#if($attachOnly) #set($oidurl = "attach_openid") #else #set($oidurl = "openid_auth") #end
+			#if(!$returnto) #set($returnto = $request.getParameter("returnto") ) #end
 			<form method="post" action="$context/$oidurl" class="mtl">
 				<fieldset>
 					#sectoken(false)					
@@ -1908,7 +1927,8 @@ $!picurl#end
 							#set($submitlabel = $!lang.get("add"))
 						#else
 							#set($submitlabel = $!lang.get("signin.title"))
-						#end						
+						#end
+						<input type="hidden" name="returnto" value="$!returnto"/>
 						<input type="submit" value="$submitlabel" class="button rounded3"/>
 					</div>
 				</fieldset>
@@ -1921,7 +1941,7 @@ $!picurl#end
 				<h2 id="fb-login">$!lang.get("signin.facebook")</h2>
 			#end
 			<div class="mvl ptl">
-				<a id="${fbbtnclass}" href="#" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
+				<a id="${fbbtnclass}" href="$!returnto" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
 			</div>
 		</div>
 	</div>
@@ -1968,12 +1988,9 @@ $!picurl#end
 #####################################
 #macro(sectoken $bare)
 	#if($authenticated)
-		#set($authToken = $utils.getStateParam($AUTH_USER, $request, $request.response, $USE_SESSIONS) )
-		#set($authSalt = "$!authUser.authstamp" )
-		#set($secToken = $utils.MD5($authToken.concat($SEPARATOR).concat($authSalt)) )
-		#if($bare && $bare == true)$secToken#else
-			<input type="hidden" name="stoken" value="$!secToken"/>
-			<input type="hidden" name="pepper" value="$!authSalt"/>
+		#if($bare && $bare == true)$!sectoken#else
+			<input type="hidden" name="stoken" value="$!sectoken"/>
+			<input type="hidden" name="pepper" value="$!authUser.authstamp"/>
 		#end		
 	#end
 #end	
@@ -2165,7 +2182,7 @@ $!picurl#end
 				(function(d){
 					var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
 					js = d.createElement('script'); js.id = id; js.async = true;
-					js.src = "//connect.facebook.net/$fb_locale/all.js";
+					js.src = "//connect.facebook.net/en_US/all.js";
 					d.getElementsByTagName('head')[0].appendChild(js);
 				}(document));
 			</script>
@@ -2189,7 +2206,7 @@ $!picurl#end
 					</div>
 					<div id="topnav" class="right mtl $!{mobilehide}">
 					#if($authenticated)
-						#if($isFBconnected)
+						#if($authUser.isFacebookUser())
 							<span class="facebook-icon-small" title="You are signed via Facebook">&nbsp;</span>
 						#else
 							<span class="openid-icon-small" title="You are signed in with OpenID">&nbsp;</span>
@@ -2221,6 +2238,7 @@ $!picurl#end
 							</fieldset>
 						</form>
 					#else
+					
 						#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 						#if($request.getAttribute('javax.servlet.forward.query_string'))
 							#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
@@ -2228,7 +2246,14 @@ $!picurl#end
 						#if($thisuri && $thisuri.startsWith($context))
 							#set($thisuri = $thisuri.replaceFirst($context, ""))
 						#end
-						<a href="$context/p$!{thisuri}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
+						
+						#if(!$returnto) #set($returnto = $request.getParameter("returnto") ) #end
+						#if(!$returnto) #set($returnto = $HOMEPAGE ) #end
+						
+						#if($returnto != $thisuri && !$thisuri.startsWith($signinlink.replaceFirst($context, "")))
+							#set($returnto = $thisuri )
+						#end
+						<a href="${signinlink}?returnto=$!{returnto}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
 					#end
 					
 					#if($isMobile)
@@ -2275,7 +2300,8 @@ $!picurl#end
 						<div class="clearfix">
 							<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
 							</a>
-							<div>$utils.formatMessage($!lang.get("license"), '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>')</div>
+							#set($_liclink = $utils.formatMessage("$!lang.get('license')", '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>') )
+							<div>$_liclink</div>
 							#if($isMobile)<br/>#end
 							<ul class="inline-list">
 								<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
@@ -2309,7 +2335,7 @@ $!picurl#end
 		
 		#set($sectoken = "#sectoken(true)")
 		#set($sectoken = $sectoken.trim())
-		#set($langjs = "#langjs()")
+		#set($_langjs = "#langjs()")
 		<script type="text/javascript">
 			/* <![CDATA[ */
 			function loadScripts(scriptslink, minsuffix) {
@@ -2319,15 +2345,15 @@ $!picurl#end
 					{modal:			"http://cdn.jsdelivr.net/jqmodal/0.1/jqModal.js" },
 					{jeditable:		"http://cdnjs.cloudflare.com/ajax/libs/jeditable.js/1.7.3/jeditable.min.js" },
 					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
-					{oembed:		scriptslink + "/jquery.oembed" + minsuffix + ".js" },
+//					{oembed:		scriptslink + "/jquery.oembed" + minsuffix + ".js" },
 					{markitup:		scriptslink + "/jquery.markitup" + minsuffix + ".js" },
-					{miuicons:		scriptslink + "/miu.set.markdown" + minsuffix + ".js" },
+//					{miuicons:		scriptslink + "/miu.set.markdown" + minsuffix + ".js" },
 					{showdown:		"http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js" },
-					{diff:			"cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js" },
+					{diff:			"http://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js" },
 					{scoold:		scriptslink + "/scoold" + minsuffix + ".js" });
 			}
 			
-			var lang = $langjs,
+			var lang = $_langjs,
 				sessiontimeout = $SESSION_TIMEOUT_SEC,
 				userip = "$!userip",
 				stoken = "$!sectoken", 

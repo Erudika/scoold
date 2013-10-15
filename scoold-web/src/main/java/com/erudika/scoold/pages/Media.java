@@ -5,11 +5,11 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.utils.DAO;
+import com.erudika.para.persistence.DAO;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Media extends BasePage{
 

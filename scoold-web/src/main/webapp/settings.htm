@@ -26,14 +26,11 @@
 			#if(!$openidlist.isEmpty())
 				<table class="mbm">
 					<tbody>
-						<tr>
-							<td class="identkey"><span class="pictos" title="$!lang.get('settings.primaryid')">K</span> 1:</strong></td>
-							<td class="pll">#identifierbox($openidlist.get(0) $canDetachOpenid 0)</td>
-						</tr>
-						#if($openidlist.size() == 2)
-							<tr>
-								<td><span class="pictos" title="$!lang.get('settings.secondaryid')">K</span> 2:</strong></td>
-								<td class="pll">#identifierbox($openidlist.get(1) $canDetachOpenid 1)</td>
+						#foreach($identifier in $openidlist)
+							#if($identifier == $authUser.identifier)#set($selectedIdent = "green" )#else#set($selectedIdent = "noclass" )#end
+							<tr class="${selectedIdent}">
+								<td class="identkey"><span class="pictos">K</span></td>
+								<td class="pll">#identifierbox($identifier $canDetachOpenid)</td>
 							</tr>
 						#end
 					</tbody>
@@ -51,7 +48,7 @@
 		<h2>$!lang.get("settings.tagfilter")</h2>
 		<div class="mvl">
 			<div class="mbm">$!lang.get("settings.tagfilter.text")</div>
-			<form method="post" action="$settingslink">
+			<form method="post">
 				<fieldset>
 					#sectoken(false)
 					<input type="text" class="nicebox tagbox p50" value="$!authUser.favtagsString" name="favtags"/>
@@ -65,9 +62,9 @@
 			<form method="post" action="$settingslink">
 				<fieldset>
 					#sectoken(false)
-					#renderSpecialFields($changeEmailForm)
-					#createformfield(${changeEmailForm.fields.email} "nicebox p50")
-					${changeEmailForm.fields.save}
+					#formvj($authUser.classname ["email"])
+					<input type="text" name="email" value="$!authUser.email"  class="nicebox p50"/> 
+					<input type="submit" value="$!lang.get('save')" class="button rounded3"/>
 				</fieldset>
 			</form>
 		</div>

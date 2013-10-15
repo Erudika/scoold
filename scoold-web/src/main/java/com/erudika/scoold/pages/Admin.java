@@ -4,10 +4,8 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.PObject;
-import com.erudika.para.utils.AppListener;
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Utils;
-import com.erudika.para.utils.Search;
 import org.apache.commons.lang3.StringUtils;
 import com.erudika.scoold.core.School;
 import java.io.File;
@@ -15,42 +13,31 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
-import org.elasticsearch.client.transport.TransportClient;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Admin extends BasePage {
 
 	public String title;
-	public long schoolcount;
 	
 	public Admin() {
-		title = "";
+		title = lang.get("admin.title");
 		if (!authenticated || !authUser.isAdmin()) {
 			setRedirect(HOMEPAGE);
 			return;
 		}
 		
-		TransportClient client = (TransportClient) AppListener.getSearchClient();
-		
-		if(client != null){
-			addModel("eshosts", client.transportAddresses());
-		}else{
-			addModel("eshosts", "ElastiSearch not available.");
-		}
-		
-		schoolcount = Search.getBeanCount(PObject.classname(School.class));
-		addModel("indexExists", Search.existsIndex(Utils.INDEX_ALIAS));
-		addModel("esindex", Search.getIndexName());
+		addModel("eshosts", search.getSearchClusterMetadata());
+		addModel("indexExists",  search.existsIndex(Utils.INDEX_ALIAS));
+		addModel("esindex", search.getIndexName());
 	}
 	
 	public void onPost() {
 		if (param("confirmdelete")) {
-			String classname = StringUtils.capitalize(getParamValue("confirmdelete"));
 			String id = getParamValue("id");
-			PObject sobject = dao.read(id);
+			ParaObject sobject = dao.read(id);
 			if (sobject != null) {
 				sobject.delete();
 
@@ -67,11 +54,11 @@ public class Admin extends BasePage {
 			String id = getParamValue("reindex");
 			dao.update(dao.read(id));
 		} else if(param("optimizeindex")) {
-			Search.optimizeIndex(Utils.INDEX_ALIAS);
+			search.optimizeIndex(Utils.INDEX_ALIAS);
 		} else if(param("rebuildindex")) {
-			Search.rebuildIndex(Utils.INDEX_ALIAS + "_" + System.currentTimeMillis());
+			search.rebuildIndex(Utils.INDEX_ALIAS + "_" + System.currentTimeMillis());
 		} else if(param("deleteindex")) {
-			Search.deleteIndex(Search.getIndexName());
+			search.deleteIndex(search.getIndexName());
 		}
 //		if (param("createschools") && schoolcount == 0L) {
 //			long startTime = System.nanoTime();

@@ -6,8 +6,7 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Group extends PObject{
 	private static final long serialVersionUID = 1L;
@@ -91,7 +90,7 @@ public class Group extends PObject{
 				list.add(new Linker(User.class, Group.class, userid, groupid));
 			}
 		}
-		DAO.getInstance().createAll(list);
+		getDao().createAll(list);
     }
 
     public void unlinkFromUser(String userid){

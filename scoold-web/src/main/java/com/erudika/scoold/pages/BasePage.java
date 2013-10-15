@@ -4,10 +4,14 @@ package com.erudika.scoold.pages;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.erudika.para.persistence.DAO;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.search.Search;
+import com.erudika.para.core.Votable;
 import com.erudika.para.core.PObject;
+import com.erudika.para.i18n.CurrencyUtils;
 import com.erudika.para.i18n.LanguageUtils;
 import com.erudika.para.security.AuthModule;
-import com.erudika.para.utils.DAO;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.ContactDetail;
@@ -25,11 +29,11 @@ import com.erudika.scoold.core.User.Badge;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.click.Page;
@@ -51,14 +55,10 @@ import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.StringUtils;
 /**
  *
- * @author alexb 
+ * @author Alex Bogdanovski <albogdano@me.com> 
  */
 public class BasePage extends Page {
 	private static final long serialVersionUID = 1L;
-	
-	static{
-		LanguageUtils.setDefaultLanguage(Language.ENGLISH);
-	}
 	
 	public static final String APPNAME = Utils.PRODUCT_NAME; //app name
 	public static final String CDN_URL = "http://static.scoold.com"; 
@@ -125,12 +125,11 @@ public class BasePage extends Page {
 	public final String feedbacklink = prefix + "feedback";
 	public final String grouppostlink = grouplink + "/post";
 	public final String languageslink = prefix + "languages";
-	public final String HOMEPAGE = prefix;
+	public String HOMEPAGE = "/";
 	
 	public String infoStripMsg = "";
 	public boolean authenticated;
 	public boolean canComment;
-	public boolean isFBconnected;
 	public boolean includeFBscripts;
 	public boolean isMobile;
 	public User authUser;
@@ -142,20 +141,19 @@ public class BasePage extends Page {
 	public MutableLong itemcount;
 	public String showParam;
 	
-	public transient DAO dao = DAO.getInstance();
 	public transient Utils utils = Utils.getInstance();
-	public transient com.erudika.para.utils.Search search = com.erudika.para.utils.Search.getInstance();
+	public transient CurrencyUtils currutils = CurrencyUtils.getInstance();
 	public transient HttpServletRequest req = getContext().getRequest();
 	public transient HttpServletResponse resp = getContext().getResponse();
-	public Map<String, String> lang = LanguageUtils.getDefaultLanguage();
+	public static Map<String, String> deflang = Language.ENGLISH;
+	public Map<String, String> lang = deflang;
 	
-	static {
-		System.setProperty(Utils.CORE_PACKAGE, User.class.getPackage().getName());
-	}
-	
+	@Inject public transient DAO dao;
+	@Inject public transient Search search;
+	@Inject public transient LanguageUtils langutils;
+		
 	public BasePage() {
 		req = getContext().getRequest();
-		initLanguage();
 		checkAuth();
 		cdnSwitch();
 		includeFBscripts = false;
@@ -176,8 +174,11 @@ public class BasePage extends Page {
 		addModel("mobilehide", (isMobile ? "hide" : "noclass"));
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
-//		addModel("systemMessage", StringUtils.trimToEmpty(daoutils.
-//				getSystemColumn(DAO.SYSTEM_MESSAGE_KEY)));
+	}
+
+	public void onInit() {
+		super.onInit(); //To change body of generated methods, choose Tools | Templates.
+		initLanguage();
 	}
 
 	/* * PRIVATE METHODS * */
@@ -197,23 +198,22 @@ public class BasePage extends Page {
 	}
 	
 	private void checkAuth() {	
-		isFBconnected = false;
-		try {
-			if (req.getRemoteUser() != null) {
-				String uid = req.getRemoteUser();
-				if (authUser == null) {
-					authUser = User.getUser(uid);
+		try{
+			if (AuthModule.getAuthenticatedUser() != null) {
+				authUser = (User) AuthModule.getAuthenticatedUser();
+				if(authUser != null){
+					addModel("sectoken", AuthModule.getCSRFtoken(authUser));
+					HOMEPAGE = profilelink.concat("/").concat(authUser.getId());
 					long delta = System.currentTimeMillis() - authUser.getLastseen();
 					if(delta > 2 * 60 * 60 * 1000){
 						// last seen 2 hours ago -> update
 						authUser.setLastseen(System.currentTimeMillis());
 						authUser.update();
 					}
+					Utils.removeStateParam("intro", req, resp);
+					infoStripMsg = "";
+					authenticated = true;
 				}
-				isFBconnected = authUser != null && authUser.isFacebookUser();
-				Utils.removeStateParam("intro", req, resp);
-				infoStripMsg = "";
-				authenticated = true;
 			} else {
 				String intro = Utils.getStateParam("intro", req, resp);
 				infoStripMsg = "intro";
@@ -222,20 +222,21 @@ public class BasePage extends Page {
 				}else{
 					Utils.setStateParam("intro", "1", req, resp);
 				}
-				authenticated = false;
+				authenticated = false; 
 			} 
 		} catch (Exception e) {
 			authenticated = false;
 			logger.log(Level.WARNING, "CheckAuth failed for {0}: {1}", new Object[]{req.getRemoteUser(), e});
 			clearSession();
-			setRedirect(HOMEPAGE);
-			
-		}
+			if(!req.getRequestURI().startsWith("/index.htm"))
+				setRedirect(HOMEPAGE);
+		}		
 	}
 
 	private void initLanguage() {
+		langutils.setDefaultLanguage(Language.ENGLISH);
 		String cookieLoc = ClickUtils.getCookieValue(req, localeCookieName);
-		Locale requestLocale = LanguageUtils.getProperLocale(req.getLocale().getLanguage());
+		Locale requestLocale = langutils.getProperLocale(req.getLocale().getLanguage());
 		String langFromLocation = getLanguageFromLocation();
 		String langname = (cookieLoc != null) ? cookieLoc : (langFromLocation != null) ? 
 				langFromLocation : requestLocale.getLanguage();
@@ -246,10 +247,10 @@ public class BasePage extends Page {
 	/* * PUBLIC METHODS * */
 	
 	public final void setCurrentLocale(String langname, boolean setCookie) {
-		Locale loc = LanguageUtils.getProperLocale(langname);
+		Locale loc = langutils.getProperLocale(langname);
 		addModel("showCurrentLocale", loc.getDisplayLanguage(loc));
 //		getContext().setLocale(loc);
-		lang = LanguageUtils.readLanguage(loc.getLanguage());
+		lang = langutils.readLanguage(loc.getLanguage());
 
 		if(setCookie){
 			//create a cookie
@@ -257,7 +258,6 @@ public class BasePage extends Page {
 			ClickUtils.setCookie(req, resp, localeCookieName, 
 					loc.getLanguage(), maxAge, "/");
 		}
-		setFBLocale(langname);
 		addModel("currentLocale", loc);
 	}
 	
@@ -266,7 +266,7 @@ public class BasePage extends Page {
 		try {
 			String country = ClickUtils.getCookieValue(req, countryCookieName);
 			if(country != null){
-				Locale loc = Utils.getLocaleForCountry(country.toUpperCase());
+				Locale loc = currutils.getLocaleForCountry(country.toUpperCase());
 				if (loc != null) {
 					language = loc.getLanguage();
 				}
@@ -275,13 +275,6 @@ public class BasePage extends Page {
 		
 		return language;
     }
-
-	private void setFBLocale(String langname){
-		// get fb lang js file in the selected locale
-		String fb_locale = fb_locales.get(langname);
-		if(StringUtils.isBlank(fb_locale)) fb_locale = "en";
-		addModel("fb_locale", fb_locale);
-	}
 	
 	public final ArrayList<ContactDetailType> getContactDetailTypeArray(){
         ArrayList<ContactDetailType> mt = new ArrayList<ContactDetailType>();
@@ -298,7 +291,7 @@ public class BasePage extends Page {
 		return getContext().isAjaxRequest();
 	}
 	
-	public void processContactsRequest(PObject obj){
+	public void processContactsRequest(ParaObject obj){
 		Map params = req.getParameterMap();
 		if(param("contacts")){
 			try {
@@ -309,7 +302,7 @@ public class BasePage extends Page {
 
 	/* COMMENTS */
 
-	public final void processNewCommentRequest(PObject parent) {
+	public final void processNewCommentRequest(ParaObject parent) {
 		if(param("deletecomment") && authenticated){
 			String id = getParamValue("deletecomment");
 			Comment c = dao.read(id);
@@ -361,7 +354,7 @@ public class BasePage extends Page {
 
 	/* * DRAWER * */
 
-	public final void proccessDrawerRequest(PObject parent, String escapeUrl, boolean canEdit){
+	public final void proccessDrawerRequest(ParaObject parent, String escapeUrl, boolean canEdit){
 		if(!canEdit) return;
 
 		if(param("remove") && param(DAO.CN_PARENTID)){
@@ -395,12 +388,12 @@ public class BasePage extends Page {
 			}
 		}else{
 			medialist = Media.getAllMedia(parent.getId(), Media.MediaType.PHOTO, 
-					pagenum, mediacount, true, MAX_ITEMS_PER_PAGE);
+					pagenum, mediacount, true, MAX_ITEMS_PER_PAGE, search);
 		}
 
 	}
 
-	public final void processImageEmbedRequest(PObject parent, String escapeUrl,
+	public final void processImageEmbedRequest(ParaObject parent, String escapeUrl,
 			boolean canEdit){
 		if(!canEdit) return;
 
@@ -424,7 +417,7 @@ public class BasePage extends Page {
 
 	/* * PHOTOS * */
 
-	public final void processGalleryRequest(PObject parent, String escapeUrl,
+	public final void processGalleryRequest(ParaObject parent, String escapeUrl,
 			boolean canEdit){
 		if(param("comment")){
 			Media media = dao.read(getParamValue(DAO.CN_PARENTID));
@@ -434,7 +427,7 @@ public class BasePage extends Page {
 				
 			String mid = getParamValue("remove");
 			Media m = new Media();
-//			m.setParentid(getParamValue(DAO.CN_PARENTID));
+//			m.setParentid(getParamValue(AWSDynamoDAO.CN_PARENTID));
 			m.setParentid(parent.getId());
 			m.setId(mid);
 			m.delete();
@@ -467,9 +460,9 @@ public class BasePage extends Page {
 					// then moving forward to NEXT(+1) - get only current and next
 					// else if moving backwards PREV(-1) - get only current and prev
 					// i.e. -1 get prev, +1 get next, else get all three
-					medialist = Media.readPhotosAndCommentsForID(parentid, label, index, mediacount);
+					medialist = Media.readPhotosAndCommentsForID(parentid, label, index, mediacount, search);
 					if(!medialist.isEmpty() && !isAjaxRequest() ){
-	//					&& param("pageparam") && param(DAO.CN_PARENTID)
+	//					&& param("pageparam") && param(AWSDynamoDAO.CN_PARENTID)
 						Media current = medialist.get(0);
 						// this is used when js is off or it is a pagination request
 						commentslist = current.getComments(pagenum);
@@ -481,7 +474,7 @@ public class BasePage extends Page {
 			} else {
 				// gallery view - show a page of thumbnails
 				medialist = Media.getAllMedia(parentid, Media.MediaType.PHOTO, 
-						pagenum, itemcount, true, MAX_ITEMS_PER_PAGE);
+						pagenum, itemcount, true, MAX_ITEMS_PER_PAGE, search);
 			}
 		}
 	}
@@ -665,7 +658,7 @@ public class BasePage extends Page {
 		if(StringUtils.isBlank(parentID)){
 			pid = new Select(DAO.CN_PARENTID, lang.get("posts.selectschool"), true);
 			((Select) pid).add(new Option("", lang.get("chooseone")));
-			for (PObject askable : askablesMap.values()) {
+			for (ParaObject askable : askablesMap.values()) {
 				((Select) pid).add(new Option(askable.getId(), askable.getName()));
 			}
 		} else {
@@ -900,17 +893,17 @@ public class BasePage extends Page {
 
 	public void processVoteRequest(String classname, String id){
 		if(id == null) return;
-		PObject votable = dao.read(id);
+		Votable votable = dao.read(id);
 		boolean result = false;
 		Integer votes = 0;
 		
 		if(votable != null && authenticated){
 			try {
-				User author = User.getUser(votable.getCreatorid());
+				User author = dao.read(votable.getCreatorid());
 				votes = (Integer) PropertyUtils.getProperty(votable, "votes");
 
 				if(param("voteup")){
-					result = DAO.voteUp(authUser.getId(), votable);
+					result = votable.voteUp(authUser.getId());
 					if(!result) return;
 					votes++;
 					authUser.incrementUpvotes();
@@ -938,7 +931,7 @@ public class BasePage extends Page {
 					}
 
 				}else if(param("votedown")){
-					result = DAO.voteDown(authUser.getId(), votable);
+					result = votable.voteDown(authUser.getId());
 					if(!result) return;
 					votes--;
 					authUser.incrementDownvotes();
@@ -1101,43 +1094,6 @@ public class BasePage extends Page {
 			}
 		}
 	}
-
-	public static final Map<String, String> fb_locales = new HashMap<String, String>(){
-		public static final long serialVersionUID = 1L;
-		{
-			put("ca", "ca_ES"); put("cs", "cs_CZ"); put("cy", "cy_GB"); 
-			put("da", "da_DK"); put("de", "de_DE"); put("eu", "eu_ES"); 
-			put("ck", "ck_US"); put("en", "en_US"); put("es", "es_ES");
-			put("fi", "fi_FI"); put("fr", "fr_FR"); put("gl", "gl_ES"); 
-			put("hu", "hu_HU"); put("it", "it_IT"); put("ja", "ja_JP"); 
-			put("ko", "ko_KR"); put("nb", "nb_NO"); put("nn", "nn_NO");
-			put("nl", "nl_NL"); put("pl", "pl_PL"); put("pt", "pt_PT"); 
-			put("ro", "ro_RO"); put("ru", "ru_RU"); put("sk", "sk_SK"); 
-			put("sl", "sl_SI"); put("sv", "sv_SE"); put("th", "th_TH");
-			put("tr", "tr_TR"); put("ku", "ku_TR"); put("zh", "zh_CN"); 
-			put("af", "af_ZA"); put("sq", "sq_AL"); put("hy", "hy_AM"); 
-			put("az", "az_AZ"); put("be", "be_BY"); put("bn", "bn_IN");
-			put("bs", "bs_BA"); put("bg", "bg_BG"); put("hr", "hr_HR"); 
-			put("tl", "tl_ST"); put("eo", "eo_EO"); put("et", "et_EE"); 
-			put("fo", "fo_FO"); put("ka", "ka_GE"); put("el", "el_GR");
-			put("gu", "gu_IN"); put("hi", "hi_IN"); put("is", "is_IS"); 
-			put("id", "id_ID"); put("ga", "ga_IE"); put("jv", "jv_ID"); 
-			put("kn", "kn_IN"); put("kk", "kk_KZ"); put("la", "la_VA");
-			put("lv", "lv_LV"); put("li", "li_NL"); put("lt", "lt_LT"); 
-			put("mk", "mk_MK"); put("mg", "mg_MG"); put("ms", "ms_MY"); 
-			put("mt", "mt_MT"); put("mr", "mr_IN"); put("mn", "mn_MN");
-			put("ne", "ne_NP"); put("pa", "pa_IN"); put("rm", "rm_CH"); 
-			put("sa", "sa_IN"); put("sr", "sr_RS"); put("so", "so_SO"); 
-			put("sw", "sw_KE"); put("ps", "ps_AF"); put("ta", "ta_IN");
-			put("tt", "tt_RU"); put("te", "te_IN"); put("ml", "ml_IN"); 
-			put("uk", "uk_UA"); put("uz", "uz_UZ"); put("vi", "vi_VN"); 
-			put("xh", "xh_ZA"); put("zu", "zu_ZA"); put("km", "km_KH");
-			put("tg", "tg_TJ"); put("ar", "ar_AR"); put("he", "he_IL"); 
-			put("ur", "ur_String"); put("fa", "fa_IR"); put("sy", "sy_SY"); 
-			put("yi", "yi_DE"); put("gn", "gn_PY"); put("qu", "qu_PE");
-			put("ay", "ay_BO"); put("se", "se_NO");
-		}
-	};
 
 	public static final String DESCRIPTION = "Scoold is friendly place where students and teachers "
 			+ "can help each other and talk about anything related to education.";

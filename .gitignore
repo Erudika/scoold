@@ -4,6 +4,10 @@
 *.zip
 *.bak
 keys.txt
+init.properties
+nbactions.xml
+Tomcat.dpf
+nb-configuration.xml
 rebel.xml
 scoold-search/dist/
 scoold-search/build/

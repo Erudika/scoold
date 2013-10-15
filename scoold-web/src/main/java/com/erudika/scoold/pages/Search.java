@@ -5,8 +5,8 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.persistence.DAO;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.School;
@@ -24,11 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
-import static com.erudika.para.utils.Search.*;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Search extends BasePage{
 
@@ -90,23 +89,23 @@ public class Search extends BasePage{
 			
 			if (showParam != null) {
 				if ("questions".equals(showParam)) {
-					questionlist = findQuery(PObject.classname(Question.class), pagenum, itemcount, query);
+					questionlist = search.findQuery(PObject.classname(Question.class), pagenum, itemcount, query);
 				} else if("feedback".equals(showParam)) {
-					feedbacklist = findQuery(PObject.classname(Feedback.class), pagenum, itemcount, query);
+					feedbacklist = search.findQuery(PObject.classname(Feedback.class), pagenum, itemcount, query);
 				} else if("people".equals(showParam)) {
-					userlist = findQuery(PObject.classname(User.class), pagenum, itemcount, query);
+					userlist = search.findQuery(PObject.classname(User.class), pagenum, itemcount, query);
 				} else if("schools".equals(showParam)) {
-					schoollist = findQuery(PObject.classname(School.class), pagenum, itemcount, query);
+					schoollist = search.findQuery(PObject.classname(School.class), pagenum, itemcount, query);
 				} else if("classes".equals(showParam)) {
-					classlist = findQuery(PObject.classname(Classunit.class), pagenum, itemcount, query);
+					classlist = search.findQuery(PObject.classname(Classunit.class), pagenum, itemcount, query);
 				}
 				totalCount = itemcount.intValue();
 			} else { 
-				questionlist = findQuery(PObject.classname(Question.class), questionpage, questioncount, query, "", true, maxSearchResults);
-				feedbacklist = findQuery(PObject.classname(Feedback.class), feedbackpage, feedbackcount, query, "", true, maxSearchResults);
-				userlist = findQuery(PObject.classname(User.class), userpage, usercount, query, "", true, maxSearchResults);
-				schoollist = findQuery(PObject.classname(School.class), schoolpage, schoolcount, query, "", true, maxSearchResults);
-				classlist = findQuery(PObject.classname(Classunit.class), classpage, classcount, query, "", true, maxSearchResults);
+				questionlist = search.findQuery(PObject.classname(Question.class), questionpage, questioncount, query, "", true, maxSearchResults);
+				feedbacklist = search.findQuery(PObject.classname(Feedback.class), feedbackpage, feedbackcount, query, "", true, maxSearchResults);
+				userlist = search.findQuery(PObject.classname(User.class), userpage, usercount, query, "", true, maxSearchResults);
+				schoollist = search.findQuery(PObject.classname(School.class), schoolpage, schoolcount, query, "", true, maxSearchResults);
+				classlist = search.findQuery(PObject.classname(Classunit.class), classpage, classcount, query, "", true, maxSearchResults);
 				totalCount = (questioncount.intValue() + feedbackcount.intValue() +
 						usercount.intValue() + schoolcount.intValue() + classcount.intValue());
 			}
@@ -185,16 +184,16 @@ public class Search extends BasePage{
 			//show selected questions
 			ArrayList<String> favtags = u.getFavtagsList();
 			if(favtags == null || favtags.isEmpty()){
-				questionslist = findQuery(PObject.classname(Question.class), null, null, "*");
+				questionslist = search.findQuery(PObject.classname(Question.class), null, null, "*");
 				personalized = false;
 			}else{
 				personalized = true;
-				questionslist = findTagged(PObject.classname(Question.class), null, null, favtags);
+				questionslist = search.findTagged(PObject.classname(Question.class), null, null, favtags);
 			}
 		}else{
 			//show top questions
 			personalized = false;
-			questionslist = findQuery(PObject.classname(Question.class), null, null, "*");
+			questionslist = search.findQuery(PObject.classname(Question.class), null, null, "*");
 		}
 
 		return questionslist;

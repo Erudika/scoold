@@ -2,9 +2,9 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
 import static com.erudika.para.core.PObject.classname;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.persistence.DAO;
+import com.erudika.para.search.Search;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ public class Media extends PObject {
 	@Stored private Integer width;
 	@Stored private Integer height;
 	@Stored private String provider;
-	@Stored private Integer votes;
 	@Stored private String originalurl;
 	@Stored private Long commentcount;
 	@Stored private Long commentpage;
@@ -32,12 +31,13 @@ public class Media extends PObject {
 	private transient User author;
 	private ArrayList<Comment> comments = new ArrayList<Comment>(0);
 
-	public static enum MediaType{ UNKNOWN, PHOTO, RICH };
+	public static enum MediaType{ 
+		UNKNOWN, PHOTO, RICH 
+	};
 	
 	public Media() {
 		this.type = MediaType.UNKNOWN.toString();
 		this.commentcount = 0L;
-		this.votes = 0;
     }
 
 	public Media(String id) {
@@ -137,14 +137,6 @@ public class Media extends PObject {
         this.type = type.toUpperCase();
     }
     
-	public Integer getVotes() {
-		return votes;
-	}
-
-	public void setVotes(Integer votes) {
-		this.votes = votes;
-	}
-
 	public Long getCommentcount() {
 		return this.commentcount;
 	}
@@ -171,7 +163,7 @@ public class Media extends PObject {
 
     public User getAuthor(){
 		if(getCreatorid() == null) return null;
-        if(author == null) author = User.getUser(getCreatorid());
+        if(author == null) author = getDao().read(getCreatorid());
 		return author;
     }
     
@@ -192,7 +184,7 @@ public class Media extends PObject {
 	}
 
     public String create() {
-		int count = Search.getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
+		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
 		if(count > Constants.MAX_MEDIA_PER_ID) return null;
 		return super.create();
     }
@@ -203,8 +195,8 @@ public class Media extends PObject {
     }
 	
 	public static ArrayList<Media> getAllMedia(String parentid, MediaType type, MutableLong page, 
-			MutableLong itemcount, boolean reverse, int max){
-		return Search.findTwoTerms(classname(Media.class), page, itemcount, DAO.CN_PARENTID, parentid, 
+			MutableLong itemcount, boolean reverse, int max, Search search){
+		return search.findTwoTerms(classname(Media.class), page, itemcount, DAO.CN_PARENTID, parentid, 
 				"type", type.name(), null, reverse, max);
 	}
 	
@@ -233,10 +225,10 @@ public class Media extends PObject {
 	}
 	
 	public static ArrayList<Media> readPhotosAndCommentsForID (String parentid,
-				String label, Long photoid, MutableLong itemcount) {
+				String label, Long photoid, MutableLong itemcount, Search search) {
 
 		MediaType type = MediaType.PHOTO;
-		ArrayList<Media> photos = getAllMedia(parentid, type, new MutableLong(photoid), itemcount, true, 1);
+		ArrayList<Media> photos = getAllMedia(parentid, type, new MutableLong(photoid), itemcount, true, 1, search);
 
 		if(photos.isEmpty()) return photos;
 		Media curr = photos.get(0);
@@ -251,7 +243,7 @@ public class Media extends PObject {
 		// CASE 2: two photos in list
 			if (photos.size() == 1) {
 				photos.clear();
-				photos = getAllMedia(parentid, type, new MutableLong(0), null, true, 1);
+				photos = getAllMedia(parentid, type, new MutableLong(0), null, true, 1, search);
 				next = photos.get(0);
 				prev = next;
 			} else if(photos.size() == 2) {
@@ -262,21 +254,21 @@ public class Media extends PObject {
 		// CASE 3: 3 or more photos in list
 			if (photos.size() == 1) {
 				photos.clear();
-				photos = getAllMedia(parentid, type, new MutableLong(0), null, true, 1);
+				photos = getAllMedia(parentid, type, new MutableLong(0), null, true, 1, search);
 				next = photos.get(0);
 				// reverse to get previous
 				photos.clear();
-				photos = getAllMedia(parentid, type, new MutableLong(photoid), null, false, 1);
+				photos = getAllMedia(parentid, type, new MutableLong(photoid), null, false, 1, search);
 				prev = photos.get(1);
 			} else if(photos.size() == 2) {
 				next = photos.get(1);
 				// reverse to get previous
 				photos.clear();
-				photos = getAllMedia(parentid, type, new MutableLong(photoid), null, false, 1);
+				photos = getAllMedia(parentid, type, new MutableLong(photoid), null, false, 1, search);
 				if (photos.size() == 1) {
 					//get last
 					photos.clear();
-					photos = getAllMedia(parentid, type, new MutableLong(0), null, false, 1);
+					photos = getAllMedia(parentid, type, new MutableLong(0), null, false, 1, search);
 					prev = photos.get(0);
 				} else if(photos.size() == 2) {
 					prev = photos.get(1);

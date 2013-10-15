@@ -11,6 +11,10 @@ package com.erudika.scoold.core;
 public class Grouppost extends Post{
 	private static final long serialVersionUID = 1L;
 
+	public Grouppost() {
+		super();
+	}
+	
 	public boolean canHaveChildren() {
 		return true;
 	}

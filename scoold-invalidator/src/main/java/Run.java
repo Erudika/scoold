@@ -33,7 +33,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Run {
 

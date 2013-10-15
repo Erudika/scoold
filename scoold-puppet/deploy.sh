@@ -59,8 +59,6 @@ function readProp () {
 
 AWSACCESSKEY=$(readProp $KEYS "com.scoold.awsaccesskey")
 AWSSECRETKEY=$(readProp $KEYS "com.scoold.awssecretkey")
-AWSSQSENDPOINT=$(readProp $KEYS "com.scoold.awssqsendpoint")
-AWSSQSQUEUEID=$(readProp $KEYS "com.scoold.awssqsqueueid")
 FBAPPID=$(readProp $KEYS "com.scoold.fbappid")
 FBAPIKEY=$(readProp $KEYS "com.scoold.fbapikey")
 FBSECRET=$(readProp $KEYS "com.scoold.fbsecret")
@@ -116,8 +114,8 @@ function setProperties () {
 	
 	prop4="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
 	prop5="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
-	prop6="com.scoold.awssqsendpoint=\"$(echo $AWSSQSENDPOINT | sed 's/:/\\\:/g')\""
-	prop7="com.scoold.awssqsqueueid=\"$AWSSQSQUEUEID\""
+	prop6="" #AWSSQSENDPOINT
+	prop7="" #AWSSQSQUEUEID
 	prop8="com.scoold.fbappid=\"$FBAPPID\""
 	prop9="com.scoold.fbsecret=\"$FBSECRET\""
 	prop10="com.scoold.awscfdist=\"$AWSCFDIST\""	

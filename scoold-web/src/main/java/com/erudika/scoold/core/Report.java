@@ -6,11 +6,11 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Report extends PObject{
 	private static final long serialVersionUID = 1L;

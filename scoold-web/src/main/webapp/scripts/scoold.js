@@ -23,8 +23,10 @@ $(function () {
 		maxlenmsg = lang.maxlength,
 		minlenmsg = lang.minlength,
 		tagsmsg = lang["tags.toomany"],
-		secdata = {stoken: (typeof stoken !== "undefined" ? stoken : null), 
-			pepper: (typeof pepper !== "undefined" ? pepper : null)};
+		secdata = {
+			stoken: (stoken || null), 
+			pepper: (pepper || null)
+		};
 
 	/**************************
 	 *    Google Maps API
@@ -126,8 +128,8 @@ $(function () {
 	
 	(function getLocation(){
 		try {
-			if (typeof userip !== "undefined" && userip !== "") {
-				$.getJSON(ipdburl + "83.228.10.64", function(data){
+			if (typeof userip !== "undefined" && userip !== "" && userip !== "127.0.0.1") {
+				$.getJSON(ipdburl + userip, function(data){
 					if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
 						var found = data.cityName + ", " + data.countryName;
 						found = found.toLowerCase();
@@ -153,26 +155,6 @@ $(function () {
 		});
 	}
 	
-//	function fbAuthAction(actionurl){
-//		console.log("fbAuthAction start");
-//		FB.getLoginStatus(function(response) {
-//			console.log("fbAuthAction callback", response);
-//			if (response.status === 'connected') {
-//				console.log("fbAuthAction success");
-//				window.location = actionurl;
-//			}else{
-//				console.log("fbAuthAction failure");
-//				FB.login(function(response) {
-//					console.log("fbAuthAction login ", response);
-//					if (response.authResponse) {
-//						console.log("fbAuthAction failure, success");
-//						window.location = actionurl;
-//					}
-//				}, {scope: 'email'});
-//			}
-//		}, true);
-//	}
-
 	$("#fb-login-btn").click(function(){
 		FB.login(function(response) {
 			if (response.authResponse) {
@@ -195,7 +177,7 @@ $(function () {
 		fbName = $("#fb-name"),
 		fbNames = $(".fb-name");
 		
-	if(fbPicture.length || fbName.length){
+	if(fbPicture.length){
 		FB.getLoginStatus(function(response) {
 			if (response.status === 'connected') {
 				FB.api({
@@ -204,11 +186,16 @@ $(function () {
 				}, function(response) {
 					var user = response[0];
 					fbPicture.html('<img src="' + user.pic_small + '" alt="'+user.name+'"/>');
-					fbName.text(user.name + " #" + user.uid);
 					$('input.fb-name-box').val(user.name);
 					$('input.fb-email-box').val(user.email);
 				});
 			}
+		});
+	}
+	
+	if(fbName.length){
+		FB.api('/' + fbName.text().substr(3), function(response) {
+			fbName.text(response.name + " (" + response.username + ")");
 		});
 	}
 	
@@ -1470,279 +1457,453 @@ $(function () {
 	/************************************************************************
      *                           JS VALIDATION
      ************************************************************************/
+	var valobj = {highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn};
 
-	/********* SIGNUP FORM ************/
-	$(document).on("click", "input#signup-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			onsubmit: true,
-            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				name: {required: true, minlength: 4},
-                email: {required: true, email: true}
-			},
-			messages: {
-				name: {
-					required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
-				},
-				email: {
-					required: reqmsg, email: emailmsg
-				}
-			}			
-		});
-		
-        return form.valid();
-	});
-
-	/********* CREATE SCHOOL FORM ************/	
-	$(document).on("click", "input#createschool",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				name: "required", type: "required", location: "required", address: "required"
-			},
-			messages: {
-				name: reqmsg, type: reqmsg, location: reqmsg, address: reqmsg
-			}
-		});
-        return form.valid();
-	});
-
-	/********* CHANGE EMAIL FORM ************/
-	$(document).on("click", "input#change-email-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				email: {required: true, email: true}
-			},
-			messages: {
-				email: {
-					required: reqmsg, email: emailmsg
-				}
-			}
-		});
-        return form.valid();
-	});
-
-	/********* CREATE CLASS FORM ************/
-	$(document).on("click", "input#createclass",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				gradyear: {required: true, digits: true},
-				parentid: "required",
-				identifier: {required: true, minlength: 4}
-			},
-			messages: {
-				gradyear: {
-					required: reqmsg,
-					digits: digitsmsg
-				},
-				parentid: reqmsg,
-				identifier: {
-					required: reqmsg,
-					minlength: jQuery.format(minlenmsg)
-				}
-			}
-		});
-		return form.valid();
-	});
-
-	/********* ADD CLASSMATES FORM ************/
-	$(document).on("click", "input#addclassmates-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-                name: {required: true, minlength: 3, maxlength: 255},
-				email: {
-					required: false, email: true
-				}
-			},
-			messages: {
-				email: {
-					email: emailmsg
-				},
-				name: {
-					required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
-				}
-			}
-		});
-        return form.valid();
-	});
-	/********* ASK QUESTION FORM ************/
-	var maxTags = 6, maxTagsS = "6";
-	$.validator.addMethod("tags", function(value, elem){
-		return this.optional(elem) || value.split(",").length < maxTags;
-	});
-	$(document).on("click", "input#ask-btn, input.post-edit-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				title: {required: true, minlength: 10, maxlength: 255},
-				body: {required: true, minlength: 10, maxlength: 20000},
-				tags: {required: true, tags: true},
-				parentid: "required"
-			},
-			messages: {
-				title: {required: reqmsg,
-					minlength: jQuery.format(minlenmsg),
-					maxlength: jQuery.format(maxlenmsg)
-				},
-				body: {required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
-				},
-				tags: {required: reqmsg,
-					tags: $.validator.format(tagsmsg, maxTagsS)
-				},
-				parentid: reqmsg
-			}
-		});
-		return form.valid();
-	});
-
-	/********* ANSWER QUESTION FORM ************/
-
-	$(document).on("click", "input#answer-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				body: {required: true, minlength: 15, maxlength: 20000}
-			},
-			messages: {
-				body: {
-					required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
-				}
-			}
-		});
-		window.onbeforeunload = null;
-		return form.valid();
-	});
-
-	/********* NEW MESSAGE FORM ************/
-
-	$(document).on("click", "input#sendmessage-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn2,
-			rules: {
-				body: {required: true},
-				to: {required: true}
-			},
-			messages: {body: reqmsg, to: reqmsg}
-		});
-		return form.valid();
-	});
-
-	/********* SETTINGS FORMS ************/
-
-	$(document).on("click", "input.import-media-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				username: {required: true, maxlength: 150}
-			},
-			messages: {
-				username: {required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg)
-				}
-			}
-		});
-		return form.valid();
-	});
-
-	var maxFavTags = 50, maxFavTagsS = "50";
-	$.validator.addMethod("tags2", function(value, elem){
-		return this.optional(elem) || value.split(",").length < maxFavTags;
-	});
-	$(document).on("click", "input#add-favtag-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				favtags: {tags2: true}
-			},
-			messages: {
-				favtags: {
-					tags2: $.validator.format(tagsmsg, maxFavTagsS)
-				}
-			}
-		});
-		return form.valid();
-	});
-
-	/********* REPORT SOLUTION FORM ************/
-	$(document).on("click", "input.report-solution-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-                solution: {required: true, minlength:5, maxlength: 255}
-			},
-			messages: {
-				solution: {
-					required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg),
-					minlength: jQuery.format(minlenmsg)
-				}
-			}
-		});
-        return form.valid();
-	});
-	/********* NEW COMMENT FORM ************/
-	$(document).on("click", "input.new-comment-btn",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				comment: {required: true, maxlength: 500}
-			},
-			messages: {
-				comment: {
-					required: reqmsg,
-					maxlength: jQuery.format(maxlenmsg)
-				}
-			}
-		});
-		return form.valid();
-	});
-
-	/********* NEW TRANSLATION FORM ************/
-	$.validator.addMethod("notEmpty", function(value, elem){
-		var datval = $(elem).data("value");
-		return this.optional(elem) || (datval !== "" && datval !== value);
+	$(document).on("click touchend", "input[type=submit]",  function(){
+		var form = $(this).closest("form"),
+			vj = form.find("input[name=vj]").val(),
+			result = true;
+		if (vj && vj !== "") {
+			$.extend(valobj, JSON.parse(vj.replace(/'/g, "\"")));
+			form.validate(valobj);
+			result = form.valid();
+		}
+		return result;
 	});	
 	
-	/********* CREATE GROUP FORM ************/
-	$(document).on("click", "input#creategroup",  function(){
-		var form = $(this).closest("form");
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {
-				name: {required: true, minlength: 4}
-			},
-			messages: {
-				name: {
-					required: reqmsg,
-					minlength: jQuery.format(minlenmsg)
-				}
-			}
-		});
-		return form.valid();
-	});
+//	/********* SIGNUP FORM ************/
+//	$(document).on("click", "input#signup-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			onsubmit: true,
+//            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				name: {required: true, minlength: 4},
+//                email: {required: true, email: true}
+//			},
+//			messages: {
+//				name: {
+//					required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg),
+//					minlength: jQuery.format(minlenmsg)
+//				},
+//				email: {
+//					required: reqmsg, email: emailmsg
+//				}
+//			}			
+//		});
+//		
+//        return form.valid();
+//	});
+//
+//	/********* CREATE SCHOOL FORM ************/	
+//	$(document).on("click", "input#createschool",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				name: "required", type: "required", location: "required", address: "required"
+//			},
+//			messages: {
+//				name: reqmsg, type: reqmsg, location: reqmsg, address: reqmsg
+//			}
+//		});
+//        return form.valid();
+//	});
+//
+//	/********* CHANGE EMAIL FORM ************/
+//	$(document).on("click", "input#change-email-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				email: {required: true, email: true}
+//			},
+//			messages: {
+//				email: {
+//					required: reqmsg, email: emailmsg
+//				}
+//			}
+//		});
+//        return form.valid();
+//	});
+//
+//	/********* CREATE CLASS FORM ************/
+//	$(document).on("click", "input#createclass",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				gradyear: {required: true, digits: true},
+//				parentid: "required",
+//				identifier: {required: true, minlength: 4}
+//			},
+//			messages: {
+//				gradyear: {
+//					required: reqmsg,
+//					digits: digitsmsg
+//				},
+//				parentid: reqmsg,
+//				identifier: {
+//					required: reqmsg,
+//					minlength: jQuery.format(minlenmsg)
+//				}
+//			}
+//		});
+//		return form.valid();
+//	});
+//
+//	/********* ADD CLASSMATES FORM ************/
+//	$(document).on("click", "input#addclassmates-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//                name: {required: true, minlength: 3, maxlength: 255},
+//				email: {
+//					required: false, email: true
+//				}
+//			},
+//			messages: {
+//				email: {
+//					email: emailmsg
+//				},
+//				name: {
+//					required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg),
+//					minlength: jQuery.format(minlenmsg)
+//				}
+//			}
+//		});
+//        return form.valid();
+//	});
+//	/********* ASK QUESTION FORM ************/
+//	var maxTags = 6, maxTagsS = "6";
+//	$.validator.addMethod("tags", function(value, elem){
+//		return this.optional(elem) || value.split(",").length < maxTags;
+//	});
+//	$(document).on("click", "input#ask-btn, input.post-edit-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				title: {required: true, minlength: 10, maxlength: 255},
+//				body: {required: true, minlength: 10, maxlength: 20000},
+//				tags: {required: true, tags: true},
+//				parentid: "required"
+//			},
+//			messages: {
+//				title: {required: reqmsg,
+//					minlength: jQuery.format(minlenmsg),
+//					maxlength: jQuery.format(maxlenmsg)
+//				},
+//				body: {required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg),
+//					minlength: jQuery.format(minlenmsg)
+//				},
+//				tags: {required: reqmsg,
+//					tags: $.validator.format(tagsmsg, maxTagsS)
+//				},
+//				parentid: reqmsg
+//			}
+//		});
+//		return form.valid();
+//	});
+//
+//	/********* ANSWER QUESTION FORM ************/
+//
+//	$(document).on("click", "input#answer-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				body: {required: true, minlength: 15, maxlength: 20000}
+//			},
+//			messages: {
+//				body: {
+//					required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg),
+//					minlength: jQuery.format(minlenmsg)
+//				}
+//			}
+//		});
+//		window.onbeforeunload = null;
+//		return form.valid();
+//	});
+//
+//	/********* NEW MESSAGE FORM ************/
+//
+//	$(document).on("click", "input#sendmessage-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn2,
+//			rules: {
+//				body: {required: true},
+//				to: {required: true}
+//			},
+//			messages: {body: reqmsg, to: reqmsg}
+//		});
+//		return form.valid();
+//	});
+//
+//	/********* SETTINGS FORMS ************/
+//
+//	$(document).on("click", "input.import-media-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				username: {required: true, maxlength: 150}
+//			},
+//			messages: {
+//				username: {required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg)
+//				}
+//			}
+//		});
+//		return form.valid();
+//	});
+//
+//	var maxFavTags = 50, maxFavTagsS = "50";
+//	$.validator.addMethod("tags2", function(value, elem){
+//		return this.optional(elem) || value.split(",").length < maxFavTags;
+//	});
+//	$(document).on("click", "input#add-favtag-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				favtags: {tags2: true}
+//			},
+//			messages: {
+//				favtags: {
+//					tags2: $.validator.format(tagsmsg, maxFavTagsS)
+//				}
+//			}
+//		});
+//		return form.valid();
+//	});
+//
+//	/********* REPORT SOLUTION FORM ************/
+//	$(document).on("click", "input.report-solution-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//            highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//                solution: {required: true, minlength:5, maxlength: 255}
+//			},
+//			messages: {
+//				solution: {
+//					required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg),
+//					minlength: jQuery.format(minlenmsg)
+//				}
+//			}
+//		});
+//        return form.valid();
+//	});
+//	/********* NEW COMMENT FORM ************/
+//	$(document).on("click", "input.new-comment-btn",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				comment: {required: true, maxlength: 500}
+//			},
+//			messages: {
+//				comment: {
+//					required: reqmsg,
+//					maxlength: jQuery.format(maxlenmsg)
+//				}
+//			}
+//		});
+//		return form.valid();
+//	});
+//
+//	/********* NEW TRANSLATION FORM ************/
+//	$.validator.addMethod("notEmpty", function(value, elem){
+//		var datval = $(elem).data("value");
+//		return this.optional(elem) || (datval !== "" && datval !== value);
+//	});	
+//	
+//	/********* CREATE GROUP FORM ************/
+//	$(document).on("click", "input#creategroup",  function(){
+//		var form = $(this).closest("form");
+//		form.validate({
+//			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
+//			rules: {
+//				name: {required: true, minlength: 4}
+//			},
+//			messages: {
+//				name: {
+//					required: reqmsg,
+//					minlength: jQuery.format(minlenmsg)
+//				}
+//			}
+//		});
+//		return form.valid();
+//	});
 
 });//end of scoold script
 
+//////////////////////////////////////////////////////////////////
+//
+// OEmbed.js
+//
+(function($) {
+
+	$.oembed = {
+
+		// Plugin defaults
+		filter: "default",
+		maxWidth: 500,
+		maxHeight: 400,
+		apiKey: "c938e0444b5a11e1ab1c4040d3dc5c07",
+//		oembedServiceUrl: "http://oohembed.com/oohembed/",
+		oembedServiceUrl: "http://api.embed.ly/1/oembed",
+		callbackParam: "callback",
+		userAgent: "Mozilla/5.0 (compatible; Scoold/0.6; +http://scoold.com)",
+
+		getThumb: function (data, filterParam) {
+			var embedElem = null,
+				filter = filterParam || $.oembed.filter,
+				h, w;
+
+			if(data){
+				var desc = (data.description) ? "<p>"+data.description+"</p>" : "";
+				if(filter === "default" || data.type === filter){
+					if(data.thumbnail_url){
+						if(data.thumbnail_width && data.thumbnail_height){
+							w = data.thumbnail_width + 100;
+							h = data.thumbnail_height + 100;
+						}else{
+							w = 200;
+							h = 200;
+						}
+						embedElem = $("<img height='"+h+"' width='"+w+"' src='"+data.thumbnail_url+"' alt=''/>"+desc);
+					}else if(data.url){
+						h = (data.height * 30) / 100;
+						w = (data.width * 30) / 100;
+						embedElem = $("<img height='"+h+"' width='"+w+"' src='"+data.url+"' alt=''/>"+desc);
+					}
+				}
+			}
+
+			return embedElem;
+		},
+
+		fetchData: function(url, callback) {
+			if(!url || url === "" || url.indexOf("http") === -1){
+				return;
+			}
+			
+			$.ajax({
+				beforeSend: function(xhr) {xhr.setRequestHeader("User-Agent", $.oembed.userAgent)},
+				dataType: "jsonp",
+				url: $.oembed.getRequestUrl(url),
+				success: function(data, status, xhr){
+					if(data){
+						var code = data.html;
+						switch (data.type) {
+							case "photo":
+								var alt = data.title || '';
+								alt += data.author_name ? ' - ' + data.author_name : '';
+								alt += data.provider_name ? ' - ' +data.provider_name : '';
+								code = '<div><a href="' + url + '" class="extlink"><img src="' +
+									data.url + '" alt="' + alt + '"/></a></div>';
+								if (data.html){
+									code += "<div>" + data.html + "</div>";
+								}
+								break;
+//							case "video":break;
+//							case "rich":break;
+							default:
+								if (code){
+									code = "<div>" + code + "</div>";
+								}
+								break;
+						}
+						data.html = code;
+						callback(data);
+					}
+				}
+			});
+		},
+
+		getRequestUrl: function(externalUrl) {
+			var url = $.oembed.oembedServiceUrl;
+			if (url.indexOf("?") <= 0){
+				url = url + "?";
+			}  
+
+			url += "maxwidth=" + $.oembed.maxWidth +
+						"&maxheight=" + $.oembed.maxHeight +
+						"&format=json" +
+						"&url=" + escape(externalUrl) +
+						"&key=" + $.oembed.apiKey +
+						"&" + $.oembed.callbackParam + "=?";
+			return url;
+		}
+
+	};
+})(jQuery);
+
+//////////////////////////////////////////////////////////////////
+/*
+# markItUp!
+
+Copyright (C) 2008 Jay Salvat
+http://markitup.jaysalvat.com/
+
+## Markup language: Markdown <http://daringfireball.net/projects/markdown/>
+
+## Description
+ - A basic Markdown markup set with Headings, Bold, Italic, Picture, Link, List, Quotes, Code, Preview button.
+ - Feel free to add more tags.
+
+## Install
+ 1. Download the zip file
+ 2. Unzip it in your markItUp! sets folder
+ 3. Modify your JS link to point at this set.js
+*/
+
+miu_set_markdown = {
+	nameSpace:		"markdown", // Useful to prevent multi-instances CSS conflict
+	previewParserPath:	'',
+	onShiftEnter:		{keepDefault:false, openWith:'\n\n'},
+	markupSet: [
+		{name:'First Level Heading', key:'1', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '='); }, className:'miu-btn-h1'},
+		{name:'Second Level Heading', key:'2', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '-'); }, className:'miu-btn-h2'},
+		{name:'Heading 3', key:'3', openWith:'### ', placeHolder:'Your title here...', className:'miu-btn-h3'},
+		{name:'Heading 4', key:'4', openWith:'#### ', placeHolder:'Your title here...', className:'miu-btn-h4'},
+		{name:'Heading 5', key:'5', openWith:'##### ', placeHolder:'Your title here...', className:'miu-btn-h5'},
+		{name:'Heading 6', key:'6', openWith:'###### ', placeHolder:'Your title here...', className:'miu-btn-h6'},
+		{separator:'|' },
+		{name:'Bold', key:'B', openWith:'**', closeWith:'**', className:'miu-btn-strong'},
+		{name:'Italic', key:'I', openWith:'_', closeWith:'_', className:'miu-btn-em'},
+		{separator:'|'},
+		{name:'Bullet List', openWith:'- ', className:'miu-btn-ul'},
+		{name:'Numbered List', openWith:function(markItUp) {
+			return markItUp.line+'. ';
+		}, className:'miu-btn-ol'},
+		{separator:'|'},
+		{name:'Picture', key:'P', replaceWith:'![[![Alternative text]!]]([![Url:!:http://]!] "[![Title]!]")', className:'miu-btn-img'},
+		{name:'Link', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...', className:'miu-btn-a'},
+		{separator:'|'},
+		{name:'Quote', openWith:'> ', className:'miu-btn-blockquote'},
+		{name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)', className:'miu-btn-code'}
+	]
+};
+
+// miu namespace to avoid conflict.
+miu = {
+	markdownTitle: function(markItUp, c) {
+		heading = '';
+		n = $.trim(markItUp.selection||markItUp.placeHolder).length;
+		for(i = 0; i < n; i++) {
+			heading += c;
+		}
+		heading = '\n'+heading;
+		return heading;
+	}
+};

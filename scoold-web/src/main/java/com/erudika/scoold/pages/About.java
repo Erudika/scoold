@@ -10,7 +10,7 @@ import com.erudika.scoold.util.Constants;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class About extends BasePage {
     

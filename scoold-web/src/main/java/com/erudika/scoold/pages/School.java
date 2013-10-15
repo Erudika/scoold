@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class School extends BasePage{
     

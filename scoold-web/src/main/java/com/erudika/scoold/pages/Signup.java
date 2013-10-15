@@ -7,7 +7,6 @@ package com.erudika.scoold.pages;
 
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.User.Badge;
-import com.erudika.scoold.core.User.UserGroup;
 import com.erudika.scoold.core.User.UserType;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
@@ -21,7 +20,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Signup extends BasePage{
 
@@ -136,7 +135,7 @@ public class Signup extends BasePage{
 //				newUser.setIdentifier(identString);
 //
 //				if (identString.equals(ScooldAuthModule.ADMIN_FB_ID)){
-//					newUser.setGroups(UserGroup.ADMINS.toString());
+//					newUser.setGroups(Groups.ADMINS.toString());
 //				}
 //				
 //				if(IN_BETA){

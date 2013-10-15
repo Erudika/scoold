@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Messages extends BasePage{
 
@@ -30,7 +30,7 @@ public class Messages extends BasePage{
 		if(!isAjaxRequest()){
 			messageslist = authUser.getChildren(Message.class, pagenum, itemcount, null, MAX_ITEMS_PER_PAGE);
 			contactslist = authUser.getLinkedObjects(User.class, null, null);
-			Message.markAllRead(authUser.getId());
+			authUser.markAllMessagesAsRead();
 		}
 	}
 

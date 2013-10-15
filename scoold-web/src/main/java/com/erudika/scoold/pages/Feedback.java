@@ -6,14 +6,13 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Search;
 import com.erudika.scoold.core.Post;
 import java.util.ArrayList;
 import org.apache.click.control.Form;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Feedback <P extends Post> extends BasePage{
 
@@ -37,9 +36,9 @@ public class Feedback <P extends Post> extends BasePage{
 			String tag = getParamValue("tag");
 			ArrayList<String> tags = new ArrayList<String>();
 			tags.add(tag);
-			feedbacklist = Search.findTagged(feedbackType, pagenum, itemcount, tags);
+			feedbacklist = search.findTagged(feedbackType, pagenum, itemcount, tags);
 		} else if(param("search")){
-			feedbacklist = Search.findQuery(feedbackType, pagenum, itemcount, getParamValue("search"));
+			feedbacklist = search.findQuery(feedbackType, pagenum, itemcount, getParamValue("search"));
 		} else {
 			String sortBy = "";
 			if("activity".equals(getParamValue("sortby"))){
@@ -48,7 +47,7 @@ public class Feedback <P extends Post> extends BasePage{
 				sortBy = "votes";
 			}
 
-			feedbacklist = Search.findQuery(feedbackType, pagenum, itemcount, "*", sortBy, true, MAX_ITEMS_PER_PAGE);
+			feedbacklist = search.findQuery(feedbackType, pagenum, itemcount, "*", sortBy, true, MAX_ITEMS_PER_PAGE);
 		}		
 	}
 

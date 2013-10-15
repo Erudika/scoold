@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class ContactDetail {
 

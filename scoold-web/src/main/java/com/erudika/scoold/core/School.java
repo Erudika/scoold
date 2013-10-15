@@ -2,8 +2,7 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
 import com.erudika.para.utils.Utils;
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHandler.STATE;
@@ -35,7 +34,7 @@ import org.jsoup.select.Elements;
 
 /**
  * 
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class School extends PObject{
 	private static final long serialVersionUID = 1L;
@@ -45,7 +44,6 @@ public class School extends PObject{
     @Stored private Integer fromyear;
     @Stored private Integer toyear;
 	@Stored private String about;
-	@Stored private Integer votes;
 	@Stored private String contacts;
 	@Stored private String iconurl;
 
@@ -78,7 +76,6 @@ public class School extends PObject{
 	public School(String name, String type, String location){
 		setName(name);
 		this.location = location;
-		this.votes = 0;
 		this.about = "";
 		this.type = getSchoolType(type).toString();
 	}
@@ -143,14 +140,6 @@ public class School extends PObject{
 
 	public void setAbout(String about) {
 		this.about = about;
-	}
-
-	public Integer getVotes() {
-		return votes;
-	}
-
-	public void setVotes(Integer votes) {
-		this.votes = votes;
 	}
 
 	public ArrayList<User> getAllUsers(MutableLong page, MutableLong itemcount){
@@ -403,16 +392,17 @@ public class School extends PObject{
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getAllMedia(getId(), type, pagenum, itemcount, reverse, maxItems);
+		return Media.getAllMedia(getId(), type, pagenum, itemcount, 
+				reverse, maxItems, getSearch());
 	}
 
 	public void deleteAllMedia(){
 		deleteChildren(Media.class);
 	}
 
-	public static boolean mergeSchools(String primarySchoolid, String duplicateSchoolid){
-		Classunit primarySchool = DAO.getInstance().read(primarySchoolid);
-		Classunit duplicateSchool = DAO.getInstance().read(duplicateSchoolid);
+	public boolean mergeWith(String duplicateSchoolid){
+		School primarySchool = this;
+		School duplicateSchool = getDao().read(duplicateSchoolid);
 		
 		if(primarySchool == null || duplicateSchool == null) return false;
 		else if(!duplicateSchool.getParentid().equals(primarySchool.getParentid())) return false;
@@ -430,13 +420,13 @@ public class School extends PObject{
 		
 		for (Linker link : allLinks) {
 			try {
-				PropertyUtils.setProperty(link, link.getFirstIdFieldName(), primarySchoolid);
+				PropertyUtils.setProperty(link, link.getIdFieldNameFor(School.class), getId());
 			} catch (Exception ex) {
 				Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		
-		DAO.getInstance().updateAll(allLinks);
+		getDao().updateAll(allLinks);
 
 		// STEP 4:
 		// delete duplicate

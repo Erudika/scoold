@@ -6,7 +6,6 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Search;
 import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.Media;
 import com.erudika.scoold.core.Report;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Reports extends BasePage{
 
@@ -49,7 +48,7 @@ public class Reports extends BasePage{
 				showMergeClass = dao.read(id);
 			}
 		}else{
-			reportslist = Search.findQuery(PObject.classname(Report.class), pagenum, itemcount, "*");
+			reportslist = search.findQuery(PObject.classname(Report.class), pagenum, itemcount, "*");
 		}
 	}
 
@@ -65,11 +64,13 @@ public class Reports extends BasePage{
 			String link = "";
 			if("classunit".equals(what) && idsNotNull){
 				//merge classes
-				done = Classunit.mergeClasses(id1, id2);
+				Classunit c1 = dao.read(id1);
+				done = c1 != null && c1.mergeWith(id2);
 				link = classlink;
 			}else if("school".equals(what) && idsNotNull){
 				//merge schools
-				done = School.mergeSchools(id1, id2);
+				School s1 = dao.read(id1);
+				done = s1 != null && s1.mergeWith(id2);
 				link = schoollink;
 			}
 

@@ -6,35 +6,27 @@ package com.erudika.scoold.util;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.BatchWriteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.ListTablesRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutRequest;
-import com.amazonaws.services.dynamodbv2.model.ReturnConsumedCapacity;
-import com.amazonaws.services.dynamodbv2.model.WriteRequest;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Linker;
 import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.Group;
-import com.erudika.scoold.core.Media;
-import com.erudika.scoold.core.Message;
-import com.erudika.scoold.core.Post;
-import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.School;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Translation;
+import com.erudika.para.persistence.AWSDynamoDAO;
+import static com.erudika.para.persistence.AWSDynamoDAO.CN_ID;
+import com.erudika.para.persistence.CassandraDAO;
+import com.erudika.para.persistence.DAO;
+import com.erudika.para.search.ElasticSearch;
+import com.erudika.para.search.Search;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Question;
-import com.erudika.scoold.core.Tag;
 import com.erudika.scoold.core.User;
-import com.erudika.scoold.db.AbstractDAOFactory;
-import com.erudika.scoold.db.cassandra.CasDAOFactory;
-import java.lang.annotation.Annotation;
+//import com.erudika.scoold.db.cassandra.CasDAOFactory;
+//import com.erudika.scoold.db.cassandra.CasDAOUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,17 +49,12 @@ import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.factory.HFactory;
-import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.SliceQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.node.NodeBuilder;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
@@ -75,23 +62,14 @@ import org.elasticsearch.node.NodeBuilder;
  */
 public class CassandraExporter {
 	private static Keyspace keyspace;
-	private static Mutator<String> mutator;
 	private static Serializer<String> strser = SerializerTypeInferer.getSerializer(String.class);
-	private static HashMap<String, XContentBuilder> searchables;
 	private static AmazonDynamoDBClient ddb;
 	private static final String ACCESSKEY = "AKIAJ2RII4MVDWEXQZHQ";
 	private static final String SECRETKEY = "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";
 	private static final String ENDPOINT = "dynamodb.eu-west-1.amazonaws.com";
-	private static final String TABLE = DAO.OBJECTS;
 	private static final Logger logger = Logger.getLogger(CassandraExporter.class.getName());
-	public static Client searchClient;
-		
+	
 	private static void init(){
-		NodeBuilder nb = NodeBuilder.nodeBuilder();
-		nb.clusterName(CasDAOFactory.CLUSTER);
-		searchClient = new TransportClient(nb.settings()).addTransportAddress(
-						new InetSocketTransportAddress("localhost", 9300));				
-		
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
 		config.setHosts("localhost");
 		config.setPort(9160);
@@ -101,8 +79,8 @@ public class CassandraExporter {
 //		config.setAutoDiscoveryDelayInSeconds(60);
 //		config.setMaxActive(100);
 //		config.setMaxIdle(10);
-		Cluster cluster = HFactory.getOrCreateCluster(CasDAOFactory.CLUSTER, config);
-		keyspace = HFactory.createKeyspace(CasDAOFactory.KEYSPACE, cluster,
+		Cluster cluster = HFactory.getOrCreateCluster("scoold", config);
+		keyspace = HFactory.createKeyspace("scoold", cluster,
 			new ConsistencyLevelPolicy() {
 				public HConsistencyLevel get(OperationType arg0) { return getLevel(arg0); }
 				public HConsistencyLevel get(OperationType arg0, String arg1) { return getLevel(arg0); }
@@ -114,136 +92,239 @@ public class CassandraExporter {
 					}
 				}
 			}, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE);		
-		mutator = HFactory.createMutator(keyspace, strser);
 		
 		ddb = new AmazonDynamoDBClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));
 		ddb.setEndpoint(ENDPOINT);
+		System.setProperty(Utils.CORE_PACKAGE, User.class.getPackage().getName());
+//		logger.log(Level.INFO, "INDEX? {0}", new Object[]{search.xistsIndex(Utils.INDEX_ALIAS)});
 	}
 	
 	public static void main(String[] args) {
+
+//		if(true) return ;
+		
 		init();
 		
-		String name = Utils.INDEX_ALIAS;
-		if(!Search.existsIndex(name)) Search.createIndex(name);
-		
+		AWSDynamoDAO dao = new AWSDynamoDAO();
+		ElasticSearch search = new ElasticSearch();
+		search.setDao(dao);
+
 		try {
-			int i = 0;
-			BulkRequestBuilder brb = searchClient.prepareBulk();
-			HashMap<String, List<WriteRequest>> batch = new HashMap<String,  List<WriteRequest>>();
-			ArrayList<WriteRequest> list = new ArrayList<WriteRequest>();
-			
-			List<Row<String, String, String>> rows = readAll();
+			ArrayList<ParaObject> list = new ArrayList<ParaObject>();
+			List<Row<String, String, String>> rows = readAll(DAO.OBJECTS);
+			rows.addAll(readAll("AuthKeys"));
 //			List<Row<String, String, String>> rows = readAll("54301126979227648", "54301251927543808", "54301366805336064", "54301183178706944");
-			
-			// read from cassandra
+			// read ALL OBJECTS
 			for (Row<String, String, String> row : rows) {
 				List<HColumn<String, String>> cols = row.getColumnSlice().getColumns();
+				HColumn<String, String> ctype = row.getColumnSlice().getColumnByName("classtype");
 				if(cols != null && !cols.isEmpty()){
-					HColumn<String, String> ctype = row.getColumnSlice().getColumnByName("classtype");
 					if(ctype != null){
 						String classtype = ctype.getValue();
-						Map<String, Object> data = Utils.getAnnotatedFields(fromColumns(
-								Utils.toClass(classtype), cols), Stored.class, null);
 						
-//						HashMap<String, AttributeValue> rou = new HashMap<String, AttributeValue>();
-//						rou.put("key", new AttributeValue().withS(row.getKey()));
-//						for (Map.Entry<String, Object> entry : data.entrySet()) {
-//							String field = entry.getKey();
-//							Object value = entry.getValue();
-//
-//							if(value != null && !StringUtils.isBlank(value.toString())){
-//								rou.put(field, new AttributeValue(value.toString()));
-//							}
+						////////////////////////////////////////////////////////////
+						if(!classtype.equals("user")) continue;
+//						if(classtype.equals("school") || classtype.equals("classunit") || classtype.equals("user")){
+//							continue;
 //						}
-						logger.log(Level.INFO, "read row {0} ctype = {1} i={2} rou {3}", new Object[]{row.getKey(), classtype, i, data});
-//						if(i < 5){
-//							list.add(new WriteRequest().withPutRequest(new PutRequest().withItem(rou)));
-//							i++;
-//						}else{
-//							batch.put(TABLE, list);
-//							createRows(batch);
-//							batch.clear();
-//							list.clear();
-//							i = 0;
-//							
-//							Thread.sleep(500);
-//						}
+						///////////////////////////////////////////////////////////
 						
-						// index
-						logger.info(row.getKey()+" ----------------------------------------------------------- indexed!");
-//						brb.add(searchClient.prepareIndex(name, classtype, row.getKey()).
-//								setSource(data));
+						ParaObject obj = Utils.toClass(classtype).newInstance();
+						obj.setId(row.getKey());
+						
+						// SCHEMA CHANGES!!!
+						for (HColumn<String, String> hColumn : cols) {
+							String name = hColumn.getName();
+							String value = hColumn.getValue();
+							if(name.equals("schoolid")){
+								hColumn.setName(DAO.CN_PARENTID);
+							}else if(name.equals("identifier") && NumberUtils.isDigits(value) && classtype.equals("user")){
+								value = Utils.FB_PREFIX + value;
+							}else if(name.equals("userid")){
+								hColumn.setName(DAO.CN_CREATORID);
+							}else if(name.equals("fullname")){
+								hColumn.setName(DAO.CN_NAME);
+							}else if(name.equals("classtype")){
+								hColumn.setName(DAO.CN_CLASSNAME);
+							}else if(name.equals("groups")){
+								value = "users";
+								if("admins".equals(hColumn.getValue()) || "mods".equals(hColumn.getValue())){
+									value = hColumn.getValue();
+								}
+							}else if(name.equals("key") && classtype.equals("translation")){
+								hColumn.setName("thekey");
+								if(existsColumn("bg", "ApprovedTranslations", value)){
+//									BeanUtils.setProperty(obj, "approved", "true");
+									((Translation) obj).setApproved(true);
+								}
+							}
+							
+							if(!StringUtils.isBlank(value)){
+								BeanUtils.setProperty(obj, hColumn.getName(), value);
+							}							
+						}
+						
+						logger.log(Level.INFO, "{0} -> {1}", new Object[]{row.getKey(), obj.getClassname()});
+						list.add(obj);
 					}else{
-						logger.log(Level.WARNING, " NO CLASSTYPE: {0}", row.getKey());
+//						new User("54300224104960000").attachIdentifier("https://www.google.com/accounts/o8/id?id=AItOawmS_EkaWRmSheZ3u8zWGfUViu7_gyrypLE");
+//						break;
+						
+//						String ident = row.getKey();
+//						if(!cols.isEmpty()){
+//							String uid = cols.get(1).getValue();
+//							new User(uid).attachIdentifier(ident);
+//							logger.log(Level.INFO, "CREATE IDENT: {0}->{1}", new Object[]{uid, ident});
+//						}
+					}
+				}else{
+					logger.log(Level.INFO, " COL EMPTY: {0}", row.getKey());
+				}
+			}
+			
+			if (!list.isEmpty()) {
+				dao.createAll(list);
+				list.clear();
+			}
+			
+			// read ALL LINKERS
+			List<Row<String, String, String>> users = readAll("UsersParents");
+			List<Row<String, String, String>> schools = readAll("SchoolsParents");
+			List<Row<String, String, String>> classes = readAll("ClassesParents");
+			List<Row<String, String, String>> groups = readAll("GroupsParents");
+			List[] arr = {users, schools, classes, groups};
+			Class[] carr = {User.class, School.class, Classunit.class, Group.class};
+			ArrayList<Linker> links = new ArrayList<Linker>();
+			int lc = 0;
+			
+			for (int i = 0; i < arr.length; i++) {
+				List<Row<String, String, String>> rowz = arr[i];
+				for (Row<String, String, String> row : rowz) {
+					List<HColumn<String, String>> cols = row.getColumnSlice().getColumns();
+					if(cols != null && !cols.isEmpty()){
+						List<HColumn<String,String>> parentCols = readRow(row.getKey(), DAO.OBJECTS, 
+								String.class, null, null, null, Utils.DEFAULT_LIMIT, true);
+						Class<? extends ParaObject> parentClass = null;
+						for (HColumn<String, String> hColumn : parentCols) {
+							if(hColumn.getName().equals("classtype")){
+								parentClass = Utils.toClass(hColumn.getValue());
+								logger.log(Level.INFO, "CLASS {0} -> ", parentClass);
+								break;
+							}
+						}
+						
+						if(parentClass != null){
+							for (HColumn<String, String> hColumn : cols) {
+								if(hColumn.getName().equals("KEY")){
+									assert hColumn.getValue().equals(row.getKey());
+									continue;
+								}
+								String id2 = new Long(hColumn.getNameBytes().asLongBuffer().get()).toString();
+								String value = hColumn.getValue();
+								
+								if(!StringUtils.isBlank(id2)){
+									Linker link = new Linker(parentClass, carr[i], row.getKey(), id2);
+									if(value.startsWith("from")){
+										link.setMetadata(value);
+									}
+									links.add(link);
+									logger.log(Level.INFO, "NEW LINKER id:{2} {0} -> {1}, META: {3}", 
+											new Object[]{parentClass.getSimpleName(), carr[i].getSimpleName(), link.getId(), link.getMetadata()});
+									lc++;
+								}
+							}
+						}
 					}
 				}
 			}
-//			if (!list.isEmpty()) {
-//				batch.put(TABLE, list);
-//				createRows(batch);
-//			}
-//			brb.execute();
+			
+			if (!links.isEmpty()) {
+				dao.createAll(links);
+				links.clear();
+			}
+			
+//			logger.log(Level.WARNING, " TOTAL: {0}", Integer.toString(rows.size() + lc));
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, null, e);
 		}
 		
+		System.exit(0);
 	}
 	
-	private static List<Row<String, String, String>> readAll(String ... ids){
-		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(
-				keyspace, strser, strser, strser);
-		if(ids == null || ids.length == 0){
-			cqlQuery.setQuery("SELECT * FROM " + CasDAOFactory.OBJECTS.getName());
-		}else{
-			String idz = "";
-			for (String id : ids) {
-				idz = idz.concat("'").concat(id).concat("',");
-			}
-			if(idz.endsWith(",")) idz = idz.substring(0, idz.length() - 1);
-			cqlQuery.setQuery("SELECT * FROM " + CasDAOFactory.OBJECTS.getName() + " WHERE key IN("+idz+")");
-		}
-		QueryResult<CqlRows<String, String, String>> result = cqlQuery.execute();
-		CqlRows<String, String, String> rows = result.get();
-		return rows == null ? new ArrayList<Row<String, String, String>> () : rows.getList();
-	}
+	private static List<Row<String, String, String>> readAll(String cf){
+        CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(
+                keyspace, strser, strser, strser);
+        cqlQuery.setQuery("SELECT * FROM " + cf);
+  
+        QueryResult<CqlRows<String, String, String>> result = cqlQuery.execute();
+        CqlRows<String, String, String> rows = result.get();
+        return rows == null ? new ArrayList<Row<String, String, String>> () : rows.getList();
+    }
 
-	private static void createRows(Map<String, List<WriteRequest>> row){
+	private static String getColumn(String key, String cf, String colName) {
+		if(StringUtils.isBlank(key) || cf == null || colName == null) return null;
+		HColumn<String, String> col = getHColumn(key, cf, colName);
+		return (col != null) ? col.getValue() : null;
+	}
+	
+	private static boolean existsColumn(String key, String cf, String columnName){
+		if(StringUtils.isBlank(key)) return false;
+		return getColumn(key, cf, columnName) != null;
+	}
+	
+	private static HColumn<String, String> getHColumn(String key, String cf, String colName){
+		if(cf == null) return null;
+		HColumn<String, String> col = null;
 		try {
-			BatchWriteItemResult res = ddb.batchWriteItem(new BatchWriteItemRequest().withRequestItems(row).
-					withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL));
-			logger.log(Level.WARNING, ">>> consumed {0}", res.getConsumedCapacity());
+			col = HFactory.createColumnQuery(keyspace, strser, strser, strser)
+				.setKey(key)
+				.setColumnFamily(cf)
+				.setName(colName)
+				.execute().get();
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, null, e);
-		}		
-	}
-	
-	private static <T extends PObject> T fromColumns(Class<T> clazz,
-			List<HColumn<String, String>> cols) {
-		if (cols == null || cols.isEmpty())	return null;
-
-		T transObject = null;
-		try {
-			transObject = clazz.newInstance();
-			for (HColumn<String, String> col : cols) {
-				String name = col.getName();
-				String value = col.getValue();
-				//set property WITH CONVERSION
-				BeanUtils.setProperty(transObject, name, value);
-				//set property WITHOUT CONVERSION
-//				PropertyUtils.setProperty(transObject, name, value);
-			}
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
 		}
-
-		return transObject;
+		return col;
 	}
 	
-	private static XContentBuilder getMapping(String type) throws Exception{
-		return XContentFactory.jsonBuilder().startObject().startObject(type).
-					startObject("_source").
-						field("enabled", "true").
-						field("compress", "true").
-					endObject().endObject().endObject();
-	}
+	private static List<HColumn<String, String>> readRow(String key, String cf,
+            Class<String> colNameClass, String startKey, MutableLong page,
+            MutableLong itemcount, int maxItems, boolean reverse){
+             
+        if(StringUtils.isBlank(key) || cf == null)
+            return new ArrayList<HColumn<String, String>>();
+  
+        ArrayList<HColumn<String, String>> list = new ArrayList<HColumn<String, String>>();
+  
+        try {
+            SliceQuery<String, String, String> sq = HFactory.createSliceQuery(keyspace,
+                    strser, strser, strser);
+            sq.setKey(key);
+            sq.setColumnFamily(cf);
+            sq.setRange(startKey, null, reverse, maxItems);
+  
+            list.addAll((Collection<? extends HColumn<String, String>>)
+                    sq.execute().get().getColumns());
+  
+            if(!list.isEmpty() && page != null){
+                HColumn<?,?> last = list.get(list.size() - 1);
+                Object lastk = ((HColumn<String, String>) last).getName();
+                page.setValue((long) lastk);
+                // showing max + 1 just to get the start key of next page so remove last
+                if(maxItems > 1 && list.size() > maxItems){
+                    list.remove(list.size() - 1); //remove last
+                }
+            }
+//            // count keys
+//            if(itemcount != null){
+//                int count = countColumns(key, cf, colNameClass);
+//                itemcount.setValue(count);
+//            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, null, e);
+        }
+  
+        return list;
+    }
+
 }

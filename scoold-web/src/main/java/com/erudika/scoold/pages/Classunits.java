@@ -5,9 +5,8 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.persistence.DAO;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Classunit;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */ 
 public class Classunits extends BasePage{
 
@@ -43,7 +42,7 @@ public class Classunits extends BasePage{
 
 	public void onGet(){
 		if(!param("create")){
-			classlist = Search.findQuery(PObject.classname(Classunit.class), pagenum, itemcount, "*");
+			classlist = search.findQuery(PObject.classname(Classunit.class), pagenum, itemcount, "*");
 		}
 	}
 

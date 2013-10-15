@@ -5,9 +5,8 @@ import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.persistence.DAO;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Media.MediaType;
 import com.erudika.scoold.util.Constants;
@@ -85,13 +84,13 @@ public class Classunit extends PObject {
    
 	public School getSchool(){
 		if(getParentid() == null) return null;
-		if(school == null) school = DAO.getInstance().read(getParentid());
+		if(school == null) school = getDao().read(getParentid());
 		return school;
 	}
 	
 	public Post getBlackboard(){
 		if(blackboard == null){
-			ArrayList<PObject> list = Search.findTerm(classname(Blackboard.class), 
+			ArrayList<PObject> list = getSearch().findTerm(classname(Blackboard.class), 
 					null, null, DAO.CN_PARENTID, getId());
 			if(list.isEmpty()){
 				blackboard = (Blackboard) list.get(0);				
@@ -129,7 +128,7 @@ public class Classunit extends PObject {
 		bb.setBody(" ");
 		bb.setCreatorid(getCreatorid());
 		bb.setParentid(getId());
-		DAO.getInstance().create(bb);
+		bb.create();
 		linkToUser(getCreatorid());
 		
         return getId();
@@ -147,9 +146,9 @@ public class Classunit extends PObject {
 		return this.countLinks(User.class).intValue();
 	}
 	
-	public static boolean mergeClasses(String primaryClassid, String duplicateClassid){
-		Classunit primaryClass = DAO.getInstance().read(primaryClassid);
-		Classunit duplicateClass = DAO.getInstance().read(duplicateClassid);
+	public boolean mergeWith(String duplicateClassid){
+		Classunit primaryClass = this;
+		Classunit duplicateClass = getDao().read(duplicateClassid);
 		
 		if(primaryClass == null || duplicateClass == null) return false;
 		else if(!duplicateClass.getParentid().equals(primaryClass.getParentid())) return false;
@@ -164,13 +163,13 @@ public class Classunit extends PObject {
 		
 		for (Linker link : allLinks) {
 			try {
-				PropertyUtils.setProperty(link, link.getFirstIdFieldName(), primaryClassid);
+				PropertyUtils.setProperty(link, link.getIdFieldNameFor(Classunit.class), getId());
 			} catch (Exception ex) {
 				Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		
-		DAO.getInstance().updateAll(allLinks);
+		getDao().updateAll(allLinks);
 
 		// STEP 3:
 		// delete duplicate
@@ -179,9 +178,9 @@ public class Classunit extends PObject {
 		return true;
 	}
 	
-	public static String sendChat(String primaryClassid, String chat) {
-		if(primaryClassid == null || StringUtils.isBlank(chat)) return "[]";
-		String chad = receiveChat(primaryClassid);
+	public String sendChat(String chat) {
+		if(getId() == null || StringUtils.isBlank(chat)) return "[]";
+		String chad = receiveChat();
 		try {
 			StringBuilder sb = new StringBuilder("[");
 			JSONArray arr = new JSONArray(chad);
@@ -199,14 +198,14 @@ public class Classunit extends PObject {
 			Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
-		DAO.getInstance().putColumn(primaryClassid, DAO.OBJECTS, "chat", chad);
+		getDao().putColumn(getId(), DAO.OBJECTS, "chat", chad);
 		return chad;
 	}
 	
-	public static String receiveChat(String primaryClassid) {
-		String chat = DAO.getInstance().getColumn(primaryClassid, DAO.OBJECTS, "chat");
-		if(StringUtils.isBlank(chat)) chat = "[]";
-		return chat;
+	public String receiveChat() {
+		String chad = getDao().getColumn(getId(), DAO.OBJECTS, "chat");
+		if(StringUtils.isBlank(chad)) chad = "[]";
+		return chad;
 	}
 
 	public boolean equals(Object obj){
@@ -226,7 +225,7 @@ public class Classunit extends PObject {
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getAllMedia(getId(), type, pagenum, itemcount, reverse, maxItems);
+		return Media.getAllMedia(getId(), type, pagenum, itemcount, reverse, maxItems, getSearch());
 	}
 
 	public void deleteAllMedia(){

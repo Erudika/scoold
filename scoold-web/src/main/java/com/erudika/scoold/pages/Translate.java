@@ -5,21 +5,19 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.PObject;
-import com.erudika.para.i18n.LanguageUtils;
-import com.erudika.para.i18n.Translation;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Translation;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.User.Badge;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Translate extends BasePage{
 
@@ -27,27 +25,24 @@ public class Translate extends BasePage{
 	
 	public Locale showLocale;
 	public int showLocaleProgress;
-	public ArrayList<PObject> translationslist;	// only the translations for given key
-	public Set<String> approvedTransMap;
-	public static Map<String, String> deflang = LanguageUtils.getDefaultLanguage();
+	public ArrayList<ParaObject> translationslist;	// only the translations for given key
 	public ArrayList<String> langkeys;
 	public int showIndex;
+	public boolean isTranslated = false;
 
 	public Translate(){
 		title = lang.get("translate.title");
 		langkeys = new ArrayList<String>();
 
 		if (param("locale")) {
-			showLocale = LanguageUtils.ALL_LOCALES.get(getParamValue("locale"));
+			showLocale = langutils.getAllLocales().get(getParamValue("locale"));
 			if(showLocale == null || showLocale.getLanguage().equals("en")){
 				setRedirect(languageslink);
 				return;
 			}
 			title += " - " + showLocale.getDisplayName(showLocale);
 
-			approvedTransMap = LanguageUtils.getApprovedTransKeys(showLocale.getLanguage());
-			
-			for (String key : LanguageUtils.getDefaultLanguage().keySet()) {
+			for (String key : deflang.keySet()) {
 				langkeys.add(key);
 			}
 			
@@ -67,15 +62,12 @@ public class Translate extends BasePage{
 	public void onGet(){
 		if(isAjaxRequest()) return;
 		if(param("locale")){
-			double c1 = (double) approvedTransMap.size();
-			double c2 = (double) lang.size();
-			showLocaleProgress = (int) (Math.round((c1 / c2) * 100));
-
+			showLocaleProgress = langutils.getTranslationProgressMap().get(showLocale.getLanguage());
 			if(param("index")){
 				// this is what is currently shown for translation
 				String langkey = langkeys.get(showIndex);
-				
-				translationslist = LanguageUtils.readAllTranslationsForKey(showLocale.getLanguage(), langkey, pagenum, itemcount);
+				translationslist = langutils.readAllTranslationsForKey(showLocale.getLanguage(), 
+						langkey, pagenum, itemcount);
 			}
 		}
 	}
@@ -84,7 +76,8 @@ public class Translate extends BasePage{
 		if(param("locale") && param("gettranslationhtmlcode")){
 			String value = StringUtils.trim(getParamValue("value"));
 			String langkey = langkeys.get(showIndex);
-			boolean isTranslated = approvedTransMap.contains(langkey);
+			Set<String> approved = langutils.getApprovedTransKeys(showLocale.getLanguage());
+			isTranslated = approved.contains(langkey);
 			if(!StringUtils.isBlank(value) && (!isTranslated || inRole("admin"))){
 				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
 				trans.setCreatorid(authUser.getId());
@@ -92,7 +85,7 @@ public class Translate extends BasePage{
 				addModel("newtranslation", trans);
 			}
 			if(!isAjaxRequest()){
-				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex));
+				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex, approved));
 			}
 		}else if(param("reset") && inRole("admin")){
 			String key = getParamValue("reset");
@@ -113,11 +106,9 @@ public class Translate extends BasePage{
 			if(trans != null){
 				if(trans.isApproved()){
 					trans.disapprove();
-					approvedTransMap.remove(trans.getKey());
 				}else{
 					trans.approve();
-					approvedTransMap.add(trans.getKey());
-					addBadge(Badge.POLYGLOT, User.getUser(trans.getCreatorid()), true);
+					addBadge(Badge.POLYGLOT, (User) dao.read(trans.getCreatorid()), true);
 				}
 			}
 			if(!isAjaxRequest())
@@ -136,14 +127,14 @@ public class Translate extends BasePage{
 		}
 	}
 	
-	private int getNextIndex(int start){
+	private int getNextIndex(int start, Set<String> approved){
 		if(start < 0) start = 0;
-		if(start >= approvedTransMap.size()) start = approvedTransMap.size() - 1;
+		if(start >= approved.size()) start = approved.size() - 1;
 		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);
 		
 		// if there are untranslated strings go directly there
-		if(approvedTransMap.size() != langkeys.size()){
-			while(approvedTransMap.contains(langkeys.get(nexti))){
+		if(approved.size() != langkeys.size()){
+			while(approved.contains(langkeys.get(nexti))){
 				nexti = (nexti + 1) >= langkeys.size() ? 0 : (nexti + 1);
 			}
 		}

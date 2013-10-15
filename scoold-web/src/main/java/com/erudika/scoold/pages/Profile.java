@@ -12,15 +12,15 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.User.Badge;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.School;
-import com.erudika.scoold.core.User.UserGroup;
-import com.erudika.scoold.core.User.UserType;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import static com.erudika.para.core.User.Groups.*;
+
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */ 
 public class Profile extends BasePage{
 	
@@ -112,20 +112,10 @@ public class Profile extends BasePage{
 		}
 		
 		if(!isMyProfile){
-			if(param("makemod") && inRole("admin")){
-				boolean makemod = Boolean.parseBoolean(getParamValue("makemod"));
-				if(makemod == true && !showUser.isModerator()){
-					showUser.setGroups(UserGroup.MODS.toString());
-					showUser.update();
-				}else if(makemod == false && showUser.isModerator() && !showUser.isAdmin()){
-					try {
-						UserType ut = UserType.valueOf(showUser.getType().toUpperCase());
-						showUser.setGroups(ut.toGroupString());
-						showUser.update();
-					} catch (Exception e) {
-						logger.severe(e.toString());
-					}
-				}
+			if(param("makemod") && inRole("admin") && !showUser.isAdmin()){
+				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !showUser.isModerator();
+				showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
+				showUser.update();
 			}
 		}
     }

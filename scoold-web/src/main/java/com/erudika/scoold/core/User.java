@@ -1,9 +1,9 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.persistence.DAO;
+import static com.erudika.para.core.PObject.classname;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Media.MediaType;
 import com.erudika.scoold.util.Constants;
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -40,25 +39,15 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 	@Stored private Long comments;
 	@Stored private Long reputation;
 	@Stored private String contacts;
-	@Stored private String identifier;
+//	@Stored private String identifier;
 	@Stored private Long photos;
 	@Stored private String favtags;
 	@Stored private String newbadges;
 	@Stored private Integer newmessages;
 	@Stored private String eduperiods; // JSON {schoolid: 1234(from):1234(to)}, schoolid: {...}}
-	@Stored private String identifiertwo;
 	
 	private transient Integer newreports;
 	private transient boolean isGroupMember;
-	private transient Long authstamp;
-
-	public static enum UserGroup{
-		ALUMNI, STUDENTS, TEACHERS, ADMINS, MODS;
-		
-		public String toString(){
-			return super.toString().toLowerCase();
-		}
-	}
 
 	public static enum Badge{
 		VETERAN(10),		//regular visitor		//TODO: IMPLEMENT!
@@ -111,15 +100,6 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		public String toString(){
 			return super.toString().toLowerCase();
 		}
-
-		public String toGroupString(){
-			switch(this){
-				case ALUMNUS: return UserGroup.ALUMNI.toString();
-				case STUDENT: return UserGroup.STUDENTS.toString();
-				case TEACHER: return UserGroup.TEACHERS.toString();
-				default: return UserGroup.STUDENTS.toString();
-			}
-		}		
 	};
 
     public User () {
@@ -134,7 +114,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		this.comments = 0L;
 		this.reputation = 0L;
 		this.photos = 0L;
-		setGroups(UserGroup.STUDENTS.toString());
+		setGroups(Groups.USERS.toString());
 	}
 
 	public User (String id){
@@ -150,14 +130,6 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		this.type =  type.toString();
     }
 
-	public String getIdentifiertwo() {
-		return identifiertwo;
-	}
-
-	public void setIdentifiertwo(String identifiertwo) {
-		this.identifiertwo = identifiertwo;
-	}
-	
 	public String getEduperiods() {
 		return eduperiods;
 	}
@@ -174,7 +146,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		this.newmessages = newmessages;
 	}
 
-	public boolean isIsGroupMember() {
+	public boolean getIsGroupMember() {
 		return isGroupMember;
 	}
 
@@ -388,7 +360,8 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 	}
 	
 	private ArrayList<? extends Post> getPostsForUser(String type, MutableLong pagenum, MutableLong itemcount){
-		return Search.findTerm(type, pagenum, itemcount, DAO.CN_CREATORID, getId(), "votes", true, Utils.MAX_ITEMS_PER_PAGE);
+		return getSearch().findTerm(type, pagenum, itemcount, 
+				DAO.CN_CREATORID, getId(), "votes", true, Utils.MAX_ITEMS_PER_PAGE);
 	}
 
 	public String getFavtagsString(){
@@ -565,23 +538,19 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 
     public String create() {
 		setLastseen(System.currentTimeMillis());
-		return DAO.getInstance().createUser(this);
-    }
-
-    public void update(){
-		DAO.getInstance().updateUser(this);
+		return super.create();
     }
 
     public void delete(){
 		deleteChildren(Message.class);
 		deleteChildren(Media.class);
-		DAO.getInstance().deleteUser(this);
-		DAO.getInstance().deleteIdentifier(identifiertwo);
+		super.delete();
     }
 
 	public ArrayList<Media> getMedia(MediaType type, String label, MutableLong pagenum,
 			MutableLong itemcount, int maxItems, boolean reverse) {
-		return Media.getAllMedia(getId(), type, pagenum, itemcount, reverse, maxItems);
+		return Media.getAllMedia(getId(), type, pagenum, itemcount, 
+				reverse, maxItems, getSearch());
 	}
 
 	public void deleteAllMedia(){
@@ -690,60 +659,33 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		return m;
 	}
     
-    public static User getUser(String identifier){
-		return (User) DAO.getInstance().readUserForIdentifier(identifier);
-    }
-
-	public boolean isFacebookUser(){
-		return identifier != null && NumberUtils.isDigits(identifier);
-	}
-
-	public static boolean exists(String identifier){
-		return Search.getCount(classname(User.class), "identifier", identifier) > 0;
+	public void markAllMessagesAsRead(){
+		if(StringUtils.isBlank(getId())) return;
+		ArrayList<PObject> list = new ArrayList<PObject>();
+		List<Message> unread = getSearch().findTwoTerms(classname(Message.class), null, null, 
+				DAO.CN_PARENTID, getId(), "isread", false);
+		for (Message message : unread) {
+			message.setIsread(Boolean.TRUE);
+			list.add(message);
+		}
+		getDao().updateAll(list);
 	}
 	
-	public List<String> getIdentifiers(){
-		return Arrays.asList(identifier, identifiertwo);
-	}
-
-	public void attachIdentifier(String identifier){
-		setIdentifiertwo(identifier);
-		DAO.getInstance().createIdentifier(getId(), identifier);
-	}
-
-	public void detachIdentifier(String identifier){
-		DAO.getInstance().deleteIdentifier(identifier);
-	}
-
-	public boolean isModerator(){
-		if(isAdmin()) return true;
-		return StringUtils.equalsIgnoreCase(getGroups(), UserGroup.MODS.toString());
-	}
-
-	public boolean isAdmin(){
-		return StringUtils.equalsIgnoreCase(getGroups(), UserGroup.ADMINS.toString());
-	}
-
 	public int countNewMessages(){
 		if(newmessages == null)
-			newmessages = Message.countNewMessages(getId());
+			newmessages = getSearch().getCount(classname(Message.class), 
+					DAO.CN_PARENTID, getId(), "isread", false).intValue();
 		return newmessages;
 	}
 	
 	public int countNewReports(){
 		if(!isModerator()) return 0;
 		if(newreports == null)
-			newreports = Search.getBeanCount(PObject.classname(Report.class)).intValue();
+			newreports = getSearch().getBeanCount(PObject.classname(Report.class)).intValue();
 			
 		return newreports;
 	}
 	
-	public Long getAuthstamp(){
-		if(authstamp == null)
-			authstamp = NumberUtils.toLong(DAO.getInstance().loadAuthMap(getIdentifier()).get(DAO.CN_AUTHSTAMP));
-		return authstamp;
-	}
-
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;

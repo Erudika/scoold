@@ -7,7 +7,7 @@ package com.erudika.scoold.pages;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Message extends BasePage{
 	

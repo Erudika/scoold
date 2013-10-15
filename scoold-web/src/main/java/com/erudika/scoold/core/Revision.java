@@ -6,18 +6,17 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Revision extends PObject{
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String body;
 	@Stored private String description;
-	@Stored private String userid;
 	@Stored private String title;
 	@Stored private String tags;
 	@Stored private Boolean original;
@@ -52,6 +51,7 @@ public class Revision extends PObject{
 	}
 
 	public void setTitle(String title) {
+		setName(title);
 		this.title = title;
 	}
 
@@ -72,8 +72,8 @@ public class Revision extends PObject{
 	}
 
 	public User getAuthor(){
-		if(userid == null) return null;
-		if(author == null) author = User.getUser(userid);
+		if(getCreatorid() == null) return null;
+		if(author == null) author = getDao().read(getCreatorid());
 		return author;
 	}
 

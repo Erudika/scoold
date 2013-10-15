@@ -10,6 +10,10 @@ package com.erudika.scoold.core;
  */
 public class Reply extends Post{
 	private static final long serialVersionUID = 1L;
+
+	public Reply() {
+		super();
+	}
 	
 	public boolean canHaveChildren() {
 		return true;

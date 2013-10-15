@@ -6,24 +6,19 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.PObject;
-import static com.erudika.para.core.PObject.classname;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.persistence.DAO;
 import com.erudika.scoold.util.Constants;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Message extends PObject{
 	private static final long serialVersionUID = 1L;
   
-	@Stored private String toid;
     @Stored private Boolean isread;
     @Stored private String body;
 	
@@ -35,25 +30,24 @@ public class Message extends PObject{
     }
 
 	public Message(Set<String> toids, String creatorid, Boolean isread, String body) {
-		this.toids = toids;
 		setCreatorid(creatorid);
+		this.toids = toids;
 		this.isread = isread;
 		this.body = body;
-        this.isread = false;
 	}
 
 	public Message(String id, String toid) {
 		this();
 		setId(id);
-		this.toid = toid;        
+		setParentid(toid);
 	}
 
 	public String getToid() {
-		return toid;
+		return getParentid();
 	}
 
 	public void setToid(String toid) {
-		this.toid = toid;
+		setParentid(toid);
 	}
 
     public String getBody() {
@@ -74,7 +68,7 @@ public class Message extends PObject{
 
 	public User getAuthor(){
 		if(getCreatorid() == null) return null;
-		if(author == null) author = User.getUser(getCreatorid());
+		if(author == null) author = getDao().read(getCreatorid());
 		return author;
 	}
 
@@ -91,33 +85,18 @@ public class Message extends PObject{
 		
 		return true;
 	}
-	
-	public static int countNewMessages(String parentid){
-		return Search.getCount(classname(Message.class), DAO.CN_PARENTID, parentid, "isread", false).intValue();
-	}
-
-	public static void markAllRead(String parentid){
-		if(StringUtils.isBlank(parentid)) return;
-		ArrayList<PObject> list = new ArrayList<PObject>();
-		List<Message> unread = Search.findTwoTerms(classname(Message.class), null, null, 
-				DAO.CN_PARENTID, parentid, "isread", false);
-		for (Message message : unread) {
-			message.setIsread(Boolean.TRUE);
-			list.add(message);
-		}
-		DAO.getInstance().updateAll(list);
-	}
 
 	public String create() {
-		boolean existsUser = User.exists(toid);
-		int count = Search.getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
+		DAO dao = getDao();
+		boolean existsUser = dao.existsColumn(getParentid(), DAO.OBJECTS, DAO.CN_ID);
+		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
 		if (!existsUser || count > Constants.MAX_MESSAGES_PER_USER) {
 			return null;
 		}
 
 		String id = super.create();
-		Integer newmessages = countNewMessages(id) + 1;
-		DAO.getInstance().putColumn(toid, DAO.OBJECTS, "newmessages", newmessages.toString());
+		Integer newmessages = new User(getParentid()).countNewMessages() + 1;
+		dao.putColumn(getParentid(), DAO.OBJECTS, "newmessages", newmessages.toString());
 		return id;
 	}
 	
@@ -130,7 +109,8 @@ public class Message extends PObject{
 			return false;
 		}
 		final Message other = (Message) obj;
-		if (this.toid != other.toid && (this.toid == null || !this.toid.equals(other.toid))) {
+		if (this.getParentid() != other.getParentid() && (this.getParentid() == null || 
+				!this.getParentid().equals(other.getParentid()))) {
 			return false;
 		}
 		if (getCreatorid() == null || !getCreatorid().equals(other.getCreatorid())) {
@@ -145,12 +125,11 @@ public class Message extends PObject{
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 79 * hash + (this.toid != null ? this.toid.hashCode() : 0);
+		hash = 79 * hash + (this.getParentid() != null ? this.getParentid().hashCode() : 0);
 		hash = 79 * hash + (getCreatorid() != null ? getCreatorid().hashCode() : 0);
 		hash = 79 * hash + (this.body != null ? this.body.hashCode() : 0);
 		hash = 79 * hash + (getTimestamp() != null ? getTimestamp().hashCode() : 0);
 		return hash;
 	}
-     
     
 }

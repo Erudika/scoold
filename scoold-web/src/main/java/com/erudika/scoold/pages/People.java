@@ -6,13 +6,12 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.Search;
 import com.erudika.scoold.core.User;
 import java.util.ArrayList;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class People extends BasePage{
 
@@ -27,6 +26,6 @@ public class People extends BasePage{
 	public void onGet(){
 		String sortBy = "";
 		if("rep".equals(getParamValue("sortby"))) sortBy = "reputation";
-		userlist = Search.findQuery(PObject.classname(User.class), pagenum, itemcount, "*", sortBy, true, MAX_ITEMS_PER_PAGE);
+		userlist = search.findQuery(PObject.classname(User.class), pagenum, itemcount, "*", sortBy, true, MAX_ITEMS_PER_PAGE);
 	}
 }

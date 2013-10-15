@@ -63,12 +63,8 @@ function setProps () {
 	sk=$(echo `readProp $KEYS "com.scoold.awssecretkey"` | sed 's/\//\\\//g')
 	
 	if [ -e $ESCONFIG ]; then		
-		ap=$(readProp $KEYS "com.scoold.awssqsendpoint")
-		id=$(readProp $KEYS "com.scoold.awssqsqueueid")
-		queue=$(echo "$ap/$id/$INDEXNAME" | sed 's/\//\\\//g' | sed 's/\./\\\./g')
 		sed -e "1,/cloud\.aws\.access_key:/ s/cloud\.aws\.access_key:.*/cloud\.aws\.access_key: $ak/" -i.bak $ESCONFIG
 		sed -e "1,/cloud\.aws\.secret_key:/ s/cloud\.aws\.secret_key:.*/cloud\.aws\.secret_key: $sk/" -i.bak $ESCONFIG
-		sed -e "1,/cloud\.aws\.sqs\.queue_url:/ s/cloud\.aws\.sqs\.queue_url:.*/cloud\.aws\.sqs\.queue_url: $queue/" -i.bak $ESCONFIG
 	fi
 	if [ -e $ESCONFIG ]; then
 		sed -e "1,/access_key/ s/access_key.*/access_key = $ak/" -i.bak $S3CONFIG

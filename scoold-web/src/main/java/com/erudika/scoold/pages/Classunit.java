@@ -8,6 +8,7 @@ package com.erudika.scoold.pages;
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.User;
@@ -16,12 +17,13 @@ import com.erudika.scoold.core.User.UserType;
 import com.erudika.scoold.util.Constants;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import javax.inject.Inject;
 import org.apache.click.control.RadioGroup;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class Classunit extends BasePage{
 
@@ -37,6 +39,8 @@ public class Classunit extends BasePage{
 
 	public String photoslink;
 	public String drawerlink;
+
+	@Inject private Emailer emailer;
 	
 	public Classunit(){
 		title = lang.get("class.title");
@@ -149,7 +153,7 @@ public class Classunit extends BasePage{
 			}
 			return;
 		}else if(param("receivechat")){
-			chatJSONResponse(com.erudika.scoold.core.Classunit.receiveChat(showClass.getId()));
+			chatJSONResponse(showClass.receiveChat());
 		}
 	}
 
@@ -210,8 +214,7 @@ public class Classunit extends BasePage{
 			}
 			if(!isAjaxRequest()) setRedirect(classlink+"/"+showClass.getId());
 		}else if (param("sendchat")) {
-			chatJSONResponse(com.erudika.scoold.core.Classunit.
-					sendChat(showClass.getId(), getJSONMessage(getParamValue("message"))));
+			chatJSONResponse(showClass.sendChat(getJSONMessage(getParamValue("message"))));
 		}else{
 			if(canEdit){
 				Utils.populate(showClass, req.getParameterMap());
@@ -235,7 +238,7 @@ public class Classunit extends BasePage{
 		String subject = lang.get("class.invitation");
 		ArrayList<String> emails = new ArrayList<String>();
 		for (User user : users) emails.add(user.getEmail());
-		Utils.sendEmail(emails, subject, body);
+		emailer.sendEmail(emails, subject, body);
 	}
 	
 	private void chatJSONResponse(String chat){

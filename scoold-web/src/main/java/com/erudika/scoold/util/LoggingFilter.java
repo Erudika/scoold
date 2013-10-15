@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public class LoggingFilter implements Filter {
 

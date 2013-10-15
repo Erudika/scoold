@@ -5,25 +5,22 @@
 
 package com.erudika.scoold.core;
 
+import com.erudika.para.core.Tag;
 import com.erudika.para.core.PObject;
-import com.erudika.para.utils.AppListener;
-import com.erudika.para.utils.DAO;
-import com.erudika.para.utils.Search;
-import com.erudika.para.utils.Stored;
+import com.erudika.para.annotations.Stored;
+import com.erudika.para.core.Linkable;
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public abstract class Post extends PObject{
 	private static final long serialVersionUID = 1L;
@@ -39,7 +36,6 @@ public abstract class Post extends PObject{
 	@Stored private Long lastactivity;
 	@Stored private Boolean deleteme;
 	@Stored private String lasteditby;
-	@Stored private Integer votes;
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
 	@Stored private Integer oldvotes;
@@ -52,7 +48,6 @@ public abstract class Post extends PObject{
 	private transient Long pagenum;
 	
 	public Post(){
-		this.votes = 0;
 		this.answercount = 0L;
 		this.viewcount = 0L;
 		this.commentcount = 0L;
@@ -82,14 +77,6 @@ public abstract class Post extends PObject{
 
 	public void setDeletereportid(String deletereportid) {
 		this.deletereportid = deletereportid;
-	}
-
-	public Integer getOldvotes() {
-		return oldvotes;
-	}
-
-	public void setOldvotes(Integer oldvotes) {
-		this.oldvotes = oldvotes;
 	}
 
 	public Form getEditForm() {
@@ -200,15 +187,6 @@ public abstract class Post extends PObject{
 		this.body = body;
 	}
 	
-	public Integer getVotes() {
-		return votes;
-	}
-
-	public void setVotes(Integer votes) {
-		setOldvotes(this.votes);
-		this.votes = votes;
-	}
-
 	public boolean isClosed(){
 		return this.closerid != null;
 	}
@@ -239,21 +217,21 @@ public abstract class Post extends PObject{
 	public void delete() {
 		// delete post
 		super.delete();
-		ArrayList<PObject> children = new ArrayList<PObject>();
+		ArrayList<ParaObject> children = new ArrayList<ParaObject>();
 		getAllChildren(this, children);
 		
 		if(canHaveChildren()){
-			for (PObject reply : getChildren(Reply.class)) {
+			for (ParaObject reply : getChildren(Reply.class)) {
 				// delete Replies
-				getAllChildren(reply, children);
+				getAllChildren((Linkable) reply, children);
 			}
 		}
-		DAO.getInstance().deleteAll(children);
+		getDao().deleteAll(children);
 
 		createUpdateOrDeleteTags(null, getTags());
 	}
 	
-	private void getAllChildren(PObject p, ArrayList<PObject> all){
+	private void getAllChildren(Linkable p, ArrayList<ParaObject> all){
 		// delete Comments
 		all.addAll(p.getChildren(Comment.class));
 		// delete Revisions
@@ -285,28 +263,28 @@ public abstract class Post extends PObject{
 
 		//create update or deleteRow a given tag
 		for (Map.Entry<String, Integer> tagEntry : newTagIndex.entrySet()) {
-			Tag tag = DAO.getInstance().read(tagEntry.getKey());
+			Tag tag = getDao().read(Tag.id(tagEntry.getKey()));
 			switch(tagEntry.getValue()){
 				case 1:
 					if(tag == null){
 						//create tag
 						tag = new Tag(tagEntry.getKey());
-						DAO.getInstance().create(tag);
+						getDao().create(tag);
 					}else{
 						//update tag count
 						tag.incrementCount();
-						DAO.getInstance().update(tag);
+						getDao().update(tag);
 					}
 					break;
 				case -1:
 					if(tag != null){
 						if(tag.getCount() - 1 == 0){
 							// delete tag
-							DAO.getInstance().delete(tag);
+							getDao().delete(tag);
 						}else{
 							//update tag count
 							tag.decrementCount();
-							DAO.getInstance().update(tag);
+							getDao().update(tag);
 						}
 					}
 					break;
@@ -326,18 +304,18 @@ public abstract class Post extends PObject{
 	
 	public User getAuthor(){
 		if(getCreatorid() == null) return null;
-		if(author == null) author = User.getUser(getCreatorid());
+		if(author == null) author = getDao().read(getCreatorid());
 		return author;
 	}
 
 	public User getLastEditor(){
 		if(lasteditby == null) return null;
-		if(lastEditor == null) lastEditor = User.getUser(lasteditby);
+		if(lastEditor == null) lastEditor = getDao().read(lasteditby);
 		return lastEditor;
 	}
 
 	public void restoreRevisionAndUpdate(String revisionid){
-		Revision rev = DAO.getInstance().read(revisionid);
+		Revision rev = getDao().read(revisionid);
 		if(rev != null){
 			//copy rev data to post
 			setTitle(rev.getTitle());
@@ -418,7 +396,7 @@ public abstract class Post extends PObject{
 		} else if(p.isGrouppost()){
 			return plural ? grouplink+"/"+p.getParentid() : grouppostlink + pid;
 		} else if(p.isReply()){
-			Post parentp = DAO.getInstance().read(p.getParentid());
+			Post parentp = getDao().read(p.getParentid());
 			if(parentp != null){
 				return parentp.getPostLink(plural, noid, questionslink, questionlink, 
 						feedbacklink, grouplink, grouppostlink, classeslink, classlink);

@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  *
- * @author alexb
+ * @author Alex Bogdanovski <albogdano@me.com>
  */
 public final class Language {
 	
@@ -169,6 +169,9 @@ public final class Language {
 			put("goback", "Go back");
 			put("minlength", "At least {0} characters are required.");
 			put("maxlength", "Too long. {0} characters max.");
+			put("requiredfield", "This field is required and cannot be empty.");
+			put("bademail", "This email appears to be invalid.");
+			put("emailexists", "This email is already registered.");
 			put("invite", "Invite people");
 			put("contactdetails", "Contact details");
 			put("more", "More");
@@ -228,9 +231,6 @@ public final class Language {
 			put("signup.form.iama", "I am a");
 			put("signup.form.email", "Email");
 			put("signup.form.termsofuse", "By clicking the button above, you agree to our 'Terms of use'.");
-			put("signup.form.error.required", "This field is required and cannot be empty.");
-			put("signup.form.error.email", "This email appears to be invalid.");
-			put("signup.form.error.emailexists", "This email is already registered.");
 
 			put("signin.facebook", "Sign in with Facebook");
 			put("signin.openid", "Sign in with OpenID");
@@ -396,7 +396,6 @@ public final class Language {
 			put("translate.select", "Select language");
 			put("translate.translate", "Translate");
 
-			put("msgcode.2", "Signup failed!");
 			put("msgcode.3", "Authentication failed or was canceled.");
 			put("msgcode.4", "Your account has been deleted.");
 			put("msgcode.5", "You have been signed out.");

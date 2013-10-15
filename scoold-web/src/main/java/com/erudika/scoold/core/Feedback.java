@@ -11,6 +11,10 @@ package com.erudika.scoold.core;
 public class Feedback extends Post{
 	private static final long serialVersionUID = 1L;
 
+	public Feedback() {
+		super();
+	}
+	
 	public boolean canHaveChildren() {
 		return true;
 	}
