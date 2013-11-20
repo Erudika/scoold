@@ -4,6 +4,7 @@ package com.erudika.scoold.pages;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.erudika.para.Para;
 import com.erudika.para.persistence.DAO;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.search.Search;
@@ -11,7 +12,8 @@ import com.erudika.para.core.Votable;
 import com.erudika.para.core.PObject;
 import com.erudika.para.i18n.CurrencyUtils;
 import com.erudika.para.i18n.LanguageUtils;
-import com.erudika.para.security.AuthModule;
+import com.erudika.para.security.SecurityUtils;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.ContactDetail;
@@ -26,13 +28,12 @@ import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Report.ReportType;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.User.Badge;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,29 +54,30 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 /**
  *
  * @author Alex Bogdanovski <albogdano@me.com> 
  */
-public class BasePage extends Page {
+public class Base extends Page {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String APPNAME = Utils.PRODUCT_NAME; //app name
+	public static final String APPNAME = Config.PRODUCT_NAME; //app name
 	public static final String CDN_URL = "http://static.scoold.com"; 
 	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
-	public static final boolean IN_PRODUCTION = Utils.IN_PRODUCTION;
-	public static final boolean IN_DEVELOPMENT = !Utils.IN_PRODUCTION;
-	public static final int MAX_ITEMS_PER_PAGE = Utils.MAX_ITEMS_PER_PAGE;
-	public static final int SESSION_TIMEOUT_SEC = Utils.SESSION_TIMEOUT_SEC;
+	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
+	public static final boolean IN_DEVELOPMENT = !Config.IN_PRODUCTION;
+	public static final int MAX_ITEMS_PER_PAGE = Config.MAX_ITEMS_PER_PAGE;
+	public static final int SESSION_TIMEOUT_SEC = Config.SESSION_TIMEOUT_SEC;
 	public static final long ONE_YEAR = 365L*24L*60L*60L*1000L;
-	public static final String SEPARATOR = Utils.SEPARATOR;
-	public static final String AUTH_USER = Utils.AUTH_COOKIE;
+	public static final String SEPARATOR = Config.SEPARATOR;
+	public static final String AUTH_USER = Config.AUTH_COOKIE;
 	
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String MOBILE_COOKIE = "scoold-mobile";
-	public static final String FB_APP_ID = Utils.FB_APP_ID;
-	public static final Logger logger = Logger.getLogger(BasePage.class.getName());
+	public static final String FB_APP_ID = Config.FB_APP_ID;
+	public static final Logger logger = LoggerFactory.getLogger(Base.class);
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
 	public final String localeCookieName = APPNAME.toLowerCase() + "-locale";
@@ -147,13 +149,13 @@ public class BasePage extends Page {
 	public transient HttpServletResponse resp = getContext().getResponse();
 	public static Map<String, String> deflang = Language.ENGLISH;
 	public Map<String, String> lang = deflang;
+	public Locale currentLocale;
 	
-	@Inject public transient DAO dao;
-	@Inject public transient Search search;
-	@Inject public transient LanguageUtils langutils;
+	@Inject public transient DAO dao;// = Para.getDAO();
+	@Inject public transient Search search;// = Para.getSearch();
+	@Inject public transient LanguageUtils langutils;// = new LanguageUtils(search, Para.getCache());
 		
-	public BasePage() {
-		req = getContext().getRequest();
+	public Base() {
 		checkAuth();
 		cdnSwitch();
 		includeFBscripts = false;
@@ -199,10 +201,9 @@ public class BasePage extends Page {
 	
 	private void checkAuth() {	
 		try{
-			if (AuthModule.getAuthenticatedUser() != null) {
-				authUser = (User) AuthModule.getAuthenticatedUser();
+			if (SecurityUtils.getAuthenticatedUser() != null) {
+				authUser = (User) SecurityUtils.getAuthenticatedUser();
 				if(authUser != null){
-					addModel("sectoken", AuthModule.getCSRFtoken(authUser));
 					HOMEPAGE = profilelink.concat("/").concat(authUser.getId());
 					long delta = System.currentTimeMillis() - authUser.getLastseen();
 					if(delta > 2 * 60 * 60 * 1000){
@@ -223,10 +224,11 @@ public class BasePage extends Page {
 					Utils.setStateParam("intro", "1", req, resp);
 				}
 				authenticated = false; 
-			} 
+			}
+			addModel("sectoken", SecurityUtils.getCSRFtoken(authUser));
 		} catch (Exception e) {
 			authenticated = false;
-			logger.log(Level.WARNING, "CheckAuth failed for {0}: {1}", new Object[]{req.getRemoteUser(), e});
+			logger.warn("CheckAuth failed for {0}: {1}", new Object[]{req.getRemoteUser(), e});
 			clearSession();
 			if(!req.getRequestURI().startsWith("/index.htm"))
 				setRedirect(HOMEPAGE);
@@ -247,18 +249,15 @@ public class BasePage extends Page {
 	/* * PUBLIC METHODS * */
 	
 	public final void setCurrentLocale(String langname, boolean setCookie) {
-		Locale loc = langutils.getProperLocale(langname);
-		addModel("showCurrentLocale", loc.getDisplayLanguage(loc));
+		currentLocale = langutils.getProperLocale(langname);
 //		getContext().setLocale(loc);
-		lang = langutils.readLanguage(loc.getLanguage());
+		lang = langutils.readLanguage(currentLocale.getLanguage());
 
 		if(setCookie){
 			//create a cookie
 			int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
-			ClickUtils.setCookie(req, resp, localeCookieName, 
-					loc.getLanguage(), maxAge, "/");
+			ClickUtils.setCookie(req, resp, localeCookieName, currentLocale.getLanguage(), maxAge, "/");
 		}
-		addModel("currentLocale", loc);
 	}
 	
 	private String getLanguageFromLocation(){
@@ -320,7 +319,7 @@ public class BasePage extends Page {
 						Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
 						dao.putColumn(id, DAO.OBJECTS, "commentcount", Long.toString(count - 1));
 					} catch (Exception ex) {
-						logger.log(Level.SEVERE, null, ex);
+						logger.error(null, ex);
 					}
 				}
 			}
@@ -336,7 +335,7 @@ public class BasePage extends Page {
 
 			if(lastComment.create() != null){
 				long commentCount = authUser.getComments();
-				addBadgeOnce(Badge.COMMENTATOR, commentCount >= Constants.COMMENTATOR_IFHAS);
+				addBadgeOnce(Badge.COMMENTATOR, commentCount >= AppConfig.COMMENTATOR_IFHAS);
 				authUser.setComments(commentCount + 1);
 				authUser.update();
 				commentslist.add(lastComment);
@@ -346,7 +345,7 @@ public class BasePage extends Page {
 					Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
 					dao.putColumn(parent.getId(), DAO.OBJECTS, "commentcount", Long.toString(count + 1));
 				} catch (Exception ex) {
-					logger.log(Level.SEVERE, null, ex);
+					logger.error(null, ex);
 				}
 			}
 		}
@@ -494,7 +493,7 @@ public class BasePage extends Page {
 		if(param("answer")){
 			// add new answer
 			if(!post.isClosed() && !post.isReply() && !post.isBlackboard() &&
-					post.getAnswercount() < Constants.MAX_REPLIES_PER_POST){
+					post.getAnswercount() < AppConfig.MAX_REPLIES_PER_POST){
 				//create new answer
 				Reply newq = new Reply();
 				newq.setCreatorid(authUser.getId());
@@ -503,7 +502,7 @@ public class BasePage extends Page {
 				newq.create();
 
 				post.setAnswercount(post.getAnswercount() + 1);
-				if(post.getAnswercount() >= Constants.MAX_REPLIES_PER_POST){
+				if(post.getAnswercount() >= AppConfig.MAX_REPLIES_PER_POST){
 					post.setCloserid("0");
 				}
 				post.updateLastActivity();
@@ -526,15 +525,15 @@ public class BasePage extends Page {
 							// Answer approved award - UNDO
 							post.setAnswerid(null);
 							if (!same) {
-								author.removeRep(Constants.ANSWER_APPROVE_REWARD_AUTHOR);
-								authUser.removeRep(Constants.ANSWER_APPROVE_REWARD_VOTER);
+								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
+								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
 							}
 						}else{
 							// Answer approved award - GIVE
 							post.setAnswerid(ansid);
 							if(!same){
-								author.addRep(Constants.ANSWER_APPROVE_REWARD_AUTHOR);
-								authUser.addRep(Constants.ANSWER_APPROVE_REWARD_VOTER);
+								author.addRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
+								authUser.addRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
 								addBadgeOnce(Badge.NOOB, true);
 							}
 						}
@@ -558,7 +557,7 @@ public class BasePage extends Page {
 				//				beforeUpdate.setTags(post.getTags());
 				//			}
 			} catch (Exception ex) {
-				logger.log(Level.SEVERE, null, ex);
+				logger.error(null, ex);
 			}
 
 			//update post
@@ -719,7 +718,7 @@ public class BasePage extends Page {
 		TextArea body = new TextArea("body", true);
 		body.setLabel(lang.get("messages.text"));
 		body.setMinLength(10);
-		body.setMaxLength(Constants.MAX_TEXT_LENGTH);
+		body.setMaxLength(AppConfig.MAX_TEXT_LENGTH);
 		body.setRows(4);
 		body.setCols(5);
 		body.setTabIndex(2);
@@ -776,7 +775,7 @@ public class BasePage extends Page {
 			body.setLabel(lang.get("posts.question"));
 		}
 		body.setMinLength(15);
-		body.setMaxLength(Constants.MAX_TEXT_LENGTH);
+		body.setMaxLength(AppConfig.MAX_TEXT_LENGTH);
 		body.setRows(4);
 		body.setCols(5);
 		body.setValue(post.getBody());
@@ -824,7 +823,7 @@ public class BasePage extends Page {
 			qForm.setError("You are too quick!");
 		}
 		if(tags != null && StringUtils.split(tags, ",").length >
-				Constants.MAX_TAGS_PER_POST){
+				AppConfig.MAX_TAGS_PER_POST){
 			qForm.setError(lang.get("tags.toomany"));
 		}
 
@@ -845,7 +844,7 @@ public class BasePage extends Page {
 		if (System.currentTimeMillis() - Long.parseLong(time) < timer){
 			qForm.setError("You are too quick!");
 		}
-		if(StringUtils.split(tags, ",").length > Constants.MAX_TAGS_PER_POST){
+		if(StringUtils.split(tags, ",").length > AppConfig.MAX_TAGS_PER_POST){
 			qForm.setError(lang.get("tags.toomany"));
 		}
 
@@ -883,7 +882,7 @@ public class BasePage extends Page {
 			newq.setCreatorid(authUser.getId());
 			newq.create();
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.error(null, ex);
 		}
 
 		setRedirect(getPostLink(newq, false, false));
@@ -913,16 +912,16 @@ public class BasePage extends Page {
 					if(votable instanceof Post){
 						Post p = (Post) votable;
 						if(p.isReply()){
-							addBadge(Badge.GOODANSWER, votes >= Constants.GOODANSWER_IFHAS);
-							award = Constants.ANSWER_VOTEUP_REWARD_AUTHOR;
+							addBadge(Badge.GOODANSWER, votes >= AppConfig.GOODANSWER_IFHAS);
+							award = AppConfig.ANSWER_VOTEUP_REWARD_AUTHOR;
 						}else if(p.isQuestion()){
-							addBadge(Badge.GOODQUESTION, votes >= Constants.GOODQUESTION_IFHAS);
-							award = Constants.QUESTION_VOTEUP_REWARD_AUTHOR;
+							addBadge(Badge.GOODQUESTION, votes >= AppConfig.GOODQUESTION_IFHAS);
+							award = AppConfig.QUESTION_VOTEUP_REWARD_AUTHOR;
 						}else{
-							award = Constants.VOTEUP_REWARD_AUTHOR;
+							award = AppConfig.VOTEUP_REWARD_AUTHOR;
 						}
 					}else{
-						award = Constants.VOTEUP_REWARD_AUTHOR;
+						award = AppConfig.VOTEUP_REWARD_AUTHOR;
 					}
 
 					if(author != null){
@@ -961,19 +960,19 @@ public class BasePage extends Page {
 					}
 
 					if(author != null){
-						author.removeRep(Constants.POST_VOTEDOWN_PENALTY_AUTHOR);
+						author.removeRep(AppConfig.POST_VOTEDOWN_PENALTY_AUTHOR);
 						author.update();
 						//small penalty to voter
-						authUser.removeRep(Constants.POST_VOTEDOWN_PENALTY_VOTER);
+						authUser.removeRep(AppConfig.POST_VOTEDOWN_PENALTY_VOTER);
 					}
 				}
 			} catch (Exception ex) {
-				logger.severe(ex.toString());
+				logger.error(null, ex);
 			}
 		
-			addBadgeOnce(Badge.SUPPORTER, authUser.getUpvotes() >= Constants.SUPPORTER_IFHAS);
-			addBadgeOnce(Badge.CRITIC, authUser.getDownvotes() >= Constants.CRITIC_IFHAS);
-			addBadgeOnce(Badge.VOTER, authUser.getTotalVotes() >= Constants.VOTER_IFHAS);
+			addBadgeOnce(Badge.SUPPORTER, authUser.getUpvotes() >= AppConfig.SUPPORTER_IFHAS);
+			addBadgeOnce(Badge.CRITIC, authUser.getDownvotes() >= AppConfig.CRITIC_IFHAS);
+			addBadgeOnce(Badge.VOTER, authUser.getTotalVotes() >= AppConfig.VOTER_IFHAS);
 			
 			if(result){
 	//			votable.update();
@@ -1019,7 +1018,7 @@ public class BasePage extends Page {
 	}
 	
 	public final void clearSession(){
-		AuthModule.clearSession(req, resp);
+		SecurityUtils.clearSession(req, resp);
 	}
 		
 	public boolean inRole(String role){
@@ -1069,22 +1068,18 @@ public class BasePage extends Page {
 		return true;
 	}
 	
-	public String getTemplate() {
-		return "basetemplate.htm";
-	}
-
 	public void onDestroy(){
 		if(authenticated && !isAjaxRequest()){
 			long oneYear = authUser.getTimestamp() + ONE_YEAR;
 
-			addBadgeOnce(Badge.ENTHUSIAST, authUser.getReputation() >= Constants.ENTHUSIAST_IFHAS);
-			addBadgeOnce(Badge.FRESHMAN, authUser.getReputation() >= Constants.FRESHMAN_IFHAS);
-			addBadgeOnce(Badge.SCHOLAR, authUser.getReputation() >= Constants.SCHOLAR_IFHAS);
-			addBadgeOnce(Badge.TEACHER, authUser.getReputation() >= Constants.TEACHER_IFHAS);
-			addBadgeOnce(Badge.PROFESSOR, authUser.getReputation() >= Constants.PROFESSOR_IFHAS);
-			addBadgeOnce(Badge.GEEK, authUser.getReputation() >= Constants.GEEK_IFHAS);
+			addBadgeOnce(Badge.ENTHUSIAST, authUser.getReputation() >= AppConfig.ENTHUSIAST_IFHAS);
+			addBadgeOnce(Badge.FRESHMAN, authUser.getReputation() >= AppConfig.FRESHMAN_IFHAS);
+			addBadgeOnce(Badge.SCHOLAR, authUser.getReputation() >= AppConfig.SCHOLAR_IFHAS);
+			addBadgeOnce(Badge.TEACHER, authUser.getReputation() >= AppConfig.TEACHER_IFHAS);
+			addBadgeOnce(Badge.PROFESSOR, authUser.getReputation() >= AppConfig.PROFESSOR_IFHAS);
+			addBadgeOnce(Badge.GEEK, authUser.getReputation() >= AppConfig.GEEK_IFHAS);
 			addBadgeOnce(Badge.SENIOR, System.currentTimeMillis() >= oneYear);
-			addBadgeOnce(Badge.PHOTOLOVER, authUser.getPhotos() >= Constants.PHOTOLOVER_IFHAS);
+			addBadgeOnce(Badge.PHOTOLOVER, authUser.getPhotos() >= AppConfig.PHOTOLOVER_IFHAS);
 			
 			if(!StringUtils.isBlank(authUser.getNewbadges())){
 				if(authUser.getNewbadges().equals("none")){

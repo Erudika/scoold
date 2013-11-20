@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.erudika.scoold.util;
+package com.erudika.scoold.utils;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -11,28 +11,16 @@ import com.erudika.para.core.Linker;
 import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.Group;
 import com.erudika.scoold.core.School;
-import com.erudika.para.core.PObject;
-import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Translation;
 import com.erudika.para.persistence.AWSDynamoDAO;
-import static com.erudika.para.persistence.AWSDynamoDAO.CN_ID;
-import com.erudika.para.persistence.CassandraDAO;
 import com.erudika.para.persistence.DAO;
 import com.erudika.para.search.ElasticSearch;
-import com.erudika.para.search.Search;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.User;
-//import com.erudika.scoold.db.cassandra.CasDAOFactory;
-//import com.erudika.scoold.db.cassandra.CasDAOUtils;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.prettyprint.cassandra.model.CqlQuery;
 import me.prettyprint.cassandra.model.CqlRows;
 import me.prettyprint.cassandra.serializers.SerializerTypeInferer;
@@ -55,6 +43,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -67,7 +57,7 @@ public class CassandraExporter {
 	private static final String ACCESSKEY = "AKIAJ2RII4MVDWEXQZHQ";
 	private static final String SECRETKEY = "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";
 	private static final String ENDPOINT = "dynamodb.eu-west-1.amazonaws.com";
-	private static final Logger logger = Logger.getLogger(CassandraExporter.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(CassandraExporter.class);
 	
 	private static void init(){
 		CassandraHostConfigurator config = new CassandraHostConfigurator();
@@ -95,8 +85,8 @@ public class CassandraExporter {
 		
 		ddb = new AmazonDynamoDBClient(new BasicAWSCredentials(ACCESSKEY, SECRETKEY));
 		ddb.setEndpoint(ENDPOINT);
-		System.setProperty(Utils.CORE_PACKAGE, User.class.getPackage().getName());
-//		logger.log(Level.INFO, "INDEX? {0}", new Object[]{search.xistsIndex(Utils.INDEX_ALIAS)});
+		System.setProperty(Config.CORE_PACKAGE, User.class.getPackage().getName());
+//		logger.log(Level.INFO, "INDEX? {0}", new Object[]{search.xistsIndex(Config.INDEX_ALIAS)});
 	}
 	
 	public static void main(String[] args) {
@@ -106,8 +96,7 @@ public class CassandraExporter {
 		init();
 		
 		AWSDynamoDAO dao = new AWSDynamoDAO();
-		ElasticSearch search = new ElasticSearch();
-		search.setDao(dao);
+		ElasticSearch search = new ElasticSearch(dao);
 
 		try {
 			ArrayList<ParaObject> list = new ArrayList<ParaObject>();
@@ -139,7 +128,7 @@ public class CassandraExporter {
 							if(name.equals("schoolid")){
 								hColumn.setName(DAO.CN_PARENTID);
 							}else if(name.equals("identifier") && NumberUtils.isDigits(value) && classtype.equals("user")){
-								value = Utils.FB_PREFIX + value;
+								value = Config.FB_PREFIX + value;
 							}else if(name.equals("userid")){
 								hColumn.setName(DAO.CN_CREATORID);
 							}else if(name.equals("fullname")){
@@ -164,7 +153,7 @@ public class CassandraExporter {
 							}							
 						}
 						
-						logger.log(Level.INFO, "{0} -> {1}", new Object[]{row.getKey(), obj.getClassname()});
+						logger.info("{0} -> {1}", new Object[]{row.getKey(), obj.getClassname()});
 						list.add(obj);
 					}else{
 //						new User("54300224104960000").attachIdentifier("https://www.google.com/accounts/o8/id?id=AItOawmS_EkaWRmSheZ3u8zWGfUViu7_gyrypLE");
@@ -178,7 +167,7 @@ public class CassandraExporter {
 //						}
 					}
 				}else{
-					logger.log(Level.INFO, " COL EMPTY: {0}", row.getKey());
+					logger.info(" COL EMPTY: {0}", row.getKey());
 				}
 			}
 			
@@ -203,12 +192,12 @@ public class CassandraExporter {
 					List<HColumn<String, String>> cols = row.getColumnSlice().getColumns();
 					if(cols != null && !cols.isEmpty()){
 						List<HColumn<String,String>> parentCols = readRow(row.getKey(), DAO.OBJECTS, 
-								String.class, null, null, null, Utils.DEFAULT_LIMIT, true);
+								String.class, null, null, null, Config.DEFAULT_LIMIT, true);
 						Class<? extends ParaObject> parentClass = null;
 						for (HColumn<String, String> hColumn : parentCols) {
 							if(hColumn.getName().equals("classtype")){
 								parentClass = Utils.toClass(hColumn.getValue());
-								logger.log(Level.INFO, "CLASS {0} -> ", parentClass);
+								logger.info("CLASS {0} -> ", parentClass);
 								break;
 							}
 						}
@@ -228,8 +217,9 @@ public class CassandraExporter {
 										link.setMetadata(value);
 									}
 									links.add(link);
-									logger.log(Level.INFO, "NEW LINKER id:{2} {0} -> {1}, META: {3}", 
-											new Object[]{parentClass.getSimpleName(), carr[i].getSimpleName(), link.getId(), link.getMetadata()});
+									logger.info("NEW LINKER id:{2} {0} -> {1}, META: {3}", 
+											new Object[]{parentClass.getSimpleName(), carr[i].getSimpleName(), 
+												link.getId(), link.getMetadata()});
 									lc++;
 								}
 							}
@@ -245,7 +235,7 @@ public class CassandraExporter {
 			
 //			logger.log(Level.WARNING, " TOTAL: {0}", Integer.toString(rows.size() + lc));
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
+			logger.error(null, e);
 		}
 		
 		System.exit(0);
@@ -282,7 +272,7 @@ public class CassandraExporter {
 				.setName(colName)
 				.execute().get();
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
+			logger.error(null, e);
 		}
 		return col;
 	}
@@ -321,7 +311,7 @@ public class CassandraExporter {
 //                itemcount.setValue(count);
 //            }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, null, e);
+            logger.error(null, e);
         }
   
         return list;

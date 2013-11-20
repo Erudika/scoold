@@ -17,7 +17,7 @@ import java.util.ArrayList;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class School extends BasePage{
+public class School extends Base{
     
     public String title;
     public com.erudika.scoold.core.School showSchool;

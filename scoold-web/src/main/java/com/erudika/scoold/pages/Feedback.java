@@ -14,7 +14,7 @@ import org.apache.click.control.Form;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Feedback <P extends Post> extends BasePage{
+public class Feedback <P extends Post> extends Base{
 
 	public String title;
 	public ArrayList<Post> feedbacklist;

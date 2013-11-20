@@ -9,7 +9,7 @@ package com.erudika.scoold.pages;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Message extends BasePage{
+public class Message extends Base{
 	
 	public String title;
 	public com.erudika.scoold.core.Message showMessage;

@@ -7,8 +7,8 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
-import com.erudika.para.utils.Utils;
-import com.erudika.scoold.util.Constants;
+import com.erudika.para.utils.Config;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -59,7 +59,7 @@ public class Group extends PObject{
 	}
 
 	public ArrayList<Post> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount) {
-		return getChildren(Post.class, pagenum, itemcount, sortBy, Utils.MAX_ITEMS_PER_PAGE);
+		return getChildren(Post.class, pagenum, itemcount, sortBy, Config.MAX_ITEMS_PER_PAGE);
 	}
 
 	public String create() {
@@ -86,7 +86,7 @@ public class Group extends PObject{
 		for (String userid : userids) {
 			String groupid = getId();
 			User u = new User(userid);
-			if(u.countLinks(Group.class) < Constants.MAX_GROUPS_PER_USER) {
+			if(u.countLinks(Group.class) < AppConfig.MAX_GROUPS_PER_USER) {
 				list.add(new Linker(User.class, Group.class, userid, groupid));
 			}
 		}

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Group extends BasePage{
+public class Group extends Base{
 	
 	public String title;
     public com.erudika.scoold.core.Group showGroup;

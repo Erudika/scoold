@@ -11,7 +11,7 @@ import com.erudika.para.persistence.DAO;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Media extends BasePage{
+public class Media extends Base{
 
 	public String title;
 	public com.erudika.scoold.core.Media showMedia;

@@ -1986,13 +1986,7 @@ $!picurl#end
 	#end
 #end
 #####################################
-#macro(sectoken $bare)
-	#if($authenticated)
-		#if($bare && $bare == true)$!sectoken#else
-			<input type="hidden" name="stoken" value="$!sectoken"/>
-			<input type="hidden" name="pepper" value="$!authUser.authstamp"/>
-		#end		
-	#end
+#macro(sectoken $bare)#if($bare && $bare == true)$!sectoken#else<input type="hidden" name="stoken" value="$!sectoken"/><input type="hidden" name="pepper" value="$!authUser.authstamp"/>#end
 #end	
 #####################################
 #macro(adplaceholders )
@@ -2324,7 +2318,7 @@ $!picurl#end
 						<span class="mediumText">
 							<span class="pictos">G</span>
 							<a href="$!languageslink" title="Switch to a different language" class="capitalize">
-								$showCurrentLocale
+								$!currentLocale.getDisplayLanguage($currentLocale)
 							</a>
 						</span>
 					</div>

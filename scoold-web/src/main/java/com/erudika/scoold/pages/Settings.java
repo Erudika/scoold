@@ -8,7 +8,7 @@ import com.erudika.para.core.PObject;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.search.ElasticSearch;
 import com.erudika.scoold.core.User;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.click.control.Submit;
@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com> 
  */
-public class Settings extends BasePage {
+public class Settings extends Base {
 
 	public String title;
 	public ArrayList<String> openidlist;
@@ -42,7 +42,7 @@ public class Settings extends BasePage {
 			clearSession();
 			redirectto = signinlink + "?code=4&success=true";
 		}else if(param("favtags")){
-			String cleanTags = Utils.fixCSV(getParamValue("favtags"), Constants.MAX_FAV_TAGS);
+			String cleanTags = Utils.fixCSV(getParamValue("favtags"), AppConfig.MAX_FAV_TAGS);
 			authUser.setFavtags(cleanTags);
 			authUser.update();
 		}else if (param("detachid") && canDetachOpenid) {
@@ -84,7 +84,7 @@ public class Settings extends BasePage {
 
 	//allow max 2 openids per account besides FB connect
 	private boolean canAttachOpenid() {
-		return  (openidlist.size() >= Constants.MAX_IDENTIFIERS_PER_USER)
+		return  (openidlist.size() >= AppConfig.MAX_IDENTIFIERS_PER_USER)
 				? false : true;
 	}
 }

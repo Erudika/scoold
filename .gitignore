@@ -4,7 +4,8 @@
 *.zip
 *.bak
 keys.txt
-init.properties
+application.conf
+reference.conf
 nbactions.xml
 Tomcat.dpf
 nb-configuration.xml

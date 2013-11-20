@@ -14,9 +14,8 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.User.Badge;
 import com.erudika.scoold.core.User.UserType;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import javax.inject.Inject;
 import org.apache.click.control.RadioGroup;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Classunit extends BasePage{
+public class Classunit extends Base{
 
 	public String title;
     public boolean fullaccess;
@@ -178,8 +177,8 @@ public class Classunit extends BasePage{
 				String[] emails = req.getParameterValues("email");
 				ArrayList<User> users = new ArrayList<User>();
 
-				int max = (fns.length > Constants.MAX_INVITES) ?
-					Constants.MAX_INVITES : fns.length;
+				int max = (fns.length > AppConfig.MAX_INVITES) ?
+					AppConfig.MAX_INVITES : fns.length;
 				
 				for (int i= 0; i < max; i++) {
 					String name = fns[i];
@@ -253,7 +252,7 @@ public class Classunit extends BasePage{
 			resp.setContentType("application/json");
 			resp.setCharacterEncoding("UTF-8");
 		} catch (JSONException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.error(null, ex);
 		}
 	}
 	
@@ -266,7 +265,7 @@ public class Classunit extends BasePage{
 			jo.put("message", msg);
 			jo.put("stamp", System.currentTimeMillis());
 		} catch (JSONException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.error(null, ex);
 		}
 		
 		return jo.toString();

@@ -4,9 +4,10 @@ import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.persistence.DAO;
 import static com.erudika.para.core.PObject.classname;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Media.MediaType;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 public class User extends com.erudika.para.core.User implements Comparable<User>{
@@ -48,7 +50,8 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 	
 	private transient Integer newreports;
 	private transient boolean isGroupMember;
-
+	private transient ObjectMapper objectMapper = Utils.getInstance().getObjectMapper();
+	
 	public static enum Badge{
 		VETERAN(10),		//regular visitor		//TODO: IMPLEMENT!
 
@@ -318,7 +321,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		Map<String, String> map = getSchoolPeriodsMap();
 		map.put(id, getLinkMetadata(from, to));
 		try {
-			eduperiods = Utils.getObjectMapper().writeValueAsString(map);
+			eduperiods = objectMapper.writeValueAsString(map);
 		} catch (Exception e) {}
 	}
 	
@@ -327,7 +330,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		Map<String, String> map = getSchoolPeriodsMap();
 		map.remove(id);
 		try {
-			eduperiods = Utils.getObjectMapper().writeValueAsString(map);
+			eduperiods = objectMapper.writeValueAsString(map);
 		} catch (Exception e) {}
 	}
 	
@@ -335,8 +338,8 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		if(StringUtils.isBlank(eduperiods)) eduperiods = "{}";
 		Map<String, String> map = null;
 		try {
-			map = Utils.getObjectMapper().readValue(eduperiods, new TypeReference<Map<String, String>>() {});
-//			eduperiods = Utils.getObjectMapper().writeValueAsString(map);
+			map = objectMapper.readValue(eduperiods, new TypeReference<Map<String, String>>() {});
+//			eduperiods = objectMapper.writeValueAsString(map);
 		} catch (Exception e) { map = new HashMap<String,String>();	}
 		return map;
 	}
@@ -346,7 +349,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 		Integer fyear = (from == null || from < min || from > max) ? Integer.valueOf(0) : from;
 		Integer tyear = (to == null || to < min || to > max) ? Integer.valueOf(0) : to;
 		// format: [id -> "fromyear=0:toyear=2000"]
-		return fyear.toString().concat(Utils.SEPARATOR).concat(tyear.toString());
+		return fyear.toString().concat(Config.SEPARATOR).concat(tyear.toString());
 	}
 	
 	public ArrayList<Question> getAllQuestions(MutableLong pagenum, MutableLong itemcount){
@@ -361,7 +364,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 	
 	private ArrayList<? extends Post> getPostsForUser(String type, MutableLong pagenum, MutableLong itemcount){
 		return getSearch().findTerm(type, pagenum, itemcount, 
-				DAO.CN_CREATORID, getId(), "votes", true, Utils.MAX_ITEMS_PER_PAGE);
+				DAO.CN_CREATORID, getId(), "votes", true, Config.MAX_ITEMS_PER_PAGE);
 	}
 
 	public String getFavtagsString(){
@@ -601,7 +604,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
     }
 
     public ArrayList<School> getAllSchools(MutableLong page, MutableLong itemcount){
-        return getAllSchools(page, itemcount, Utils.MAX_ITEMS_PER_PAGE);
+        return getAllSchools(page, itemcount, Config.MAX_ITEMS_PER_PAGE);
     }
 	
     public ArrayList<Group> getAllGroups(MutableLong page, MutableLong itemcount){
@@ -625,7 +628,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 
 	public Map<String, String> getSimpleSchoolsMap(){
 		Map<String, String> m = new HashMap<String, String>();
-		int max = Constants.MAX_SCHOOLS_PER_USER;
+		int max = AppConfig.MAX_SCHOOLS_PER_USER;
         for(School school : this.getAllSchools(null, null, max)){
 			m.put(school.getId(), school.getName());
         }		
@@ -635,7 +638,7 @@ public class User extends com.erudika.para.core.User implements Comparable<User>
 	public Map<String, School> getSchoolsMap(){
 		Map<String, School> m = new HashMap<String, School>();
 
-		int max = Constants.MAX_SCHOOLS_PER_USER;
+		int max = AppConfig.MAX_SCHOOLS_PER_USER;
         for(School school : this.getAllSchools(null, null, max)){
 			m.put(school.getId(), school);
         }

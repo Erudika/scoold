@@ -19,7 +19,7 @@ import org.apache.click.control.TextField;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Schools extends BasePage{
+public class Schools extends Base{
 
 	public String title;
 	public ArrayList<School> topSchools;

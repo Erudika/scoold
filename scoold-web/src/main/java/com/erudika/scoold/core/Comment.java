@@ -8,7 +8,7 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.persistence.DAO;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -65,7 +65,7 @@ public class Comment extends PObject implements Comparable<Comment> {
 	public String create() {
 		if(StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
 		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
-		if(count > Constants.MAX_COMMENTS_PER_ID) return null;
+		if(count > AppConfig.MAX_COMMENTS_PER_ID) return null;
 		return super.create();
 	}
 	

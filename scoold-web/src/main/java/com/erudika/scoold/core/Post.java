@@ -10,6 +10,7 @@ import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.core.Linkable;
 import com.erudika.para.core.ParaObject;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -338,7 +339,7 @@ public abstract class Post extends PObject{
 	}
 
 	public ArrayList<Comment> getComments(MutableLong page) {
-		this.comments = getChildren(Comment.class, page, new MutableLong(commentcount), null, Utils.MAX_ITEMS_PER_PAGE);
+		this.comments = getChildren(Comment.class, page, new MutableLong(commentcount), null, Config.MAX_ITEMS_PER_PAGE);
 		this.pagenum = page.longValue();
 		return this.comments;
 	}
@@ -352,11 +353,11 @@ public abstract class Post extends PObject{
 	}
 
 	public ArrayList<Post> getAnswers(String sortby, MutableLong page, MutableLong itemcount){
-		return getChildren(Reply.class, page, itemcount, sortby, Utils.MAX_ITEMS_PER_PAGE);
+		return getChildren(Reply.class, page, itemcount, sortby, Config.MAX_ITEMS_PER_PAGE);
 	}
 
 	public ArrayList<Revision> getRevisions(MutableLong page, MutableLong itemcount){
-		return getChildren(Revision.class, page, itemcount, null, Utils.MAX_ITEMS_PER_PAGE);
+		return getChildren(Revision.class, page, itemcount, null, Config.MAX_ITEMS_PER_PAGE);
 	}
 
 	public boolean isReply(){

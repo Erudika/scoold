@@ -7,18 +7,17 @@ import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.persistence.DAO;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.utils.Config;
 import com.erudika.scoold.core.Media.MediaType;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.slf4j.LoggerFactory;
 
 public class Classunit extends PObject {
 	private static final long serialVersionUID = 1L;
@@ -109,7 +108,7 @@ public class Classunit extends PObject {
 		User u = new User(userid);
 		long count1 = u.countLinks(Classunit.class);
 		long count2 = u.countLinks(School.class);
-		if((count1 < Constants.MAX_CLASSES_PER_USER && count2 < Constants.MAX_SCHOOLS_PER_USER)){
+		if((count1 < AppConfig.MAX_CLASSES_PER_USER && count2 < AppConfig.MAX_SCHOOLS_PER_USER)){
 			u.link(Classunit.class, getId());
 			u.link(School.class, getParentid());
 			return true;
@@ -165,7 +164,7 @@ public class Classunit extends PObject {
 			try {
 				PropertyUtils.setProperty(link, link.getIdFieldNameFor(Classunit.class), getId());
 			} catch (Exception ex) {
-				Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
+				LoggerFactory.getLogger(Classunit.class).error(null, ex);
 			}
 		}
 		
@@ -184,7 +183,7 @@ public class Classunit extends PObject {
 		try {
 			StringBuilder sb = new StringBuilder("[");
 			JSONArray arr = new JSONArray(chad);
-			int start = (arr.length() >= Utils.MAX_ITEMS_PER_PAGE) ? 1 : 0;
+			int start = (arr.length() >= Config.MAX_ITEMS_PER_PAGE) ? 1 : 0;
 			
 			for (int i = start; i < arr.length(); i++) {
 				JSONObject object = arr.getJSONObject(i);
@@ -195,7 +194,7 @@ public class Classunit extends PObject {
 			sb.append("]");
 			chad = sb.toString().replaceAll(",]", "]");
 		} catch (JSONException ex) {
-			Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
+			LoggerFactory.getLogger(Classunit.class).error(null, ex);
 		}
 		
 		getDao().putColumn(getId(), DAO.OBJECTS, "chat", chad);

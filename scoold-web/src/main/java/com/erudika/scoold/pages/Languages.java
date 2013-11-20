@@ -13,7 +13,7 @@ import java.util.TreeMap;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Languages extends BasePage{
+public class Languages extends Base{
 
 	public String title;
 	public Map<String, Integer> langProgressMap;

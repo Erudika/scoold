@@ -19,7 +19,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Translate extends BasePage{
+public class Translate extends Base{
 
 	public String title;
 	
@@ -79,7 +79,7 @@ public class Translate extends BasePage{
 			Set<String> approved = langutils.getApprovedTransKeys(showLocale.getLanguage());
 			isTranslated = approved.contains(langkey);
 			if(!StringUtils.isBlank(value) && (!isTranslated || inRole("admin"))){
-				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
+				Translation trans = new Translation(showLocale.getLanguage(), langkey, value, langutils);
 				trans.setCreatorid(authUser.getId());
 				trans.create();
 				addModel("newtranslation", trans);

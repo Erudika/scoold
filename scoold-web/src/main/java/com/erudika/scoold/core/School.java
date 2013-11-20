@@ -3,6 +3,7 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.Linker;
 import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHandler.STATE;
@@ -13,15 +14,13 @@ import com.ning.http.client.HttpResponseHeaders;
 import com.ning.http.client.HttpResponseStatus;
 import com.ning.http.client.Response;
 import com.erudika.scoold.core.Media.MediaType;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -30,6 +29,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -155,7 +155,7 @@ public class School extends PObject{
 		// auto add to my schools
 		User u = new User(userid);
 		long count = u.countLinks(School.class);
-		if(count < Constants.MAX_SCHOOLS_PER_USER){
+		if(count < AppConfig.MAX_SCHOOLS_PER_USER){
 			u.link(School.class, getParentid());
 			return true;
 		}
@@ -240,7 +240,7 @@ public class School extends PObject{
 				httpClient.prepareHead(website.concat(filename))
 						.execute(headHandler(website, filename));
 			} catch (IOException ex) {
-				Logger.getLogger(School.class.getName()).log(Level.WARNING, null, ex);
+				LoggerFactory.getLogger(School.class).error(null, ex);
 			}
 		}
 	}
@@ -422,7 +422,7 @@ public class School extends PObject{
 			try {
 				PropertyUtils.setProperty(link, link.getIdFieldNameFor(School.class), getId());
 			} catch (Exception ex) {
-				Logger.getLogger(Classunit.class.getName()).log(Level.SEVERE, null, ex);
+				LoggerFactory.getLogger(Classunit.class).error(null, ex);
 			}
 		}
 		
@@ -451,7 +451,7 @@ public class School extends PObject{
     }
 
 	public ArrayList<Post> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount) {
-		return getChildren(Question.class, pagenum, itemcount, sortBy, Utils.MAX_ITEMS_PER_PAGE);
+		return getChildren(Question.class, pagenum, itemcount, sortBy, Config.MAX_ITEMS_PER_PAGE);
 	}
 }
 

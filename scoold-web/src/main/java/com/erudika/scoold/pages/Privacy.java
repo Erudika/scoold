@@ -10,7 +10,7 @@ package com.erudika.scoold.pages;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Privacy extends BasePage {
+public class Privacy extends Base {
     
     public String title;
             

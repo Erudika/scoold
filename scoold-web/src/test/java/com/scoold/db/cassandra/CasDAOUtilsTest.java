@@ -13,7 +13,7 @@ package com.scoold.db.cassandra;
 public class CasDAOUtilsTest {
 
 //	private static EmbeddedServerHelper embedded;
-//	private static final Logger logger = Logger.getLogger(CasDAOUtilsTest.class.getName());
+//	private static final Logger logger = LoggerFactory.getLogger(CasDAOUtilsTest.class);
 //	private static User testObject;
 //	private static CasDAOUtils cdu = new CasDAOUtils();
 
@@ -680,10 +680,10 @@ public class CasDAOUtilsTest {
 //	 * Test of addNumbersortColumn method, of class CasDAOUtils.
 //	 */ @Test
 //	public void testAddNumbersortColumn() {
-//		String compositeKey1 = "100".concat(Utils.SEPARATOR).concat("1231");
-//		String compositeKey2 = "200".concat(Utils.SEPARATOR).concat("1232");
-//		String compositeKey3 = "300".concat(Utils.SEPARATOR).concat("1233");
-//		String compositeKey4 = "400".concat(Utils.SEPARATOR).concat("1234");
+//		String compositeKey1 = "100".concat(Config.SEPARATOR).concat("1231");
+//		String compositeKey2 = "200".concat(Config.SEPARATOR).concat("1232");
+//		String compositeKey3 = "300".concat(Config.SEPARATOR).concat("1233");
+//		String compositeKey4 = "400".concat(Config.SEPARATOR).concat("1234");
 //		int max = 3;
 //		Mutator<String> mut = cdu.createMutator();
 //

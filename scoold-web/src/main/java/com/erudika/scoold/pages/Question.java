@@ -11,7 +11,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.School;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.User.Badge;
-import static com.erudika.scoold.pages.BasePage.MAX_ITEMS_PER_PAGE;
+import static com.erudika.scoold.pages.Base.MAX_ITEMS_PER_PAGE;
 import java.util.ArrayList;
 import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Question extends BasePage{
+public class Question extends Base{
 
 	public String title;
 	public boolean canEdit;

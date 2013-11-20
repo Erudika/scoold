@@ -19,7 +19,6 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,7 @@ import org.apache.commons.lang3.mutable.MutableLong;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Search extends BasePage{
+public class Search extends Base{
 
 	public String title;
 	public ArrayList<User> userlist;
@@ -120,12 +119,12 @@ public class Search extends BasePage{
 //				addModel("feedstring", output.outputString(feed));
 				output.output(feed, resp.getWriter());
 			} catch (Exception ex) {
-				logger.log(Level.SEVERE, COULD_NOT_GENERATE_FEED_ERROR, ex);
+				logger.error(COULD_NOT_GENERATE_FEED_ERROR, ex);
 				try {
 					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
 							COULD_NOT_GENERATE_FEED_ERROR);
 				} catch (IOException ex1) {
-					logger.log(Level.SEVERE, null, ex1);
+					logger.error(null, ex1);
 				}
 			}
 		}
@@ -179,7 +178,7 @@ public class Search extends BasePage{
 		String key = req.getParameter("key");
 		User u = dao.read(uid);
 		
-		if(u != null && !StringUtils.isBlank(key) && key.equals(Utils.MD5(uid + BasePage.FEED_KEY_SALT))){
+		if(u != null && !StringUtils.isBlank(key) && key.equals(Utils.MD5(uid + Base.FEED_KEY_SALT))){
 			
 			//show selected questions
 			ArrayList<String> favtags = u.getFavtagsList();

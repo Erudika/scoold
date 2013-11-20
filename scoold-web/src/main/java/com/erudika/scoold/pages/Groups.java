@@ -14,7 +14,7 @@ import org.apache.click.control.*;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Groups extends BasePage{
+public class Groups extends Base{
 	
 	public String title;
     public ArrayList<Group> grouplist;

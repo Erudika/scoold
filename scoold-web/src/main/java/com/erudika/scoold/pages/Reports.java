@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Reports extends BasePage{
+public class Reports extends Base{
 
 	public String title;
 	public School showMergeSchool;

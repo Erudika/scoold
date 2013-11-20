@@ -3,44 +3,31 @@
     <description>scoold.com</description>
     <display-name>scoold</display-name>
 	
-	<listener>
-		<listener-class>com.erudika.para.utils.ParaContextListener</listener-class>
-	</listener>
-	
-    <filter>
-        <filter-name>LoggingFilter</filter-name>
-        <filter-class>com.erudika.scoold.util.LoggingFilter</filter-class>
-        <init-param>
-            <description>logging level</description>
-            <param-name>level</param-name>
-            <param-value>fine</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>LoggingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
-   
-    <servlet>
+	<servlet>
         <servlet-name>ClickServlet</servlet-name>
-        <servlet-class>org.apache.click.ClickServlet</servlet-class>
+        <servlet-class>com.erudika.scoold.utils.InjectedClickServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>ClickServlet</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <session-timeout>1</session-timeout>
-		<cookie-config>
-			<name>sess</name>
-			<max-age>1</max-age>
-		</cookie-config>
-    </session-config>
+	
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+		<init-param>
+			<param-name>statusEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+		
     <error-page>
         <error-code>404</error-code>
         <location>/not-found</location>
@@ -61,58 +48,4 @@
         <error-code>400</error-code>
         <location>/400</location>
     </error-page>
-    <security-role>
-        <description>The administrator</description>
-        <role-name>admin</role-name>
-    </security-role>
-    <security-role>
-        <description>The moderator</description>
-        <role-name>mod</role-name>
-    </security-role>
-    <security-role>
-        <description>The user</description>
-        <role-name>user</role-name>
-    </security-role>
-    <filter>
-        <description>css caching</description>
-        <filter-name>cssCache</filter-name>
-        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
-        <init-param>
-            <description>14 days</description>
-            <param-name>expirationTime</param-name>
-            <param-value>1209600</param-value>
-        </init-param>
-        <init-param>
-            <param-name>privacy</param-name>
-            <param-value>public</param-value>
-        </init-param>
-    </filter>
-    <filter>
-        <description>image caching</description>
-        <filter-name>imageCache</filter-name>
-        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
-        <init-param>
-            <description>30 days</description>
-            <param-name>expirationTime</param-name>
-            <param-value>2592000</param-value>
-        </init-param>
-        <init-param>
-            <param-name>privacy</param-name>
-            <param-value>public</param-value>
-        </init-param>
-    </filter>
-    <filter>
-        <description>javascript caching</description>
-        <filter-name>jsCache</filter-name>
-        <filter-class>com.erudika.scoold.util.CacheFilter</filter-class>
-        <init-param>
-            <description>14 days</description>
-            <param-name>expirationTime</param-name>
-            <param-value>1209600</param-value>
-        </init-param>
-        <init-param>
-            <param-name>privacy</param-name>
-            <param-value>private</param-value>
-        </init-param>
-    </filter>
 </web-app>

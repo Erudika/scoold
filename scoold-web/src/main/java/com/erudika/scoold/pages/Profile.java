@@ -12,7 +12,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.User.Badge;
 import com.erudika.scoold.core.User;
 import com.erudika.scoold.core.School;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -22,7 +22,7 @@ import static com.erudika.para.core.User.Groups.*;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */ 
-public class Profile extends BasePage{
+public class Profile extends Base{
 	
     public String title;
     public boolean isMyProfile;
@@ -167,7 +167,7 @@ public class Profile extends BasePage{
 		if(!isMyProfile){
 			if(param("addcontact")){
 				int count = authUser.addContact(showUser);
-				if(!addBadgeOnce(Badge.CONNECTED, count >= Constants.CONNECTED_IFHAS) && !isAjaxRequest())
+				if(!addBadgeOnce(Badge.CONNECTED, count >= AppConfig.CONNECTED_IFHAS) && !isAjaxRequest())
 					setRedirect(profilelink+"/"+showUser.getId()+"?code=12&success=true");
 			}else if(param("removecontact")){
 				authUser.removeContact(showUser);

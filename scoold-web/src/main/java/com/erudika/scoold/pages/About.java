@@ -6,13 +6,13 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.scoold.core.User.Badge;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 
 /**
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class About extends BasePage {
+public class About extends Base {
     
     public String title;
     
@@ -20,13 +20,13 @@ public class About extends BasePage {
     public About() {
         title = lang.get("about.title");
 		
-		addModel("ANSWER_VOTEUP_REWARD_AUTHOR", Constants.ANSWER_VOTEUP_REWARD_AUTHOR);
-		addModel("QUESTION_VOTEUP_REWARD_AUTHOR", Constants.QUESTION_VOTEUP_REWARD_AUTHOR);
-		addModel("VOTEUP_REWARD_AUTHOR", Constants.VOTEUP_REWARD_AUTHOR);
-		addModel("ANSWER_APPROVE_REWARD_AUTHOR", Constants.ANSWER_APPROVE_REWARD_AUTHOR);
-		addModel("ANSWER_APPROVE_REWARD_VOTER", Constants.ANSWER_APPROVE_REWARD_VOTER);
-		addModel("POST_VOTEDOWN_PENALTY_AUTHOR", Constants.POST_VOTEDOWN_PENALTY_AUTHOR);
-		addModel("POST_VOTEDOWN_PENALTY_VOTER", Constants.POST_VOTEDOWN_PENALTY_VOTER);
+		addModel("ANSWER_VOTEUP_REWARD_AUTHOR", AppConfig.ANSWER_VOTEUP_REWARD_AUTHOR);
+		addModel("QUESTION_VOTEUP_REWARD_AUTHOR", AppConfig.QUESTION_VOTEUP_REWARD_AUTHOR);
+		addModel("VOTEUP_REWARD_AUTHOR", AppConfig.VOTEUP_REWARD_AUTHOR);
+		addModel("ANSWER_APPROVE_REWARD_AUTHOR", AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
+		addModel("ANSWER_APPROVE_REWARD_VOTER", AppConfig.ANSWER_APPROVE_REWARD_VOTER);
+		addModel("POST_VOTEDOWN_PENALTY_AUTHOR", AppConfig.POST_VOTEDOWN_PENALTY_AUTHOR);
+		addModel("POST_VOTEDOWN_PENALTY_VOTER", AppConfig.POST_VOTEDOWN_PENALTY_VOTER);
 		
 		addModel("NICEPROFILE_BONUS", Badge.NICEPROFILE.getReward());
 		addModel("SUPPORTER_BONUS",Badge.SUPPORTER.getReward());

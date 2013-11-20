@@ -5,20 +5,18 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.ParaObject;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.utils.Config;
 import org.apache.commons.lang3.StringUtils;
 import com.erudika.scoold.core.School;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Admin extends BasePage {
+public class Admin extends Base {
 
 	public String title;
 	
@@ -30,7 +28,7 @@ public class Admin extends BasePage {
 		}
 		
 		addModel("eshosts", search.getSearchClusterMetadata());
-		addModel("indexExists",  search.existsIndex(Utils.INDEX_ALIAS));
+		addModel("indexExists",  search.existsIndex(Config.INDEX_ALIAS));
 		addModel("esindex", search.getIndexName());
 	}
 	
@@ -41,7 +39,7 @@ public class Admin extends BasePage {
 			if (sobject != null) {
 				sobject.delete();
 
-				logger.log(Level.INFO, "{0} #{1} deleted {3} #{4}", new Object[]{
+				logger.info("{0} #{1} deleted {3} #{4}", new Object[]{
 							authUser.getName(),
 							authUser.getId(),
 							sobject.getClass().getName(),
@@ -54,9 +52,9 @@ public class Admin extends BasePage {
 			String id = getParamValue("reindex");
 			dao.update(dao.read(id));
 		} else if(param("optimizeindex")) {
-			search.optimizeIndex(Utils.INDEX_ALIAS);
+			search.optimizeIndex(Config.INDEX_ALIAS);
 		} else if(param("rebuildindex")) {
-			search.rebuildIndex(Utils.INDEX_ALIAS + "_" + System.currentTimeMillis());
+			search.rebuildIndex(Config.INDEX_ALIAS + "_" + System.currentTimeMillis());
 		} else if(param("deleteindex")) {
 			search.deleteIndex(search.getIndexName());
 		}
@@ -92,13 +90,12 @@ public class Admin extends BasePage {
 						s.setContacts(starr[3]);
 					}
 					String id = s.create();
-					Logger.getLogger(Admin.class.getName()).log(
-							Level.INFO, "{0}. created school {1} in {2}", new Object[]{i, id, starr[2]});
+					logger.info("{0}. created school {1} in {2}", new Object[]{i, id, starr[2]});
 					i++;
 				}
 			}
 		} catch (Exception ex) {
-			Logger.getAnonymousLogger().log(Level.SEVERE, null, ex);
+			logger.error(null, ex);
 		}
 	}
 }

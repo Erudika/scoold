@@ -5,7 +5,7 @@
 
 package com.erudika.scoold.core;
 
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -75,8 +75,8 @@ public class ContactDetail {
 		if (params.containsKey("contacts")) {
 			String[] values = params.get("contacts");
 			//a special case of multi-value param - contacts
-			int max = (values.length > Constants.MAX_CONTACT_DETAILS)
-					? Constants.MAX_CONTACT_DETAILS : values.length;
+			int max = (values.length > AppConfig.MAX_CONTACT_DETAILS)
+					? AppConfig.MAX_CONTACT_DETAILS : values.length;
 			for (int i = 0; i < max; i++) {
 				String contact = values[i];
 				if (!StringUtils.isBlank(contact)) {

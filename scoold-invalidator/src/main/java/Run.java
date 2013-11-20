@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -73,10 +72,10 @@ public class Run {
 						if((rsum != null && !lsum.equals(rsum)) || rsum == null){
 							if (rsum == null) {
 								// reupload file
-								System.out.println("found new file "+lfile);
+								logger.info("found new file "+lfile);
 							} else {
 								// upload new version and mark for invalidation
-								System.out.println("found changes in "+lfile);
+								logger.info("found changes in "+lfile);
 							}
 							
 							uploadFile(lfile, fullpath, true, true);
@@ -89,13 +88,13 @@ public class Run {
 				if(!invalidate.isEmpty()){
 					invalidateCDNCache(invalidate);
 				}else{
-					System.out.println("no changes found - nothing to upload or invalidate.");
+					logger.info("no changes found - nothing to upload or invalidate.");
 				}
 				
 				// finally upload new checksums.txt file 
 				if(changesFound) uploadFile(sumsfile, args[0], true, false);
 			}else{
-				System.out.println("USAGE: jar checksums.txt filepaths.txt");
+				logger.info("USAGE: jar checksums.txt filepaths.txt");
 			}
 		}
 	}
@@ -111,16 +110,16 @@ public class Run {
 					keys.add("/"+s3ObjectSummary.getKey());
 				}
 			}		
-			System.out.println("invalidating " + keys);
+			logger.info("invalidating " + keys);
 			
 			Paths paths = new Paths().withItems(keys);
 			paths.setQuantity(keys.size());
 			InvalidationBatch batch = new InvalidationBatch(paths, "" + System.currentTimeMillis());
 			CreateInvalidationResult cir = cf.createInvalidation(new CreateInvalidationRequest(distributionID, batch));
-			System.out.println("invalidation request status: " + cir.getInvalidation().getStatus());
+			logger.info("invalidation request status: " + cir.getInvalidation().getStatus());
 			ok = true;
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.severe(ex.toString());
 		}
 
 		return ok;
@@ -161,7 +160,7 @@ public class Run {
 			}
 			
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
+			logger.severe(e.toString());
 		} finally {
 			IOUtils.closeQuietly(stream);
 			IOUtils.closeQuietly(writer);
@@ -183,7 +182,7 @@ public class Run {
 				}
 			}
 		} catch (IOException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.severe(ex.toString());
 		}
 		return map;
 	}	

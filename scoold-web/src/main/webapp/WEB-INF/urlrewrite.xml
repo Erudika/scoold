@@ -25,10 +25,10 @@
         <from>^/$</from>
         <to>/questions.htm</to>
     </rule>
-    <rule>
+<!--    <rule>
         <from>^/index.htm$</from>
         <to type="redirect">%{context-path}</to>
-    </rule>
+    </rule>-->
 	<rule>
         <from>^/signin(/?)$</from>
         <to>/signin.htm</to>

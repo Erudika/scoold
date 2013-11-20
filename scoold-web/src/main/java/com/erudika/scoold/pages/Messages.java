@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Messages extends BasePage{
+public class Messages extends Base{
 
 	public String title;
 	public ArrayList<Message> messageslist;

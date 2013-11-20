@@ -6,6 +6,7 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.PObject;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Report;
@@ -24,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Questions extends BasePage{
+public class Questions extends Base{
 
 	public String title;
 	public ArrayList<Post> questionslist;
@@ -103,7 +104,7 @@ public class Questions extends BasePage{
 			if ("true".equals(m)) {
 				setStateParam(MOBILE_COOKIE, "true");
 				ClickUtils.setCookie(req, resp, MOBILE_COOKIE, "true", 
-						Utils.SESSION_TIMEOUT_SEC * 365, "/");
+						Config.SESSION_TIMEOUT_SEC * 365, "/");
 			} else {
 				ClickUtils.setCookie(req, resp, MOBILE_COOKIE, "", 0, "/");
 			}

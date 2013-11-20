@@ -8,7 +8,7 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.persistence.DAO;
-import com.erudika.scoold.util.Constants;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
@@ -75,7 +75,7 @@ public class Message extends PObject{
 	public boolean send(){
 		if(toids == null || toids.isEmpty()) return false;
 		if(StringUtils.isBlank(body) || getCreatorid() == null || toids.isEmpty()) return false;
-		else if(toids.size() > Constants.MAX_MULTIPLE_RECIPIENTS) return false;
+		else if(toids.size() > AppConfig.MAX_MULTIPLE_RECIPIENTS) return false;
 
 		//send to many recepients or just one
 		for (String toid : toids) {
@@ -90,7 +90,7 @@ public class Message extends PObject{
 		DAO dao = getDao();
 		boolean existsUser = dao.existsColumn(getParentid(), DAO.OBJECTS, DAO.CN_ID);
 		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
-		if (!existsUser || count > Constants.MAX_MESSAGES_PER_USER) {
+		if (!existsUser || count > AppConfig.MAX_MESSAGES_PER_USER) {
 			return null;
 		}
 

@@ -9,7 +9,7 @@ package com.erudika.scoold.pages;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Comment extends BasePage{
+public class Comment extends Base{
 
 	public com.erudika.scoold.core.Comment showComment;
 

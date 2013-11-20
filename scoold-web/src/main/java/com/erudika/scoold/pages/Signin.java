@@ -5,7 +5,7 @@
 
 package com.erudika.scoold.pages;
 
-public class Signin extends BasePage{
+public class Signin extends Base{
      
     public String title;
 	

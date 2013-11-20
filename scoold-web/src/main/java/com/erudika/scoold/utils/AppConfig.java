@@ -2,19 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.erudika.scoold.util;
-
+package com.erudika.scoold.utils;
 /**
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public abstract class Constants {
+public final class AppConfig {
 	
-	// GLOBAL LIMITS
-//	public static final int MAX_PAGES = 10000;
-//	public static final int VOTE_LOCKED_FOR_SEC = 4*7*24*60*60; //1 month in seconds
-//	public static final long VOTE_LOCK_AFTER_SEC = 2*60; //2 minutes in ms
-//	public static final int MAX_ITEMS_PER_PAGE = 30;
+//	static {
+//		try {
+//			Config.init(ConfigFactory.parseURL(new URL("URL")));
+//		} catch (MalformedURLException ex) {
+//			LoggerFactory.getLogger(AppConfig.class).error(null, ex);
+//		}
+//	}
 	
 	public static final int MAX_CONTACTS_PER_USER = 2000;
 	public static final int MAX_SCHOOLS_PER_USER = 100;

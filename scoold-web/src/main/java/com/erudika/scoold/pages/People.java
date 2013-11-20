@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class People extends BasePage{
+public class People extends Base{
 
 	public String title;
 	public ArrayList<User> userlist;

@@ -10,7 +10,7 @@ package com.erudika.scoold.pages;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Terms extends BasePage {
+public class Terms extends Base {
     
     public String title;
             

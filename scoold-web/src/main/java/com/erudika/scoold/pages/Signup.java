@@ -22,7 +22,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */
-public class Signup extends BasePage{
+public class Signup extends Base{
 
     public String title;
     public Form signupForm;

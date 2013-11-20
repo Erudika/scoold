@@ -5,8 +5,8 @@ import static com.erudika.para.core.PObject.classname;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.persistence.DAO;
 import com.erudika.para.search.Search;
-import com.erudika.para.utils.Utils;
-import com.erudika.scoold.util.Constants;
+import com.erudika.para.utils.Config;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -185,7 +185,7 @@ public class Media extends PObject {
 
     public String create() {
 		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
-		if(count > Constants.MAX_MEDIA_PER_ID) return null;
+		if(count > AppConfig.MAX_MEDIA_PER_ID) return null;
 		return super.create();
     }
 
@@ -202,7 +202,7 @@ public class Media extends PObject {
 	
 	public ArrayList<Comment> getComments(MutableLong page){
 		MutableLong itemcount = new MutableLong(); 
-		this.comments = getChildren(Comment.class, page, itemcount, null, Utils.MAX_ITEMS_PER_PAGE);
+		this.comments = getChildren(Comment.class, page, itemcount, null, Config.MAX_ITEMS_PER_PAGE);
 		commentcount = itemcount.longValue();
 		return this.comments;
 	}
@@ -288,7 +288,7 @@ public class Media extends PObject {
 				MutableLong commentCount = new MutableLong(0);
 				MutableLong commentPage = new MutableLong(0);
 				ArrayList<Comment> commentz = photo.getChildren(Comment.class, commentPage, commentCount, 
-						null, Utils.MAX_ITEMS_PER_PAGE);
+						null, Config.MAX_ITEMS_PER_PAGE);
 
 				photo.setComments(commentz);
 				photo.setCommentcount(commentCount.longValue());

@@ -22,7 +22,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  *
  * @author Alex Bogdanovski <albogdano@me.com>
  */ 
-public class Classunits extends BasePage{
+public class Classunits extends Base{
 
 	public String title;
 	public ArrayList<Classunit> classlist;
