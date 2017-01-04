@@ -5,12 +5,13 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.persistence.DAO;
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.User;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.School;
-import com.erudika.scoold.core.User;
+import com.erudika.scoold.core.ScooldUser;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Feedback;
@@ -18,97 +19,86 @@ import com.sun.syndication.feed.synd.*;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Search extends Base{
 
 	public String title;
-	public ArrayList<User> userlist;
-	public ArrayList<Classunit> classlist;
-	public ArrayList<School> schoollist;
-	public ArrayList<Post> questionlist;
-	public ArrayList<Post> feedbacklist;
+	public List<ScooldUser> userlist;
+	public List<Classunit> classlist;
+	public List<School> schoollist;
+	public List<Post> questionlist;
+	public List<Post> feedbacklist;
 	public String url;
-	
-	public MutableLong questioncount;
-	public MutableLong feedbackcount;
-	public MutableLong usercount;
-	public MutableLong schoolcount;
-	public MutableLong classcount;
-	
-	public MutableLong questionpage;
-	public MutableLong feedbackpage;
-	public MutableLong userpage;
-	public MutableLong schoolpage;
-	public MutableLong classpage;
-	
-	public int totalCount;
+
+	public Pager questioncount;
+	public Pager feedbackcount;
+	public Pager usercount;
+	public Pager schoolcount;
+	public Pager classcount;
+
+	public long totalCount;
 	public int maxSearchResults = 10;
-	
+
 	private static final String DEFAULT_FEED_TYPE = "atom_1.0";
     private static final String MIME_TYPE = "application/xml; charset=UTF-8";
     private static final String COULD_NOT_GENERATE_FEED_ERROR = "Could not generate feed";
 
 	private boolean personalized;
- 
+
 	public Search() {
-		title = lang.get("search.title");
+		title = lang.get("pc.title");
 		questionlist = new ArrayList<Post>();
 		feedbacklist = new ArrayList<Post>();
-		userlist = new ArrayList<User>();
+		userlist = new ArrayList<ScooldUser>();
 		schoollist = new ArrayList<School>();
 		classlist = new ArrayList<Classunit>();
 
-		questioncount = new MutableLong(0);
-		feedbackcount = new MutableLong(0);
-		usercount = new MutableLong(0);
-		schoolcount = new MutableLong(0);
-		classcount = new MutableLong(0);
-		
-		questionpage = new MutableLong(0);
-		feedbackpage = new MutableLong(0);
-		userpage = new MutableLong(0);
-		schoolpage = new MutableLong(0);
-		classpage = new MutableLong(0);
-		
-		totalCount = 0; 
+		questioncount = new Pager();
+		feedbackcount = new Pager();
+		usercount = new Pager();
+		schoolcount = new Pager();
+		classcount = new Pager();
+
+		totalCount = 0;
 	}
-	
-	public void onGet(){
-		if(param("q") && !StringUtils.isBlank(getParamValue("q"))){
+
+	public void onGet() {
+		if (param("q") && !StringUtils.isBlank(getParamValue("q"))) {
 			String query = getParamValue("q");
-			
+
 			if (showParam != null) {
 				if ("questions".equals(showParam)) {
-					questionlist = search.findQuery(PObject.classname(Question.class), pagenum, itemcount, query);
-				} else if("feedback".equals(showParam)) {
-					feedbacklist = search.findQuery(PObject.classname(Feedback.class), pagenum, itemcount, query);
-				} else if("people".equals(showParam)) {
-					userlist = search.findQuery(PObject.classname(User.class), pagenum, itemcount, query);
-				} else if("schools".equals(showParam)) {
-					schoollist = search.findQuery(PObject.classname(School.class), pagenum, itemcount, query);
-				} else if("classes".equals(showParam)) {
-					classlist = search.findQuery(PObject.classname(Classunit.class), pagenum, itemcount, query);
+					questionlist = pc.findQuery(Utils.type(Question.class), query, itemcount);
+				} else if ("feedback".equals(showParam)) {
+					feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
+				} else if ("people".equals(showParam)) {
+					userlist = pc.findQuery(Utils.type(User.class), query, itemcount);
+				} else if ("schools".equals(showParam)) {
+					schoollist = pc.findQuery(Utils.type(School.class), query, itemcount);
+				} else if ("classes".equals(showParam)) {
+					classlist = pc.findQuery(Utils.type(Classunit.class), query, itemcount);
 				}
-				totalCount = itemcount.intValue();
-			} else { 
-				questionlist = search.findQuery(PObject.classname(Question.class), questionpage, questioncount, query, "", true, maxSearchResults);
-				feedbacklist = search.findQuery(PObject.classname(Feedback.class), feedbackpage, feedbackcount, query, "", true, maxSearchResults);
-				userlist = search.findQuery(PObject.classname(User.class), userpage, usercount, query, "", true, maxSearchResults);
-				schoollist = search.findQuery(PObject.classname(School.class), schoolpage, schoolcount, query, "", true, maxSearchResults);
-				classlist = search.findQuery(PObject.classname(Classunit.class), classpage, classcount, query, "", true, maxSearchResults);
-				totalCount = (questioncount.intValue() + feedbackcount.intValue() +
-						usercount.intValue() + schoolcount.intValue() + classcount.intValue());
+				totalCount = itemcount.getCount();
+			} else {
+				questionlist = pc.findQuery(Utils.type(Question.class), query, questioncount);
+				feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, feedbackcount);
+				userlist = pc.findQuery(Utils.type(User.class), query, usercount);
+				schoollist = pc.findQuery(Utils.type(School.class), query, schoolcount);
+				classlist = pc.findQuery(Utils.type(Classunit.class), query, classcount);
+				totalCount = (questioncount.getCount() + feedbackcount.getCount() +
+						usercount.getCount() + schoolcount.getCount() + classcount.getCount());
 			}
-		}else if(param("feed")){
+		} else if (param("feed")) {
 			try {
 				SyndFeed feed = getFeed(req);
 				String feedType = (param("type")) ? getParamValue("type") : DEFAULT_FEED_TYPE;
@@ -121,7 +111,7 @@ public class Search extends Base{
 			} catch (Exception ex) {
 				logger.error(COULD_NOT_GENERATE_FEED_ERROR, ex);
 				try {
-					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 							COULD_NOT_GENERATE_FEED_ERROR);
 				} catch (IOException ex1) {
 					logger.error(null, ex1);
@@ -133,12 +123,12 @@ public class Search extends Base{
 	private SyndFeed getFeed(HttpServletRequest req) throws IOException,FeedException {
 		SyndFeed feed = new SyndFeedImpl();
 
-		ArrayList<Post> questions = getQuestionsList(req);
+		List<Post> questions = getQuestionsList(req);
 		String baseuri = "http://scoold.com/";
 
-		if(personalized){
+		if (personalized) {
 			feed.setTitle("Scoold - Selected questions");
-		}else{
+		} else {
 			feed.setTitle("Scoold - Recent questions");
 		}
 
@@ -158,11 +148,11 @@ public class Search extends Base{
 			entry.setPublishedDate(new Date(post.getTimestamp()));
 			entry.setAuthor(baseuri.concat("profile/").concat(post.getCreatorid().toString()));
 			entry.setUri(baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).replaceAll("\\p{Z}+","-").toLowerCase()));
-			
+
 			description = new SyndContentImpl();
 			description.setType("text/html");
 			description.setValue(Utils.markdownToHtml(post.getBody()));
-			
+
 			entry.setDescription(description);
 			entries.add(entry);
 		}
@@ -172,27 +162,27 @@ public class Search extends Base{
         return feed;
     }
 
-	private ArrayList<Post> getQuestionsList(HttpServletRequest req){
-		ArrayList<Post> questionslist = null;
-		String uid = req.getParameter(DAO.CN_ID);
+	private List<Post> getQuestionsList(HttpServletRequest req) {
+		List<Post> questionslist = null;
+		String uid = req.getParameter(Config._ID);
 		String key = req.getParameter("key");
-		User u = dao.read(uid);
-		
-		if(u != null && !StringUtils.isBlank(key) && key.equals(Utils.MD5(uid + Base.FEED_KEY_SALT))){
-			
+		ScooldUser u = pc.read(uid);
+
+		if (u != null && !StringUtils.isBlank(key) && key.equals(Utils.md5(uid + Base.FEED_KEY_SALT))) {
+
 			//show selected questions
-			ArrayList<String> favtags = u.getFavtagsList();
-			if(favtags == null || favtags.isEmpty()){
-				questionslist = search.findQuery(PObject.classname(Question.class), null, null, "*");
+			ArrayList<String> favtags = new ArrayList<String>(u.getFavtags());
+			if (favtags == null || favtags.isEmpty()) {
+				questionslist = pc.findQuery(Utils.type(Question.class), "*");
 				personalized = false;
-			}else{
+			} else {
 				personalized = true;
-				questionslist = search.findTagged(PObject.classname(Question.class), null, null, favtags);
+				questionslist = pc.findTermInList(Utils.type(Question.class), Config._TAGS, favtags);
 			}
-		}else{
+		} else {
 			//show top questions
 			personalized = false;
-			questionslist = search.findQuery(PObject.classname(Question.class), null, null, "*");
+			questionslist = pc.findQuery(Utils.type(Question.class), "*");
 		}
 
 		return questionslist;

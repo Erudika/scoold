@@ -1,28 +1,22 @@
 <div class="line">
-	<div class="unit size4of5">
-		<a href="$peoplelink?find=true" class="right button-small next-div-toggle rounded3" title="Find a person">$!{lang.get('search.people')}</a>
-		<h2>$!lang.get("people.title") #showcount($itemcount.longValue())</h2>
-		#if($request.getParameter("find"))	#set($hide = "" ) #else #set($hide = "hide" ) #end
-		<div class="center $hide">
-			<form method="get" action="$context/profile/">
-				<fieldset>
-					<input type="text" class="nicebox personbox p99" value="" name="name"/>
-					<input type="hidden" name="id" value=""/>
-				</fieldset>
-			</form>
-		</div>
-		<hr/>
-		
-		#set($sortarr = {'rep': "", 'newest': ""} )
-		#setsortbyselection($sortarr 'newest')
-		<div class="mvm">
-			<a href="$peoplelink" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$peoplelink/reputation" class="button-tiny rounded3 $sortarr.rep">$!lang.get("reputation")</a>
-		</div>
-		#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.longValue() "" "pageless")
+	<a href="$peoplelink?find=true" class="right button-small next-div-toggle rounded3" title="Find a person">$!{lang.get('search.people')}</a>
+	<h2>$!lang.get("people.title") #showcount($itemcount.longValue())</h2>
+	#if ($request.getParameter("find"))	#set($hide = "" ) #else #set($hide = "hide" ) #end
+	<div class="center ${hide}">
+		<form method="get" action="$context/profile/">
+			<fieldset>
+				<input type="text" class="nicebox personbox p99" value="" name="name"/>
+				<input type="hidden" name="id" value=""/>
+			</fieldset>
+		</form>
 	</div>
+	<hr/>
 
-	<div class="unit size1of5 lastUnit r">
-		#adplaceholders()
+	#set($sortarr = {'rep': "", 'newest': ""} )
+	#setsortbyselection($sortarr 'newest')
+	<div class="mvm">
+		<a href="$peoplelink" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
+		<a href="$peoplelink/reputation" class="button-tiny rounded3 $sortarr.rep">$!lang.get("reputation")</a>
 	</div>
+	#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.longValue() "" "pageless")
 </div>

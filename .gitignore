@@ -24,3 +24,5 @@ scoold-puppet/scoold/files/adminpass.txt
 scoold-invalidator/target/
 scoold-web/src/main/webapp/WEB-INF/classes/
 scoold-web/src/main/webapp/click/
+data/
+*.log

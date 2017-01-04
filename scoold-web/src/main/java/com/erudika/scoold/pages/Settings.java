@@ -4,87 +4,55 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.PObject;
 import com.erudika.para.utils.Utils;
-import com.erudika.para.search.ElasticSearch;
-import com.erudika.scoold.core.User;
 import com.erudika.scoold.utils.AppConfig;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.click.control.Submit;
-import org.apache.click.control.TextField;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com> 
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Settings extends Base {
 
 	public String title;
-	public ArrayList<String> openidlist;
-	public boolean canDetachOpenid;
-	public boolean canAttachOpenid;
 
 	public Settings() {
 		title = lang.get("settings.title");
-		includeFBscripts = true;
-		sortIdentifiers(authUser.getIdentifiers());
-		canDetachOpenid = canDetachOpenid();
-		canAttachOpenid = canAttachOpenid();
 	}
-	
-	public void onPost(){
+
+	public void onPost() {
 		// check if the checksum is the same as the one in the link
 		String redirectto = settingslink;
-		if (param("deleteaccount") && StringUtils.equals(Utils.MD5(authUser.getId()), getParamValue("key"))) {
+		if (param("deleteaccount") && StringUtils.equals(Utils.md5(authUser.getId()), getParamValue("key"))) {
 			authUser.delete();
 			clearSession();
 			redirectto = signinlink + "?code=4&success=true";
-		}else if(param("favtags")){
-			String cleanTags = Utils.fixCSV(getParamValue("favtags"), AppConfig.MAX_FAV_TAGS);
-			authUser.setFavtags(cleanTags);
-			authUser.update();
-		}else if (param("detachid") && canDetachOpenid) {
-			String ident = getParamValue("detachid");
-			if(!StringUtils.isBlank(ident)){
-				authUser.detachIdentifier(ident);
-				openidlist.remove(ident);
-				canAttachOpenid = canAttachOpenid();
-				canDetachOpenid = canDetachOpenid();
+		} else if (param("favtags")) {
+			String cleanTags = getParamValue("favtags");
+			Set<String> ts = new LinkedHashSet<String>();
+			for (String tag : cleanTags.split(",")) {
+				if (!StringUtils.isBlank(tag) && ts.size() <= AppConfig.MAX_FAV_TAGS) {
+					ts.add(tag);
+				}
 			}
-		}else if(param("email")){
+			authUser.setFavtags(new LinkedList<String>(ts));
+			authUser.update();
+		} else if (param("detachid")) {
+			String ident = getParamValue("detachid");
+			if (!StringUtils.isBlank(ident) && !ident.equals(authUser.getIdentifier())) {
+				authUser.detachIdentifier(ident);
+			}
+		} else if (param("email")) {
 			String newEmail = getParamValue("email");
 			authUser.setEmail(newEmail);
 			authUser.update();
 		}
 
-		if(!isAjaxRequest())
+		if (!isAjaxRequest())
 			setRedirect(redirectto);
 	}
 
-	private void sortIdentifiers(List<String> list){
-		openidlist = new ArrayList<String>();
-		if(list != null && list.size() > 0){
-			String id1 = authUser.getIdentifier();
-			openidlist.add(id1);
-			
-			for (String ident : list) {
-				if(!ident.equals(id1)){
-					openidlist.add(ident);
-				}
-			}
-		}
-	}
-
-	private boolean canDetachOpenid() {
-		//make sure you we don't delete the user's primary openid
-		return (openidlist.size() == 1) ? false : true;
-	}
-
-	//allow max 2 openids per account besides FB connect
-	private boolean canAttachOpenid() {
-		return  (openidlist.size() >= AppConfig.MAX_IDENTIFIERS_PER_USER)
-				? false : true;
-	}
 }

@@ -5,23 +5,23 @@
 
 package com.erudika.scoold.core;
 
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
+import com.erudika.scoold.utils.AppConfig;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Revision extends PObject{
+public class Revision extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String body;
 	@Stored private String description;
 	@Stored private String title;
-	@Stored private String tags;
 	@Stored private Boolean original;
 
-	private transient User author;
+	private transient ScooldUser author;
 
 	public Revision() {
 	}
@@ -36,14 +36,6 @@ public class Revision extends PObject{
 
 	public void setOriginal(Boolean original) {
 		this.original = original;
-	}
-
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		this.tags = tags;
 	}
 
 	public String getTitle() {
@@ -71,13 +63,13 @@ public class Revision extends PObject{
 		this.body = body;
 	}
 
-	public User getAuthor(){
-		if(getCreatorid() == null) return null;
-		if(author == null) author = getDao().read(getCreatorid());
+	public ScooldUser getAuthor() {
+		if (getCreatorid() == null) return null;
+		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;
 	}
 
-	public static Revision createRevisionFromPost(Post post, boolean orig){
+	public static Revision createRevisionFromPost(Post post, boolean orig) {
 		String revUserid = post.getLasteditby();
 		if (revUserid == null) {
 			revUserid = post.getCreatorid();

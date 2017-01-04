@@ -5,10 +5,10 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.School;
-import java.util.ArrayList;
+import java.util.List;
 import org.apache.click.control.Form;
 import org.apache.click.control.Option;
 import org.apache.click.control.Select;
@@ -17,45 +17,45 @@ import org.apache.click.control.TextField;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Schools extends Base{
 
 	public String title;
-	public ArrayList<School> topSchools;
-	public ArrayList<School> schoollist;
-	public Form createSchoolForm; 
+	public List<School> topSchools;
+	public List<School> schoollist;
+	public Form createSchoolForm;
 
 	public Schools() {
-		if(param("create") && authenticated){
+		if (param("create") && authenticated) {
 			title = lang.get("schools.title") + " - " + lang.get("school.create");
 			addModel("includeGMapsScripts", true);
 			makeforms();
-		}else{
+		} else {
 			title = lang.get("schools.title");
 			addModel("includeGMapsScripts", false);
 		}
-		
+
 		addModel("schoolsSelected", "navbtn-hover");
 	}
-	
-	public void onGet(){
+
+	public void onGet() {
 		if (!param("create")) {
 			String sortBy = "";
-			if("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-			schoollist = search.findQuery(PObject.classname(School.class), pagenum, itemcount, 
-					"*", sortBy, true, MAX_ITEMS_PER_PAGE);
+			if ("votes".equals(getParamValue("sortby"))) sortBy = "votes";
+			itemcount.setSortby(sortBy);
+			schoollist = pc.findQuery(Utils.type(School.class), "*", itemcount);
 		}
 	}
 
-	private void makeforms(){
+	private void makeforms() {
 		createSchoolForm = new Form("createSchoolForm");
 
         TextField name = new TextField("name", true);
         name.setLabel(lang.get("profile.myschools.create.name"));
 		name.setFocus(true);
 
-        Select type = new Select("type", true);
+        Select type = new Select("subtype", true);
         type.setLabel(lang.get("profile.myschools.create.type"));
         type.add(new Option("", lang.get("chooseone")));
         type.addAll(School.getSchoolTypeMap(lang));
@@ -74,10 +74,10 @@ public class Schools extends Base{
 	}
 
 	public boolean onCreateSchoolClick() {//
-		if(createSchoolForm.isValid()){
-			if(param("create")){
+		if (createSchoolForm.isValid()) {
+			if (param("create")) {
 				School school = new School();
-				Utils.populate(school, req.getParameterMap());
+				ParaObjectUtils.populate(school, req.getParameterMap());
 				school.setCreatorid(authUser.getId());
 				school.create();
 

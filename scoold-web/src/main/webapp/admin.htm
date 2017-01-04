@@ -1,4 +1,4 @@
-#if($request.getParameter("delete"))
+#if ($request.getParameter("delete"))
 
 	#set($confirmlink = "$adminlink?confirmdelete=$request.getParameter('delete')&amp;id=$request.getParameter('id')")
 
@@ -6,7 +6,7 @@
 		<div class="largeText">$!lang.get("areyousure")</div>
 		<br/>
 
-		#if($request.getHeader("Referer"))
+		#if ($request.getHeader("Referer"))
 			#set($ref = $request.getHeader("Referer"))
 		#else
 			#set($ref = $HOMEPAGE)
@@ -35,7 +35,7 @@
 							<fieldset>
 								#sectoken(false)
 								<span>$!esindex </span>
-								#if($indexExists)
+								#if ($indexExists)
 									<span class="pictos green mrl mediumText">2</span>
 								#else
 									<span class="pictos red mrl mediumText">D</span>
@@ -67,7 +67,7 @@
 			</tbody>
 		</table>
 
-		#if($IN_PRODUCTION)
+		#if ($IN_PRODUCTION)
 			<br />
 			<br />
 			<h2>System properties</h2>

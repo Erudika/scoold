@@ -6,7 +6,7 @@ package com.erudika.scoold.core;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Question extends Post{
 	private static final long serialVersionUID = 1L;

@@ -2,18 +2,10 @@
 
 User-agent: *
 
-Disallow: /scripts/
-Disallow: /styles/
-Disallow: /images/
 Disallow: /click/
 Disallow: /p/
-Disallow: /signup/
 Disallow: /signout/
 Disallow: /signin/
 Disallow: /search/
 Disallow: /*?getreportform*
-Disallow: /openid_auth*
-Disallow: /facebook_auth*
-Disallow: /attach_openid*
-Disallow: /attach_facebook*
 Allow: /

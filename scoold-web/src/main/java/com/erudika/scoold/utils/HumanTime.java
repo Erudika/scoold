@@ -566,7 +566,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //                ++parts;
 //                rounded = true;
 //                prependBlank = true;
-//            }else 
+//            } else 
 			
 			if (d >= YEAR) {
                 a.append(floor(d, YEAR));
@@ -574,7 +574,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
                 a.append('y');
                 ++parts;
                 rounded = mod <= lowerCeiling(YEAR);
-				if(rounded) return a;
+				if (rounded) return a;
                 prependBlank = true;
             }
 
@@ -591,7 +591,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //                    ++parts;
 //                    rounded = true;
 //                    prependBlank = true;
-//                }else 
+//                } else 
 			if (d >= MONTH) {
 				if (prependBlank) {
 					a.append(' ');
@@ -601,11 +601,11 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 				a.append('n');
 				++parts;
 				rounded = mod <= lowerCeiling(MONTH);
-				if(rounded) return a;
+				if (rounded) return a;
 				prependBlank = true;
 			}
 
-			if(parts < 2){
+			if (parts < 2) {
 				d %= MONTH;
 				mod = d % DAY;
 
@@ -619,7 +619,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //						++parts;
 //						rounded = true;
 //						prependBlank = true;
-//					}else 
+//					} else 
 				if (d >= DAY) {
 					if (prependBlank) {
 						a.append(' ');
@@ -629,7 +629,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 					a.append('d');
 					++parts;
 					rounded = mod <= lowerCeiling(DAY);
-					if(rounded) return a;
+					if (rounded) return a;
 					prependBlank = true;
 				}
 
@@ -647,7 +647,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //							++parts;
 //							rounded = true;
 //							prependBlank = true;
-//						}else 
+//						} else 
 					if (d >= HOUR && !rounded) {
 						if (prependBlank) {
 							a.append(' ');
@@ -657,7 +657,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 						a.append('h');
 						++parts;
 						rounded = mod <= lowerCeiling(HOUR);
-						if(rounded) return a;
+						if (rounded) return a;
 						prependBlank = true;
 					}
 
@@ -675,7 +675,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //								++parts;
 //								rounded = true;
 //								prependBlank = true;
-//							}else 
+//							} else 
 						if (d >= MINUTE && !rounded) {
 							if (prependBlank) {
 								a.append(' ');
@@ -685,7 +685,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 							a.append('m');
 							++parts;
 							rounded = mod <= lowerCeiling(MINUTE);
-							if(rounded) return a;
+							if (rounded) return a;
 							prependBlank = true;
 						}
 
@@ -703,7 +703,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 //									++parts;
 //									rounded = true;
 //									prependBlank = true;
-//								}else 
+//								} else 
 							if (d >= SECOND && !rounded) {
 								if (prependBlank) {
 									a.append(' ');
@@ -713,7 +713,7 @@ public class HumanTime implements Externalizable, Comparable<HumanTime>, Cloneab
 								a.append('s');
 								++parts;
 								rounded = mod <= lowerCeiling(SECOND);
-								if(rounded) return a;
+								if (rounded) return a;
 								prependBlank = true;
 							}
 

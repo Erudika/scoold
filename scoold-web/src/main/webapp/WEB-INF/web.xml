@@ -2,7 +2,7 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <description>scoold.com</description>
     <display-name>scoold</display-name>
-	
+
 	<servlet>
         <servlet-name>ClickServlet</servlet-name>
         <servlet-class>com.erudika.scoold.utils.InjectedClickServlet</servlet-class>
@@ -12,7 +12,7 @@
         <servlet-name>ClickServlet</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
-	
+
 	<filter>
 		<filter-name>UrlRewriteFilter</filter-name>
 		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
@@ -27,7 +27,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
-		
+
     <error-page>
         <error-code>404</error-code>
         <location>/not-found</location>

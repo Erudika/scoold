@@ -1,11 +1,11 @@
 <div class="preview-dialog jqmWindow rounded5"> <div class="center">#ajaxloading(false) </div></div>
 
-#if($request.getParameter("merge") && $request.getParameter("id") && $request.isUserInRole("admin"))
+#if ($request.getParameter("merge") && $request.getParameter("id") && $request.isUserInRole("admin"))
 	<div class="mvl">
-		#if($request.getParameter("merge") == "school")
+		#if ($request.getParameter("merge") == "school")
 			<h2 class="red">Warning! &quot;$showMergeSchool.name&quot; will be deleted.</h2>
 			<h2>You are about to merge &quot;$showMergeSchool.name&quot; with:</h2>
-		#elseif($request.getParameter("merge") == "classunit")
+		#elseif ($request.getParameter("merge") == "classunit")
 			<h2 class="red">Warning! &quot;$showMergeClass.identifier&quot; will be deleted.</h2>
 			<h2>You are about to merge &quot;$showMergeClass.identifier&quot; with:</h2>
 		#end
@@ -13,7 +13,7 @@
 		<form method="post" action="$reportslink?confirmmerge=$request.getParameter('merge')">
 			<fieldset>
 			#sectoken(false)
-			#if($request.getParameter("merge") == "school")
+			#if ($request.getParameter("merge") == "school")
 				<input type="hidden" name="id2" value="$!showMergeSchool.id"/>
 				<label>$!lang.get("name"): </label>
 				<input type="text" class="nicebox p99 schoolnamebox" value=""/>
@@ -23,10 +23,10 @@
 					<input type="submit" value="Merge" class="button rounded3"/>
 					<a href="$schoollink/$!request.getParameter('id')" title="Cancel" class="button-small rounded3">$!lang.get("cancel")</a>
 				</div>
-			#elseif($request.getParameter("merge") == "classunit")
+			#elseif ($request.getParameter("merge") == "classunit")
 				<input type="hidden" name="id2" value="$!showMergeClass.id"/>
 				<label>$!lang.get("name"): </label>
-				<input type="text" class="nicebox p99 classnamebox" value=""/>
+				<input type="text" class="nicebox p99 typebox" value=""/>
 				<input type="hidden" name="id1" value=""/>
 				<br/>
 				<div class="center">
@@ -41,7 +41,7 @@
 	<div id="reports">
 		<h1><span class="pictos">^</span> $!lang.get("reports.title") #showcount($itemcount.longValue())</h1>
 		<hr/>
-		#if($itemcount.longValue() == 0)
+		#if ($itemcount.longValue() == 0)
 			<div class="mediumText">$!{lang.get("search.notfound")}</div>
 		#else
 			#paginate($pagenum.longValue() "\#reportspage(\$reportslist)" $itemcount.longValue() "" "pageless")

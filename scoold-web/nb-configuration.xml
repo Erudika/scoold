@@ -11,13 +11,15 @@ Without this configuration present, some functionality in the IDE may be limited
     </config-data>
     <properties xmlns="http://www.netbeans.org/ns/maven-properties-data/1">
         <!--
-Properties that influence various parts of the IDE, especially code formatting and the like. 
+Properties that influence various parts of the IDE, especially code formatting and the like.
 You can copy and paste the single properties, into the pom.xml file and the IDE will pick them up.
 That way multiple projects can share the same settings (useful for formatting rules for example).
 Any value defined here will override the pom.xml file value but is only applicable to the current project.
 -->
         <netbeans.compile.on.save>all</netbeans.compile.on.save>
-        <netbeans.hint.jdkPlatform>JDK_1.7</netbeans.hint.jdkPlatform>
         <netbeans.deploy.on.save>false</netbeans.deploy.on.save>
+        <org-netbeans-modules-whitelist.whitelist-oracle>false</org-netbeans-modules-whitelist.whitelist-oracle>
+        <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_j2eeVersion>1.7-web</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_j2eeVersion>
+        <org-netbeans-modules-javascript2-requirejs.enabled>true</org-netbeans-modules-javascript2-requirejs.enabled>
     </properties>
 </project-shared-configuration>

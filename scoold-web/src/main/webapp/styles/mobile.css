@@ -29,7 +29,7 @@ h2 {
 	font-size: 130%;
 }
 
-.hugeText:not(.votebox){
+.hugeText:not(.votebox) {
 	font-size: 150%;
 }
 

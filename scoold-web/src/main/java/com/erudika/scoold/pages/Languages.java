@@ -5,13 +5,14 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.utils.Config;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Languages extends Base{
 
@@ -22,11 +23,11 @@ public class Languages extends Base{
 		title = lang.get("translate.select");
 
 		addModel("allLocales", new TreeMap<String, Locale>(langutils.getAllLocales()));
-		langProgressMap = langutils.getTranslationProgressMap();
+		langProgressMap = langutils.getTranslationProgressMap(Config.APP_NAME_NS);
 	}
 
 	public void onPost() {
-		if(param("setlocale")) {
+		if (param("setlocale")) {
 			String loc = getParamValue("setlocale");
 			setCurrentLocale(loc, true);
 			setRedirect(languageslink);

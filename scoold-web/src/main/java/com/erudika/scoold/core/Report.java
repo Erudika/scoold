@@ -5,17 +5,17 @@
 
 package com.erudika.scoold.core;
 
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Report extends PObject{
+public class Report extends Sysprop{
 	private static final long serialVersionUID = 1L;
 
-	@Stored private String type;
+	@Stored private String subType;
 	@Stored private String description;
 	@Stored private String author;
 	@Stored private String link;
@@ -26,7 +26,7 @@ public class Report extends PObject{
 	public static enum ReportType{
 		SPAM, OFFENSIVE, DUPLICATE, INCORRECT, OTHER;
 
-		public String toString(){
+		public String toString() {
 			return super.toString().toLowerCase();
 		}
 	}
@@ -43,7 +43,7 @@ public class Report extends PObject{
 	public Report(String parentid, String type, String description,
 			String creatorid) {
 		setParentid(parentid);
-		this.type = type;
+		this.subType = type;
 		this.description = description;
 		setCreatorid(creatorid);
 		this.closed = false;
@@ -97,16 +97,16 @@ public class Report extends PObject{
 		this.description = description;
 	}
 
-	public String getType() {
-		return type;
+	public String getSubType() {
+		return subType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setSubType(String subType) {
+		this.subType = subType;
 	}
 
-	public void setType(ReportType type){
-		if(type != null) this.type = type.name();
+	public void setSubType(ReportType subType) {
+		if (subType != null) this.subType = subType.name();
 	}
 	
 	public boolean equals(Object obj) {
@@ -120,7 +120,7 @@ public class Report extends PObject{
 		if ((getParentid() == null) ? (other.getParentid() != null) : !getParentid().equals(other.getParentid())) {
 			return false;
 		}
-		if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+		if ((this.subType == null) ? (other.subType != null) : !this.subType.equals(other.subType)) {
 			return false;
 		}
 		if (getCreatorid() == null || !getCreatorid().equals(other.getCreatorid())) {
@@ -132,7 +132,7 @@ public class Report extends PObject{
 	public int hashCode() {
 		int hash = 5;
 		hash = 37 * hash + (getParentid() != null ? getParentid().hashCode() : 0);
-		hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
+		hash = 37 * hash + (this.subType != null ? this.subType.hashCode() : 0);
 		hash = 37 * hash + (getCreatorid() != null ? getCreatorid().hashCode() : 0);
 		return hash;
 	}

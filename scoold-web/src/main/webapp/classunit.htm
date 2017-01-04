@@ -2,16 +2,16 @@
 	<div class="unit size3of4">
 		<div id="class-head">
 			#set($showschool = $showClass.school)
-			
+
 			<div class="line lightgray mediumText">
 				<div class="unit size1of3">$!{lang.get("class.title")}</div>
-				<div class="unit size2of3 lastUnit r ${mobilehide}">			
+				<div class="unit size2of3 lastUnit r ${mobilehide}">
 					<span class="pictos">g</span> $!showClass.count
 				</div>
 			</div>
 
-			#if($isMine || $request.isUserInRole("mod"))
-				<div id="classname" class="largeText editable p100">$!{showClass.identifier}</div>
+			#if ($isMine || $request.isUserInRole("mod"))
+				<div id="type" class="largeText editable p100">$!{showClass.identifier}</div>
 			#else
 				<div class="hugeText">$!{showClass.identifier}</div>
 			#end
@@ -19,50 +19,28 @@
 			<hr/>
 
 			<div class="mvm">
-				#if($isMine && $isLinkedToMe)
-					<a href="$classlink/$!showClass.id/invite/#stripstr($!showClass.identifier)" class="button-tiny rounded3"><span class="pictos">U</span> $!{lang.get("invite")}</a>
-				#end
-				#if($authenticated)
-					#if($isLinkedToMe)
+				#if ($authenticated)
+					#if ($isLinkedToMe)
 						<a href="$classlink/$!showClass.id/leave/#stripstr($!showClass.identifier)/?left=true" class="rusure button-tiny rounded3"><span class="pictos">-</span> $!lang.get("leave")</a>
 					#else
 						<a href="$classlink/$!showClass.id/join/#stripstr($!showClass.identifier)/?joined=true" class="button-tiny rounded3"><span class="pictos">+</span> $!lang.get("join")</a>
 					#end
 				#end
 
-				#if($request.isUserInRole("mod"))
+				#if ($request.isUserInRole("mod"))
 					<a href="${reportslink}?merge=classunit&amp;id=$showClass.id" title="Merge classes" class="red button-tiny rounded3"><span class="pictos">|</span> $!lang.get("merge")</a>
 				#end
-				
-				#if($request.isUserInRole("admin"))
+
+				#if ($request.isUserInRole("admin"))
 					<a href="${adminlink}?delete=classunit&amp;id=$showClass.id" title="Delete class" class="red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
-				
+
 				#getreportlink($showClass "$classlink/$!showClass.id" "button-tiny rounded3")
 			</div>
 		</div>
 
-		#if($showParam)
-			#if($showParam == "photos")
-				#showphotos($photoslink $canEdit)
-
-			#elseif($showParam == "drawer")
-				<h2>$!lang.get("drawer.title") <a href="#" class="pictos trigger-embedly-services">?</a></h2>
-				
-				#if($authenticated)
-					#oembedbox("addvideo")
-				#end
-
-				<div id="drawer-edit">
-					#if($itemcount.longValue() == 0)
-						<div class="mvl">$!lang.get("class.novideos")</div>
-					#end
-					<div id="drawer">
-						#paginate($pagenum.longValue() "\#drawerpage(\$medialist)" $itemcount.longValue() "" "pageless" )
-					</div>
-				</div>
-
-			#elseif($showParam == "chat" && $authenticated)
+		#if ($showParam)
+			#if ($showParam == "chat" && $authenticated)
 				<h2>$!lang.get("class.chat")</h2>
 
 				<div id="chat">
@@ -76,48 +54,15 @@
 						</fieldset>
 					</form>
 				</div>
-
-			#elseif($showParam == "invite" && $isLinkedToMe && $isMine)
-				<h2>$!lang.get("invite")</h2>
-				<br />
-				<h4>$!lang.get("class.copylink"):</h4>
-				<div class="lightborder pam rounded3 mediumText center">
-					<code>http://scoold.com/class/$!showClass.id/join</code>
-				</div>
-				
-				<br />
-				<h2>$!lang.get("class.addclassmates")</h2>
-
-				<form method="post" action="$classlink/$showClass.id/addclassmates">
-					<fieldset>
-						#sectoken(false)
-						<div>
-							<div class="right p50">
-								<label class="blocklabel">$!lang.get("signup.form.email") ($!lang.get("optional"))</label>
-								<input tabindex="2" type="text" class="nicebox p90" value="" name="email"/>
-							</div>
-							<div class="left p50">
-								<label class="blocklabel">$!lang.get("name")</label>
-								<input tabindex="1" type="text" class="nicebox p90" value="" name="name"/>
-							</div>
-						</div>
-						<a href="#" id="add-more-classmates" title="Add more"><span class="pictos">&amp;</span> $!lang.get("addmore")</a>
-					</fieldset>
-					<div class="center">
-						<input id="addclassmates-btn" type="submit" value="$!lang.get('add')" class="button rounded3"/>
-						<input type="button" value="$!lang.get('close')" class="button rounded3"/>
-					</div>
-				</form>
-
 			#end
-		#else	
+		#else
 			#postbox($showPost $showPost)
 			#set($inactivelist =  $showClass.getInactiveusersList())
 			<br />
-			#if(!$peoplelist.isEmpty() || !$inactivelist.isEmpty())
+			#if (!$peoplelist.isEmpty() || !$inactivelist.isEmpty())
 				<h2>$!lang.get("class.classmates") #showcount($itemcount.longValue())</h2>
 				#classmatespage($peoplelist)
-				
+
 				#foreach($iuser in $inactivelist)
 					#inactivepersonbox($iuser $showClass)
 				#end
@@ -132,8 +77,6 @@
 			<ul class="sidebar">
 				<li class="rounded3"><a href="$classlink/$!showClass.id/#stripstr($!showClass.identifier)">$!{lang.get("class.classroom")}</a></li>
 				<li class="rounded3"><a href="$classlink/$!showClass.id/chat/#stripstr($!showClass.identifier)">$!{lang.get("class.chat")}</a></li>
-				<li class="rounded3"><a href="$classlink/$!showClass.id/photos/#stripstr($!showClass.identifier)">$!{lang.get("photos.title")}</a></li>
-				<li class="rounded3"><a href="$classlink/$!showClass.id/drawer/#stripstr($!showClass.identifier)">$!{lang.get("drawer.title")}</a></li>
 			</ul>
 		</div>
 	</div>

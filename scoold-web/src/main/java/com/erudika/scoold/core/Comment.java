@@ -5,17 +5,18 @@
 
 package com.erudika.scoold.core;
 
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
-import com.erudika.para.persistence.DAO;
+import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.AppConfig;
+import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Comment extends PObject implements Comparable<Comment> {
+public class Comment extends Sysprop implements Comparable<Comment> {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String comment;
@@ -63,12 +64,19 @@ public class Comment extends PObject implements Comparable<Comment> {
 	}
 
 	public String create() {
-		if(StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
-		int count = getSearch().getCount(getClassname(), DAO.CN_PARENTID, getParentid()).intValue();
-		if(count > AppConfig.MAX_COMMENTS_PER_ID) return null;
-		return super.create();
+		if (StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
+		int count = AppConfig.client().getCount(getType(),
+				Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
+		if (count > AppConfig.MAX_COMMENTS_PER_ID) return null;
+		Comment c = AppConfig.client().create(this);
+		if (c != null) {
+			setId(c.getId());
+			setTimestamp(c.getTimestamp());
+			return c.getId();
+		}
+		return null;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -82,7 +90,7 @@ public class Comment extends PObject implements Comparable<Comment> {
 		}
 		if (getCreatorid() == null || !getCreatorid().equals(other.getCreatorid())) {
 			return false;
-		}		
+		}
 		if ((this.comment == null) ? (other.comment != null) : !this.comment.equals(other.comment)) {
 			return false;
 		}
@@ -99,10 +107,10 @@ public class Comment extends PObject implements Comparable<Comment> {
 
 	public int compareTo(Comment o) {
 		int deptComp = 0;
-		if(getTimestamp() != null)
+		if (getTimestamp() != null)
 			deptComp = getTimestamp().compareTo(o.getTimestamp());
 
 		return deptComp;
 	}
-	
+
 }

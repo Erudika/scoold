@@ -6,24 +6,28 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.Tag;
-import com.erudika.para.core.PObject;
 import com.erudika.para.annotations.Stored;
-import com.erudika.para.core.Linkable;
 import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import com.erudika.scoold.utils.AppConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
-public abstract class Post extends PObject{
+public abstract class Post extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String body;
@@ -32,23 +36,20 @@ public abstract class Post extends PObject{
 	@Stored private String answerid;
 	@Stored private String revisionid;
 	@Stored private String closerid;
-	@Stored private String tags;
 	@Stored private Long answercount;
 	@Stored private Long lastactivity;
 	@Stored private Boolean deleteme;
 	@Stored private String lasteditby;
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
-	@Stored private Integer oldvotes;
-	@Stored private String oldtags;
 
 	private transient User author;
 	private transient User lastEditor;
-	private transient ArrayList<Comment> comments;
+	private transient List<Comment> comments;
 	private transient Form editForm;
 	private transient Long pagenum;
-	
-	public Post(){
+
+	public Post() {
 		this.answercount = 0L;
 		this.viewcount = 0L;
 		this.commentcount = 0L;
@@ -63,15 +64,7 @@ public abstract class Post extends PObject{
 	public void setPagenum(Long pagenum) {
 		this.pagenum = pagenum;
 	}
-	
-	public String getOldtags() {
-		return oldtags;
-	}
 
-	public void setOldtags(String oldtags) {
-		this.oldtags = oldtags;
-	}
-	
 	public String getDeletereportid() {
 		return deletereportid;
 	}
@@ -120,15 +113,6 @@ public abstract class Post extends PObject{
 		this.answercount = answercount;
 	}
 
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		setOldtags(this.tags);
-		this.tags = Utils.fixCSV(tags);
-	}
-
 	public String getCloserid() {
 		return closerid;
 	}
@@ -166,18 +150,11 @@ public abstract class Post extends PObject{
 	}
 
 	public void setTitle(String title) {
-		if(StringUtils.trimToNull(title) == null) return;
+		if (StringUtils.trimToNull(title) == null) return;
 		title = title.replaceAll("\\p{S}", "");
 		title = title.replaceAll("\\p{C}", "");
 		this.title = title;
-	}
-
-	public String getName() {
-		return getTitle();
-	}
-
-	public void setName(String name) {
-		setTitle(name);
+		setName(title);
 	}
 
 	public String getBody() {
@@ -187,137 +164,106 @@ public abstract class Post extends PObject{
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
-	public boolean isClosed(){
+
+	public boolean isClosed() {
 		return this.closerid != null;
 	}
 
-	public String getTagsString(){
-		if(StringUtils.isBlank(tags)) return "";
-		return tags.substring(1, tags.length() - 1).replaceAll(",", ", ");
+	public String getTagsString() {
+		if (getTags() == null || getTags().isEmpty()) return "";
+		return StringUtils.join(getTags(), ", ");
 	}
 
 	public String create() {
-		if(getRevisionid() == null && canHaveRevisions()){
+		if (getRevisionid() == null && canHaveRevisions()) {
 			//create initial revision = simply create a copy
 			setRevisionid(Revision.createRevisionFromPost(this, true).create());
 		}
-		createUpdateOrDeleteTags(getTags(), null);
-		return super.create();
+		if (getTags() != null) {
+			createTags(new HashSet<String>(getTags()));
+		}
+		Post p = AppConfig.client().create(this);
+		if (p != null) {
+			setId(p.getId());
+			setTimestamp(p.getTimestamp());
+			return p.getId();
+		}
+		return null;
 	}
 
 	public void update() {
 		updateLastActivity();
-		if(canHaveRevisions()){
+		if (canHaveRevisions()) {
 			setRevisionid(Revision.createRevisionFromPost(this, true).create());
 		}
-		createUpdateOrDeleteTags(getTags(), getOldtags());
-		super.update();
+		createTags(new HashSet<String>(getTags()));
+		AppConfig.client().update(this);
 	}
 
 	public void delete() {
 		// delete post
-		super.delete();
+		AppConfig.client().delete(this);
 		ArrayList<ParaObject> children = new ArrayList<ParaObject>();
-		getAllChildren(this, children);
-		
-		if(canHaveChildren()){
-			for (ParaObject reply : getChildren(Reply.class)) {
-				// delete Replies
-				getAllChildren((Linkable) reply, children);
-			}
-		}
-		getDao().deleteAll(children);
-
-		createUpdateOrDeleteTags(null, getTags());
-	}
-	
-	private void getAllChildren(Linkable p, ArrayList<ParaObject> all){
+		ArrayList<String> ids = new ArrayList<String>();
 		// delete Comments
-		all.addAll(p.getChildren(Comment.class));
+		children.addAll(AppConfig.client().getChildren(this, Utils.type(Comment.class)));
 		// delete Revisions
-		all.addAll(p.getChildren(Revision.class));
+		children.addAll(AppConfig.client().getChildren(this, Utils.type(Revision.class)));
+
+		if (canHaveChildren()) {
+			for (ParaObject reply : AppConfig.client().getChildren(this, Utils.type(Reply.class))) {
+				// delete Comments
+				children.addAll(AppConfig.client().getChildren(reply, Utils.type(Comment.class)));
+				// delete Revisions
+				children.addAll(AppConfig.client().getChildren(reply, Utils.type(Revision.class)));
+			}
+		}
+		for (ParaObject child : children) {
+			ids.add(child.getId());
+		}
+		AppConfig.client().deleteAll(ids);
 	}
 
-	private void createUpdateOrDeleteTags(String newTags, String oldTags){
-		Map<String, Integer> newTagIndex = new HashMap<String, Integer>();
-		//parse
-		if(newTags != null){
-			for (String ntag : newTags.split(",")) {
-				newTagIndex.put(ntag.trim(), 1);
-			}
-		}
-		
-		//organize
-		if(oldTags != null){
-			for (String otag : oldTags.split(",")) {
-				otag = otag.trim();
-				if(newTagIndex.containsKey(otag)){
-					newTagIndex.remove(otag);	// no change so remove
-				}else{
-					newTagIndex.put(otag, -1); // tag missing so deleteRow and update count
-				}
-			}
-		}
-		//clean up the empty tag
-		newTagIndex.remove("");
 
-		//create update or deleteRow a given tag
-		for (Map.Entry<String, Integer> tagEntry : newTagIndex.entrySet()) {
-			Tag tag = getDao().read(Tag.id(tagEntry.getKey()));
-			switch(tagEntry.getValue()){
-				case 1:
-					if(tag == null){
-						//create tag
-						tag = new Tag(tagEntry.getKey());
-						getDao().create(tag);
-					}else{
-						//update tag count
-						tag.incrementCount();
-						getDao().update(tag);
-					}
-					break;
-				case -1:
-					if(tag != null){
-						if(tag.getCount() - 1 == 0){
-							// delete tag
-							getDao().delete(tag);
-						}else{
-							//update tag count
-							tag.decrementCount();
-							getDao().update(tag);
-						}
-					}
-					break;
-				default: break;
+	private void createTags(Set<String> newTags) {
+		if (newTags == null) return;
+		for (String ntag : newTags) {
+			ntag = StringUtils.trimToEmpty(ntag);
+			Tag t = new Tag(ntag);
+			// create tag if it doesn't exist
+			if (!StringUtils.isBlank(ntag) && AppConfig.client().getCount(Utils.type(Tag.class),
+					Collections.singletonMap(Config._ID, t.getId())) == 0) {
+				t.create();
 			}
 		}
 	}
 
-	public static void readAllCommentsForPosts (ArrayList<Post> list, int maxPerPage) {
-		for (Post post : list) {
-			MutableLong page = new MutableLong(post.getPagenum());
-			ArrayList<Comment> commentz = post.getChildren(Comment.class, page, null, null, 5);
+	public static <P extends Post> void readAllCommentsForPosts(List<P> list, int maxPerPage) {
+		for (P post : list) {
+			Pager page = new Pager(post.getPagenum(), null, true, 5);
+			List<Comment> commentz = AppConfig.client().getChildren(post, Utils.type(Comment.class), page);
 			post.setComments(commentz);
-			post.setPagenum(page.longValue());
+			post.setPagenum(page.getPage());
 		}
 	}
-	
-	public User getAuthor(){
-		if(getCreatorid() == null) return null;
-		if(author == null) author = getDao().read(getCreatorid());
+
+	@JsonIgnore
+	public User getAuthor() {
+		if (getCreatorid() == null) return null;
+		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;
 	}
 
-	public User getLastEditor(){
-		if(lasteditby == null) return null;
-		if(lastEditor == null) lastEditor = getDao().read(lasteditby);
+	@JsonIgnore
+	public User getLastEditor() {
+		if (lasteditby == null) return null;
+		if (lastEditor == null) lastEditor = AppConfig.client().read(lasteditby);
 		return lastEditor;
 	}
 
-	public void restoreRevisionAndUpdate(String revisionid){
-		Revision rev = getDao().read(revisionid);
-		if(rev != null){
+	public void restoreRevisionAndUpdate(String revisionid) {
+		Revision rev = AppConfig.client().read(revisionid);
+		if (rev != null) {
 			//copy rev data to post
 			setTitle(rev.getTitle());
 			setBody(rev.getBody());
@@ -330,17 +276,18 @@ public abstract class Post extends PObject{
 		}
 	}
 
-	public void setComments(ArrayList<Comment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 
-	public ArrayList<Comment> getComments(){
+	public List<Comment> getComments() {
 		return this.comments;
 	}
 
-	public ArrayList<Comment> getComments(MutableLong page) {
-		this.comments = getChildren(Comment.class, page, new MutableLong(commentcount), null, Config.MAX_ITEMS_PER_PAGE);
-		this.pagenum = page.longValue();
+	public List<Comment> getComments(Pager pager) {
+		this.comments = AppConfig.client().getChildren(this, Utils.type(Comment.class), pager);
+		this.commentcount = pager.getCount();
+		this.pagenum = pager.getPage();
 		return this.comments;
 	}
 
@@ -348,61 +295,68 @@ public abstract class Post extends PObject{
 		return this.commentcount;
 	}
 
-	public void setCommentcount(Long count){
+	public void setCommentcount(Long count) {
 		this.commentcount = count;
 	}
 
-	public ArrayList<Post> getAnswers(String sortby, MutableLong page, MutableLong itemcount){
-		return getChildren(Reply.class, page, itemcount, sortby, Config.MAX_ITEMS_PER_PAGE);
+	@JsonIgnore
+	public List<Reply> getAnswers(Pager pager) {
+		return AppConfig.client().getChildren(this, Utils.type(Reply.class), pager);
 	}
 
-	public ArrayList<Revision> getRevisions(MutableLong page, MutableLong itemcount){
-		return getChildren(Revision.class, page, itemcount, null, Config.MAX_ITEMS_PER_PAGE);
+	@JsonIgnore
+	public List<Revision> getRevisions(Pager pager) {
+		return AppConfig.client().getChildren(this, Utils.type(Revision.class), pager);
 	}
 
-	public boolean isReply(){
+	@JsonIgnore
+	public boolean isReply() {
 		return this instanceof Reply;
 	}
 
-	public boolean isQuestion(){
+	@JsonIgnore
+	public boolean isQuestion() {
 		return this instanceof Question;
 	}
 
-	public boolean isBlackboard(){
+	@JsonIgnore
+	public boolean isBlackboard() {
 		return this instanceof Blackboard;
 	}
 
-	public boolean isFeedback(){
+	@JsonIgnore
+	public boolean isFeedback() {
 		return this instanceof Feedback;
 	}
 
-	public boolean isGrouppost(){
+	@JsonIgnore
+	public boolean isGrouppost() {
 		return this instanceof Grouppost;
 	}
 
-	public void updateLastActivity(){
+	public void updateLastActivity() {
 		setLastactivity(System.currentTimeMillis());
 	}
-		
-	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink, 
-			String grouplink, String grouppostlink, String classeslink, String classlink){
+
+	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink,
+			String grouplink, String grouppostlink, String classeslink, String classlink) {
 		Post p = this;
-		if(p == null) return "/";
-		String ptitle = Utils.spacesToDashes(p.getTitle());
+		if (p == null) return "/";
+		String ptitle = Utils.noSpaces(p.getTitle(), "-");
 		String pid = (noid ? "" : "/"+p.getId()+"/"+ ptitle);
 		if (p.isQuestion()) {
 			return plural ? questionslink : questionlink + pid;
-		} else if(p.isFeedback()) {
+		} else if (p.isFeedback()) {
 			return plural ? feedbacklink : feedbacklink + pid;
-		} else if(p.isGrouppost()){
+		} else if (p.isGrouppost()) {
 			return plural ? grouplink+"/"+p.getParentid() : grouppostlink + pid;
-		} else if(p.isReply()){
-			Post parentp = getDao().read(p.getParentid());
-			if(parentp != null){
-				return parentp.getPostLink(plural, noid, questionslink, questionlink, 
+		} else if (p.isReply()) {
+			Post parentp = AppConfig.client().read(p.getParentid());
+			if (parentp != null) {
+				return parentp.getPostLink(plural, noid, questionslink, questionlink,
 						feedbacklink, grouplink, grouppostlink, classeslink, classlink);
 			}
-		}else if(p.isBlackboard()){
+		} else if (p.isBlackboard()) {
 			return plural ? classeslink : classlink + (noid ? "" : "/" + p.getParentid());
 		}
 		return "";
@@ -422,9 +376,6 @@ public abstract class Post extends PObject{
 		if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
 			return false;
 		}
-		if ((this.tags == null) ? (other.tags != null) : !this.tags.equals(other.tags)) {
-			return false;
-		}
 		return true;
 	}
 
@@ -433,8 +384,8 @@ public abstract class Post extends PObject{
 		hash = 97 * hash + (this.body != null ? this.body.hashCode() : 0);
 		return hash;
 	}
-	
+
 	public abstract boolean canHaveChildren();
-	
+
 	public abstract boolean canHaveRevisions();
 }

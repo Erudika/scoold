@@ -25,14 +25,9 @@ import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Run {
 
@@ -44,7 +39,7 @@ public class Run {
 	private static final BasicAWSCredentials awsCredentials = new BasicAWSCredentials(ACCESSKEY, SECRETKEY);
 	private static AmazonS3Client s3 = new AmazonS3Client(awsCredentials);
 	private static AmazonCloudFrontClient cf = new AmazonCloudFrontClient(awsCredentials);
-	
+
 	/**
 	 * @param args the command line arguments
 	 */
@@ -59,11 +54,11 @@ public class Run {
 				ArrayList<String> invalidate = new ArrayList<String>();
 				Map<String, String> filepaths = readFile(args[1]);
 				Map<String, String> localSums = readFile(args[0]);
-				Map<String, String> remoteSums = readInputStream((chksms != null) ? 
+				Map<String, String> remoteSums = readInputStream((chksms != null) ?
 						chksms.getObjectContent() : null);
 
 				for (Map.Entry<String, String> entry : localSums.entrySet()) {
-					String lfile = entry.getKey();						
+					String lfile = entry.getKey();
 					String lsum = entry.getValue();
 					String rsum = remoteSums.get(lfile);
 					String fullpath = filepaths.get(lfile);
@@ -77,9 +72,9 @@ public class Run {
 								// upload new version and mark for invalidation
 								logger.info("found changes in "+lfile);
 							}
-							
+
 							uploadFile(lfile, fullpath, true, true);
-							invalidate.add("/"+lfile);							
+							invalidate.add("/"+lfile);
 							changesFound = true;
 						}
 					}
@@ -90,8 +85,8 @@ public class Run {
 				}else{
 					logger.info("no changes found - nothing to upload or invalidate.");
 				}
-				
-				// finally upload new checksums.txt file 
+
+				// finally upload new checksums.txt file
 				if(changesFound) uploadFile(sumsfile, args[0], true, false);
 			}else{
 				logger.info("USAGE: jar checksums.txt filepaths.txt");
@@ -100,18 +95,18 @@ public class Run {
 	}
 
 	private static boolean invalidateCDNCache(List<String> keys) {
-		boolean ok = false;		
+		boolean ok = false;
 		try {
 			if (keys == null || keys.isEmpty()) {
 				ObjectListing ol = s3.listObjects(bucket);
 				List<S3ObjectSummary> list = ol.getObjectSummaries();
-				keys = new ArrayList<String>();				
+				keys = new ArrayList<String>();
 				for (S3ObjectSummary s3ObjectSummary : list) {
 					keys.add("/"+s3ObjectSummary.getKey());
 				}
-			}		
+			}
 			logger.info("invalidating " + keys);
-			
+
 			Paths paths = new Paths().withItems(keys);
 			paths.setQuantity(keys.size());
 			InvalidationBatch batch = new InvalidationBatch(paths, "" + System.currentTimeMillis());
@@ -124,7 +119,7 @@ public class Run {
 
 		return ok;
 	}
-	
+
 	private static S3Object getS3Object(String name){
 		S3Object so = null;
 		try {
@@ -132,7 +127,7 @@ public class Run {
 		} catch (Exception e) {}
 		return so;
 	}
-	
+
 	private static void uploadFile(String name, String path, boolean publik, boolean gzip){
 		if(name == null || name.isEmpty() || path == null || path.isEmpty()) return;
 		PutObjectRequest por = new PutObjectRequest(bucket, name, new File(path));
@@ -144,7 +139,7 @@ public class Run {
 		por.setMetadata(om);
 		s3.putObject(por);
 	}
-	
+
 	private static Map<String, String> readInputStream(InputStream stream){
 		Map<String, String> map = new HashMap<String, String>();
 		if(stream == null) return map;
@@ -158,7 +153,7 @@ public class Run {
 					map.put(s[0], s[1]);
 				}
 			}
-			
+
 		} catch (Exception e) {
 			logger.severe(e.toString());
 		} finally {
@@ -167,7 +162,7 @@ public class Run {
 		}
 		return map;
 	}
-	
+
 	private static Map<String, String> readFile(String name){
 		Map<String, String> map = new HashMap<String, String>();
 		if(name == null || name.isEmpty()) return map;
@@ -185,5 +180,5 @@ public class Run {
 			logger.severe(ex.toString());
 		}
 		return map;
-	}	
+	}
 }

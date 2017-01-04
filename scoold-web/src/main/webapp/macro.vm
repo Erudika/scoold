@@ -1,13 +1,13 @@
 #macro(basichead $showdesc $showkeyw)
-	#if($title && !$title.isEmpty()) #set($_titlestr = "- $!title" )	#else #set($_titlestr = "" ) #end
-	#if($IN_PRODUCTION) 
-		#set($slink = $CDN_URL) 
-		#set($ilink = $CDN_URL) 
-		#set($minsuffix = "-min") 
-	#else 
-		#set($slink = "$context/styles") 
-		#set($ilink = "$context/images") 
-		#set($minsuffix = "") 
+	#if ($title && !$title.isEmpty()) #set($_titlestr = "- $!title" )	#else #set($_titlestr = "" ) #end
+	#if ($IN_PRODUCTION)
+		#set($slink = $CDN_URL)
+		#set($ilink = $CDN_URL)
+		#set($minsuffix = "-min")
+	#else
+		#set($slink = "$context/styles")
+		#set($ilink = "$context/images")
+		#set($minsuffix = "")
 	#end
 	<title>$APPNAME $!_titlestr </title>
 	<meta charset="utf-8"/>
@@ -15,11 +15,1679 @@
 	<link href="$ilink/logosq.png" rel="apple-touch-icon"/>
 	<link href="$ilink/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" media="screen"/>
-	#if($showdesc && !$showdesc.isEmpty())
+	#if ($showdesc && !$showdesc.isEmpty())
 		<meta name="description" content="$showdesc"/>
 	#end
-	#if($showkeyw && !$showkeyw.isEmpty())
+	#if ($showkeyw && !$showkeyw.isEmpty())
 		<meta name="keywords" content="$showkeyw"/>
-	#end	
+	#end
+	<meta property="fb:app_id" content="99517177417" />
 #end
+################# DEFINE MACROS ################################################
+#macro(dayselect $class $name $selectday)
+<select class="${class}" name="$name">
+	#if ($selectday == 0)
+	<option value="" selected="selected">$!{lang.get("day")} &nbsp;</option>
+	#else
+	<option value="">$!{lang.get("day")} &nbsp;</option>
+	#end
+
+	#foreach ($day in [1..31])
+	#if ($selectday != 0 && $day == $selectday)
+	<option value="${day}" selected="selected">${day}</option>
+	#else
+	<option value="${day}">${day}</option>
+	#end
+	#end
+</select>
+#end
+#####################################
+#macro(monthselect $class $name $selectmonth)
+<select class="${class}" name="$name">
+	#if ($selectmonth == 0)
+	<option value="" selected="selected">$!{lang.get("month")} &nbsp;</option>
+	#else
+	<option value="">$!{lang.get("month")} &nbsp;</option>
+	#end
+
+	#foreach ($month in $utils.getMonths($currentLocale))
+	#if ($velocityCount < 13)
+	#if ($selectmonth != 0 && $velocityCount == $selectmonth)
+	<option value="$velocityCount"  selected="selected">${month} &nbsp;</option>
+	#else
+	<option value="$velocityCount" >${month} &nbsp;</option>
+	#end
+	#end
+	#end
+</select>
+#end
+#####################################
+#macro(yearselect $class $name $future $selectyear $firstItem)
+<select class="${class}" name="$name">
+	#if ($firstItem && $firstItem == "") #set($first = $!lang.get("year"))
+	#else	#set($first = $firstItem)	#end
+
+	#if ($selectyear == 0)
+	<option value="" selected="selected">$first &nbsp;</option>
+	#else
+	<option value="">$!{lang.get("year")} &nbsp;</option>
+	#end
+
+	#if ($future)  #set($y1 = $utils.currentYear + 10) #set($y2 = $y1 - 80)
+	#else  #set($y1 = $utils.currentYear)  #set($y2 = $y1 - 65)  #end
+
+	#foreach ($y in [$y1..$y2])
+	#if ($selectyear != 0 && $selectyear == $y)
+	<option value="${y}" selected="selected">${y}</option>
+	#else
+	<option value="${y}">${y}</option>
+	#end
+	#end
+</select>
+#end
+#####################################
+#macro(renderSpecialFields $clickform)
+${clickform.fields.form_name}
+#foreach ($field in $clickform.fieldList)
+#if ($field.name.contains("SUBMIT_CHECK")) $field #end
+#end
+#end
+#####################################
+#macro(getcontactlinkcode $showcontact)
+#if ($showcontact)
+#if ($showcontact.value.startsWith("http://") || $showcontact.value.startsWith("https://") || $showcontact.value.startsWith("www."))
+<a href="$showcontact.value" class="extlink" rel="no-follow">$!showcontact.value</a>
+#elseif ($showcontact.subType == "SKYPE")
+<a href="skype:$!showcontact.value?add" rel="no-follow">$!showcontact.value</a>
+#elseif ($showcontact.subType == "AIM")
+<a href="aim:goim?screenname=$!showcontact.value" rel="no-follow">$!showcontact.value</a>
+#elseif ($showcontact.subType == "YAHOO")
+<a href="ymsgr:addfriend?$!showcontact.value" rel="no-follow">$!showcontact.value</a>
+#elseif ($showcontact.subType == "GTALK")
+<a href="gtalk:chat?jid=$!showcontact.value" rel="no-follow">$!showcontact.value</a>
+#elseif ($showcontact.subType == "TWITTER")
+#if ($showcontact.value.startsWith("@"))
+#set($showcontval = $showcontact.value.substring(1))
+<a href="http://twitter.com/$!showcontval">@$!showcontval</a>
+#else
+<a href="http://twitter.com/$!showcontact.value">@$!showcontact.value</a>
+#end
+#else
+$!showcontact.value
+#end
+#end
+#end
+#####################################
+#macro(contactdetailtypestr $detailtype )
+#if ($detailtype && $detailtype != "")
+#if ($detailtype == "WEBSITE") #set($showdetailstr = $!lang.get("website") )
+#elseif ($detailtype == "ADDRESS") #set($showdetailstr = $!lang.get("address") )
+#elseif ($detailtype == "UNKNOWN") #set($showdetailstr = $!lang.get("unknown") )
+#else #set($showdetailstr = $detailtype.toLowerCase()) #end
+$!{showdetailstr}#end
+#end
+#####################################
+#macro(contactdetailbox $showdetail )
+#if (!$showdetail || $showdetail == "") #set($hide = "hide" ) #else #set($hide = "" ) #end
+<tr class="detailbox ${hide}">
+	<td class="r p25 contact-type capitalize">#contactdetailtypestr($!showdetail.subType):</td>
+	<td class="pll p75">
+		<span class="contact-value">#getcontactlinkcode($!showdetail)</span>
+		<input type="hidden" name="contacts" value="$!showdetail"/>
+		<a href="#" class="pictos remove-contact" title="$!lang.get('remove')">D</a>
+	</td>
+</tr>
+#end
+#####################################
+#macro(showaboutview )
+<table class="p100">
+	<tbody>
+		#if ($showUser.rawDobString && !$showUser.rawDobString.isEmpty())
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.age")}: </td>
+			<td class="pll p75" title="#formatdate($!{showUser.dob} 'dd MMMM yyyy')">$!{showUser.age} </td>
+		</tr>
+		#end
+		#if ($showUser.location && !$showUser.location.isEmpty())
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.location")}:</td>
+			<td class="pll p75">$!{showUser.location}</td>
+		</tr>
+		#end
+		#if ($showUser.ilike && !$showUser.ilike.isEmpty())
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.ilike")}:</td>
+			<td class="pll p75">$!{showUser.ilike}</td>
+		</tr>
+		#end
+		#if ($showUser.contacts && !$showUser.contacts.isEmpty())
+		#foreach($contact in $showUser.getAllContactDetails())
+		<tr>
+			<td class="r p25 capitalize">#contactdetailtypestr(${contact.subType}):</td>
+			<td class="pll p75">#getcontactlinkcode($!contact)</td>
+		</tr>
+		#end
+		#end
+		#if ($showUser.aboutme && !$showUser.aboutme.isEmpty())
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.aboutme")}:</td>
+			<td class="pll p75">$!{showUser.aboutme}</td>
+		</tr>
+		#end
+		#if ($showUser.timestamp)
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.membersince")}:</td>
+			<td class="pll p75">#formatdate($!{showUser.timestamp} "dd MMMM yyyy")</td>
+		</tr>
+		#end
+		#if ($showUser.lastseen)
+		<tr>
+			<td class="r p25">$!{lang.get("profile.about.lastseen")}:</td>
+			<td class="pll p75">#formatdate($!{showUser.lastseen} "")</td>
+		</tr>
+		#end
+	</tbody>
+</table>
+#end
+################# SCHOOL MACROS #####################
+#macro(myschoolspage $schools )
+#foreach($school in $schools)
+#set($periods = $authUser.getSchoolPeriodsMap() )
+#set($fromto = $periods.get($school.id) )
+#if ($fromto)
+$school.setFromyear($fromto.substring(0, $fromto.indexOf(":")) )
+#set($sepindex = $fromto.indexOf(":") + 1 )
+$school.setToyear($fromto.substring($sepindex) )
+#end
+#myschoolbox($school)
+#end
+#end
+#####################################################
+#macro(myschoolbox $school )
+<div class="editschool">
+	#if ($request.getParameter("edit"))
+	#set($hideedit = "")
+	#set($hideview = "hide")
+	#else
+	#set($hideedit = "hide")
+	#set($hideview = "")
+	#end
+
+	<div class="viewbox ${hideview}">
+		#schoolbox($school true)
+	</div>
+
+	#if ($canEdit)
+	<div class="editbox lightgraybg rounded5 mvl pam ${hideedit}">
+		<form method="post" class="school-edit-form" action="$profilelink/$!showUser.id">
+			<fieldset>
+				#sectoken(false)
+				<input type="hidden" name="sid" value="$!school.id"/>
+				<input type="hidden" name="getmyschoolscode" value="true"/>
+
+				<legend>$!{lang.get("profile.myschools.add.period")}:</legend>
+				<div class="line">
+					<div class="unit size1of2">
+						<label class="mrm">$!{lang.get("from")}</label>
+						#yearselect("fromyear nicebox p60" "fromyear" false $!school.fromyear "")
+					</div>
+					<div class="unit size1of2 lastUnit">
+						<label class="mrm">$!{lang.get("to")}</label>
+						#yearselect("toyear nicebox p60" "toyear" true $!school.toyear "")
+					</div>
+				</div>
+
+				<div class="center mtl">
+					<input type="submit" value="$!{lang.get('save')}" class="edit-schoolbtn button rounded3"/>
+					<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit ${hideview}"/>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	#end
+</div>
+#end
+#####################################
+#macro(schoolaboutview )
+#if (!$showSchool.about || $showSchool.about.trim().isEmpty() && $canEdit)
+<a class="editlink info-placeholder largeText center inlineblock p100 rounded5 mbl" href="$schoollink/$showSchool.id/edit">$!lang.get("clickedit")</a>
+#else
+<p>$!showSchool.about</p>
+#end
+<table class="p100">
+	<tbody>
+		#if ($showSchool.contacts && !$showSchool.contacts.isEmpty())
+		#foreach($contact in $showSchool.getAllContactDetails())
+		<tr>
+			<td class="r p25">$!lang.get(${contact.subType.toLowerCase()}):</td>
+			<td class="pll p75">#getcontactlinkcode($!contact)</td>
+		</tr>
+		#end
+		#end
+		<tr>
+			<td class="r p25">$!{lang.get("school.created")}:</td>
+			<td class="pll p75" colspan="2">#formatdate($!showSchool.timestamp "dd MMMM yyyy")</td>
+		</tr>
+	</tbody>
+</table>
+#end
+################# COMMENTS MACROS #####################
+#macro(newcommentform $parentid $hidden $uri)
+#if ($uri == "")
+#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
+#if ($request.getAttribute('javax.servlet.forward.query_string'))
+#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
+#end
+#else
+#set($thisuri = $uri)
+#end
+
+#if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
+<div class="newcommentform mvm ${hide}">
+	<form method="post" class="new-comment-form" action="${thisuri}">
+		<fieldset>
+			#sectoken(false)
+			<div class="line">
+				<div class="unit size4of5">
+					<textarea rows="2" cols="4" class="p100 nicebox" name="comment"></textarea>
+					<input type="hidden" name="parentid" value="$!parentid"/>
+					<input type="hidden" name="getcommenthtmlcode" value="true"/>
+				</div>
+				<div class="unit size1of5 lastUnit center">
+					<input type="submit" value="$!lang.get('add')" class="button rounded3 new-comment-btn"/>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+#end
+################# QUESTIONS MACROS #####################
+#macro(newquestionform $form $hidden $type)
+#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
+
+#if ($hidden) #set($hide = "hide") #else #set($hide = "") #end
+#if ($type.equalsIgnoreCase("question"))
+<h2>
+	#if ($postParentId && $postParentClass)
+	#if ($postParentClass == "school")
+	#set($actionlink = "$schoollink/$!postParentId")
+	<a href="$actionlink">$!lang.get("school.title")</a>
+	#elseif ($postParentClass == "group")
+	#set($actionlink = "$grouplink/$!postParentId")
+	<a href="$actionlink">$!lang.get("group.title")</a>
+	#end
+	#else
+	#set($actionlink = $questionslink)
+	<a href="$actionlink">$!lang.get("questions.title")</a>
+	#end
+	/ #if ($postParentClass == "group") $!lang.get("posts.new") #else $!lang.get("posts.ask") #end
+</h2>
+#elseif ($type.equalsIgnoreCase("feedback"))
+#set($actionlink = $feedbacklink)
+<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
+#end
+<hr />
+<div id="questionform" class="qform ${hide}">
+	<form method="post" id="$form.id" action="$thisuri">
+		#if ($form.error)
+		#getmessagebox("errorBox" $form.error false)
+		#end
+		<fieldset>
+			#sectoken(false)
+			#renderSpecialFields($form)
+			<div class="hide">Leave blank:</div>${form.fields.additional}
+			<input type="hidden" name="ask" value="true"/>
+			#createformfield(${form.fields.parentid} "nicebox p50")
+			#createformfield(${form.fields.title} "nicebox p98")
+			#createformfield(${form.fields.body} "edit-post nicebox p98 nicebox hidelabel")
+			<div class="edit-preview"></div>
+			#createformfield(${form.fields.tags} "tagbox nicebox p98")
+
+			<div class="center mtl">
+				${form.fields.askbtn} &nbsp; <a href="$!actionlink" class="button-small rounded3">$!lang.get('cancel')</a>
+			</div>
+		</fieldset>
+	</form>
+</div>
+#end
+###########################################
+#macro(newanswerform $form $showpost $hidden)
+#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
+
+#if ($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
+<div class="${hide}">
+	<form method="post" id="$form.id" action="$thisuri">
+		#if ($form.error)
+		#getmessagebox("errorBox" $form.error false)
+		#end
+		<fieldset>
+			#sectoken(false)
+			#if ($showpost.isQuestion())
+			<legend>$!lang.get("posts.youranswer")</legend>
+			#else
+			<legend>$!lang.get("feedback.writereply")</legend>
+			#end
+			#renderSpecialFields($form)
+			<input type="hidden" name="answer" value="true"/>
+			<div class="hide">Leave blank:</div>${form.fields.additional}
+			<ol>
+				<li>
+					#createformfield(${form.fields.body} "hidelabel edit-post unload-confirm p99 nicebox")
+					<div class="edit-preview"></div>
+				</li>
+			</ol>
+
+			<div class="center">
+				${form.fields.answerbtn}
+				<input type="button" value="$!lang.get('close')" class="button rounded3 close-answer-form"/>
+			</div>
+		</fieldset>
+	</form>
+</div>
+#end
+###########################################
+#macro(tagsbox $tags $link)
+#foreach($showtag in $tags.split(","))
+#if ($showtag && $showtag.trim() != "")
+#if ($link.isEmpty())
+<span class="button-tiny rounded3 mrs">
+	<span class="pictos">z</span> $!showtag
+</span>
+#else
+<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="button-tiny rounded3 mrs">
+	<span class="pictos">z</span> $!showtag
+</a>
+#end
+#end
+#end
+#end
+################# PAGINATION #####################
+#macro(paginate $page $macroCode $count $params $mode)
+#if ($pagenum && $pagenum.longValue() > 10000) #set($next = $page) #else #set($next = $page + 1) #end
+#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
+#set($classes = "pagelink button-small rounded3")
+#if ($params && !$params.isEmpty()) #set($reqURL = "$requri?${params}&amp;page") #else #set($reqURL = "$requri?page") #end
+
+<div class="page-content">#evaluate($macroCode)</div>
+#if ($count && $count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
+<div class="pages center mtl">
+	#if ($mode == "pageless") #set($classes = "$classes more-link" ) #else #set($classes = "$classes more-link-na" ) #end
+	<a href="$reqURL=$!next" class="more-link-na ${classes}" title="Load more">$!lang.get("more")</a>
+	<span class="hide page-macro-code">$!macroCode</span>
+</div>
+#end
+#end
+####################################
+#macro(schoolbox $showschool $showYears)
+<div class="whitebox clearfix media">
+	<div class="img mrl ">
+		#if ($showschool.iconurl && !$showschool.iconurl.isEmpty())
+		#set($schoolthumbclass = "noclass" )
+		#else
+		#set($schoolthumbclass = "school-pic-thumb inlineblock" )
+		#end
+
+		<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" class="${schoolthumbclass}">
+			#if ($showschool.iconurl && !$showschool.iconurl.isEmpty())
+			<img src="$showschool.iconurl" alt="School thumbnail" />
+			#else
+			&nbsp;
+			#end
+		</a>
+	</div>
+	<div class="bd">
+		<div class="line lightgray">
+			<div class="unit size1of2">$!lang.get("school.${showschool.subType}")</div>
+			<div class="unit size1of2 lastUnit r">
+				<span>$!showschool.location</span>
+			</div>
+		</div>
+		<div class="line">
+			<div class="unit size3of4">
+				<div class="mediumText">
+					<span class="phs rounded3 reputationbox" title="$!lang.get('votes')">$utils.abbreviateInt($!showschool.votes, 0)</span>
+					<a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)" >$!{showschool.name}</a>
+				</div>
+				#if ($showschool.fromyear && $showschool.fromyear != 0)
+				#set($from = $showschool.fromyear) #else #set($from = "") #end
+
+				#if ($showschool.toyear && $showschool.toyear != 0)
+				#set($to = $showschool.toyear) #else #set($to = "") #end
+
+				#if ($from != "" && $showYears)
+				<span class="mediumText eduperiod ">$from - $to</span>
+				#end
+			</div>
+			<div class="unit size1of4 lastUnit r">
+				#if ($authenticated)
+				#if ($showschool.isLinkedTo($authUser))
+				<a class="button-tiny rounded3" href="$schoollink/$!showschool.id/leave/#stripstr($!showschool.name)" class="rounded3 button-tiny rusure">
+					<span class="pictos">-</span> $!lang.get("leave")
+				</a>
+				#else
+				<a class="button-tiny rounded3" href="$schoollink/$!showschool.id/join/#stripstr($!showschool.name)" class="rounded3 button-tiny">
+					<span class="pictos">+</span> $!lang.get("join")
+				</a>
+				#end
+				#end
+				#if ($canEdit)
+				<a href="$profilelink/$!showUser.id/schools/edit" class="editlink button-tiny rounded3">
+					<span class="pictos">W</span> $!lang.get("edit")
+				</a>
+				#end
+				#if (!$authenticated || ($authenticated && $showschool.creatorid != $authUser.id))
+				#getreportlink($showschool "$schoollink/$!showschool.id" "button-tiny rounded3 notext")
+				#end
+			</div>
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(schoolspage $schools)
+#foreach($showschool in $schools)
+#schoolbox($showschool false)
+#end
+#end
+####################################
+#macro(classbox $showclass )
+<div class="whitebox clearfix classbox media">
+	<div class="img center mls mrl">
+		<div class="lightgray">$!lang.get("year")</div>
+		<span class="hugeText">$!{showclass.gradyear}</span>
+	</div>
+	<div class="bd">
+		#set($showschool = $showclass.school)
+		<div class="line lightgray">
+			<div class="unit size1of3">$!lang.get("class.title")</div>
+			<div class="unit size2of3 lastUnit r ${mobilehide}" title="$!lang.get('class.classmates')">
+				<span class="pictos">g</span> $!showclass.count
+			</div>
+		</div>
+		<div class="line">
+			<div class="unit size3of4">
+				<div class="mediumText">
+					<a href="$classlink/$!showclass.id/#stripstr($!showclass.identifier)">$!{showclass.identifier}</a>
+				</div>
+				<span class="pictos">j</span> <a href="$schoollink/$!showschool.id/#stripstr($!showschool.name)">$!{showschool.name}</a>
+			</div>
+			<div class="unit size1of4 lastUnit r">
+				#if ($authenticated)
+				#if ($showclass.isLinkedTo($authUser))
+				<a class="button-tiny rounded3" href="$classlink/$!showclass.id/leave/#stripstr($!showclass.identifier)/?left=true">
+					<span class="pictos">-</span> $!lang.get("leave")
+				</a>
+				#else
+				<a class="button-tiny rounded3" href="$classlink/$!showclass.id/join/#stripstr($!showclass.identifier)/?joined=true">
+					<span class="pictos">+</span> $!lang.get("join")
+				</a>
+				#end
+				#end
+				#if (!$authenticated || ($authenticated && $showclass.creatorid != $authUser.id))
+				#getreportlink($showclass "$classlink/$showclass.id" "button-tiny rounded3 notext")
+				#end
+			</div>
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(classespage $classes)
+#foreach($showclass in $classes)
+#classbox($showclass)
+#end
+#end
+###################################
+#macro(classmatespage $classmates)
+#foreach($classmate in $classmates)
+#smallpersonbox($classmate)
+#end
+#end
+####################################
+#macro(groupbox $showgroup )
+<div class="whitebox clearfix groupbox media">
+	<div class="img center mls mrl">
+		#grouppic($showgroup "small")
+	</div>
+	<div class="bd">
+		<div class="line lightgray">
+			<div class="unit size1of3">$!lang.get("group.title")</div>
+			<div class="unit size2of3 lastUnit r" title="$!lang.get('group.members')">
+				<span class="pictos">g</span> $!showgroup.count
+			</div>
+		</div>
+		<div class="line">
+			<div class="unit size3of4">
+				<div class="mediumText">
+					<a href="$grouplink/$!showgroup.id/#stripstr($!showgroup.name)">$!{showgroup.name}</a>
+				</div>
+				#if ($showgroup.description && !$showgroup.description.trim().isEmpty())
+				<span>$showgroup.description</span>
+				#end
+			</div>
+			<div class="unit size1of4 lastUnit r">
+				#if ($authenticated)
+				#if ($showgroup.isLinkedTo($authUser) && !$showgroup.creatorid.equals($authUser.id))
+				<a class="button-tiny rounded3" href="$grouplink/$!showgroup.id/leave/#stripstr($!showgroup.name)/?left=true">
+					<span class="pictos">-</span> $!lang.get("leave")
+				</a>
+				#end
+				#end
+				#if (!$authenticated || ($authenticated && $showgroup.creatorid != $authUser.id))
+				#getreportlink($showgroup "$grouplink/$showgroup.id" "button-tiny rounded3 notext")
+				#end
+			</div>
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(grouppic $showgroup $large)
+#set($hasimg = $showgroup.imageurl && $showgroup.imageurl.startsWith("http") &&
+!$showgroup.imageurl.contains("scoold.com"))
+#if ($large && $large == "large")
+#if ($hasimg)
+<img src="$!showgroup.imageurl" alt="Group image" class="rounded3 profile-pic-large"/>
+#else
+<span class="gigaText pictos groupicon-large rounded3">g</span>
+#end
+#else
+#if ($hasimg)
+<img src="$!showgroup.imageurl" alt="Group image" class="profile-pic-small"/>
+#else
+<span class="mediumText pictos groupicon-small">g</span>
+#end
+#end
+#end
+####################################
+#macro(groupspage $groups)
+#foreach($showgroup in $groups)
+#groupbox($showgroup)
+#end
+#end
+####################################
+#macro(groupmemberspage $members)
+#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
+#foreach($showmember in $members)
+#if ($showmember.id.equals($authUser.id))
+#set($showmember.isGroupMember = false )
+#else
+#set($showmember.isGroupMember = true )
+#end
+#personbox($showmember)
+#end
+#end
+####################################
+#macro(contactsjs $contacts )#foreach($contact in $contacts) {id:"$contact.id", name:"$contact.name"}#if ($velocityCount < $contactslist.size()),#end#end#end
+####################################
+#macro(personbox $showFriend)
+#if ($showFriend)
+<div class="whitebox clearfix media">
+	<div class="img mrl center">
+		<a href="$profilelink/$showFriend.id/#stripstr($showFriend.name)">
+			<img src="#profilepic($showFriend true)" width="50" height="50" alt="Profile thumbnail"/>
+		</a>
+	</div>
+	<div class="bd">
+		<div class="line lightgray">
+			<div class="unit size1of2">$!{lang.get($showFriend.type)}</div>
+			<div class="unit size1of2 lastUnit r">
+				#usertitlebadge($showFriend)
+			</div>
+		</div>
+		<div class="line">
+			<div class="unit size3of4">
+				<div class="mediumText mbs">
+					<span class="phs rounded3 reputationbox" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
+					<a href="$profilelink/${showFriend.id}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+				</div>
+				#if ($showFriend.status && !$showFriend.status.isEmpty() && !$showFriend.isGroupMember)
+				<div>$!{showFriend.status}</div>
+				#end
+			</div>
+			<div class="unit size1of4 lastUnit r">
+				#if ($showFriend.isGroupMember)
+				<a href="${uri}?remove=$showmember.id" class="remove-groupmember-btn button-small rounded3"><span class="pictos">_</span> $!lang.get("remove")</a>
+				#else
+				#if ($authenticated && $authUser.id != $showFriend.id)
+				#if ($authUser.isFriendWith($showFriend))
+				<a class="delfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/remove" title="Remove from contacts">
+					<span class="pictos">-</span> $!{lang.get("remove")}
+				</a>
+				#else
+				<a class="addfriend button-tiny rounded3" href="$profilelink/$!{showFriend.id}/add" title="Add to contacts">
+					<span class="pictos">+</span> $!lang.get("add")
+				</a>
+				#end
+				#end
+				#if (!$authenticated || ($authenticated && $showFriend.id != $authUser.id))#getreportlink($showFriend "$profilelink/$showFriend.id" "button-tiny rounded3 notext")#end
+				#end
+			</div>
+		</div>
+	</div>
+</div>
+#end
+#end
+####################################
+#macro(smallpersonbox $showu)
+<div class="userbox media pas inlineblock user-$!{showu.id}">
+	<div class="img mrm center">
+		#if ($showu)
+		<a href="$profilelink/$!showu.id/#stripstr($!showu.name)" title="$!showu.name">
+			<img src="#profilepic($!showu true)" width="50" height="50" alt="Profile picture"/>
+		</a>
+		#else
+		<img src="#profilepic($!showu true)" width="50" height="50" alt="Profile picture"/>
+		#end
+	</div>
+	<div class="bd $!{mobilehide}">
+		#if ($showu)
+		<a href="$profilelink/$!showu.id/#stripstr($!showu.name)" class="smallText">$showu.name</a>
+		#else
+		$!lang.get("profile.deleted")
+		#end
+		#if ($showu)
+		<br />
+		<span class="reputationbox rounded3 phs">$!utils.abbreviateInt($!showu.votes, 0)</span>
+		<span class="lightgray">#usertitlebadge($showu)</span>
+		#end
+	</div>
+</div>
+#end
+####################################
+#macro(tinypersonbox $showu)
+<div class="inlineblock">
+	#if ($showu)
+	<a href="$profilelink/$!showu.id/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
+		<img src="#profilepic($!showu true)" width="40" height="40" alt="Profile picture"/>
+	</a>
+	#else
+	<img src="#profilepic($!showu true)" width="40" height="40" alt="Profile picture"/>
+	#end
+</div>
+#end
+####################################
+#macro(inactivepersonbox $showname $showclass)
+<div class="userbox media pas inlineblock">
+	#set($isFBid = $showname.matches("^\d+$"))
+	<div class="img mrm center">
+		#if ($isFBid)
+		<img src="https://graph.facebook.com/$!{showname}/picture?type=square" width="50" height="50" alt="Profile picture"/>
+		#else
+		<img src="https://www.gravatar.com/avatar/?size=50&amp;d=mm&amp;r=pg" width="50" height="50" alt="Profile picture"/>
+		#end
+	</div>
+	<div class="bd">
+		<div class="smallText">
+			#if ($isFBid)
+			<span class="fb-name">$!showname</span>
+			#else
+			$!showname
+			#end
+		</div>
+
+		#if (($authenticated && $authUser.votes >= 20) || !$authenticated)
+		<div>
+			<a href="$classlink/p/$showclass.id/thisisme/${utils.urlEncode($!showname)}?thisisme=${utils.urlEncode($!showname)}" title="This is me!" class="button-tiny rounded3">$!lang.get("profile.thisisme")</a>
+		</div>
+		#end
+	</div>
+</div>
+#end
+####################################
+#macro(personlink $showu)
+<span>
+	#if ($showu.groups && !$showu.groups.isEmpty())
+	#if ($showu.groups == "mods")
+	<span class="pictos" title="$!lang.get('mod')">S</span>
+	#elseif ($showu.groups == "admins")
+	<span class="pictos" title="$!APPNAME developer">b</span>
+	<span class="pictos" title="$!lang.get('mod')">S</span>
+	#else
+	<span class="pictos">U</span>
+	#end
+	#end
+	#if ($showu)
+	#if ($showu.name)
+	#set($seopsuffix = "/#stripstr($!showu.name)" )
+	#else
+	#set($seopsuffix = "" )
+	#end
+	<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.name</a>
+	#else
+	$!lang.get("profile.deleted")
+	#end
+</span>
+#end
+####################################
+#macro(peoplepage $people)
+#foreach($showFriend in $people)
+#personbox($showFriend)
+#end
+#end
+####################################
+#macro(messagebox $showmsg)
+#set($uri = $request.getAttribute("javax.servlet.forward.request_uri"))
+#if ($showmsg.isread) #set($gclass = "" ) #else #set($gclass = "lightbluebg" ) #end
+<div class="whitebox clearfix ${gclass}">
+	<table>
+		<tbody>
+			<tr>
+				<td class="prm">
+					#tinypersonbox($showmsg.author)
+				</td>
+				<td class="p95"><span class="lightgray right">#formatdate($showmsg.timestamp "")</span> $!showmsg.body</td>
+				<td class="pll">
+					<a href="${uri}?delete=$showmsg.id" title="Delete" class="button-tiny rounded3 delete-message">
+						<span class="pictos red">*</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+#end
+####################################
+#macro(messagespage $messages )
+#foreach($showmsg in $messages)
+#messagebox($showmsg)
+#end
+#end
+####################################
+#macro(commentbox $showcomment)
+#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
+#if ($request.getAttribute('javax.servlet.forward.query_string'))
+#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
+#end
+#if ($thisuri.contains("?"))	#set($amp = "&amp;") #else #set($amp = "?") #end
+
+#if ($showcomment == "")	#set($hide = "hide") #else #set($hide = "clearfix")	#end
+<div class="commentbox pas ${hide}">
+	#if ($showcomment.hidden)
+	#set($hidden = "hide")
+	<span>$!lang.get("comments.hidden") &nbsp;</span>
+	<a href="#" title="$!lang.get('comments.show')" class="show-comment">$!lang.get("comments.show")</a>
+	#else
+	#set($hidden = "noclass")
+	#end
+
+	<div class="${hidden}">
+		<div class="left">
+			<span class="lightgray pictos">w</span>
+			#set($commentAuthor = {'name': $!showcomment.author, 'id': $showcomment.creatorid})
+			<span class="comment-author">#personlink($commentAuthor):</span>&nbsp;
+			<span class="comment-text">$!showcomment.comment</span>
+		</div>
+		<div class="inlineblock right max-width-100">
+			<span class="comment-timestamp mrs"><span class="pictos">t</span> #formatdate($showcomment.timestamp '')</span>
+			#votebox($showcomment "mrs")
+			#if ($showcomment == "")
+			#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
+			<a href="${thisuri}" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
+			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $request.isUserInRole("mod")))
+			<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
+			#else
+			#getreportlink($showcomment "$commentlink/$!showcomment.id" "button-tiny rounded3 notext")
+			#end
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(commentspage $comments)
+#foreach($comment in $comments)
+#commentbox($comment)
+#end
+#commentbox("") ## empty box to be cloned
+#end
+####################################
+#macro(commentspagepreview $comments $count)
+#if ($comments)
+#if ($comments.size() > $count)
+#set($countmo = $count - 1 )
+#foreach($c in [0..$countmo])
+#commentbox($comments.get($c))
+#end
+
+#if ($comments.size() > $count)
+<a href="#" class="more-comments-btn button-tiny rounded3">$!lang.get("more")</a>
+<div class="hide">
+	#set($countmo = $comments.size() - 1 )
+	#foreach($c in [$count..$countmo])
+	#commentbox($comments.get($c))
+	#end
+</div>
+#end
+#else
+#foreach($comment in $comments)
+#commentbox($comment)
+#end
+#end
+#end
+#commentbox("") ## empty box to be cloned
+#end
+####################################
+#macro(getreportlink $reportable $link $clazz)
+#if ($reportable)
+#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
+#set($href = "${requri}?getreportform=true&amp;parentid=$!reportable.id&amp;parentid=$!reportable.id&amp;type=$!reportable.class.getSimpleName()")
+#if (!$link.isEmpty())
+#set($encodedLink = $utils.urlEncode($link))
+#set($href = "${href}&amp;link=$encodedLink")
+#end
+#if ($reportable.parentid && !$reportable.parentid.isEmpty())
+#set($href = "${href}&amp;grandparentid=$reportable.parentid")
+#end
+#if ($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $!lang.get('report')") #end
+<a href="$!{href}" title="Report a problem" class="trigger-report $!{clazz}"><span class="pictos">^</span>$showtxt</a>
+#end
+#end
+####################################
+#macro(reportspage $reports )
+#foreach($report in $reports)
+#reportbox($report)
+#end
+#end
+####################################
+#macro(reportbox $showreport )
+<div class="reportbox whitebox clearfix">
+	<div class="mediumText lightgray mbm">
+		$!lang.get("reports.$!{showreport.type.toLowerCase()}"):
+		$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
+		<span class="right"><span class="pictos">t</span>#formatdate($!showreport.timestamp "")</span>
+	</div>
+	#if ($showreport.closed)
+	#set($hide = "" )
+	#else
+	#set($hide = "hide" )
+	#end
+
+	<div class="pictos left mrl hugeText green ${hide}">3</div>
+	<div class="right">
+		<a href="$showreport.link" class="button-medium rounded3"><span class="pictos">E</span> $!lang.get("open")</a>
+		#if (!$showreport.closed)
+		<a href="#" class="button-medium rounded3 close-report" title="Close report"><span class="pictos">3</span> $!lang.get("close")</a>
+		#else
+		<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="button-medium rounded3"><span class="pictos">1</span> $!lang.get("reopen")</a>
+		#end
+		#if ($request.isUserInRole("admin"))
+		<a href="$reportslink/delete/$showreport.id" title="Delete" class="button-medium rounded3 red delete-report"><span class="pictos">*</span> $!lang.get("delete")</a>
+		#end
+	</div>
+	<div class="clearfix">
+		<strong> <span class="pictos">U</span>
+			#if ($showreport.creatorid && $showreport.creatorid > 0)
+			<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.author:</a>
+			#else
+			<span>$!showreport.author:</span>
+			#end
+		</strong>
+		#if ($showreport.description && !$showreport.description.isEmpty())
+		<span>$showreport.description</span>
+		#end
+		#if ($showreport.solution && !$showreport.solution.isEmpty())
+		#set($hide = "" )
+		#else
+		#set($hide = "hide" )
+		#end
+		<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span class="report-solution-text">$!showreport.solution</span></p>
+	</div>
+
+	<div class="hide report-solution-box p100 mtm center">
+		<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
+			<fieldset>
+				#sectoken(false)
+				<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+				<input class="report-solution-btn" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="button rounded3"/>
+			</fieldset>
+		</form>
+	</div>
+</div>
+#end
+####################################
+#macro(questionspage $posts )
+#foreach($post in $posts)
+#questionbox($post)
+#end
+#end
+####################################
+#macro(questionbox $showpost )
+#set($actionlink = "#getpostlink($showpost false true)")
+#set($actionlink2 = "#getpostlink($showpost true true)")
+
+<div class="questionbox whitebox clearfix">
+	<div class="right mlm center max-width-100 $!{mobilehide}">
+		#set($author = $showpost.author)
+		#tinypersonbox($author)
+		<div class="smallText lightgray">
+			<span class="pictos">t</span>
+			#formatdate($showpost.timestamp "")
+		</div>
+		#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
+		#getreportlink($showpost "$questionlink/$!showpost.id" "button-tiny rounded3 notext")
+		#end
+	</div>
+	<div class="media">
+		#set($votes = $showpost.votes)
+		#set($viewcount = $showpost.viewcount)
+		#set($answercount = $showpost.answercount)
+
+		#if (!$votes) #set($votes = 0) #end
+		#if (!$viewcount) #set($viewcount = 0) #end
+		#if (!$answercount) #set($answercount = 0) #end
+
+		<div class="img">
+			#if ($showpost.answerid) #set($bgclass = "lightbluebg" ) #else #set($bgclass = "" ) #end
+			<div class="qstatsbox mrl pas rounded5 center $!{bgclass}">
+				<div class="largeText" title="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
+				<div class="line">
+					<div class="unit size1of2" title="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
+					<div class="unit size1of2 lastUnit" title="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</div>
+				</div>
+			</div>
+		</div>
+		<div class="bd">
+			#if ($showpost.deleteme)
+			<span class="pictos red" title="$!lang.get('posts.marked')">#</span>
+			#end
+			<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+
+			#set($showBody = $utils.stripHtml($utils.markdownToHtml($showpost.body)) )
+			<div>$!utils.abbreviate($showBody, 160)</div>
+			<div>#tagsbox($showpost.tags $actionlink2)</div>
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(answerspage $answers $parentpost)
+#foreach($answer in $answers)
+#postbox($answer $parentpost)
+#end
+#end
+####################################
+#macro(compactanswerspage $answers)
+#foreach($answer in $answers)
+#answerbox($answer)
+#end
+#end
+####################################
+#macro(answerbox $showpost )
+<div class="questionbox whitebox clearfix max-width-100">
+	<div class="right p">
+		<span class="pictos">t</span> #formatdate($showpost.timestamp "")
+	</div>
+	<div class="p100">
+		#set($votes = $showpost.votes)
+		#if (!$votes) #set($votes = 0) #end
+
+		<span class="p10 reputationbox phs mediumText rounded3 mrl">$!votes</span>
+		<span class="p70">
+			<a href="$questionlink/$showpost.parentid#post-$!showpost.id" title="View answer">
+				#$!utils.abbreviate($showpost.body, 100).replaceAll('\s', ' ')
+			</a>
+		</span>
+	</div>
+</div>
+#end
+####################################
+#macro(postbox $showpost $parentpost)
+#if ($showpost.isReply())	#set($boxclass = "whitebox") #else #set($boxclass = "" ) #end
+
+#set($actionlink = "#getpostlink($showpost false true)")
+#set($actionlink2 = "#getpostlink($showpost true true)")
+
+<div class="p100 postbox ${boxclass}">
+	#if ($showpost.isBlackboard())
+	<h2 class="inline">$!lang.get("blackboard.title")</h2> &nbsp;
+	#set($divposclass = "right" )
+	#else
+	#set($divposclass = "mbm" )
+	#end
+	<div class="$!{divposclass}">
+
+		#if ($canEdit)
+		<a href="#" title="Edit" class="editlink button-tiny rounded3"><span class="pictos">W</span> $!lang.get("edit")</a>
+		#end
+
+		#if ($canComment && !$showpost.isBlackboard())
+		<a href="#" class="next-div-toggle button-tiny rounded3" title="Add a comment"><span class="pictos">w</span> $!lang.get("comments.write")</a>
+		#end
+
+		#if ($showpost.lasteditby)
+		<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="button-tiny rounded3"><span class="pictos">l</span> $!lang.get("revisions.title")</a>
+		#end
+
+		#if (!$showpost.isBlackboard())
+		#if ($showpost.deleteme)
+		<a href="$!actionlink/$showpost.id/undelete" class="post-refresh button-tiny rounded3" title="Undelete"><span class="pictos">1</span> $!lang.get("undelete")</a>
+		#elseif ($isMine || $request.isUserInRole("mod"))
+		<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask button-tiny rounded3" title="Delete"><span class="pictos">*</span> $!lang.get("delete")</a>
+		#end
+		#end
+
+		#if ($request.isUserInRole("mod") && $showpost.isQuestion())
+		#if ($showPost.isClosed())
+		<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh button-tiny rounded3"><span class="pictos">)</span> $!lang.get("reopen")</a>
+		#else
+		<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask button-tiny rounded3"><span class="pictos">(</span> $!lang.get("close")</a>
+		#end
+		#end
+
+		#if ($request.isUserInRole("admin") && !$showpost.isBlackboard())
+		<a href="${adminlink}?delete=post&amp;id=$showpost.id" title="Delete" class="button-tiny rounded3 red"><span class="pictos">*</span> $!lang.get("delete")</a>
+		#end
+
+		#if (!$showpost.isBlackboard() && (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id)))
+		#getreportlink($showpost "$questionlink/$!showpost.id" "button-tiny rounded3")
+		#end
+
+		#if ($canComment && !$showpost.isBlackboard())
+		#newcommentform($showpost.id true "$questionlink/$showpost.id")
+		#end
+	</div>
+
+	#if (!$showpost.isBlackboard())
+	<div class="line lightgraybg prs plm pts rounded5">
+		<div class="unit size1of2">
+			#votebox($showpost "hugeText mtm mrl")
+			#if (!$showpost.isBlackboard())
+			<span class="right mtm">
+				#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
+				#if ($approvedAnswer)
+				#set($onclass = "green")
+				#set($picon = "2")
+				#else
+				#set($onclass = "")
+				#set($picon = "3")
+				#end
+				#if ($authenticated && $showpost.isReply() && $parentpost.creatorid.equals($authUser.id))
+				<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText pictos approve-answer nodecoration $!{onclass}" title="Approve answer">$picon</a>
+				#elseif ($approvedAnswer)
+				<span class="pictos megaText green">$picon</span>
+				#end
+			</span>
+			#end
+		</div>
+		<div class="unit size1of2 lastUnit r">
+			#set($author = $showpost.author)
+			#smallpersonbox($author)
+		</div>
+	</div>
+	#end
+
+	#if (!$showpost.isBlackboard())
+	#set($postviewid = "post-$!showpost.id" )
+	#set($bbclazz = "mbm" )
+	#else
+	#set($postviewid = "blackboard" )
+	#set($bbclazz = "rounded3 pas" )
+	#end
+	<div id="${postviewid}" class="viewbox ${bbclazz}">
+		<div class="mbl pas">
+			#set($_bodyHtml = $utils.markdownToHtml("$!showpost.body"))
+			$!{_bodyHtml}
+
+			#if ($showpost.isBlackboard() && (!$showpost.body || $showpost.body.trim().isEmpty()))
+			<div class="center mtl mediumText">$!lang.get("class.blankboard")</div>
+			#end
+
+			#if ($showpost.tags && !$showpost.tags.isEmpty())
+			<div class="mtm">#tagsbox($showpost.tags $actionlink2)</div>
+			#end
+		</div>
+
+		#if ($showpost.lasteditby || !$showpost.isBlackboard())
+		<div class="line">
+			<div class="unit size1of3">
+				#if (!$showpost.isBlackboard())
+				<span class="pictos">p</span>
+				<strong>$!lang.get("posts.posted")</strong>
+				<span class="pictos">t</span> #formatdate($showpost.timestamp "")
+				#end
+			</div>
+			<div class="unit size2of3 lastUnit r">
+				#if ($showpost.lasteditby)
+				<span class="pictos">W</span>
+				<strong>
+					<a href="$postlink/$showpost.id/revisions" title="Revision history">$!lang.get("posts.editby")</a>
+				</strong>
+				#personlink($showpost.lastEditor) <span class="pictos">t</span> #formatdate($showpost.lastactivity "")
+				#end
+			</div>
+		</div>
+		#end
+	</div>
+	#if ($canEdit)
+	<div class="editbox lightgraybg rounded5 pam hide">
+		#set($form = $showpost.editForm)
+		#if ($form)
+		#set($editLink = $request.getAttribute("javax.servlet.forward.request_uri"))
+		<form method="post" id="$form.id" action="$editLink">
+			#if ($form.error)
+			#getmessagebox("errorBox" $form.error false)
+			#end
+			<fieldset>
+				#sectoken(false)
+				#renderSpecialFields($form)
+				<input type="hidden" name="editpostid" value="$showpost.id"/>
+				<div class="hide">Leave blank:</div>${form.fields.additional}
+				#createformfield(${form.fields.body} "hidelabel edit-post nicebox p99")
+				<div class="edit-preview"></div>
+				#if ($showpost.isQuestion())
+				#createformfield(${form.fields.tags} "tagbox nicebox p99")
+				#end
+
+				<div class="center mtl">
+					${form.fields.editbtn}
+					<input type="button" value="$!lang.get('close')" class="button rounded3 canceledit"/>
+				</div>
+			</fieldset>
+		</form>
+		#end
+	</div>
+	#end
+
+	<div class="comments post-comments">
+		#if ($showpost && $showpost.properties.commentcount > 0)
+		#paginate($showpost.pagenum.longValue() "\#commentspagepreview(\$showpost.comments 2)" $showpost.properties.commentcount "getcomments=true&amp;parentid=$showpost.id" "pageless")
+		#end
+	</div>
+</div>
+#end
+####################################
+#macro(revisionspage $revisions $canrestore $showpost)
+#if ($revisions && !$revisions.isEmpty())
+#set($lastIndex = $revisions.size() - 1)
+#set($lastrev = $revisions.get($lastIndex))
+
+#if ($revisions.size() == 1)
+#revisionbox($lastrev $lastrev $canrestore $showpost)
+#else
+
+#if ($revisions.size() > $MAX_ITEMS_PER_PAGE)
+#set($lastrev = $revisions.remove($lastIndex))
+#end
+
+#foreach($revision in $revisions)
+#if ($velocityCount < $revisions.size())
+#set($prevrev = $revisions.get($velocityCount))
+#else
+#set($prevrev = $lastrev)
+#end
+
+#revisionbox($revision $prevrev $canrestore $showpost)
+#end
+#end
+#end
+#end
+####################################
+#macro(revisionbox $showrev $showorigrev $canrestore $showpost)
+#set($actionlink = "#getpostlink($showpost false true)")
+#set($actionlink2 = "#getpostlink($showpost true true)")
+<div class="whitebox revisionbox">
+	<div class="line lightgraybg rounded3 pas">
+		<div class="unit size1of3">
+			#set($author = $showrev.getAuthor())
+			#smallpersonbox($author)
+		</div>
+		<div class="unit size1of3 center">
+			<span class="lightgray mediumText ${mobilehide}">#if ($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
+		</div>
+		<div class="unit size1of3 lastUnit r">
+			<div class="lightgray mediumText">
+				<span class="mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
+			</div>
+			<div class="mts">
+				#if ($showpost.revisionid == $showrev.id)
+				<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
+				#elseif ($canrestore || $request.isUserInRole("mod"))
+				<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask button-small rounded3" title="Restore">
+					<span class="pictos">1</span> $!lang.get("restore")
+				</a>
+				#end
+			</div>
+		</div>
+	</div>
+	<div>
+		#if ($showrev.title)
+		<h3 class="newrev">$showrev.title</h3>
+		#if ($showorigrev.title)
+		<span class="hide oldrev">$!showorigrev.title</span>
+		#end
+		#end
+		#if ($showrev.body)
+		#set($revHtml = $utils.markdownToHtml($showrev.body))
+		#set($showRevBody = $utils.stripHtml($revHtml) )
+		<div class="newrev mtl">$!showRevBody</div>
+		#if ($showorigrev.body)
+		#set($origHtml = $utils.markdownToHtml($showorigrev.body))
+		#set($showOrigBody = $utils.stripHtml($origHtml) )
+		<span class="hide oldrev">$!showOrigBody</span>
+		#end
+		#end
+		#if ($showrev.tags)
+		<div class="newrev tagsdiff mtm">
+			#tagsbox($showrev.tags "")
+		</div>
+		#if ($showorigrev.tags)
+		<span class="hide oldrev">#tagsbox($!showorigrev.tags "")</span>
+		#end
+		#end
+	</div>
+</div>
+<br/>
+#end
+###################################
+#macro(translationspage $translations $approvedmap)
+#foreach($trans in $translations)
+#set($approved = $approvedmap.containsKey($trans.key) && $approvedmap.get($trans.key).equals($trans.id))
+#translationbox($trans $approved)
+#end
+#end
+###################################
+#macro(translationbox $showtrans $approved)
+#set($timestamp = "#formatdate($showtrans.timestamp '')")
+#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
+
+<div class="translationbox media">
+	<div class="img mrm">
+		#if ($request.isUserInRole("admin"))
+		#if ($approved)
+		#set($onclass = "green")
+		#set($picon = "2")
+		#else
+		#set($onclass = "")
+		#set($picon = "3")
+		#end
+		<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!{onclass}" title="Approve">$picon</a>
+		&nbsp;
+		#end
+		#votebox($showtrans "mediumText")
+	</div>
+	<div class="bd pts">
+		<div class="trans-value inlineblock">$!showtrans.value</div>
+		<div class="right">
+			#set($translAuthor = $!showtrans.author)
+			#personlink($translAuthor)
+			<span class="trans-timestamp"><span class="pictos">t</span> $!timestamp</span>
+			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $request.isUserInRole("admin")))
+			<a href="${thisuri}?delete=$!showtrans.id" title="Delete" class="delete-translation red button-tiny rounded3"><span class="pictos">*</span></a>
+			#else
+			#getreportlink($showtrans "$translatelink/$!showtrans.id" "button-tiny rounded3 notext")
+			#end
+		</div>
+	</div>
+</div>
+#end
+###################################
+#set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher",
+"student","profile.status.txt","class.chat.userin",	"class.chat.userout","class.chat.connection.error",
+"class.chat.polling.error","class.chat.reconnect.error", "more","posts.unloadconfirm",
+"signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close",
+"save", "clickedit","invalidyear"])
+#macro(langjs ) {#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if ($velocityCount < $jslang.size()),#end #end}#end
+###################################
+#macro(langbox $showLangKey $showLangName $progress  )
+#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang rounded5") #else #set($selclass = "") #end
+<div class="inlineblock mrl mbm center langbox rounded5 ${selclass}">
+	<div class="mediumText mbs">
+		#if ($selclass == "")
+		<form action="$languageslink" method="post">
+			<fieldset>
+				#sectoken(false)
+				<input type="hidden" name="setlocale" value="$!showLangKey"/>
+				<input type="submit" class="button-link capitalize" value="$showLangName"/>
+			</fieldset>
+		</form>
+		#else
+		<span class="capitalize">$!{showLangName}</span>
+		#end
+	</div>
+	<div>
+		#if ($progress >= 90) #set($gclass = "green" )#elseif ($progress >= 50)#set($gclass = "orange" )#else #set($gclass = "red" )#end
+		<span class="reputationbox rounded3 phs $!{gclass}" title="$!{progress}%">$!{progress}%</span>
+
+		#if (!$showLangKey.equals("en"))
+		<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="button-tiny rounded3">$!lang.get("translate.translate")</a>
+		#end
+	</div>
+</div>
+#end
+###################################
+#macro(badgebox $showbadge $num)
+#set($badgeinfo = $!lang.get("about.badges.$showbadge") )
+<span class="badge phs mas rounded5 inlineblock" title="$!badgeinfo">
+	<span class="pictos">S</span>
+	#if ($num && $num > 1)
+	$!lang.get("$showbadge") <sup>$num</sup>
+	#else
+	$!lang.get("$showbadge")
+	#end
+</span>
+#end
+###################################
+#macro(showcount $param )
+#if ($param && $param > 1)
+<span class="lightbluebg rounded3 phs">$!param</span>
+#end
+#end
+################# MISC MACROS #####################
+#macro(votebox $votable $sizeClass)
+#if ($votable == "")
+#set($id = "")
+#set($type = "comment")
+#else
+#set($id = $!votable.id)
+#set($type = $votable.class.simpleName.toLowerCase())
+#end
+#if ($authenticated) #set($linkclass = "votelink") #else #set($linkclass = "") #end
+#if ($votable.votes)	#set($votes = $votable.votes) #else #set($votes = 0) #end
+
+<div class="votebox ${sizeClass}">
+	#if ($votable && $authenticated && $votable.creatorid.longValue() == $authUser.id.longValue())
+	<span class="pictos downvote lightgray" title="Vote down">-</span>
+	<span class="votecount">$!votes</span>
+	<span class="pictos upvote lightgray" title="Vote up">+</span>
+	#else
+	<a href="$votedownlink/$!type/$!id" class="pictos downvote ${linkclass}" title="Vote down">-</a>
+	<span class="votecount">$!votes</span>
+	<a href="$voteuplink/$!type/$!id" class="pictos upvote ${linkclass}" title="Vote up">+</a>
+	#end
+</div>
+#end
+#####################################
+########### DELETE
+########### DELETE
+########### DELETE
+#macro(createformfield $field $class)
+#if ($field)
+#if (!$class.isEmpty())  $field.setAttribute("class", $class)  #end
+#if ($field.error) #set($hideme = "") #else  #set($hideme = "hide")  #end
+#if ($class.contains("hintbox"))
+$field.setValue($!field.label)
+#elseif (!$class.contains("hidelabel") && !$field.isHidden())
+#if ($field.label && !$field.label.isEmpty()) <label class="blocklabel">$!{field.label}: </label>#end
+#end
+<span class="error $!{hideme}">$!{field.error}</span>
+$!{field}
+#end
+#end
+########### DELETE
+########### DELETE
+########### DELETE
+###################################
+#macro(formvc $ctype)
+<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)"/>
+#end
+###################################
+#macro(formvj $ctype $fields)
+<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled"/>
+#end
+#####################################
+#macro(formatdate $date $format)
+#if ($date && !$format.trim().isEmpty() && $format != "slim")
+$utils.formatDate($date, $format, $currentLocale)
+#elseif ($date)
+#set($delta = $utils.timestamp() - $date)
+#set($approxtime = $utils.humanTime.approximately($delta))
+#if (!$approxtime || $approxtime.isEmpty()) #set($approxtime = "1s") #end
+#set($lastindx = $approxtime.length() - 1 )
+#set($suffix = $approxtime.substring($lastindx))
+#set($approx = $approxtime.substring(0, $lastindx))
+#set($sufstr = "humantime.$suffix" )
+#if ($format == "slim")
+$!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)]
+#else
+<span title="$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
+	$!utils.formatMessage($!lang.get($!sufstr), $!approx)
+</span>
+#end
+#end
+#end
+#####################################
+#macro(reportform $type $parentid $grandparentid $parentid $link)
+<form method="post" class="create-report-form" action="$context/?report=true">
+	<fieldset>
+		#sectoken(false)
+		<legend><span class="pictos">^</span> $!lang.get("reportproblem")</legend>
+		<label class="blocklabel">$!lang.get("reports.category")</label>
+		<select class="nicebox p100" name="type">
+			#foreach($type in $reportTypes)
+			#if ($type.name() == "OTHER")
+			<option selected="selected" value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
+			#else
+			<option value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
+			#end
+			#end
+		</select>
+		<label class="blocklabel">$!lang.get("reports.description")</label>
+		<textarea class="p98 nicebox" cols="15" rows="5" name="description"></textarea>
+		<input type="hidden" name="parentid" value="$!parentid"/>
+		<input type="hidden" name="parentid" value="$!parentid"/>
+		<input type="hidden" name="type" value="$!type"/>
+		#if ($grandparentid && $grandparentid != "")
+		<input type="hidden" name="grandparentid" value="$!grandparentid"/>
+		#end
+		#if ($link && !$link.isEmpty())
+		<input type="hidden" name="link" value="$!link"/>
+		#end
+		<div class="center mtm">
+			<input id="sendreport-btn" type="submit" value="$!lang.get('send')" class="button rounded3 mrm"/>
+			<input type="button" value="$!lang.get('close')" class="button rounded3 jqmClose"/>
+		</div>
+	</fieldset>
+</form>
+#end
+#####################################
+#macro(getmessagebox $class $text $hidden)
+#if ($hidden) #set($hideclass = "hide") #else #set($hideclass = "") #end
+<div class="messagebox ${class} ${hideclass}" title="$!lang.get('click2close')">
+	<div class="msg center">  #if ($text == "") &nbsp; #else $text #end  </div>
+</div>
+#end
+#####################################
+#macro(getpostlink $p $plural $noid)$p.getPostLink($plural,$noid,$questionslink,$questionlink,$feedbacklink,$grouplink,$grouppostlink,$classeslink,$classlink)#end
+#####################################
+#macro(ajaxloading $hide)
+#if ($hide) #set($hidden = "hide") #else #set($hidden = "") #end
+<img src="data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA=" width="16" height="16" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
+#end
+#####################################
+#macro(profilepic $user $thumb)
+#set($picurl = "https://www.gravatar.com/avatar/?d=mm")
+#if ($user)#if ($thumb)#if ($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=square")
+#else#set($picurl = "https://www.gravatar.com/avatar/$!{utils.MD5($user.email)}?size=50&amp;d=mm&amp;r=pg")#end
+#else#if ($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=large")
+#else#set($picurl = "https://www.gravatar.com/avatar/$!{utils.MD5($user.email)}?size=400&amp;d=mm&amp;r=pg")#end#end#end
+$!picurl#end
+#####################################
+#macro(infostrip )
+#if ($request.getParameter("success"))
+#set($infoStripClass = "successBox" )
+#elseif ($request.getParameter("error"))
+#set($infoStripClass = "errorBox" )
+#else
+#set($infoStripClass = "infoBox" )
+#end
+
+#if ((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
+#set($hideInfoStrip = "hide")
+#else
+#set($hideInfoStrip = "")
+#end
+
+#if ($infoStripMsg == "intro" && !$request.getParameter("code"))
+#set($hideInfoStrip = "introBox" )
+#set($infoStripMsg = "$!lang.get('about.intro') <a href='$aboutlink'>$!lang.get('learnmore')</a>" )
+#set($infoStripClass = "" )
+#elseif ($systemMessage && !$systemMessage.isEmpty())
+#set($hideInfoStrip = "sysmsgBox" )
+#set($infoStripMsg = $!systemMessage )
+#set($infoStripClass = "infoBox blue" )
+#end
+
+<noscript>
+<div class="infostrip errorBox pvm center">
+	<span class="pictos ico errorBoxIcon $!{he}">!</span> $!{lang.get("nojavascript")}
+</div>
+</noscript>
+<div class="infostrip center pvm ${hideInfoStrip} ${infoStripClass}" title="$!lang.get('close')">
+	#set($hs = "hide" ) #set($he = "hide" ) #set($hi = "hide" )
+	#if ($infoStripClass.contains("successBox"))
+	#set($hs = "" )
+	#elseif ($infoStripClass.contains("errorBox"))
+	#set($he = "" )
+	#elseif ($infoStripClass.contains("infoBox"))
+	#set($hi = "" )
+	#end
+	<span class="pictos ico successBoxIcon $!{hs}">2</span>
+	<span class="pictos ico errorBoxIcon $!{he}">!</span>
+	<span class="pictos ico infoBoxIcon  $!{hi}">i</span>
+
+	#set($_infoStripMsg = $infoStripMsg )
+
+	<span class="infostrip-msg">
+		#if (!$badgelist.isEmpty())
+		#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
+		&nbsp;
+		#foreach($badge in $badgelist)
+		#badgebox($badge 0)
+		#end
+		#elseif ($request.getParameter("code"))
+		$!lang.get("msgcode.${request.getParameter('code')}")
+		#else
+		$!_infoStripMsg
+		#end
+	</span>
+</div>
+#end
+#####################################
+#macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($str, "-"))#end
+#####################################
+#macro(identifierbox $showid)
+<span>
+	#if ($showid.startsWith("http"))
+	<span class="openid-icon-small" title="OpenID">&nbsp;</span>
+	<span>
+		#if ($isMobile)
+		$utils.abbreviate($!showid, 20)
+		#else
+		$!showid
+		#end
+	</span>
+	#elseif ($showid.startsWith("fb:"))
+	<span class="facebook-icon-small" title="Facebook">&nbsp;</span>
+	<span id="fb-name">$!showid</span>
+	#else
+	<span title="Email">@</span>
+	<span>$!showid</span>
+	#end
+	#if (!$showid.equals($authUser.identifier))
+	<a href="${settingslink}?detachid=$showid" title="Remove" class="delopenid nodecoration red"><span class="pictos">D</span></a>
+	#end
+</span>
+#end
+#####################################
+#macro(usertitlebadge $showu)
+#if ($showu.isModerator())
+#if ($showu.isAdmin())
+<span class="pictos" title="$!APPNAME developer">b</span>
+#end
+<span class="pictos" title="$!lang.get('mod')">S</span>
+#end
+#set($tbadge = $showu.titleBadge )
+#if ($tbadge) #set($tbadgestr = $!lang.get("$tbadge") ) #else #set($tbadgestr = "" ) #end
+$!tbadgestr
+#end
+#####################################
+#macro(setsortbyselection $paramMap $defkey )
+#set($sbparam = $request.getParameter("sortby")) #set($sbclazz = "button-tiny-selected" )
+#if ($sbparam && !$sbparam.isEmpty()) #set($paramMap[$sbparam] = $sbclazz) #else #set($paramMap[$defkey] = $sbclazz) #end
+#end
+#####################################
+#macro(chatmessages $msgs)
+#foreach($msg in $msgs)
+<div class="stamp-$!msg.stamp">
+	#personlink($msg): $!msg.message
+	<span class="right smallText lightgray">#formatdate($!{msg.stamp} "")</span>
+</div>
+#end
+#end
+#####################################
+#macro(searchbox )
+<div id="search" class="rounded3 right">
+	<form method="get" id="search-form" action="$searchlink">
+		<fieldset>
+			#if ($request.getParameter("q"))
+			#set($showSearchValue = $!request.getParameter('q'))
+			#set($hintbox = "noclass" )
+			#else
+			#set($showSearchValue = $!lang.get('search.search'))
+			#set($hintbox = "hintbox" )
+			#end
+			<input type="submit" class="pictos search-btn" value="s"/>
+			<input id="search-box" type="search" class="$!{hintbox}" name="q" value="$showSearchValue"/>
+		</fieldset>
+	</form>
+</div>
+#end
+#####################################
+#macro(signinbox $attachOnly )
+<div class="line">
+	#if ($attachOnly) #set($fbbtnclass = "fb-attach-btn") #else #set($fbbtnclass = "fb-login-btn") #end
+	<div class="unit size1of1 lastUnit pal center">
+		#if (!$attachOnly)
+		<h2 id="fb-login">$!lang.get("signin.facebook")</h2>
+		#end
+		<div class="mvl ptl">
+			<a id="${fbbtnclass}" href="$!returnto" class="rounded3 mediumText nodecoration">$!lang.get("signin.title")</a>
+		</div>
+	</div>
+</div>
+#end
+#####################################
+#macro(mobilehead )
+#if ($isMobile)
+<link href="$styleslink/mobile$!{minsuffix}.css" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<script type="text/javascript">
+	if ( !window.location.hash && window.addEventListener ) {
+		window.addEventListener("load", function() {
+			setTimeout(function() {
+				window.scrollTo(0, 0);
+			}, 0);
+		});
+		window.addEventListener("orientationchange", function() {
+			setTimeout(function() {
+				window.scrollTo(0, 0);
+			}, 0);
+		});
+	}
+</script>
+#end
+#end
+#####################################
+#macro(fontfix )
+#if ($IN_DEVELOPMENT)
+<style type="text/css">
+	@font-face {
+		font-family: 'PictosRegular';
+		src: url('$!context/styles/pictos-web.eot');
+		src:  local('☺'),
+			url('$!context/styles/pictos-web.woff') format('woff'),
+			url('$!context/styles/pictos-web.ttf') format('truetype'),
+			url('$!context/styles/pictos-web-webfont.svg#webfontIyfZbseF') format('svg');
+		font-weight: normal;
+		font-style: normal;
+	}
+</style>
+#end
+#end
+#####################################
+#macro(sectoken $bare)
+#if ($!req.getAttribute("_csrf"))#set($sectoken = $!req.getAttribute("_csrf").getToken() )#end
+#if ($bare && $bare == true)$!sectoken#else<input type="hidden" name="_csrf" value="$!sectoken"/>#end#end
+################# END MACROS ###################################################
 

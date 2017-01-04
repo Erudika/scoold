@@ -19,4 +19,4 @@
 			trace           Yes 	No          TRACE           WARN -->
 
 	<mode value="production"/>
-</click-app>  
+</click-app>

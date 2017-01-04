@@ -1,60 +1,60 @@
 <div class="line">
 	<div class="unit size3of4">
 		<div id="group-head">
-			<div class="line lightgray mediumText">	
+			<div class="line lightgray mediumText">
 			<div class="unit size1of3">$!{lang.get("group.title")}</div>
-				<div class="unit size2of3 lastUnit r">			
+				<div class="unit size2of3 lastUnit r">
 					<span class="pictos">g</span> $!showGroup.count
 				</div>
 			</div>
 
-			#if($isMine || $request.isUserInRole("mod"))
-				
-				#if($showGroup.description && !$showGroup.description.trim().isEmpty())
+			#if ($isMine || $request.isUserInRole("mod"))
+
+				#if ($showGroup.description && !$showGroup.description.trim().isEmpty())
 					#set($grpdesc = $showGroup.description)
 				#else
 					#set($grpdesc = $!lang.get("profile.status.txt"))
 				#end
 
-				#if($isMine)
+				#if ($isMine)
 					<div id="groupname" class="largeText editable p100 mbm">$!{showGroup.name}</div>
 					<div id="groupdesc" class="editable p100">$!grpdesc</div>
 				#else
 					<div class="largeText p100">$!{showGroup.name}</div>
-					#if(($showGroup.description && !$showGroup.description.trim().isEmpty()) || $authenticated)
+					#if (($showGroup.description && !$showGroup.description.trim().isEmpty()) || $authenticated)
 						<div class="p100">$!grpdesc</div>
 					#end
-				#end				
+				#end
 			#else
 				<div class="hugeText">$!{showGroup.name}</div>
 			#end
 			<hr/>
 
 			<div class="mvm">
-				#if($isLinkedToMe)
+				#if ($isLinkedToMe)
 					<a href="$grouplink/$!showGroup.id/post" class="button-tiny rounded3"><span class="pictos">p</span> $!{lang.get("posts.new")}</a>
 				#end
-				
+
 				<a href="$grouplink/$!showGroup.id/#stripstr($!showGroup.name)" class="button-tiny rounded3"><span class="pictos">l</span> $!{lang.get("posts")}</a>
 				<a href="$grouplink/$!showGroup.id/members/#stripstr($!showGroup.name)" class="button-tiny rounded3"><span class="pictos">U</span> $!{lang.get("people.title")}</a>
-				
-				#if($authenticated && $isLinkedToMe && !$isMine)
+
+				#if ($authenticated && $isLinkedToMe && !$isMine)
 					<a href="$grouplink/$!showGroup.id?leave=true" class="post-refresh-ask button-tiny rounded3"><span class="pictos">-</span> $!lang.get("leave")</a>
 				#end
-				
-				#if($isMine)
+
+				#if ($isMine)
 					<a href="$grouplink/$!showGroup.id?changepic=true" class="change-group-picture-btn button-tiny rounded3 next-div-toggle"><span class="pictos">-</span> $!lang.get("group.changepic")</a>
 					<a href="$grouplink/$!showGroup.id?delete=true" title="Delete group" class="post-refresh-ask red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
-				
-				#if($request.isUserInRole("admin"))
+
+				#if ($request.isUserInRole("admin"))
 					<a href="${adminlink}?delete=group&amp;id=$!showGroup.id" title="Delete group" class="red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
 				#end
-				
+
 				#getreportlink($showGroup "$grouplink/$!showGroup.id" "button-tiny rounded3")
 			</div>
-			
-			#if($request.getParameter("changepic")) #set($hide = "noclass" ) #else #set($hide = "hide" ) #end
+
+			#if ($request.getParameter("changepic")) #set($hide = "noclass" ) #else #set($hide = "hide" ) #end
 			<div id="group-picture-url" class="mvm $!{hide}">
 				<form action="$grouplink/$!showGroup.id" method="post">
 					<fieldset>
@@ -66,11 +66,11 @@
 			</div>
 		</div>
 
-		#if($showParam)
-			#if($showParam == "members")
+		#if ($showParam)
+			#if ($showParam == "members")
 				<h2>$!lang.get("group.members") #showcount($itemcount.longValue())</h2>
-				
-				#if($isMine)
+
+				#if ($isMine)
 					<form method="post" action="$grouplink/$!showGroup.id/members">
 						<fieldset>
 							#sectoken(false)
@@ -89,9 +89,9 @@
 					var contacts = [$contactsjs];
 				</script>
 			#end
-		#else			
+		#else
 			<h2>$!lang.get("posts") #showcount($itemcount.longValue())</h2>
-			#if(!$postslist.isEmpty())
+			#if (!$postslist.isEmpty())
 
 				#set($sortarr = {'votes': "", 'newest': "", 'activity': ""} )
 				#setsortbyselection($sortarr 'newest')
@@ -101,12 +101,12 @@
 					<a href="$grouplink/$showGroup.id/#stripstr($!showSchool.name)" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
 				</div>
 
-				#if($request.getParameter("sortby"))
+				#if ($request.getParameter("sortby"))
 					#set($extraParam = "sortby=${request.getParameter('sortby')}")
 				#else
 					#set($extraParam = "")
 				#end
-				
+
 				#paginate($pagenum.longValue() "\#questionspage(\$postslist)" $itemcount.longValue() $extraParam "pageless")
 			#else
 				<h3 class="mtl">$!lang.get("posts.none")</h3>
@@ -117,9 +117,6 @@
 	<div class="unit size1of4 lastUnit">
 		<div id="class-nav" class="center mlm mbl">
 			#grouppic($showGroup "large")
-		</div>
-		<div class="r">
-			#adplaceholders()
 		</div>
 	</div>
 </div>

@@ -56,7 +56,7 @@
   <!-- ============ Built In Context Init Parameter Definitions =========== -->
 
 
-  <!-- Init parameter to force the XML validation of JSF configuration  --> 
+  <!-- Init parameter to force the XML validation of JSF configuration  -->
   <!-- ressources.                                                      -->
 
   <context-param>
@@ -65,14 +65,14 @@
   </context-param>
 
   <!-- Init parameter will cause the JSF implementation to bypass      -->
-  <!-- processing the web.xml to determine if we should continue       --> 
+  <!-- processing the web.xml to determine if we should continue       -->
   <!-- bootstrapping JSF for the web application.                      -->
 
   <context-param>
       <param-name>com.sun.faces.forceLoadConfiguration</param-name>
       <param-value>true</param-value>
-  </context-param> 
-      
+  </context-param>
+
 
   <!-- ================== Built In Servlet Definitions ==================== -->
 
@@ -346,7 +346,7 @@
     </init-param>
     <load-on-startup>3</load-on-startup>
   </servlet>
-  
+
 
   <!-- NOTE: An SSI Filter is also available as an alternative SSI          -->
   <!-- implementation. Use either the Servlet or the Filter but NOT both.   -->
@@ -792,7 +792,7 @@
   </mime-mapping>
   <mime-mapping>
     <extension>mathml</extension>
-    <mime-type>application/mathml+xml</mime-type> 
+    <mime-type>application/mathml+xml</mime-type>
   </mime-mapping>
   <mime-mapping>
     <extension>me</extension>

@@ -9,7 +9,7 @@ import com.erudika.scoold.pages.Base;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class NotFound extends Base {
 

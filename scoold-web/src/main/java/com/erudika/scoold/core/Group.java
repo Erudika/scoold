@@ -5,37 +5,38 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.Linker;
-import com.erudika.para.core.PObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
-import com.erudika.para.utils.Config;
+import com.erudika.para.core.User;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Group extends PObject{
+public class Group extends Sysprop{
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String description;
 	@Stored private String imageurl;
-	
+
 	private transient Integer count;
-	
+
 	public Group() {
 		this("group", "");
 	}
-	
-	public Group(String id){
+
+	public Group(String id) {
 		this();
 		setId(id);
 	}
 
 	public Group(String name, String description) {
-		setName(name);
 		this.description = description;
 	}
 
@@ -45,7 +46,7 @@ public class Group extends PObject{
 
 	public void setImageurl(String imageurl) {
 		this.imageurl = imageurl;
-		if(StringUtils.length(imageurl) <= 10 || !StringUtils.startsWith(imageurl, "http")){
+		if (StringUtils.length(imageurl) <= 10 || !StringUtils.startsWith(imageurl, "http")) {
 			this.imageurl = null;
 		}
 	}
@@ -58,52 +59,58 @@ public class Group extends PObject{
 		this.description = description;
 	}
 
-	public ArrayList<Post> getQuestions(String sortBy, MutableLong pagenum, MutableLong itemcount) {
-		return getChildren(Post.class, pagenum, itemcount, sortBy, Config.MAX_ITEMS_PER_PAGE);
+	public List<Post> getQuestions(String sortBy, Pager pager) {
+		return AppConfig.client().getChildren(this, Utils.type(Post.class), pager);
 	}
 
 	public String create() {
-		super.create();
-		if(getCreatorid() != null) this.linkToUser(getCreatorid());
-		return getId();
+		Group g = AppConfig.client().create(this);
+		if (g != null) {
+			linkToUser(getCreatorid());
+			setId(g.getId());
+			setTimestamp(g.getTimestamp());
+			return g.getId();
+		}
+		return null;
+	}
+
+	public void update() {
+		AppConfig.client().update(this);
 	}
 
 	public void delete() {
-		super.delete();
+		AppConfig.client().delete(this);
 		unlinkAll();
 	}
-	
-	public boolean isLinkedTo(User u){
-		return this.isLinked(User.class, u.getId());
+
+	public boolean isLinkedTo(ScooldUser u) {
+		return AppConfig.client().isLinked(this, Utils.type(User.class), u.getId());
 	}
-	
-    public boolean linkToUser(String userid){
-		return this.link(User.class, userid) != null;
-    }
-	
-    public void linkToUsers(ArrayList<String> userids){
-		ArrayList<Linker> list = new ArrayList<Linker>();
-		for (String userid : userids) {
-			String groupid = getId();
-			User u = new User(userid);
-			if(u.countLinks(Group.class) < AppConfig.MAX_GROUPS_PER_USER) {
-				list.add(new Linker(User.class, Group.class, userid, groupid));
-			}
-		}
-		getDao().createAll(list);
+
+    public boolean linkToUser(String userid) {
+		return AppConfig.client().link(this, userid) != null;
     }
 
-    public void unlinkFromUser(String userid){
-        this.unlink(User.class, userid);
-    }
-		
-	public int getCount(){		
-		if(count == null){
-			return this.countLinks(User.class).intValue();
+    public void linkToUsers(List<String> userids) {
+		ArrayList<Linker> list = new ArrayList<Linker>();
+		for (String userid : userids) {
+			if (AppConfig.client().countLinks(new User(userid), Utils.type(Group.class)) < AppConfig.MAX_GROUPS_PER_USER) {
+				AppConfig.client().link(this, userid);
+			}
 		}
-		return count;		
+    }
+
+    public void unlinkFromUser(String userid) {
+        AppConfig.client().unlink(this, Utils.type(User.class), userid);
+    }
+
+	public int getCount() {
+		if (count == null) {
+			return AppConfig.client().countLinks(this, Utils.type(User.class)).intValue();
+		}
+		return count;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -127,5 +134,5 @@ public class Group extends PObject{
 		hash = 89 * hash + (getName() != null ? getName().hashCode() : 0);
 		return hash;
 	}
-	
+
 }

@@ -1,108 +1,102 @@
-#if($request.getParameter("feed"))
+#if ($request.getParameter("feed"))
 	$!feedstring
 #else
 	<div class="line">
-		<div class="unit size4of5">
-			#set($searchQuery = $request.getParameter("q") )
+		#set($searchQuery = $request.getParameter("q") )
 
-			<h2>
-				<span class="pictos">s</span>
-				#if($showParam)
-					<a href="$searchlink?q=$!searchQuery">$!lang.get("search.title")</a>
-					#if($showParam == "questions")
-						/ $!lang.get("questions.title") #showcount($itemcount.longValue())
-					#elseif($showParam == "feedback")
-						/ $!lang.get("feedback.title") #showcount($itemcount.longValue())
-					#elseif($showParam == "people")
-						/ $!lang.get("people.title") #showcount($itemcount.longValue())
-					#elseif($showParam == "schools")
-						/ $!lang.get("schools.title") #showcount($itemcount.longValue())
-					#elseif($showParam == "classes")
-						/ $!lang.get("classes.title") #showcount($itemcount.longValue())
-					#end
-				#else
-					$!lang.get("search.title")
+		<h2>
+			<span class="pictos">s</span>
+			#if ($showParam)
+				<a href="$searchlink?q=$!searchQuery">$!lang.get("search.title")</a>
+				#if ($showParam == "questions")
+					/ $!lang.get("questions.title") #showcount($itemcount.longValue())
+				#elseif ($showParam == "feedback")
+					/ $!lang.get("feedback.title") #showcount($itemcount.longValue())
+				#elseif ($showParam == "people")
+					/ $!lang.get("people.title") #showcount($itemcount.longValue())
+				#elseif ($showParam == "schools")
+					/ $!lang.get("schools.title") #showcount($itemcount.longValue())
+				#elseif ($showParam == "classes")
+					/ $!lang.get("classes.title") #showcount($itemcount.longValue())
 				#end
-			</h2>
-			<hr/>
-
-			#if($request.queryString.contains("q=") ) #set($params = "q=$!searchQuery") #else #set($params = "") #end
-
-			#if(!$request.getParameter("q") || $totalCount == 0)
-				<h2 class="mtl center">$!lang.get("search.notfound")</h2>
-			#elseif($showParam)
-				#if($showParam == "questions")
-					#paginate($pagenum.longValue() "\#questionspage(\$questionlist)" $itemcount.longValue() $params "pageless")
-				#elseif($showParam == "feedback")
-					#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.longValue() $params "pageless")
-				#elseif($showParam == "people")
-					#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.longValue() $params "pageless")
-				#elseif($showParam == "schools")
-					#paginate($pagenum.longValue() "\#schoolspage(\$schoollist)" $itemcount.longValue() $params "pageless")
-				#elseif($showParam == "classes")
-					#paginate($pagenum.longValue() "\#classespage(\$classlist)" $itemcount.longValue() $params "pageless")
-				#end
-			#else		
-
-				#if(!$questionlist.isEmpty())
-					<h2>$!lang.get("questions.title") #showcount($questioncount.longValue())</h2>
-					#questionspage($questionlist)
-					#if($questioncount.intValue() > $maxSearchResults)
-						<div class="center mtl">
-							<a href="$searchlink/questions/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-						</div>
-					#end
-					<br />
-				#end
-
-				#if(!$feedbacklist.isEmpty())
-					<h2>$!lang.get("feedback.title") #showcount($feedbackcount.longValue())</h2>
-					#questionspage($feedbacklist)
-					#if($feedbackcount.intValue() > $maxSearchResults)
-						<div class="center mtl">
-							<a href="$searchlink/feedback/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-						</div>
-					#end
-					<br />
-				#end
-
-				#if(!$userlist.isEmpty())
-					<h2>$!lang.get("people.title") #showcount($usercount.longValue())</h2>
-					#peoplepage($userlist)
-					#if($usercount.intValue() > $maxSearchResults)
-						<div class="center mtl">
-							<a href="$searchlink/people/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-						</div>
-					#end
-					<br />
-				#end
-
-				#if(!$schoollist.isEmpty())
-					<h2>$!lang.get("schools.title") #showcount($schoolcount.longValue())</h2>
-					#schoolspage($schoollist)
-					#if($schoolcount.intValue() > $maxSearchResults)
-						<div class="center mtl">
-							<a href="$searchlink/schools/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-						</div>
-					#end
-					<br />
-				#end
-
-				#if(!$classlist.isEmpty())
-					<h2>$!lang.get("classes.title") #showcount($classcount.longValue())</h2>
-					#classespage($classlist)
-					#if($classcount.intValue() > $maxSearchResults)
-						<div class="center mtl">
-							<a href="$searchlink/classes/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-						</div>
-					#end
-					<br />
-				#end
+			#else
+				$!lang.get("search.title")
 			#end
-		</div>
+		</h2>
+		<hr/>
 
-		<div class="unit size1of5 lastUnit r">
-			#adplaceholders()
-		</div>
+		#if ($request.queryString.contains("q=") ) #set($params = "q=$!searchQuery") #else #set($params = "") #end
+
+		#if (!$request.getParameter("q") || $totalCount == 0)
+			<h2 class="mtl center">$!lang.get("search.notfound")</h2>
+		#elseif ($showParam)
+			#if ($showParam == "questions")
+				#paginate($pagenum.longValue() "\#questionspage(\$questionlist)" $itemcount.longValue() $params "pageless")
+			#elseif ($showParam == "feedback")
+				#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.longValue() $params "pageless")
+			#elseif ($showParam == "people")
+				#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.longValue() $params "pageless")
+			#elseif ($showParam == "schools")
+				#paginate($pagenum.longValue() "\#schoolspage(\$schoollist)" $itemcount.longValue() $params "pageless")
+			#elseif ($showParam == "classes")
+				#paginate($pagenum.longValue() "\#classespage(\$classlist)" $itemcount.longValue() $params "pageless")
+			#end
+		#else
+
+			#if (!$questionlist.isEmpty())
+				<h2>$!lang.get("questions.title") #showcount($questioncount.longValue())</h2>
+				#questionspage($questionlist)
+				#if ($questioncount.intValue() > $maxSearchResults)
+					<div class="center mtl">
+						<a href="$searchlink/questions/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+					</div>
+				#end
+				<br />
+			#end
+
+			#if (!$feedbacklist.isEmpty())
+				<h2>$!lang.get("feedback.title") #showcount($feedbackcount.longValue())</h2>
+				#questionspage($feedbacklist)
+				#if ($feedbackcount.intValue() > $maxSearchResults)
+					<div class="center mtl">
+						<a href="$searchlink/feedback/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+					</div>
+				#end
+				<br />
+			#end
+
+			#if (!$userlist.isEmpty())
+				<h2>$!lang.get("people.title") #showcount($usercount.longValue())</h2>
+				#peoplepage($userlist)
+				#if ($usercount.intValue() > $maxSearchResults)
+					<div class="center mtl">
+						<a href="$searchlink/people/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+					</div>
+				#end
+				<br />
+			#end
+
+			#if (!$schoollist.isEmpty())
+				<h2>$!lang.get("schools.title") #showcount($schoolcount.longValue())</h2>
+				#schoolspage($schoollist)
+				#if ($schoolcount.intValue() > $maxSearchResults)
+					<div class="center mtl">
+						<a href="$searchlink/schools/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+					</div>
+				#end
+				<br />
+			#end
+
+			#if (!$classlist.isEmpty())
+				<h2>$!lang.get("classes.title") #showcount($classcount.longValue())</h2>
+				#classespage($classlist)
+				#if ($classcount.intValue() > $maxSearchResults)
+					<div class="center mtl">
+						<a href="$searchlink/classes/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+					</div>
+				#end
+				<br />
+			#end
+		#end
 	</div>
 #end

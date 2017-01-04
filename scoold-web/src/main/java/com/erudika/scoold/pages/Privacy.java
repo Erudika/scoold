@@ -8,7 +8,7 @@ package com.erudika.scoold.pages;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Privacy extends Base {
     

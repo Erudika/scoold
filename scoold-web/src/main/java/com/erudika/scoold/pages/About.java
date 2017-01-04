@@ -5,12 +5,12 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.scoold.core.User.Badge;
+import com.erudika.scoold.core.ScooldUser.Badge;
 import com.erudika.scoold.utils.AppConfig;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class About extends Base {
     

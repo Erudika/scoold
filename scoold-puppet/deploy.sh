@@ -1,5 +1,5 @@
 # Copyright Erudika LLC
-# http://erudika.com/
+# https://erudika.com/
 # 
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -114,13 +114,13 @@ function setProperties () {
 	
 	prop4="com.scoold.awsaccesskey=\"$AWSACCESSKEY\""
 	prop5="com.scoold.awssecretkey=\"$AWSSECRETKEY\""
-	prop6="" #AWSSQSENDPOINT
-	prop7="" #AWSSQSQUEUEID
+	#prop6="" #AWSSQSENDPOINT
+	#prop7="" #AWSSQSQUEUEID
 	prop8="com.scoold.fbappid=\"$FBAPPID\""
 	prop9="com.scoold.fbsecret=\"$FBSECRET\""
 	prop10="com.scoold.awscfdist=\"$AWSCFDIST\""	
 	
-	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5:$prop6:$prop7:$prop8:$prop9:$prop10"
+	ssh -n ubuntu@$1 "$ASADMIN create-system-properties $prop1:$prop2:$prop3:$prop4:$prop5::$prop8:$prop9:$prop10"
 }
 
 function uploadWAR () {

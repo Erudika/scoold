@@ -7,16 +7,17 @@ package com.erudika.scoold.core;
 
 import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class ContactDetail {
 
-    private String type;
+    private String subType;
     private String value;
 
 	public static final String SEPARATOR = ";";
@@ -25,7 +26,7 @@ public class ContactDetail {
 		UNKNOWN, WEBSITE, ADDRESS, FACEBOOK, TWITTER, SKYPE,
 		MSN, AIM, GTALK, QQ, YAHOO, ICQ, EBUDDY;
 
-		public String toString(){
+		public String toString() {
 			switch (this) {
 				case WEBSITE: return "Website";
 				case ADDRESS: return "Address";
@@ -49,7 +50,7 @@ public class ContactDetail {
     }
 
 	public ContactDetail(String type, String value) {
-		this.setType(type);
+		this.setSubType(type);
 		this.value = value;
 	}
 
@@ -61,16 +62,16 @@ public class ContactDetail {
         this.value = getContactDetailType(value).toString();
     }
 
-    public String getType() {
-        return type;
+    public String getSubType() {
+        return subType;
     }
 
-    public void setType(String type) {
-        this.type = getContactDetailType(type).name();
+    public void setSubType(String subType) {
+        this.subType = getContactDetailType(subType).name();
     }
 
-	public static String getContactsFromParamsMap(Map<String, String[]> params){
-		if(params == null)return "";
+	public static String getContactsFromParamsMap(Map<String, String[]> params) {
+		if (params == null)return "";
 		String contacts = "";
 		if (params.containsKey("contacts")) {
 			String[] values = params.get("contacts");
@@ -93,43 +94,43 @@ public class ContactDetail {
 		return contacts;
 	}
 	
-	public static ArrayList<ContactDetail> toContactsList(String details){
+	public static List<ContactDetail> toContactsList(String details) {
 		ArrayList<ContactDetail> list = new ArrayList<ContactDetail>();
-		if(StringUtils.isBlank(details)) return list;
+		if (StringUtils.isBlank(details)) return list;
 		for (String detail : details.split(SEPARATOR)) {
 			String[] twoParts = detail.split(",");
-			if(twoParts.length == 2){
+			if (twoParts.length == 2) {
 				list.add(new ContactDetail(twoParts[0], twoParts[1]));
 			}
 		}
 		return list;
 	}
 
-	private ContactDetailType getContactDetailType(String type){
-		if(type == null) return ContactDetailType.UNKNOWN;
+	private ContactDetailType getContactDetailType(String type) {
+		if (type == null) return ContactDetailType.UNKNOWN;
 		try{
 			return ContactDetailType.valueOf(type.toUpperCase());
-        }catch(IllegalArgumentException e){
+        }catch(IllegalArgumentException e) {
             //oh shit!
 			return ContactDetailType.UNKNOWN;
         }
 	}
 
 	public String toString() {
-		if(this.type == null || this.value == null) 
-			this.type = ContactDetailType.UNKNOWN.name();
-		return type+","+value;
+		if (this.subType == null || this.value == null) 
+			this.subType = ContactDetailType.UNKNOWN.name();
+		return subType+","+value;
 	}
 
     public boolean equals(Object obj) {
-        if(this == obj)
+        if (this == obj)
                 return true;
-        if((obj == null) || (obj.getClass() != this.getClass()))
+        if ((obj == null) || (obj.getClass() != this.getClass()))
                 return false;
         ContactDetail other = (ContactDetail) obj;
 
         return (this.value.equals(other.getValue()) &&
-				this.type.equals(other.getType()));
+				this.subType.equals(other.getSubType()));
     }
 
     public int hashCode() {

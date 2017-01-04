@@ -1,36 +1,30 @@
-<div id="line">
-	<div class="unit size4of5">
-		#if($request.getParameter("create"))
-			<h2><a href="$groupslink">$!lang.get("groups.title")</a> / $!{lang.get("group.create")}</h2>
-			<hr />
-			<form method="post" id="$createGroupForm.id" action="$groupslink/create">
-				<fieldset>
-					#sectoken(false)
-					${createGroupForm.fields.form_name}
-					#createformfield(${createGroupForm.fields.name} "nicebox p98")
-					#createformfield(${createGroupForm.fields.description} "nicebox p98")
-					#createformfield(${createGroupForm.fields.imageurl} "nicebox p98")
+<div class="line">
+	#if ($request.getParameter("create"))
+		<h2><a href="$groupslink">$!lang.get("groups.title")</a> / $!{lang.get("group.create")}</h2>
+		<hr />
+		<form method="post" id="$createGroupForm.id" action="$groupslink/create">
+			<fieldset>
+				#sectoken(false)
+				${createGroupForm.fields.form_name}
+				#createformfield(${createGroupForm.fields.name} "nicebox p98")
+				#createformfield(${createGroupForm.fields.description} "nicebox p98")
+				#createformfield(${createGroupForm.fields.imageurl} "nicebox p98")
 
-					<div class="center mtl">
-						${createGroupForm.fields.creategroup} &nbsp;
-						<a href="$groupslink" class="button-small rounded3">$!lang.get("cancel")</a>
-					</div>
-				</fieldset>
-			</form>
+				<div class="center mtl">
+					${createGroupForm.fields.creategroup} &nbsp;
+					<a href="$groupslink" class="button-small rounded3">$!lang.get("cancel")</a>
+				</div>
+			</fieldset>
+		</form>
+	#else
+		<a href="$groupslink/create" class="button-small rounded3 right" title="Create a group">$!{lang.get('group.create')}</a>
+		<h2>$!lang.get("groups.title") #showcount($itemcount.longValue())</h2>
+		<hr />
+
+		#if ($grouplist.isEmpty())
+			<h3 class="mtl">$!lang.get("search.notfound")</h3>
 		#else
-			<a href="$groupslink/create" class="button-small rounded3 right" title="Create a group">$!{lang.get('group.create')}</a>
-			<h2>$!lang.get("groups.title") #showcount($itemcount.longValue())</h2>
-			<hr />
-
-			#if($grouplist.isEmpty())
-				<h3 class="mtl">$!lang.get("search.notfound")</h3>
-			#else
-				#paginate($pagenum.longValue() "\#groupspage(\$grouplist)" $itemcount.longValue() "" "pageless")
-			#end
+			#paginate($pagenum.longValue() "\#groupspage(\$grouplist)" $itemcount.longValue() "" "pageless")
 		#end
-	</div>
-	
-	<div class="unit size1of5 lastUnit r">
-		#adplaceholders()
-	</div>
+	#end
 </div>

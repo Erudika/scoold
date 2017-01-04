@@ -1,5 +1,5 @@
 <div id="settings">
-	#if($request.getParameter("delete"))
+	#if ($request.getParameter("delete"))
 		<br />
 		<br />
 		<div class="mvl">
@@ -19,32 +19,6 @@
 		<h1><span class="pictos">y</span> $!lang.get("settings.title")</h1>
 		<hr/>
 
-		<h2>$!lang.get("settings.authentication")</h2>
-		<div class="mvl">
-			<div class="mbm">$!lang.get("settings.authentication.text")</div>
-
-			#if(!$openidlist.isEmpty())
-				<table class="mbm">
-					<tbody>
-						#foreach($identifier in $openidlist)
-							#if($identifier == $authUser.identifier)#set($selectedIdent = "green" )#else#set($selectedIdent = "noclass" )#end
-							<tr class="${selectedIdent}">
-								<td class="identkey"><span class="pictos">K</span></td>
-								<td class="pll">#identifierbox($identifier $canDetachOpenid)</td>
-							</tr>
-						#end
-					</tbody>
-				</table>
-			#end
-
-			#if($canAttachOpenid)
-				<a href="#" class="next-div-toggle button-small rounded3"><span class="pictos">&amp;</span> $!lang.get("add")</a>
-				<div class="hide mtm">
-					#signinbox(true)
-				</div>
-			#end
-		</div>
-
 		<h2>$!lang.get("settings.tagfilter")</h2>
 		<div class="mvl">
 			<div class="mbm">$!lang.get("settings.tagfilter.text")</div>
@@ -62,8 +36,8 @@
 			<form method="post" action="$settingslink">
 				<fieldset>
 					#sectoken(false)
-					#formvj($authUser.classname ["email"])
-					<input type="text" name="email" value="$!authUser.email"  class="nicebox p50"/> 
+					#formvj($authUser.type ["email"])
+					<input type="text" name="email" value="$!authUser.email"  class="nicebox p50"/>
 					<input type="submit" value="$!lang.get('save')" class="button rounded3"/>
 				</fieldset>
 			</form>

@@ -4,9 +4,11 @@
  */
 package com.erudika.scoold.core;
 
+import com.erudika.para.utils.Config;
+
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Blackboard extends Post{
 	private static final long serialVersionUID = 1L;
@@ -14,7 +16,7 @@ public class Blackboard extends Post{
 	public Blackboard() {
 		super();
 	}
-	
+
 	public boolean canHaveChildren() {
 		return false;
 	}
@@ -22,5 +24,12 @@ public class Blackboard extends Post{
 	public boolean canHaveRevisions() {
 		return false;
 	}
-	
+
+	public static final String getBlackboardId(String parentid) {
+		if (parentid == null) {
+			return null;
+		}
+		return parentid + Config.SEPARATOR + "blackboard";
+	}
+
 }

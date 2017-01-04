@@ -63,7 +63,7 @@ b, i,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, figcaption, figure, 
+article, aside, canvas, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section, summary,
 time, mark, audio, video {
     margin:0;
@@ -75,9 +75,9 @@ time, mark, audio, video {
     background:transparent;
 }
 
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, nav, section { 
-	display: block; 
+article, aside, details, figcaption, figure,
+footer, header, hgroup, nav, section {
+	display: block;
 }
 
 nav ul {
@@ -114,7 +114,7 @@ ins {
 
 mark {
     background-color:#ff9;
-    color:#000; 
+    color:#000;
     font-style:italic;
     font-weight:bold;
 }
@@ -136,7 +136,7 @@ table {
 hr {
     display:block;
     height:1px;
-    border:0;   
+    border:0;
     border-top:1px solid #cccccc;
     margin:1em 0;
     padding:0;
@@ -168,9 +168,9 @@ textarea { overflow: auto; vertical-align: top; resize: vertical; }
 @font-face {
 	font-family: 'PictosRegular';
 	src: url('http://static.scoold.com/pictos-web.eot');
-	src: local('☺'), 
-		url('http://www.scoold.com/styles/pictos-web.woff') format('woff'), 
-		url('http://static.scoold.com/pictos-web.ttf') format('truetype'), 
+	src: local('☺'),
+		url('http://www.scoold.com/styles/pictos-web.woff') format('woff'),
+		url('http://static.scoold.com/pictos-web.ttf') format('truetype'),
 		url('http://static.scoold.com/pictos-web.svg#webfontIyfZbseF') format('svg');
 	font-weight: normal;
 	font-style: normal;
@@ -191,10 +191,10 @@ body {
 
 #main {
 	background-color: white;
-	width: 100%;	
+	width: 100%;
 	border-bottom: 3px solid #6699CC;
 }
-#header { 
+#header {
 	position: relative;
 	height: 60px;
 }
@@ -206,7 +206,7 @@ body {
     float: left;
     text-indent: -999999em;
 }
-#topnav { 
+#topnav {
 	width: 650px;
 	text-align: right;
 	font-size: 0.9em;
@@ -217,7 +217,7 @@ body {
 	padding: 3px 5px;
 	border: 1px solid #5397B9;
 }
-#search-box{	
+#search-box{
     background-color: white;
     border: none;
     font-size: 0.8em;
@@ -287,7 +287,6 @@ img.noborder { border: 0px; outline: 0px;}
 img.align-center, img[align="center"] { margin: 0 auto;}
 img.align-right, img[align="right"] { float: right; margin-left: 20px;}
 img.align-left, img[align="left"] { float: left; margin-right: 20px; }
-img.oembed-thumb{ height: 100px; width: auto;}
 img.profile-pic-large{ height: auto; width: 210px;}
 img.profile-pic-small{ height: 50px; width: auto;}
 .school-icon img{ max-width: 200px; min-width: 50px;}
@@ -345,11 +344,11 @@ a.button-tiny-selected, span.button-tiny-selected{
 	text-decoration: none;
 }
 .nicebtn, .nicebtn:visited {
-	line-height: 1em; 
-	color: white; 
-	font-size: inherit; 
-	padding: 5px 10px; 
-	display: inline-block; 
+	line-height: 1em;
+	color: white;
+	font-size: inherit;
+	padding: 5px 10px;
+	display: inline-block;
 	text-decoration: none;
 	position: relative;
 	cursor: pointer;
@@ -358,7 +357,7 @@ a.button-tiny-selected, span.button-tiny-selected{
 }
 .nicebtn:hover { border-bottom: 2px solid #555555; text-decoration: none; }
 .navbtn-hover { border-bottom: 2px solid #555555; text-decoration: none; }
-	
+
 /* -- FORMS -- */
 form fieldset fieldset label{ margin-right: 30px; }
 form legend { font-size: 1.3em;margin-bottom: 10px; color:#666666; line-height: 1em;}
@@ -393,14 +392,14 @@ select.nicebox, form.clickedit select{
 }
 input[type=radio]{margin-right: 6px;}
 input[disabled=true]{background-color: #CCCCCC;}
-input.search-btn{ 
-	background-color: transparent; 
+input.search-btn{
+	background-color: transparent;
 	color: #5397B9;
-	border: 0; 
-	padding: 0; 
-	margin-top: 2px; 
+	border: 0;
+	padding: 0;
+	margin-top: 2px;
 	width: 23px;
-	cursor: pointer; 
+	cursor: pointer;
 	font-size: 1em;
 	float: right;
 }
@@ -458,13 +457,13 @@ pre, code, .chat-msg{
 	background-color: #F5F5F5;
 	color: black;
 }
-.successBox{ 
+.successBox{
     background-color: white;
     color:#88AF12;
 }
 .infoBox{
     background-color: white;
-    color:#444444;	
+    color:#444444;
 }
 .errorBox{
 	background-color: white;
@@ -474,8 +473,6 @@ input.openidbox{ padding-left: 35px; }
 .squarelist{ list-style: square inside none; }
 .numlist{ list-style: decimal inside none; }
 .abclist{ list-style: lower-latin outside none; }
-.oembed-preview{ border: 2px dashed #CCCCCC;}
-.oembed-preview *{max-width: 100%; height: auto; width: auto;}
 .commentbox{ font-size: small; border-top: 1px dashed #CCCCCC; }
 .translationbox{ border-top: 1px dashed #CCCCCC; }
 .hidden{ opacity: 0; }
@@ -559,12 +556,12 @@ input.openidbox{ padding-left: 35px; }
 .editable input {width: 98% !important;}
 .max-width-100{ max-width: 100px; }
 .identkey{ min-width: 45px;}
-.loading, .ac_loading, div.loader{ 
-	background-image: url('data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA='); 
+.loading, .ac_loading, div.loader{
+	background-image: url('data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA=');
 }
-.loading{ 
-	background-position: 5px 50%; 
-	background-repeat: no-repeat; 
+.loading{
+	background-position: 5px 50%;
+	background-repeat: no-repeat;
 	text-indent: 15px;
 }
 .badge a{color: white;}
@@ -585,7 +582,7 @@ input.openidbox{ padding-left: 35px; }
 	font-size: 1.4em;
 	list-style: none;
 }
-.langbox { 
+.langbox {
 	width:185px;
 	padding: 7px;
 }
@@ -623,7 +620,7 @@ input.openidbox{ padding-left: 35px; }
 	top: 1px;
 }
 
-#logo, #oids-google, #oids-yahoo, #oids-aol, #oids-blogger, #oids-claimid, #oids-flickr, 
+#logo, #oids-google, #oids-yahoo, #oids-aol, #oids-blogger, #oids-claimid, #oids-flickr,
 #oids-livejournal, #oids-myid, #oids-myopenid, #oids-symantec, #oids-vidoop,
 #oids-wordpress, .school-pic, .school-pic-thumb, .openid-icon-small,
 .openidbox, .facebook-icon-small, #cc-icon, #fb-login-btn{
@@ -677,7 +674,7 @@ input.openidbox{ padding-left: 35px; }
 	font-size: inherit;
 }
 .ac_loading {
-	background-position: 99% 50%; 
+	background-position: 99% 50%;
 	background-repeat: no-repeat;
 }
 .ac_odd {background-color: #EEEEEE;}
@@ -796,7 +793,7 @@ li.markItUpDropMenu, li.markItUpDropMenu:hover {
 /*.markItUpButton a
 li.markItUpDropMenu,
 li.markItUpDropMenu:hover {
-	background-image:url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option 
+	background-image:url(http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png)!important;  Smaller file size, 8bit option
 }*/
 .markItUpButton a {
 	background-image:url('http://static.scoold.com/miu.icons.famfamfam.16px.8bit.bg-ededed.png');	/* Yeah, this line here! */

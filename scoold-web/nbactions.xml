@@ -13,7 +13,8 @@
         <action>
             <actionName>run</actionName>
             <goals>
-                <goal>package</goal>
+                <goal>jetty:run</goal>
+                <goal>-Dclick.mode=debug</goal>
                 
                 
                 
@@ -21,8 +22,15 @@
             </goals>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <netbeans.deploy>true</netbeans.deploy>
+                
+                
+                <jpda.listen>maven</jpda.listen>
+                
+                
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
+                
+                
+                <config.file>src/main/resources/application.conf</config.file>
             </properties>
         </action>
         <action>

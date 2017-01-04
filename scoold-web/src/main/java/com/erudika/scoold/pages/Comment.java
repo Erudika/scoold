@@ -5,9 +5,11 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.core.utils.ParaObjectUtils;
+
 /**
  *
- * @author Alex Bogdanovski <albogdano@me.com>
+ * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class Comment extends Base{
 
@@ -20,16 +22,16 @@ public class Comment extends Base{
 	}
 
 	public void onGet() {
-		if(param("id")){
+		if (param("id")) {
 			String id = getParamValue("id");
-			showComment = dao.read(id);
-			if(showComment == null || !utils.typesMatch(showComment)){
+			showComment = pc.read(id);
+			if (showComment == null || !ParaObjectUtils.typesMatch(showComment)) {
 				setRedirect(HOMEPAGE);
 			}
 		}
 	}
 
-	public void onPost(){
+	public void onPost() {
 		processNewCommentRequest(null);
 	}
 
