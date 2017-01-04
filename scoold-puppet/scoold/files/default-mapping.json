@@ -1,7 +1,0 @@
-{
-	"_default_" : {
-		"_source" : {
-			"enabled" : false
-		}
-	}
-}

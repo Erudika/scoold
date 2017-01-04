@@ -4,9 +4,56 @@
             <actionName>build</actionName>
             <goals>
                 <goal>install</goal>
+                
             </goals>
             <properties>
-                <skipTests>true</skipTests>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </action>
+        <action>
+            <actionName>run</actionName>
+            <goals>
+                <goal>jetty:run</goal>
+                <goal>-Dclick.mode=debug</goal>
+                
+                
+                
+                
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                
+                
+                <jpda.listen>maven</jpda.listen>
+                
+                
+                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
+                
+                
+                <config.file>src/main/resources/application.conf</config.file>
+            </properties>
+        </action>
+        <action>
+            <actionName>build-with-dependencies</actionName>
+            <basedir>../</basedir>
+            <reactor>also-make</reactor>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </action>
+        <action>
+            <actionName>debug</actionName>
+            <goals>
+                <goal>package</goal>
+                
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <netbeans.deploy>true</netbeans.deploy>
+                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
             </properties>
         </action>
         <action>
@@ -16,7 +63,19 @@
                 <goal>install</goal>
             </goals>
             <properties>
-                <skipTests>true</skipTests>
+                <maven.test.skip>true</maven.test.skip>
             </properties>
         </action>
+        <action>
+            <actionName>profile</actionName>
+            <goals>
+                <goal>package</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+                <netbeans.deploy>true</netbeans.deploy>
+                <netbeans.deploy.profilemode>true</netbeans.deploy.profilemode>
+            </properties>
+        </action>
+        
     </actions>
