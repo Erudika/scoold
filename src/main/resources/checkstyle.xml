@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+	<!--Checks whether files end with a new line.-->
+	<module name="NewlineAtEndOfFile">
+		<property name="lineSeparator" value="lf"/>
+		<property name="fileExtensions" value="java, xml, properties, js, html, css" />
+	</module>
+
+	<module name="FileLength"/>
+
+	<module name="TreeWalker">
+		<property name="cacheFile" value="${checkstyle.cache.file}"/>
+		<module name="RegexpSinglelineJava">
+			<property name="format" value="\s+$"/>
+			<property name="message" value="Line has trailing whitespace."/>
+			<property name="ignoreComments" value="true"/>
+		</module>
+		<module name="RegexpSinglelineJava">
+			<property name="format" value="^\t* +\t*\S"/>
+			<property name="message" value="Line has leading space characters; Only tabs are allowed!"/>
+			<property name="ignoreComments" value="true"/>
+		</module>
+
+		<!--Checks for Javadoc comments.-->
+		<module name="JavadocType"/>
+		<module name="JavadocStyle"/>
+		<module name="JavadocMethod">
+			<property name="scope" value="public"/>
+		</module>
+		<module name="JavadocVariable">
+			<property name="scope" value="public"/>
+		</module>
+
+		<!--Checks for Naming Conventions.-->
+		<module name="ConstantName">
+			<property name="format" value="^log(ger)?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+		</module>
+		<module name="LocalFinalVariableName">
+			<property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+		</module>
+		<module name="MethodName"/>
+		<module name="LocalVariableName"/>
+		<module name="MemberName"/>
+		<module name="PackageName"/>
+		<module name="ParameterName"/>
+		<module name="StaticVariableName"/>
+		<module name="TypeName"/>
+
+		<!--Checks for imports-->
+		<module name="AvoidStarImport"/>
+		<module name="IllegalImport"/>
+		<module name="RedundantImport"/>
+		<module name="UnusedImports"/>
+		<module name="MethodParamPad">
+			<property name="option" value="nospace"/>
+			<property name="allowLineBreaks" value="false"/>
+		</module>
+
+		<!--Checks for Size Violations.-->
+		<module name="LineLength">
+			<property name="max" value="180"/>
+		</module>
+		<module name="MethodLength"/>
+		<module name="ParameterNumber">
+			<property name="max" value="10"/>
+		</module>
+
+		<!--Checks for whitespace-->
+		<module name="EmptyForIteratorPad"/>
+		<module name="MethodParamPad"/>
+		<module name="NoWhitespaceAfter"/>
+		<module name="NoWhitespaceBefore"/>
+		<!--<module name="OperatorWrap"/>-->
+		<module name="WhitespaceAfter"/>
+		<module name="ParenPad"/>
+		<module name="TypecastParenPad"/>
+		<module name="GenericWhitespace"/>
+		<module name="WhitespaceAround"/>
+
+		<!--Modifier Checks-->
+		<module name="ModifierOrder"/>
+		<module name="RedundantModifier"/>
+		<module name="PackageAnnotation"/>
+
+		<!--Checks for blocks. You know, those {}'s-->
+		<module name="AvoidNestedBlocks"/>
+		<module name="EmptyBlock"/>
+		<module name="NeedBraces"/>
+		<module name="LeftCurly"/>
+		<module name="RightCurly"/>
+
+		<!--Checks for common coding problems-->
+		<!--<module name="AvoidInlineConditionals"/>-->
+		<!--<module name="HiddenField"/>-->
+		<module name="InnerAssignment"/>
+		<!--<module name="MagicNumber"/>-->
+		<module name="EmptyStatement"/>
+		<module name="EqualsHashCode"/>
+		<module name="IllegalInstantiation"/>
+		<module name="MissingSwitchDefault"/>
+		<module name="SimplifyBooleanExpression"/>
+		<module name="SimplifyBooleanReturn"/>
+		<module name="CovariantEquals"/>
+		<module name="ModifiedControlVariable"/>
+		<module name="OneStatementPerLine"/>
+		<module name="EmptyStatement"/>
+		<module name="DefaultComesLast"/>
+
+		<!--Checks for class design-->
+		<!--<module name="DesignForExtension"/>-->
+		<module name="HideUtilityClassConstructor"/>
+		<module name="VisibilityModifier"/>
+		<module name="FinalClass"/>
+		<module name="InterfaceIsType"/>
+
+		<!--Miscellaneous other checks.-->
+		<module name="ArrayTypeStyle"/>
+		<!--<module name="FinalParameters"/>-->
+		<module name="TodoComment"/>
+		<module name="UpperEll"/>
+		<module name="CyclomaticComplexity">
+			<property name="max" value="15"/>
+		</module>
+
+	</module>
+</module>

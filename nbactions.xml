@@ -13,8 +13,9 @@
         <action>
             <actionName>run</actionName>
             <goals>
-                <goal>jetty:run</goal>
-                <goal>-Dclick.mode=debug</goal>
+                <goal>spring-boot:run</goal>
+                
+                
                 
                 
                 
@@ -30,7 +31,10 @@
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
                 
                 
-                <config.file>src/main/resources/application.conf</config.file>
+                <config.file>src/main/resources/application.yml</config.file>
+                
+                
+                <click.mode>debug</click.mode>
             </properties>
         </action>
         <action>

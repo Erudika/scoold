@@ -47,30 +47,26 @@ public final class AppConfig {
 	public static final int MAX_IDENTIFIERS_PER_USER = 2;
 	public static final int MAX_FAV_TAGS = 50;
 
-	//////////////////////////////////////////////////////////////////
+	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = 10;
+	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = 5;
+	public static final int VOTEUP_REWARD_AUTHOR = 2;
+	public static final int ANSWER_APPROVE_REWARD_AUTHOR = 10;
+	public static final int ANSWER_APPROVE_REWARD_VOTER = 3;
+	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = 3;
+	public static final int POST_VOTEDOWN_PENALTY_VOTER = 1;
 
-	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = 10;	//
-	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = 5;	//
-	public static final int VOTEUP_REWARD_AUTHOR = 2;		//
-	public static final int ANSWER_APPROVE_REWARD_AUTHOR = 10;	//
-	public static final int ANSWER_APPROVE_REWARD_VOTER = 3;		//
-	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = 3;	//
-	public static final int POST_VOTEDOWN_PENALTY_VOTER = 1;	//
-
-	public static final int VOTER_IFHAS = 100; // total votes	//
-	public static final int COMMENTATOR_IFHAS = 100; // coments	//
-	public static final int CRITIC_IFHAS = 10; // downvotes		//
-	public static final int SUPPORTER_IFHAS = 50; // upvotes	//
-
-	public static final int GOODQUESTION_IFHAS = 20; // votes	//
-	public static final int GOODANSWER_IFHAS = 10; // votes		//
-	public static final int CONNECTED_IFHAS = 10; // contacts	//
-
-	public static final int ENTHUSIAST_IFHAS = 100; // rep		//
-	public static final int FRESHMAN_IFHAS = 300; // rep		//
-	public static final int SCHOLAR_IFHAS = 500; // rep			//
-	public static final int TEACHER_IFHAS = 1000; // rep		//
-	public static final int PROFESSOR_IFHAS = 5000; // rep		//
-	public static final int GEEK_IFHAS = 9000; // rep IT"S OVER NINE THOUSAND!
+	public static final int VOTER_IFHAS = 100;
+	public static final int COMMENTATOR_IFHAS = 100;
+	public static final int CRITIC_IFHAS = 10;
+	public static final int SUPPORTER_IFHAS = 50;
+	public static final int GOODQUESTION_IFHAS = 20;
+	public static final int GOODANSWER_IFHAS = 10;
+	public static final int CONNECTED_IFHAS = 10;
+	public static final int ENTHUSIAST_IFHAS = 100;
+	public static final int FRESHMAN_IFHAS = 300;
+	public static final int SCHOLAR_IFHAS = 500;
+	public static final int TEACHER_IFHAS = 1000;
+	public static final int PROFESSOR_IFHAS = 5000;
+	public static final int GEEK_IFHAS = 9000;
 
 }
