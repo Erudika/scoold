@@ -237,49 +237,49 @@
 				</div>
 			</div>
 			<div class="container">
-                <div id="content" class="clearfix">
+				<div id="content" class="clearfix">
 					#parse($path)
 				</div>
 			</div>
-        </div>
+		</div>
 
-        <div id="footer" class="mtl">
-            <div class="container">
-				<div class="line">
-					<div class="unit size4of5">
-						<div class="clearfix">
-							<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
-							</a>
-							#set($_liclink = $utils.formatMessage("$!lang.get('license')", '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>') )
-							<div>$_liclink</div>
-							#if ($isMobile)<br/>#end
-							<ul class="inline-list">
-								<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
-								<li><a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a> &bull;</li>
-								<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a> &bull;</li>
-								<li>
-									#if ($isMobile)
-										<a href="$context/?mobile=false" title="Classic layout">$!{lang.get('classic')}</a>
-									#else
-										<a href="$context/?mobile=true" title="Mobile layout">$!{lang.get('mobile')}</a>
-									#end
-								</li>
-							</ul>
+		<div id="footer" class="mtl">
+				<div class="container">
+					<div class="line">
+						<div class="unit size4of5">
+							<div class="clearfix">
+								<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
+								</a>
+								#set($_liclink = $utils.formatMessage("$!lang.get('license')", '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>') )
+								<div>$_liclink</div>
+								#if ($isMobile)<br/>#end
+								<ul class="inline-list">
+									<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
+									<li><a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a> &bull;</li>
+									<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a> &bull;</li>
+									<li>
+										#if ($isMobile)
+											<a href="$context/?mobile=false" title="Classic layout">$!{lang.get('classic')}</a>
+										#else
+											<a href="$context/?mobile=true" title="Mobile layout">$!{lang.get('mobile')}</a>
+										#end
+									</li>
+								</ul>
+							</div>
 						</div>
+						#if ($isMobile)<br/>#end
+						<div class="unit size1of5 lastUnit r">
+							<span class="mediumText">
+								<span class="pictos">G</span>
+								<a href="$!languageslink" title="Switch to a different language" class="capitalize">
+									$!currentLocale.getDisplayLanguage($currentLocale)
+								</a>
+							</span>
+						</div>
+						#if ($isMobile)<br/>#end
 					</div>
-					#if ($isMobile)<br/>#end
-					<div class="unit size1of5 lastUnit r">
-						<span class="mediumText">
-							<span class="pictos">G</span>
-							<a href="$!languageslink" title="Switch to a different language" class="capitalize">
-								$!currentLocale.getDisplayLanguage($currentLocale)
-							</a>
-						</span>
-					</div>
-					#if ($isMobile)<br/>#end
 				</div>
-            </div>
-        </div>
+		</div>
 
 		#set($sectoken = "#sectoken(true)")
 		#set($sectoken = $sectoken.trim())

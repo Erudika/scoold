@@ -94,14 +94,14 @@ public class Classunit extends Sysprop {
 		return blackboard;
 	}
 
-	public boolean isLinkedTo(ScooldUser u) {
+	public boolean isLinkedTo(User u) {
 		return AppConfig.client().isLinked(this, Utils.type(User.class), u.getId());
 	}
 
 	public boolean linkToUser(String userid) {
 		if (userid == null) return false;
 		// auto add to my classes
-		ScooldUser u = new ScooldUser(userid);
+		User u = new User(userid);
 		long count1 = AppConfig.client().countLinks(u, Utils.type(Classunit.class));
 		long count2 = AppConfig.client().countLinks(u, Utils.type(School.class));
 		if ((count1 < AppConfig.MAX_CLASSES_PER_USER && count2 < AppConfig.MAX_SCHOOLS_PER_USER)) {

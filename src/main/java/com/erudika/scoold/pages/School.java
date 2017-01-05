@@ -5,9 +5,9 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.scoold.core.Classunit;
-import com.erudika.scoold.core.ScooldUser;
 import com.erudika.scoold.core.ContactDetail.ContactDetailType;
 import com.erudika.scoold.core.ScooldUser.Badge;
 import java.util.List;
@@ -22,7 +22,7 @@ public class School extends Base{
     public com.erudika.scoold.core.School showSchool;
 	public boolean canEdit;
 	public List<ContactDetailType> contactDetailTypes;
-	public List<ScooldUser> peoplelist;
+	public List<User> peoplelist;
 	public List<Classunit> classeslist;
 	public List<com.erudika.scoold.core.Question> questionslist;
 	public boolean isLinkedToMe;
@@ -53,8 +53,7 @@ public class School extends Base{
 		isMine = (authenticated) ? authUser.getId().equals(showSchool.getCreatorid()) : false;
 		isMine = isMine || inRole("admin");
 
-		if (authenticated && (isMine || authUser.hasBadge(Badge.ENTHUSIAST)
-				|| inRole("mod"))) {
+		if (authenticated && (isMine || authUser.hasBadge(Badge.ENTHUSIAST)	|| inRole("mod"))) {
 			canEdit = true;
 		} else {
 			canEdit = false;

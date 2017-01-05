@@ -83,7 +83,7 @@ public class Group extends Sysprop{
 		unlinkAll();
 	}
 
-	public boolean isLinkedTo(ScooldUser u) {
+	public boolean isLinkedTo(User u) {
 		return AppConfig.client().isLinked(this, Utils.type(User.class), u.getId());
 	}
 

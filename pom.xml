@@ -4,7 +4,7 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.0.0</version>
+	<version>1.22.0</version>
 	<packaging>war</packaging>
 
 	<organization>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.21.2-SNAPSHOT</version>
+			<version>1.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tuckey</groupId>
@@ -69,17 +69,7 @@
 			<artifactId>oro</artifactId>
 			<version>2.0.8</version>
 		</dependency>
-		<dependency>
-			<groupId>com.ning</groupId>
-			<artifactId>async-http-client</artifactId>
-			<version>1.9.39</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
 <!--		<dependency>
 			<groupId>org.hectorclient</groupId>
 			<artifactId>hector-core</artifactId>
@@ -171,7 +161,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>scoold-web</finalName>
+		<!--<finalName>scoold</finalName>-->
 	</build>
 </project>
 

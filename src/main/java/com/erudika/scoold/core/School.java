@@ -6,8 +6,6 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,17 +41,6 @@ public class School extends Sysprop {
 		}
 	};
 
-	private static final AsyncHttpClient httpClient;
-	private static int redirectCount = 0;
-	static {
-		final AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-		builder.setCompressionEnforced(true)
-			.setAllowPoolingConnections(true)
-			.setRequestTimeout(5000)
-			.build();
-
-		httpClient = new AsyncHttpClient(builder.build());
-	}
 
 	public School() {
 		this("", SchoolType.UNKNOWN.toString(), "");
@@ -128,7 +115,7 @@ public class School extends Sysprop {
 		this.about = about;
 	}
 
-	public List<ScooldUser> getAllUsers(Pager pager) {
+	public List<User> getAllUsers(Pager pager) {
 		return AppConfig.client().getLinkedObjects(this, Utils.type(User.class), pager);
 	}
 

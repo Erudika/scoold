@@ -7,7 +7,9 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.core.User;
 import com.erudika.scoold.utils.AppConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -21,7 +23,7 @@ public class Revision extends Sysprop {
 	@Stored private String title;
 	@Stored private Boolean original;
 
-	private transient ScooldUser author;
+	private transient User author;
 
 	public Revision() {
 	}
@@ -63,7 +65,8 @@ public class Revision extends Sysprop {
 		this.body = body;
 	}
 
-	public ScooldUser getAuthor() {
+	@JsonIgnore
+	public User getAuthor() {
 		if (getCreatorid() == null) return null;
 		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;

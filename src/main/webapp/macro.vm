@@ -1321,12 +1321,13 @@ $school.setToyear($fromto.substring($sepindex) )
 </div>
 #end
 ###################################
+#macro(langjs)
 #set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher",
 "student","profile.status.txt","class.chat.userin",	"class.chat.userout","class.chat.connection.error",
 "class.chat.polling.error","class.chat.reconnect.error", "more","posts.unloadconfirm",
 "signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close",
 "save", "clickedit","invalidyear"])
-#macro(langjs ) {#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if ($velocityCount < $jslang.size()),#end #end}#end
+{#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if ($velocityCount < $jslang.size()),#end #end}#end
 ###################################
 #macro(langbox $showLangKey $showLangName $progress  )
 #if ($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang rounded5") #else #set($selclass = "") #end
@@ -1495,7 +1496,6 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #end
 #####################################
 #macro(profilepic $user $thumb)
-#set($picurl = "https://www.gravatar.com/avatar/?d=mm")
 #if ($user)#if ($thumb)#if ($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=square")
 #else#set($picurl = "https://www.gravatar.com/avatar/$!{utils.MD5($user.email)}?size=50&amp;d=mm&amp;r=pg")#end
 #else#if ($user.isFacebookUser())#set($picurl = "http://graph.facebook.com/$!{user.identifier.substring(3)}/picture?type=large")

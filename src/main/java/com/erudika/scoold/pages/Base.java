@@ -193,8 +193,11 @@ public class Base extends Page {
 					HOMEPAGE = profilelink.concat("/").concat(u.getId());
 					authUser = new ScooldUser(u.getEmail(), u.getActive(), ScooldUser.UserType.STUDENT, u.getName());
 					authUser.setId(u.getId());
+					authUser.setAppid(u.getAppid());
+					authUser.setActive(u.getActive());
 					authUser.setTimestamp(u.getTimestamp());
 					authUser.setLastseen(u.getUpdated());
+					authUser.setIdentifier(u.getIdentifier());
 					// TODO: create new ScooldUser if missing
 
 //					newUser.setActive(true);
@@ -409,6 +412,8 @@ public class Base extends Page {
 							if (!same) {
 								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
 								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
+								author.update();
+								authUser.update();
 							}
 						} else {
 							// Answer approved award - GIVE
@@ -417,11 +422,10 @@ public class Base extends Page {
 								author.addRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
 								authUser.addRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
 								addBadgeOnce(Badge.NOOB, true);
+								author.update();
+								authUser.update();
 							}
 						}
-
-						author.update();
-						authUser.update();
 						post.update();
 					}
 				}
