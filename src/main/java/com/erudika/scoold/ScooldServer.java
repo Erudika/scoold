@@ -86,7 +86,6 @@ public class ScooldServer {
 	 */
 	@Bean
 	public FilterRegistrationBean urlRewriteFilterRegistrationBean() {
-		// This filter is required for AngularJS to work with HTML5 URLs
 		String path = "/*";
 		logger.debug("Initializing UrlRewrite filter [{}]...", path);
 		FilterRegistrationBean frb = new FilterRegistrationBean(new UrlRewriteFilter());
