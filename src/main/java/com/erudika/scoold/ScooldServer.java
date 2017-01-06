@@ -93,7 +93,7 @@ public class ScooldServer {
 		FilterRegistrationBean frb = new FilterRegistrationBean(new UrlRewriteFilter());
 		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.FORWARD));
 //		frb.addInitParameter("confPath", Config.IN_PRODUCTION ? "/WEB-INF/urw-prod.xml" : "/WEB-INF/urw-dev.xml");
-		frb.addInitParameter("confPath", "urlrewrite.xml");
+//		frb.addInitParameter("confPath", "urlrewrite.xml");
 		frb.addInitParameter("statusEnabled", "false");
 		frb.addInitParameter("logLevel", "slf4j");
 		frb.setName("urlRewriteFilter");
