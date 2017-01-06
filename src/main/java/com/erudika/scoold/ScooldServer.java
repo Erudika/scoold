@@ -49,7 +49,6 @@ public class ScooldServer {
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
 	public static void main(String[] args) {
-		System.setProperty("server.port", Config.IN_PRODUCTION ? "8080" : "8000");
 		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);
@@ -62,7 +61,7 @@ public class ScooldServer {
 	@Bean
 	public EmbeddedServletContainerFactory jettyConfigBean() {
 		JettyEmbeddedServletContainerFactory jef = new JettyEmbeddedServletContainerFactory();
-		int defaultPort = NumberUtils.toInt(System.getProperty("jetty.http.port", "8080"));
+		int defaultPort = Config.getConfigInt("port", 8080);
 		jef.setPort(NumberUtils.toInt(System.getProperty("server.port"), defaultPort));
 		logger.info("Listening on port {}...", jef.getPort());
 		return jef;
