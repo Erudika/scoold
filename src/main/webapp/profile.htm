@@ -1,231 +1,171 @@
-<div id="line">
-	<div class="unit size3of4">
-		<div id="profile-head">
-			<div class="line mediumText lightgray">
-				<div class="unit size1of2">
-					#if ($canEdit)
-						<div id="usertype">$!{lang.get($showUser.subType)}</div>
+<div class="row ptl">
+	<div class="col m4">
+		<div class="card">
+			<div class="card-image">
+				<img src="#profilepic($showUser)" alt="Profile picture" class="profile-pic" width="200"/>
+				<span class="card-title">
+					#if($showUser.identifier.startsWith("gp"))
+						<i class="fa fa-google fa-4x"></i>
 					#else
-						<div>$!{lang.get($showUser.subType)}</div>
+						<i class="fa fa-facebook fa-4x"></i>
 					#end
+				</span>
+			</div>
+			<div class="card-content center-align">
+				<div class="largeText">$!{showUser.name}</div>
+				<div title="$!lang.get('reputation')">
+					<span class="chip largeText reputationbox phl">$!showUser.votes</span> &nbsp;&nbsp;
+					<span class="largeText">
+						#if($showUser.badges && $showUser.badges.length > 2) $showUser.badges.split(",").length $!lang.get('badges.title') #end
+					</span>
 				</div>
-				<div class="unit size1of2 lastUnit r">
-					#usertitlebadge($showUser)
+			</div>
+			#if($showUser.website && !$showUser.website.isEmpty())
+				<div class="card-action truncate">
+					<a href="$!showUser.website">$!showUser.website</a>
 				</div>
+			#end
+		</div>
+		#if (!$isMyProfile && $authenticated)
+		<div class="mvm">
+			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
+			#if ($showUser.isAdmin())
+				#if ($showUser.isModerator())
+					<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip rusure">Unmake mod</a>
+				#else
+					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip rusure">Make mod</a>
+				#end
+				<a href="${adminlink}?delete=user&amp;id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
+					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")
+				</a>
+			#end
+		</div>
+		#end
+	</div>
+
+	<div class="col m8">
+		<div class="pll">
+			<div class="row">
+				<div class="col m8">
+					<h2>$!{lang.get("profile.about.title")}</h2>
+				</div>
+				<div class="col m4 r">&nbsp;
+					<div class="pvl">
+						&nbsp;
+						#if ($canEdit)
+							<a href="$profilelink/$authUser.creatorid/edit" class="editlink btn">
+								<i class="fa fa-pencil"></i> $!{lang.get("edit")}
+							</a>
+						#end
+					</div>
+				</div>
+			</div>
+			#if ($request.getParameter("edit") && $authenticated)
+				#set($hideedit1 = "")
+				#set($hideview1 = "hide")
+			#else
+				#set($hideedit1 = "hide")
+				#set($hideview1 = "")
+			#end
+
+			<div class="viewbox ${hideview1}">
+				#if ($showUser.aboutme && !$showUser.aboutme.isEmpty())
+					<h4 class="black-text pbs">$!{showUser.aboutme}</h4>
+				#end
+				#if ($showUser.location && !$showUser.location.isEmpty())
+					<h4 class="black-text pvm"><i class="fa fa-map-marker"></i> $!{showUser.location}</h4>
+				#end
+				#if ($showUser.timestamp)
+					<div class="mediumText grey-text pvm"><i class="fa fa-birthday-cake"></i>
+						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</div>
+				#end
+				#if ($showUser.lastseen)
+					<div class="mediumText grey-text pvm"><i class="fa fa-clock-o"></i>
+						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</div>
+				#end
 			</div>
 
 			#if ($canEdit)
-				<div id="name" class="hugeText editable p100">$!{showUser.name}</div>
-				<div id="mystatus" class="editable p100">$!{showUser.status}</div>
-			#else
-				<div class="hugeText p100">$!{showUser.name}</div>
-				#if (($showUser.status && !$showUser.status.trim().isEmpty()) || $authenticated)
-					<div class="p100">$!{showUser.status}</div>
-				#end
-			#end
-		</div>
+			<div id="about-edit" class="editbox lightgraybg pal ${hideedit1}">
+				<form method="post" id="about-edit-form" action="$profilelink/$authUser.creatorid">
+					#sectoken(false)
+					<div class="input-field">
+						<i class="fa fa-user-circle prefix"></i>
+						<label for="name_text">$!{lang.get("profile.name")}</label>
+						<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}"/>
+					</div>
 
-		<hr/>
+					<div class="input-field">
+						<i class="fa fa-map-marker prefix"></i>
+						<label for="location_text">$!{lang.get("profile.about.location")}</label>
+						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"/>
+					</div>
 
-		#if (!$isMyProfile && $authenticated)
-			<div class="mvm">
-				#if ($authUser.isFriendWith($showUser))
-					<a href="$profilelink/$authUser.id/remove" class="delfriend button-tiny rounded3" title="Remove from contacts"><span class="pictos">-</span> $!{lang.get("delfriend")}</a>
-				#else
-					<a href="$profilelink/$authUser.id/add" class="addfriend button-tiny rounded3" title="Add to contacts"><span class="pictos">+</span> $!{lang.get("addfriend")}</a>
-				#end
+					<div class="input-field">
+						<i class="fa fa-globe prefix"></i>
+						<label for="website_text">$!lang.get("website")</label>
+						<input id="website_text" name="website" type="url" value="$!{showUser.website}"/>
+					</div>
 
-				#if ($request.isUserInRole("admin"))
-					#if ($showUser.isModerator())
-						<a href="$profilelink/$showUser.id/?makemod=false" class="red button-tiny rounded3 rusure"><span class="pictos">S</span> Unmake mod</a>
-					#else
-						<a href="$profilelink/$showUser.id/?makemod=true" class="red button-tiny rounded3 rusure"><span class="pictos">S</span> Make mod</a>
-					#end
-					<a href="${adminlink}?delete=user&amp;id=$showUser.id" title="Delete user account" class="red button-tiny rounded3"><span class="pictos">*</span> $!lang.get("delete")</a>
-				#end
+					<div class="input-field">
+						<label for="about_text">$!{lang.get("profile.about.aboutme")}</label>
+						<textarea id="about_text" name="aboutme" length="255" class="materialize-textarea">$!{showUser.aboutme}</textarea>
+					</div>
 
-				#getreportlink($showUser "$profilelink/$!showUser.id" "button-tiny rounded3")
+					<div class="center mtl">
+						<input type="submit" value="$!{lang.get('save')}" class="btn waves-effect waves-light"/>
+						<input type="button" value="$!{lang.get('close')}" class="btn waves-effect waves-light canceledit ${hideview1}"/>
+						<a href="$profilelink/$authUser.creatorid" class="${hideedit1}">$!{lang.get('close')}</a>
+					</div>
+				</form>
 			</div>
-		#end
-
-		#if ($showParam)
-			####################################################################################################################
-			#if ($showParam == "contacts")
-				<h2>$!{lang.get("contacts.title")} #showcount($itemcount.longValue())</h2>
-
-				<div id="contacts-list" class="mvm">
-					#if ($contactlist.isEmpty())
-						<div class="mvl">$!{lang.get("profile.contacts.nocontacts")}</div>
-					#else
-						#paginate($pagenum.longValue() "\#peoplepage(\$contactlist)" $itemcount.longValue() "" "pageless")
-					#end
-				</div>
-
-			####################################################################################################################
-			#elseif ($showParam == "questions")
-				<h2>$!{lang.get("questions.title")} #showcount($itemcount.longValue())</h2>
-
-				<div id="questions-edit">
-					#if ($postlist.isEmpty())
-						<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
-					#else
-						#paginate($pagenum.longValue() "\#questionspage(\$postlist)" $itemcount.longValue() "" "pageless")
-					#end
-				</div>
-
-			####################################################################################################################
-			#elseif ($showParam == "answers")
-				<h2>$!{lang.get("answers.title")} #showcount($itemcount.longValue())</h2>
-
-				<div id="answers-edit">
-					#if ($postlist.isEmpty())
-						<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
-					#else
-						#paginate($pagenum.longValue() "\#compactanswerspage(\$postlist)" $itemcount.longValue() "" "pageless")
-					#end
-				</div>
-
 			#end
-			####################################################################################################################
-		#else
-			<div id="about" class="mvl clearfix">
-				#if ($canEdit)
-					<a href="$profilelink/$authUser.id/edit" class="editlink button-tiny rounded3 right"><span class="pictos">W</span> $!{lang.get("edit")}</a>
-				#end
-				<h2>$!{lang.get("profile.about.title")}</h2>
-				#if ($request.getParameter("edit") && $authenticated)
-					#set($hideedit1 = "")
-					#set($hideview1 = "hide")
-				#else
-					#set($hideedit1 = "hide")
-					#set($hideview1 = "")
-				#end
-
-				<div class="viewbox ${hideview1}">
-					#showaboutview()
-				</div>
-				#if ($canEdit)
-				<div id="about-edit" class="editbox lightgraybg rounded5 pal ${hideedit1}">
-					<form method="post" id="about-edit-form" action="$profilelink/$authUser.id?getaboutviewcode=true">
-						<fieldset>
-							#sectoken(false)
-							<table class="p100">
-								<tbody>
-									<tr>
-										<td class="r p25">$!{lang.get("signup.form.iama")}:</td>
-										<td class="pll p75">
-											<select name="type" class="nicebox">
-												#foreach($utype in ["alumnus", "student", "teacher"])
-													#if ($utype == $showUser.subType)
-														<option selected="selected" value="$utype">$!lang.get($!utype) &nbsp;</option>
-													#else
-														<option value="$utype">$!lang.get($!utype) &nbsp;</option>
-													#end
-												#end
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td class="r p25">$!{lang.get("profile.about.dob")}:</td>
-										<td class="pll p75">
-											#dayselect("nicebox" "dobday" $showUser.dobday)
-											#monthselect("nicebox" "dobmonth" $showUser.dobmonth)
-											#yearselect("nicebox" "dobyear" false $showUser.dobyear "")
-										</td>
-									</tr>
-									<tr>
-										<td class="r p25">$!{lang.get("profile.about.location")}:</td>
-										<td class="pll p75">
-											<input name="location" class="locationbox nicebox p90" type="text" value="$!{showUser.location}"/>
-										</td>
-									</tr>
-									<tr>
-										<td class="r p25">$!{lang.get("profile.about.ilike")}:</td>
-										<td class="pll p75">
-											<textarea id="ilike" name="ilike" rows="3" cols="30" class="p90 nicebox">$!{showUser.ilike}</textarea>
-										</td>
-									</tr>
-									<tr>
-										<td class="r p25">
-											<select id="detail-type" class="nicebox">
-												#foreach($mtype in $contactDetailTypes)
-													<option value="$mtype.name()">#contactdetailtypestr($mtype)</option>
-												#end
-											</select>
-										</td>
-										<td class="pll p75">
-											<input id="detail-value" type="text" value="" maxlength="255" class="nicebox p80"/>
-											<a href="#" class="button-small rounded3 add-contact mls" title="$!lang.get('add')">
-												<span class="pictos">&amp;</span>
-											</a>
-										</td>
-									</tr>
-									#contactdetailbox("")
-									#foreach($detail in $showUser.getAllContactDetails())
-										#contactdetailbox($detail)
-									#end
-									<tr>
-										<td class="r p25">$!{lang.get("profile.about.aboutme")}:</td>
-										<td class="pll p75">
-											<textarea id="aboutme" name="aboutme" rows="5" cols="30" class=" p90 nicebox">$!{showUser.aboutme}</textarea>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-
-							<div class="center mtl">
-								<input type="submit" value="$!{lang.get('save')}" class="button rounded3"/>
-								<input type="button" value="$!{lang.get('close')}" class="button rounded3 canceledit ${hideview1}"/>
-								<a href="$profilelink/$authUser.id" class="${hideedit1}">$!{lang.get('close')}</a>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-				#end
-			</div>
-
-			#set($badges = $showUser.badgesMap)
-			#if (!$badges.isEmpty())
-				<h2>$!lang.get("badges.title") #showcount($!badges.size())</h2>
-				<div class="mvl clearfix">
-					#foreach($entry in $badges.entrySet())
-						#set($badge = $entry.key)
-						#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
-						#badgebox($badge $entry.value)
-					#end
-				</div>
-			#end
-
-			#if (!$schoollist.isEmpty())
-				<h2>$!{lang.get("schools.title")} #showcount($!schoollist.size())</h2>
-				<div id="schools-edit" class="editschools mvl clearfix">
-					#myschoolspage($schoollist)
-				</div>
-			#end
-
-			#if (!$classlist.isEmpty())
-				<h2>$!{lang.get("classes.title")} #showcount($!classlist.size())</h2>
-				<div id="classes-edit" class="editclasses mvl clearfix">
-					#classespage($classlist)
-				</div>
-			#end
-
-		#end ##end of sub-page switch
-	</div>
-
-	<div class="unit size1of4 lastUnit">
-		<div class="mll center">
-			<div class="mbm rounded3">
-				<img src="#profilepic($showUser false)" alt="Profile picture" class="rounded3 profile-pic" width="200"/>
-			</div>
-			<span class="largeText reputationbox p80 phl rounded5" title="$!lang.get('reputation')">$!showUser.votes</span>
-			<ul class="sidebar">
-				#if ($authenticated) #set($privatepath = "/p" ) #else #set($privatepath = "" ) #end
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/#stripstr($!showUser.name)">$!{lang.get("profile.about.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/contacts/#stripstr($!showUser.name)">$!{lang.get("contacts.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/questions/#stripstr($!showUser.name)">$!{lang.get("questions.title")}</a></li>
-				<li class="rounded3"><a href="${privatepath}$profilelink/$!showUser.id/answers/#stripstr($!showUser.name)">$!{lang.get("answers.title")}</a></li>
-			</ul>
 		</div>
 	</div>
 </div>
+
+<div class="row">
+	<div class="col m4 s12 center-align">
+		<h3 class="black-text">
+			$qpager.count $!{lang.get("questions.title")}
+		</h3>
+		<h3 class="black-text">
+			$apager.count $!{lang.get("answers.title")}
+		</h3>
+
+		#set($badges = $showUser.badgesMap)
+		<h3 class="black-text">$!lang.get("badges.title") #showcount($!badges.size())</h3>
+		#if (!$badges.isEmpty())
+		<h2></h2>
+		<div class="mvl">
+			#foreach($entry in $badges.entrySet())
+			#set($badge = $entry.key)
+			#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
+			#badgebox($badge $entry.value)
+			#end
+		</div>
+		#end
+	</div>
+	<div class="col m8 s12">
+		<h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
+
+		<div id="questions-edit">
+			#if ($questionslist.isEmpty())
+				<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
+			#else
+				#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
+			#end
+		</div>
+
+		<h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
+
+		<div id="answers-edit">
+			#if ($answerslist.isEmpty())
+				<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
+			#else
+				#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
+			#end
+		</div>
+	</div>
+</div>
+

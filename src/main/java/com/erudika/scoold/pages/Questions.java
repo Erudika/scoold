@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 
 package com.erudika.scoold.pages;
@@ -9,17 +22,12 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Report;
-import com.erudika.scoold.core.School;
-import com.erudika.scoold.core.Group;
-import com.erudika.scoold.core.Grouppost;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.ScooldUser.Badge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.apache.click.control.Form;
-import org.apache.click.util.ClickUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -30,7 +38,6 @@ public class Questions extends Base{
 
 	public String title;
 	public List<Question> questionslist;
-	public Map<String, ?> askablesMap;
 	public Form qForm;
 
 	public Questions() {
@@ -42,36 +49,17 @@ public class Questions extends Base{
 				setRedirect(signinlink);
 			} else {
 				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
-				if (param("schoolid")) {
-					qForm = getQuestionForm(School.class, getParamValue("schoolid"), authUser.getSchoolsMap());
-				} else if (param("groupid")) {
-					qForm = getQuestionForm(Group.class, getParamValue("groupid"), authUser.getGroupsMap());
-				} else {
-					qForm = getQuestionForm(School.class, null, authUser.getSchoolsMap());
-				}
+				qForm = getQuestionForm();
 			}
 		}
 	}
 
 	public void onGet() {
-		String type = Utils.type(param("groupid") ? Grouppost.class : Question.class);
+		String type = Utils.type(Question.class);
 		if (!param("ask")) {
 			if (param("tag")) {
 				String tag = getParamValue("tag");
 				questionslist = pc.findTagged(type, new String[]{tag}, itemcount);
-			} else if (param("schoolid")) {
-				String sid = getParamValue("schoolid");
-				School school = pc.read(sid);
-				if (school != null) {
-					String sortBy = "";
-					if ("activity".equals(getParamValue("sortby"))) sortBy = "lastactivity";
-					else if ("votes".equals(getParamValue("sortby"))) sortBy = "votes";
-					itemcount.setSortby(sortBy);
-					questionslist = school.getQuestions(itemcount);
-				} else {
-					setRedirect(questionslink);
-					return;
-				}
 			} else if (param("voteup") || param("votedown")) {
 				processVoteRequest(getParamValue("type"), getParamValue("id"));
 
@@ -102,18 +90,6 @@ public class Questions extends Base{
 			}
 			addModel("tagFilterOn", authenticated && authUser.hasFavtags());
 		}
-
-		if (param("mobile")) {
-			String m = getParamValue("mobile");
-			if ("true".equals(m)) {
-				setStateParam(MOBILE_COOKIE, "true");
-				ClickUtils.setCookie(req, resp, MOBILE_COOKIE, "true", (int) (Config.SESSION_TIMEOUT_SEC * 365), "/");
-			} else {
-				ClickUtils.setCookie(req, resp, MOBILE_COOKIE, "", 0, "/");
-			}
-			if (!isAjaxRequest())
-				setRedirect(HOMEPAGE);
-		}
 	}
 
 	public void onPost() {
@@ -135,7 +111,7 @@ public class Questions extends Base{
 
 	public boolean onAskClick() {
 		if (isValidQuestionForm(qForm)) {
-			createAndGoToPost(param("groupid") ? Grouppost.class : Question.class);
+			createAndGoToPost(Question.class);
 		}
 		return false;
 	}

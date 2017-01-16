@@ -1,10 +1,3 @@
-#if ($showParam == "revisions")
-	#set($actionlink = "#getpostlink($showPost false false)")
-	<a href="$actionlink" title="Go back" class="button-small rounded3 right">$!lang.get("goback")</a>
-	<h2><span class="pictos">F</span> $!lang.get("revisions.title") #showcount($itemcount.longValue())</h2>
-	<hr/>
-	#paginate($pagenum.longValue() "\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount.longValue() "" "")
-#else
 <div class="line">
 	<div class="unit size4of5">
 		<div id="question-head">
@@ -18,22 +11,15 @@
 					#set($ftypestr =  "feedback.$!{showPost.tagsString}")
 					#set($posttype = "$posttype / $!lang.get($ftypestr)")
 				#end
-			#elseif ($showPost.isGrouppost())
-				#set($posttype = "<a href='$grouplink/$showPost.parentid' title='Back to group'>$!lang.get('group.title')</a>")
-				#set($posttype = "$posttype / $!lang.get('posts.post')")
 			#end
 			<div class="line mediumText lightgray">
 				<div class="unit size1of2">$!posttype</div>
-				<div class="unit size1of2 lastUnit r $!{mobilehide}">
-					#if ($showPost.deleteme)
-						<span class="pictos" title="$!lang.get('posts.marked')">#</span> $!lang.get("posts.marked")
+				<div class="unit size1of2  r">
+					#if ($showPost.answercount > 0)
+						$!lang.get("posts.answered")
+						#if ($showPost.answerid) + <span class="pictos" title="Approved answer">2</span> #end
 					#else
-						#if ($showPost.answercount > 0)
-							$!lang.get("posts.answered")
-							#if ($showPost.answerid) + <span class="pictos" title="Approved answer">2</span> #end
-						#else
-							$!lang.get("posts.unanswered")
-						#end
+						$!lang.get("posts.unanswered")
 					#end
 				</div>
 			</div>
@@ -44,14 +30,11 @@
 			#end
 
 			<h2 id="questiontitle" class="$!{editable}">$!{showPost.title}</h2>
-			#if ($showPost.isQuestion() && $showSchool && $showSchool.id)
-				<span class="pictos">j</span> <a href="$!schoollink/$!showSchool.id/#stripstr($!showSchool.name)">$!showSchool.name</a>
-			#end
 		</div>
 
 		<hr/>
 
-		<div id="question" class="clearfix mbl">
+		<div id="question" class="mbl">
 			#postbox($showPost $showPost)
 		</div>
 
@@ -61,14 +44,16 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers" class="button-tiny rounded3 $sortarr.votes">$!lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers"
+							 class="chip $sortarr.votes">$!lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers"
+							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
-					<h2>$!lang.get("answers.title") #showcount($itemcount.longValue())</h2>
+					<h2>$!lang.get("answers.title") #showcount($itemcount.count)</h2>
 					<hr />
 				#end
 
-				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.longValue() "" "pageless")
+				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.count "" "pageless")
 
 				#if ($request.getParameter("write") && $authenticated || !$aForm.isValid())
 					#set($hideForm = false)
@@ -100,17 +85,20 @@
 						</h2>
 					#else
 						#if ($showPost.isQuestion())
-							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="button-large rounded3 ${btnclass}" title="Answer this question"><span class="pictos">p</span> $!lang.get("posts.writeanswer")</a>
+							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="btn ${btnclass}"
+								 title="Answer this question"><span class="pictos">p</span> $!lang.get("posts.writeanswer")</a>
 						#else
-							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="button-large rounded3 ${btnclass}" title="Reply"><span class="pictos">p</span> $!lang.get("feedback.writereply")</a>
+							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="btn ${btnclass}"
+								 title="Reply"><span class="pictos">p</span> $!lang.get("feedback.writereply")</a>
 						#end
 					#end
 				</div>
 			</div>
 		#end
 	</div>
-	<div class="unit size1of5 lastUnit r $!{mobilehide}">
-		<div class="thickborder p85 mbl pas rounded5 center right">
+
+	<div class="unit size1of5  r">
+		<div class="thickborder p85 mbl pas center right">
 			<div class="hugeText" title="$!lang.get('votes')">$!showPost.votes</div>
 			<div>$!lang.get('votes')</div>
 			<div class="line">
@@ -118,12 +106,13 @@
 					<span class="mediumText">$!showPost.answercount</span> <br />
 					$!lang.get('answers.title')
 				</div>
-				<div class="unit size1of2 lastUnit" title="$!lang.get('posts.views')">
+				<div class="unit size1of2 " title="$!lang.get('posts.views')">
 					<span class="mediumText">$!showPost.viewcount</span> <br />
 					$!lang.get('posts.views')
 				</div>
 			</div>
 		</div>
+
 		#if ($similarquestions && !$similarquestions.isEmpty())
 			<div class="similar mbl">
 				<h3>$!lang.get("posts.similar")</h3>
@@ -136,4 +125,3 @@
 
 	</div>
 </div>
-#end

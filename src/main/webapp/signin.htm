@@ -1,1 +1,56 @@
-#signinbox(false)
+<div class="ptl">
+	<div class="row ptl">
+		<div class="col s12 m6 offset-m3 center">
+			<div class="card-panel grey lighten-4 hoverable">
+
+				<h2 class="grey-text">$!lang.get("signin.title")</h2>
+				<div class="mvl pvs">
+					<a href="#" onclick="fbLogin()" class="btn-large indigo lighten-1 truncate">
+						<i class="fa fa-facebook left"></i> $!lang.get("signin.facebook")
+					</a>
+				</div>
+				<div class="mvl pvs">
+					<a id="g-login-btn" href="#" onclick="return false;" class="btn-large red lighten-1 truncate">
+						<i class="fa fa-google left"></i> $!lang.get("signin.google")
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="fb-root"></div>
+<script src="https://apis.google.com/js/api:client.js"></script>
+<script>
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=$FB_APP_ID";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+
+	gapi.load('auth2', function(){
+		auth2 = gapi.auth2.init({
+			client_id: '4711250984-l7rtg7bkqsk8rolvg4tcdll5ciff0dfc.apps.googleusercontent.com',
+			scope: 'https://www.googleapis.com/auth/plus.me'
+		});
+
+		auth2.attachClickHandler(document.getElementById('g-login-btn'), {}, function(googleUser) {
+			window.location = "/signin?provider=google&access_token=" + googleUser.getAuthResponse(true).access_token;
+		}, function(error) {
+			window.location = "/signin?code=3&error=true";
+		});
+	});
+
+	function fbLogin() {
+		FB.login(function(response) {
+			if (response.authResponse) {
+				window.location = "/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
+		  } else {
+			  window.location = "/signin?code=3&error=true";
+		  }
+	  }, {scope: 'public_profile,email'});
+	  return false;
+	}
+</script>

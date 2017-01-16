@@ -1,9 +1,22 @@
+/*
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
+ */
 package com.erudika.scoold.pages;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
@@ -14,13 +27,9 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Comment;
-import com.erudika.scoold.core.ContactDetail;
-import com.erudika.scoold.core.ContactDetail.ContactDetailType;
 import com.erudika.scoold.core.Feedback.FeedbackType;
-import com.erudika.scoold.core.Grouppost;
 import com.erudika.scoold.core.Language;
 import com.erudika.scoold.core.Post;
-import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Report.ReportType;
 import com.erudika.scoold.core.ScooldUser;
@@ -29,7 +38,6 @@ import com.erudika.scoold.utils.AppConfig;
 import com.erudika.scoold.utils.LanguageUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,16 +48,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.click.Page;
 import org.apache.click.control.Field;
 import org.apache.click.control.Form;
-import org.apache.click.control.HiddenField;
-import org.apache.click.control.Option;
 import org.apache.click.control.Radio;
 import org.apache.click.control.RadioGroup;
-import org.apache.click.control.Select;
 import org.apache.click.control.Submit;
 import org.apache.click.control.TextArea;
 import org.apache.click.control.TextField;
 import org.apache.click.util.ClickUtils;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -59,34 +63,24 @@ import org.slf4j.LoggerFactory;
  */
 public class Base extends Page {
 	private static final long serialVersionUID = 1L;
+	public static final Logger logger = LoggerFactory.getLogger(Base.class);
 
 	public static final String APPNAME = Config.APP_NAME; //app name
 	public static final String CDN_URL = "http://static.scoold.com";
-	public static final boolean IN_BETA = true;
 	public static final boolean USE_SESSIONS = false;
 	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
 	public static final boolean IN_DEVELOPMENT = !IN_PRODUCTION;
 	public static final int MAX_ITEMS_PER_PAGE = Config.MAX_ITEMS_PER_PAGE;
 	public static final long SESSION_TIMEOUT_SEC = Config.SESSION_TIMEOUT_SEC;
 	public static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-	public static final String SEPARATOR = Config.SEPARATOR;
-	public static final String AUTH_USER = Config.AUTH_COOKIE;
 
 	public static final String FEED_KEY_SALT = ":scoold";
-	public static final String MOBILE_COOKIE = "scoold-mobile";
 	public static final String FB_APP_ID = Config.FB_APP_ID;
-	public static final Logger logger = LoggerFactory.getLogger(Base.class);
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
 	public final String localeCookieName = Config.APP_NAME_NS + "-locale";
 	public final String countryCookieName = Config.APP_NAME_NS + "-country";
-	public final String schoolslink = prefix + "schools";
 	public final String peoplelink = prefix + "people";
-	public final String classeslink = prefix + "classes";
-	public final String groupslink = prefix + "groups";
-	public final String schoollink = prefix + "school";
-	public final String classlink = prefix + "class";
-	public final String grouplink = prefix + "group";
 	public final String profilelink = prefix + "profile";
 
 	public String minsuffix = "-min";
@@ -98,13 +92,12 @@ public class Base extends Page {
 	public final String searchquestionslink = searchlink + "/questions";
 	public final String searchfeedbacklink = searchlink + "/feedback";
 	public final String searchpeoplelink = searchlink + "/people";
-	public final String searchclasseslink = searchlink + "/classes";
-	public final String searchschoolslink = searchlink + "/schools";
 	public final String signinlink = prefix + "signin";
 	public final String signoutlink = prefix + "signout";
 	public final String aboutlink = prefix + "about";
 	public final String privacylink = prefix + "privacy";
 	public final String termslink = prefix + "terms";
+	public final String tagslink = prefix + "tags";
 	public final String settingslink = prefix + "settings";
 	public final String translatelink = prefix + "translate";
 	public final String changepasslink = prefix + "changepass";
@@ -118,15 +111,12 @@ public class Base extends Page {
 	public final String commentlink = prefix + "comment";
 	public final String postlink = prefix + "post";
 	public final String feedbacklink = prefix + "feedback";
-	public final String grouppostlink = grouplink + "/post";
 	public final String languageslink = prefix + "languages";
 	public String HOMEPAGE = "/";
 
 	public String infoStripMsg = "";
 	public boolean authenticated;
 	public boolean canComment;
-	public boolean includeFBscripts;
-	public boolean isMobile;
 	public ScooldUser authUser;
 	public List<Comment> commentslist;
 	public List<String> badgelist;
@@ -145,23 +135,28 @@ public class Base extends Page {
 	public transient LanguageUtils langutils = new LanguageUtils();
 
 	public Base() {
-		checkAuth();
-		cdnSwitch();
-		includeFBscripts = false;
-		itemcount = new Pager();
-		showParam = getParamValue("show");
-		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
 		commentslist = new ArrayList<Comment>();
 		badgelist = new ArrayList<String>();
-		isMobile = "true".equals(getStateParam(MOBILE_COOKIE));
-		if (authenticated && !StringUtils.isBlank(authUser.getNewbadges())) {
-			badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
-			authUser.setNewbadges("none");
-		}
+		itemcount = new Pager();
+		checkAuth();
+		cdnSwitch();
+		showParam = getParamValue("show");
+		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
 		addModel("userip", req.getRemoteAddr());
-		addModel("mobilehide", (isMobile ? "hide" : "noclass"));
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
+		addModel("returnto", req.getAttribute("javax.servlet.forward.request_uri"));
+		addModel("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
+		addModel("showBranding", Config.getConfigBoolean("show_branding", true));
+		addModel("logoUrl", Config.getConfigParam("logo_url", imageslink + "/logo.png"));
+		addModel("logoWidth", Config.getConfigInt("logo_width", 90));
+		addModel("bgcolor1", Config.getConfigParam("background_color1", "#03a9f4"));
+		addModel("bgcolor2", Config.getConfigParam("background_color2", "#0277bd"));
+		addModel("bgcolor3", Config.getConfigParam("background_color3", "#e0e0e0"));
+		addModel("txtcolor1", Config.getConfigParam("text_color1", "#039be5"));
+		addModel("txtcolor2", Config.getConfigParam("text_color2", "#ec407a"));
+		addModel("txtcolor3", Config.getConfigParam("text_color3", "#444444"));
+
 	}
 
 	public void onInit() {
@@ -188,47 +183,31 @@ public class Base extends Page {
 	private void checkAuth() {
 		try{
 			if (getStateParam(Config.AUTH_COOKIE) != null) {
-				User u = pc.read((String) parseJWTCookie().get("sub"));
+				User u = pc.me(getStateParam(Config.AUTH_COOKIE));
 				if (u != null) {
-					HOMEPAGE = profilelink.concat("/").concat(u.getId());
-					authUser = new ScooldUser(u.getEmail(), u.getActive(), ScooldUser.UserType.STUDENT, u.getName());
-					authUser.setId(u.getId());
-					authUser.setAppid(u.getAppid());
-					authUser.setActive(u.getActive());
-					authUser.setTimestamp(u.getTimestamp());
-					authUser.setLastseen(u.getUpdated());
-					authUser.setIdentifier(u.getIdentifier());
-					// TODO: create new ScooldUser if missing
-
-//					newUser.setActive(true);
-//					newUser.setEmail(getParamValue("email"));
-//					newUser.setFullname(getParamValue("name"));
-//					newUser.setSubType(getParamValue("type"));
-//					newUser.setIdentifier(identString);
-//
-//					if (identString.equals(ScooldAuthModule.ADMIN_FB_ID)) {
-//						newUser.setGroups(Groups.ADMINS.toString());
-//					}
-//
-//					if (IN_BETA) {
-//						newUser.addBadge(Badge.TESTER);
-//					}
-//
-//					Long uid = newUser.create();
-
-
-
-
-
-//					long delta = System.currentTimeMillis() - authUser.getLastseen();
-//					if (delta > 2 * 60 * 60 * 1000) {
-//						// last seen 2 hours ago -> update
-//						authUser.setLastseen(System.currentTimeMillis());
-//						authUser.update();
-//					}
+					HOMEPAGE = profilelink;
+					authUser = pc.read(ScooldUser.id(u.getId()));
+					if (authUser == null) {
+						authUser = new ScooldUser(u.getId(), u.getEmail(), u.getName());
+						authUser.setAppid(u.getAppid());
+						authUser.setCreatorid(u.getId());
+						authUser.setTimestamp(u.getTimestamp());
+						authUser.setLastseen(u.getUpdated());
+						authUser.setGroups(u.getGroups());
+						authUser.setIdentifier(u.getIdentifier());
+						authUser.setPicture(u.getPicture());
+						authUser.create();
+					}
+					authUser.setGroups(u.getGroups());
+					authUser.setPicture(u.getPicture());
+					authUser.setUser(u);
 					Utils.removeStateParam("intro", req, resp);
 					infoStripMsg = "";
 					authenticated = true;
+					if (!StringUtils.isBlank(authUser.getNewbadges())) {
+						badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
+						authUser.setNewbadges("none");
+					}
 				}
 			} else {
 				String intro = getStateParam("intro");
@@ -288,28 +267,9 @@ public class Base extends Page {
 		return language;
     }
 
-	public final List<ContactDetailType> getContactDetailTypeArray() {
-        ArrayList<ContactDetailType> mt = new ArrayList<ContactDetailType>();
-
-        for(ContactDetailType s : ContactDetailType.values()) {
-            if (s != com.erudika.scoold.core.ContactDetail.ContactDetailType.UNKNOWN)
-				mt.add(s);
-        }
-        return mt;
-    }
-
 	public final boolean isAjaxRequest() {
 		//context.isAjaxRequest()
 		return getContext().isAjaxRequest();
-	}
-
-	public void processContactsRequest(ParaObject obj) {
-		Map params = req.getParameterMap();
-		if (param("contacts")) {
-			try {
-				PropertyUtils.setProperty(obj, "contacts", ContactDetail.getContactsFromParamsMap(params));
-			} catch (Exception e) {}
-		}
 	}
 
 	/* COMMENTS */
@@ -370,180 +330,8 @@ public class Base extends Page {
 
 	/****  POSTS  ****/
 
-	public final void processPostEditRequest(Post post, String escapelink, boolean canEdit) {
-		if (!canEdit || post == null) return;
-
-		boolean isMine = (authenticated) ? authUser.getId().equals(post.getCreatorid()) : false;
-
-		if (param("answer")) {
-			// add new answer
-			if (!post.isClosed() && !post.isReply() && !post.isBlackboard() &&
-					post.getAnswercount() < AppConfig.MAX_REPLIES_PER_POST) {
-				//create new answer
-				Reply newq = new Reply();
-				newq.setCreatorid(authUser.getId());
-				newq.setParentid(post.getId());
-				newq.setBody(getParamValue("body"));
-				newq.create();
-
-				post.setAnswercount(post.getAnswercount() + 1);
-				if (post.getAnswercount() >= AppConfig.MAX_REPLIES_PER_POST) {
-					post.setCloserid("0");
-				}
-				post.updateLastActivity();
-				post.update();
-
-				addBadge(Badge.EUREKA, newq.getCreatorid().equals(post.getCreatorid()));
-//				if (!isAjaxRequest()) setRedirect(escapelink+"#post-"+newq.getId());
-			}
-		} else if (param("approve")) {
-			String ansid = getParamValue("answerid");
-			if (canEdit && ansid != null && isMine) {
-				Reply answer = (Reply) pc.read(ansid);
-
-				if (answer != null && answer.isReply()) {
-					ScooldUser author = pc.read(answer.getCreatorid());
-					if (author != null && authenticated) {
-						boolean same = author.equals(authUser);
-
-						if (ansid.equals(post.getAnswerid())) {
-							// Answer approved award - UNDO
-							post.setAnswerid(null);
-							if (!same) {
-								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
-								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
-								author.update();
-								authUser.update();
-							}
-						} else {
-							// Answer approved award - GIVE
-							post.setAnswerid(ansid);
-							if (!same) {
-								author.addRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
-								authUser.addRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
-								addBadgeOnce(Badge.NOOB, true);
-								author.update();
-								authUser.update();
-							}
-						}
-						post.update();
-					}
-				}
-			}
-		} else if (param("editpostid") || param("title")) {
-			// edit post
-			Post beforeUpdate = null;
-			try {
-				beforeUpdate = (Post) BeanUtils.cloneBean(post);
-			} catch (Exception ex) {
-				logger.error(null, ex);
-			}
-
-			//update post
-			String title = getParamValue("title");
-			if (!StringUtils.isBlank(title) && title.length() > 10) {
-				post.setTitle(title);
-			}
-			if (param("body")) {
-				post.setBody(getParamValue("body"));
-			}
-			if (param("tags") && post.isQuestion()) {
-				post.setTags(Arrays.asList(StringUtils.split(getParamValue("tags"), ",")));
-			}
-
-			post.setLasteditby(authUser.getId());
-			//note: update only happens if something has changed
-			if (!post.equals(beforeUpdate)) {
-				post.update();
-				addBadgeOnce(Badge.EDITOR, true);
-			}
-
-//			if (!isAjaxRequest()) setRedirect(escapelink);
-
-		} else if (param("close")) {
-			if (inRole("mod")) {
-				if (post.isClosed()) {
-					post.setCloserid(null);
-				} else {
-					post.setCloserid(authUser.getId());
-				}
-				post.update();
-			}
-		} else if (param("restore")) {
-			String revid = getParamValue("revisionid");
-			if (canEdit && revid != null) {
-				addBadge(Badge.BACKINTIME, true);
-				post.restoreRevisionAndUpdate(revid);
-			}
-		} else if (param("delete")) {
-			if (!post.isReply()) {
-				if ((isMine || inRole("mod")) && !post.getDeleteme()) {
-					post.setDeleteme(true);
-
-					Report rep = new Report();
-					rep.setParentid(post.getId());
-					rep.setLink(escapelink);
-					rep.setDescription(lang.get("posts.marked"));
-					rep.setSubType(ReportType.OTHER);
-					rep.setAuthor(authUser.getName());
-					rep.setCreatorid(authUser.getId());
-
-					String rid = rep.create();
-					post.setDeletereportid(rid);
-					post.update();
-				}
-			} else if (post.isReply()) {
-				if (isMine || inRole("mod")) {
-					Post parent = pc.read(post.getParentid());
-					parent.setAnswercount(parent.getAnswercount() - 1);
-					parent.update();
-					post.delete();
-				}
-			}
-		} else if (param("undelete")) {
-			if (!post.isReply()) {
-				if ((isMine || inRole("mod")) && post.getDeleteme()) {
-					post.setDeleteme(false);
-					Report rep = pc.read(post.getDeletereportid());
-					if (rep != null) rep.delete();
-					post.setDeletereportid(null);
-					post.update();
-				}
-			}
-		}
-
-		if (escapelink != null && !isAjaxRequest()) {
-			setRedirect(escapelink);
-		}
-	}
-
-	public final <T extends Sysprop> Form getQuestionForm(Class<T> clazz, String parentID,
-			Map<String, T> askablesMap) {
-
-		if (!authenticated || askablesMap == null)
-			return null;
-
-		Class<?> type = com.erudika.scoold.core.Group.class.equals(clazz) ?
-				Grouppost.class : Question.class;
-		Form qForm = getPostForm(type, "qForm", "ask-question-form");
-		Field pid = null;
-		addModel("postParentClass", clazz.getSimpleName().toLowerCase());
-
-//		Askable selected = askablesMap.get(parentID);
-		if (StringUtils.isBlank(parentID)) {
-			pid = new Select(Config._PARENTID, lang.get("posts.selectschool"), true);
-			((Select) pid).add(new Option("", lang.get("chooseone")));
-			for (ParaObject askable : askablesMap.values()) {
-				((Select) pid).add(new Option(askable.getId(), askable.getName()));
-			}
-		} else {
-			addModel("postParentId", parentID);
-			pid = new HiddenField(Config._PARENTID, parentID);
-		}
-
-		qForm.add(pid);
-
-		return qForm;
+	public final <T extends Sysprop> Form getQuestionForm() {
+		return getPostForm(Question.class, "qForm", "ask-question-form");
 	}
 
 	public final Form getAnswerForm() {
@@ -560,7 +348,7 @@ public class Base extends Page {
 		hideme.setAttribute("class", "hide");
 
         Submit submit = new Submit("answerbtn", lang.get("post"), this, "onAnswerClick");
-        submit.setAttribute("class", "button rounded3");
+        submit.setAttribute("class", "btn waves-effect waves-light");
 		submit.setId("answer-btn");
 
 		aForm.add(hideme);
@@ -595,7 +383,7 @@ public class Base extends Page {
 		body.setTabIndex(2);
 
 		Field tags = null;
-		if (type.equals(Question.class) || type.equals(Grouppost.class)) {
+		if (type.equals(Question.class)) {
 			tags = new TextField("tags", true);
 			tags.setLabel(lang.get("tags.title"));
 			((TextField) tags).setMaxLength(255);
@@ -617,7 +405,7 @@ public class Base extends Page {
 		hideme.setAttribute("class", "hide");
 
         Submit submit = new Submit("askbtn", lang.get("post"), this, "onAskClick");
-        submit.setAttribute("class", "button rounded3");
+        submit.setAttribute("class", "btn waves-effect waves-light");
 		submit.setId("ask-btn");
 
         qForm.add(title);
@@ -627,47 +415,6 @@ public class Base extends Page {
         qForm.add(submit);
 
 		return qForm;
-	}
-
-	public final Form getPostEditForm(Post post) {
-		if (post == null) return null;
-		Form form = new Form("editPostForm"+post.getId());
-		form.setId("post-edit-form-"+post.getId());
-
-		TextArea  body = new TextArea("body", true);
-		if (post.isReply()) {
-			body.setLabel(lang.get("posts.answer"));
-		} else {
-			body.setLabel(lang.get("posts.question"));
-		}
-		body.setMinLength(15);
-		body.setMaxLength(AppConfig.MAX_TEXT_LENGTH);
-		body.setRows(4);
-		body.setCols(5);
-		body.setValue(post.getBody());
-
-		if (post.isQuestion()) {
-			TextField tags = new TextField("tags", false);
-			tags.setLabel(lang.get("tags.tags"));
-			tags.setMaxLength(255);
-			tags.setValue(post.getTagsString());
-			form.add(tags);
-		}
-
-		TextField hideme = new TextField("additional", false);
-		hideme.setLabel("Leave blank!");
-		hideme.setAttribute("class", "hide");
-
-        Submit submit = new Submit("editbtn",
-				lang.get("save"), this, "onPostEditClick");
-        submit.setAttribute("class", "button rounded3 post-edit-btn");
-		submit.setId("post-edit-btn-"+post.getId());
-
-		form.add(hideme);
-        form.add(body);
-        form.add(submit);
-
-		return form;
 	}
 
 	public final boolean isValidPostEditForm(Form qForm) {
@@ -710,18 +457,13 @@ public class Base extends Page {
 	public final void createAndGoToPost(Class<? extends Post> type) {
 		String parentid = getParamValue(Config._PARENTID);
 
-		Post newq = null;
-		try {
-			newq = type.getConstructor().newInstance();
-			newq.setTitle(getParamValue("title"));
-			newq.setBody(getParamValue("body"));
-			newq.setTags(Arrays.asList(StringUtils.split(getParamValue("tags"), ",")));
-			if (parentid != null) newq.setParentid(parentid);
-			newq.setCreatorid(authUser.getId());
-			newq.create();
-		} catch (Exception ex) {
-			logger.error(null, ex);
-		}
+		Post newq = ParaObjectUtils.toObject(type.getSimpleName().toLowerCase());
+		newq.setTitle(getParamValue("title"));
+		newq.setBody(getParamValue("body"));
+		newq.setTags(Arrays.asList(StringUtils.split(getParamValue("tags"), ",")));
+		if (parentid != null) newq.setParentid(parentid);
+		newq.setCreatorid(authUser.getId());
+		newq.create();
 
 		setRedirect(getPostLink(newq, false, false));
 	}
@@ -828,8 +570,7 @@ public class Base extends Page {
 	}
 
 	public String getPostLink(Post p, boolean plural, boolean noid) {
-		return p.getPostLink(plural, noid, questionslink, questionlink,
-				feedbacklink, grouplink, grouppostlink, classeslink, classlink);
+		return p.getPostLink(plural, noid, questionslink, questionlink, feedbacklink);
 	}
 
 	public final int getIndexInBounds(int index, int count) {
@@ -861,16 +602,6 @@ public class Base extends Page {
 		}
 	}
 
-	public final Map<String, Object> parseJWTCookie() {
-		try {
-			String[] cookie = StringUtils.split(getStateParam(Config.AUTH_COOKIE), ".");
-			if (cookie != null && cookie.length > 1) {
-				return ParaObjectUtils.getJsonReader(Map.class).readValue(Utils.base64dec(cookie[1]));
-			}
-		} catch (Exception ex) {}
-		return Collections.emptyMap();
-	}
-
 	public boolean inRole(String role) {
 		return req.isUserInRole(role);
 	}
@@ -892,10 +623,7 @@ public class Base extends Page {
 
 		u.addBadge(b);
 		u.setNewbadges(newb);
-
-		if (!authUser.getId().equals(u.getId())) {
-			u.update();
-		}
+		u.update();
 
 		return true;
 	}
@@ -939,12 +667,8 @@ public class Base extends Page {
 		}
 	}
 
-	public static final String DESCRIPTION = "Scoold is friendly place where students and teachers "
-			+ "can help each other and talk about anything related to education.";
-
-	public static final String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, "
-			+ "schools, students, classmates, alumni, teachers, contacts, social, "
-			+ "network, classes, classroom, education";
+	public static final String DESCRIPTION = "Scoold is friendly place where you can get answers to your questions.";
+	public static final String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, forum, Q&A, questions and answers";
 
 	public String getTemplate() {
 		return "base.htm";

@@ -1,53 +1,73 @@
-<div class="preview-dialog jqmWindow rounded5"> <div class="center">#ajaxloading(false) </div></div>
-
-#if ($request.getParameter("merge") && $request.getParameter("id") && $request.isUserInRole("admin"))
-	<div class="mvl">
-		#if ($request.getParameter("merge") == "school")
-			<h2 class="red">Warning! &quot;$showMergeSchool.name&quot; will be deleted.</h2>
-			<h2>You are about to merge &quot;$showMergeSchool.name&quot; with:</h2>
-		#elseif ($request.getParameter("merge") == "classunit")
-			<h2 class="red">Warning! &quot;$showMergeClass.identifier&quot; will be deleted.</h2>
-			<h2>You are about to merge &quot;$showMergeClass.identifier&quot; with:</h2>
-		#end
-
-		<form method="post" action="$reportslink?confirmmerge=$request.getParameter('merge')">
-			<fieldset>
-			#sectoken(false)
-			#if ($request.getParameter("merge") == "school")
-				<input type="hidden" name="id2" value="$!showMergeSchool.id"/>
-				<label>$!lang.get("name"): </label>
-				<input type="text" class="nicebox p99 schoolnamebox" value=""/>
-				<input type="hidden" name="id1" value=""/>
-				<br/>
-				<div class="center">
-					<input type="submit" value="Merge" class="button rounded3"/>
-					<a href="$schoollink/$!request.getParameter('id')" title="Cancel" class="button-small rounded3">$!lang.get("cancel")</a>
-				</div>
-			#elseif ($request.getParameter("merge") == "classunit")
-				<input type="hidden" name="id2" value="$!showMergeClass.id"/>
-				<label>$!lang.get("name"): </label>
-				<input type="text" class="nicebox p99 typebox" value=""/>
-				<input type="hidden" name="id1" value=""/>
-				<br/>
-				<div class="center">
-					<input type="submit" value="Merge" class="button rounded3"/>
-					<a href="$classlink/$!request.getParameter('id')" title="Cancel" class="button-small rounded3">$!lang.get("cancel")</a>
-				</div>
-			#end
-			</fieldset>
-		</form>
-	</div>
-#else
-	<div id="reports">
-		<h1><span class="pictos">^</span> $!lang.get("reports.title") #showcount($itemcount.longValue())</h1>
-		<hr/>
-		#if ($itemcount.longValue() == 0)
-			<div class="mediumText">$!{lang.get("search.notfound")}</div>
+#macro(reportspage $reports )
+#foreach($showreport in $reports)
+	<div class="reportbox whitebox">
+		<div class="mediumText lightgray mbm">
+			$!lang.get("reports.$!{showreport.type.toLowerCase()}"):
+			$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
+			<span class="right"><span class="pictos">t</span>#formatdate($!showreport.timestamp "")</span>
+		</div>
+		#if ($showreport.closed)
+		#set($hide = "" )
 		#else
-			#paginate($pagenum.longValue() "\#reportspage(\$reportslist)" $itemcount.longValue() "" "pageless")
+		#set($hide = "hide" )
 		#end
+
+		<div class="pictos left mrl hugeText green ${hide}">3</div>
+		<div class="right">
+			<a href="$showreport.link" class="btn"><span class="pictos">E</span> $!lang.get("open")</a>
+			#if (!$showreport.closed)
+			<a href="#" class="btn close-report" title="Close report"><span class="pictos">3</span> $!lang.get("close")</a>
+			#else
+			<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="btn"><span class="pictos">1</span> $!lang.get("reopen")</a>
+			#end
+			#if ($request.isUserInRole("admin"))
+			<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red delete-report"><span class="pictos">*</span> $!lang.get("delete")</a>
+			#end
+		</div>
+		<div>
+			<strong> <span class="pictos">U</span>
+				#if ($showreport.creatorid && $showreport.creatorid > 0)
+				<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.author:</a>
+				#else
+				<span>$!showreport.author:</span>
+				#end
+			</strong>
+			#if ($showreport.description && !$showreport.description.isEmpty())
+			<span>$showreport.description</span>
+			#end
+			#if ($showreport.solution && !$showreport.solution.isEmpty())
+			#set($hide = "" )
+			#else
+			#set($hide = "hide" )
+			#end
+			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span class="report-solution-text">$!showreport.solution</span></p>
+		</div>
+
+		<div class="hide report-solution-box p100 mtm center">
+			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
+				<fieldset>
+					#sectoken(false)
+					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+					<input class="report-solution-btn" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="btn waves-effect waves-light"/>
+				</fieldset>
+			</form>
+		</div>
 	</div>
 #end
+#end
+
+<div class="preview-dialog jqmWindow"> <div class="center">#ajaxloading(false) </div></div>
+
+<div id="reports">
+	<h1><span class="pictos">^</span> $!lang.get("reports.title") #showcount($itemcount.count)</h1>
+	<hr/>
+	#if ($itemcount.count == 0)
+		<div class="mediumText">$!{lang.get("search.notfound")}</div>
+	#else
+		#paginate($pagenum.longValue() "\#reportspage(\$reportslist)" $itemcount.count "" "pageless")
+	#end
+</div>
+
 
 
 

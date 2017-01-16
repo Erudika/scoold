@@ -1,1 +1,30 @@
-<h1>HELLO $name</h1>
+#set($springXhtmlCompliant = true)
+#set($springHtmlEscape = true)
+<h1>HELLO $greeting.name</h1>
+
+<form action="/addGreeting" method="POST">
+	Name:
+	#springBind("greeting.name")<br>
+	<input type="text"
+            name="${status.expression}"
+            value="$!status.value"/><br>
+	#springFormInput("greeting.name" "")<br>
+	#springShowErrors("<br>" "")
+
+	<br>
+	<input type="submit" value="submit"/>
+</form>
+
+
+
+
+
+#springUrl("/greeting")
+##springFormHiddenInput($path $attributes)
+##springFormPasswordInput($path $attributes)
+##springFormTextarea($path $attributes)
+##springFormSingleSelect( $path $options $attributes)
+##springFormMultiSelect($path $options $attributes)
+##springFormRadioButtons($path $options $separator $attributes)
+##springFormCheckboxes($path $options $separator $attributes)
+##springFormCheckbox($path $attributes)

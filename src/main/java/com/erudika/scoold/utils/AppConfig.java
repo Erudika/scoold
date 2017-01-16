@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 package com.erudika.scoold.utils;
 
@@ -34,9 +47,6 @@ public final class AppConfig {
 	}
 
 	public static final int MAX_CONTACTS_PER_USER = 2000;
-	public static final int MAX_SCHOOLS_PER_USER = 100;
-	public static final int MAX_CLASSES_PER_USER = 100;
-	public static final int MAX_GROUPS_PER_USER = 2000;
 	public static final int MAX_COMMENTS_PER_ID = 1000;
 	public static final int MAX_TEXT_LENGTH = 20000;
 	public static final int MAX_TEXT_LENGTH_SHORT = 5000;

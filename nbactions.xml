@@ -11,48 +11,47 @@
             </properties>
         </action>
         <action>
-            <actionName>run</actionName>
-            <goals>
-                <goal>spring-boot:run</goal>
-                
-                
-                
-                
-                
-                
-            </goals>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                
-                
-                <jpda.listen>maven</jpda.listen>
-                
-                
-                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
-                
-                
-                <config.file>src/main/resources/application.yml</config.file>
-                
-                
-                <click.mode>debug</click.mode>
-            </properties>
-        </action>
-        <action>
             <actionName>build-with-dependencies</actionName>
             <basedir>../</basedir>
             <reactor>also-make</reactor>
             <goals>
                 <goal>install</goal>
+                
+                
+                
+                
+                
+                
+                
+                
+                
             </goals>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
             </properties>
         </action>
         <action>
             <actionName>debug</actionName>
             <goals>
-                <goal>package</goal>
-                
+                <goal>spring-boot:run</goal>
             </goals>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
@@ -65,20 +64,52 @@
             <goals>
                 <goal>clean</goal>
                 <goal>install</goal>
+                
             </goals>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
+                
+                
             </properties>
         </action>
         <action>
             <actionName>profile</actionName>
             <goals>
                 <goal>package</goal>
+                
             </goals>
             <properties>
                 <skipTests>true</skipTests>
                 <netbeans.deploy>true</netbeans.deploy>
                 <netbeans.deploy.profilemode>true</netbeans.deploy.profilemode>
+                
+            </properties>
+        </action>
+        <action>
+            <actionName>run</actionName>
+            <packagings>
+                <packaging>war</packaging>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>spring-boot:run</goal>
+                
+            </goals>
+            <properties>
+                
+                
+                
+                
+                
+                <skipTests>true</skipTests>
+                
+                
+                <config.file>src/main/resources/application.conf</config.file>
+                
+                
+                
+                
+                
             </properties>
         </action>
         

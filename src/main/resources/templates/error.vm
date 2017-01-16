@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		#basichead($!DESCRIPTION $!KEYWORDS)
+	</head>
+	<body id="error" class="ptl">
+		<div class="mtl">
+			<div class="container center pal">
+				<div class="mbl">
+					<a href="/"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error"/></a>
+				</div>
+				#if ($request.getParameter("e"))
+				#set($e = $request.getParameter("e"))
+				#if ($e == "403")
+				<h1>$!lang.get("forbidden")</h1>
+				#elseif ($e == "400")
+				<h1>$!lang.get("badrequest")</h1>
+				#elseif ($e == "500")
+				<h1>$!lang.get("servererror")</h1>
+				#elseif ($e == "503")
+				<h1>$!lang.get("sitedown")</h1>
+				#else
+				<h1>$!lang.get("error.title")</h1>
+				#end
+				#else
+				<h1>$!lang.get("error.title")</h1>
+				#end
+				<br />
+			</div>
+		</div>
+	</body>
+</html>

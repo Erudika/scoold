@@ -44,16 +44,26 @@ import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
  */
 @Configuration
 @SpringBootApplication
-public class ScooldServer {
+public class ScooldServer  {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
 	public static void main(String[] args) {
+		System.setProperty("click.mode", Config.IN_PRODUCTION ? "production" : "debug");
 		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);
 		app.run(args);
 	}
+//
+//	@Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/WEB-INF/**")
+//                .addResourceLocations("/images/")
+//                .addResourceLocations("/scripts/")
+//                .addResourceLocations("/styles/")
+//                .setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic());
+//    }
 
 	/**
 	 * @return Jetty config bean

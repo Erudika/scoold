@@ -1,18 +1,31 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
+import com.erudika.scoold.utils.AppConfig;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Report extends Sysprop{
+public class Report extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String subType;
@@ -108,7 +121,25 @@ public class Report extends Sysprop{
 	public void setSubType(ReportType subType) {
 		if (subType != null) this.subType = subType.name();
 	}
-	
+
+	public void delete() {
+		AppConfig.client().delete(this);
+	}
+
+	public void update() {
+		AppConfig.client().update(this);
+	}
+
+	public String create() {
+		Report r = AppConfig.client().create(this);
+		if (r != null) {
+			setId(r.getId());
+			setTimestamp(r.getTimestamp());
+			return r.getId();
+		}
+		return null;
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;

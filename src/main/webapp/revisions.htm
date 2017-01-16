@@ -1,0 +1,96 @@
+#macro(tagbox $tags)
+	#foreach($showtag in $tags)
+	<span class="mrm">
+		<strong>#$!showtag.trim()</strong>
+	</span>
+	#end
+#end
+
+#macro(revisionbox $showrev $showorigrev $canrestore $showpost)
+#set($actionlink = "#getpostlink($showpost false true)")
+#set($actionlink2 = "#getpostlink($showpost true true)")
+<div class="whitebox revisionbox">
+	<div class="line lightgraybg chip">
+		<div class="unit size1of3">
+			#set($author = $showrev.getAuthor())
+			#smallpersonbox($author)
+		</div>
+		<div class="unit size1of3 center">
+			<span class="lightgray mediumText">#if ($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
+		</div>
+		<div class="unit size1of3  r">
+			<div class="lightgray mediumText">
+				<span class="mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
+			</div>
+			<div class="mts">
+				#if ($showpost.revisionid == $showrev.id)
+				<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
+				#elseif ($canrestore || $request.isUserInRole("mod"))
+				<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask btn waves-effect waves-light" title="Restore">
+					<span class="pictos">1</span> $!lang.get("restore")
+				</a>
+				#end
+			</div>
+		</div>
+	</div>
+	<div>
+		#if ($showrev.title)
+		<h3 class="newrev">$showrev.title</h3>
+		#if ($showorigrev.title)
+		<span class="hide oldrev">$!showorigrev.title</span>
+		#end
+		#end
+		#if ($showrev.body)
+		#set($revHtml = $utils.markdownToHtml($showrev.body))
+		#set($showRevBody = $utils.stripHtml($revHtml) )
+		<div class="newrev mtl">$!showRevBody</div>
+		#if ($showorigrev.body)
+		#set($origHtml = $utils.markdownToHtml($showorigrev.body))
+		#set($showOrigBody = $utils.stripHtml($origHtml) )
+		<span class="hide oldrev">$!showOrigBody</span>
+		#end
+		#end
+		#if ($showrev.tags)
+			<div class="newrev tagsdiff mtm">
+				#tagbox($showrev.tags)
+			</div>
+			#if ($showorigrev.tags)
+			<span class="hide oldrev">#tagbox($!showorigrev.tags)</span>
+			#end
+		#end
+	</div>
+</div>
+<br/>
+#end
+
+#macro(revisionspage $revisions $canrestore $showpost)
+#if ($revisions && !$revisions.isEmpty())
+#set($lastIndex = $revisions.size() - 1)
+#set($lastrev = $revisions.get($lastIndex))
+
+#if ($revisions.size() == 1)
+#revisionbox($lastrev $lastrev $canrestore $showpost)
+#else
+
+#if ($revisions.size() > $MAX_ITEMS_PER_PAGE)
+#set($lastrev = $revisions.remove($lastIndex))
+#end
+
+#foreach($revision in $revisions)
+#if ($velocityCount < $revisions.size())
+#set($prevrev = $revisions.get($velocityCount))
+#else
+#set($prevrev = $lastrev)
+#end
+
+#revisionbox($revision $prevrev $canrestore $showpost)
+#end
+#end
+#end
+#end
+
+#set($actionlink = "#getpostlink($showPost false false)")
+<a href="$actionlink" title="Go back" class="btn waves-effect waves-light right">$!lang.get("goback")</a>
+<h2><span class="pictos">F</span> $!lang.get("revisions.title") #showcount($itemcount.count)</h2>
+<hr/>
+#paginate($pagenum.longValue() "\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount.count "" "")

@@ -2,25 +2,25 @@
 	#if ($request.getParameter("write"))
 		#newquestionform($fForm false "feedback")
 	#else
-		<a href="$feedbacklink/write" class="button-small rounded3 right" title="Write something">$!{lang.get('feedback.write')}</a>
+		<a href="$feedbacklink/write" class="btn waves-effect waves-light right" title="Write something">$!{lang.get('feedback.write')}</a>
 		#if ($request.getParameter("tag"))
 			#set($showTag = $request.getParameter("tag"))
 			<h2>$!lang.get("feedback.tagged") &ldquo;$!{showTag}&rdquo;</h2>
 		#elseif ($request.getParameter("search"))
 			<h2><a href="$feedbacklink" title="Feedback">$!lang.get("feedback.title")</a> / $!lang.get("search.title") </h2>
 		#else
-			<h2>$!lang.get("feedback.title") #showcount($itemcount.longValue())</h2>
+			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
 		#end
 		<hr />
 
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="mvm">
-			<a href="$feedbacklink" class="button-tiny rounded3 $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$feedbacklink/votes" class="button-tiny rounded3 $sortarr.votes">$!lang.get("votes")</a>
-			<a href="$feedbacklink/updated" class="button-tiny rounded3 $sortarr.updated">$!lang.get("posts.updated")</a>
+			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
+			<a href="$feedbacklink/votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+			<a href="$feedbacklink/updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
 		</div>
 
-		#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.longValue() "" "pageless")
+		#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.count "" "pageless")
 	#end
 </div>

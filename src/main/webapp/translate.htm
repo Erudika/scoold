@@ -1,7 +1,7 @@
 <div id="translate">
 	#if ($request.getParameter("locale"))
 		<h2>
-			<span class="pictos">G</span> 
+			<span class="pictos">G</span>
 			<a href="$translatelink">$!lang.get("translate.title")</a> /
 			#if ($request.getParameter("index"))
 				#set($indx = $showIndex + 1)
@@ -13,7 +13,7 @@
 			<span class="right">$!{showLocaleProgress}%</span>
 		</h2>
 		<hr/>
-		
+
 		#if ($request.getParameter("index"))
 			#set($indx = $showIndex + 1)
 			#set($nexti = $indx + 1)
@@ -25,38 +25,38 @@
 					<a href="$translatelink/$showLocale/$!previ" title="Previous"><span class="pictos">[</span> $!lang.get("prev")</a>
 				</div>
 				<div class="unit size1of3 center">
-					<span class="reputationbox phm rounded3">$indx / $!lang.size()</span>
+					<span class="chip reputationbox">$indx / $!lang.size()</span>
 				</div>
-				<div class="unit size1of3 lastUnit r">
+				<div class="unit size1of3  r">
 					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <span class="pictos">]</span></a>
 				</div>
 			</div>
 
 			#set($langkey = $!langkeys.get($showIndex))
-			<div class="p100 mvl center mediumText lightborder rounded5 pvs">$!deflang.get($!langkey)</div>
-			
+			<div class="p100 mvl center mediumText lightborder pvs">$!deflang.get($!langkey)</div>
+
 			<div id="translations">
-				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.longValue() "" "pageless")
+				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.count "" "pageless")
 			</div>
 			<br />
-				
+
 			#if (!$isTranslated)
 				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form" action="${thisuri}">
 						<fieldset>
 							#sectoken(false)
-							<textarea rows="2" cols="3" name="value" class="nicebox p100 rounded5"></textarea>
+							<textarea rows="2" cols="3" name="value" class="nicebox p100"></textarea>
 							<input type="hidden" name="gettranslationhtmlcode" value="true"/>
 							<div class="center mtm">
-								<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="button rounded3"/> &nbsp;
-								<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="button rounded3"/>
+								<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="btn waves-effect waves-light"/> &nbsp;
+								<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="btn waves-effect waves-light"/>
 							</div>
 						</fieldset>
 					</form>
 				</div>
 			#end
-			
+
 			#if ($request.isUserInRole("admin") && $isTranslated)
 				<br />
 				<div class="line center">
@@ -64,20 +64,20 @@
 						<form action="$translatelink/$showLocale/?reset=$!langkey" method="post">
 							<fieldset>
 								#sectoken(false)
-								<input type="submit" value="Reset" class="button rounded3 red rusure"/>
+								<input type="submit" value="Reset" class="btn waves-effect waves-light red rusure"/>
 								<input type="hidden" name="reset" value="$!langkey"/>
 							</fieldset>
 						</form>
 					</div>
-					<div class="unit size1of2 lastUnit l plm">
+					<div class="unit size1of2  l plm">
 						<form action="$translatelink/$showLocale" method="post">
 							<fieldset>
 								#sectoken(false)
-								<input type="submit" value="Global reset" class="button rounded3 red rusure"/>
+								<input type="submit" value="Global reset" class="btn waves-effect waves-light red rusure"/>
 								<input type="hidden" name="reset" value="$!langkey"/>
 								<input type="hidden" name="global" value="true"/>
 							</fieldset>
-						</form> 
+						</form>
 					</div>
 				</div>
 			#end
@@ -85,7 +85,7 @@
 			<div class="center">
 				#foreach($!langKey in $!langkeys)
 					<div class="p30 inlineblock mrl l pvs">
-						#if ($isTranslated)							
+						#if ($isTranslated)
 							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )

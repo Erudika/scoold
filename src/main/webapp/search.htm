@@ -9,15 +9,11 @@
 			#if ($showParam)
 				<a href="$searchlink?q=$!searchQuery">$!lang.get("search.title")</a>
 				#if ($showParam == "questions")
-					/ $!lang.get("questions.title") #showcount($itemcount.longValue())
+					/ $!lang.get("questions.title") #showcount($itemcount.count)
 				#elseif ($showParam == "feedback")
-					/ $!lang.get("feedback.title") #showcount($itemcount.longValue())
+					/ $!lang.get("feedback.title") #showcount($itemcount.count)
 				#elseif ($showParam == "people")
-					/ $!lang.get("people.title") #showcount($itemcount.longValue())
-				#elseif ($showParam == "schools")
-					/ $!lang.get("schools.title") #showcount($itemcount.longValue())
-				#elseif ($showParam == "classes")
-					/ $!lang.get("classes.title") #showcount($itemcount.longValue())
+					/ $!lang.get("people.title") #showcount($itemcount.count)
 				#end
 			#else
 				$!lang.get("search.title")
@@ -31,15 +27,11 @@
 			<h2 class="mtl center">$!lang.get("search.notfound")</h2>
 		#elseif ($showParam)
 			#if ($showParam == "questions")
-				#paginate($pagenum.longValue() "\#questionspage(\$questionlist)" $itemcount.longValue() $params "pageless")
+				#paginate($pagenum.longValue() "\#questionspage(\$questionlist)" $itemcount.count $params "pageless")
 			#elseif ($showParam == "feedback")
-				#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.longValue() $params "pageless")
+				#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.count $params "pageless")
 			#elseif ($showParam == "people")
-				#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.longValue() $params "pageless")
-			#elseif ($showParam == "schools")
-				#paginate($pagenum.longValue() "\#schoolspage(\$schoollist)" $itemcount.longValue() $params "pageless")
-			#elseif ($showParam == "classes")
-				#paginate($pagenum.longValue() "\#classespage(\$classlist)" $itemcount.longValue() $params "pageless")
+				#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.count $params "pageless")
 			#end
 		#else
 
@@ -48,7 +40,7 @@
 				#questionspage($questionlist)
 				#if ($questioncount.intValue() > $maxSearchResults)
 					<div class="center mtl">
-						<a href="$searchlink/questions/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+						<a href="$searchlink/questions/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 					</div>
 				#end
 				<br />
@@ -59,7 +51,7 @@
 				#questionspage($feedbacklist)
 				#if ($feedbackcount.intValue() > $maxSearchResults)
 					<div class="center mtl">
-						<a href="$searchlink/feedback/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+						<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 					</div>
 				#end
 				<br />
@@ -70,33 +62,12 @@
 				#peoplepage($userlist)
 				#if ($usercount.intValue() > $maxSearchResults)
 					<div class="center mtl">
-						<a href="$searchlink/people/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
+						<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 					</div>
 				#end
 				<br />
 			#end
 
-			#if (!$schoollist.isEmpty())
-				<h2>$!lang.get("schools.title") #showcount($schoolcount.longValue())</h2>
-				#schoolspage($schoollist)
-				#if ($schoolcount.intValue() > $maxSearchResults)
-					<div class="center mtl">
-						<a href="$searchlink/schools/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-					</div>
-				#end
-				<br />
-			#end
-
-			#if (!$classlist.isEmpty())
-				<h2>$!lang.get("classes.title") #showcount($classcount.longValue())</h2>
-				#classespage($classlist)
-				#if ($classcount.intValue() > $maxSearchResults)
-					<div class="center mtl">
-						<a href="$searchlink/classes/$!searchQuery" class="button-small rounded3">$!lang.get("more")</a>
-					</div>
-				#end
-				<br />
-			#end
 		#end
 	</div>
 #end

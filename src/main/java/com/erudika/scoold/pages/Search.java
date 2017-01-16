@@ -1,17 +1,26 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.User;
-import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.core.Classunit;
-import com.erudika.scoold.core.School;
-import com.erudika.scoold.core.ScooldUser;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Feedback;
@@ -33,9 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 public class Search extends Base{
 
 	public String title;
-	public List<ScooldUser> userlist;
-	public List<Classunit> classlist;
-	public List<School> schoollist;
+	public List<User> userlist;
 	public List<Post> questionlist;
 	public List<Post> feedbacklist;
 	public String url;
@@ -43,8 +50,6 @@ public class Search extends Base{
 	public Pager questioncount;
 	public Pager feedbackcount;
 	public Pager usercount;
-	public Pager schoolcount;
-	public Pager classcount;
 
 	public long totalCount;
 	public int maxSearchResults = 10;
@@ -53,21 +58,15 @@ public class Search extends Base{
     private static final String MIME_TYPE = "application/xml; charset=UTF-8";
     private static final String COULD_NOT_GENERATE_FEED_ERROR = "Could not generate feed";
 
-	private boolean personalized;
-
 	public Search() {
 		title = lang.get("pc.title");
 		questionlist = new ArrayList<Post>();
 		feedbacklist = new ArrayList<Post>();
-		userlist = new ArrayList<ScooldUser>();
-		schoollist = new ArrayList<School>();
-		classlist = new ArrayList<Classunit>();
+		userlist = new ArrayList<User>();
 
 		questioncount = new Pager();
 		feedbackcount = new Pager();
 		usercount = new Pager();
-		schoolcount = new Pager();
-		classcount = new Pager();
 
 		totalCount = 0;
 	}
@@ -83,20 +82,13 @@ public class Search extends Base{
 					feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
 				} else if ("people".equals(showParam)) {
 					userlist = pc.findQuery(Utils.type(User.class), query, itemcount);
-				} else if ("schools".equals(showParam)) {
-					schoollist = pc.findQuery(Utils.type(School.class), query, itemcount);
-				} else if ("classes".equals(showParam)) {
-					classlist = pc.findQuery(Utils.type(Classunit.class), query, itemcount);
 				}
 				totalCount = itemcount.getCount();
 			} else {
 				questionlist = pc.findQuery(Utils.type(Question.class), query, questioncount);
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, feedbackcount);
 				userlist = pc.findQuery(Utils.type(User.class), query, usercount);
-				schoollist = pc.findQuery(Utils.type(School.class), query, schoolcount);
-				classlist = pc.findQuery(Utils.type(Classunit.class), query, classcount);
-				totalCount = (questioncount.getCount() + feedbackcount.getCount() +
-						usercount.getCount() + schoolcount.getCount() + classcount.getCount());
+				totalCount = (questioncount.getCount() + feedbackcount.getCount() + usercount.getCount());
 			}
 		} else if (param("feed")) {
 			try {
@@ -123,15 +115,9 @@ public class Search extends Base{
 	private SyndFeed getFeed(HttpServletRequest req) throws IOException,FeedException {
 		SyndFeed feed = new SyndFeedImpl();
 
-		List<Post> questions = getQuestionsList(req);
+		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
 		String baseuri = "http://scoold.com/";
-
-		if (personalized) {
-			feed.setTitle("Scoold - Selected questions");
-		} else {
-			feed.setTitle("Scoold - Recent questions");
-		}
-
+		feed.setTitle("Scoold - Recent questions");
         feed.setLink(baseuri);
         feed.setDescription("A summary of the most recent questions asked on Scoold.");
 
@@ -162,29 +148,4 @@ public class Search extends Base{
         return feed;
     }
 
-	private List<Post> getQuestionsList(HttpServletRequest req) {
-		List<Post> questionslist = null;
-		String uid = req.getParameter(Config._ID);
-		String key = req.getParameter("key");
-		ScooldUser u = pc.read(uid);
-
-		if (u != null && !StringUtils.isBlank(key) && key.equals(Utils.md5(uid + Base.FEED_KEY_SALT))) {
-
-			//show selected questions
-			ArrayList<String> favtags = new ArrayList<String>(u.getFavtags());
-			if (favtags == null || favtags.isEmpty()) {
-				questionslist = pc.findQuery(Utils.type(Question.class), "*");
-				personalized = false;
-			} else {
-				personalized = true;
-				questionslist = pc.findTermInList(Utils.type(Question.class), Config._TAGS, favtags);
-			}
-		} else {
-			//show top questions
-			personalized = false;
-			questionslist = pc.findQuery(Utils.type(Question.class), "*");
-		}
-
-		return questionslist;
-	}
 }

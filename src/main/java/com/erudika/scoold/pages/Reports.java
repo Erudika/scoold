@@ -1,14 +1,24 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.pages;
 
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.core.Classunit;
 import com.erudika.scoold.core.Report;
-import com.erudika.scoold.core.School;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 /**
@@ -18,8 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 public class Reports extends Base{
 
 	public String title;
-	public School showMergeSchool;
-	public Classunit showMergeClass;
 	public String showtype;
 	public List<Report> reportslist;
 
@@ -38,43 +46,11 @@ public class Reports extends Base{
 			return;
 		}
 
-		if (param("merge") && param("id") && inRole("admin")) {
-			String id = getParamValue("id");
-			if (getParamValue("merge").equals("school")) {
-				showMergeSchool = pc.read(id);
-			} else if (getParamValue("merge").equals("classunit")) {
-				showMergeClass = pc.read(id);
-			}
-		} else {
-			reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
-		}
+		reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
 	}
 
 	public void onPost() {
-		if (param("confirmmerge") && req.getHeader("Referer") != null && inRole("admin")) {
-			String what = getParamValue("confirmmerge");
-
-			String id1 = getParamValue("id1"); // primary id
-			String id2 = getParamValue("id2"); // duplicate id
-
-			boolean idsNotNull = !id1.equals(0L) && !id2.equals(0L);
-			boolean done = false;
-			String link = "";
-			if ("classunit".equals(what) && idsNotNull) {
-				//merge classes
-				Classunit c1 = pc.read(id1);
-				done = c1 != null && c1.mergeWith(id2);
-				link = classlink;
-			} else if ("school".equals(what) && idsNotNull) {
-				//merge schools
-				School s1 = pc.read(id1);
-				done = s1 != null && s1.mergeWith(id2);
-				link = schoollink;
-			}
-
-			if (done) setRedirect(link+"/"+id1+"?mergesuccess=true");
-			else setRedirect(link+"/"+id2+"?mergefail=true");
-		} else if (param("close")) {
+		if (param("close")) {
 			Report rep = pc.read(getParamValue("id"));
 			if (rep != null && !rep.getClosed()) {
 				String sol = getParamValue("solution");

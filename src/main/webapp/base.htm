@@ -18,18 +18,8 @@
                 $!{location.name}, $!{location.countryName}| $!{location.adminName1} |$!{location.geoNameId}
             #end
 			#stop
-        #elseif($request.getParameter("find") == "schools")
-            #foreach($showschool in $utils.readAndRepair("school", $utils.findQuery("school", $pagenum, $itemcount, $q.trim())))
-                ${showschool.name}|${showschool.location}|$!{showschool.id}
-            #end
-			#stop
-		#elseif($request.getParameter("find") == "classes")
-            #foreach($showclass in $utils.readAndRepair("classunit", $utils.findQuery("classunit", $pagenum, $itemcount, $q.trim())))
-				${showclass.identifier}|$!lang.get("profile.myclasses.gradyear"): ${showclass.gradyear} |$!{showclass.id}
-            #end
-			#stop
 		#elseif($request.getParameter("find") == "tags")
-            #foreach($showtag in $utils.findTags($q.trim(), 7))
+            #foreach($showtag in $pc.findTags($q.trim()))
 				$!{showtag.tag}| |$!{showtag.id}
             #end
 			#stop
@@ -41,27 +31,8 @@
         #end
 	#end
     ################# SPECIAL AJAX REQUESTS #################
-    #if($request.getParameter("getaboutviewcode"))
-        #showaboutview()
-		#stop
 
-	#elseif($request.getParameter("getschoolaboutviewcode"))
-        #schoolaboutview()
-		#stop
-
-	#elseif($request.getParameter("getmyschoolscode"))
-		#myschoolspage($schoollist)
-		#stop
-
-	#elseif($request.getParameter("newmessage"))
-		#if($request.getParameter("toname") && $request.getParameter("toid"))
-			#newmessageform($request.getParameterValues("toname") $request.getParameterValues("toid"))
-		#else
-			#newmessageform([] [])
-		#end
-		#stop
-
-	#elseif($request.getParameter("getcommenthtmlcode"))
+	#if($request.getParameter("getcommenthtmlcode"))
 		#commentbox($!newcomment)
 		#stop
 
@@ -72,8 +43,8 @@
 		#else
 			#set($page = $pagenum.longValue())
 		#end
-		#if($commentslist && $itemcount.longValue() && $commentslist.size() > 0)
-			#paginate($page "\#commentspage(\$commentslist)" $itemcount.longValue() "" "pageless" )
+		#if($commentslist && $itemcount.count && $commentslist.size() > 0)
+			#paginate($page "\#commentspage(\$commentslist)" $itemcount.count "" "pageless" )
 		#end
 		#stop
 
@@ -105,10 +76,6 @@
 		#end
 		#stop
 
-	#elseif($request.getParameter("sendchat") || $request.getParameter("receivechat"))
-		#chatmessages($chatMessages)
-		#stop
-
 	#end
 	#stop
 
@@ -116,159 +83,275 @@
 	#stop
 #end
 <!DOCTYPE html>
-<html lang="$currentLocale.language">
-    <head>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 		#basichead($!DESCRIPTION $!KEYWORDS)
-		#mobilehead()
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search"/>
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed" />
-		#if ($authenticated && $authUser.favtags && !$authUser.favtags.isEmpty())
-			#set($feedkey = $utils.MD5("${authUser.id}${FEED_KEY_SALT}"))
-			<link href="$context/feed.xml?id=$authUser.id&amp;key=$feedkey" rel="alternate" type="application/atom+xml" title="Selected questions feed"/>
-		#end
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/headjs/0.99/head.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css">
 		<!--<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>-->
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>
 		#end
-		#fontfix()
+		<style media="screen" type="text/css">
+			a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: ${txtcolor1};}
+			.btn, .btn-large {background-color: ${txtcolor2};}
+			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: ${txtcolor2}; opacity: 0.7;}
+			.btn:hover, .btn-large:hover {background-color: ${txtcolor3};}
+			body, footer.page-footer {background-color: ${txtcolor3};}
+			main {background-color: white;}
+		</style>
 	</head>
-    <body>
-		#if ($includeFBscripts)
-			<div id="fb-root"></div>
-			<script type="text/javascript">
-				window.fbAsyncInit = function() {
-					FB.init({appId: '$FB_APP_ID', version: 'v2.0', status: true, cookie: true, xfbml: false, oauth: true});
-				};
-				// Load the SDK Asynchronously
-				(function(d) {
-					var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-					js = d.createElement('script'); js.id = id; js.async = true;
-					js.src = "//connect.facebook.com/en_US/sdk.js";
-					d.getElementsByTagName('head')[0].appendChild(js);
-				}(document));
-			</script>
-		#end
-		<div class="report-dialog jqmWindow rounded5"> <div class="center">#ajaxloading(false) </div></div>
-		<div id="main" class="clearfix">
-			#infostrip()
-			<div id="header" class="ptm">
-				<div class="container">
-					<div class="left">
-						#if ($isMobile)<a href="#" class="next-div-toggle mobile-nav-toggle button-small rounded3 mrm">&dtrif;</a>#end
-						<a id="logo" href="$!prefix">$APPNAME</a>
-						<span class="logosup">
-							#if ($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
-							#if (!$IN_PRODUCTION && !$IN_DEVELOPMENT)
-								<code class="red pictos" title="Environment not configured properly!">!</code>
-							#elseif ($IN_DEVELOPMENT)
-								<code class="blue pictos" title="Development mode">b</code>
-							#end
-						</span>
-					</div>
-					<div id="topnav" class="right mtl $!{mobilehizde}">
-					#if ($authenticated)
-						#if ($authUser.name)
-							<a href="$profilelink/$authUser.id/#stripstr($authUser.name)" title="My profile">$!{authUser.name}</a>
-						#end
-						|
-						<span class="pictos gray">y</span> <a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a> |
-						#if ($request.isUserInRole("mod"))
-							#if ($authUser.countNewReports() > 0)
-								<span class="notificationbox rounded5">$authUser.countNewReports()</span>
-							#else
-								<span class="pictos">^</span>
-							#end
-							<a href="$reportslink" title="Reports">$!lang.get("reports.title")</a> |
-						#end
-						<span class="pictos">K</span>
-						<form method="post" action="$signoutlink" class="inline">
-							<fieldset class="inline">
-								#sectoken(false)
-								<input type="submit" value="$!lang.get('signout')" class="bold button-link"/>
-							</fieldset>
-						</form>
-					#else
-						#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-						#if ($request.getAttribute('javax.servlet.forward.query_string'))
-							#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
-						#end
-						#if ($thisuri && $thisuri.startsWith($context))
-							#set($thisuri = $thisuri.replaceFirst($context, ""))
-						#end
+	<body>
+<!--			<div class="report-dialog jqmWindow">
+				<div class="center">#ajaxloading(false)</div>
+			</div>-->
+	<div class="scoold-wrapper">
+		<header>
+			<div class="${navbarFixedClass}">
+				<nav class="light-blue">
+					<div class="nav-wrapper container">
+						<a href="#" data-activates="mobile-drawer" class="button-collapse"><i class="fa fa-bars fa-2x"></i></a>
 
-						#if (!$returnto) #set($returnto = $request.getParameter("returnto") ) #end
-						#if (!$returnto) #set($returnto = $HOMEPAGE ) #end
+						<ul id="user-dropdown" class="dropdown-content">
+							<li><a href="$profilelink" title="$!{authUser.name}">$!lang.get('profile.title')</a></li>
+							<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+							<li class="divider"></li>
+							<li>
+								<form method="post" action="$signoutlink">
+									#sectoken(false)
+									<input type="submit" value="$!lang.get('signout')" class="btn-flat"/>
+								</form>
+							</li>
+						</ul>
 
-						#if ($returnto != $thisuri && !$thisuri.startsWith($signinlink.replaceFirst($context, "")))
-							#set($returnto = $thisuri )
-						#end
-						<a href="${signinlink}?returnto=$!{returnto}" title="Sign in" class="button-small rounded3"><span class="pictos">K</span> $!lang.get("signin.title")</a>
-					#end
-
-					#if ($isMobile)
-						<div class="mtm">
-							#searchbox()
+						<div class="brand-logo">
+							<a href="/">
+								<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo"/>
+							</a>
 						</div>
-					#end
-					</div>
-				</div>
-			</div>
-			<div id="nav" class="mediumText p100">
-				<div class="container">
-					<div class="line">
-						<div class="unit size2of3">
-							<ul id="nav-list" class="left">
-								<li><a href="$questionslink" title="Questions" class="nicebtn rounded3 $!{questionsSelected}">$!lang.get("questions.title")</a></li>
-								<li><a href="$peoplelink" title="People" class="nicebtn rounded3 $!{peopleSelected}">$!lang.get("people.title")</a></li>
-								<li><a href="$schoolslink" title="Schools" class="nicebtn rounded3 $!{schoolsSelected}">$!lang.get("schools.title")</a></li>
-								<li><a href="$classeslink" title="Classes" class="nicebtn rounded3 $!{classesSelected}">$!lang.get("classes.title")</a></li>
-								#if ($authenticated)
-									<li><a href="$groupslink" title="Groups" class="nicebtn rounded3 $!{groupsSelected}">$!lang.get("groups.title")</a></li>
+
+						<ul class="right hide-on-med-and-down">
+							<li>
+								<a href="#" onclick="$('#search-drawer').toggleClass('hide'); $('#search-box').focus()">
+									<i class="fa fa-search fa"></i>
+								</a>
+							</li>
+							<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+							<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+							<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+							<li><a href="$questionslink/ask" title="Ask Question" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+							#if ($authenticated)
+								#if ($request.isUserInRole("mod"))
+									<li>
+										<a href="$reportslink" title="Reports">$!lang.get("reports.title")
+											#if ($authUser.countNewReports() > 0)
+												<span class="new badge">$authUser.countNewReports()</span>
+											#end
+										</a>
+									</li>
 								#end
-							</ul>
+								<li>
+									<a class="dropdown-button scoold-user-dropdown" href="#!" data-constrainwidth="false"
+										 data-alignment="right" data-beloworigin="true" data-activates="user-dropdown">
+										<img src="#profilepic($authUser)" width="50" alt="Avatar"/>
+										<i class="fa fa-caret-down right"></i></a>
+								</li>
+							#else
+								<li><a href="${signinlink}?returnto=$!{returnto}" title="Sign in" class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
+							#end
+						</ul>
+
+						<ul class="side-nav" id="mobile-drawer">
+							<li>
+								<nav class="light-blue z-depth-0">
+									<div class="nav-wrapper">
+										<form action="$searchlink">
+											<div class="input-field">
+												<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
+												<label for="search"><i class="fa fa-search fa-2x"></i></label>
+												<i class="material-icons fa fa-close"></i>
+											</div>
+										</form>
+									</div>
+								</nav>
+							</li>
+							<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+							<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+							<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+							<li><a href="$questionslink/ask" title="Ask Question" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+							#if ($authenticated)
+								#if ($request.isUserInRole("mod"))
+									<li>
+										<a href="$reportslink" title="Reports">$!lang.get("reports.title")
+											#if ($authUser.countNewReports() > 0)
+												<span class="new badge">$authUser.countNewReports()</span>
+											#end
+										</a>
+									</li>
+								#end
+								<li><a href="$profilelink" title="$!{authUser.name}">$!lang.get('profile.title')</a></li>
+								<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+								<li class="divider"></li>
+								<li>
+									<form method="post" action="$signoutlink">
+										#sectoken(false)
+										<input type="submit" value="$!lang.get('signout')" class="btn-flat mts"/>
+									</form>
+								</li>
+							#else
+								<li><a href="${signinlink}?returnto=$!{returnto}" title="Sign in"
+											 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
+							#end
+						</ul>
+					</div>
+				</nav>
+
+				<nav id="search-drawer" class="white z-depth-0 hide">
+					<div class="nav-wrapper container">
+						<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
+							<div class="input-field">
+								<input id="search-box" type="search" name="q" placeholder="$!lang.get('search.search')" required>
+								<label for="search"><i class="fa fa-search fa-2x grey-text"></i></label>
+								<i class="material-icons fa fa-close grey-text" onclick="$('#search-drawer').toggleClass('hide')"></i>
+							</div>
+						</form>
+					</div>
+				</nav>
+			</div>
+		</header>
+
+		<main class="container">
+			#parse($path)
+		</main>
+
+		<footer class="page-footer">
+			<div class="container">
+				<div class="row">
+					<div class="col l6 s12">
+						<h5 class="white-text">
+							#if($showBranding)
+								Powered by <a href="https://paraio.com" target="_blank">
+									<img src="/images/paradark.svg" width="100" style="margin-bottom: -6px;" alt="Para logo"/></a>
+							#end
+						</h5>
+						<div class="pvl">
+							<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
+							<a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
+							<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
 						</div>
-						<div class="unit size1of3 lastUnit">
-							#if (!$isMobile)
-								#searchbox()
+					</div>
+					<div class="col l4 offset-l2 s12 r">
+						<div class="pvl white-text">
+							#if($showBranding)
+								Made with <i class="fa fa-coffee pink-text"></i> by
+								<a href="https://erudika.com" target="_blank">Erudika</a>
 							#end
 						</div>
+						<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey right capitalize">
+							$!currentLocale.getDisplayLanguage($currentLocale)
+						</a>
 					</div>
 				</div>
 			</div>
-			<div class="container">
-				<div id="content" class="clearfix">
-					#parse($path)
+			<div class="footer-copyright">
+				<div class="container">
+					#set($_liclink = $utils.formatMessage("$!lang.get('license')",
+					'<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>') )
+					<i class="fa fa-creative-commons"></i> $_liclink
 				</div>
 			</div>
-		</div>
+		</footer>
+	</div>
 
-		<div id="footer" class="mtl">
+<!--
+
+			<div id="main">
+				#infostrip()
+				<div id="header" class="ptm">
+					<div class="container">
+						<div class="left">
+							<a id="logo" href="$!prefix">$APPNAME</a>
+							<span class="logosup">
+								#if ($IN_BETA) &nbsp;<code class="smallText" title="Beta">&beta;</code> #end
+								#if (!$IN_PRODUCTION && !$IN_DEVELOPMENT)
+									<code class="red pictos" title="Environment not configured properly!">!</code>
+								#elseif ($IN_DEVELOPMENT)
+									<code class="blue pictos" title="Development mode">b</code>
+								#end
+							</span>
+						</div>
+						<div id="topnav" class="right mtl">
+						#if ($authenticated)
+							<a href="$profilelink" title="My profile">$!{authUser.name}</a>
+							<span class="pictos gray">y</span>
+							<a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a>
+							#if ($request.isUserInRole("mod"))
+								#if ($authUser.countNewReports() > 0)
+									<span class="notificationbox">$authUser.countNewReports()</span>
+								#else
+									<span class="pictos">^</span>
+								#end
+								<a href="$reportslink" title="Reports">$!lang.get("reports.title")</a>
+							#end
+							<span class="pictos">K</span>
+							<form method="post" action="$signoutlink" class="inline">
+								<fieldset class="inline">
+									#sectoken(false)
+									<input type="submit" value="$!lang.get('signout')" class="bold button-link"/>
+								</fieldset>
+							</form>
+						#else
+							<a href="${signinlink}?returnto=$!{returnto}" title="Sign in" class="btn waves-effect waves-light">
+								<span class="pictos">K</span> $!lang.get("signin.title")
+							</a>
+						#end
+						</div>
+					</div>
+				</div>
+				<div id="nav" class="mediumText p100">
+					<div class="container">
+						<div class="line">
+							<div class="unit size2of3">
+								<ul id="nav-list" class="left">
+									<li><a href="$questionslink" title="Questions" class="btn $!{questionsSelected}">$!lang.get("questions.title")</a></li>
+									<li><a href="$peoplelink" title="Users" class="btn $!{peopleSelected}">$!lang.get("people.title")</a></li>
+									<li><a href="$tagslink" title="Tags" class="btn $!{tagsSelected}">$!lang.get("tags.title")</a></li>
+									<li><a href="$questionslink/ask" title="Ask Question" class="btn $!{askSelected}">$!lang.get("posts.ask")</a></li>
+								</ul>
+							</div>
+							<div class="unit size1of3 ">
+								#searchbox()
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="container">
+					<div id="content">
+						#parse($path)
+					</div>
+				</div>
+			</div>
+
+			<div id="footer" class="mtl">
 				<div class="container">
 					<div class="line">
 						<div class="unit size4of5">
-							<div class="clearfix">
+							<div>
 								<a id="cc-icon" rel="license" class="extlink left mrm mbl pts" href="http://creativecommons.org/licenses/by-sa/3.0/">
 								</a>
 								#set($_liclink = $utils.formatMessage("$!lang.get('license')", '<a class="extlink" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a>') )
 								<div>$_liclink</div>
-								#if ($isMobile)<br/>#end
 								<ul class="inline-list">
 									<li><a href="$aboutlink" title="About">$!{lang.get('about.title')}</a> &bull;</li>
 									<li><a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a> &bull;</li>
 									<li><a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a> &bull;</li>
-									<li>
-										#if ($isMobile)
-											<a href="$context/?mobile=false" title="Classic layout">$!{lang.get('classic')}</a>
-										#else
-											<a href="$context/?mobile=true" title="Mobile layout">$!{lang.get('mobile')}</a>
-										#end
-									</li>
 								</ul>
 							</div>
 						</div>
-						#if ($isMobile)<br/>#end
-						<div class="unit size1of5 lastUnit r">
+						<div class="unit size1of5  r">
 							<span class="mediumText">
 								<span class="pictos">G</span>
 								<a href="$!languageslink" title="Switch to a different language" class="capitalize">
@@ -276,36 +359,30 @@
 								</a>
 							</span>
 						</div>
-						#if ($isMobile)<br/>#end
 					</div>
 				</div>
-		</div>
+			</div>
+		</div>-->
 
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+		<!--<script src="/$!scriptslink/jquery.autocomplete.js"></script>-->
+		<!--<script src="/$!scriptslink/jquery.markitup.js"></script>-->
 		#set($sectoken = "#sectoken(true)")
 		#set($sectoken = $sectoken.trim())
 		#set($_langjs = "#langjs()")
 		<script type="text/javascript">
-			/* <![CDATA[ */
-			function loadScripts(scriptslink, minsuffix) {
-				head.js (
-					{jquery:		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" },
-					{validate:		"http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js" },
-					{modal:			"http://cdn.jsdelivr.net/jqmodal/0.1/jqModal.js" },
-					{jeditable:		"http://cdnjs.cloudflare.com/ajax/libs/jeditable.js/1.7.3/jeditable.min.js" },
-					{autocomplete:	scriptslink + "/jquery.autocomplete" + minsuffix + ".js" },
-					{markitup:		scriptslink + "/jquery.markitup" + minsuffix + ".js" },
-//					{miuicons:		scriptslink + "/miu.set.markdown" + minsuffix + ".js" },
-					{showdown:		"http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js" },
-					{diff:			"http://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js" },
-					{scoold:		scriptslink + "/scoold" + minsuffix + ".js" });
-			}
-
 			var lang = $_langjs,
-				sessiontimeout = $SESSION_TIMEOUT_SEC,
-				userip = "$!userip",
+				userip = "$req.remoteAddr",
 				csrftoken = "$!sectoken";
-			loadScripts("$!scriptslink", "$!minsuffix");
-			/* ]]> */
+				$(".button-collapse").sideNav();
+				$('select').material_select();
+				$('textarea').characterCounter();
 		</script>
-    </body>
+		<script src="$!scriptslink/scoold.js"></script>
+	</body>
 </html>

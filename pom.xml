@@ -39,7 +39,7 @@
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<netbeans.hint.j2eeVersion>1.8</netbeans.hint.j2eeVersion>
+		<netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
 	</properties>
 
 	<dependencies>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.22.0</version>
+			<version>1.22.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tuckey</groupId>
@@ -144,9 +144,13 @@
 					<showDeprecation>true</showDeprecation>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showWarnings>true</showWarnings>
+					<compilerArgument>-Xlint:-options</compilerArgument>
+					<compilerArguments>
+						<endorseddirs>${endorsed.dir}</endorseddirs>
+					</compilerArguments>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.0.0</version>
 				<configuration>
@@ -159,7 +163,7 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
+			</plugin>-->
 <!--			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>

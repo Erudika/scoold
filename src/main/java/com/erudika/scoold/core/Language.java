@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 
 package com.erudika.scoold.core;
@@ -34,16 +47,10 @@ public final class Language {
 			put("settings.title", "Settings");
 			put("translate.title", "Translations");
 			put("contacts.title", "Contacts");
-			put("schools.title", "Schools");
-			put("school.title", "School");
-			put("class.title", "Class");
 			put("messages.title", "Messages");
 			put("message.title", "Message");
-			put("classes.title", "Classes");
-			put("groups.title", "Groups");
-			put("group.title", "Group");
 			put("suggest.title", "Suggestions");
-			put("people.title", "People");
+			put("people.title", "Users");
 			put("comments.title", "Comments");
 			put("comment.title", "Comment");
 			put("reports.title", "Reports");
@@ -52,7 +59,6 @@ public final class Language {
 			put("questions.title", "Questions");
 			put("answers.title", "Answers");
 			put("badges.title", "Badges");
-			put("blackboard.title", "Blackboard");
 			put("feedback.title", "Feedback");
 			put("accounts.title", "Accounts");
 			put("voterep.title", "Voting and Reputation");
@@ -90,9 +96,6 @@ public final class Language {
 			put("optional", "optional");
 			put("add", "Add");
 			put("results", "Results");
-			put(ScooldUser.UserType.STUDENT.toString(), "Student");
-			put(ScooldUser.UserType.TEACHER.toString(), "Teacher");
-			put(ScooldUser.UserType.ALUMNUS.toString(), "Former student");
 			put("students", "Students");
 			put("teachers", "Teachers");
 			put("alumni", "Former students");
@@ -130,7 +133,7 @@ public final class Language {
 			put(ScooldUser.Badge.ENTHUSIAST.toString(), "Enthusiast");
 			put(ScooldUser.Badge.FRESHMAN.toString(), "Freshman");
 			put(ScooldUser.Badge.SCHOLAR.toString(), "Scholar");
-//			put(ScooldUser.Badge.TEACHER.toString(), "Teacher");
+			put(ScooldUser.Badge.TEACHER.toString(), "Teacher");
 			put(ScooldUser.Badge.PROFESSOR.toString(), "Professor");
 			put(ScooldUser.Badge.GEEK.toString(), "Geek");
 			put(ScooldUser.Badge.GOODQUESTION.toString(), "Good Question");
@@ -138,9 +141,6 @@ public final class Language {
 			put(ScooldUser.Badge.EUREKA.toString(), "Eureka!");
 			put(ScooldUser.Badge.SENIOR.toString(), "Senior");
 			put(ScooldUser.Badge.NOOB.toString(), "Newbie");
-			put(ScooldUser.Badge.FIRSTCLASS.toString(), "First Class");
-			put(ScooldUser.Badge.BACKTOSCHOOL.toString(), "Back to School");
-			put(ScooldUser.Badge.CONNECTED.toString(), "Connected");
 			put(ScooldUser.Badge.DISCIPLINED.toString(), "Disciplined");
 			put(ScooldUser.Badge.POLYGLOT.toString(), "Polyglot");
 			put("timeago", "{0} ago");
@@ -166,7 +166,6 @@ public final class Language {
 			put("requiredfield", "This field is required and cannot be empty.");
 			put("bademail", "This email appears to be invalid.");
 			put("emailexists", "This email is already registered.");
-			put("contactdetails", "Contact details");
 			put("more", "More");
 			put("addmore", "Add more");
 			put("newbadges", "You've got new badges!");
@@ -180,7 +179,7 @@ public final class Language {
 			put("servererror", "Critical server error.");
 			put("sitedown", "Scoold is down. We'll be back soon.");
 			put("maintenance", "Scoold is being fixed. Expect some downtime.");
-			put("license", "The content on this site is licensed under a {0} license.");
+			put("license", "Excluding logos, this site is licensed under a {0} license.");
 			put("badrequest", "Bad request.");
 			put("create", "Create");
 			put("pause", "Pause");
@@ -202,33 +201,15 @@ public final class Language {
 			put("humantime.n", "{0} months ago");
 			put("humantime.y", "{0} years ago");
 
-
-			put("school."+School.SchoolType.PRIMARY.toString(), "Primary school");
-			put("school."+School.SchoolType.ELEMENTARY.toString(), "Elementary school");
-			put("school."+School.SchoolType.SECONDARY.toString(), "Secondary school");
-			put("school."+School.SchoolType.HIGHSCHOOL.toString(), "High school");
-			put("school."+School.SchoolType.GYMNASIUM.toString(), "Gymnasium");
-			put("school."+School.SchoolType.LYCEUM.toString(), "Lyceum");
-			put("school."+School.SchoolType.COLLEGE.toString(), "College");
-			put("school."+School.SchoolType.THEOLOGY.toString(), "Theological school");
-			put("school."+School.SchoolType.SEMINARY.toString(), "Seminary");
-			put("school."+School.SchoolType.ACADEMY.toString(), "Academy");
-			put("school."+School.SchoolType.SPECIALIZED.toString(), "Specialized school");
-			put("school."+School.SchoolType.PRIVATE.toString(), "Private school");
-			put("school."+School.SchoolType.UNIVERSITY.toString(), "University");
-			put("school."+School.SchoolType.MIDDLE.toString(), "Middle school");
-			put("school."+School.SchoolType.ARTS.toString(), "Art school");
-			put("school."+School.SchoolType.SPORTS.toString(), "Sports school");
-
 			put("signup.form.myname", "My name is");
 			put("signup.form.iama", "I am a");
 			put("signup.form.email", "Email");
 			put("signup.form.termsofuse", "By clicking the button above, you agree to our 'Terms of use'.");
 
-			put("signin.facebook", "Sign in with Facebook");
-			put("signin.openid", "Sign in with OpenID");
-			put("signin.openid.text", "OpenID allows you to use an existing account to sign in to multiple websites, without needing to create new passwords. It's a free and easy way to use a single digital identity across the Internet.");
+			put("signin.facebook", "Continue with Facebook");
+			put("signin.google", "Continue with Google");
 
+			put("profile.title", "Profile");
 			put("profile.about.title", "About me");
 			put("profile.about.dob", "Date of birth");
 			put("profile.about.location", "Location");
@@ -242,13 +223,6 @@ public final class Language {
 			put("profile.contacts.nocontacts", "No contacts.");
 			put("profile.contacts.added", "You've added a new contact.");
 			put("profile.status.txt", "Write something here...");
-			put("profile.myschools.add.period", "Period of education");
-			put("profile.myschools.create.type", "School type");
-			put("profile.myschools.create.name", "School name");
-			put("profile.myclasses.gradyear", "Graduation year");
-			put("profile.myclasses.create.schoollink", "Select a school for this class");
-			put("profile.myclasses.create.name", "Class name");
-			put("profile.thisisme", "This is me!");
 			put("profile.deleted", "Deleted user");
 			put("profile.posts.noquestions", "No questions.");
 			put("profile.posts.noanswers", "No answers.");
@@ -256,37 +230,7 @@ public final class Language {
 			put("search.notfound", "Nothing found.");
 			put("search.search", "Search");
 			put("search.people", "Find a person");
-			put("search.schools", "Find a school");
-			put("search.classes", "Find a class");
 			put("search.questions", "Find a question");
-
-			put("school.create", "Create а school");
-			put("school.created", "Created");
-			put("school.someinfo", "Write some information about this school.");
-			put("school.noclasses", "This school has no classes.");
-			put("school.nopeople", "This school is empty.");
-
-			put("classes.noschools", "You don't seem to have any schools linked to your account. You need to join at least one school before you can start creating classes.");
-			put("class.create", "Create a class");
-			put("class.classroom", "Classroom");
-			put("class.classmates", "Classmates");
-			put("class.blankboard", "This blackboard is blank.");
-			put("class.chat", "Chat");
-			put("class.chat.userin", "joined the chat");
-			put("class.chat.userout", "left the chat");
-			put("class.chat.connection.error", "Failed to connect.");
-			put("class.chat.polling.error", "Connection lost. Let's try again...");
-			put("class.chat.reconnect.error", "Reconnecting...");
-			put("class.chat.whoshere", "Who's here?");
-			put("class.copylink", "Copy and send this link to your friends");
-			put("class.invitation", "Invitation");
-			put("class.addclassmates", "Add your classmates");
-
-			put("group.create", "Create a group");
-			put("group.image", "Group picture");
-			put("group.members", "Group members");
-			put("group.add", "Add people to group");
-			put("group.changepic", "Change picture");
 
 			put("messages.nomessages", "You have no messages.");
 			put("messages.to", "To");
@@ -303,6 +247,7 @@ public final class Language {
 			put("settings.primaryid", "Primary identifier");
 			put("settings.secondaryid", "Secondary identifier");
 			put("settings.email", "Change Email");
+			put("settings.location", "Point where you are on the map. This allows you to filter questions based on your location.");
 			put("settings.email.new", "New email address");
 			put("settings.delete", "Delete my account!");
 			put("settings.delete.text", "Permanently delete your Scoold account and data.");
@@ -316,11 +261,8 @@ public final class Language {
 			put("reports."+Report.ReportType.INCORRECT.toString(), "Incorrect or outdated content");
 			put("reports."+Report.ReportType.OTHER.toString(), "Other problems that need attention");
 			put("reports.all", "All reports");
-			put("reports.school", "Schools");
-			put("reports.classunit", "Classes");
-			put("reports.group", "Groups");
 			put("reports.post", "Posts");
-			put("reports.user", "People");
+			put("reports.user", "Users");
 			put("reports.comment", "Comments");
 			put("reports.translation", "Translations");
 			put("reports.category", "Report category");
@@ -337,7 +279,7 @@ public final class Language {
 			put("posts.posted", "Posted");
 			put("posts.views", "Views");
 			put("posts.answered", "Answered");
-			put("posts.ask", "Ask a question");
+			put("posts.ask", "Ask Question");
 			put("posts.title", "Title");
 			put("posts.writeanswer", "Write your answer");
 			put("posts.youranswer", "Your answer");
@@ -347,12 +289,10 @@ public final class Language {
 			put("posts.forclosing", "Marked for closing");
 			put("posts.noquestions", "No questions found.");
 			put("posts.updated", "Updated");
-			put("posts.schoolfilter", "Filter by school");
+			put("posts.locationfilter", "Filter by location");
 			put("posts.unanswered", "Unanswered");
 			put("posts.mostpopular", "Most popular questions");
 			put("posts.tagged", "Questions with tag");
-			put("posts.selectschool", "Select school");
-			put("posts.noschools", "Questions are linked to schools. In order to ask a question you need to join at least one school.");
 			put("posts.unloadconfirm", "Everything you've written will be lost!");
 			put("posts.editby", "Edited by");
 			put("posts.filtered", "Filtered");
@@ -381,13 +321,7 @@ public final class Language {
 			put("msgcode.6", "OpenID authentication request failed!");
 			put("msgcode.7", "Something went terribly wrong!");
 			put("msgcode.8", "The message was sent.");
-			put("msgcode.9", "You cаn't join this school.");
-			put("msgcode.10", "You've left this school.");
-			put("msgcode.11", "You've joined this school.");
-			put("msgcode.12", "You've added this person to your contacts.");
-			put("msgcode.13", "You've removed this person from your contacts.");
-			put("msgcode.14", "You've joined this class.");
-			put("msgcode.15", "You've left this class.");
+			put("msgcode.16", "This post was deleted.");
 
 			put("about.intro", "Got questions about your education? You're in the right place. We're all here to help each other.");
 
@@ -407,7 +341,6 @@ public final class Language {
 			put("about.questions.5", "learning materials, books and research papers,");
 			put("about.questions.6", "research and experiments,");
 			put("about.questions.7", "internal school matters like timetables, graduations or other events.");
-			put("about.questions.8", "Questions are linked to schools, so you need to join at least one school in order to ask a question. This way you can more easily find the information that is only relevant to your school and interests.");
 			put("about.questions.9", "You can, of course, always answer you own question if you know the answer to it. This way you are helping others and it will also earn you some reputation. You can ask as many questions as you want, as long as they don't exist already for a particular school. Duplicate questions might be voted down or even deleted.");
 			put("about.questions.10", "Everything related to Scoold itself should be discussed in the 'Feedback' section. There you can post all your site-related questions, suggestions, general feedback or feature requests.");
 			put("about.questions.11", "A question might be closed for various reasons — it has too many answers, it's a duplicate of another question or it's just inappropriate. Closing a question means that no new answers can be posted but that doesn't affect the editing functionality. A question is automatically marked for closing once it reaches -5 votes.");
@@ -421,17 +354,6 @@ public final class Language {
 
 			put("about.comments.1", "Comments can be posted on all questions and answers. Basically, anything that's too short for an answer should be a comment. Comments can also contain suggestions, corrections or criticism. Bad comments will be voted down and automatically hidden once they reach -5 votes.");
 			put("about.comments.2", "Everyone with the 'Enthusiast' badge can post comments.");
-
-			put("about.schools.1", "You can create school pages for any kind of school or university that exists around the world. Schools are open for everyone to join. On each school page you can write a brief description and contact information for that school.");
-			put("about.schools.2", "Schools are linked to questions so that every school has a set of questions associated with it. This allows for questions to be organized in a way which allows them to be filtered by school.");
-			put("about.schools.3", "Everyone with the 'Enthusiast' badge can edit school pages.");
-
-			put("about.classes.1", "Classes are groups of people who study or have studied together. When creating a class you should specify the year of graduation (which might be in the past) and the school associated with that class.");
-			put("about.classes.2", "Every class has a blackboard where you and your classmates can write anything like important messages or reminders. There's also a chat room for each class.");
-			put("about.classes.3", "Everyone with the 'Enthusiast' badge can write on the blackboard.");
-
-			put("about.groups.1", "Groups are like classes but private — the only way to join a group is to get invited by the creator of that group. As with schools, you can post questions and answers in your group but they will be visible only to the members of the group.");
-			put("about.groups.2", "You can add as many people to a group as you wish. In order to add a person to your group you first have to add them as contact.")			;
 
 			put("about.voterep.1", "Voting is an integral part of Scoold. If you like something useful or interesting, vote it up. Questions that are clear and well-written should also be given +1. The same goes for answers that are helpful. If something is poorly written, unclear, rude or inappropriate, vote it down.");
 			put("about.voterep.2", "Your reputation points measure how much other people trust you and like you. Reputation is earned by posting good questions and answers. It is also awarded with certain badges.");
@@ -465,15 +387,12 @@ public final class Language {
 			put("about.badges."+ScooldUser.Badge.GOODANSWER.toString(), "your answer reached 10 votes");
 			put("about.badges."+ScooldUser.Badge.EUREKA.toString(), "every time you answer your own question");
 			put("about.badges."+ScooldUser.Badge.SENIOR.toString(), "your account is one year old");
-			put("about.badges."+ScooldUser.Badge.FIRSTCLASS.toString(), "joined a class for the first time");
-			put("about.badges."+ScooldUser.Badge.BACKTOSCHOOL.toString(), "joined a school for the first time");
-			put("about.badges."+ScooldUser.Badge.CONNECTED.toString(), "added 10 contacts");
 			put("about.badges."+ScooldUser.Badge.DISCIPLINED.toString(), "every time you delete your own comment");
 			put("about.badges."+ScooldUser.Badge.POLYGLOT.toString(), "every time your translation is approved");
 
 			put("about.reports.1", "If you ever notice any problems on Scoold, report them! This includes bugs, missing or incorrect information, abusive, discriminatory or exploitative behavior. Every report you send helps us keep Scoold a nice and friendly place.");
 
-			put("about.accounts.1", "You don't need to register for an account at Scoold — you simply sign in with your account at Facebook, Google, Yahoo, AOL or any other account that is compatible with OpenID. The first time you sign in, we will only ask you for your name and email address. We promise to keep your email safe and never send you anything, unless it's really important.");
+			put("about.accounts.1", "You don't need to register for an account at Scoold — you simply sign in with your social account. The first time you sign in, we will only ask you for your name and email address. We promise to keep your email safe and never send you anything, unless it's really important.");
 
 			put("about.feedback.1", "The feedback section is where you can tell us what you think about the site. You can also ask anything about the site itself, describe in details any problems you've encountered or suggest some improvements. So if you think there's something we've missed here, go there and tell us now!");
 

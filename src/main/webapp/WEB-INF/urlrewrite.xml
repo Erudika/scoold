@@ -11,6 +11,10 @@
 		<from>^/(\d+)$</from>
 		<to>/click/error.htm?e=$1</to>
 	</rule>
+	<rule>
+		<from>^/error$</from>
+		<to>/click/error.htm</to>
+	</rule>
 	<!-- ======== PROTECTED ========== -->
 	<rule>
 		<from>^/p/(.*)$</from>
@@ -34,12 +38,16 @@
 		<to>/signin.htm</to>
 	</rule>
 	<rule>
-		<from>^/signout(/?)$</from>
+		<from>^/signout$</from>
 		<to>/signin.htm?signout=true</to>
 	</rule>
 	<rule>
 		<from>^/about(/?)$</from>
 		<to>/about.htm</to>
+	</rule>
+	<rule>
+		<from>^/tags(/?)$</from>
+		<to>/tags.htm</to>
 	</rule>
 	<rule>
 		<from>^/terms(/?)$</from>
@@ -240,108 +248,6 @@
 		<to type="redirect">%{context-path}/profile/$1$2</to>
 	</rule>
 
-	<!-- ======== SCHOOLS ========== -->
-
-	<rule>
-		<from>^/school/(\d+)(/?)$</from>
-		<to>/school.htm?schoolid=$1</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/edit(/?)$</from>
-		<to>/school.htm?schoolid=$1&amp;edit=true</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/people((/?)(.*?))$</from>
-		<to>/school.htm?schoolid=$1&amp;show=people</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/classes((/?)(.*?))$</from>
-		<to>/school.htm?schoolid=$1&amp;show=classes</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/ask((/?)(.*?))$</from>
-		<to>/questions.htm?schoolid=$1&amp;ask=true</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/join((/?)(.*?))$</from>
-		<to>/school.htm?join=true&amp;schoolid=$1</to>
-	</rule>
-	<rule>
-		<from>^/school/(\d+)/leave((/?)(.*?))$</from>
-		<to>/school.htm?leave=true&amp;schoolid=$1</to>
-	</rule>
-
-	<!--SEO URLs-->
-	<rule>
-		<from>^/school/(\d+)/([^edit][^ask][^classes][^people][^join][^leave])*.*(/?)$</from>
-		<to>/school.htm?schoolid=$1</to>
-	</rule>
-
-	<!-- PROTECTED -->
-	<rule>
-		<from>^/school/p/(\d+)(.*)$</from>
-		<to type="redirect">%{context-path}/school/$1$2</to>
-	</rule>
-	<rule>
-		<from>^/schools(/?)$</from>
-		<to>/schools.htm</to>
-	</rule>
-	<rule>
-		<from>^/schools/votes(/?)$</from>
-		<to>/schools.htm?sortby=votes</to>
-	</rule>
-	<rule>
-		<from>^/schools/create(/?)$</from>
-		<to>/schools.htm?create=true</to>
-	</rule>
-
-	<!-- ======== CLASSES ========== -->
-	<rule>
-		<from>^/class/(\d+)(/?)$</from>
-		<to>/classunit.htm?classid=$1</to>
-	</rule>
-	<rule>
-		<from>^/class/(\d+)/chat((/?)(.*?))$</from>
-		<to>/classunit.htm?classid=$1&amp;show=chat</to>
-	</rule>
-	<rule>
-		<from>^/class/(\d+)/questions/ask((/?)(.*?))$</from>
-		<to>/questions.htm?classid=$1&amp;ask=true</to>
-	</rule>
-	<rule>
-		<from>^/class/(\d+)/join((/?)(.*?))$</from>
-		<to>/classunit.htm?join=true&amp;classid=$1</to>
-	</rule>
-	<rule>
-		<from>^/class/(\d+)/leave((/?)(.*?))$</from>
-		<to>/classunit.htm?leave=true&amp;classid=$1</to>
-	</rule>
-	<rule>
-		<from>^/class/(\d+)/thisisme/(.*?)$</from>
-		<to>/classunit.htm?thisisme=$2&amp;classid=$1</to>
-	</rule>
-
-	<!-- SEO URLs -->
-	<rule>
-		<from>^/class/(\d+)/([^thisisme][^chat][^addclassmates][^join][^leave])*.*(/?)$</from>
-		<to>/classunit.htm?classid=$1</to>
-	</rule>
-
-	<!-- PROTECTED -->
-	<rule>
-		<from>^/class/p/(\d+)(.*)$</from>
-		<to type="redirect">%{context-path}/class/$1$2</to>
-	</rule>
-
-	<rule>
-		<from>^/classes(/?)$</from>
-		<to>/classunits.htm</to>
-	</rule>
-	<rule>
-		<from>^/classes/create(/?)$</from>
-		<to>/classunits.htm?create=true</to>
-	</rule>
-
 	<!-- ======== PEOPLE ========== -->
 	<rule>
 		<from>^/people(/?)$</from>
@@ -371,7 +277,7 @@
 	</rule>
 	<rule>
 		<from>^/post/(\d+)/revisions(/?)$</from>
-		<to>/question.htm?id=$1&amp;show=revisions</to>
+		<to>/revisions.htm?id=$1</to>
 	</rule>
 	<rule>
 		<from>^/question/(\d+)/restore/(\d+)(/?)$</from>
@@ -424,41 +330,6 @@
 	<rule>
 		<from>^/question/answer/(\d+)((/?)(.*?))$</from>
 		<to type="redirect">%{context-path}/question/$1/?write=true</to>
-	</rule>
-
-	<!-- ======== GROUPS ========== -->
-
-	<rule>
-		<from>^/group/(\d+)(/?)$</from>
-		<to>/group.htm?groupid=$1</to>
-	</rule>
-	<rule>
-		<from>^/group/(\d+)/members((/?)(.*?))$</from>
-		<to>/group.htm?groupid=$1&amp;show=members</to>
-	</rule>
-
-	<rule>
-		<from>^/group/(\d+)/post((/?)(.*?))$</from>
-		<to>/questions.htm?groupid=$1&amp;ask=true</to>
-	</rule>
-	<rule>
-		<from>^/group/post/(\d+)/*.*(/?)$</from>
-		<to>/question.htm?id=$1</to>
-	</rule>
-
-	<rule>
-		<from>^/groups(/?)$</from>
-		<to>/groups.htm</to>
-	</rule>
-	<rule>
-		<from>^/groups/create(/?)$</from>
-		<to>/groups.htm?create=true</to>
-	</rule>
-
-	<!--SEO URLs-->
-	<rule>
-		<from>^/group/(\d+)/([^delete][^votes][^post][^updated][^members])*.*(/?)$</from>
-		<to>/group.htm?groupid=$1</to>
 	</rule>
 
 	<!-- ======== SEARCH ========== -->

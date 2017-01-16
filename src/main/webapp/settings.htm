@@ -6,11 +6,11 @@
 			<div class="center">
 				<div class="largeText">$!lang.get("settings.delete.confirm")</div>
 				<br/>
-				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$utils.MD5($authUser.id.toString())">
+				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$utils.md5($authUser.id.toString())">
 					<fieldset>
 						#sectoken(false)
-						<input type="submit" value="$!lang.get('delete')" class="button rounded3 mrl red"/>  &nbsp; &nbsp; &nbsp;
-						<a href="$settingslink" title="Cancel" class="button-small rounded3">$!lang.get("cancel")</a>
+						<input type="submit" value="$!lang.get('delete')" class="btn waves-effect waves-light mrl red"/>  &nbsp; &nbsp; &nbsp;
+						<a href="$settingslink" title="Cancel" class="btn waves-effect waves-light">$!lang.get("cancel")</a>
 					</fieldset>
 				</form>
 			</div>
@@ -19,6 +19,11 @@
 		<h1><span class="pictos">y</span> $!lang.get("settings.title")</h1>
 		<hr/>
 
+		<h2>$!lang.get("profile.about.location")</h2>
+		<p>$!lang.get('settings.location')</p>
+		<input name="location" class="locationbox nicebox p90" type="text" value="$!{showUser.location}"/>
+		<div id="map-canvas" class="gmap mvl center" style="height: 300px">#ajaxloading(false)</div>
+
 		<h2>$!lang.get("settings.tagfilter")</h2>
 		<div class="mvl">
 			<div class="mbm">$!lang.get("settings.tagfilter.text")</div>
@@ -26,7 +31,7 @@
 				<fieldset>
 					#sectoken(false)
 					<input type="text" class="nicebox tagbox p50" value="$!authUser.favtagsString" name="favtags"/>
-					<input type="submit" id="add-favtag-btn" value="$!lang.get('save')" class="button rounded3"/>
+					<input type="submit" id="add-favtag-btn" value="$!lang.get('save')" class="btn waves-effect waves-light"/>
 				</fieldset>
 			</form>
 		</div>
@@ -38,7 +43,7 @@
 					#sectoken(false)
 					#formvj($authUser.type ["email"])
 					<input type="text" name="email" value="$!authUser.email"  class="nicebox p50"/>
-					<input type="submit" value="$!lang.get('save')" class="button rounded3"/>
+					<input type="submit" value="$!lang.get('save')" class="btn waves-effect waves-light"/>
 				</fieldset>
 			</form>
 		</div>
@@ -46,7 +51,7 @@
 		<h2>$!lang.get("settings.delete")</h2>
 		<div class="mvl">
 			<div class="mbm">$!lang.get("settings.delete.text")</div>
-			<a href="${settingslink}?delete=true" title="" class="button-small rounded3 redbg white"><span class="pictos">*</span> $!lang.get("settings.delete")</a>
+			<a href="${settingslink}?delete=true" title="" class="btn waves-effect waves-light redbg white"><span class="pictos">*</span> $!lang.get("settings.delete")</a>
 		</div>
 
 	#end

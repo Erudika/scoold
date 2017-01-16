@@ -123,7 +123,7 @@ $(function () {
 					if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
 						var found = data.cityName + ", " + data.countryName;
 						found = found.toLowerCase();
-						createCookie("scoold-country", data.countryCode);
+						localStorage.setItem("scoold-country", data.countryCode);
 					}
 				});
 			}
@@ -222,37 +222,6 @@ $(function () {
 		});
 	}
 
-	function readCookie(name) {
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';'), i;
-		for(i = 0; i < ca.length; i++) {
-			var c = ca[i];
-            while (c.charAt(0) === ' ') {c = c.substring(1,c.length);}
-            if (c.indexOf(nameEQ) === 0) {return c.substring(nameEQ.length,c.length);}
-		}
-		return null;
-	}
-
-	function createCookie(name, value) {
-		var expires = "";
-		var date = new Date();
-		date.setTime(date.getTime()+(sessiontimeout * 1000));
-		expires = ";expires="+date.toGMTString();
-		document.cookie = name+"="+value+expires+";path=/";
-	}
-
-	function deleteCookie(name) {
-		if (readCookie(name)) {
-			document.cookie = name + "=;path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT";
-		}
-	}
-
-
-	function highlight(elem, hlclass) {
-		$('.'+hlclass).removeClass(hlclass);
-		$(elem).addClass(hlclass);
-	}
-
 	function crossfadeToggle(elem1, elem2) {
 		if ($(elem1).hasClass("hide") || $(elem1).css("display") === "none") {
             $(elem2).animate({opacity: "hide"}, 200, function() {
@@ -265,13 +234,6 @@ $(function () {
                 $(elem2).animate({opacity: "show"}, 200).removeClass("hide");
 			});
 		}
-	}
-
-	function crossfade(elem1, elem2) {
-		$(elem1).animate({opacity: "hide"}, 200, function() {
-			$(this).addClass("hide");
-			$(elem2).animate({opacity: "show"}, 200).removeClass("hide");
-		});
 	}
 
 	function submitForm(form, method, callbackfn) {
@@ -382,11 +344,11 @@ $(function () {
 				if (e.keyCode === 8 || e.keyCode === 46) {
 					clear(this);
 				}
-			}).bind('copy', function(e) {
+			}).on('copy', function(e) {
 				clear(this);
-			}).bind('paste', function(e) {
+			}).on('paste', function(e) {
 				clear(this);
-			}).bind('cut', function(e) {
+			}).on('cut', function(e) {
 				clear(this);
 			});
 		}
@@ -446,24 +408,44 @@ $(function () {
 		return areYouSure($.noop, rusuremsg, true);
 	});
 
+	$(document).on("click", "a.next-div-toggle",  function(e) {
+		var that = $(this);
+		var hdiv = that.nextAll("div:first");
+		if (!hdiv.length) {
+			hdiv = that.parent().nextAll("div:first");
+		}
+		if (!hdiv.length) {
+			hdiv = that.closest("div").find("div:first");
+		}
+		hdiv.slideToggle("fast").find("input[type=text]:first, textarea:first").focus();
+		return false;
+	});
+
+	$(document).on("click", "a.next-span-toggle",  function() {
+		$(this).nextAll("span:first").toggle();
+		return false;
+	});
+
 	$(document).on("click", ".editlink",  function() {
 		var that = $(this);
-		var viewbox = that.parent().nextAll(".viewbox:first");
-		var editbox = that.parent().nextAll(".editbox:first");
+		var parent = that.closest(".row");
+		var viewbox = parent.find(".viewbox:first");
+		var editbox = parent.find(".editbox:first");
 		if (!viewbox.length) {
 			viewbox = that.nextAll(".viewbox:first");
+		}
+		if (!viewbox.length) {
+			viewbox = that.closest(".viewbox");
+		}
+		if (!viewbox.length) {
+			viewbox = parent.closest(".row").nextAll(".viewbox:first");
 		}
 		if (!editbox.length) {
 			editbox = that.nextAll(".editbox:first");
 		}
-
-		if (!viewbox.length) {
-			viewbox = that.closest(".viewbox");
-		}
 		if (!editbox.length) {
 			editbox = viewbox.nextAll(".editbox:first");
 		}
-
 		crossfadeToggle(viewbox.get(0), editbox.get(0));
 		return false;
 	});
@@ -506,7 +488,7 @@ $(function () {
 		var that = $(this);
 		that.hide();
 		if (that.hasClass("introBox")) {
-			createCookie("intro", "0");
+			localStorage.setItem("intro", "0");
 		}
 		return (event.target.nodeName === "A");
 	});
@@ -515,56 +497,14 @@ $(function () {
 		clearLoading();
 	});
 
-	var color1 = $("body").css("color");
-	var color2 = "#AAAAAA";
-	$(".hintbox").focus(function() {
-		var t = $(this);
-		if (t.data("value") === "") {t.data("value", $(this).val());}
-		if (t.val() === t.data("value")) {t.val("");}
-		t.css("color", color1);
-	}).blur(function() {
-		var t = $(this);
-		if ($.trim(t.val()) === "") {t.val(t.data("value"));
-		t.css("color", color2);}
-	}).css("color", color2).data("value", $(this).val());
-
-	$("a#search-icon").click(function() {
-		$(this).closest("form").submit();
-		return false;
-	});
-
-	$(document).on("click", "a.next-div-toggle",  function(e) {
-		var that = $(this);
-		var hdiv = that.nextAll("div:first");
-		if (!hdiv.length) {
-			hdiv = that.parent().nextAll("div:first");
-		}
-		if (!hdiv.length) {
-			hdiv = that.closest("div").find("div:first");
-		}
-		hdiv.slideToggle("fast").find("input[type=text]:first, textarea:first").focus();
-		return false;
-	});
-
-	$(document).on("click", "a.next-span-toggle",  function() {
-		$(this).nextAll("span:first").toggle();
-		return false;
-	});
-
-
-	function postAsk(elem, fn, callback) {
-		return areYouSure(function() {
-			$.post(elem.attr("href"), function(data) {
-				callback(data);
-			});
-			fn();
-		}, rusuremsg, false);
-	}
 
 	$(document).on("click", ".post-refresh-ask",  function() {
-		postAsk($(this), function() {}, function() {
-			window.location.reload(true);
-		});
+		var elem = $(this);
+		return areYouSure(function() {
+			$.post(elem.attr("href"), function(data) {
+				window.location = elem.attr("href");
+			});
+		}, rusuremsg, false);
 	});
 
 	$(document).on("click", ".post-refresh",  function() {
@@ -579,8 +519,6 @@ $(function () {
 		form.find("input[name=value]").val(title.substring(title.indexOf(":")+1, title.length));
 		return false;
 	});
-
-	// TODO: ^^^^^^^^^^^ USE the new postAsk code on THESE  \/ \/ \/
 
 	/****************************************************
      *                    REPORTS
@@ -628,63 +566,11 @@ $(function () {
      *                    PROFILE
      ****************************************************/
 
-	submitFormBind("form#about-edit-form", function(data, status, xhr, form) {
-		var dis = $(form);
-		dis.closest("div.editbox").siblings("div.viewbox").html(data);
-		dis.find("input.canceledit").click();
-	});
-
-	$(document).on("click", "a.addfriend",  function() {
-		$.post(this.href);
-		showSuccessBox(lang["profile.contacts.added"]);
-		$(this).fadeOut();
-		return false;
-	});
-
-	//delete friend link
-	$(document).on("click", "a.delfriend",  function() {
-		var that = $(this);
-		return areYouSure(function() {
-			that.fadeOut();
-			$.post(that.attr("href"));
-		}, rusuremsg, false);
-	});
-
-	/****************************************************
-     *                    EDITABLES
-     ****************************************************/
-
-	var editable_settings = {
-			submit: lang.save,
-			tooltip: lang.clickedit,
-			placeholder: lang['profile.status.txt'],
-			cssclass: "clickedit"
-		};
-
-	function editableBind(elem, param, opts) {
-		if (opts) {
-			$.extend(true, editable_settings, opts);
-		}
-
-		var params = {};
-		var $elem = $(elem);
-		$elem.editable(function(value, settings) {
-			var $text = $elem.data("value");
-			params[param] = value;
-				$.post(ajaxpath, params);
-				$text = $elem.text(value).text();
-				$elem.data("value", $text);
-			return $text;}, editable_settings
-		).data("value", $elem.text());
-	}
-
-	editableBind("#name.editable", "name");
-	editableBind("#mystatus.editable", "status");
-	editableBind("#schoolname.editable", "name");
-	editableBind("#type.editable", "identifier");
-	editableBind("#groupname.editable", "name");
-	editableBind("#groupdesc.editable", "description");
-	editableBind("#questiontitle.editable", "title");
+//	submitFormBind("form#about-edit-form", function(data, status, xhr, form) {
+//		var dis = $(form);
+//		dis.closest("div.editbox").siblings("div.viewbox").text(data);
+//		dis.find("input.canceledit").click();
+//	});
 
 	/****************************************************
      *               CONTACT DETAILS
@@ -731,127 +617,47 @@ $(function () {
      *                    AUTOCOMPLETE
      ****************************************************/
 
-	autocompleteBind("input.locationbox", {find: "locations"});
-	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
-	autocompleteTagBind("input.tagbox", {find: "tags"});
-	autocompleteUserBind("input.personbox", {find: "people"});
-	autocompleteBind("input.schoolnamebox", {find: "schools"});
-	autocompleteBind("input.typebox", {find: "classes"});
-
-
-	/****************************************************
-     *                   SCHOOLS
-     ****************************************************/
-
-	submitFormBind("form#school-about-edit-form", function(data, status, xhr, form) {
-		var dis = $(form);
-		dis.closest("div.editbox").siblings("div.viewbox").html(data);
-		dis.find("input.canceledit").click();
-	});
-
-	submitFormBind("form.school-edit-form", function(data, status, xhr, form) {
-		$("div#schools-edit").html(data);
-	});
-
-	/****************************************************
-     *                   CLASSES
-	 ****************************************************/
-
-	$("#add-more-classmates").click(function() {
-		var that = $(this);
-		var clone = that.prev("div").clone();
-		clone.find("input").val("");
-		that.before(clone);
-		clone.find("input[name=name]").focus();
-		return false;
-	});
-
-	/****************************************************
-     *                   GROUPS
-	 ****************************************************/
-
-	$(".remove-groupmember-btn").click(function() {
-		$.post(this.href);
-		var that = $(this);
-		that.closest("div.media").fadeOut("slow", function() {
-			that.remove();
-		});
-		return false;
-	});
-
-	$(".add-groupmember-btn").click(function() {
-		var that = $(this);
-		that.closest("form").submit();
-	});
-
-	/****************************************************
-     *						 CHAT
-	 ****************************************************/
-
-	var chatlog = $("#chat-log");
-	var chatmessage = $("input#chat-message");
-	var timeout = 1000;
-
-	function chatPoll() {
-		setTimeout(function() {
-			$.get(ajaxpath, {receivechat: true}, function(data) {
-				chatlog.html(data);
-				timeout = 30 * 1000;
-				chatPoll();
-			})
-		}, timeout);
-	}
-
-	if (chatlog.length) {
-		chatPoll();
-	}
-
-	submitFormBind("form#chat-form", function(data, status, xhr, form) {
-		chatlog.html(data);
-		chatmessage.val("");
-	});
-
-	$("a#chat-send-msg").click(function() {
-		$(this).closest("form").submit();
-		chatmessage.val("");
-		return false;
-	});
+//	autocompleteBind("input.locationbox", {find: "locations"});
+//	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
+//	autocompleteTagBind("input.tagbox", {find: "tags"});
+//	autocompleteUserBind("input.personbox", {find: "people"});
+//	autocompleteBind("input.typebox", {find: "classes"});
 
 	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/
 
-	$("div.report-dialog").jqm({
-		trigger: ".trigger-report",
-		onShow: function(hash) {
-			var div = hash.w;
-			var trigr = $(hash.t);
-			if (typeof trigr.data("loadedForm") === "undefined") {
-				$.get(trigr.attr("href"), function(data) {
-					clearLoading();
-					div.html(data);
-					trigr.data("loadedForm", data);
-				});
-			} else {
-				div.html(trigr.data("loadedForm"));
-			}
-			div.on("click", ".jqmClose", function() {
-				hash.w.jqmHide();
-				return false;
-			});
-			div.show();
-		}
-	});
-
-	$(document).on("click", ".trigger-report",  function() {
-		$("div.report-dialog").jqmShow(this);
-		return false;
-	});
-
-	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
-		$("div.report-dialog").jqmHide();
-		clearForm(form);
-	});
+//	$("div.report-dialog").jqm({
+//		trigger: ".trigger-report",
+//		onShow: function(hash) {
+//			var div = hash.w;
+//			var trigr = $(hash.t);
+//			if (typeof trigr.data("loadedForm") === "undefined") {
+//				$.get(trigr.attr("href"), function(data) {
+//					clearLoading();
+//					div.html(data);
+//					trigr.data("loadedForm", data);
+//				});
+//			} else {
+//				div.html(trigr.data("loadedForm"));
+//			}
+//			div.on("click", ".jqmClose", function() {
+//				hash.w.jqmHide();
+//				return false;
+//			});
+//			div.show();
+//		}
+//	});
+//
+//	$(document).on("click", ".trigger-report",  function() {
+//		$("div.report-dialog").jqmShow(this);
+//		return false;
+//	});
+//
+//	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
+//		$("div.report-dialog").jqmHide();
+//		clearForm(form);
+//	});
 
 
 	/****************************************************
@@ -880,7 +686,7 @@ $(function () {
 	});
 
 	$(document).on("click", "a.show-comment",  function() {
-		$(this).siblings("div:hidden").show().end().prev("span").andSelf().remove();
+		$(this).siblings("div:hidden").show().end().prev("span").addBack().remove();
 		return false;
 	});
 
@@ -1041,7 +847,7 @@ $(function () {
 		}, 1000);
 
 		// Try registering for paste events
-		that.bind("paste", function() {
+		that.on("paste", function() {
 			// It worked! Cancel paste polling.
 			if (pollingFallback !== undefined) {
 				window.clearInterval(pollingFallback);
@@ -1051,7 +857,7 @@ $(function () {
 		});
 
 		// Try registering for input events (the best solution)
-		that.bind("input", function() {
+		that.on("input", function() {
 			// It worked! Cancel paste polling.
 			if (pollingFallback !== undefined) {
 				window.clearInterval(pollingFallback);
@@ -1068,12 +874,12 @@ $(function () {
 	if (inputPane.length > 0) {
 		inputPane.each(initPostEditor);
 
-		window.onbeforeunload = function() {
-			var txtbox = $("textarea.unload-confirm");
-			if (txtbox.length && txtbox.val() !== "") {
-				return lang["posts.unloadconfirm"];
-			}
-		};
+//		window.onbeforeunload = function() {
+//			var txtbox = $("textarea.unload-confirm");
+//			if (txtbox.length && txtbox.text() !== "") {
+//				return lang["posts.unloadconfirm"];
+//			}
+//		};
 
 		$(document).on("click", "a.more-link",  function() {
 			return loadMoreHandler(this, function(updatedContainer) {
@@ -1178,62 +984,3 @@ $(function () {
 	});
 
 });//end of scoold script
-
-/*
-# markItUp!
-
-Copyright (C) 2008 Jay Salvat
-http://markitup.jaysalvat.com/
-
-## Markup language: Markdown <http://daringfireball.net/projects/markdown/>
-
-## Description
- - A basic Markdown markup set with Headings, Bold, Italic, Picture, Link, List, Quotes, Code, Preview button.
- - Feel free to add more tags.
-
-## Install
- 1. Download the zip file
- 2. Unzip it in your markItUp! sets folder
- 3. Modify your JS link to point at this set.js
-*/
-
-miu_set_markdown = {
-	nameSpace:		"markdown", // Useful to prevent multi-instances CSS conflict
-	previewParserPath:	'',
-	onShiftEnter:		{keepDefault:false, openWith:'\n\n'},
-	markupSet: [
-		{name:'First Level Heading', key:'1', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '='); }, className:'miu-btn-h1'},
-		{name:'Second Level Heading', key:'2', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '-'); }, className:'miu-btn-h2'},
-		{name:'Heading 3', key:'3', openWith:'### ', placeHolder:'Your title here...', className:'miu-btn-h3'},
-		{name:'Heading 4', key:'4', openWith:'#### ', placeHolder:'Your title here...', className:'miu-btn-h4'},
-		{name:'Heading 5', key:'5', openWith:'##### ', placeHolder:'Your title here...', className:'miu-btn-h5'},
-		{name:'Heading 6', key:'6', openWith:'###### ', placeHolder:'Your title here...', className:'miu-btn-h6'},
-		{separator:'|' },
-		{name:'Bold', key:'B', openWith:'**', closeWith:'**', className:'miu-btn-strong'},
-		{name:'Italic', key:'I', openWith:'_', closeWith:'_', className:'miu-btn-em'},
-		{separator:'|'},
-		{name:'Bullet List', openWith:'- ', className:'miu-btn-ul'},
-		{name:'Numbered List', openWith:function(markItUp) {
-			return markItUp.line+'. ';
-		}, className:'miu-btn-ol'},
-		{separator:'|'},
-		{name:'Picture', key:'P', replaceWith:'![[![Alternative text]!]]([![Url:!:http://]!] "[![Title]!]")', className:'miu-btn-img'},
-		{name:'Link', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...', className:'miu-btn-a'},
-		{separator:'|'},
-		{name:'Quote', openWith:'> ', className:'miu-btn-blockquote'},
-		{name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)', className:'miu-btn-code'}
-	]
-};
-
-// miu namespace to avoid conflict.
-miu = {
-	markdownTitle: function(markItUp, c) {
-		heading = '';
-		n = $.trim(markItUp.selection||markItUp.placeHolder).length;
-		for(i = 0; i < n; i++) {
-			heading += c;
-		}
-		heading = '\n'+heading;
-		return heading;
-	}
-};

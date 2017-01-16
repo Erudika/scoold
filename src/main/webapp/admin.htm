@@ -15,8 +15,8 @@
 		<form method="post" action="$!{confirmlink}">
 			<fieldset>
 				#sectoken(false)
-				<input type="submit" value="$!lang.get('yes')" class="button rounded3"/>
-				<a class="button-small rounded3" href="$!{ref}" title="No">$!lang.get("no")</a>
+				<input type="submit" value="$!lang.get('yes')" class="btn waves-effect waves-light"/>
+				<a class="btn waves-effect waves-light" href="$!{ref}" title="No">$!lang.get("no")</a>
 			</fieldset>
 		</form>
 	</div>
@@ -40,9 +40,9 @@
 								#else
 									<span class="pictos red mrl mediumText">D</span>
 								#end
-								<input type="submit" value="Delete index" name="deleteindex" class="button rounded3 red rusure"/>
-								<input type="submit" value="Rebuild index" name="rebuildindex" class="button rounded3 rusure"/>
-								<input type="submit" value="Optimize index" name="optimizeindex" class="button rounded3 rusure"/>
+								<input type="submit" value="Delete index" name="deleteindex" class="btn waves-effect waves-light red rusure"/>
+								<input type="submit" value="Rebuild index" name="rebuildindex" class="btn waves-effect waves-light rusure"/>
+								<input type="submit" value="Optimize index" name="optimizeindex" class="btn waves-effect waves-light rusure"/>
 							</fieldset>
 						</form>
 					</td>

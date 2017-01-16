@@ -17,32 +17,24 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.utils.Config;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import com.erudika.para.core.Tag;
+import java.util.List;
+
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Languages extends Base{
+public class Tags extends Base {
 
-	public String title;
-	public Map<String, Integer> langProgressMap;
+    public String title;
+	public List<Tag> tagslist;
 
-	public Languages() {
-		title = lang.get("translate.select");
+    public Tags() {
+        title = lang.get("tags.title");
+    }
 
-		addModel("allLocales", new TreeMap<String, Locale>(langutils.getAllLocales()));
-		langProgressMap = langutils.getTranslationProgressMap(Config.APP_NAME_NS);
-	}
-
-	public void onPost() {
-		if (param("setlocale")) {
-			String loc = getParamValue("setlocale");
-			setCurrentLocale(loc, true);
-			setRedirect(languageslink);
-		}
+	public void onGet() {
+		tagslist = pc.findTags("*", itemcount);
 	}
 }

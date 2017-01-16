@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 
 package com.erudika.scoold.core;
@@ -73,22 +86,39 @@ public class Revision extends Sysprop {
 	}
 
 	public static Revision createRevisionFromPost(Post post, boolean orig) {
-		String revUserid = post.getLasteditby();
-		if (revUserid == null) {
-			revUserid = post.getCreatorid();
+		if (post != null && post.getId() != null) {
+			String revUserid = post.getLasteditby();
+			if (revUserid == null) {
+				revUserid = post.getCreatorid();
+			}
+			Revision postrev = new Revision();
+			postrev.setCreatorid(revUserid);
+			postrev.setParentid(post.getId());
+			postrev.setTitle(post.getTitle());
+			postrev.setBody(post.getBody());
+			postrev.setTags(post.getTags());
+			postrev.setOriginal(orig);
+			return postrev;
 		}
-		// TODO check if revision's parentid is set
-		assert post.getId() != null;
-		Revision postrev = new Revision();
-//		postrev.setId(post.getRevisionid());
-		postrev.setCreatorid(revUserid);
-		postrev.setParentid(post.getId());
-		postrev.setTitle(post.getTitle());
-		postrev.setBody(post.getBody());
-		postrev.setTags(post.getTags());
-		postrev.setOriginal(orig);
+		return null;
+	}
 
-		return postrev;
+	public void delete() {
+		AppConfig.client().delete(this);
+	}
+
+	public void update() {
+		AppConfig.client().update(this);
+	}
+
+	public String create() {
+		Revision r = AppConfig.client().create(this);
+		if (r != null) {
+			setId(r.getId());
+			setTimestamp(r.getTimestamp());
+			return r.getId();
+		}
+		return null;
 	}
 
 	public boolean equals(Object obj) {

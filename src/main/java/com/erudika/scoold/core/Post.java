@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013-2017 Erudika. https://erudika.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For issues and patches go to: https://github.com/erudika
  */
 
 package com.erudika.scoold.core;
@@ -10,16 +23,13 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
-import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.AppConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,7 +48,6 @@ public abstract class Post extends Sysprop {
 	@Stored private String closerid;
 	@Stored private Long answercount;
 	@Stored private Long lastactivity;
-	@Stored private Boolean deleteme;
 	@Stored private String lasteditby;
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
@@ -54,7 +63,6 @@ public abstract class Post extends Sysprop {
 		this.viewcount = 0L;
 		this.commentcount = 0L;
 		this.pagenum = 0L;
-		this.deleteme = false;
 	}
 
 	public Long getPagenum() {
@@ -73,6 +81,7 @@ public abstract class Post extends Sysprop {
 		this.deletereportid = deletereportid;
 	}
 
+	@JsonIgnore
 	public Form getEditForm() {
 		return editForm;
 	}
@@ -87,14 +96,6 @@ public abstract class Post extends Sysprop {
 
 	public void setLasteditby(String lasteditby) {
 		this.lasteditby = lasteditby;
-	}
-
-	public Boolean getDeleteme() {
-		return deleteme;
-	}
-
-	public void setDeleteme(Boolean deleteme) {
-		this.deleteme = deleteme;
 	}
 
 	public Long getLastactivity() {
@@ -150,11 +151,11 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void setTitle(String title) {
-		if (StringUtils.trimToNull(title) == null) return;
-		title = title.replaceAll("\\p{S}", "");
-		title = title.replaceAll("\\p{C}", "");
-		this.title = title;
-		setName(title);
+		title = Utils.stripAndTrim(title);
+		if (!StringUtils.isBlank(title)) {
+			this.title = title;
+			setName(title);
+		}
 	}
 
 	public String getBody() {
@@ -175,15 +176,12 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String create() {
-		if (getRevisionid() == null && canHaveRevisions()) {
-			//create initial revision = simply create a copy
-			setRevisionid(Revision.createRevisionFromPost(this, true).create());
-		}
-		if (getTags() != null) {
-			createTags(new HashSet<String>(getTags()));
-		}
 		Post p = AppConfig.client().create(this);
 		if (p != null) {
+			if (canHaveRevisions()) {
+				setRevisionid(Revision.createRevisionFromPost(p, true).create());
+			}
+			createTags();
 			setId(p.getId());
 			setTimestamp(p.getTimestamp());
 			return p.getId();
@@ -194,15 +192,14 @@ public abstract class Post extends Sysprop {
 	public void update() {
 		updateLastActivity();
 		if (canHaveRevisions()) {
-			setRevisionid(Revision.createRevisionFromPost(this, true).create());
+			setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		}
-		createTags(new HashSet<String>(getTags()));
+		createTags();
 		AppConfig.client().update(this);
 	}
 
 	public void delete() {
 		// delete post
-		AppConfig.client().delete(this);
 		ArrayList<ParaObject> children = new ArrayList<ParaObject>();
 		ArrayList<String> ids = new ArrayList<String>();
 		// delete Comments
@@ -222,28 +219,29 @@ public abstract class Post extends Sysprop {
 			ids.add(child.getId());
 		}
 		AppConfig.client().deleteAll(ids);
+		AppConfig.client().delete(this);
 	}
 
-
-	private void createTags(Set<String> newTags) {
-		if (newTags == null) return;
-		for (String ntag : newTags) {
-			ntag = StringUtils.trimToEmpty(ntag);
-			Tag t = new Tag(ntag);
-			// create tag if it doesn't exist
-			if (!StringUtils.isBlank(ntag) && AppConfig.client().getCount(Utils.type(Tag.class),
-					Collections.singletonMap(Config._ID, t.getId())) == 0) {
-				t.create();
+	private void createTags() {
+		if (getTags() == null) return;
+		ArrayList<Tag> tags = new ArrayList<Tag>();
+		for (String ntag : getTags()) {
+			Tag t = new Tag(StringUtils.trimToEmpty(ntag));
+			if (!StringUtils.isBlank(ntag) && AppConfig.client().findTags(t.getId()).isEmpty()) {
+				tags.add(t);
 			}
 		}
+		AppConfig.client().createAll(tags);
 	}
 
 	public static <P extends Post> void readAllCommentsForPosts(List<P> list, int maxPerPage) {
-		for (P post : list) {
-			Pager page = new Pager(post.getPagenum(), null, true, 5);
-			List<Comment> commentz = AppConfig.client().getChildren(post, Utils.type(Comment.class), page);
-			post.setComments(commentz);
-			post.setPagenum(page.getPage());
+		if (list != null) {
+			for (P post : list) {
+				Pager page = new Pager(post.getPagenum(), null, true, 5);
+				List<Comment> commentz = AppConfig.client().getChildren(post, Utils.type(Comment.class), page);
+				post.setComments(commentz);
+				post.setPagenum(page.getPage());
+			}
 		}
 	}
 
@@ -301,6 +299,9 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public List<Reply> getAnswers(Pager pager) {
+		if (isReply()) {
+			return Collections.emptyList();
+		}
 		return AppConfig.client().getChildren(this, Utils.type(Reply.class), pager);
 	}
 
@@ -320,26 +321,15 @@ public abstract class Post extends Sysprop {
 	}
 
 	@JsonIgnore
-	public boolean isBlackboard() {
-		return this instanceof Blackboard;
-	}
-
-	@JsonIgnore
 	public boolean isFeedback() {
 		return this instanceof Feedback;
-	}
-
-	@JsonIgnore
-	public boolean isGrouppost() {
-		return this instanceof Grouppost;
 	}
 
 	public void updateLastActivity() {
 		setLastactivity(System.currentTimeMillis());
 	}
 
-	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink,
-			String grouplink, String grouppostlink, String classeslink, String classlink) {
+	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink) {
 		Post p = this;
 		if (p == null) return "/";
 		String ptitle = Utils.noSpaces(p.getTitle(), "-");
@@ -348,16 +338,11 @@ public abstract class Post extends Sysprop {
 			return plural ? questionslink : questionlink + pid;
 		} else if (p.isFeedback()) {
 			return plural ? feedbacklink : feedbacklink + pid;
-		} else if (p.isGrouppost()) {
-			return plural ? grouplink+"/"+p.getParentid() : grouppostlink + pid;
 		} else if (p.isReply()) {
 			Post parentp = AppConfig.client().read(p.getParentid());
 			if (parentp != null) {
-				return parentp.getPostLink(plural, noid, questionslink, questionlink,
-						feedbacklink, grouplink, grouppostlink, classeslink, classlink);
+				return parentp.getPostLink(plural, noid, questionslink, questionlink, feedbacklink);
 			}
-		} else if (p.isBlackboard()) {
-			return plural ? classeslink : classlink + (noid ? "" : "/" + p.getParentid());
 		}
 		return "";
 	}
@@ -374,6 +359,9 @@ public abstract class Post extends Sysprop {
 			return false;
 		}
 		if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+			return false;
+		}
+		if ((getTags() == null) ? (other.getTags() != null) : !getTags().equals(other.getTags())) {
 			return false;
 		}
 		return true;
