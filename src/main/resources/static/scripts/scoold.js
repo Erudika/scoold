@@ -3,7 +3,7 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, lang: false */
+/*global window: false, jQuery: false, $: false, lang, google: false */
 $(function () {
 	"use strict";
 	var ajaxpath = window.location.pathname,
@@ -24,22 +24,29 @@ $(function () {
 
 	function initMap(elem) {
 		var geocoder = new google.maps.Geocoder(),
-			myLatlng = new google.maps.LatLng(42.6975, 23.3241),
 			marker = new google.maps.Marker({}),
-			locbox = $("input.locationbox"),
-			locality = "",
-			sublocality = "",
-			country = "",
+			locbox = $("input.locationbox:first"),
+			latlngbox = $("input.latlngbox:first"),
 			mapElem = elem || mapCanvas.get(0),
 			mapZoom = 3,
-			mapMarker = new google.maps.Marker({visible: false}),
-			map = new google.maps.Map(mapElem, {
+			mapMarker = new google.maps.Marker({visible: false});
+
+		var myLatlng = new google.maps.LatLng(42.6975, 23.3241);
+		if (latlngbox.length && latlngbox.val().length > 5) {
+			var ll = latlngbox.val().split(",");
+			myLatlng = new google.maps.LatLng(ll[0], ll[1]);
+			mapZoom = 10;
+		}
+		var map = new google.maps.Map(mapElem, {
 					zoom: mapZoom,
 					center: myLatlng,
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
 					mapTypeControl: false,
 					streetViewControl: false
 			});
+
+		marker.setPosition(myLatlng);
+		marker.setMap(map);
 
 		if (locbox.length && $.trim(locbox.val()) !== "") {
 			geocoder.geocode({address: locbox.val()}, function(results, status) {
@@ -54,9 +61,10 @@ $(function () {
 		}
 
 		google.maps.event.addListener(map, 'click', function(event) {
-			map.setCenter(event.latLng);
+//			map.setCenter(event.latLng);
 			marker.setPosition(event.latLng);
 			marker.setMap(map);
+			latlngbox.val(event.latLng.lat() + "," + event.latLng.lng());
 
 			geocoder.geocode({location: event.latLng}, function(results, status) {
 				if (status !== google.maps.GeocoderStatus.OK) {
@@ -101,102 +109,22 @@ $(function () {
 		});
 	}
 
-	if (mapCanvas.length) {
-		if (mapCanvas.is(":visible")) {
-			initMap();
-		}
+	if (mapCanvas.length && mapCanvas.is(":visible")) {
+		initMap();
 	}
 
-	$(".map-div-toggle").click(function() {
-		if (mapCanvas.is(":visible")) {
-			mapCanvas.html("").hide(0, initMap);
-		} else {
-			mapCanvas.show(0, initMap);
+	try {
+		if (typeof userip !== "undefined" && userip !== "" && userip !== "127.0.0.1") {
+			$.getJSON(ipdburl + userip, function(data) {
+				if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
+					var found = data.cityName + ", " + data.countryName;
+					found = found.toLowerCase();
+					localStorage.setItem("scoold-country", data.countryCode);
+				}
+			});
 		}
-		return false;
-	});
+	} catch(err) {}
 
-	(function getLocation() {
-		try {
-			if (typeof userip !== "undefined" && userip !== "" && userip !== "127.0.0.1") {
-				$.getJSON(ipdburl + userip, function(data) {
-					if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
-						var found = data.cityName + ", " + data.countryName;
-						found = found.toLowerCase();
-						localStorage.setItem("scoold-country", data.countryCode);
-					}
-				});
-			}
-		} catch(err) {}
-	}());
-
-	/****************************************************
-     *            FACEBOOK API FUNCTIONS
-     ****************************************************/
-
-	var fbauthurl = "signin";
-
-//	if ($("#fb-login").length) {
-//		FB.Event.subscribe('auth.login', function(response) {
-//			if (response.status === 'connected') {
-//				window.location = fbauthurl;
-//			}
-//		});
-//	}
-
-	$("#fb-login-btn").click(function() {
-//		var origin = window.location.protocol + "//" + window.location.hostname +
-//				(window.location.port ? ":" + window.location.port : "");
-//		var fbAction = "https://www.facebook.com/dialog/oauth?response_type=code" +
-//				"&client_id=99517177417&scope=email&state=" + (new Date().getTime()) +
-//				"&redirect_uri=" + origin + "/signin";
-//		window.location = fbAction;
-
-		FB.login(function(response) {
-			if (response.authResponse) {
-				window.location = "/signin?access_token=" + response.authResponse.accessToken;
-			} else {
-				window.location = "/signin?code=3&error=true";
-			}
-		}, {scope: 'public_profile,email'});
-		return false;
-	});
-
-	var fbPicture = $("#fb-picture"),
-		fbName = $("#fb-name"),
-		fbNames = $(".fb-name");
-
-//	if (fbPicture.length) {
-//		FB.getLoginStatus(function(response) {
-//			if (response.status === 'connected') {
-//				FB.api({
-//					method: 'fql.query',
-//					query: 'SELECT uid, name, pic_small, email FROM user WHERE uid=' + response.authResponse.userID
-//				}, function(response) {
-//					var user = response[0];
-//					fbPicture.html('<img src="' + user.pic_small + '" alt="'+user.name+'"/>');
-//					$('input.fb-name-box').val(user.name);
-//					$('input.fb-email-box').val(user.email);
-//				});
-//			}
-//		});
-//	}
-//
-//	if (fbName.length) {
-//		FB.api('/' + fbName.text().substr(3), function(response) {
-//			fbName.text(response.name + " (" + response.username + ")");
-//		});
-//	}
-//
-//	if (fbNames.length) {
-//		FB.api({
-//			method: 'fql.query',
-//			query: 'SELECT name, pic_small, url FROM profile WHERE id=' + fbNames.text()
-//		}, function(response) {
-//			var user = response[0];
-//			fbNames.text(user.name);
-//		});
-//	}
 
 	/****************************************************
      *					MISC FUNCTIONS
@@ -417,7 +345,7 @@ $(function () {
 		if (!hdiv.length) {
 			hdiv = that.closest("div").find("div:first");
 		}
-		hdiv.slideToggle("fast").find("input[type=text]:first, textarea:first").focus();
+		hdiv.toggleClass("hide").find("input[type=text]:first, textarea:first").focus();
 		return false;
 	});
 
@@ -549,20 +477,6 @@ $(function () {
 	});
 
 	/****************************************************
-     *                    SETTINGS
-     ****************************************************/
-
-	 $(".delopenid").click(function() {
-		 var that = $(this);
-		 return areYouSure(function() {
-			$.post(that.attr("href"));
-			that.closest("tr").fadeOut(function() {
-				that.remove();
-			}).siblings("tr").find(".delopenid").hide();
-		 }, rusuremsg, false);
-	 });
-
-	/****************************************************
      *                    PROFILE
      ****************************************************/
 
@@ -572,46 +486,24 @@ $(function () {
 //		dis.find("input.canceledit").click();
 //	});
 
-	/****************************************************
-     *               CONTACT DETAILS
-     ****************************************************/
-
-	function getDetailValue(typeRaw) {
-		var val = "";
-		if (typeRaw === "WEBSITE") {
-			val = "http://";
-		} else if (typeRaw === "FACEBOOK") {
-			val = "http://facebook.com/";
-		}
-		return val;
-	}
-
-	$(".add-contact").click(function() {
-		var txtbox = $(this).prev("input");
-		var val = txtbox.val();
-		var type = $("select#detail-type option:selected").text();
-		var typeRaw = $("select#detail-type").val();
-		if ($.trim(val) !== "") {
-			var clonable = txtbox.closest("tr").nextAll(".detailbox:hidden:first");
-			var box = clonable.clone();
-			val = val.replace(/[;,]/gi, "");
-			box.find(".contact-type").text(type+":");
-			box.find(".contact-value").text(val);
-			clonable.after(box.show());
-			txtbox.val(getDetailValue(this.value));
-			box.find("input[type='hidden']").val(typeRaw + "," + val);
-		}
-		return false;
+	$("#use-gravatar-switch").change(function () {
+		var dis = $(this);
+		var newPic = dis.is(":checked") ? $("#picture_url").next("input[type=hidden]").val() : $("#picture_url").val();
+		$("img.profile-pic:first").attr("src", newPic);
+		$.post(dis.closest("form").attr("action"), {picture: newPic});
+	});
+	$("#picture_url").on('focusout', function () {
+		var dis = $(this);
+		$("img.profile-pic:first").attr("src", dis.val());
+		$.post(dis.closest("form").attr("action"), {picture: dis.val()});
 	});
 
-	$(document).on("click", ".remove-contact",  function() {
-		$(this).closest("tr").remove();
-		return false;
+	$("img.profile-pic, #edit-picture-link").on("mouseenter touchstart", function () {
+		$("#edit-picture-link").show();
 	});
-
-	$("select#detail-type").change(function() {
-		$("#detail-value").val(getDetailValue(this.value));
-	}).change();
+	$("img.profile-pic").on("mouseleave", function () {
+		$("#edit-picture-link").hide();
+	});
 
 	/****************************************************
      *                    AUTOCOMPLETE
@@ -627,33 +519,32 @@ $(function () {
      *                    MODAL DIALOGS
      ****************************************************/
 
-//	$("div.report-dialog").jqm({
-//		trigger: ".trigger-report",
-//		onShow: function(hash) {
-//			var div = hash.w;
-//			var trigr = $(hash.t);
-//			if (typeof trigr.data("loadedForm") === "undefined") {
-//				$.get(trigr.attr("href"), function(data) {
-//					clearLoading();
-//					div.html(data);
-//					trigr.data("loadedForm", data);
-//				});
-//			} else {
-//				div.html(trigr.data("loadedForm"));
-//			}
-//			div.on("click", ".jqmClose", function() {
-//				hash.w.jqmHide();
-//				return false;
-//			});
-//			div.show();
-//		}
-//	});
-//
-//	$(document).on("click", ".trigger-report",  function() {
-//		$("div.report-dialog").jqmShow(this);
+	 $('#main-modal').modal({
+		ready: function (modal, trigger) {
+			var div = $(modal);
+			var trigr = $(trigger);
+			if (typeof trigr.data("loadedForm") === "undefined") {
+				$.get(trigr.attr("data-fetch"), function(data) {
+					clearLoading();
+					div.html(data);
+					trigr.data("loadedForm", data);
+					div.find('select').material_select();
+				});
+			} else {
+				div.html(trigr.data("loadedForm"));
+				div.find('select').material_select();
+			}
+			div.on("click", ".modal-close", function() {
+				$("#main-modal").modal("close");
+				return false;
+			});
+		},
+		complete: function () {}
+	});
+
+//	$(document).on("click", ".modal-close",  function() {
 //		return false;
 //	});
-//
 //	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
 //		$("div.report-dialog").jqmHide();
 //		clearForm(form);
@@ -971,7 +862,7 @@ $(function () {
      ************************************************************************/
 	var valobj = {highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn};
 
-	$(document).on("click touchend", "input[type=submit]",  function() {
+	$(document).on("click touchend", "input[type=submit], button[type=submit]",  function() {
 		var form = $(this).closest("form"),
 			vj = form.find("input[name=vj]").val(),
 			result = true;

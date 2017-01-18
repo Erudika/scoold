@@ -18,7 +18,6 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.User;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Post;
@@ -42,7 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 public class Search extends Base{
 
 	public String title;
-	public List<User> userlist;
+	public List<com.erudika.scoold.core.Profile> userlist;
 	public List<Post> questionlist;
 	public List<Post> feedbacklist;
 	public String url;
@@ -59,10 +58,11 @@ public class Search extends Base{
     private static final String COULD_NOT_GENERATE_FEED_ERROR = "Could not generate feed";
 
 	public Search() {
-		title = lang.get("pc.title");
+		title = lang.get("search.title");
+		addModel("searchSelected", "navbtn-hover");
 		questionlist = new ArrayList<Post>();
 		feedbacklist = new ArrayList<Post>();
-		userlist = new ArrayList<User>();
+		userlist = new ArrayList<com.erudika.scoold.core.Profile>();
 
 		questioncount = new Pager();
 		feedbackcount = new Pager();
@@ -81,13 +81,13 @@ public class Search extends Base{
 				} else if ("feedback".equals(showParam)) {
 					feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
 				} else if ("people".equals(showParam)) {
-					userlist = pc.findQuery(Utils.type(User.class), query, itemcount);
+					userlist = pc.findQuery(Utils.type(com.erudika.scoold.core.Profile.class), query, itemcount);
 				}
 				totalCount = itemcount.getCount();
 			} else {
 				questionlist = pc.findQuery(Utils.type(Question.class), query, questioncount);
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, feedbackcount);
-				userlist = pc.findQuery(Utils.type(User.class), query, usercount);
+				userlist = pc.findQuery(Utils.type(com.erudika.scoold.core.Profile.class), query, usercount);
 				totalCount = (questioncount.getCount() + feedbackcount.getCount() + usercount.getCount());
 			}
 		} else if (param("feed")) {
@@ -98,7 +98,6 @@ public class Search extends Base{
 
 				resp.setContentType(MIME_TYPE);
 				SyndFeedOutput output = new SyndFeedOutput();
-//				addModel("feedstring", output.outputString(feed));
 				output.output(feed, resp.getWriter());
 			} catch (Exception ex) {
 				logger.error(COULD_NOT_GENERATE_FEED_ERROR, ex);

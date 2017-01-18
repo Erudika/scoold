@@ -8,6 +8,9 @@ body {
 	word-spacing: normal;
 	letter-spacing: 0;
 }
+p {font-size: 1.2em;}
+.em3v{margin: 3rem 0 3rem 0;}
+.em5v{margin: 5rem 0 5rem 0;}
 /* --- DIVS --- */
 /*
 #main {
@@ -656,6 +659,14 @@ main {
 .scoold-user-dropdown {
 	height: 63px;
 	padding: 7px 2px 7px 7px;
+}
+#edit-picture-link {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	padding: 10px 15px;
+	background-color: white;
+	display: none;
 }
 
 /*

@@ -23,7 +23,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Question;
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile.Badge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,15 +42,17 @@ public class Questions extends Base{
 
 	public Questions() {
 		title = lang.get("home.title");
-		addModel("questionsSelected", "navbtn-hover");
 
 		if (param("ask") && !isAjaxRequest()) {
 			if (!authenticated) {
 				setRedirect(signinlink);
 			} else {
+				addModel("askSelected", "navbtn-hover");
 				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
 				qForm = getQuestionForm();
 			}
+		} else {
+			addModel("questionsSelected", "navbtn-hover");
 		}
 	}
 

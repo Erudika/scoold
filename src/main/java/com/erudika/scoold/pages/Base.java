@@ -32,8 +32,8 @@ import com.erudika.scoold.core.Language;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Report.ReportType;
-import com.erudika.scoold.core.ScooldUser;
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.utils.AppConfig;
 import com.erudika.scoold.utils.LanguageUtils;
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class Base extends Page {
 	public String infoStripMsg = "";
 	public boolean authenticated;
 	public boolean canComment;
-	public ScooldUser authUser;
+	public Profile authUser;
 	public List<Comment> commentslist;
 	public List<String> badgelist;
 	public Pager itemcount;
@@ -141,7 +141,7 @@ public class Base extends Page {
 		checkAuth();
 		cdnSwitch();
 		showParam = getParamValue("show");
-		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.isModerator());
+		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.getUser().isModerator());
 		addModel("userip", req.getRemoteAddr());
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
@@ -186,20 +186,16 @@ public class Base extends Page {
 				User u = pc.me(getStateParam(Config.AUTH_COOKIE));
 				if (u != null) {
 					HOMEPAGE = profilelink;
-					authUser = pc.read(ScooldUser.id(u.getId()));
+					authUser = pc.read(Profile.id(u.getId()));
 					if (authUser == null) {
-						authUser = new ScooldUser(u.getId(), u.getEmail(), u.getName());
+						authUser = new Profile(u.getId(), u.getName());
+						authUser.setPicture(u.getPicture());
 						authUser.setAppid(u.getAppid());
 						authUser.setCreatorid(u.getId());
 						authUser.setTimestamp(u.getTimestamp());
 						authUser.setLastseen(u.getUpdated());
-						authUser.setGroups(u.getGroups());
-						authUser.setIdentifier(u.getIdentifier());
-						authUser.setPicture(u.getPicture());
 						authUser.create();
 					}
-					authUser.setGroups(u.getGroups());
-					authUser.setPicture(u.getPicture());
 					authUser.setUser(u);
 					Utils.removeStateParam("intro", req, resp);
 					infoStripMsg = "";
@@ -478,7 +474,7 @@ public class Base extends Page {
 
 		if (votable != null && authenticated) {
 			try {
-				ScooldUser author = pc.read(votable.getCreatorid());
+				Profile author = pc.read(votable.getCreatorid());
 				votes = (Integer) PropertyUtils.getProperty(votable, "votes");
 
 				if (param("voteup")) {
@@ -603,7 +599,7 @@ public class Base extends Page {
 	}
 
 	public boolean inRole(String role) {
-		return req.isUserInRole(role);
+		return authUser != null && authUser.getUser().getGroups().equals(role);
 	}
 
 	public final boolean addBadgeOnce(Badge b, boolean condition) {
@@ -614,7 +610,7 @@ public class Base extends Page {
 		return addBadge(b, null, condition);
 	}
 
-	public final boolean addBadge(Badge b, ScooldUser u, boolean condition) {
+	public final boolean addBadge(Badge b, Profile u, boolean condition) {
 		if (u == null) u = authUser;
 		if (!authenticated || !condition) return false;
 
@@ -628,7 +624,7 @@ public class Base extends Page {
 		return true;
 	}
 
-	public final boolean removeBadge(Badge b, ScooldUser u, boolean condition) {
+	public final boolean removeBadge(Badge b, Profile u, boolean condition) {
 		if (u == null) u = authUser;
 		if (!authenticated || !condition) return false;
 

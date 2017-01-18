@@ -33,7 +33,7 @@
 			</div>
 
 			#set($langkey = $!langkeys.get($showIndex))
-			<div class="p100 mvl center mediumText lightborder pvs">$!deflang.get($!langkey)</div>
+			<div class="mvl center mediumText lightborder pvs">$!deflang.get($!langkey)</div>
 
 			<div id="translations">
 				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.count "" "pageless")
@@ -46,7 +46,7 @@
 					<form method="post" class="new-translation-form" action="${thisuri}">
 						<fieldset>
 							#sectoken(false)
-							<textarea rows="2" cols="3" name="value" class="nicebox p100"></textarea>
+							<textarea rows="2" cols="3" name="value"></textarea>
 							<input type="hidden" name="gettranslationhtmlcode" value="true"/>
 							<div class="center mtm">
 								<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="btn waves-effect waves-light"/> &nbsp;
@@ -84,7 +84,7 @@
 		#else
 			<div class="center">
 				#foreach($!langKey in $!langkeys)
-					<div class="p30 inlineblock mrl l pvs">
+					<div class="mrl l pvs">
 						#if ($isTranslated)
 							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
 						#end

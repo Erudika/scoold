@@ -32,6 +32,7 @@ public class Tags extends Base {
 
     public Tags() {
         title = lang.get("tags.title");
+		addModel("tagsSelected", "navbtn-hover");
     }
 
 	public void onGet() {

@@ -43,12 +43,12 @@
 			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span class="report-solution-text">$!showreport.solution</span></p>
 		</div>
 
-		<div class="hide report-solution-box p100 mtm center">
+		<div class="hide report-solution-box mtm center">
 			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
 				<fieldset>
 					#sectoken(false)
-					<textarea name="solution" cols="10" rows="1" class="nicebox p100 hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
-					<input class="report-solution-btn" type="submit" value="$!lang.get('save') &amp; $!lang.get('close')" class="btn waves-effect waves-light"/>
+					<textarea name="solution" cols="10" rows="1" class="hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+					<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
 				</fieldset>
 			</form>
 		</div>

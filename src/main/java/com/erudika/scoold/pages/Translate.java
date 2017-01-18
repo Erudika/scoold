@@ -19,8 +19,8 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.Translation;
 import com.erudika.para.utils.Config;
-import com.erudika.scoold.core.ScooldUser;
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Profile.Badge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -118,11 +118,14 @@ public class Translate extends Base{
 			Translation trans = (Translation) pc.read(id);
 			if (trans != null) {
 				if (trans.isApproved()) {
-					trans.disapprove();
+					trans.setApproved(false);
+					langutils.disapproveTranslation(trans.getAppid(), trans.getLocale(), trans.getId());
 				} else {
-					trans.approve();
-					addBadge(Badge.POLYGLOT, (ScooldUser) pc.read(trans.getCreatorid()), true);
+					trans.setApproved(true);
+					langutils.approveTranslation(trans.getAppid(), trans.getLocale(), trans.getThekey(), trans.getValue());
+					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true);
 				}
+				trans.update();
 			}
 			if (!isAjaxRequest())
 				setRedirect(translatelink+"/"+showLocale.getLanguage()+"/"+(showIndex+1));
@@ -131,7 +134,7 @@ public class Translate extends Base{
 			if (id != null) {
 				Translation t = (Translation) pc.read(id);
 				if (authUser.getId().equals(t.getCreatorid()) || inRole("admin")) {
-					t.disapprove();
+					langutils.disapproveTranslation(t.getAppid(), t.getLocale(), t.getId());
 					t.delete();
 				}
 				if (!isAjaxRequest())

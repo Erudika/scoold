@@ -18,7 +18,7 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.utils.AppConfig;
 
 /**

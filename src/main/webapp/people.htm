@@ -1,22 +1,13 @@
-<div class="line">
-	<a href="$peoplelink?find=true" class="btn right next-div-toggle" title="Find a person">$!{lang.get('search.people')}</a>
+<div class="ptl">
+	<div class="right ptl mtl">
+		#set($sortarr = {'rep': "", 'newest': ""} )
+		#setsortbyselection($sortarr 'newest')
+		<div class="mvm">
+			<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
+			<a href="$peoplelink/reputation" class="chip $sortarr.rep">$!lang.get("reputation")</a>
+		</div>
+	</div>
 	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>
-	#if ($request.getParameter("find"))	#set($hide = "" ) #else #set($hide = "hide" ) #end
-	<div class="center ${hide}">
-		<form method="get" action="$context/profile/">
-			<fieldset>
-				<input type="text" class="nicebox personbox p99" value="" name="name"/>
-				<input type="hidden" name="id" value=""/>
-			</fieldset>
-		</form>
-	</div>
 	<hr/>
-
-	#set($sortarr = {'rep': "", 'newest': ""} )
-	#setsortbyselection($sortarr 'newest')
-	<div class="mvm">
-		<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-		<a href="$peoplelink/reputation" class="chip $sortarr.rep">$!lang.get("reputation")</a>
-	</div>
-	#paginate($pagenum.longValue() "\#peoplepage(\$userlist)" $itemcount.count "" "pageless")
+	#paginate($pagenum "\#peoplepage(\$userlist)" $itemcount.count "" "pageless")
 </div>

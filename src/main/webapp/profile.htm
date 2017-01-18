@@ -2,32 +2,61 @@
 	<div class="col m4">
 		<div class="card">
 			<div class="card-image">
-				<img src="#profilepic($showUser)" alt="Profile picture" class="profile-pic" width="200"/>
+				<img src="#profilepic($showUser)" alt="Profile picture" class="profile-pic">
 				<span class="card-title">
 					#if($showUser.identifier.startsWith("gp"))
-						<i class="fa fa-google fa-4x"></i>
+						<i class="fa fa-google fa-2x"></i>
 					#else
-						<i class="fa fa-facebook fa-4x"></i>
+						<i class="fa fa-facebook fa-2x"></i>
 					#end
 				</span>
 			</div>
 			<div class="card-content center-align">
-				<div class="largeText">$!{showUser.name}</div>
-				<div title="$!lang.get('reputation')">
-					<span class="chip largeText reputationbox phl">$!showUser.votes</span> &nbsp;&nbsp;
-					<span class="largeText">
-						#if($showUser.badges && $showUser.badges.length > 2) $showUser.badges.split(",").length $!lang.get('badges.title') #end
-					</span>
+				#if ($canEdit)
+				<a id="edit-picture-link" href="#" class="editlink"><i class="fa fa-image"></i> $!lang.get('profile.changepic')</a>
+				<div class="pal editbox hide">
+					<a href="#" class="canceledit right"><i class="fa fa-close"></i></a>
+					<form action="$profilelink/$!authUser.creatorid" method="post">
+						<div class="input-field">
+							<label for="picture_url">URL</label>
+							<input id="picture_url" type="url" name="picture" value="$!showUser.picture">
+							<input type="hidden" value="$!gravatarPicture"/>
+						</div>
+						<div class="switch right">
+							<label>
+								$!lang.get('off')
+								#if($showUser.picture.contains("gravatar"))
+								<input id="use-gravatar-switch" type="checkbox" name="gravatar" checked="checked">
+								#else
+								<input id="use-gravatar-switch" type="checkbox" name="gravatar">
+								#end
+								<span class="lever"></span>
+								$!lang.get('on')
+							</label>
+						</div>
+						<span class="mediumText">$!lang.get('profile.usegravatar')</span>
+					</form>
+				</div>
+				#end
+				<div class="viewbox">
+					<span class="largeText">$!{showUser.name}</span>
+					<div title="$!lang.get('reputation')">
+						<span class="chip largeText reputationbox phl">$!showUser.votes</span> &nbsp;&nbsp;
+						<span class="largeText">
+							#if($showUser.badges && $showUser.badges.length() > 2)
+							$showUser.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i> #end
+						</span>
+					</div>
 				</div>
 			</div>
 			#if($showUser.website && !$showUser.website.isEmpty())
-				<div class="card-action truncate">
-					<a href="$!showUser.website">$!showUser.website</a>
+				<div class="card-action center-align truncate">
+					<a href="$!showUser.website" class="blue-text">$!showUser.website</a>
 				</div>
 			#end
 		</div>
 		#if (!$isMyProfile && $authenticated)
-		<div class="mvm">
+		<div class="mvm center-align">
 			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
 			#if ($showUser.isAdmin())
 				#if ($showUser.isModerator())
@@ -35,7 +64,7 @@
 				#else
 					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip rusure">Make mod</a>
 				#end
-				<a href="${adminlink}?delete=user&amp;id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
+				<a href="${adminlink}?delete=user&id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
 					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")
 				</a>
 			#end
@@ -43,8 +72,9 @@
 		#end
 	</div>
 
-	<div class="col m8">
-		<div class="pll">
+	<div class="col m1"></div>
+	<div class="col m7">
+		<div>
 			<div class="row">
 				<div class="col m8">
 					<h2>$!{lang.get("profile.about.title")}</h2>
@@ -73,38 +103,51 @@
 					<h4 class="black-text pbs">$!{showUser.aboutme}</h4>
 				#end
 				#if ($showUser.location && !$showUser.location.isEmpty())
-					<h4 class="black-text pvm"><i class="fa fa-map-marker"></i> $!{showUser.location}</h4>
+					<h4 class="pvs"><i class="fa fa-map-marker grey-text text-darken-1"></i>&nbsp;
+						<span class="black-text">$!{showUser.location}</span></h4>
 				#end
+					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-list grey-text text-darken-1"></i> &nbsp;
+						$qpager.count $!{lang.get("questions.title")}, $apager.count $!{lang.get("answers.title")}</h5>
 				#if ($showUser.timestamp)
-					<div class="mediumText grey-text pvm"><i class="fa fa-birthday-cake"></i>
-						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</div>
+					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-birthday-cake"></i> &nbsp;
+						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</h5>
 				#end
 				#if ($showUser.lastseen)
-					<div class="mediumText grey-text pvm"><i class="fa fa-clock-o"></i>
-						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</div>
+					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-clock-o"></i> &nbsp;
+						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</h5>
+				#end
+
+				#set($badges = $showUser.badgesMap)
+				#if (!$badges.isEmpty())
+					<span class="largeText grey-text text-darken-1" title=" $!lang.get('badges.title')"><i class="fa fa-star"></i>&nbsp;</span>
+					#foreach($entry in $badges.entrySet())
+					#set($badge = $entry.key)
+					#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
+					#badgebox($badge $entry.value)
+					#end
 				#end
 			</div>
 
 			#if ($canEdit)
 			<div id="about-edit" class="editbox lightgraybg pal ${hideedit1}">
-				<form method="post" id="about-edit-form" action="$profilelink/$authUser.creatorid">
+				<form method="post" id="about-edit-form" action="$profilelink/$!authUser.creatorid">
 					#sectoken(false)
 					<div class="input-field">
 						<i class="fa fa-user-circle prefix"></i>
 						<label for="name_text">$!{lang.get("profile.name")}</label>
-						<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}"/>
+						<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}">
 					</div>
 
 					<div class="input-field">
 						<i class="fa fa-map-marker prefix"></i>
 						<label for="location_text">$!{lang.get("profile.about.location")}</label>
-						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"/>
+						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}">
 					</div>
 
 					<div class="input-field">
 						<i class="fa fa-globe prefix"></i>
 						<label for="website_text">$!lang.get("website")</label>
-						<input id="website_text" name="website" type="url" value="$!{showUser.website}"/>
+						<input id="website_text" name="website" type="url" value="$!{showUser.website}">
 					</div>
 
 					<div class="input-field">
@@ -113,8 +156,8 @@
 					</div>
 
 					<div class="center mtl">
-						<input type="submit" value="$!{lang.get('save')}" class="btn waves-effect waves-light"/>
-						<input type="button" value="$!{lang.get('close')}" class="btn waves-effect waves-light canceledit ${hideview1}"/>
+						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
+						<input type="button" value="$!{lang.get('close')}" class="btn waves-effect waves-light canceledit ${hideview1}">
 						<a href="$profilelink/$authUser.creatorid" class="${hideedit1}">$!{lang.get('close')}</a>
 					</div>
 				</form>
@@ -125,28 +168,7 @@
 </div>
 
 <div class="row">
-	<div class="col m4 s12 center-align">
-		<h3 class="black-text">
-			$qpager.count $!{lang.get("questions.title")}
-		</h3>
-		<h3 class="black-text">
-			$apager.count $!{lang.get("answers.title")}
-		</h3>
-
-		#set($badges = $showUser.badgesMap)
-		<h3 class="black-text">$!lang.get("badges.title") #showcount($!badges.size())</h3>
-		#if (!$badges.isEmpty())
-		<h2></h2>
-		<div class="mvl">
-			#foreach($entry in $badges.entrySet())
-			#set($badge = $entry.key)
-			#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
-			#badgebox($badge $entry.value)
-			#end
-		</div>
-		#end
-	</div>
-	<div class="col m8 s12">
+	<div class="col m6 s12">
 		<h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
 
 		<div id="questions-edit">
@@ -156,7 +178,8 @@
 				#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
 			#end
 		</div>
-
+	</div>
+	<div class="col m6 s12">
 		<h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
 
 		<div id="answers-edit">
@@ -169,3 +192,6 @@
 	</div>
 </div>
 
+<script>
+
+</script>

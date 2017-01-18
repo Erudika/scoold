@@ -20,11 +20,11 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.User;
 import com.erudika.scoold.core.Post;
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile.Badge;
 import static com.erudika.para.core.User.Groups.*;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Pager;
-import com.erudika.scoold.core.ScooldUser;
+import com.erudika.para.utils.Utils;
 import java.util.List;
 
 /**
@@ -36,10 +36,11 @@ public class Profile extends Base{
     public String title;
     public boolean isMyProfile;
 	public boolean canEdit;
-	public ScooldUser showUser;
+	public com.erudika.scoold.core.Profile showUser;
 	public List<User> contactlist;
 	public List<? extends Post> questionslist;
 	public List<? extends Post> answerslist;
+	public String gravatarPicture;
 	public Pager qpager;
 	public Pager apager;
 
@@ -48,13 +49,13 @@ public class Profile extends Base{
 		canEdit = false;
 		qpager = new Pager();
 		apager = new Pager();
-		
+
 		if (!authenticated && !param("id")) {
 			setRedirect(HOMEPAGE);
 			return;
 		}
 
-		String showuid = ScooldUser.id(param("id") ? getParamValue("id") : authUser.getId());
+		String showuid = com.erudika.scoold.core.Profile.id(param("id") ? getParamValue("id") : authUser.getId());
 
 		if (isMyid(showuid)) {
 			//requested userid !exists or = my userid => show my profile
@@ -77,6 +78,7 @@ public class Profile extends Base{
 		title = lang.get("profile.title") + " - " + showUser.getName();
 		questionslist = showUser.getAllQuestions(qpager);
 		answerslist = showUser.getAllAnswers(apager);
+		gravatarPicture = "https://www.gravatar.com/avatar/" + Utils.md5(showUser.getUser().getEmail()) + "?size=400&d=mm";
 
 		if (param("getsmallpersonbox")) {
 			addModel("showAjaxUser", showUser);
@@ -85,11 +87,10 @@ public class Profile extends Base{
 
     public void onGet() {
 		if (!authenticated || showUser == null) return;
-
 		if (!isMyProfile) {
-			if (param("makemod") && inRole("admin") && !showUser.isAdmin()) {
-				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !showUser.isModerator();
-				showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
+			if (param("makemod") && inRole("admin") && !showUser.getUser().isAdmin()) {
+				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !showUser.getUser().isModerator();
+				showUser.getUser().setGroups(makemod ? MODS.toString() : USERS.toString());
 				showUser.update();
 			}
 		}
@@ -97,13 +98,34 @@ public class Profile extends Base{
 
     public void onPost() {
 		if (canEdit) {
-			showUser.setName(getParamValue("name"));
-			showUser.setLocation(getParamValue("location"));
-			showUser.setWebsite(getParamValue("website"));
-			showUser.setAboutme(getParamValue("aboutme"));
-			addBadgeOnce(Badge.NICEPROFILE, showUser.isComplete() && isMyid(showUser.getId()));
-			showUser.update();
+			boolean update = false;
 
+			if (param("name")) {
+				showUser.setName(getParamValue("name"));
+				update = true;
+			}
+			if (param("location")) {
+				showUser.setLocation(getParamValue("location"));
+				update = true;
+			}
+			if (param("website")) {
+				showUser.setWebsite(getParamValue("website"));
+				update = true;
+			}
+			if (param("aboutme")) {
+				showUser.setAboutme(getParamValue("aboutme"));
+				update = true;
+			}
+			if (param("picture") && !getParamValue("picture").equals(showUser.getUser().getPicture())) {
+				showUser.setPicture(getParamValue("picture"));
+				update = true;
+			}
+
+			addBadgeOnce(Badge.NICEPROFILE, showUser.isComplete() && isMyid(showUser.getId()));
+
+			if (update) {
+				showUser.update();
+			}
 			if (!isAjaxRequest())
 				setRedirect(profilelink); //redirect after post
 		}

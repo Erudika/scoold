@@ -15,6 +15,7 @@
 	<link href="$ilink/logosq.png" rel="image_src"/>
 	<link href="$ilink/logosq.png" rel="apple-touch-icon"/>
 	<link href="$ilink/favicon.ico" rel="shortcut icon"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" media="screen"/>
 	#if ($showdesc && !$showdesc.isEmpty())
 		<meta name="description" content="$showdesc"/>
@@ -55,12 +56,12 @@ ${clickform.fields.form_name}
 			#sectoken(false)
 			<div class="line">
 				<div class="unit size4of5">
-					<textarea rows="2" cols="4" class="p100 nicebox" name="comment"></textarea>
+					<textarea rows="2" cols="4" name="comment"></textarea>
 					<input type="hidden" name="parentid" value="$!parentid"/>
 					<input type="hidden" name="getcommenthtmlcode" value="true"/>
 				</div>
 				<div class="unit size1of5  center">
-					<input type="submit" value="$!lang.get('add')" class="btn waves-effect waves-light new-comment-btn"/>
+					<button type="submit" class="btn waves-effect waves-light new-comment-btn">$!lang.get('add')</button>
 				</div>
 			</div>
 		</fieldset>
@@ -73,7 +74,7 @@ ${clickform.fields.form_name}
 #if ($request.getAttribute('javax.servlet.forward.query_string'))
 #set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
 #end
-#if ($thisuri.contains("?"))	#set($amp = "&amp;") #else #set($amp = "?") #end
+#if ($thisuri.contains("?"))	#set($amp = "&") #else #set($amp = "?") #end
 
 #if ($showcomment == "")	#set($hide = "hide") #else #set($hide = "")	#end
 <div class="commentbox pas ${hide}">
@@ -163,11 +164,11 @@ ${clickform.fields.form_name}
 			#renderSpecialFields($_form)
 			<div class="hide">Leave blank:</div>${_form.fields.additional}
 			<input type="hidden" name="ask" value="true"/>
-			#createformfield(${_form.fields.parentid} "nicebox p50")
-			#createformfield(${_form.fields.title} "nicebox p98")
-			#createformfield(${_form.fields.body} "edit-post nicebox p98 nicebox hidelabel")
+			#createformfield(${_form.fields.parentid} "")
+			#createformfield(${_form.fields.title} "")
+			#createformfield(${_form.fields.body} "edit-post hidelabel")
 			<div class="edit-preview"></div>
-			#createformfield(${_form.fields.tags} "tagbox nicebox p98")
+			#createformfield(${_form.fields.tags} "tagbox")
 
 			<div class="center mtl">
 				${_form.fields.askbtn} &nbsp; <a href="$!actionlink" class="btn waves-effect waves-light">$!lang.get('cancel')</a>
@@ -198,7 +199,7 @@ ${clickform.fields.form_name}
 			<div class="hide">Leave blank:</div>${_form.fields.additional}
 			<ol>
 				<li>
-					#createformfield(${_form.fields.body} "hidelabel edit-post unload-confirm p99 nicebox")
+					#createformfield(${_form.fields.body} "hidelabel edit-post unload-confirm")
 					<div class="edit-preview"></div>
 				</li>
 			</ol>
@@ -232,7 +233,7 @@ ${clickform.fields.form_name}
 #if ($pagenum && $pagenum.longValue() > 10000) #set($next = $page) #else #set($next = $page + 1) #end
 #set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
 #set($classes = "pagelink btn waves-effect waves-light")
-#if ($params && !$params.isEmpty()) #set($reqURL = "$requri?${params}&amp;page") #else #set($reqURL = "$requri?page") #end
+#if ($params && !$params.isEmpty()) #set($reqURL = "$requri?${params}&page") #else #set($reqURL = "$requri?page") #end
 
 <div class="page-content">#evaluate($macroCode)</div>
 #if ($count && $count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
@@ -250,7 +251,7 @@ ${clickform.fields.form_name}
 #if ($showFriend)
 <div class="whitebox media">
 	<div class="img mrl center">
-		<a href="$profilelink/$showFriend.id/#stripstr($showFriend.name)">
+		<a href="$profilelink/$showFriend.creatorid/#stripstr($showFriend.name)">
 			<img src="#profilepic($showFriend)" width="50" height="50" alt="Profile thumbnail"/>
 		</a>
 	</div>
@@ -265,7 +266,7 @@ ${clickform.fields.form_name}
 			<div class="unit size3of4">
 				<div class="mediumText mbs">
 					<span class="chip reputationbox" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
-					<a href="$profilelink/${showFriend.id}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+					<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 				</div>
 				#if ($showFriend.status && !$showFriend.status.isEmpty())
 				<div>$!{showFriend.status}</div>
@@ -323,7 +324,7 @@ ${clickform.fields.form_name}
 #macro(inactivepersonbox $showname $showclass)
 <div class="userbox media pas">
 	<div class="img mrm center">
-		<img src="https://www.gravatar.com/avatar/?size=50&amp;d=mm&amp;r=pg" width="50" height="50" alt="Profile picture"/>
+		<img src="https://www.gravatar.com/avatar/?size=50&d=mm&r=pg" width="50" height="50" alt="Profile picture"/>
 	</div>
 	<div class="bd">
 		<div class="smallText">
@@ -367,16 +368,18 @@ ${clickform.fields.form_name}
 #macro(getreportlink $reportable $link $clazz)
 #if ($reportable)
 #set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
-#set($href = "${requri}?getreportform=true&amp;parentid=$!reportable.id&amp;parentid=$!reportable.id&amp;type=$!reportable.class.getSimpleName()")
+#set($_href = "${requri}?getreportform=true&parentid=$!reportable.id&type=$!reportable.type")
 #if (!$link.isEmpty())
 #set($encodedLink = $utils.urlEncode($link))
-#set($href = "${href}&amp;link=$encodedLink")
+#set($_href = "${_href}&link=$encodedLink")
 #end
 #if ($reportable.parentid && !$reportable.parentid.isEmpty())
-#set($href = "${href}&amp;grandparentid=$reportable.parentid")
+#set($_href = "${_href}&grandparentid=$reportable.parentid")
 #end
 #if ($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $!lang.get('report')") #end
-<a href="$!{href}" title="Report a problem" class="trigger-report $!{clazz}"><span class="fa fa-flag"></span>$showtxt</a>
+<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
+	<span class="fa fa-flag"></span> $showtxt
+</a>
 #end
 #end
 ####################################
@@ -452,12 +455,12 @@ ${clickform.fields.form_name}
 	<div class="right p">
 		<span class="pictos">t</span> #formatdate($showpost.timestamp "")
 	</div>
-	<div class="p100">
+	<div>
 		#set($votes = $showpost.votes)
 		#if (!$votes) #set($votes = 0) #end
 
 		<span class="chip reputationbox mediumText mrl">$!votes</span>
-		<span class="p70">
+		<span>
 			<a href="$questionlink/$showpost.parentid#post-$!showpost.id" title="View answer">
 				$!utils.abbreviate($showpost.body, 100).replaceAll('\s', ' ')
 			</a>
@@ -472,7 +475,7 @@ ${clickform.fields.form_name}
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
 
-<div class="p100 postbox ${boxclass}">
+<div class="postbox ${boxclass}">
 	<div class="mbm">
 		#if ($canEdit)
 		<a href="#" title="Edit" class="editlink chip"><span class="pictos">W</span> $!lang.get("edit")</a>
@@ -499,7 +502,7 @@ ${clickform.fields.form_name}
 		#end
 
 		#if ($request.isUserInRole("admin"))
-		<a href="${adminlink}?delete=post&amp;id=$showpost.id" title="Delete" class="chip red"><span class="pictos">*</span> $!lang.get("delete")</a>
+		<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="chip red"><span class="pictos">*</span> $!lang.get("delete")</a>
 		#end
 
 		#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
@@ -579,9 +582,9 @@ ${clickform.fields.form_name}
 				#renderSpecialFields($_form)
 				<input type="hidden" name="editpostid" value="$showpost.id"/>
 				<div class="hide">Leave blank:</div>${_form.fields.additional}
-				#createformfield(${_form.fields.body} "hidelabel edit-post nicebox p99")
+				#createformfield(${_form.fields.body} "hidelabel edit-post")
 				<div class="edit-preview"></div>
-				#createformfield(${_form.fields.tags} "tagbox nicebox p99")
+				#createformfield(${_form.fields.tags} "tagbox")
 
 				<div class="center mtl">
 					${_form.fields.editbtn}
@@ -595,7 +598,7 @@ ${clickform.fields.form_name}
 
 	<div class="comments post-comments">
 		#if ($showpost && $showpost.commentcount > 0)
-		#paginate($showpost.pagenum.longValue() "\#commentspagepreview(\$showpost.comments 2)" $showpost.commentcount "getcomments=true&amp;parentid=$showpost.id" "pageless")
+		#paginate($showpost.pagenum.longValue() "\#commentspagepreview(\$showpost.comments 2)" $showpost.commentcount "getcomments=true&parentid=$showpost.id" "pageless")
 		#end
 	</div>
 </div>
@@ -643,14 +646,6 @@ ${clickform.fields.form_name}
 </div>
 #end
 ###################################
-#macro(langjs)
-#set($jslang = ["areyousure","messages.sent","messages.to","profile.contacts.added","alumnus", "teacher",
-"student","profile.status.txt","class.chat.userin",	"class.chat.userout","class.chat.connection.error",
-"class.chat.polling.error","class.chat.reconnect.error", "more","posts.unloadconfirm",
-"signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close",
-"save", "clickedit","invalidyear"])
-{#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if ($velocityCount < $jslang.size()),#end #end}#end
-###################################
 #macro(langbox $showLangKey $showLangName $progress  )
 #if ($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang") #else #set($selclass = "") #end
 <div class="mrl mbm center langbox ${selclass}">
@@ -660,7 +655,7 @@ ${clickform.fields.form_name}
 			<fieldset>
 				#sectoken(false)
 				<input type="hidden" name="setlocale" value="$!showLangKey"/>
-				<input type="submit" class="button-link capitalize" value="$showLangName"/>
+				<button type="submit" class="btn waves-effect waves-light">$showLangName</button>
 			</fieldset>
 		</form>
 		#else
@@ -688,7 +683,7 @@ ${clickform.fields.form_name}
 ###################################
 #macro(showcount $param )
 #if ($param && $param > 1)
-<span class="chip light-blue">$!param</span>
+<small class="grey-text">$!param</small>
 #end
 #end
 ################# MISC MACROS #####################
@@ -763,12 +758,11 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #end
 #####################################
 #macro(reportform $type $parentid $grandparentid $parentid $link)
-<form method="post" class="create-report-form" action="$context/?report=true">
-	<fieldset>
+<form method="post" class="create-report-form pal" action="$context/?report=true">
 		#sectoken(false)
-		<legend><span class="pictos">^</span> $!lang.get("reportproblem")</legend>
+		<h3>$!lang.get("reportproblem")</h3>
 		<label class="blocklabel">$!lang.get("reports.category")</label>
-		<select class="nicebox p100" name="type">
+		<select name="type">
 			#foreach($type in $reportTypes)
 			#if ($type.name() == "OTHER")
 			<option selected="selected" value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
@@ -777,9 +771,10 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 			#end
 			#end
 		</select>
-		<label class="blocklabel">$!lang.get("reports.description")</label>
-		<textarea class="p98 nicebox" cols="15" rows="5" name="description"></textarea>
-		<input type="hidden" name="parentid" value="$!parentid"/>
+		<div class="input-field">
+			<label>$!lang.get("reports.description")</label>
+			<textarea name="description" class="materialize-textarea"></textarea>
+		</div>
 		<input type="hidden" name="parentid" value="$!parentid"/>
 		<input type="hidden" name="type" value="$!type"/>
 		#if ($grandparentid && $grandparentid != "")
@@ -788,11 +783,10 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 		#if ($link && !$link.isEmpty())
 		<input type="hidden" name="link" value="$!link"/>
 		#end
-		<div class="center mtm">
-			<input id="sendreport-btn" type="submit" value="$!lang.get('send')" class="btn waves-effect waves-light mrm"/>
-			<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light jqmClose"/>
+		<div class="center mtl">
+			<button id="sendreport-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('send')</button>
+			<a href="#main-modal" class="btn-flat waves-effect waves-light modal-action modal-close">$!lang.get('close')</a>
 		</div>
-	</fieldset>
 </form>
 #end
 #####################################
@@ -807,7 +801,7 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #####################################
 #macro(ajaxloading $hide)
 #if ($hide) #set($hidden = "hide") #else #set($hidden = "") #end
-<img src="data:image/gif;base64,R0lGODlhEAAQAPMAAP///wAAAAAAAIKCgnJycqioqLy8vM7Ozt7e3pSUlOjo6GhoaAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAEKxDISau9OE/Bu//cQBTGgWDhWJ5XSpqoIL6s5a7xjLeyCvOgIEdDLBqPlAgAIfkECQoAAAAsAAAAABAAEAAABCsQyEmrvThPwbv/XJEMxIFg4VieV0qaqCC+rOWu8Yy3sgrzoCBHQywaj5QIACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/9xhFMlAYOFYnldKmqggvqzlrvGMt7IK86AgR0MsGo+UCAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+cghxGkQyEFY7lmVYraaKqIMpufbc0bLOzFyXGE25AyI5myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nKQgh1EkA0GFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HKUgh1EkAyGF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/nKUgh1EkAxFWY3mmK9WaqCqIJA3fbP7aOFctNpn9QEiPZslsOikRACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xymIIexEOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEJhDISau9OE/Bu/+cthBDEmZjeWKpKYikC6svGq9XC+6e5v/AICUCACH5BAkKAAAALAAAAAAQABAAAAQrEMhJq704T8G7/xy2EENSGOE1lmdqrSYqiGTsVnA7q7VOszKQ8KYpGo/ICAAh+QQJCgAAACwAAAAAEAAQAAAEMRDISau9OE/Bu/+ctRBDUhgHElZjeaYr1ZqoKogkDd9s/to4Vy02mf1ASI9myWw6KREAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/HLUQQ1IYByKF01ie6SqIpImqACu5dpzPrRoMpwPwhjLa6yYDOYuaqHRKjQAAIfkECQoAAAAsAAAAABAAEAAABDYQyEmrvThPwbv/nLQQQ1IYB0KFwFie6SqIpImq29zWMC6xLlssR3vdZEWhDwBqejTQqHRKiQAAIfkECQoAAAAsAAAAABAAEAAABDEQyEmrvThPwbv/3EIMSWEciBWO5ZlWK2miqiDKbn23NGyzsxclxhNuQMiOZslsOikRADsAAAAAAAAAAAA=" width="16" height="16" alt="loading" class="ajaxwait vertcenter $!{hidden}"/>
+<div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
 #macro(profilepic $user)${user.picture}#end

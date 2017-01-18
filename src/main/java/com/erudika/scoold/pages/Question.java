@@ -24,8 +24,8 @@ import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Report;
-import com.erudika.scoold.core.ScooldUser;
-import com.erudika.scoold.core.ScooldUser.Badge;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Profile.Badge;
 import static com.erudika.scoold.pages.Base.logger;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.Arrays;
@@ -227,7 +227,7 @@ public class Question extends Base{
 				Reply answer = (Reply) pc.read(ansid);
 
 				if (answer != null && answer.isReply()) {
-					ScooldUser author = pc.read(answer.getCreatorid());
+					Profile author = pc.read(answer.getCreatorid());
 					if (author != null && authenticated) {
 						boolean same = author.equals(authUser);
 

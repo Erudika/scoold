@@ -4,9 +4,9 @@
 	#else
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
-		<div class="right mtl ptm">
+		<div class="right mtl ptl">
 			#if (!$request.getParameter("tag") && $tagFilterOn)
-				<a href="$settingslink" class="chip green-text"> <span class="pictos">3</span> $!lang.get("settings.tagfilter")</a>
+				<a href="$settingslink" class="chip"> <span class="fa fa-check">3</span> $!lang.get("settings.tagfilter")</a>
 			#end
 			<a href="${questionslink}$!{filterparam}" class="chip $sortarr.newest">$!lang.get("newest")</a>
 			<a href="${questionslink}/votes$!{filterparam}" class="chip $sortarr.votes">$!lang.get("votes")</a>
@@ -19,22 +19,30 @@
 					<form method="get" id="filter-questions-form" action="$questionslink/filter/">
 						<fieldset>
 							TODO: filter by location
-							<input type="submit" value="$!lang.get('save')" class="btn waves-effect waves-light"/>
+							<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
 						</fieldset>
 					</form>
 				</div>
 			#end
 		</div>
-		<h3>
+		<h2>
 			#if ($request.getParameter("tag"))
 				#set($showTag = $request.getParameter("tag"))
 				$!lang.get("questions.title") / #tagsbox($showTag $questionslink)
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end
-		</h3>
+		</h2>
 		<hr/>
 
-		#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $itemcount.count "" "pageless")
+		#if ($questionslist.isEmpty())
+			<div class="card-panel hugeText center-align grey-text">
+				<div class="em5v">
+					$!{lang.get("profile.posts.noquestions")}
+				</div>
+			</div>
+		#else
+			#paginate($pagenum "\#questionspage(\$questionslist)" $itemcount.count "" "pageless")
+		#end
 	#end
 </div>

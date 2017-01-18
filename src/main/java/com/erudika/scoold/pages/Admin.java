@@ -31,7 +31,7 @@ public class Admin extends Base {
 
 	public Admin() {
 		title = lang.get("admin.title");
-		if (!authenticated || !authUser.isAdmin()) {
+		if (!authenticated || !authUser.getUser().isAdmin()) {
 			setRedirect(HOMEPAGE);
 			return;
 		}

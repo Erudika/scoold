@@ -1,58 +1,44 @@
-<div id="settings">
+<div class="ptl">
 	#if ($request.getParameter("delete"))
 		<br />
 		<br />
 		<div class="mvl">
 			<div class="center">
-				<div class="largeText">$!lang.get("settings.delete.confirm")</div>
+				<i class="fa fa-warning fa-5x"></i>
+				<h1 class="black-text">$!lang.get("settings.delete.confirm")</h1>
 				<br/>
-				<form method="post" action="$settingslink?deleteaccount=true&amp;key=$utils.md5($authUser.id.toString())">
-					<fieldset>
-						#sectoken(false)
-						<input type="submit" value="$!lang.get('delete')" class="btn waves-effect waves-light mrl red"/>  &nbsp; &nbsp; &nbsp;
-						<a href="$settingslink" title="Cancel" class="btn waves-effect waves-light">$!lang.get("cancel")</a>
-					</fieldset>
+				<form method="post" action="$settingslink?deleteaccount=true">
+					#sectoken(false)
+					<div class="input-field">
+						<button type="submit" class="btn waves-effect waves-light mrl red white-text">$!lang.get('delete')</button>
+						&nbsp; &nbsp; &nbsp;
+						<a href="$settingslink" title="Cancel" class="btn-large grey waves-effect waves-light">$!lang.get("cancel")</a>
+					</div>
 				</form>
 			</div>
 		</div>
 	#else
-		<h1><span class="pictos">y</span> $!lang.get("settings.title")</h1>
+		<h2>$!lang.get("settings.title")</h2>
 		<hr/>
+		<form method="post">
+			<p>$!lang.get('settings.location')</p>
+			<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
+			<div id="map-canvas" class="gmap center" style="height: 300px">#ajaxloading(false)</div>
 
-		<h2>$!lang.get("profile.about.location")</h2>
-		<p>$!lang.get('settings.location')</p>
-		<input name="location" class="locationbox nicebox p90" type="text" value="$!{showUser.location}"/>
-		<div id="map-canvas" class="gmap mvl center" style="height: 300px">#ajaxloading(false)</div>
-
-		<h2>$!lang.get("settings.tagfilter")</h2>
+			<p>$!lang.get("settings.tagfilter.text")</p>
+			#sectoken(false)
+			<div class="input-field">
+				<label>$!lang.get('tags.title')</label>
+				<input type="text" class="tagbox" value="$!authUser.favtagsString" name="favtags"/>
+			</div>
+			<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
+		</form>
+		<br>
+		<br>
+		<br>
 		<div class="mvl">
-			<div class="mbm">$!lang.get("settings.tagfilter.text")</div>
-			<form method="post">
-				<fieldset>
-					#sectoken(false)
-					<input type="text" class="nicebox tagbox p50" value="$!authUser.favtagsString" name="favtags"/>
-					<input type="submit" id="add-favtag-btn" value="$!lang.get('save')" class="btn waves-effect waves-light"/>
-				</fieldset>
-			</form>
+			<a href="${settingslink}?delete=true" title="" class="btn waves-effect waves-light red white-text">
+				<i class="fa fa-close"></i> $!lang.get("settings.delete")</a>
 		</div>
-
-		<h2>$!lang.get("settings.email")</h2>
-		<div class="mvl">
-			<form method="post" action="$settingslink">
-				<fieldset>
-					#sectoken(false)
-					#formvj($authUser.type ["email"])
-					<input type="text" name="email" value="$!authUser.email"  class="nicebox p50"/>
-					<input type="submit" value="$!lang.get('save')" class="btn waves-effect waves-light"/>
-				</fieldset>
-			</form>
-		</div>
-
-		<h2>$!lang.get("settings.delete")</h2>
-		<div class="mvl">
-			<div class="mbm">$!lang.get("settings.delete.text")</div>
-			<a href="${settingslink}?delete=true" title="" class="btn waves-effect waves-light redbg white"><span class="pictos">*</span> $!lang.get("settings.delete")</a>
-		</div>
-
 	#end
 </div>

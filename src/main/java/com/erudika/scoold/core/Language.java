@@ -33,7 +33,6 @@ public final class Language {
 		{
 			put("home.title", "Home");
 			put("signin.title", "Sign in");
-			put("signup.title", "Welcome to Scoold!");
 			put("about.title", "About");
 			put("search.title", "Search");
 			put("profile.title", "Profile");
@@ -96,9 +95,8 @@ public final class Language {
 			put("optional", "optional");
 			put("add", "Add");
 			put("results", "Results");
-			put("students", "Students");
-			put("teachers", "Teachers");
-			put("alumni", "Former students");
+			put("on", "on");
+			put("off", "off");
 			put("male", "Male");
 			put("female", "Female");
 			put("name", "Name");
@@ -120,29 +118,29 @@ public final class Language {
 			put("epicfail", "Epic fail!");
 			put("join", "Join");
 			put("leave", "Leave");
-			put(ScooldUser.Badge.NICEPROFILE.toString(), "Nice Profile");
-			put(ScooldUser.Badge.TESTER.toString(), "Lab Rat");
-			put(ScooldUser.Badge.REPORTER.toString(), "Reporter");
-			put(ScooldUser.Badge.VOTER.toString(), "Voter");
-			put(ScooldUser.Badge.COMMENTATOR.toString(), "Commentator");
-			put(ScooldUser.Badge.CRITIC.toString(), "Critic");
-			put(ScooldUser.Badge.SUPPORTER.toString(), "Supporter");
-			put(ScooldUser.Badge.EDITOR.toString(), "Editor");
-			put(ScooldUser.Badge.BACKINTIME.toString(), "Back in Time");
-//			put(ScooldUser.Badge.VETERAN.toString(), "Veteran");
-			put(ScooldUser.Badge.ENTHUSIAST.toString(), "Enthusiast");
-			put(ScooldUser.Badge.FRESHMAN.toString(), "Freshman");
-			put(ScooldUser.Badge.SCHOLAR.toString(), "Scholar");
-			put(ScooldUser.Badge.TEACHER.toString(), "Teacher");
-			put(ScooldUser.Badge.PROFESSOR.toString(), "Professor");
-			put(ScooldUser.Badge.GEEK.toString(), "Geek");
-			put(ScooldUser.Badge.GOODQUESTION.toString(), "Good Question");
-			put(ScooldUser.Badge.GOODANSWER.toString(), "Good Answer");
-			put(ScooldUser.Badge.EUREKA.toString(), "Eureka!");
-			put(ScooldUser.Badge.SENIOR.toString(), "Senior");
-			put(ScooldUser.Badge.NOOB.toString(), "Newbie");
-			put(ScooldUser.Badge.DISCIPLINED.toString(), "Disciplined");
-			put(ScooldUser.Badge.POLYGLOT.toString(), "Polyglot");
+			put(Profile.Badge.NICEPROFILE.toString(), "Nice Profile");
+			put(Profile.Badge.TESTER.toString(), "Lab Rat");
+			put(Profile.Badge.REPORTER.toString(), "Reporter");
+			put(Profile.Badge.VOTER.toString(), "Voter");
+			put(Profile.Badge.COMMENTATOR.toString(), "Commentator");
+			put(Profile.Badge.CRITIC.toString(), "Critic");
+			put(Profile.Badge.SUPPORTER.toString(), "Supporter");
+			put(Profile.Badge.EDITOR.toString(), "Editor");
+			put(Profile.Badge.BACKINTIME.toString(), "Back in Time");
+//			put(Profile.Badge.VETERAN.toString(), "Veteran");
+			put(Profile.Badge.ENTHUSIAST.toString(), "Enthusiast");
+			put(Profile.Badge.FRESHMAN.toString(), "Freshman");
+			put(Profile.Badge.SCHOLAR.toString(), "Scholar");
+			put(Profile.Badge.TEACHER.toString(), "Teacher");
+			put(Profile.Badge.PROFESSOR.toString(), "Professor");
+			put(Profile.Badge.GEEK.toString(), "Geek");
+			put(Profile.Badge.GOODQUESTION.toString(), "Good Question");
+			put(Profile.Badge.GOODANSWER.toString(), "Good Answer");
+			put(Profile.Badge.EUREKA.toString(), "Eureka!");
+			put(Profile.Badge.SENIOR.toString(), "Senior");
+			put(Profile.Badge.NOOB.toString(), "Newbie");
+			put(Profile.Badge.DISCIPLINED.toString(), "Disciplined");
+			put(Profile.Badge.POLYGLOT.toString(), "Polyglot");
 			put("timeago", "{0} ago");
 			put("links", "Links");
 			put("signout", "Sign out");
@@ -164,8 +162,6 @@ public final class Language {
 			put("minlength", "At least {0} characters are required.");
 			put("maxlength", "Too long. {0} characters max.");
 			put("requiredfield", "This field is required and cannot be empty.");
-			put("bademail", "This email appears to be invalid.");
-			put("emailexists", "This email is already registered.");
 			put("more", "More");
 			put("addmore", "Add more");
 			put("newbadges", "You've got new badges!");
@@ -173,12 +169,11 @@ public final class Language {
 			put("reputation", "Reputation");
 			put("writehere", "Write here...");
 			put("website", "Website");
-			put("merge", "Merge");
 			put("pagenotfound", "This page cannot be found.");
 			put("forbidden", "You shall not pass!");
 			put("servererror", "Critical server error.");
-			put("sitedown", "Scoold is down. We'll be back soon.");
-			put("maintenance", "Scoold is being fixed. Expect some downtime.");
+			put("sitedown", "We're having a break. We'll be back soon.");
+			put("maintenance", "We're doing some maintenance.");
 			put("license", "Excluding logos, this site is licensed under a {0} license.");
 			put("badrequest", "Bad request.");
 			put("create", "Create");
@@ -191,8 +186,6 @@ public final class Language {
 			put("invalidyear", "Invalid year");
 			put("learnmore", "Learn more");
 			put("posts", "Posts");
-			put("mobile", "Mobile");
-			put("classic", "Classic");
 
 			put("humantime.s", "{0} seconds ago");
 			put("humantime.m", "{0} minutes ago");
@@ -210,19 +203,14 @@ public final class Language {
 			put("signin.google", "Continue with Google");
 
 			put("profile.title", "Profile");
+			put("profile.changepic", "Change picture");
+			put("profile.usegravatar", "Use Gravatar");
 			put("profile.about.title", "About me");
 			put("profile.about.dob", "Date of birth");
 			put("profile.about.location", "Location");
-			put("profile.about.city", "City");
-			put("profile.about.age", "Age");
 			put("profile.about.membersince", "Active since");
 			put("profile.about.lastseen", "Last activity");
 			put("profile.about.aboutme", "More about me");
-			put("profile.about.ilike", "Stuff I like");
-			put("profile.contacts.title", "Contacts");
-			put("profile.contacts.nocontacts", "No contacts.");
-			put("profile.contacts.added", "You've added a new contact.");
-			put("profile.status.txt", "Write something here...");
 			put("profile.deleted", "Deleted user");
 			put("profile.posts.noquestions", "No questions.");
 			put("profile.posts.noanswers", "No answers.");
@@ -232,28 +220,15 @@ public final class Language {
 			put("search.people", "Find a person");
 			put("search.questions", "Find a question");
 
-			put("messages.nomessages", "You have no messages.");
-			put("messages.to", "To");
-			put("messages.text", "Text");
-			put("messages.sent", "Message sent.");
-			put("messages.nocontacts", "You don't have any contacts yet.");
-
 			put("comments.write", "Add comment");
 			put("comments.show", "Show comment");
 			put("comments.hidden", "Hidden.");
 
-			put("settings.authentication", "Authentication settings");
-			put("settings.authentication.text", "Identifiers are your keys to the site. You can have one additional identifer linked to your Scoold account.");
-			put("settings.primaryid", "Primary identifier");
-			put("settings.secondaryid", "Secondary identifier");
-			put("settings.email", "Change Email");
-			put("settings.location", "Point where you are on the map. This allows you to filter questions based on your location.");
-			put("settings.email.new", "New email address");
+			put("settings.location", "You can filter questions based on your location - just point where you are on the map.");
+			put("settings.tagfilter.text", "You can also filter questions by specifying the tags you are interested in.");
 			put("settings.delete", "Delete my account!");
-			put("settings.delete.text", "Permanently delete your Scoold account and data.");
 			put("settings.delete.confirm", "Please confirm that you really want to delete your account.");
-			put("settings.tagfilter", "Tag filter");
-			put("settings.tagfilter.text", "You can filter questions by specifying the tags you are interested in.");
+			put("settings.filters", "Question filters");
 
 			put("reports."+Report.ReportType.SPAM.toString(), "Spam or commercial content");
 			put("reports."+Report.ReportType.OFFENSIVE.toString(), "Offensive content, violence or abuse");
@@ -323,38 +298,24 @@ public final class Language {
 			put("msgcode.8", "The message was sent.");
 			put("msgcode.16", "This post was deleted.");
 
-			put("about.intro", "Got questions about your education? You're in the right place. We're all here to help each other.");
-
-			put("about.scoold.1", "Scoold is a student network for knowledge sharing and collaboration. Its primary goal is to help students find the answers to all questions related to their education. But Scoold isn't just for students — teachers and former students are welcome, too! Anyone can ask a question about anything related to education.");
-			put("about.scoold.2", "In general, Scoold is all about:");
+			put("about.intro", "Hey! This is an open source forum platform powered by Para.");
+			put("about.scoold.1", "Scoold is an open source forum platform for knowledge sharing and collaboration. It was inspired by StackOverflow.com the sites of the Stack Exchange family and we have huge respect towards the people behind them.");
+			put("about.scoold.2", "It's all about:");
 			put("about.scoold.3", "learning new stuff,");
 			put("about.scoold.4", "sharing knowledge,");
 			put("about.scoold.5", "gathering and organizing information,");
 			put("about.scoold.6", "helping your mates and earning reputation points while doing it.");
-			put("about.scoold.7", "Information is organized around questions. Questions can be specific or they can be in the form of a discussion on a certain topic. Below every question are the answers which are sorted by votes. The number of votes indicates the quality of both answers and questions. Almost everything posted on Scoold can be voted up (+) or down (-).");
-			put("about.scoold.8", "Scoold has been greatly influenced by the sites of the Stack Exchange family and we have huge respect towards the guys who built them. We wanted to create a website based on their clever model but targeted towards students and teachers.");
-
-			put("about.questions.1", "You can ask or discuss anything about education on Scoold. For example you might ask questions about:");
-			put("about.questions.2", "coursework or homework,");
-			put("about.questions.3", "examinations,");
-			put("about.questions.4", "the curriculum,");
-			put("about.questions.5", "learning materials, books and research papers,");
-			put("about.questions.6", "research and experiments,");
-			put("about.questions.7", "internal school matters like timetables, graduations or other events.");
-			put("about.questions.9", "You can, of course, always answer you own question if you know the answer to it. This way you are helping others and it will also earn you some reputation. You can ask as many questions as you want, as long as they don't exist already for a particular school. Duplicate questions might be voted down or even deleted.");
-			put("about.questions.10", "Everything related to Scoold itself should be discussed in the 'Feedback' section. There you can post all your site-related questions, suggestions, general feedback or feature requests.");
+			put("about.scoold.7", "Information is organized around questions. Questions can be specific or they can be in the form of a discussion on a certain topic. Below every question are the answers which are sorted by votes. The number of votes indicates the quality of both answers and questions. Almost every post can be voted up (+) or down (-).");
+			put("about.questions.9", "You can, of course, always answer you own question if you know the answer to it. This way you are helping others and it will also earn you some reputation. You can ask as many questions as you want but keep in mind that duplicate questions might be voted down or even deleted.");
+			put("about.questions.10", "Everything related to the website itself should be discussed in the 'Feedback' section. There you can post all your site-related questions, suggestions, general feedback or feature requests.");
 			put("about.questions.11", "A question might be closed for various reasons — it has too many answers, it's a duplicate of another question or it's just inappropriate. Closing a question means that no new answers can be posted but that doesn't affect the editing functionality. A question is automatically marked for closing once it reaches -5 votes.");
 			put("about.questions.12", "Everyone with the 'Teacher' badge can edit questions.");
-
 			put("about.answers.1", "Answers can be posted to any question that hasn't been closed yet. The good answers are always at the top and one of them can be approved as the best by the author of the question. The approved answer should be the one that's most helpful to the author of the question, rather than the one with the most votes. You should avoid posting answers that are one or two words long. Тhese should be posted as comments instead (see Comments).");
 			put("about.answers.2", "Everyone with the 'Freshman' badge can edit answers.");
-
 			put("about.revisions.1", "Every time you edit a question or an answer, a new revision is created. Revisions keep track of all the changes in the text, title and tags of questions and answers. The first revision is the original. The next edit you make will create revision #1, followed by #2 and so on.");
 			put("about.revisions.2", "You can always switch back to the original or any other revision. Restoring back to the original does not delete any of the previous revisions but creates a new revision with the original text restored.");
-
 			put("about.comments.1", "Comments can be posted on all questions and answers. Basically, anything that's too short for an answer should be a comment. Comments can also contain suggestions, corrections or criticism. Bad comments will be voted down and automatically hidden once they reach -5 votes.");
 			put("about.comments.2", "Everyone with the 'Enthusiast' badge can post comments.");
-
 			put("about.voterep.1", "Voting is an integral part of Scoold. If you like something useful or interesting, vote it up. Questions that are clear and well-written should also be given +1. The same goes for answers that are helpful. If something is poorly written, unclear, rude or inappropriate, vote it down.");
 			put("about.voterep.2", "Your reputation points measure how much other people trust you and like you. Reputation is earned by posting good questions and answers. It is also awarded with certain badges.");
 			put("about.voterep.3", "Voting is linked to reputation. You earn reputation points when your post gets voted up and you lose points if your post gets voted down. Voting down costs 1 reputation point.");
@@ -365,35 +326,31 @@ public final class Language {
 			put("about.voterep.8", "If you approve an answer to your question you get:");
 			put("about.voterep.9", "If your post gets voted down you loose:");
 			put("about.voterep.10", "If you vote something down you loose:");
-
 			put("about.badges.1", "Badges are only given to those who deserve them. Being friendly and treating people with respect will always earn you badges and reputation points. So be nice and get some of these badges:");
-			put("about.badges."+ScooldUser.Badge.NICEPROFILE.toString(), "your profile is complete");
-			put("about.badges."+ScooldUser.Badge.TESTER.toString(), "for people who helped test the site");
-			put("about.badges."+ScooldUser.Badge.REPORTER.toString(), "for each report you submit");
-			put("about.badges."+ScooldUser.Badge.VOTER.toString(), "voted more than 100 times");
-			put("about.badges."+ScooldUser.Badge.CRITIC.toString(), "voted down 10 times");
-			put("about.badges."+ScooldUser.Badge.SUPPORTER.toString(), "voted up 50 times");
-			put("about.badges."+ScooldUser.Badge.COMMENTATOR.toString(), "posted 100 comments");
-			put("about.badges."+ScooldUser.Badge.EDITOR.toString(), "edited your post for the first time");
-			put("about.badges."+ScooldUser.Badge.BACKINTIME.toString(), "each time you restore a post from a revision");
-			put("about.badges."+ScooldUser.Badge.NOOB.toString(), "approved an answer to your question for the first time");
-			put("about.badges."+ScooldUser.Badge.ENTHUSIAST.toString(), "reached 100 reputation points");
-			put("about.badges."+ScooldUser.Badge.FRESHMAN.toString(), "reached 300 reputation points");
-			put("about.badges."+ScooldUser.Badge.SCHOLAR.toString(), "reached 500 reputation points");
-			put("about.badges."+ScooldUser.Badge.TEACHER.toString(), "reached 1000 reputation points");
-			put("about.badges."+ScooldUser.Badge.PROFESSOR.toString(), "reached 5000 reputation points");
-			put("about.badges."+ScooldUser.Badge.GEEK.toString(), "reached 9000 reputation points");
-			put("about.badges."+ScooldUser.Badge.GOODQUESTION.toString(), "your question reached 20 votes");
-			put("about.badges."+ScooldUser.Badge.GOODANSWER.toString(), "your answer reached 10 votes");
-			put("about.badges."+ScooldUser.Badge.EUREKA.toString(), "every time you answer your own question");
-			put("about.badges."+ScooldUser.Badge.SENIOR.toString(), "your account is one year old");
-			put("about.badges."+ScooldUser.Badge.DISCIPLINED.toString(), "every time you delete your own comment");
-			put("about.badges."+ScooldUser.Badge.POLYGLOT.toString(), "every time your translation is approved");
-
+			put("about.badges."+Profile.Badge.NICEPROFILE.toString(), "your profile is complete");
+			put("about.badges."+Profile.Badge.TESTER.toString(), "for people who helped test the site");
+			put("about.badges."+Profile.Badge.REPORTER.toString(), "for each report you submit");
+			put("about.badges."+Profile.Badge.VOTER.toString(), "voted more than 100 times");
+			put("about.badges."+Profile.Badge.CRITIC.toString(), "voted down 10 times");
+			put("about.badges."+Profile.Badge.SUPPORTER.toString(), "voted up 50 times");
+			put("about.badges."+Profile.Badge.COMMENTATOR.toString(), "posted 100 comments");
+			put("about.badges."+Profile.Badge.EDITOR.toString(), "edited your post for the first time");
+			put("about.badges."+Profile.Badge.BACKINTIME.toString(), "each time you restore a post from a revision");
+			put("about.badges."+Profile.Badge.NOOB.toString(), "approved an answer to your question for the first time");
+			put("about.badges."+Profile.Badge.ENTHUSIAST.toString(), "reached 100 reputation points");
+			put("about.badges."+Profile.Badge.FRESHMAN.toString(), "reached 300 reputation points");
+			put("about.badges."+Profile.Badge.SCHOLAR.toString(), "reached 500 reputation points");
+			put("about.badges."+Profile.Badge.TEACHER.toString(), "reached 1000 reputation points");
+			put("about.badges."+Profile.Badge.PROFESSOR.toString(), "reached 5000 reputation points");
+			put("about.badges."+Profile.Badge.GEEK.toString(), "reached 9000 reputation points");
+			put("about.badges."+Profile.Badge.GOODQUESTION.toString(), "your question reached 20 votes");
+			put("about.badges."+Profile.Badge.GOODANSWER.toString(), "your answer reached 10 votes");
+			put("about.badges."+Profile.Badge.EUREKA.toString(), "every time you answer your own question");
+			put("about.badges."+Profile.Badge.SENIOR.toString(), "your account is one year old");
+			put("about.badges."+Profile.Badge.DISCIPLINED.toString(), "every time you delete your own comment");
+			put("about.badges."+Profile.Badge.POLYGLOT.toString(), "every time your translation is approved");
 			put("about.reports.1", "If you ever notice any problems on Scoold, report them! This includes bugs, missing or incorrect information, abusive, discriminatory or exploitative behavior. Every report you send helps us keep Scoold a nice and friendly place.");
-
 			put("about.accounts.1", "You don't need to register for an account at Scoold — you simply sign in with your social account. The first time you sign in, we will only ask you for your name and email address. We promise to keep your email safe and never send you anything, unless it's really important.");
-
 			put("about.feedback.1", "The feedback section is where you can tell us what you think about the site. You can also ask anything about the site itself, describe in details any problems you've encountered or suggest some improvements. So if you think there's something we've missed here, go there and tell us now!");
 
 		}

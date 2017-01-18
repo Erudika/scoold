@@ -18,6 +18,7 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
@@ -29,20 +30,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
-public class ScooldUser extends User implements Comparable<ScooldUser>{
+public class Profile extends Sysprop implements Comparable<Profile>{
 	private static final long serialVersionUID = 1L;
 
     @Stored private Long lastseen;
 	@Stored private String location;
+	@Stored private String latlng;
     @Stored private String status;
     @Stored private String aboutme;
 	@Stored private String badges;
 	@Stored private Long upvotes;
 	@Stored private Long downvotes;
 	@Stored private Long comments;
+	@Stored @URL private String picture;
 	@Stored @URL private String website;
 	@Stored private List<String> favtags;
 
@@ -91,7 +95,7 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 		}
 	};
 
-    public ScooldUser () {
+    public Profile () {
 		this.status = "";
         this.aboutme = "";
         this.location = "";
@@ -99,19 +103,17 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
-		setGroups(Groups.USERS.toString());
 	}
 
-	public ScooldUser (String id) {
+	public Profile (String id) {
 		this();
 		setId(id(id));
 	}
 
-    public ScooldUser (String userid, String email, String name) {
+    public Profile (String userid, String name) {
         this();
 		setId(id(userid));
 		setName(name);
-        setEmail(email);
     }
 
 	public static final String id(String userid) {
@@ -124,11 +126,30 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 
 	@JsonIgnore
 	public User getUser() {
+		if (user == null) {
+			user = AppConfig.client().read(getCreatorid());
+		}
 		return user;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getLatlng() {
+		return latlng;
+	}
+
+	public void setLatlng(String latlng) {
+		this.latlng = latlng;
 	}
 
 	public String getNewbadges() {
@@ -306,13 +327,6 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 		}
 	}
 
-	public String getPicture() {
-		if (StringUtils.isBlank(super.getPicture())) {
-			setPicture("https://www.gravatar.com/avatar/" + Utils.md5(getEmail()) + "?size=400&d=mm&r=pg");
-		}
-		return super.getPicture();
-	}
-
 	public HashMap<String, Integer> getBadgesMap() {
 		HashMap<String, Integer> badgeMap = new HashMap<String, Integer>(0);
 		if (StringUtils.isBlank(badges)) return badgeMap;
@@ -345,6 +359,7 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 
     public void delete() {
 		AppConfig.client().delete(this);
+		AppConfig.client().delete(getUser());
     }
 
     public String getLastname() {
@@ -356,24 +371,7 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
         return getName().split("\\s")[0];
     }
 
-    public int addContact(ScooldUser contact) {
-        int count = AppConfig.client().countLinks(this, Utils.type(User.class)).intValue();
-		AppConfig.client().link(this, contact.getId());
-		return count + 1;
-    }
-
-    public int removeContact(ScooldUser contact) {
-        int count = AppConfig.client().countLinks(this, Utils.type(User.class)).intValue();
-		AppConfig.client().unlink(this, Utils.type(User.class), contact.getId());
-		return count - 1;
-    }
-
-    public List<User> getAllContacts(Pager pager) {
-        return AppConfig.client().getLinkedObjects(this, Utils.type(User.class), pager);
-    }
-
 	public int countNewReports() {
-		if (!isModerator()) return 0;
 		if (newreports == null)
 			newreports = AppConfig.client().getCount(Utils.type(Report.class)).intValue();
 
@@ -381,30 +379,17 @@ public class ScooldUser extends User implements Comparable<ScooldUser>{
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final ScooldUser other = (ScooldUser) obj;
-		if ((getName() == null) ? (other.getName() != null) : !getName().equals(other.getName())) {
-			return false;
-		}
-		if ((getEmail() == null) ? (other.getEmail() != null) : !getEmail().equals(other.getEmail())) {
-			return false;
-		}
-		return true;
+		return Objects.equal(obj, (Profile) obj);
 	}
 
 	public int hashCode() {
-		int hash = 3;
-		hash = 89 * hash + (getName() != null ? getName().hashCode() : 0);
-		hash = 89 * hash + (getEmail() != null ? getEmail().hashCode() : 0);
-		return hash;
+		return Objects.hashCode(getName(), getId());
 	}
 
-	public int compareTo(ScooldUser u) {
+	public int compareTo(Profile u) {
 		int deptComp = -1;
 		if (getName() != null)
 			deptComp = getName().compareTo(u.getName());

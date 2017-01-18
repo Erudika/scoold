@@ -1,9 +1,17 @@
-<div id="tags">
-	<h1>$!lang.get("tags.title")</h1>
+<div class="ptl">
+	<h2>$!lang.get("tags.title") #showcount($itemcount.count)</h2>
 	<hr />
-	#foreach($showtag in $tagslist)
-		<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="chip mrs">
-			<span class="pictos">z</span> $!showtag.tag
-		</a> x $!showtag.count
+	#if($tagslist.isEmpty())
+		<div class="card-panel hugeText center-align grey-text">
+			<div class="em5v">
+				$!{lang.get("search.notfound")}
+			</div>
+		</div>
+	#else
+		#foreach($showtag in $tagslist)
+			<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="chip mrs">
+				<span class="pictos">z</span> $!showtag.tag
+			</a> x $!showtag.count
+		#end
 	#end
 </div>

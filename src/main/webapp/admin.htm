@@ -1,6 +1,6 @@
 #if ($request.getParameter("delete"))
 
-	#set($confirmlink = "$adminlink?confirmdelete=$request.getParameter('delete')&amp;id=$request.getParameter('id')")
+	#set($confirmlink = "$adminlink?confirmdelete=$request.getParameter('delete')&id=$request.getParameter('id')")
 
 	<div class="mvl center">
 		<div class="largeText">$!lang.get("areyousure")</div>
@@ -15,7 +15,7 @@
 		<form method="post" action="$!{confirmlink}">
 			<fieldset>
 				#sectoken(false)
-				<input type="submit" value="$!lang.get('yes')" class="btn waves-effect waves-light"/>
+				<button type="submit" class="btn waves-effect waves-light">$!lang.get('yes')</button>
 				<a class="btn waves-effect waves-light" href="$!{ref}" title="No">$!lang.get("no")</a>
 			</fieldset>
 		</form>
@@ -25,12 +25,12 @@
 	<h1><span class="pictos">e</span> Admin</h1>
 	<hr />
 	<div>
-		<h2>Search</h2>		
-		<table class="p100">
+		<h2>Search</h2>
+		<table>
 			<tbody>
 				<tr>
-					<td class="p20 l"><strong>index: </strong></td>
-					<td class="p80">
+					<td><strong>index: </strong></td>
+					<td>
 						<form action="$adminlink" method="post" class="mrl">
 							<fieldset>
 								#sectoken(false)
@@ -40,24 +40,24 @@
 								#else
 									<span class="pictos red mrl mediumText">D</span>
 								#end
-								<input type="submit" value="Delete index" name="deleteindex" class="btn waves-effect waves-light red rusure"/>
-								<input type="submit" value="Rebuild index" name="rebuildindex" class="btn waves-effect waves-light rusure"/>
-								<input type="submit" value="Optimize index" name="optimizeindex" class="btn waves-effect waves-light rusure"/>
+								<button type="submit" name="deleteindex" class="btn waves-effect waves-light rusure">Delete index</button>
+								<button type="submit" name="rebuildindex" class="btn waves-effect waves-light rusure">Rebuild index</button>
+								<button type="submit" name="optimizeindex" class="btn waves-effect waves-light rusure">Optimize index</button>
 							</fieldset>
 						</form>
 					</td>
 				</tr>
 				<tr>
-					<td class="p20 l"><strong>Metadata: </strong></td>
-					<td class="p80">
+					<td><strong>Metadata: </strong></td>
+					<td>
 						<table>
 						#foreach($entry in $eshosts.entrySet())
 							<tr>
 								<td>
-									<strong>$entry.key</strong> 
+									<strong>$entry.key</strong>
 								</td>
 								<td>
-									<code>$entry.value</code> 
+									<code>$entry.value</code>
 								</td>
 							</tr>
 						#end
@@ -72,27 +72,27 @@
 			<br />
 			<h2>System properties</h2>
 			<br />
-			<table class="p100">
+			<table>
 				<tbody>
 				#foreach($showprop in ["com.scoold.workerid", "com.scoold.eshosts"])
 					<tr>
-						<td class="p20 l"><strong>$showprop</strong></td>
-						<td class="p80">$!utils.getSystemProperty($showprop)</td>
+						<td><strong>$showprop</strong></td>
+						<td>$!utils.getSystemProperty($showprop)</td>
 					</tr>
-				#end				
+				#end
 				</tbody>
 			</table>
 		#end
 		<br />
 		<br />
-		
+
 		<h2>System information</h2>
-		<table class="p100 mtl">
+		<table class="mtl">
 			<tbody>
 				#foreach($key in ["java.vm.name", "java.version", "java.vendor", "java.vm.specification.vendor", "user.timezone", "os.arch", "file.encoding"])
 					<tr>
-						<td class="p25">$key: </td>
-						<td class="pll p75">$!utils.getSystemProperty($key) </td>
+						<td>$key: </td>
+						<td>$!utils.getSystemProperty($key) </td>
 					</tr>
 				#end
 			</tbody>
