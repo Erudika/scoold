@@ -9,7 +9,7 @@
 #macro(revisionbox $showrev $showorigrev $canrestore $showpost)
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
-<div class="whitebox revisionbox">
+<div class="card-panel hoverable">
 	<div class="line lightgraybg chip">
 		<div class="unit size1of3">
 			#set($author = $showrev.getAuthor())

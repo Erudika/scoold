@@ -1,6 +1,6 @@
 #macro(reportspage $reports )
 #foreach($showreport in $reports)
-	<div class="reportbox whitebox">
+	<div class="reportbox card-panel hoverable">
 		<div class="mediumText lightgray mbm">
 			$!lang.get("reports.$!{showreport.type.toLowerCase()}"):
 			$!lang.get("reports.$!{showreport.subType.toLowerCase()}")

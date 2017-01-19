@@ -25,7 +25,7 @@
 					<a href="$translatelink/$showLocale/$!previ" title="Previous"><span class="pictos">[</span> $!lang.get("prev")</a>
 				</div>
 				<div class="unit size1of3 center">
-					<span class="chip reputationbox">$indx / $!lang.size()</span>
+					<span class="chip">$indx / $!lang.size()</span>
 				</div>
 				<div class="unit size1of3  r">
 					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <span class="pictos">]</span></a>
@@ -41,9 +41,8 @@
 			<br />
 
 			#if (!$isTranslated)
-				#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 				<div class="newtranslationform">
-					<form method="post" class="new-translation-form" action="${thisuri}">
+					<form method="post" class="new-translation-form">
 						<fieldset>
 							#sectoken(false)
 							<textarea rows="2" cols="3" name="value"></textarea>

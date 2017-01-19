@@ -26,13 +26,6 @@
 	<meta property="fb:app_id" content="99517177417" />
 #end
 ################# DEFINE MACROS ################################################
-#macro(renderSpecialFields $clickform)
-${clickform.fields.form_name}
-#foreach ($field in $clickform.fieldList)
-#if ($field.name.contains("SUBMIT_CHECK")) $field #end
-#end
-#end
-#####################################
 #macro(getcontactlinkcode $showcontact)
 #if ($showcontact)
 #if ($showcontact.value.startsWith("http://") || $showcontact.value.startsWith("https://") || $showcontact.value.startsWith("www."))
@@ -40,18 +33,9 @@ ${clickform.fields.form_name}
 #else $!showcontact.value #end#end#end
 ################# COMMENTS MACROS #####################
 #macro(newcommentform $parentid $hidden $uri)
-#if ($uri == "")
-#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-#if ($request.getAttribute('javax.servlet.forward.query_string'))
-#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
-#end
-#else
-#set($thisuri = $uri)
-#end
-
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
 <div class="newcommentform mvm ${hide}">
-	<form method="post" class="new-comment-form" action="${thisuri}">
+	<form method="post" class="new-comment-form">
 		<fieldset>
 			#sectoken(false)
 			<div class="line">
@@ -71,11 +55,6 @@ ${clickform.fields.form_name}
 ###########################################
 #macro(commentbox $showcomment)
 #set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-#if ($request.getAttribute('javax.servlet.forward.query_string'))
-#set($thisuri = "$!{thisuri}?$!request.getAttribute('javax.servlet.forward.query_string')")
-#end
-#if ($thisuri.contains("?"))	#set($amp = "&") #else #set($amp = "?") #end
-
 #if ($showcomment == "")	#set($hide = "hide") #else #set($hide = "")	#end
 <div class="commentbox pas ${hide}">
 	#if ($showcomment.hidden)
@@ -142,50 +121,12 @@ ${clickform.fields.form_name}
 #commentbox("") ## empty box to be cloned
 #end
 ################# QUESTIONS MACROS #####################
-#macro(newquestionform $_form $hidden $type)
-#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-
-#if ($hidden) #set($hide = "hide") #else #set($hide = "") #end
-#if ($type.equalsIgnoreCase("question"))
-<h2>
-	<a href="$questionslink">$!lang.get("questions.title")</a> / $!lang.get("posts.ask")
-</h2>
-#elseif ($type.equalsIgnoreCase("feedback"))
-<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
-#end
-<hr />
-<div id="questionform" class="qform ${hide}">
-	<form method="post" id="$_form.id" action="$thisuri">
-		#if ($_form.error)
-		#getmessagebox("errorBox" $_form.error false)
-		#end
-		<fieldset>
-			#sectoken(false)
-			#renderSpecialFields($_form)
-			<div class="hide">Leave blank:</div>${_form.fields.additional}
-			<input type="hidden" name="ask" value="true"/>
-			#createformfield(${_form.fields.parentid} "")
-			#createformfield(${_form.fields.title} "")
-			#createformfield(${_form.fields.body} "edit-post hidelabel")
-			<div class="edit-preview"></div>
-			#createformfield(${_form.fields.tags} "tagbox")
-
-			<div class="center mtl">
-				${_form.fields.askbtn} &nbsp; <a href="$!actionlink" class="btn waves-effect waves-light">$!lang.get('cancel')</a>
-			</div>
-		</fieldset>
-	</form>
-</div>
-#end
-###########################################
 #macro(newanswerform $_form $showpost $hidden)
-#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-
 #if ($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
 <div class="${hide}">
-	<form method="post" id="$_form.id" action="$thisuri">
+	<form method="post" id="$_form.id">
 		#if ($_form.error)
-		#getmessagebox("errorBox" $_form.error false)
+		#getmessagebox("errorBox" $_form.error)
 		#end
 		<fieldset>
 			#sectoken(false)
@@ -194,9 +135,7 @@ ${clickform.fields.form_name}
 			#else
 			<legend>$!lang.get("feedback.writereply")</legend>
 			#end
-			#renderSpecialFields($_form)
 			<input type="hidden" name="answer" value="true"/>
-			<div class="hide">Leave blank:</div>${_form.fields.additional}
 			<ol>
 				<li>
 					#createformfield(${_form.fields.body} "hidelabel edit-post unload-confirm")
@@ -247,42 +186,6 @@ ${clickform.fields.form_name}
 ####################################
 #macro(contactsjs $contacts )#foreach($contact in $contacts) {id:"$contact.id", name:"$contact.name"}#if ($velocityCount < $contactslist.size()),#end#end#end
 ####################################
-#macro(personbox $showFriend)
-#if ($showFriend)
-<div class="whitebox media">
-	<div class="img mrl center">
-		<a href="$profilelink/$showFriend.creatorid/#stripstr($showFriend.name)">
-			<img src="#profilepic($showFriend)" width="50" height="50" alt="Profile thumbnail"/>
-		</a>
-	</div>
-	<div class="bd">
-		<div class="line lightgray">
-			<div class="unit size1of2">$!{lang.get($showFriend.type)}</div>
-			<div class="unit size1of2  r">
-				#usertitlebadge($showFriend)
-			</div>
-		</div>
-		<div class="line">
-			<div class="unit size3of4">
-				<div class="mediumText mbs">
-					<span class="chip reputationbox" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
-					<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
-				</div>
-				#if ($showFriend.status && !$showFriend.status.isEmpty())
-				<div>$!{showFriend.status}</div>
-				#end
-			</div>
-			<div class="unit size1of4  r">
-				#if (!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
-					#getreportlink($showFriend "$profilelink/$showFriend.id" "chip notext")
-				#end
-			</div>
-		</div>
-	</div>
-</div>
-#end
-#end
-####################################
 #macro(smallpersonbox $showu)
 <div class="userbox media pas user-$!{showu.id}">
 	<div class="img mrm center">
@@ -302,7 +205,7 @@ ${clickform.fields.form_name}
 		#end
 		#if ($showu)
 		<br />
-		<span class="chip reputationbox">$!utils.abbreviateInt($!showu.votes, 0)</span>
+		<span class="chip">$!utils.abbreviateInt($!showu.votes, 0)</span>
 		<span class="lightgray">#usertitlebadge($showu)</span>
 		#end
 	</div>
@@ -360,9 +263,34 @@ ${clickform.fields.form_name}
 #end
 ####################################
 #macro(peoplepage $people)
-#foreach($showFriend in $people)
-#personbox($showFriend)
-#end
+<div class="row">
+	#foreach($showFriend in $people)
+	<div class="col s12 m6 l4">
+		<div class="card hoverable">
+			<div class="row valign-wrapper">
+				<div class="col s4">
+					<img src="#profilepic($showFriend)" alt="$showFriend.name" class="responsive-img pts pls">
+				</div>
+				<div class="col s8">
+					<div class="mediumText">
+						<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+					</div>
+					<span class="chip mtm" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
+					#if($showFriend.badges && $showFriend.badges.length() > 2)
+						$showFriend.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i>
+					#end
+					#if (!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
+						#getreportlink($showFriend "$profilelink/$showFriend.id" "mll notext")
+					#end
+					<div class="grey-text r prl" title="$!{lang.get('profile.about.lastseen')}">
+						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	#end
+</div>
 #end
 ####################################
 #macro(getreportlink $reportable $link $clazz)
@@ -393,7 +321,7 @@ ${clickform.fields.form_name}
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
 
-<div class="questionbox whitebox">
+<div class="card-panel hoverable">
 	<div class="right mlm center">
 		#set($author = $showpost.author)
 		#tinypersonbox($author)
@@ -451,7 +379,7 @@ ${clickform.fields.form_name}
 #end
 ####################################
 #macro(answerbox $showpost )
-<div class="questionbox whitebox">
+<div class="card-panel hoverable">
 	<div class="right p">
 		<span class="pictos">t</span> #formatdate($showpost.timestamp "")
 	</div>
@@ -459,7 +387,7 @@ ${clickform.fields.form_name}
 		#set($votes = $showpost.votes)
 		#if (!$votes) #set($votes = 0) #end
 
-		<span class="chip reputationbox mediumText mrl">$!votes</span>
+		<span class="chip mediumText mrl">$!votes</span>
 		<span>
 			<a href="$questionlink/$showpost.parentid#post-$!showpost.id" title="View answer">
 				$!utils.abbreviate($showpost.body, 100).replaceAll('\s', ' ')
@@ -470,7 +398,7 @@ ${clickform.fields.form_name}
 #end
 ####################################
 #macro(postbox $showpost $parentpost)
-#if ($showpost.isReply())	#set($boxclass = "whitebox") #else #set($boxclass = "" ) #end
+#if ($showpost.isReply())	#set($boxclass = "card") #else #set($boxclass = "" ) #end
 
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
@@ -572,16 +500,13 @@ ${clickform.fields.form_name}
 	<div class="editbox lightgraybg pam hide">
 		#set($_form = $showpost.editForm)
 		#if ($_form)
-		#set($editLink = $request.getAttribute("javax.servlet.forward.request_uri"))
-		<form method="post" id="$_form.id" action="$editLink">
+		<form method="post" id="$_form.id">
 			#if ($_form.error)
-			#getmessagebox("errorBox" $_form.error false)
+			#getmessagebox("errorBox" $_form.error)
 			#end
 			<fieldset>
 				#sectoken(false)
-				#renderSpecialFields($_form)
 				<input type="hidden" name="editpostid" value="$showpost.id"/>
-				<div class="hide">Leave blank:</div>${_form.fields.additional}
 				#createformfield(${_form.fields.body} "hidelabel edit-post")
 				<div class="edit-preview"></div>
 				#createformfield(${_form.fields.tags} "tagbox")
@@ -614,7 +539,6 @@ ${clickform.fields.form_name}
 #macro(translationbox $showtrans $approved)
 #set($timestamp = "#formatdate($showtrans.timestamp '')")
 #set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-
 <div class="translationbox media">
 	<div class="img mrm">
 		#if ($request.isUserInRole("admin"))
@@ -664,7 +588,7 @@ ${clickform.fields.form_name}
 	</div>
 	<div>
 		#if ($progress >= 90) #set($gclass = "green" )#elseif ($progress >= 50)#set($gclass = "orange" )#else #set($gclass = "red" )#end
-		<span class="chip reputationbox $!{gclass}" title="$!{progress}%">$!{progress}%</span>
+		<span class="chip $!{gclass}" title="$!{progress}%">$!{progress}%</span>
 
 		#if (!$showLangKey.equals("en"))
 		<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
@@ -790,11 +714,13 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 </form>
 #end
 #####################################
-#macro(getmessagebox $class $text $hidden)
-#if ($hidden) #set($hideclass = "hide") #else #set($hideclass = "") #end
-<div class="messagebox ${class} ${hideclass}" title="$!lang.get('click2close')">
-	<div class="msg center">  #if ($text == "") &nbsp; #else $text #end  </div>
-</div>
+#macro(getmessagebox $class $text)
+#if($text && !$text.isEmpty())
+	<div class="chip phl ${class}">
+		<i class="fa fa-close close"></i>
+		<div class="msg mrl left">#if($text == "") &nbsp; #else $text #end</div>
+	</div>
+#end
 #end
 #####################################
 #macro(getpostlink $p $plural $noid)$p.getPostLink($plural,$noid,$questionslink,$questionlink,$feedbacklink)#end

@@ -185,130 +185,130 @@ $(function () {
 		});
 	}
 
-	function autocompleteBind(elem, params) {
-		var that = $(elem);
-		that.attr("autocomplete", "off");
-		that.autocomplete(ajaxpath, {
-			minChars: 3,
-			width: that.attr("width"),
-			matchContains: true,
-			highlight: false,
-            extraParams: params,
-			autoFill: true,
-			formatItem: function(row) {
-				return row[0] + "<br/>" + row[1];
-			}
-		});
-		that.result(function(event, data, formatted) {
-			$(this).next("input:hidden").val(data[2]);
-		});
-		//clear hidden fields on keypress except enter
-		that.keypress(function(e) {
-			if (e.which !== 13 || e.keyCode !== 13) {
-				$(this).next("input:hidden").val("");
-			}
-		});
-	}
+//	function autocompleteBind(elem, params) {
+//		var that = $(elem);
+//		that.attr("autocomplete", "off");
+//		that.autocomplete(ajaxpath, {
+//			minChars: 3,
+//			width: that.attr("width"),
+//			matchContains: true,
+//			highlight: false,
+//            extraParams: params,
+//			autoFill: true,
+//			formatItem: function(row) {
+//				return row[0] + "<br/>" + row[1];
+//			}
+//		});
+//		that.result(function(event, data, formatted) {
+//			$(this).next("input:hidden").val(data[2]);
+//		});
+//		//clear hidden fields on keypress except enter
+//		that.keypress(function(e) {
+//			if (e.which !== 13 || e.keyCode !== 13) {
+//				$(this).next("input:hidden").val("");
+//			}
+//		});
+//	}
 
-	function autocompleteTagBind(elem, params) {
-		var that = $(elem);
-		that.attr("autocomplete", "off");
-		that.autocomplete(ajaxpath, {
-			minChars: 2,
-			width: that.attr("width"),
-			matchContains: true,
-			multiple: true,
-			highlight: false,
-            extraParams: params,
-			autoFill: true,
-			scroll: true,
-			formatItem: function(row) {
-				return row[0];
-			}
-		});
-	}
+//	function autocompleteTagBind(elem, params) {
+//		var that = $(elem);
+//		that.attr("autocomplete", "off");
+//		that.autocomplete(ajaxpath, {
+//			minChars: 2,
+//			width: that.attr("width"),
+//			matchContains: true,
+//			multiple: true,
+//			highlight: false,
+//            extraParams: params,
+//			autoFill: true,
+//			scroll: true,
+//			formatItem: function(row) {
+//				return row[0];
+//			}
+//		});
+//	}
 
-	function autocompleteUserBind(elem, params) {
-		autocompleteBind(elem, params);
-		$(elem).keypress(function(e) {
-			if (e.which === 13 || e.keyCode === 13) {
-				$(this).closest("form").submit();
-			}
-		});
-	}
+//	function autocompleteUserBind(elem, params) {
+//		autocompleteBind(elem, params);
+//		$(elem).keypress(function(e) {
+//			if (e.which === 13 || e.keyCode === 13) {
+//				$(this).closest("form").submit();
+//			}
+//		});
+//	}
 
-	function autocompleteContactBind(elem, params) {
-		if (typeof contacts !== "undefined") {
-			var that = $(elem);
-			that.attr("autocomplete", "off");
-			that.autocomplete(contacts, {
-				minChars: 3,
-				width: that.attr("width"),
-				matchContains: true,
-				multiple: true,
-				highlight: false,
-				extraParams: params,
-//				autoFill: true,
-				scroll: true,
-				formatItem: function(row) {
-					return row.name;
-				}
-			});
-			that.result(function(event, data, formatted) {
-				var that = $(this),
-					hidden = that.nextAll("input:hidden:first"),
-					newHidden = hidden.clone();
-				newHidden.val(data.id);
-				hidden.after(newHidden);
-			});
+//	function autocompleteContactBind(elem, params) {
+//		if (typeof contacts !== "undefined") {
+//			var that = $(elem);
+//			that.attr("autocomplete", "off");
+//			that.autocomplete(contacts, {
+//				minChars: 3,
+//				width: that.attr("width"),
+//				matchContains: true,
+//				multiple: true,
+//				highlight: false,
+//				extraParams: params,
+////				autoFill: true,
+//				scroll: true,
+//				formatItem: function(row) {
+//					return row.name;
+//				}
+//			});
+//			that.result(function(event, data, formatted) {
+//				var that = $(this),
+//					hidden = that.nextAll("input:hidden:first"),
+//					newHidden = hidden.clone();
+//				newHidden.val(data.id);
+//				hidden.after(newHidden);
+//			});
+//
+//			var clear = function(e) {
+//				$(e).nextAll("input:hidden").not(":first").remove();
+//				$(e).val("");
+//			};
+//
+//			//clear hidden fields on keypress except enter
+//			that.keyup(function(e) {
+//				if (e.keyCode === 8 || e.keyCode === 46) {
+//					clear(this);
+//				}
+//			}).on('copy', function(e) {
+//				clear(this);
+//			}).on('paste', function(e) {
+//				clear(this);
+//			}).on('cut', function(e) {
+//				clear(this);
+//			});
+//		}
+//	}
 
-			var clear = function(e) {
-				$(e).nextAll("input:hidden").not(":first").remove();
-				$(e).val("");
-			};
-
-			//clear hidden fields on keypress except enter
-			that.keyup(function(e) {
-				if (e.keyCode === 8 || e.keyCode === 46) {
-					clear(this);
-				}
-			}).on('copy', function(e) {
-				clear(this);
-			}).on('paste', function(e) {
-				clear(this);
-			}).on('cut', function(e) {
-				clear(this);
-			});
-		}
-	}
-
-	function showMsgBox(msg, clazz, hideafter) {
-		infobox.removeClass("infoBox errorBox successBox");
-		infobox.find(".ico").hide();
-		infobox.find("."+clazz+"Icon").show();
-		infobox.addClass(clazz).children(".infostrip-msg").text(msg);
-		infobox.show();
-
-		if (hideafter && hideafter > 0) {
-			setTimeout(function() {
-				infobox.hide();
-			}, hideafter);
-		}
-	}
-
-	function showInfoBox(msg) {
-		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
-	}
-	function showErrorBox(msg) {
-		showMsgBox(msg, "errorBox", 0);
-	}
-	function showSuccessBox(msg) {
-		showMsgBox(msg, "successBox", hideMsgBoxAfter);
-	}
-
-	function hideMsgBoxes() {
-		infobox.hide();
-	}
+//	function showMsgBox(msg, clazz, hideafter) {
+//		infobox.removeClass("infoBox errorBox successBox");
+//		infobox.find(".ico").hide();
+//		infobox.find("."+clazz+"Icon").show();
+//		infobox.addClass(clazz).children(".infostrip-msg").text(msg);
+//		infobox.show();
+//
+//		if (hideafter && hideafter > 0) {
+//			setTimeout(function() {
+//				infobox.hide();
+//			}, hideafter);
+//		}
+//	}
+//
+//	function showInfoBox(msg) {
+//		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
+//	}
+//	function showErrorBox(msg) {
+//		showMsgBox(msg, "errorBox", 0);
+//	}
+//	function showSuccessBox(msg) {
+//		showMsgBox(msg, "successBox", hideMsgBoxAfter);
+//	}
+//
+//	function hideMsgBoxes() {
+//		infobox.hide();
+//	}
 
 	function areYouSure(func, msg, returns) {
 		if (confirm(msg)) {
@@ -411,20 +411,9 @@ $(function () {
 		return false;
 	});
 
-	//close msg boxes
-	$(document).on("click", ".infostrip, .messagebox",  function(event) {
-		var that = $(this);
-		that.hide();
-		if (that.hasClass("introBox")) {
-			localStorage.setItem("intro", "0");
-		}
-		return (event.target.nodeName === "A");
-	});
-
 	$("body").ajaxSuccess(function() {
 		clearLoading();
 	});
-
 
 	$(document).on("click", ".post-refresh-ask",  function() {
 		var elem = $(this);
@@ -508,6 +497,76 @@ $(function () {
 	/****************************************************
      *                    AUTOCOMPLETE
      ****************************************************/
+
+
+	var resultCache = {
+		'A': [
+			{
+				id: 'Abe',
+				text: 'Abe'
+			},
+			{
+				id: 'Ari',
+				text: 'Ari'
+			}
+		],
+		'B': [
+			{
+				id: 'Baz',
+				text: 'Baz'
+			}
+		],
+		'BA': [
+			{
+				id: 'Baz',
+				text: 'Baz'
+			}
+		],
+		'BAZ': [
+			{
+				id: 'Baz',
+				text: 'Baz'
+			}
+		],
+		'AB': [
+			{
+				id: 'Abe',
+				text: 'Abe'
+			}
+		],
+		'ABE': [
+			{
+				id: 'Abe',
+				text: 'Abe'
+			}
+		],
+		'AR': [
+			{
+				id: 'Ari',
+				text: 'Ari'
+			}
+		],
+		'ARI': [
+			{
+				id: 'Ari',
+				text: 'Ari'
+			}
+		]
+	};
+
+		$('input.tagbox').materialize_autocomplete({
+            multiple: {
+                enable: true
+            },
+            appender: {
+                el: '.ac-tags',
+				tagTemplate: '<div class="chip" data-id="<%= item.id %>" data-text="<%= item.text %>">\n\
+								<%= item.text %> &nbsp;<i class="fa fa-close"></i></div>'
+            },
+            dropdown: {
+                el: '#tags-dropdown'
+            }
+        }).resultCache = resultCache;
 
 //	autocompleteBind("input.locationbox", {find: "locations"});
 //	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
@@ -717,48 +776,48 @@ $(function () {
 	}
 
 	function initPostEditor(index, elem) {
-		var that = $(elem).addClass("markedUp"),
-			lastText,
-			preview = that.nextAll("div.edit-preview"),
-			converter = new Showdown.converter();
-
-		that.markItUp(miu_set_markdown);
-
-		// First, try registering for keyup events
-		// (There's no harm in calling onInput() repeatedly)
-		that.keyup(function(e) {
-			preview.html(markdownToHTML(that.val(), lastText, converter));
-		});
-
-		// In case we can't capture paste events, poll for them
-		var pollingFallback = window.setInterval(function() {
-			if (that.html() !== lastText) {
-				preview.html(markdownToHTML(that.val(), lastText, converter));
-			}
-		}, 1000);
-
-		// Try registering for paste events
-		that.on("paste", function() {
-			// It worked! Cancel paste polling.
-			if (pollingFallback !== undefined) {
-				window.clearInterval(pollingFallback);
-				pollingFallback = undefined;
-			}
-			preview.html(markdownToHTML(that.val(), lastText, converter));
-		});
-
-		// Try registering for input events (the best solution)
-		that.on("input", function() {
-			// It worked! Cancel paste polling.
-			if (pollingFallback !== undefined) {
-				window.clearInterval(pollingFallback);
-				pollingFallback = undefined;
-			}
-			preview.html(markdownToHTML(that.val(), lastText, converter));
-		});
-
-		// do an initial conversion to avoid a hiccup
-		preview.html(markdownToHTML(that.val(), lastText, converter));
+//		var that = $(elem).addClass("markedUp"),
+//			lastText,
+//			preview = that.nextAll("div.edit-preview"),
+//			converter = new Showdown.converter();
+//
+//		that.markItUp(miu_set_markdown);
+//
+//		// First, try registering for keyup events
+//		// (There's no harm in calling onInput() repeatedly)
+//		that.keyup(function(e) {
+//			preview.html(markdownToHTML(that.val(), lastText, converter));
+//		});
+//
+//		// In case we can't capture paste events, poll for them
+//		var pollingFallback = window.setInterval(function() {
+//			if (that.html() !== lastText) {
+//				preview.html(markdownToHTML(that.val(), lastText, converter));
+//			}
+//		}, 1000);
+//
+//		// Try registering for paste events
+//		that.on("paste", function() {
+//			// It worked! Cancel paste polling.
+//			if (pollingFallback !== undefined) {
+//				window.clearInterval(pollingFallback);
+//				pollingFallback = undefined;
+//			}
+//			preview.html(markdownToHTML(that.val(), lastText, converter));
+//		});
+//
+//		// Try registering for input events (the best solution)
+//		that.on("input", function() {
+//			// It worked! Cancel paste polling.
+//			if (pollingFallback !== undefined) {
+//				window.clearInterval(pollingFallback);
+//				pollingFallback = undefined;
+//			}
+//			preview.html(markdownToHTML(that.val(), lastText, converter));
+//		});
+//
+//		// do an initial conversion to avoid a hiccup
+//		preview.html(markdownToHTML(that.val(), lastText, converter));
 	}
 
 	var inputPane = $("textarea.edit-post");

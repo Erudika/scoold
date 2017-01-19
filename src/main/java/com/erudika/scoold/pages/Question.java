@@ -131,16 +131,11 @@ public class Question extends Base{
 			form.add(tags);
 		}
 
-		TextField hideme = new TextField("additional", false);
-		hideme.setLabel("Leave blank!");
-		hideme.setAttribute("class", "hide");
-
         Submit submit = new Submit("editbtn",
 				lang.get("save"), this, "onPostEditClick");
         submit.setAttribute("class", "btn waves-effect waves-light post-edit-btn");
 		submit.setId("post-edit-btn-"+post.getId());
 
-		form.add(hideme);
         form.add(body);
         form.add(submit);
 

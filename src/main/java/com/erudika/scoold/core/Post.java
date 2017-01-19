@@ -22,7 +22,6 @@ import com.erudika.para.core.Tag;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
-import com.erudika.para.core.User;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.AppConfig;
@@ -30,8 +29,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.validation.constraints.Size;
 import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -40,8 +42,13 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class Post extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
-	@Stored private String body;
-	@Stored private String title;
+	@Stored @NotBlank @Size(min = 10, max = AppConfig.MAX_TEXT_LENGTH)
+	private String body;
+	@Stored @NotBlank @Size(min = 6, max = 255)
+	private String title;
+	@Stored @NotEmpty
+	private List<String> tags;
+
 	@Stored private Long viewcount;
 	@Stored private String answerid;
 	@Stored private String revisionid;
@@ -52,8 +59,8 @@ public abstract class Post extends Sysprop {
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
 
-	private transient User author;
-	private transient User lastEditor;
+	private transient Profile author;
+	private transient Profile lastEditor;
 	private transient List<Comment> comments;
 	private transient Form editForm;
 	private transient Long pagenum;
@@ -79,6 +86,14 @@ public abstract class Post extends Sysprop {
 
 	public void setDeletereportid(String deletereportid) {
 		this.deletereportid = deletereportid;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 	@JsonIgnore
@@ -246,14 +261,14 @@ public abstract class Post extends Sysprop {
 	}
 
 	@JsonIgnore
-	public User getAuthor() {
+	public Profile getAuthor() {
 		if (getCreatorid() == null) return null;
 		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;
 	}
 
 	@JsonIgnore
-	public User getLastEditor() {
+	public Profile getLastEditor() {
 		if (lasteditby == null) return null;
 		if (lastEditor == null) lastEditor = AppConfig.client().read(lasteditby);
 		return lastEditor;

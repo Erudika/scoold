@@ -669,15 +669,32 @@ main {
 	display: none;
 }
 
-/*
-@media only screen and (max-width: 1279px) {
-	.container {
-    width: 100%;
-	}
+.autocomplete {
+	display: -ms-flexbox;
+	display: flex;
 }
-
-@media only screen and (min-width: 1280px) {
-	.container {
-    width: 70%;
-	}
-}*/
+.autocomplete .ac-tags {
+	padding-top: 10px;
+	padding-right: 15px
+}
+.autocomplete .ac-tags .chip {
+	-ms-flex: auto;
+	flex: auto;
+	margin-top: 15px;
+	margin-left: 15px;
+}
+.autocomplete .ac-tags .chip:last-child {
+	margin-right: 10px;
+}
+.autocomplete .ac-dropdown .ac-hover {
+	background: #eee;
+}
+.autocomplete .ac-input {
+	-ms-flex: 1;
+	flex: 1;
+	min-width: 150px;
+	padding-top: 0.6rem;
+}
+.autocomplete .ac-input input {
+	height: 2.4rem;
+}

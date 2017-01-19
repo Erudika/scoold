@@ -19,8 +19,10 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Post;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.List;
 import org.apache.click.control.Form;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -31,6 +33,7 @@ public class Feedback <P extends Post> extends Base{
 	public String title;
 	public List<Post> feedbacklist;
 	public Form fForm;
+	public String error = "";
 
 	public Feedback() {
 		title = lang.get("feedback.title");
@@ -61,10 +64,30 @@ public class Feedback <P extends Post> extends Base{
 		}
 	}
 
-	public boolean onAskClick() {
-		if (isValidQuestionForm(fForm)) {
+	public void onPost() {
+		if (isValidQuestionForm()) {
 			createAndGoToPost(com.erudika.scoold.core.Feedback.class);
 		}
-		return false;
+	}
+
+	private boolean isValidQuestionForm() {
+		String head = getParamValue("title");
+		String body = getParamValue("body");
+		String tags = getParamValue("tags");
+
+		if (StringUtils.length(head) < 6) {
+			error += "\n " + Utils.formatMessage(lang.get("minlength"), 6);
+		}
+		if (StringUtils.length(body) < 10) {
+			error += "\n " + Utils.formatMessage(lang.get("minlength"), 10);
+		}
+		if (StringUtils.isBlank(tags)) {
+			error += lang.get("tags.title") + " - " + lang.get("requiredfield");
+		}
+		if (StringUtils.split(tags, ",").length > AppConfig.MAX_TAGS_PER_POST) {
+			error += lang.get("tags.toomany");
+		}
+
+		return error.isEmpty();
 	}
 }

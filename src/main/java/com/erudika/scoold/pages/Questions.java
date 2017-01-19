@@ -21,13 +21,18 @@ package com.erudika.scoold.pages;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import com.erudika.para.validation.ValidationUtils;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Profile.Badge;
+import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import org.apache.click.control.Form;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -38,7 +43,8 @@ public class Questions extends Base{
 
 	public String title;
 	public List<Question> questionslist;
-	public Form qForm;
+	public int MAX_TEXT_LENGTH = AppConfig.MAX_TEXT_LENGTH;
+	public HashMap<String, String> error = new HashMap<String, String>();
 
 	public Questions() {
 		title = lang.get("home.title");
@@ -49,7 +55,6 @@ public class Questions extends Base{
 			} else {
 				addModel("askSelected", "navbtn-hover");
 				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
-				qForm = getQuestionForm();
 			}
 		} else {
 			addModel("questionsSelected", "navbtn-hover");
@@ -108,13 +113,40 @@ public class Questions extends Base{
 				rep.setAuthor(lang.get("anonymous"));
 			}
 			rep.create();
+		} else {
+			if (isValidQuestionForm()) {
+				createAndGoToPost(Question.class);
+			}
 		}
 	}
 
-	public boolean onAskClick() {
-		if (isValidQuestionForm(qForm)) {
-			createAndGoToPost(Question.class);
+	private boolean isValidQuestionForm() {
+		final String[] tags = StringUtils.split(getParamValue("tags"), ",");
+		Question q = ParaObjectUtils.setAnnotatedFields(new Question(), new HashMap<String, Object>(){{
+			put("title", getParamValue("title"));
+			put("body", getParamValue("body"));
+			put("tags", tags == null ? Collections.emptyList() : Arrays.asList(tags));
+		}}, null);
+
+		Set<ConstraintViolation<Question>> errors = ValidationUtils.getValidator().validate(q);
+		for (ConstraintViolation<Question> err : errors) {
+			error.put(err.getPropertyPath().toString(), err.getMessage());
 		}
-		return false;
+
+//		if (StringUtils.length(head) < 6) {
+//			error.put("title", Utils.formatMessage(lang.get("minlength"), 6));
+//		}
+//		if (StringUtils.length(body) < 10) {
+//			error.put("body", Utils.formatMessage(lang.get("minlength"), 10));
+//		}
+//		if (StringUtils.isBlank(tags)) {
+//			error.put("tags", lang.get("requiredfield"));
+//		}
+//		if (StringUtils.split(tags, ",").length > AppConfig.MAX_TAGS_PER_POST) {
+//			error.put("tags", lang.get("tags.toomany"));
+//		}
+
+		return error.isEmpty();
 	}
+
 }

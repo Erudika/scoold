@@ -326,10 +326,6 @@ public class Base extends Page {
 
 	/****  POSTS  ****/
 
-	public final <T extends Sysprop> Form getQuestionForm() {
-		return getPostForm(Question.class, "qForm", "ask-question-form");
-	}
-
 	public final Form getAnswerForm() {
 		Form aForm = new Form("aForm");
 		aForm.setId("answer-question-form");
@@ -339,15 +335,10 @@ public class Base extends Page {
 		body.setRows(4);
 		body.setCols(5);
 
-		TextField hideme = new TextField("additional", false);
-		hideme.setLabel("Leave blank!");
-		hideme.setAttribute("class", "hide");
-
         Submit submit = new Submit("answerbtn", lang.get("post"), this, "onAnswerClick");
         submit.setAttribute("class", "btn waves-effect waves-light");
 		submit.setId("answer-btn");
 
-		aForm.add(hideme);
         aForm.add(body);
         aForm.add(submit);
 
@@ -396,16 +387,11 @@ public class Base extends Page {
 			((RadioGroup) tags).setVerticalLayout(false);
 		}
 
-		TextField hideme = new TextField("additional", false);
-		hideme.setLabel("Leave blank!");
-		hideme.setAttribute("class", "hide");
-
         Submit submit = new Submit("askbtn", lang.get("post"), this, "onAskClick");
         submit.setAttribute("class", "btn waves-effect waves-light");
 		submit.setId("ask-btn");
 
         qForm.add(title);
-		qForm.add(hideme);
         qForm.add(body);
 		qForm.add(tags);
         qForm.add(submit);
@@ -415,11 +401,6 @@ public class Base extends Page {
 
 	public final boolean isValidPostEditForm(Form qForm) {
         String tags = qForm.getFieldValue("tags");
-		String additional = qForm.getFieldValue("additional");
-
-		if (!StringUtils.isBlank(additional)) {
-			qForm.setError("You are not supposed to do that!");
-		}
 		if (tags != null && StringUtils.split(tags, ",").length >
 				AppConfig.MAX_TAGS_PER_POST) {
 			qForm.setError(lang.get("tags.toomany"));
@@ -428,25 +409,7 @@ public class Base extends Page {
 		return qForm.isValid();
 	}
 
-	public final boolean isValidQuestionForm(Form qForm) {
-        String tags = qForm.getFieldValue("tags");
-		String additional = qForm.getFieldValue("additional");
-
-		if (!StringUtils.isBlank(additional)) {
-			qForm.setError("You are not supposed to do that!");
-		}
-		if (StringUtils.split(tags, ",").length > AppConfig.MAX_TAGS_PER_POST) {
-			qForm.setError(lang.get("tags.toomany"));
-		}
-
-		return qForm.isValid();
-	}
-
 	public final boolean isValidAnswerForm(Form aForm, Post showPost) {
-		String additional = aForm.getFieldValue("additional");
-		if (!StringUtils.isBlank(additional)) {
-			aForm.setError("You are not supposed to do that!");
-		}
         return aForm.isValid();
 	}
 

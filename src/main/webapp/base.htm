@@ -238,6 +238,7 @@
 							</h5>
 							<div class="pvl">
 								<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
+								<a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a>&nbsp;&nbsp;
 								<a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
 								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
 							</div>
@@ -279,7 +280,8 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize-autocomplete/1.0.7/jquery.materialize-autocomplete.min.js"></script>
+		
 		#macro(langjs)
 			#set($jslang = ["areyousure","more","posts.unloadconfirm","signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close","save","clickedit"])
 			{#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end#end}

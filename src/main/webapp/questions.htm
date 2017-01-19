@@ -1,6 +1,47 @@
 <div class="ptl">
 	#if ($request.getParameter("ask"))
-		#newquestionform($qForm false "question")
+		<h2>$!lang.get("posts.ask")</h2>
+		<hr />
+		<div id="questionform" class="ptl">
+			<form method="post" id="ask-question-form">
+				#sectoken(false)
+				<div class="input-field">
+					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					<label for="title_text">$!lang.get('posts.title')</label>
+					<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6" required>
+					#getmessagebox("red white-text" $error.get("title"))
+				</div>
+
+				<div class="input-field">
+					<i class="fa fa-pencil pvm prefix grey-text"></i>
+					<label for="body_text">$!lang.get('feedback.write')</label>
+					<textarea id="body_text" class="materialize-textarea validate edit-post" name="body"
+										length="$MAX_TEXT_LENGTH" minlength="10" required></textarea>
+					#getmessagebox("red white-text" $error.get("body"))
+				</div>
+
+				<div class="autocomplete">
+					<i class="fa fa-tag fa-2x ptl grey-text"></i>
+					<div class="ac-tags"></div>
+					<div class="ac-input input-field">
+						<label for="tags_text">$!lang.get('tags.title')</label>
+						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
+									 data-beloworigin="true" autocomplete="off">
+					</div>
+					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
+					<input type="hidden" name="tags" />
+				</div>
+				#getmessagebox("red white-text" $error.get("tags"))
+
+				<input type="hidden" name="parentid"/>
+				<div class="edit-preview"></div>
+
+				<br>
+				<button class="btn mtl" type="submit"><i class="fa fa-paper-plane left"></i>$!lang.get('post')</button>
+			</form>
+		</div>
+
+
 	#else
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')

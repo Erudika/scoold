@@ -1,6 +1,9 @@
 <div class="line">
 	#if ($request.getParameter("write"))
-		#newquestionform($fForm false "feedback")
+		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
+		
+
+
 	#else
 		<a href="$feedbacklink/write" class="btn waves-effect waves-light right" title="Write something">$!{lang.get('feedback.write')}</a>
 		#if ($request.getParameter("tag"))
