@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.Size;
-import org.apache.click.control.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -46,7 +45,7 @@ public abstract class Post extends Sysprop {
 	private String body;
 	@Stored @NotBlank @Size(min = 6, max = 255)
 	private String title;
-	@Stored @NotEmpty
+	@Stored @NotEmpty @Size(min = 1, max = AppConfig.MAX_TAGS_PER_POST)
 	private List<String> tags;
 
 	@Stored private Long viewcount;
@@ -62,7 +61,6 @@ public abstract class Post extends Sysprop {
 	private transient Profile author;
 	private transient Profile lastEditor;
 	private transient List<Comment> comments;
-	private transient Form editForm;
 	private transient Long pagenum;
 
 	public Post() {
@@ -94,15 +92,6 @@ public abstract class Post extends Sysprop {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
-	}
-
-	@JsonIgnore
-	public Form getEditForm() {
-		return editForm;
-	}
-
-	public void setEditForm(Form editForm) {
-		this.editForm = editForm;
 	}
 
 	public String getLasteditby() {

@@ -9,21 +9,21 @@
 		#set($minsuffix = "")
 	#end
 	<title>$APPNAME $!title </title>
-	<meta charset="utf-8"/>
+	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-	<link href="$ilink/logosq.png" rel="image_src"/>
-	<link href="$ilink/logosq.png" rel="apple-touch-icon"/>
-	<link href="$ilink/favicon.ico" rel="shortcut icon"/>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" type="text/css" media="screen"/>
+	<link href="$ilink/logosq.png" rel="image_src">
+	<link href="$ilink/logosq.png" rel="apple-touch-icon">
+	<link href="$ilink/favicon.ico" rel="shortcut icon">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
+	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" media="screen">
 	#if ($showdesc && !$showdesc.isEmpty())
-		<meta name="description" content="$showdesc"/>
+		<meta name="description" content="$showdesc">
 	#end
 	#if ($showkeyw && !$showkeyw.isEmpty())
-		<meta name="keywords" content="$showkeyw"/>
+		<meta name="keywords" content="$showkeyw">
 	#end
-	<meta property="fb:app_id" content="99517177417" />
+	<meta property="fb:app_id" content="99517177417">
 #end
 ################# DEFINE MACROS ################################################
 #macro(getcontactlinkcode $showcontact)
@@ -41,8 +41,8 @@
 			<div class="line">
 				<div class="unit size4of5">
 					<textarea rows="2" cols="4" name="comment"></textarea>
-					<input type="hidden" name="parentid" value="$!parentid"/>
-					<input type="hidden" name="getcommenthtmlcode" value="true"/>
+					<input type="hidden" name="parentid" value="$!parentid">
+					<input type="hidden" name="getcommenthtmlcode" value="true">
 				</div>
 				<div class="unit size1of5  center">
 					<button type="submit" class="btn waves-effect waves-light new-comment-btn">$!lang.get('add')</button>
@@ -78,7 +78,7 @@
 			#if ($showcomment == "")
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
 			<a href="${thisuri}" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
-			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $request.isUserInRole("mod")))
+			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $isMod))
 			<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$!lang.get('delete')" class="red delete-comment pictos">D</a>
 			#else
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
@@ -124,28 +124,29 @@
 #macro(newanswerform $_form $showpost $hidden)
 #if ($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
 <div class="${hide}">
-	<form method="post" id="$_form.id">
-		#if ($_form.error)
-		#getmessagebox("errorBox" $_form.error)
-		#end
+	<form method="post" id="answer-question-form">
 		<fieldset>
 			#sectoken(false)
-			#if ($showpost.isQuestion())
-			<legend>$!lang.get("posts.youranswer")</legend>
-			#else
-			<legend>$!lang.get("feedback.writereply")</legend>
-			#end
-			<input type="hidden" name="answer" value="true"/>
-			<ol>
-				<li>
-					#createformfield(${_form.fields.body} "hidelabel edit-post unload-confirm")
-					<div class="edit-preview"></div>
-				</li>
-			</ol>
+			<span class="mediumText">
+				#if ($showpost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
+			</span>
+
+			<div class="input-field">
+				<i class="fa fa-pencil pvm prefix grey-text"></i>
+				<label for="body_text">$!lang.get('posts.answer')</label>
+				<textarea id="body_text" class="materialize-textarea validate edit-post" name="body"
+									length="$MAX_TEXT_LENGTH" minlength="10" required></textarea>
+				#getmessagebox("red white-text" $error.get("body"))
+			</div>
+
+			<input type="hidden" name="answer" value="true">
+			<div class="edit-preview"></div>
 
 			<div class="center">
-				${_form.fields.answerbtn}
-				<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light close-answer-form"/>
+				<button class="btn mtl waves-effect waves-light" type="submit">
+					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+				</button>
+				<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light close-answer-form">
 			</div>
 		</fieldset>
 	</form>
@@ -191,10 +192,10 @@
 	<div class="img mrm center">
 		#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-			<img src="#profilepic($!showu)" width="50" height="50" alt="Profile picture"/>
+			<img src="#profilepic($!showu)" width="50" height="50" alt="Profile picture">
 		</a>
 		#else
-		<img src="#profilepic($!showu)" width="50" height="50" alt="Profile picture"/>
+		<img src="#profilepic($!showu)" width="50" height="50" alt="Profile picture">
 		#end
 	</div>
 	<div class="bd">
@@ -204,7 +205,7 @@
 		$!lang.get("profile.deleted")
 		#end
 		#if ($showu)
-		<br />
+		<br>
 		<span class="chip">$!utils.abbreviateInt($!showu.votes, 0)</span>
 		<span class="lightgray">#usertitlebadge($showu)</span>
 		#end
@@ -216,10 +217,10 @@
 <div>
 	#if ($showu)
 	<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-		<img src="#profilepic($!showu)" width="40" height="40" alt="Profile picture"/>
+		<img src="#profilepic($!showu)" width="40" height="40" alt="Profile picture">
 	</a>
 	#else
-	<img src="#profilepic($!showu)" width="40" height="40" alt="Profile picture"/>
+	<img src="#profilepic($!showu)" width="40" height="40" alt="Profile picture">
 	#end
 </div>
 #end
@@ -227,7 +228,7 @@
 #macro(inactivepersonbox $showname $showclass)
 <div class="userbox media pas">
 	<div class="img mrm center">
-		<img src="https://www.gravatar.com/avatar/?size=50&d=mm&r=pg" width="50" height="50" alt="Profile picture"/>
+		<img src="https://www.gravatar.com/avatar/?size=50&d=mm&r=pg" width="50" height="50" alt="Profile picture">
 	</div>
 	<div class="bd">
 		<div class="smallText">
@@ -239,25 +240,23 @@
 ####################################
 #macro(personlink $showu)
 <span>
-	#if ($showu.groups && !$showu.groups.isEmpty())
-	#if ($showu.groups == "mods")
-	<span class="pictos" title="$!lang.get('mod')">S</span>
-	#elseif ($showu.groups == "admins")
-	<span class="pictos" title="$!APPNAME developer">b</span>
-	<span class="pictos" title="$!lang.get('mod')">S</span>
-	#else
-	<span class="pictos">U</span>
-	#end
+	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
+		#if ($showu.groups == "admins")
+		<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+		#end
+		#if ($showu.groups == "mods")
+		<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+		#end
 	#end
 	#if ($showu)
-	#if ($showu.name)
-	#set($seopsuffix = "/#stripstr($!showu.name)" )
+		#if ($showu.name)
+			#set($seopsuffix = "/#stripstr($!showu.name)" )
+		#else
+			#set($seopsuffix = "" )
+		#end
+		<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.name</a>
 	#else
-	#set($seopsuffix = "" )
-	#end
-	<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.name</a>
-	#else
-	$!lang.get("profile.deleted")
+		$!lang.get("profile.deleted")
 	#end
 </span>
 #end
@@ -321,7 +320,7 @@
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
 
-<div class="card-panel hoverable">
+<div class="card-panel">
 	<div class="right mlm center">
 		#set($author = $showpost.author)
 		#tinypersonbox($author)
@@ -406,39 +405,39 @@
 <div class="postbox ${boxclass}">
 	<div class="mbm">
 		#if ($canEdit)
-		<a href="#" title="Edit" class="editlink chip"><span class="pictos">W</span> $!lang.get("edit")</a>
+			<a href="#" title="Edit" class="editlink chip"><span class="pictos">W</span> $!lang.get("edit")</a>
 		#end
 
 		#if ($canComment)
-		<a href="#" class="next-div-toggle chip" title="Add a comment"><span class="pictos">w</span> $!lang.get("comments.write")</a>
+			<a href="#" class="next-div-toggle chip" title="Add a comment"><span class="pictos">w</span> $!lang.get("comments.write")</a>
 		#end
 
 		#if ($showpost.lasteditby)
-		<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="chip"><span class="pictos">l</span> $!lang.get("revisions.title")</a>
+			<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="chip"><span class="pictos">l</span> $!lang.get("revisions.title")</a>
 		#end
 
-		#if ($isMine || $request.isUserInRole("mod"))
-		<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask chip" title="Delete"><span class="pictos">*</span> $!lang.get("delete")</a>
+		#if ($isMine || $isMod)
+			<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask chip" title="Delete"><span class="pictos">*</span> $!lang.get("delete")</a>
 		#end
 
-		#if ($request.isUserInRole("mod") && $showpost.isQuestion())
-		#if ($showPost.isClosed())
-		<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh chip"><span class="pictos">)</span> $!lang.get("reopen")</a>
-		#else
-		<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask chip"><span class="pictos">(</span> $!lang.get("close")</a>
-		#end
+		#if ($isMod && $showpost.isQuestion())
+			#if ($showPost.isClosed())
+			<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh chip"><span class="pictos">)</span> $!lang.get("reopen")</a>
+			#else
+			<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask chip"><span class="pictos">(</span> $!lang.get("close")</a>
+			#end
 		#end
 
-		#if ($request.isUserInRole("admin"))
-		<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="chip red"><span class="pictos">*</span> $!lang.get("delete")</a>
+		#if ($isAdmin)
+			<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="chip red"><span class="pictos">*</span> $!lang.get("delete")</a>
 		#end
 
 		#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
-		#getreportlink($showpost "$questionlink/$!showpost.id" "chip")
+			#getreportlink($showpost "$questionlink/$!showpost.id" "chip")
 		#end
 
 		#if ($canComment)
-		#newcommentform($showpost.id true "$questionlink/$showpost.id")
+			#newcommentform($showpost.id true "$questionlink/$showpost.id")
 		#end
 	</div>
 
@@ -506,14 +505,14 @@
 			#end
 			<fieldset>
 				#sectoken(false)
-				<input type="hidden" name="editpostid" value="$showpost.id"/>
+				<input type="hidden" name="editpostid" value="$showpost.id">
 				#createformfield(${_form.fields.body} "hidelabel edit-post")
 				<div class="edit-preview"></div>
 				#createformfield(${_form.fields.tags} "tagbox")
 
 				<div class="center mtl">
 					${_form.fields.editbtn}
-					<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light canceledit"/>
+					<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light canceledit">
 				</div>
 			</fieldset>
 		</form>
@@ -541,16 +540,16 @@
 #set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 <div class="translationbox media">
 	<div class="img mrm">
-		#if ($request.isUserInRole("admin"))
-		#if ($approved)
-		#set($onclass = "green")
-		#set($picon = "2")
-		#else
-		#set($onclass = "")
-		#set($picon = "3")
-		#end
-		<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!{onclass}" title="Approve">$picon</a>
-		&nbsp;
+		#if ($isAdmin)
+			#if ($approved)
+				#set($onclass = "green")
+				#set($picon = "2")
+			#else
+				#set($onclass = "")
+				#set($picon = "3")
+			#end
+			<a href="${thisuri}?approve=$showtrans.id" class="approve-translation largeText pictos nodecoration $!{onclass}" title="Approve">$picon</a>
+			&nbsp;
 		#end
 		#votebox($showtrans "mediumText")
 	</div>
@@ -560,7 +559,7 @@
 			#set($translAuthor = $!showtrans.author)
 			#personlink($translAuthor)
 			<span class="trans-timestamp"><span class="pictos">t</span> $!timestamp</span>
-			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $request.isUserInRole("admin")))
+			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
 			<a href="${thisuri}?delete=$!showtrans.id" title="Delete" class="delete-translation red chip"><span class="pictos">*</span></a>
 			#else
 			#getreportlink($showtrans "$translatelink/$!showtrans.id" "chip notext")
@@ -578,7 +577,7 @@
 		<form action="$languageslink" method="post">
 			<fieldset>
 				#sectoken(false)
-				<input type="hidden" name="setlocale" value="$!showLangKey"/>
+				<input type="hidden" name="setlocale" value="$!showLangKey">
 				<button type="submit" class="btn waves-effect waves-light">$showLangName</button>
 			</fieldset>
 		</form>
@@ -631,33 +630,13 @@
 </div>
 #end
 #end
-#####################################
-########### DELETE
-########### DELETE
-########### DELETE
-#macro(createformfield $_field $class)
-#if ($_field)
-#if (!$class.isEmpty())  $_field.setAttribute("class", $class)  #end
-#if ($_field.error) #set($hideme = "") #else  #set($hideme = "hide")  #end
-#if ($class.contains("hintbox"))
-$_field.setValue($!_field.label)
-#elseif (!$class.contains("hidelabel") && !$_field.isHidden())
-#if ($_field.label && !$_field.label.isEmpty()) <label class="blocklabel">$!{_field.label}: </label>#end
-#end
-<span class="error $!{hideme}">$!{_field.error}</span>
-$!{_field}
-#end
-#end
-########### DELETE
-########### DELETE
-########### DELETE
 ###################################
 #macro(formvc $ctype)
-<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)"/>
+<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)">
 #end
 ###################################
 #macro(formvj $ctype $fields)
-<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled"/>
+<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled">
 #end
 #####################################
 #macro(formatdate $date $format)
@@ -682,11 +661,11 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #end
 #####################################
 #macro(reportform $type $parentid $grandparentid $parentid $link)
-<form method="post" class="create-report-form pal" action="$context/?report=true">
+<form method="post" class="create-report-form pal" action="$reportslink">
 		#sectoken(false)
 		<h3>$!lang.get("reportproblem")</h3>
 		<label class="blocklabel">$!lang.get("reports.category")</label>
-		<select name="type">
+		<select name="subType">
 			#foreach($type in $reportTypes)
 			#if ($type.name() == "OTHER")
 			<option selected="selected" value="$!type.name()">$!lang.get("reports.$type.toString()")</option>
@@ -699,13 +678,12 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 			<label>$!lang.get("reports.description")</label>
 			<textarea name="description" class="materialize-textarea"></textarea>
 		</div>
-		<input type="hidden" name="parentid" value="$!parentid"/>
-		<input type="hidden" name="type" value="$!type"/>
+		<input type="hidden" name="parentid" value="$!parentid">
 		#if ($grandparentid && $grandparentid != "")
-		<input type="hidden" name="grandparentid" value="$!grandparentid"/>
+		<input type="hidden" name="grandparentid" value="$!grandparentid">
 		#end
 		#if ($link && !$link.isEmpty())
-		<input type="hidden" name="link" value="$!link"/>
+		<input type="hidden" name="link" value="$!link">
 		#end
 		<div class="center mtl">
 			<button id="sendreport-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('send')</button>
@@ -733,74 +711,51 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #macro(profilepic $user)${user.picture}#end
 #####################################
 #macro(infostrip )
-#if ($request.getParameter("success"))
-#set($infoStripClass = "successBox" )
-#elseif ($request.getParameter("error"))
-#set($infoStripClass = "errorBox" )
-#else
-#set($infoStripClass = "infoBox" )
-#end
-
-#if ((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
-#set($hideInfoStrip = "hide")
-#else
-#set($hideInfoStrip = "")
-#end
-
-#if ($infoStripMsg == "intro" && !$request.getParameter("code"))
-#set($hideInfoStrip = "introBox" )
-#set($infoStripMsg = "$!lang.get('about.intro') <a href='$aboutlink'>$!lang.get('learnmore')</a>" )
-#set($infoStripClass = "" )
-#elseif ($systemMessage && !$systemMessage.isEmpty())
-#set($hideInfoStrip = "sysmsgBox" )
-#set($infoStripMsg = $!systemMessage )
-#set($infoStripClass = "infoBox blue" )
-#end
-
-<noscript>
-<div class="infostrip errorBox pvm center">
-	<span class="pictos ico errorBoxIcon $!{he}">!</span> $!{lang.get("nojavascript")}
-</div>
-</noscript>
-<div class="infostrip center pvm ${hideInfoStrip} ${infoStripClass}" title="$!lang.get('close')">
-	#set($hs = "hide" ) #set($he = "hide" ) #set($hi = "hide" )
-	#if ($infoStripClass.contains("successBox"))
-	#set($hs = "" )
-	#elseif ($infoStripClass.contains("errorBox"))
-	#set($he = "" )
-	#elseif ($infoStripClass.contains("infoBox"))
-	#set($hi = "" )
+	#if ($request.getParameter("success"))
+		#set($infoStripClass = "green white-text" )
+	#elseif ($request.getParameter("error"))
+		#set($infoStripClass = "red white-text" )
+	#else
+		#set($infoStripClass = "light-blue white-text" )
 	#end
-	<span class="pictos ico successBoxIcon $!{hs}">2</span>
-	<span class="pictos ico errorBoxIcon $!{he}">!</span>
-	<span class="pictos ico infoBoxIcon  $!{hi}">i</span>
 
-	#set($_infoStripMsg = $infoStripMsg )
+	#if ((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
+		#set($hideInfoStrip = "hide")
+	#else
+		#set($hideInfoStrip = "")
+	#end
 
-	<span class="infostrip-msg">
-		#if (!$badgelist.isEmpty())
-		#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
-		&nbsp;
-		#foreach($badge in $badgelist)
-		#badgebox($badge 0)
-		#end
-		#elseif ($request.getParameter("code"))
-		$!lang.get("msgcode.${request.getParameter('code')}")
-		#else
-		$!_infoStripMsg
-		#end
-	</span>
-</div>
+	<noscript>
+		<div class="infostrip errorBox pvm center">
+			<span class="pictos ico errorBoxIcon $!{he}">!</span> $!{lang.get("nojavascript")}
+		</div>
+	</noscript>
+	<div class="card-panel center ${hideInfoStrip} ${infoStripClass}" onclick="$(this).hide()" style="cursor: pointer">
+		#set($_infoStripMsg = $infoStripMsg )
+		<span class="mediumText">
+			#if (!$badgelist.isEmpty())
+			#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
+			&nbsp;
+			#foreach($badge in $badgelist)
+			#badgebox($badge 0)
+			#end
+			#elseif ($request.getParameter("code"))
+			$!lang.get("msgcode.${request.getParameter('code')}")
+			#else
+			$!_infoStripMsg
+			#end
+		</span>
+	</div>
 #end
 #####################################
 #macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($str, "-"))#end
 #####################################
 #macro(usertitlebadge $showu)
-#if ($showu.isModerator())
-	#if ($showu.isAdmin())
-	<i class="fa fa-check-circle indigo-text" title="Developer"></i>
-	#end
-	<i class="fa fa-dot-circle-o indigo-text" title="$!lang.get('mod')"></i>
+#if ($showu.groups == "admins")
+	<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+#end
+#if ($showu.groups == "mods")
+	<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 #end
 #end
 #####################################
@@ -811,6 +766,6 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #####################################
 #macro(sectoken $bare)
 #if ($!req.getAttribute("_csrf"))#set($sectoken = $!req.getAttribute("_csrf").getToken() )#end
-#if ($bare && $bare == true)$!sectoken#else<input type="hidden" name="_csrf" value="$!sectoken"/>#end#end
+#if ($bare && $bare == true)$!sectoken#else<input type="hidden" name="_csrf" value="$!sectoken">#end#end
 ################# END MACROS ###################################################
 

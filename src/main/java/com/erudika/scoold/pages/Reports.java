@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.pages;
 
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Report;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Reports extends Base{
 
 	public Reports() {
 		title = lang.get("reports.title");
-		if (param("merge") && param("id") && inRole("admin")) {
+		if (param("merge") && param("id") && isAdmin) {
 			title += " - Merge operation";
 		} else {
 			title += lang.get("reports.title");
@@ -61,12 +62,28 @@ public class Reports extends Base{
 				}
 			}
 			if (!isAjaxRequest()) setRedirect(reportslink);
-		} else if (param("delete") && inRole("admin")) {
+		} else if (param("delete") && isAdmin) {
 			Report rep = pc.read(getParamValue("id"));
 			if (rep != null) {
 				rep.delete();
 			}
 			if (!isAjaxRequest()) setRedirect(reportslink);
+		} else {
+			Report rep = new Report();
+
+
+
+			ParaObjectUtils.populate(rep, req.getParameterMap());
+			if (authenticated) {
+				rep.setAuthor(authUser.getName());
+				rep.setCreatorid(authUser.getId());
+
+				addBadge(com.erudika.scoold.core.Profile.Badge.REPORTER, true);
+			} else {
+				//allow anonymous reports
+				rep.setAuthor(lang.get("anonymous"));
+			}
+			rep.create();
 		}
 	}
 }

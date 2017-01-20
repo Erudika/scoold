@@ -20,7 +20,7 @@
 			#else
 			<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="btn"><span class="pictos">1</span> $!lang.get("reopen")</a>
 			#end
-			#if ($request.isUserInRole("admin"))
+			#if ($isAdmin)
 			<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red delete-report"><span class="pictos">*</span> $!lang.get("delete")</a>
 			#end
 		</div>
@@ -60,7 +60,7 @@
 
 <div id="reports">
 	<h1><span class="pictos">^</span> $!lang.get("reports.title") #showcount($itemcount.count)</h1>
-	<hr/>
+	<hr>
 	#if ($itemcount.count == 0)
 		<div class="mediumText">$!{lang.get("search.notfound")}</div>
 	#else

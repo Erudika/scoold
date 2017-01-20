@@ -20,7 +20,7 @@
 						<div class="input-field">
 							<label for="picture_url">URL</label>
 							<input id="picture_url" type="url" name="picture" value="$!showUser.picture">
-							<input type="hidden" value="$!gravatarPicture"/>
+							<input type="hidden" value="$!gravatarPicture">
 						</div>
 						<div class="switch right">
 							<label>
@@ -46,6 +46,14 @@
 							#if($showUser.badges && $showUser.badges.length() > 2)
 							$showUser.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i> #end
 						</span>
+						#if ($showUser.groups == "admins")
+							<i class="fa fa-asterisk fa-2x orange-text mhs tooltipped"
+								 data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+						#end
+						#if ($showUser.groups == "mods")
+							<i class="fa fa-dot-circle-o fa-2x orange-text mhs tooltipped"
+								 data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+						#end
 					</div>
 				</div>
 			</div>
@@ -58,11 +66,15 @@
 		#if (!$isMyProfile && $authenticated)
 		<div class="mvm center-align">
 			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
-			#if ($showUser.isAdmin())
-				#if ($showUser.isModerator())
-					<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip rusure">Unmake mod</a>
+			#if ($isAdmin)
+				#if ($isMod)
+					<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip">
+						<i class="fa fa-chevron-down"></i>
+						Unmake mod</a>
 				#else
-					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip rusure">Make mod</a>
+					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip">
+						<i class="fa fa-chevron-up"></i>
+						Make mod</a>
 				#end
 				<a href="${adminlink}?delete=user&id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
 					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")

@@ -25,7 +25,7 @@
 			<div class="mts">
 				#if ($showpost.revisionid == $showrev.id)
 				<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
-				#elseif ($canrestore || $request.isUserInRole("mod"))
+				#elseif ($canrestore || $isMod)
 				<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask btn waves-effect waves-light" title="Restore">
 					<span class="pictos">1</span> $!lang.get("restore")
 				</a>
@@ -60,7 +60,7 @@
 		#end
 	</div>
 </div>
-<br/>
+<br>
 #end
 
 #macro(revisionspage $revisions $canrestore $showpost)
@@ -92,5 +92,5 @@
 #set($actionlink = "#getpostlink($showPost false false)")
 <a href="$actionlink" title="Go back" class="btn waves-effect waves-light right">$!lang.get("goback")</a>
 <h2><span class="pictos">F</span> $!lang.get("revisions.title") #showcount($itemcount.count)</h2>
-<hr/>
+<hr>
 #paginate($pagenum.longValue() "\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount.count "" "")

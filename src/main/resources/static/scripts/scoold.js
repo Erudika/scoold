@@ -604,10 +604,10 @@ $(function () {
 //	$(document).on("click", ".modal-close",  function() {
 //		return false;
 //	});
-//	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
-//		$("div.report-dialog").jqmHide();
-//		clearForm(form);
-//	});
+	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
+		$("#main-modal").modal("close");
+		clearForm(form);
+	});
 
 
 	/****************************************************

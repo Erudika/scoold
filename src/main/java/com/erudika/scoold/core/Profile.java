@@ -43,6 +43,7 @@ public class Profile extends Sysprop implements Comparable<Profile>{
     @Stored private String status;
     @Stored private String aboutme;
 	@Stored private String badges;
+	@Stored private String groups;
 	@Stored private Long upvotes;
 	@Stored private Long downvotes;
 	@Stored private Long comments;
@@ -130,6 +131,14 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 			user = AppConfig.client().read(getCreatorid());
 		}
 		return user;
+	}
+
+	public String getGroups() {
+		return groups;
+	}
+
+	public void setGroups(String groups) {
+		this.groups = groups;
 	}
 
 	public String getPicture() {

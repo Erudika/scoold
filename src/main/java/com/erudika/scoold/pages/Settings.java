@@ -58,7 +58,6 @@ public class Settings extends Base {
 			if (!StringUtils.isBlank(latlng)) {
 				authUser.setLatlng(latlng);
 			}
-
 			authUser.update();
 		}
 

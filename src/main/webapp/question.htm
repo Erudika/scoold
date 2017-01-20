@@ -32,7 +32,7 @@
 			<h2 id="questiontitle" class="$!{editable}">$!{showPost.title}</h2>
 		</div>
 
-		<hr/>
+		<hr>
 
 		<div id="question" class="mbl">
 			#postbox($showPost $showPost)
@@ -50,7 +50,7 @@
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
 					<h2>$!lang.get("answers.title") #showcount($itemcount.count)</h2>
-					<hr />
+					<hr>
 				#end
 
 				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.count "" "pageless")
@@ -74,7 +74,7 @@
 					#if ($showPost.isClosed())
 						<h2>
 							<span class="pictos">(</span> $!lang.get("posts.closed")
-							#if ($request.isUserInRole("mod"))
+							#if ($isMod)
 								#if ($showPost.closerid == "0")
 									#set($closer = $APPNAME)
 								#else
@@ -103,11 +103,11 @@
 			<div>$!lang.get('votes')</div>
 			<div class="line">
 				<div class="unit size1of2" title="$!lang.get('answers.title')">
-					<span class="mediumText">$!showPost.answercount</span> <br />
+					<span class="mediumText">$!showPost.answercount</span> <br>
 					$!lang.get('answers.title')
 				</div>
 				<div class="unit size1of2 " title="$!lang.get('posts.views')">
-					<span class="mediumText">$!showPost.viewcount</span> <br />
+					<span class="mediumText">$!showPost.viewcount</span> <br>
 					$!lang.get('posts.views')
 				</div>
 			</div>

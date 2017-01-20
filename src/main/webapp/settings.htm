@@ -1,16 +1,15 @@
 <div class="ptl">
 	#if ($request.getParameter("delete"))
-		<br />
-		<br />
+		<br>
+		<br>
 		<div class="mvl">
 			<div class="center">
-				<i class="fa fa-warning fa-5x"></i>
 				<h1 class="black-text">$!lang.get("settings.delete.confirm")</h1>
-				<br/>
+				<br>
 				<form method="post" action="$settingslink?deleteaccount=true">
 					#sectoken(false)
 					<div class="input-field">
-						<button type="submit" class="btn waves-effect waves-light mrl red white-text">$!lang.get('delete')</button>
+						<button type="submit" class="btn-large waves-effect waves-light mrl red white-text">$!lang.get('delete')</button>
 						&nbsp; &nbsp; &nbsp;
 						<a href="$settingslink" title="Cancel" class="btn-large grey waves-effect waves-light">$!lang.get("cancel")</a>
 					</div>
@@ -19,7 +18,7 @@
 		</div>
 	#else
 		<h2>$!lang.get("settings.title")</h2>
-		<hr/>
+		<hr>
 		<form method="post">
 			<p>$!lang.get('settings.location')</p>
 			<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
@@ -29,7 +28,7 @@
 			#sectoken(false)
 			<div class="input-field">
 				<label>$!lang.get('tags.title')</label>
-				<input type="text" class="tagbox" value="$!authUser.favtagsString" name="favtags"/>
+				<input type="text" class="tagbox" value="$!authUser.favtagsString" name="favtags">
 			</div>
 			<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
 		</form>

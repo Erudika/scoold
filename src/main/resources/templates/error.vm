@@ -7,7 +7,7 @@
 		<div class="mtl">
 			<div class="container center pal">
 				<div class="mbl">
-					<a href="/"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error"/></a>
+					<a href="/"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error"></a>
 				</div>
 				#if ($request.getParameter("e"))
 				#set($e = $request.getParameter("e"))
@@ -25,7 +25,7 @@
 				#else
 				<h1>$!lang.get("error.title")</h1>
 				#end
-				<br />
+				<br>
 			</div>
 		</div>
 	</body>

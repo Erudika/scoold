@@ -19,7 +19,6 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
-import java.util.Collections;
 
 /**
  *
@@ -31,14 +30,14 @@ public class Admin extends Base {
 
 	public Admin() {
 		title = lang.get("admin.title");
-		if (!authenticated || !authUser.getUser().isAdmin()) {
-			setRedirect(HOMEPAGE);
-			return;
-		}
+		addModel("configMap", Config.getConfig());
+		addModel("version", pc.getServerVersion());
+	}
 
-		addModel("eshosts", Collections.emptyMap());
-		addModel("indexExists",  true);
-		addModel("esindex", Config.APP_NAME_NS);
+	public void onGet() {
+		if (!authenticated || !isAdmin) {
+			setRedirect(HOMEPAGE);
+		}
 	}
 
 	public void onPost() {
@@ -47,23 +46,10 @@ public class Admin extends Base {
 			ParaObject sobject = pc.read(id);
 			if (sobject != null) {
 				sobject.delete();
-
-				logger.info("{} #{} deleted {} #{}",
-						authUser.getName(), authUser.getId(), sobject.getClass().getName(), sobject.getId());
+				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
+						sobject.getClass().getName(), sobject.getId());
 			}
 		}
-
-		if (param("reindex")) {
-			String id = getParamValue("reindex");
-			pc.update(pc.read(id));
-		} else if (param("optimizeindex")) {
-//			ElasticSearchUtils.optimizeIndex(Config.APP_NAME_NS);
-		} else if (param("rebuildindex")) {
-			logger.info("Not supported.");
-		} else if (param("deleteindex")) {
-			logger.info("Not supported.");
-		}
-
 		setRedirect(adminlink);
 	}
 }

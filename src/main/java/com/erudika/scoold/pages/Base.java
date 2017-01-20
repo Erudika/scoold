@@ -26,8 +26,8 @@ import com.erudika.para.i18n.CurrencyUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import com.erudika.para.validation.ValidationUtils;
 import com.erudika.scoold.core.Comment;
-import com.erudika.scoold.core.Feedback.FeedbackType;
 import com.erudika.scoold.core.Language;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Report;
@@ -38,21 +38,17 @@ import com.erudika.scoold.utils.AppConfig;
 import com.erudika.scoold.utils.LanguageUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolation;
 import org.apache.click.Page;
-import org.apache.click.control.Field;
-import org.apache.click.control.Form;
-import org.apache.click.control.Radio;
-import org.apache.click.control.RadioGroup;
-import org.apache.click.control.Submit;
-import org.apache.click.control.TextArea;
-import org.apache.click.control.TextField;
 import org.apache.click.util.ClickUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +62,7 @@ public class Base extends Page {
 	public static final Logger logger = LoggerFactory.getLogger(Base.class);
 
 	public static final String APPNAME = Config.APP_NAME; //app name
-	public static final String CDN_URL = "http://static.scoold.com";
+	public static final String CDN_URL = Config.getConfigParam("cdn_url", "");
 	public static final boolean USE_SESSIONS = false;
 	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
 	public static final boolean IN_DEVELOPMENT = !IN_PRODUCTION;
@@ -117,6 +113,8 @@ public class Base extends Page {
 	public String infoStripMsg = "";
 	public boolean authenticated;
 	public boolean canComment;
+	public boolean isMod = false;
+	public boolean isAdmin = false;
 	public Profile authUser;
 	public List<Comment> commentslist;
 	public List<String> badgelist;
@@ -141,7 +139,7 @@ public class Base extends Page {
 		checkAuth();
 		cdnSwitch();
 		showParam = getParamValue("show");
-		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || authUser.getUser().isModerator());
+		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || isMod);
 		addModel("userip", req.getRemoteAddr());
 		addModel("isAjaxRequest", isAjaxRequest());
 		addModel("reportTypes", ReportType.values());
@@ -194,9 +192,13 @@ public class Base extends Page {
 						authUser.setCreatorid(u.getId());
 						authUser.setTimestamp(u.getTimestamp());
 						authUser.setLastseen(u.getUpdated());
+						authUser.setGroups(u.getIdentifier().equals(Config.ADMIN_IDENT) ?
+								User.Groups.ADMINS.toString() : u.getGroups());
 						authUser.create();
 					}
 					authUser.setUser(u);
+					isAdmin = User.Groups.ADMINS.toString().equals(authUser.getGroups());
+					isMod = isAdmin || User.Groups.MODS.toString().equals(authUser.getGroups());
 					Utils.removeStateParam("intro", req, resp);
 					infoStripMsg = "";
 					authenticated = true;
@@ -206,13 +208,6 @@ public class Base extends Page {
 					}
 				}
 			} else {
-				String intro = getStateParam("intro");
-				infoStripMsg = "intro";
-				if ("0".equals(intro)) {
-					infoStripMsg = "";
-				} else {
-					Utils.setStateParam("intro", "1", req, resp);
-				}
 				authenticated = false;
 			}
 		} catch (Exception e) {
@@ -274,13 +269,13 @@ public class Base extends Page {
 		if (param("deletecomment") && authenticated) {
 			String id = getParamValue("deletecomment");
 			Comment c = pc.read(id);
-			if (c != null && (c.getCreatorid().equals(authUser.getId()) || inRole("mod"))) {
+			if (c != null && (c.getCreatorid().equals(authUser.getId()) || isMod)) {
 				// check parent and correct (for multi-parent-object pages)
 				if (parent == null || !c.getParentid().equals(parent.getId())) {
 					parent = pc.read(c.getParentid());
 				}
 				c.delete();
-				if (!inRole("mod")) {
+				if (!isMod) {
 					addBadge(Badge.DISCIPLINED, true);
 				}
 				if (parent != null) {
@@ -326,105 +321,11 @@ public class Base extends Page {
 
 	/****  POSTS  ****/
 
-	public final Form getAnswerForm() {
-		Form aForm = new Form("aForm");
-		aForm.setId("answer-question-form");
-
-		TextArea body = new TextArea("body", lang.get("posts.answer"), true);
-		body.setMinLength(15);
-		body.setRows(4);
-		body.setCols(5);
-
-        Submit submit = new Submit("answerbtn", lang.get("post"), this, "onAnswerClick");
-        submit.setAttribute("class", "btn waves-effect waves-light");
-		submit.setId("answer-btn");
-
-        aForm.add(body);
-        aForm.add(submit);
-
-		return aForm;
-	}
-
-	public final Form getFeedbackForm() {
-		return getPostForm(Feedback.class, "fForm", "write-feedback-form");
-	}
-
-	public final Form getPostForm(Class<?> type, String name, String id) {
-		if (!authenticated) return null;
-
-		Form qForm = new Form(name);
-		qForm.setId(id);
-
-        TextField title = new TextField("title", true);
-        title.setLabel(lang.get("posts.title"));
-        title.setMaxLength(255);
-		title.setMinLength(10);
-		title.setTabIndex(1);
-
-		TextArea body = new TextArea("body", true);
-		body.setLabel(lang.get("messages.text"));
-		body.setMinLength(10);
-		body.setMaxLength(AppConfig.MAX_TEXT_LENGTH);
-		body.setRows(4);
-		body.setCols(5);
-		body.setTabIndex(2);
-
-		Field tags = null;
-		if (type.equals(Question.class)) {
-			tags = new TextField("tags", true);
-			tags.setLabel(lang.get("tags.title"));
-			((TextField) tags).setMaxLength(255);
-			tags.setTabIndex(3);
-		} else if (type.equals(Feedback.class)) {
-			tags = new RadioGroup("tags", lang.get("feedback.type"), true);
-			String bug = FeedbackType.BUG.toString();
-			String question = FeedbackType.QUESTION.toString();
-			String suggestion = FeedbackType.SUGGESTION.toString();
-
-			((RadioGroup) tags).add(new Radio(question, lang.get("feedback." + question)));
-			((RadioGroup) tags).add(new Radio(suggestion, lang.get("feedback." + suggestion)));
-			((RadioGroup) tags).add(new Radio(bug, lang.get("feedback." + bug)));
-			((RadioGroup) tags).setVerticalLayout(false);
+	public final void createAndGoToPost(Post p) {
+		if (p != null) {
+			p.create();
+			setRedirect(getPostLink(p, false, false));
 		}
-
-        Submit submit = new Submit("askbtn", lang.get("post"), this, "onAskClick");
-        submit.setAttribute("class", "btn waves-effect waves-light");
-		submit.setId("ask-btn");
-
-        qForm.add(title);
-        qForm.add(body);
-		qForm.add(tags);
-        qForm.add(submit);
-
-		return qForm;
-	}
-
-	public final boolean isValidPostEditForm(Form qForm) {
-        String tags = qForm.getFieldValue("tags");
-		if (tags != null && StringUtils.split(tags, ",").length >
-				AppConfig.MAX_TAGS_PER_POST) {
-			qForm.setError(lang.get("tags.toomany"));
-		}
-
-		return qForm.isValid();
-	}
-
-	public final boolean isValidAnswerForm(Form aForm, Post showPost) {
-        return aForm.isValid();
-	}
-
-	public final void createAndGoToPost(Class<? extends Post> type) {
-		String parentid = getParamValue(Config._PARENTID);
-
-		Post newq = ParaObjectUtils.toObject(type.getSimpleName().toLowerCase());
-		newq.setTitle(getParamValue("title"));
-		newq.setBody(getParamValue("body"));
-		newq.setTags(Arrays.asList(StringUtils.split(getParamValue("tags"), ",")));
-		if (parentid != null) newq.setParentid(parentid);
-		newq.setCreatorid(authUser.getId());
-		newq.create();
-
-		setRedirect(getPostLink(newq, false, false));
 	}
 
 	/******** VOTING ********/
@@ -511,7 +412,6 @@ public class Base extends Page {
 			if (result) {
 				votable.setVotes(votes);
 				votable.update();
-//				pc.putColumn(votable.getId(), "votes", votes.toString());
 			}
 		}
 
@@ -526,6 +426,40 @@ public class Base extends Page {
 
 	public final String getParamValue(String param) {
 		return getContext().getRequestParameter(param);
+	}
+
+	public <P extends ParaObject> P populate(P pobj, String... paramName) {
+		if (pobj != null && paramName != null) {
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			for (String param : paramName) {
+				String[] values = req.getParameterValues(param);
+				if (values != null && values.length > 0) {
+					if (param.matches("|.$")) {
+						String separator = param.substring(param.length() - 1);
+						data.put(param, Arrays.asList(param.substring(0, param.length() - 2).split(separator)));
+					} else if (values.length > 1) {
+						data.put(param, Arrays.asList(values));
+					} else {
+						data.put(param, values[0]);
+					}
+				}
+			}
+			if (!data.isEmpty()) {
+				ParaObjectUtils.setAnnotatedFields(pobj, data, null);
+			}
+		}
+		return pobj;
+	}
+
+	public <P extends ParaObject> Map<String, String> validate(P pobj) {
+		HashMap<String, String> error = new HashMap<String, String>();
+		if (pobj != null) {
+			Set<ConstraintViolation<P>> errors = ValidationUtils.getValidator().validate(pobj);
+			for (ConstraintViolation<P> err : errors) {
+				error.put(err.getPropertyPath().toString(), err.getMessage());
+			}
+		}
+		return error;
 	}
 
 	public String getPostLink(Post p, boolean plural, boolean noid) {
@@ -559,10 +493,6 @@ public class Base extends Page {
 			}
 			removeStateParam(Config.AUTH_COOKIE);
 		}
-	}
-
-	public boolean inRole(String role) {
-		return authUser != null && authUser.getUser().getGroups().equals(role);
 	}
 
 	public final boolean addBadgeOnce(Badge b, boolean condition) {

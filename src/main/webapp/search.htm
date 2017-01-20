@@ -15,7 +15,7 @@
 			$!lang.get("search.title")
 		#end
 	</h2>
-	<hr/>
+	<hr>
 
 	#if ($request.queryString.contains("q=") ) #set($params = "q=$!searchQuery") #else #set($params = "") #end
 
@@ -43,7 +43,7 @@
 					<a href="$searchlink/questions/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 				</div>
 			#end
-			<br />
+			<br>
 		#end
 
 		#if (!$feedbacklist.isEmpty())
@@ -54,7 +54,7 @@
 					<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 				</div>
 			#end
-			<br />
+			<br>
 		#end
 
 		#if (!$userlist.isEmpty())
@@ -65,7 +65,7 @@
 					<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 				</div>
 			#end
-			<br />
+			<br>
 		#end
 
 	#end

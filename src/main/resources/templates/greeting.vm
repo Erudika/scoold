@@ -7,12 +7,12 @@
 	#springBind("greeting.name")<br>
 	<input type="text"
             name="${status.expression}"
-            value="$!status.value"/><br>
+            value="$!status.value"><br>
 	#springFormInput("greeting.name" "")<br>
 	#springShowErrors("<br>" "")
 
 	<br>
-	<input type="submit" value="submit"/>
+	<input type="submit" value="submit">
 </form>
 
 

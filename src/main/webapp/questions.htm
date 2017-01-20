@@ -1,8 +1,8 @@
 <div class="ptl">
 	#if ($request.getParameter("ask"))
 		<h2>$!lang.get("posts.ask")</h2>
-		<hr />
-		<div id="questionform" class="ptl">
+		<hr>
+		<div class="ptl">
 			<form method="post" id="ask-question-form">
 				#sectoken(false)
 				<div class="input-field">
@@ -29,19 +29,19 @@
 									 data-beloworigin="true" autocomplete="off">
 					</div>
 					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-					<input type="hidden" name="tags" />
+					<input type="hidden" name="tags">
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
 
-				<input type="hidden" name="parentid"/>
+				<input type="hidden" name="parentid">
 				<div class="edit-preview"></div>
 
 				<br>
-				<button class="btn mtl" type="submit"><i class="fa fa-paper-plane left"></i>$!lang.get('post')</button>
+				<button class="btn mtl waves-effect waves-light" type="submit">
+					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+				</button>
 			</form>
 		</div>
-
-
 	#else
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
@@ -74,7 +74,7 @@
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end
 		</h2>
-		<hr/>
+		<hr>
 
 		#if ($questionslist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">

@@ -91,7 +91,7 @@ public class Translate extends Base{
 			String langkey = langkeys.get(showIndex);
 			Set<String> approved = langutils.getApprovedTransKeys(Config.APP_NAME_NS, showLocale.getLanguage());
 			isTranslated = approved.contains(langkey);
-			if (!StringUtils.isBlank(value) && (!isTranslated || inRole("admin"))) {
+			if (!StringUtils.isBlank(value) && (!isTranslated || isAdmin)) {
 				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
 				trans.setCreatorid(authUser.getId());
 				trans.create();
@@ -100,7 +100,7 @@ public class Translate extends Base{
 			if (!isAjaxRequest()) {
 				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex, approved));
 			}
-		} else if (param("reset") && inRole("admin")) {
+		} else if (param("reset") && isAdmin) {
 			String key = getParamValue("reset");
 			if (lang.containsKey(key)) {
 				if (param("global")) {
@@ -113,7 +113,7 @@ public class Translate extends Base{
 				if (!isAjaxRequest())
 					setRedirect(translatelink+"/"+showLocale.getLanguage());
 			}
-		} else if (param("approve") && inRole("admin")) {
+		} else if (param("approve") && isAdmin) {
 			String id = getParamValue("approve");
 			Translation trans = (Translation) pc.read(id);
 			if (trans != null) {
@@ -133,7 +133,7 @@ public class Translate extends Base{
 			String id = getParamValue("delete");
 			if (id != null) {
 				Translation t = (Translation) pc.read(id);
-				if (authUser.getId().equals(t.getCreatorid()) || inRole("admin")) {
+				if (authUser.getId().equals(t.getCreatorid()) || isAdmin) {
 					langutils.disapproveTranslation(t.getAppid(), t.getLocale(), t.getId());
 					t.delete();
 				}

@@ -71,7 +71,7 @@ public class Profile extends Base{
 			return;
 		}
 
-		if (authenticated && (isMyid(showuid) || inRole("admin"))) {
+		if (authenticated && (isMyid(showuid) || isAdmin)) {
 			canEdit = true;
 		}
 
@@ -88,8 +88,10 @@ public class Profile extends Base{
     public void onGet() {
 		if (!authenticated || showUser == null) return;
 		if (!isMyProfile) {
-			if (param("makemod") && inRole("admin") && !showUser.getUser().isAdmin()) {
-				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !showUser.getUser().isModerator();
+			boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
+			boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
+			if (param("makemod") && isAdmin && !isShowUserAdmin) {
+				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !isShowUserMod;
 				showUser.getUser().setGroups(makemod ? MODS.toString() : USERS.toString());
 				showUser.update();
 			}

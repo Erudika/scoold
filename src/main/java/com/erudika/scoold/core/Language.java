@@ -298,7 +298,6 @@ public final class Language {
 			put("msgcode.8", "The message was sent.");
 			put("msgcode.16", "This post was deleted.");
 
-			put("about.intro", "Hey! This is an open source forum platform powered by Para.");
 			put("about.scoold.1", "Scoold is an open source forum platform for knowledge sharing and collaboration. It was inspired by StackOverflow.com the sites of the Stack Exchange family and we have huge respect towards the people behind them.");
 			put("about.scoold.2", "It's all about:");
 			put("about.scoold.3", "learning new stuff,");
