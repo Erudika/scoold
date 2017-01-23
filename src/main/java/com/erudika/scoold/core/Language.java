@@ -145,9 +145,6 @@ public final class Language {
 			put("links", "Links");
 			put("signout", "Sign out");
 			put("lang", "Language");
-			put("addfriend", "Add to contacts");
-			put("delfriend", "Remove from contacts");
-			put("sendmsg", "Send a message");
 			put("report", "Report");
 			put("reportproblem", "Report a problem");
 			put("nojavascript", "JavaScript is disabled. Strange things can happen.");
@@ -177,15 +174,13 @@ public final class Language {
 			put("license", "Excluding logos, this site is licensed under a {0} license.");
 			put("badrequest", "Bad request.");
 			put("create", "Create");
-			put("pause", "Pause");
-			put("play", "Play");
 			put("address", "Address");
 			put("loading", "Loading...");
 			put("map", "Map");
 			put("points", "points");
-			put("invalidyear", "Invalid year");
 			put("learnmore", "Learn more");
 			put("posts", "Posts");
+			put("created", "Created");
 
 			put("humantime.s", "{0} seconds ago");
 			put("humantime.m", "{0} minutes ago");
@@ -269,7 +264,7 @@ public final class Language {
 			put("posts.mostpopular", "Most popular questions");
 			put("posts.tagged", "Questions with tag");
 			put("posts.unloadconfirm", "Everything you've written will be lost!");
-			put("posts.editby", "Edited by");
+			put("posts.edited", "Edited");
 			put("posts.filtered", "Filtered");
 			put("posts.none", "No posts.");
 			put("posts.new", "New post");

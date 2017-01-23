@@ -1,45 +1,22 @@
-<div class="line">
-	<div class="unit size4of5">
-		<div id="question-head">
-			#if ($showPost.isReply())
-				#set($posttype = $!lang.get("posts.answer"))
-			#elseif ($showPost.isQuestion())
-				#set($posttype = $!lang.get("posts.question"))
-			#elseif ($showPost.isFeedback())
-				#set($posttype = "<a href='$feedbacklink' title='Back to feedback'>$!lang.get('feedback.title')</a>")
-				#if (!$showPost.tagsString.isEmpty())
-					#set($ftypestr =  "feedback.$!{showPost.tagsString}")
-					#set($posttype = "$posttype / $!lang.get($ftypestr)")
-				#end
-			#end
-			<div class="line mediumText lightgray">
-				<div class="unit size1of2">$!posttype</div>
-				<div class="unit size1of2  r">
-					#if ($showPost.answercount > 0)
-						$!lang.get("posts.answered")
-						#if ($showPost.answerid) + <span class="pictos" title="Approved answer">2</span> #end
-					#else
-						$!lang.get("posts.unanswered")
-					#end
-				</div>
-			</div>
-			#if ($canEdit)
-				#set($editable = "editable")
+<div class="ptl">
+	<div class="row">
+		<div class="col m9">
+			<span class="grey-text">
+			#if ($showPost.answercount > 0)
+				#if ($showPost.answerid) <i class="fa fa-check-circle tooltipped" data-tootlip="Approved answer"></i> #end
+				$!lang.get("posts.answered")
 			#else
-				#set($editable = "noclass")
+				$!lang.get("posts.unanswered")
 			#end
+			</span>
+			<div class="largeText">$!{showPost.title}</div>
+			<hr>
 
-			<h2 id="questiontitle" class="$!{editable}">$!{showPost.title}</h2>
-		</div>
+			<div class="mbl">
+				#postbox($showPost $showPost)
+			</div>
 
-		<hr>
-
-		<div id="question" class="mbl">
-			#postbox($showPost $showPost)
-		</div>
-
-		#if (!$showPost.isReply())
-			<div id="answers">
+			#if (!$showPost.isReply())
 				#if ($answerslist && !$answerslist.isEmpty())
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
@@ -63,7 +40,7 @@
 					#set($hideBtn = "")
 				#end
 
-				#if ($authenticated && !$showPost.isClosed())
+				#if ($authenticated && $showPost.isClosed())
 					#newanswerform($aForm $showPost $hideForm)
 					#set($btnclass = "open-answer-form")
 				#else
@@ -73,55 +50,45 @@
 				<div class="center mtm ${hideBtn}">
 					#if ($showPost.isClosed())
 						<h2>
-							<span class="pictos">(</span> $!lang.get("posts.closed")
-							#if ($isMod)
-								#if ($showPost.closerid == "0")
-									#set($closer = $APPNAME)
-								#else
-								#set($closer = "<a href='$profilelink/$!showPost.closerid' title='Go to profile'>$!lang.get('mod')</a>")
-								#end
-								(by $closer)
-							#end
+							<i class="fa fa-lock"></i> $!lang.get("posts.closed")
 						</h2>
 					#else
 						#if ($showPost.isQuestion())
 							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="btn ${btnclass}"
-								 title="Answer this question"><span class="pictos">p</span> $!lang.get("posts.writeanswer")</a>
+								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
 						#else
 							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="btn ${btnclass}"
-								 title="Reply"><span class="pictos">p</span> $!lang.get("feedback.writereply")</a>
+								 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
 						#end
 					#end
 				</div>
-			</div>
-		#end
-	</div>
-
-	<div class="unit size1of5  r">
-		<div class="thickborder mbl pas center right">
-			<div class="hugeText" title="$!lang.get('votes')">$!showPost.votes</div>
-			<div>$!lang.get('votes')</div>
-			<div class="line">
-				<div class="unit size1of2" title="$!lang.get('answers.title')">
-					<span class="mediumText">$!showPost.answercount</span> <br>
-					$!lang.get('answers.title')
-				</div>
-				<div class="unit size1of2 " title="$!lang.get('posts.views')">
-					<span class="mediumText">$!showPost.viewcount</span> <br>
-					$!lang.get('posts.views')
-				</div>
-			</div>
+			#end
 		</div>
 
-		#if ($similarquestions && !$similarquestions.isEmpty())
-			<div class="similar mbl">
-				<h3>$!lang.get("posts.similar")</h3>
-				#foreach($showSimilar in $similarquestions)
-					#set($plink = "#getpostlink($showSimilar false false)")
-					<a href="$plink" class="smallText">$!showSimilar.title</a>
-				#end
+		<div class="col m3">
+			<div class="card-panel">
+				<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
+				<div class="mediumText pvs"><b>$!showPost.answercount</b> $!lang.get('answers.title')</div>
+				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
+					<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
+				</div>
+				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('profile.about.lastseen')">
+					<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.updated "")
+				</div>
+				<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
+				#tagsbox($shoPost.tags $questionslink)
 			</div>
-		#end
 
+			#if ($similarquestions && !$similarquestions.isEmpty())
+				<div class="similar mbl">
+					<h3>$!lang.get("posts.similar")</h3>
+					#foreach($showSimilar in $similarquestions)
+						#set($plink = "#getpostlink($showSimilar false false)")
+						<a href="$plink" class="smallText">$!showSimilar.title</a>
+					#end
+				</div>
+			#end
+
+		</div>
 	</div>
 </div>

@@ -12,11 +12,9 @@
 		#end
 
 		<form method="post" action="$!{confirmlink}">
-			<fieldset>
-				#sectoken(false)
-				<button type="submit" class="btn waves-effect waves-light">$!lang.get('yes')</button>
-				<a class="btn waves-effect waves-light" href="$!{ref}" title="No">$!lang.get("no")</a>
-			</fieldset>
+			#sectoken(false)
+			<button type="submit" class="btn waves-effect waves-light">$!lang.get('yes')</button>
+			<a class="btn waves-effect waves-light" href="$!{ref}" title="No">$!lang.get("no")</a>
 		</form>
 	</div>
 #else

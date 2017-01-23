@@ -43,6 +43,7 @@
 			</form>
 		</div>
 	#else
+	$session.keySet()$session.values() $req.getCookies()
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
@@ -58,10 +59,8 @@
 				<a href="#" class="chip next-div-toggle $sortarr.filter">$!lang.get("posts.filtered")</a>
 				<div class="hide mtm">
 					<form method="get" id="filter-questions-form" action="$questionslink/filter/">
-						<fieldset>
-							TODO: filter by location
-							<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
-						</fieldset>
+						TODO: filter by location
+						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
 					</form>
 				</div>
 			#end

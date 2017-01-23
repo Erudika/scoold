@@ -92,7 +92,7 @@ public class Profile extends Base{
 			boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
 			if (param("makemod") && isAdmin && !isShowUserAdmin) {
 				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !isShowUserMod;
-				showUser.getUser().setGroups(makemod ? MODS.toString() : USERS.toString());
+				showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
 				showUser.update();
 			}
 		}

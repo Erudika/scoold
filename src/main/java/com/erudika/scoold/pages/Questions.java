@@ -21,7 +21,6 @@ package com.erudika.scoold.pages;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Question;
-import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +35,6 @@ public class Questions extends Base{
 
 	public String title;
 	public List<Question> questionslist;
-	public int MAX_TEXT_LENGTH = AppConfig.MAX_TEXT_LENGTH;
 	public Map<String, String> error = Collections.emptyMap();
 
 	public Questions() {
@@ -71,7 +69,7 @@ public class Questions extends Base{
 				}
 			} else {
 				if ("activity".equals(getParamValue("sortby"))) {
-					itemcount.setSortby("lastactivity");
+					itemcount.setSortby("updated");
 					questionslist = pc.findQuery(type, "*", itemcount);
 				} else if ("votes".equals(getParamValue("sortby"))) {
 					itemcount.setSortby("votes");

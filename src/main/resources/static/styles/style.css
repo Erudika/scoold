@@ -84,7 +84,7 @@ p {font-size: 1.2em;}
 	border: 1px solid #333333;
 }
 
-hr { height: 1px; border: 0; background-color: #AAAAAA; width: 100%;}
+*/hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}/*
 
 h1, h2, h3, h4, h5, h6 { line-height: 1em; margin: 7px 0; font-weight: normal;}
 h1 {font-size: 180%;}
@@ -342,7 +342,7 @@ input.openidbox{ padding-left: 35px; }
 .lowercase{ text-transform: lowercase; }
 .thickborder{ border: 2px solid #CCCCCC;}
 .darkborder{ border: 1px solid #444444; }
-.lightborder{ border: 1px solid #CCCCCC; }
+*/.lightborder{ border: 1px solid #CCCCCC; border-radius: 2px;}/*
 .rightborder{ border-right: 2px dashed #CCCCCC; }
 .noborder img { border: 0 none; outline: 0; }
 .noborder { border: 0 none; outline: 0; }
@@ -698,3 +698,6 @@ main {
 .autocomplete .ac-input input {
 	height: 2.4rem;
 }
+.upvote, .downvote {color: #888888;}
+.upvote:hover {color: #4CAF50;}
+.downvote:hover {color: #F44336;}

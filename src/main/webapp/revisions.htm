@@ -20,14 +20,14 @@
 		</div>
 		<div class="unit size1of3  r">
 			<div class="lightgray mediumText">
-				<span class="mrs"><span class="pictos">t</span> #formatdate($showrev.timestamp "")</span>
+				<span class="mrs"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
 			</div>
 			<div class="mts">
 				#if ($showpost.revisionid == $showrev.id)
-				<span class="pictos green largeText" title="$!lang.get('revisions.current')">2</span>
+				<i class="fa fa-check-circle green-text fa-2x" title="$!lang.get('revisions.current')"></i>
 				#elseif ($canrestore || $isMod)
 				<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask btn waves-effect waves-light" title="Restore">
-					<span class="pictos">1</span> $!lang.get("restore")
+					<i class="fa fa-check"></i> $!lang.get("restore")
 				</a>
 				#end
 			</div>
@@ -91,6 +91,6 @@
 
 #set($actionlink = "#getpostlink($showPost false false)")
 <a href="$actionlink" title="Go back" class="btn waves-effect waves-light right">$!lang.get("goback")</a>
-<h2><span class="pictos">F</span> $!lang.get("revisions.title") #showcount($itemcount.count)</h2>
+<h2>$!lang.get("revisions.title") #showcount($itemcount.count)</h2>
 <hr>
 #paginate($pagenum.longValue() "\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount.count "" "")

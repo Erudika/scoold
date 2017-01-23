@@ -368,6 +368,9 @@ $(function () {
 		if (!viewbox.length) {
 			viewbox = parent.closest(".row").nextAll(".viewbox:first");
 		}
+		if (!viewbox.length) {
+			viewbox = parent.closest(".postbox").find(".viewbox:first");
+		}
 		if (!editbox.length) {
 			editbox = that.nextAll(".editbox:first");
 		}

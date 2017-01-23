@@ -80,9 +80,11 @@ public class Revision extends Sysprop {
 
 	@JsonIgnore
 	public User getAuthor() {
-		if (getCreatorid() == null) return null;
-		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
 	}
 
 	public static Revision createRevisionFromPost(Post post, boolean orig) {

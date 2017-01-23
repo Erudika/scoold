@@ -68,6 +68,8 @@ public class Base extends Page {
 	public static final boolean IN_DEVELOPMENT = !IN_PRODUCTION;
 	public static final int MAX_ITEMS_PER_PAGE = Config.MAX_ITEMS_PER_PAGE;
 	public static final long SESSION_TIMEOUT_SEC = Config.SESSION_TIMEOUT_SEC;
+	public static final int MAX_TEXT_LENGTH = AppConfig.MAX_TEXT_LENGTH;
+	public static final String TOKEN_PREFIX = "ST_";
 	public static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 
 	public static final String FEED_KEY_SALT = ":scoold";
@@ -76,6 +78,7 @@ public class Base extends Page {
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
 	public final String localeCookieName = Config.APP_NAME_NS + "-locale";
 	public final String countryCookieName = Config.APP_NAME_NS + "-country";
+	public final String csrfCookieName = Config.APP_NAME_NS + "-csrf";
 	public final String peoplelink = prefix + "people";
 	public final String profilelink = prefix + "profile";
 
@@ -129,7 +132,7 @@ public class Base extends Page {
 	public Map<String, String> lang = deflang;
 	public Locale currentLocale;
 
-	public transient ParaClient pc = AppConfig.client();
+	public static ParaClient pc = AppConfig.client();
 	public transient LanguageUtils langutils = new LanguageUtils();
 
 	public Base() {
@@ -158,8 +161,9 @@ public class Base extends Page {
 	}
 
 	public void onInit() {
-		super.onInit(); //To change body of generated methods, choose Tools | Templates.
+		super.onInit();
 		initLanguage();
+		initCSRFToken();
 	}
 
 	/* * PRIVATE METHODS * */
@@ -199,7 +203,6 @@ public class Base extends Page {
 					authUser.setUser(u);
 					isAdmin = User.Groups.ADMINS.toString().equals(authUser.getGroups());
 					isMod = isAdmin || User.Groups.MODS.toString().equals(authUser.getGroups());
-					Utils.removeStateParam("intro", req, resp);
 					infoStripMsg = "";
 					authenticated = true;
 					if (!StringUtils.isBlank(authUser.getNewbadges())) {
@@ -207,16 +210,48 @@ public class Base extends Page {
 						authUser.setNewbadges("none");
 					}
 				}
-			} else {
-				authenticated = false;
 			}
-		} catch (Exception e) {
 			authenticated = false;
+		} catch (Exception e) {
 			logger.warn("CheckAuth failed for {}: {}", req.getRemoteUser(), e);
 			clearSession();
 			if (!req.getRequestURI().startsWith("/index.htm"))
 				setRedirect(HOMEPAGE);
 		}
+	}
+
+	private void initCSRFToken() {
+		String csrfInCookie = getStateParam(csrfCookieName);
+		if (!StringUtils.isBlank(csrfInCookie)) {
+			getContext().setSessionAttribute(TOKEN_PREFIX + "CSRF", csrfInCookie);
+		}
+	}
+
+	private void initTimeToken(String formId) {
+		if (!StringUtils.isBlank(formId)) {
+			getContext().setSessionAttribute(TOKEN_PREFIX + formId, System.currentTimeMillis());
+		}
+	}
+
+	public boolean checkTokens(String formId) {
+		if ("POST".equals(req.getMethod())) {
+			String csrfToken = req.getParameter("_csrf");
+			String csrfInCookie = getStateParam(csrfCookieName);
+
+			String time = req.getParameter("_time");
+			String timeInSession = (String) getContext().getSessionAttribute(TOKEN_PREFIX + formId);
+
+			if (time == null || !time.equals(timeInSession)) {
+				return false;
+			}
+
+			if (csrfToken == null || StringUtils.isBlank(csrfInCookie) || !csrfToken.equals(csrfInCookie)) {
+				return false;
+			}
+
+			initTimeToken(formId);
+		}
+		return true;
 	}
 
 	private void initLanguage() {
@@ -473,8 +508,7 @@ public class Base extends Page {
 	}
 
 	public final void setStateParam(String name, String value) {
-		Utils.setStateParam(name, value, req, resp,
-				USE_SESSIONS);
+		Utils.setStateParam(name, value, req, resp, USE_SESSIONS);
 	}
 
 	public final String getStateParam(String name) {

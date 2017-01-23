@@ -38,6 +38,7 @@ public class Signin extends Base{
 				User u = pc.signIn(getParamValue("provider"), getParamValue("access_token"), false);
 				if (u != null) {
 					Utils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, resp, true);
+					Utils.setStateParam(csrfCookieName, Utils.generateSecurityToken(), req, resp);
 					setRedirect(HOMEPAGE);
 				} else {
 					setRedirect(signinlink + "?code=3&error=true");

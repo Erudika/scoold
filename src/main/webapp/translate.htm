@@ -1,7 +1,6 @@
 <div id="translate">
 	#if ($request.getParameter("locale"))
 		<h2>
-			<span class="pictos">G</span>
 			<a href="$translatelink">$!lang.get("translate.title")</a> /
 			#if ($request.getParameter("index"))
 				#set($indx = $showIndex + 1)
@@ -22,13 +21,13 @@
 			#if ($previ <= 0) #set($previ = $!langkeys.size()) #end
 			<div class="line mediumText">
 				<div class="unit size1of3">
-					<a href="$translatelink/$showLocale/$!previ" title="Previous"><span class="pictos">[</span> $!lang.get("prev")</a>
+					<a href="$translatelink/$showLocale/$!previ" title="Previous"><i class="fa fa-arrow-left"></i> $!lang.get("prev")</a>
 				</div>
 				<div class="unit size1of3 center">
 					<span class="chip">$indx / $!lang.size()</span>
 				</div>
 				<div class="unit size1of3  r">
-					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <span class="pictos">]</span></a>
+					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <i class="fa fa-arrow-right"></i></a>
 				</div>
 			</div>
 
@@ -43,15 +42,13 @@
 			#if (!$isTranslated)
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form">
-						<fieldset>
-							#sectoken(false)
-							<textarea rows="2" cols="3" name="value"></textarea>
-							<input type="hidden" name="gettranslationhtmlcode" value="true">
-							<div class="center mtm">
-								<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="btn waves-effect waves-light"> &nbsp;
-								<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="btn waves-effect waves-light">
-							</div>
-						</fieldset>
+						#sectoken(false)
+						<textarea rows="2" cols="3" name="value"></textarea>
+						<input type="hidden" name="gettranslationhtmlcode" value="true">
+						<div class="center mtm">
+							<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="btn waves-effect waves-light"> &nbsp;
+							<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="btn waves-effect waves-light">
+						</div>
 					</form>
 				</div>
 			#end
@@ -61,21 +58,17 @@
 				<div class="line center">
 					<div class="unit size1of2 r prm">
 						<form action="$translatelink/$showLocale/?reset=$!langkey" method="post">
-							<fieldset>
-								#sectoken(false)
-								<input type="submit" value="Reset" class="btn waves-effect waves-light red rusure">
-								<input type="hidden" name="reset" value="$!langkey">
-							</fieldset>
+							#sectoken(false)
+							<input type="submit" value="Reset" class="btn waves-effect waves-light red rusure">
+							<input type="hidden" name="reset" value="$!langkey">
 						</form>
 					</div>
 					<div class="unit size1of2  l plm">
 						<form action="$translatelink/$showLocale" method="post">
-							<fieldset>
-								#sectoken(false)
-								<input type="submit" value="Global reset" class="btn waves-effect waves-light red rusure">
-								<input type="hidden" name="reset" value="$!langkey">
-								<input type="hidden" name="global" value="true">
-							</fieldset>
+							#sectoken(false)
+							<input type="submit" value="Global reset" class="btn waves-effect waves-light red rusure">
+							<input type="hidden" name="reset" value="$!langkey">
+							<input type="hidden" name="global" value="true">
 						</form>
 					</div>
 				</div>
@@ -85,7 +78,7 @@
 				#foreach($!langKey in $!langkeys)
 					<div class="mrl l pvs">
 						#if ($isTranslated)
-							<span title="Translated and approved" class="pictos green mediumText mrs">2</span>
+							<i class="fa fa-check-circle green-text mediumText mrs" title="Translated and approved" ></i>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )
 						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!utils.abbreviate($!transthis, 25)</a>

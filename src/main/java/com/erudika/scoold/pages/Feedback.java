@@ -52,7 +52,7 @@ public class Feedback <P extends Post> extends Base{
 		} else {
 			String sortBy = "";
 			if ("activity".equals(getParamValue("sortby"))) {
-				sortBy = "lastactivity";
+				sortBy = "updated";
 			} else if ("votes".equals(getParamValue("sortby"))) {
 				sortBy = "votes";
 			}

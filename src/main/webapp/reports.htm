@@ -4,7 +4,7 @@
 		<div class="mediumText lightgray mbm">
 			$!lang.get("reports.$!{showreport.type.toLowerCase()}"):
 			$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
-			<span class="right"><span class="pictos">t</span>#formatdate($!showreport.timestamp "")</span>
+			<span class="right"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
 		</div>
 		#if ($showreport.closed)
 		#set($hide = "" )
@@ -12,20 +12,22 @@
 		#set($hide = "hide" )
 		#end
 
-		<div class="pictos left mrl hugeText green ${hide}">3</div>
+		<div class="left mrl hugeText green-text ${hide}"><i class="fa fa-check"></i></div>
 		<div class="right">
-			<a href="$showreport.link" class="btn"><span class="pictos">E</span> $!lang.get("open")</a>
+			<a href="$showreport.link" class="btn"><i class="fa fa-external-link-square"></i> $!lang.get("open")</a>
 			#if (!$showreport.closed)
-			<a href="#" class="btn close-report" title="Close report"><span class="pictos">3</span> $!lang.get("close")</a>
+			<a href="#" class="btn close-report" title="Close report"><i class="fa fa-check"></i> $!lang.get("close")</a>
 			#else
-			<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="btn"><span class="pictos">1</span> $!lang.get("reopen")</a>
+			<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="btn"><i class="fa fa-undo"></i> $!lang.get("reopen")</a>
 			#end
 			#if ($isAdmin)
-			<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red delete-report"><span class="pictos">*</span> $!lang.get("delete")</a>
+			<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red white-text delete-report">
+				<i class="fa fa-times"></i> $!lang.get("delete")
+			</a>
 			#end
 		</div>
 		<div>
-			<strong> <span class="pictos">U</span>
+			<strong> <i class="fa fa-user-circle"></i>
 				#if ($showreport.creatorid && $showreport.creatorid > 0)
 				<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.author:</a>
 				#else
@@ -40,16 +42,16 @@
 			#else
 			#set($hide = "hide" )
 			#end
-			<p class="report-solution ${hide}"><span class="pictos lightgray" title="$!lang.get('reports.actionstaken')">i</span> <span class="report-solution-text">$!showreport.solution</span></p>
+			<p class="report-solution ${hide}"><i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
+				<span class="report-solution-text">$!showreport.solution</span>
+			</p>
 		</div>
 
 		<div class="hide report-solution-box mtm center">
 			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
-				<fieldset>
-					#sectoken(false)
-					<textarea name="solution" cols="10" rows="1" class="hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
-					<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
-				</fieldset>
+				#sectoken(false)
+				<textarea name="solution" cols="10" rows="1" class="hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+				<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
 			</form>
 		</div>
 	</div>
@@ -59,7 +61,7 @@
 <div class="preview-dialog jqmWindow"> <div class="center">#ajaxloading(false) </div></div>
 
 <div id="reports">
-	<h1><span class="pictos">^</span> $!lang.get("reports.title") #showcount($itemcount.count)</h1>
+	<h1>$!lang.get("reports.title") #showcount($itemcount.count)</h1>
 	<hr>
 	#if ($itemcount.count == 0)
 		<div class="mediumText">$!{lang.get("search.notfound")}</div>

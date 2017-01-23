@@ -53,7 +53,6 @@ public abstract class Post extends Sysprop {
 	@Stored private String revisionid;
 	@Stored private String closerid;
 	@Stored private Long answercount;
-	@Stored private Long lastactivity;
 	@Stored private String lasteditby;
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
@@ -102,14 +101,6 @@ public abstract class Post extends Sysprop {
 		this.lasteditby = lasteditby;
 	}
 
-	public Long getLastactivity() {
-		return lastactivity;
-	}
-
-	public void setLastactivity(Long lastactivity) {
-		this.lastactivity = lastactivity;
-	}
-
 	public Long getAnswercount() {
 		return answercount;
 	}
@@ -151,6 +142,9 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String getTitle() {
+		if (StringUtils.isBlank(title)) {
+			return getId();
+		}
 		return title;
 	}
 
@@ -194,7 +188,6 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void update() {
-		updateLastActivity();
 		if (canHaveRevisions()) {
 			setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		}
@@ -251,16 +244,20 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public Profile getAuthor() {
-		if (getCreatorid() == null) return null;
-		if (author == null) author = AppConfig.client().read(getCreatorid());
 		return author;
+	}
+
+	public void setAuthor(Profile author) {
+		this.author = author;
 	}
 
 	@JsonIgnore
 	public Profile getLastEditor() {
-		if (lasteditby == null) return null;
-		if (lastEditor == null) lastEditor = AppConfig.client().read(lasteditby);
 		return lastEditor;
+	}
+
+	public void setLastEditor(Profile lastEditor) {
+		this.lastEditor = lastEditor;
 	}
 
 	public void restoreRevisionAndUpdate(String revisionid) {
@@ -270,8 +267,6 @@ public abstract class Post extends Sysprop {
 			setTitle(rev.getTitle());
 			setBody(rev.getBody());
 			setTags(rev.getTags());
-
-			updateLastActivity();
 			setRevisionid(rev.getId());
 			//update post
 			update();
@@ -327,10 +322,6 @@ public abstract class Post extends Sysprop {
 	@JsonIgnore
 	public boolean isFeedback() {
 		return this instanceof Feedback;
-	}
-
-	public void updateLastActivity() {
-		setLastactivity(System.currentTimeMillis());
 	}
 
 	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink) {
