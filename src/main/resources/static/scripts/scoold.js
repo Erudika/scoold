@@ -500,76 +500,39 @@ $(function () {
 	/****************************************************
      *                    AUTOCOMPLETE
      ****************************************************/
+	var autocomplete = $('input.tagbox').materialize_autocomplete({
+		multiple: {
+			enable: true
+		},
+		appender: {
+			el: '.ac-tags',
+			tagTemplate: '<div class="chip" data-id="<%= item.id %>" data-text="<%= item.text %>">\n\
+							<%= item.text %> &nbsp;<i class="fa fa-close"></i></div>'
+		},
+		dropdown: {
+			el: '#tags-dropdown'
+		},
+		hidden: {
+			enabled: true,
+			el: '.ac-hidden'
+		},
+		getData: function (value, callback) {
+			$.get("/ajax/" + value, function (data) {
+				data.push({id: value.toLowerCase(), text: value.toLowerCase()});
+				callback(value, data);
+			});
+		}
+	});
 
-
-	var resultCache = {
-		'A': [
-			{
-				id: 'Abe',
-				text: 'Abe'
-			},
-			{
-				id: 'Ari',
-				text: 'Ari'
+	var tags = $("input.ac-hidden");
+	if (tags.length) {
+		var tagsVal = tags.val().split(",");
+		for (var i = 0; i < tagsVal.length; i++) {
+			if (tagsVal[i].length > 0) {
+				autocomplete.append({id: tagsVal[i], text: tagsVal[i]});
 			}
-		],
-		'B': [
-			{
-				id: 'Baz',
-				text: 'Baz'
-			}
-		],
-		'BA': [
-			{
-				id: 'Baz',
-				text: 'Baz'
-			}
-		],
-		'BAZ': [
-			{
-				id: 'Baz',
-				text: 'Baz'
-			}
-		],
-		'AB': [
-			{
-				id: 'Abe',
-				text: 'Abe'
-			}
-		],
-		'ABE': [
-			{
-				id: 'Abe',
-				text: 'Abe'
-			}
-		],
-		'AR': [
-			{
-				id: 'Ari',
-				text: 'Ari'
-			}
-		],
-		'ARI': [
-			{
-				id: 'Ari',
-				text: 'Ari'
-			}
-		]
-	};
-
-		$('input.tagbox').materialize_autocomplete({
-            multiple: {
-                enable: true
-            },
-            appender: {
-                el: '.ac-tags',
-				tagTemplate: '<div class="chip" data-id="<%= item.id %>" data-text="<%= item.text %>">\n\
-								<%= item.text %> &nbsp;<i class="fa fa-close"></i></div>'
-            },
-            dropdown: {
-                el: '#tags-dropdown'
-            }
-        }).resultCache = resultCache;
+		}
+	}
 
 //	autocompleteBind("input.locationbox", {find: "locations"});
 //	autocompleteContactBind("input.contactnamebox", {find: "contacts"});

@@ -18,6 +18,7 @@
 package com.erudika.scoold;
 
 import com.erudika.para.utils.Config;
+import com.erudika.scoold.utils.CsrfFilter;
 import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import org.apache.click.ClickServlet;
@@ -87,7 +88,7 @@ public class ScooldServer  {
 		reg.setName("ClickServlet");
 		reg.setAsyncSupported(true);
 		reg.setEnabled(true);
-		reg.setOrder(0);
+		reg.setOrder(3);
 		return reg;
 	}
 
@@ -110,6 +111,24 @@ public class ScooldServer  {
 		frb.setMatchAfter(true);
 		frb.setEnabled(true);
 		frb.setOrder(1);
+		return frb;
+	}
+
+	/**
+	 * @return CSRF protection filter bean
+	 */
+	@Bean
+	public FilterRegistrationBean csrfFilterRegistrationBean() {
+		String path = "/*";
+		logger.debug("Initializing CSRF filter [{}]...", path);
+		FilterRegistrationBean frb = new FilterRegistrationBean(new CsrfFilter());
+		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
+		frb.setName("csrfFilter");
+		frb.setAsyncSupported(true);
+		frb.addUrlPatterns(path);
+		frb.setMatchAfter(false);
+		frb.setEnabled(true);
+		frb.setOrder(2);
 		return frb;
 	}
 

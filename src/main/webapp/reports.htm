@@ -58,11 +58,10 @@
 #end
 #end
 
-<div class="preview-dialog jqmWindow"> <div class="center">#ajaxloading(false) </div></div>
-
-<div id="reports">
-	<h1>$!lang.get("reports.title") #showcount($itemcount.count)</h1>
+<div class="ptl">
+	<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
 	<hr>
+	<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
 	#if ($itemcount.count == 0)
 		<div class="mediumText">$!{lang.get("search.notfound")}</div>
 	#else

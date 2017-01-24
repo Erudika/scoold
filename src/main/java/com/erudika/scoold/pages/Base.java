@@ -19,7 +19,6 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
-import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.i18n.CurrencyUtils;
@@ -63,7 +62,6 @@ public class Base extends Page {
 
 	public static final String APPNAME = Config.APP_NAME; //app name
 	public static final String CDN_URL = Config.getConfigParam("cdn_url", "");
-	public static final boolean USE_SESSIONS = false;
 	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
 	public static final boolean IN_DEVELOPMENT = !IN_PRODUCTION;
 	public static final int MAX_ITEMS_PER_PAGE = Config.MAX_ITEMS_PER_PAGE;
@@ -163,7 +161,6 @@ public class Base extends Page {
 	public void onInit() {
 		super.onInit();
 		initLanguage();
-		initCSRFToken();
 	}
 
 	/* * PRIVATE METHODS * */
@@ -209,10 +206,15 @@ public class Base extends Page {
 						badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
 						authUser.setNewbadges("none");
 					}
+				} else {
+					authenticated = false;
 				}
+			} else {
+				authenticated = false;
 			}
-			authenticated = false;
+			initCSRFToken();
 		} catch (Exception e) {
+			authenticated = false;
 			logger.warn("CheckAuth failed for {}: {}", req.getRemoteUser(), e);
 			clearSession();
 			if (!req.getRequestURI().startsWith("/index.htm"))
@@ -220,38 +222,22 @@ public class Base extends Page {
 		}
 	}
 
-	private void initCSRFToken() {
+	public final void initCSRFToken() {
+		String csrfInSession = (String) getContext().getSessionAttribute(TOKEN_PREFIX + "CSRF");
 		String csrfInCookie = getStateParam(csrfCookieName);
-		if (!StringUtils.isBlank(csrfInCookie)) {
-			getContext().setSessionAttribute(TOKEN_PREFIX + "CSRF", csrfInCookie);
+		if (StringUtils.isBlank(csrfInSession)) {
+			csrfInSession = Utils.generateSecurityToken();
+			getContext().setSessionAttribute(TOKEN_PREFIX + "CSRF", csrfInSession);
+		}
+		if (!csrfInSession.equals(csrfInCookie)) {
+			setStateParam(csrfCookieName, csrfInSession);
 		}
 	}
 
-	private void initTimeToken(String formId) {
+	public final void initTimeToken(String formId) {
 		if (!StringUtils.isBlank(formId)) {
 			getContext().setSessionAttribute(TOKEN_PREFIX + formId, System.currentTimeMillis());
 		}
-	}
-
-	public boolean checkTokens(String formId) {
-		if ("POST".equals(req.getMethod())) {
-			String csrfToken = req.getParameter("_csrf");
-			String csrfInCookie = getStateParam(csrfCookieName);
-
-			String time = req.getParameter("_time");
-			String timeInSession = (String) getContext().getSessionAttribute(TOKEN_PREFIX + formId);
-
-			if (time == null || !time.equals(timeInSession)) {
-				return false;
-			}
-
-			if (csrfToken == null || StringUtils.isBlank(csrfInCookie) || !csrfToken.equals(csrfInCookie)) {
-				return false;
-			}
-
-			initTimeToken(formId);
-		}
-		return true;
 	}
 
 	private void initLanguage() {
@@ -300,59 +286,6 @@ public class Base extends Page {
 
 	/* COMMENTS */
 
-	public final void processNewCommentRequest(Sysprop parent) {
-		if (param("deletecomment") && authenticated) {
-			String id = getParamValue("deletecomment");
-			Comment c = pc.read(id);
-			if (c != null && (c.getCreatorid().equals(authUser.getId()) || isMod)) {
-				// check parent and correct (for multi-parent-object pages)
-				if (parent == null || !c.getParentid().equals(parent.getId())) {
-					parent = pc.read(c.getParentid());
-				}
-				c.delete();
-				if (!isMod) {
-					addBadge(Badge.DISCIPLINED, true);
-				}
-				if (parent != null) {
-					try {
-//						Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
-//						pc.putColumn(parent.getId(), "commentcount", Long.toString(count - 1));
-						parent.addProperty("commentcount", Long.toString(((Long) parent.getProperty("commentcount")) - 1));
-						parent.update();
-					} catch (Exception ex) {
-						logger.error(null, ex);
-					}
-				}
-			}
-		} else if (canComment && param("comment") && parent != null) {
-			String comment = getParamValue("comment");
-			String parentid = parent.getId();
-			if (StringUtils.isBlank(comment)) return;
-			Comment lastComment = new Comment();
-			lastComment.setComment(comment);
-			lastComment.setParentid(parentid);
-			lastComment.setCreatorid(authUser.getId());
-			lastComment.setAuthor(authUser.getName());
-
-			if (lastComment.create() != null) {
-				long commentCount = authUser.getComments();
-				addBadgeOnce(Badge.COMMENTATOR, commentCount >= AppConfig.COMMENTATOR_IFHAS);
-				authUser.setComments(commentCount + 1);
-				authUser.update();
-				commentslist.add(lastComment);
-				addModel("newcomment", lastComment);
-
-				try{
-//					Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
-//					pc.putColumn(parent.getId(), "commentcount", Long.toString(count + 1));
-					parent.addProperty("commentcount", Long.toString(((Long) parent.getProperty("commentcount")) + 1));
-					parent.update();
-				} catch (Exception ex) {
-					logger.error(null, ex);
-				}
-			}
-		}
-	}
 
 	/****  POSTS  ****/
 
@@ -381,7 +314,6 @@ public class Base extends Page {
 					if (!result) return;
 					votes++;
 					authUser.incrementUpvotes();
-
 					int award = 0;
 
 					if (votable instanceof Post) {
@@ -403,21 +335,17 @@ public class Base extends Page {
 						author.addRep(award);
 						author.update();
 					}
-
 				} else if (param("votedown")) {
 					result = votable.voteDown(authUser.getId());
 					if (!result) return;
 					votes--;
 					authUser.incrementDownvotes();
 
-					if (StringUtils.equalsIgnoreCase(type,
-							Comment.class.getSimpleName()) && votes <= -5) {
+					if (StringUtils.equalsIgnoreCase(type, Comment.class.getSimpleName()) && votes <= -5) {
 						//treat comment as offensive or spam - hide
 						((Comment) votable).setHidden(true);
-					} else if (StringUtils.equalsIgnoreCase(type,
-							Post.class.getSimpleName()) && votes <= -5) {
+					} else if (StringUtils.equalsIgnoreCase(type, Post.class.getSimpleName()) && votes <= -5) {
 						Post p = (Post) votable;
-
 						//mark post for closing
 						Report rep = new Report();
 						rep.setParentid(id);
@@ -425,10 +353,8 @@ public class Base extends Page {
 						rep.setDescription(lang.get("posts.forclosing"));
 						rep.setSubType(ReportType.OTHER);
 						rep.setAuthor("System");
-
 						rep.create();
 					}
-
 					if (author != null) {
 						author.removeRep(AppConfig.POST_VOTEDOWN_PENALTY_AUTHOR);
 						author.update();
@@ -439,7 +365,6 @@ public class Base extends Page {
 			} catch (Exception ex) {
 				logger.error(null, ex);
 			}
-
 			addBadgeOnce(Badge.SUPPORTER, authUser.getUpvotes() >= AppConfig.SUPPORTER_IFHAS);
 			addBadgeOnce(Badge.CRITIC, authUser.getDownvotes() >= AppConfig.CRITIC_IFHAS);
 			addBadgeOnce(Badge.VOTER, authUser.getTotalVotes() >= AppConfig.VOTER_IFHAS);
@@ -467,15 +392,22 @@ public class Base extends Page {
 		if (pobj != null && paramName != null) {
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			for (String param : paramName) {
-				String[] values = req.getParameterValues(param);
-				if (values != null && values.length > 0) {
-					if (param.matches("|.$")) {
-						String separator = param.substring(param.length() - 1);
-						data.put(param, Arrays.asList(param.substring(0, param.length() - 2).split(separator)));
-					} else if (values.length > 1) {
+				String[] values;
+				if (param.matches(".+?\\|.$")) {
+					String cleanParam = param.substring(0, param.length() - 2);
+					values = req.getParameterValues(cleanParam);
+					String firstValue = (values != null && values.length > 0) ? values[0] : null;
+					String separator = param.substring(param.length() - 1);
+					if (firstValue != null) {
+						data.put(cleanParam, Arrays.asList(firstValue.split(separator)));
+					}
+				} else {
+					values = req.getParameterValues(param);
+					String firstValue = (values != null && values.length > 0) ? values[0] : null;
+					if (values != null && values.length > 1) {
 						data.put(param, Arrays.asList(values));
-					} else {
-						data.put(param, values[0]);
+					} else if (firstValue != null) {
+						data.put(param, firstValue);
 					}
 				}
 			}
@@ -508,7 +440,7 @@ public class Base extends Page {
 	}
 
 	public final void setStateParam(String name, String value) {
-		Utils.setStateParam(name, value, req, resp, USE_SESSIONS);
+		Utils.setStateParam(name, value, req, resp, false);
 	}
 
 	public final String getStateParam(String name) {
@@ -521,11 +453,13 @@ public class Base extends Page {
 
 	public final void clearSession() {
 		if (req != null) {
+			getContext().removeSessionAttribute(TOKEN_PREFIX + "CSRF");
 			HttpSession session = req.getSession(false);
 			if (session != null) {
 				session.invalidate();
 			}
 			removeStateParam(Config.AUTH_COOKIE);
+			removeStateParam(csrfCookieName);
 		}
 	}
 

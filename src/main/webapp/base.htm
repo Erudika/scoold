@@ -9,28 +9,23 @@
 		<span class="$!{pnext}"></span>
 		#stop
 	#end
-    ################ AUTOCOMPLETE AJAX REQUESTS ################
-    #if($request.getParameter("q") && $request.getParameter("find"))
+  ################ AUTOCOMPLETE AJAX REQUESTS ################
 
+	#if($request.getParameter("q") && $request.getParameter("find"))
 		#set($q = $request.getParameter("q"))
-        #if($request.getParameter("find") == "locations")
-            #foreach($location in $utils.readLocationForKeyword($q.trim()))
-                $!{location.name}, $!{location.countryName}| $!{location.adminName1} |$!{location.geoNameId}
-            #end
-			#stop
-		#elseif($request.getParameter("find") == "tags")
-            #foreach($showtag in $pc.findTags($q.trim()))
+		#if($request.getParameter("find") == "tags")
+			#foreach($showtag in $pc.findTags($q.trim()))
 				$!{showtag.tag}| |$!{showtag.id}
-            #end
+			#end
 			#stop
 		#elseif($request.getParameter("find") == "people")
-            #foreach($showuser in $utils.readAndRepair("user", $utils.findQuery("user", $pagenum, $itemcount, $q.trim())))
+			#foreach($showuser in $utils.readAndRepair("user", $utils.findQuery("user", $pagenum, $itemcount, $q.trim())))
 				$!{showuser.name}| |$!{showuser.id}
-            #end
+			#end
 			#stop
-        #end
+		#end
 	#end
-    ################# SPECIAL AJAX REQUESTS #################
+	################# SPECIAL AJAX REQUESTS #################
 
 	#if($request.getParameter("getcommenthtmlcode"))
 		#commentbox($!newcomment)
@@ -231,6 +226,7 @@
 			</header>
 
 			<main class="container">
+				$session.keySet()$session.values()
 				#infostrip()
 				#parse($path)
 			</main>
@@ -296,8 +292,10 @@
 			{#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end#end}
 		#end
 		#set($_langjs = "#langjs()")
+		#set($sectok = "#sectoken(true)")
+		#set($sectok = "$sectok.trim()")
 		<script type="text/javascript">
-			var lang = $_langjs.trim(), userip = "$req.remoteAddr", csrftoken = "#sectoken(true)";
+			var lang = $_langjs.trim(), userip = "$req.remoteAddr", csrftoken = "$sectok";
 			$(".button-collapse").sideNav();
 			$('select').material_select();
 			$('textarea').characterCounter();

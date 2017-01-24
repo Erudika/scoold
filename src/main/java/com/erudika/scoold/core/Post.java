@@ -170,7 +170,7 @@ public abstract class Post extends Sysprop {
 
 	public String getTagsString() {
 		if (getTags() == null || getTags().isEmpty()) return "";
-		return StringUtils.join(getTags(), ", ");
+		return StringUtils.join(getTags(), ",");
 	}
 
 	public String create() {
@@ -221,14 +221,16 @@ public abstract class Post extends Sysprop {
 
 	private void createTags() {
 		if (getTags() == null) return;
-		ArrayList<Tag> tags = new ArrayList<Tag>();
-		for (String ntag : getTags()) {
-			Tag t = new Tag(StringUtils.trimToEmpty(ntag));
-			if (!StringUtils.isBlank(ntag) && AppConfig.client().findTags(t.getId()).isEmpty()) {
-				tags.add(t);
+		ArrayList<Tag> tagz = new ArrayList<Tag>();
+		for (int i = 0; i < getTags().size(); i++) {
+			String ntag = getTags().get(i);
+			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
+			if (!StringUtils.isBlank(t.getTag())) {
+				getTags().set(i, t.getTag());
+				tagz.add(t);
 			}
 		}
-		AppConfig.client().createAll(tags);
+		AppConfig.client().createAll(tagz);
 	}
 
 	public static <P extends Post> void readAllCommentsForPosts(List<P> list, int maxPerPage) {

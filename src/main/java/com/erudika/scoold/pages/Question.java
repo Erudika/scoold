@@ -46,6 +46,7 @@ public class Question extends Base{
 	public List<Reply> answerslist;
 	public List<Post> similarquestions;
 	public String markdownHtml;
+	public String FORM_ID = "EDIT_POST_";
 
 	private String postlink;
 
@@ -71,6 +72,7 @@ public class Question extends Base{
 			itemcount.setSortby("newest".equals(getParamValue("sortby")) ? "" : "votes");
 			answerslist = showPost.getAnswers(itemcount);
 			postlink = getPostLink(showPost, false, false);
+			initTimeToken(FORM_ID + showPost.getId());
 		}
 	}
 
@@ -137,7 +139,6 @@ public class Question extends Base{
 //	}
 
 	public void onPost() {
-		processNewCommentRequest(showPost);
 		if (!canEdit || showPost == null) {
 			return;
 		}
