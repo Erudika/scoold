@@ -4,7 +4,36 @@
 	<div class="row">
 		#foreach($entry in $allLocales.entrySet())
 		<div class="col m4">
-			#langbox($entry.key $!entry.value.getDisplayName($!entry.value) $!langProgressMap.get($!entry.key))
+			#set($showLangKey = $entry.key)
+			#set($showLangName = $!entry.value.getDisplayName($!entry.value))
+			#set($progress = $!langProgressMap.get($!entry.key))
+
+			#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "green white-text") #else #set($selclass = "") #end
+			<div class="card-panel $!{selclass}">
+				<div class="mediumText mbs center-align">
+					#if ($selclass == "")
+					<form action="$languageslink" method="post">
+						#sectoken(false)
+						<input type="hidden" name="setlocale" value="$!showLangKey">
+						<button type="submit" class="btn-flat waves-effect waves-light"><span class="capitalize">$!showLangName</span></button>
+					</form>
+					#else
+					<a class="btn-flat disabled"><span class="white-text capitalize">$!showLangName</span></a>
+					#end
+				</div>
+				<div class="center-align">
+					<span class="chip" title="$!{progress}%">
+						#if ($progress == 100)
+							<i class="fa fa-check-circle green-text"></i>
+						#else
+							$!{progress}%
+						#end
+					</span>
+					#if (!$showLangKey.equals("en"))
+					<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
+					#end
+				</div>
+			</div>
 		</div>
 		#end
 	</div>

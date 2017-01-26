@@ -536,19 +536,17 @@
 		<div class="col m1">
 			#votebox($showtrans "mediumText")
 		</div>
-		$showtrans
 		<div class="col m7 trans-value">
 			<span class="mediumText">$!showtrans.value</span> <br>
-			#set($translAuthor = $!showtrans.author)
-			<i class="fa fa-user-circle grey-text"></i> #personlink($translAuthor)
+			<i class="fa fa-user-circle grey-text"></i> $!showtrans.authorName
 			<span class="grey-text trans-timestamp"><i class="fa fa-clock-o"></i> #formatdate($showtrans.timestamp '')</span>
 		</div>
 		<div class="col m4 mediumText r">
 			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
 				#if ($isAdmin)
 					#if ($showtrans.approved)#set($onclass = "green-text")#else#set($onclass = "")#end
-					<a href="${thisuri}?approve=$showtrans.id" class="approve-translation $!{onclass}"
-						 title="Approve"><i class="fa fa-check-circle"></i> Approve
+					<a href="${thisuri}?approve=$showtrans.id" class="approve-translation $!{onclass}" title="Toogle approved status">
+						<i class="fa fa-check-circle"></i>#if ($showtrans.approved) Approved #else Approve #end
 					</a>
 					&nbsp;
 				#end
@@ -559,30 +557,6 @@
 				#getreportlink($showtrans "$translatelink/$!showtrans.id" "chip notext")
 			#end
 		</div>
-	</div>
-</div>
-#end
-###################################
-#macro(langbox $showLangKey $showLangName $progress  )
-#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "green white-text") #else #set($selclass = "") #end
-<div class="card-panel ${selclass}">
-	<div class="mediumText mbs center-align">
-		#if ($selclass == "")
-		<form action="$languageslink" method="post">
-			#sectoken(false)
-			<input type="hidden" name="setlocale" value="$!showLangKey">
-			<button type="submit" class="btn-flat waves-effect waves-light">$showLangName</button>
-		</form>
-		#else
-		<div class="capitalize pts pbm">$!{showLangName}</div>
-		#end
-	</div>
-	<div class="center-align">
-		#if ($progress >= 90) #set($gclass = "green" )#elseif ($progress >= 50)#set($gclass = "orange" )#else#set($gclass = "")#end
-		<span class="chip $!{gclass}" title="$!{progress}%">$!{progress}%</span>
-		#if (!$showLangKey.equals("en"))
-		<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
-		#end
 	</div>
 </div>
 #end

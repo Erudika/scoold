@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.utils.Config;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +34,7 @@ public class Languages extends Base{
 		title = lang.get("translate.select");
 
 		addModel("allLocales", new TreeMap<String, Locale>(langutils.getAllLocales()));
-		langProgressMap = langutils.getTranslationProgressMap(Config.APP_NAME_NS);
+		langProgressMap = langutils.getTranslationProgressMap();
 	}
 
 	public void onPost() {

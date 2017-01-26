@@ -27,7 +27,6 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
 import com.erudika.scoold.core.Comment;
-import com.erudika.scoold.core.Language;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Report.ReportType;
@@ -124,14 +123,14 @@ public class Base extends Page {
 
 	public transient Utils utils = Utils.getInstance();
 	public transient CurrencyUtils currutils = CurrencyUtils.getInstance();
-	public transient HttpServletRequest req = getContext().getRequest();
-	public transient HttpServletResponse resp = getContext().getResponse();
-	public static Map<String, String> deflang = Language.ENGLISH;
-	public Map<String, String> lang = deflang;
+	public transient LanguageUtils langutils = new LanguageUtils();
+	public Map<String, String> lang = langutils.getDefaultLanguage();
 	public Locale currentLocale;
 
+	public transient HttpServletRequest req = getContext().getRequest();
+	public transient HttpServletResponse resp = getContext().getResponse();
+
 	public static ParaClient pc = AppConfig.client();
-	public transient LanguageUtils langutils = new LanguageUtils();
 
 	public Base() {
 		commentslist = new ArrayList<Comment>();
@@ -235,7 +234,6 @@ public class Base extends Page {
 	}
 
 	private void initLanguage() {
-		langutils.setDefaultLanguage(Language.ENGLISH);
 		String cookieLoc = ClickUtils.getCookieValue(req, localeCookieName);
 		Locale requestLocale = langutils.getProperLocale(req.getLocale().getLanguage());
 		String langFromLocation = getLanguageFromLocation();
@@ -249,7 +247,7 @@ public class Base extends Page {
 
 	public final void setCurrentLocale(String langname, boolean setCookie) {
 		currentLocale = langutils.getProperLocale(langname);
-		lang = langutils.readLanguage(Config.APP_NAME_NS, currentLocale.getLanguage());
+		lang = langutils.readLanguage(currentLocale.getLanguage());
 		if (lang == null || lang.isEmpty()) {
 			currentLocale = langutils.getProperLocale("en");
 			lang = langutils.getDefaultLanguage();

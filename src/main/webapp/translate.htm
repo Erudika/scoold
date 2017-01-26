@@ -33,7 +33,6 @@
 
 			#set($langkey = $!langkeys.get($showIndex))
 			<div class="mvl center mediumText">$!deflang.get($!langkey)</div>
-
 			<div class="pvl center-align"><i class="fa fa-arrow-down fa-2x grey-text"></i></div>
 
 			#if (!$isTranslated)
@@ -41,8 +40,8 @@
 					<form method="post" class="new-translation-form">
 						#sectoken(false "ADD_TRANSLATION")
 						<div class="input-field">
-							<label>Translate the above</label>
-							<textarea class="materialize-textarea" rows="2" cols="3" name="value" tabindex="1"></textarea>
+							<p class="center-align">Translate here:</p>
+							<textarea class="materialize-textarea center-align" rows="2" cols="3" name="value" tabindex="1"></textarea>
 						</div>
 						<input type="hidden" name="gettranslationhtmlcode" value="true">
 						<div class="center mtm">
@@ -57,27 +56,6 @@
 			<div id="translations">
 				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.count "" "pageless")
 			</div>
-
-			#if ($isAdmin && $isTranslated)
-				<br>
-				<div class="row center">
-					<div class="col m6 r prm">
-						<form action="$translatelink/$showLocale/?reset=$!langkey" method="post">
-							#sectoken(false)
-							<input type="submit" value="Reset" class="btn waves-effect waves-light red rusure">
-							<input type="hidden" name="reset" value="$!langkey">
-						</form>
-					</div>
-					<div class="col m6 l plm">
-						<form action="$translatelink/$showLocale" method="post">
-							#sectoken(false)
-							<input type="submit" value="Global reset" class="btn waves-effect waves-light red rusure">
-							<input type="hidden" name="reset" value="$!langkey">
-							<input type="hidden" name="global" value="true">
-						</form>
-					</div>
-				</div>
-			#end
 		#else
 			<div class="center">
 				#foreach($!langKey in $!langkeys)

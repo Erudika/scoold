@@ -326,7 +326,7 @@ $(function () {
 
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
-			xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
+				xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
 		}
 	});
 
@@ -446,7 +446,7 @@ $(function () {
 		var dis = $(this);
 		return areYouSure(function() {
 			$.post(dis.attr("href"));
-			dis.closest(".reportbox").fadeOut(function() {dis.remove();});
+			dis.closest(".reportbox").hide(function() {dis.remove();});
 		 }, rusuremsg, false);
 	});
 
@@ -572,7 +572,7 @@ $(function () {
 	$(document).on("click", "a.delete-comment",  function() {
 		var that = $(this);
 		return areYouSure(function() {
-			that.closest("div.commentbox").fadeOut("slow", function() {that.remove();});
+			that.closest("div.commentbox").hide(function() {that.remove();});
 			$.post(that.attr("href"));
 		}, rusuremsg, false);
 	});
@@ -605,7 +605,7 @@ $(function () {
 	$(document).on("click", "a.delete-translation",  function() {
 		var that = $(this);
 		return areYouSure(function() {
-			that.closest("div.translationbox").fadeOut("slow", function() {
+			that.closest("div.translationbox").hide(function() {
 				that.remove();
 			});
 			$.post(that.attr("href"));

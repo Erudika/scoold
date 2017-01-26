@@ -17,9 +17,7 @@
  */
 package com.erudika.scoold.pages.click;
 
-import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.core.Language;
 import com.erudika.scoold.pages.Base;
 import com.erudika.scoold.utils.LanguageUtils;
 import java.util.Locale;
@@ -50,9 +48,8 @@ public class Error extends ErrorPage {
 
 	public void onInit() {
 		super.onInit();
-		langutils.setDefaultLanguage(Language.ENGLISH);
 		Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
-		lang = langutils.readLanguage(Config.APP_NAME_NS, loc.getLanguage());
+		lang = langutils.readLanguage(loc.getLanguage());
 		if (lang == null || lang.isEmpty()) {
 			lang = langutils.getDefaultLanguage();
 		}

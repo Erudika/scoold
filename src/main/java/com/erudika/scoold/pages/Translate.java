@@ -18,12 +18,12 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.Translation;
-import com.erudika.para.utils.Config;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -42,11 +42,12 @@ public class Translate extends Base{
 	public List<String> langkeys;
 	public int showIndex;
 	public boolean isTranslated = false;
+	public Map<String, String> deflang;
 
 	public Translate() {
 		title = lang.get("translate.title");
 		langkeys = new ArrayList<String>();
-
+		deflang = langutils.getDefaultLanguage();
 		if (param("locale")) {
 			showLocale = langutils.getProperLocale(getParamValue("locale"));
 			if (showLocale == null || showLocale.getLanguage().equals("en")) {
@@ -75,11 +76,11 @@ public class Translate extends Base{
 	public void onGet() {
 		if (isAjaxRequest()) return;
 		if (param("locale")) {
-			showLocaleProgress = langutils.getTranslationProgressMap(Config.APP_NAME_NS).get(showLocale.getLanguage());
+			showLocaleProgress = langutils.getTranslationProgressMap().get(showLocale.getLanguage());
 			if (param("index")) {
 				// this is what is currently shown for translation
 				String langkey = langkeys.get(showIndex);
-				translationslist = langutils.readAllTranslationsForKey(Config.APP_NAME_NS, showLocale.getLanguage(),
+				translationslist = langutils.readAllTranslationsForKey(showLocale.getLanguage(),
 						langkey, itemcount);
 			}
 		}
@@ -89,29 +90,18 @@ public class Translate extends Base{
 		if (param("locale") && param("gettranslationhtmlcode")) {
 			String value = StringUtils.trim(getParamValue("value"));
 			String langkey = langkeys.get(showIndex);
-			Set<String> approved = langutils.getApprovedTransKeys(Config.APP_NAME_NS, showLocale.getLanguage());
+			Set<String> approved = langutils.getApprovedTransKeys(showLocale.getLanguage());
 			isTranslated = approved.contains(langkey);
 			if (!StringUtils.isBlank(value) && (!isTranslated || isAdmin)) {
 				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
 				trans.setCreatorid(authUser.getId());
+				trans.setAuthorName(authUser.getName());
+				trans.setTimestamp(System.currentTimeMillis());
 				pc.create(trans);
 				addModel("newtranslation", trans);
 			}
 			if (!isAjaxRequest()) {
 				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex, approved));
-			}
-		} else if (param("reset") && isAdmin) {
-			String key = getParamValue("reset");
-			if (lang.containsKey(key)) {
-				if (param("global")) {
-					// global reset: delete all approved translations for this key
-//					LanguageUtils.disapproveAllForKey(key);
-				} else {
-					// loca reset: delete all approved translations for this key and locale
-//					LanguageUtils.disapproveAllForKey(key, showLocale.getLanguage());
-				}
-				if (!isAjaxRequest())
-					setRedirect(translatelink+"/"+showLocale.getLanguage());
 			}
 		} else if (param("approve") && isAdmin) {
 			String id = getParamValue("approve");
@@ -119,10 +109,10 @@ public class Translate extends Base{
 			if (trans != null) {
 				if (trans.getApproved()) {
 					trans.setApproved(false);
-					langutils.disapproveTranslation(trans.getAppid(), trans.getLocale(), trans.getId());
+					langutils.disapproveTranslation(trans.getLocale(), trans.getId());
 				} else {
 					trans.setApproved(true);
-					langutils.approveTranslation(trans.getAppid(), trans.getLocale(), trans.getThekey(), trans.getValue());
+					langutils.approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
 					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true);
 				}
 				pc.update(trans);
@@ -134,7 +124,7 @@ public class Translate extends Base{
 			if (id != null) {
 				Translation trans = (Translation) pc.read(id);
 				if (authUser.getId().equals(trans.getCreatorid()) || isAdmin) {
-					langutils.disapproveTranslation(trans.getAppid(), trans.getLocale(), trans.getId());
+					langutils.disapproveTranslation(trans.getLocale(), trans.getId());
 					pc.delete(trans);
 				}
 				if (!isAjaxRequest())

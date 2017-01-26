@@ -40,19 +40,19 @@
 				#end
 				<div class="viewbox">
 					<span class="largeText">$!{showUser.name}</span>
-					<div title="$!lang.get('reputation')">
-						<span class="chip largeText phl">$!showUser.votes</span> &nbsp;&nbsp;
-						<span class="largeText">
+					<div>
+						<span class="chip largeText phl tooltipped" data-tooltip="$!lang.get('reputation')">$!showUser.votes</span> &nbsp;&nbsp;
+						<span class="largeText tooltipped" data-tooltip="$!lang.get('badges.title')">
 							#if($showUser.badges && $showUser.badges.length() > 2)
 							$showUser.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i> #end
 						</span>
 						#if ($showUser.groups == "admins")
 							<i class="fa fa-asterisk fa-2x orange-text mhs tooltipped"
-								 data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+								 data-delay="0" data-tooltip="$!lang.get('admin')"></i>
 						#end
 						#if ($showUser.groups == "mods")
 							<i class="fa fa-dot-circle-o fa-2x orange-text mhs tooltipped"
-								 data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+								 data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 						#end
 					</div>
 				</div>
@@ -179,29 +179,22 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="col m6 s12">
-		<h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
+<h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
+<div id="questions-edit">
+	#if ($questionslist.isEmpty())
+		<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
+	#else
+		#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
+	#end
+</div>
 
-		<div id="questions-edit">
-			#if ($questionslist.isEmpty())
-				<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
-			#else
-				#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
-			#end
-		</div>
-	</div>
-	<div class="col m6 s12">
-		<h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
-
-		<div id="answers-edit">
-			#if ($answerslist.isEmpty())
-				<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
-			#else
-				#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
-			#end
-		</div>
-	</div>
+<h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
+<div id="answers-edit">
+	#if ($answerslist.isEmpty())
+		<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
+	#else
+		#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
+	#end
 </div>
 
 <script>
