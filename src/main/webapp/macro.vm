@@ -30,14 +30,14 @@
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
 <div class="newcommentform mvm ${hide}">
 	<form method="post" class="new-comment-form">
-		#sectoken(false)
-		<div class="line">
-			<div class="unit size4of5">
+		#sectoken(false "ADD_COMMENT_$!parentid")
+		<div class="row">
+			<div class="col s10">
 				<textarea rows="2" cols="4" name="comment"></textarea>
 				<input type="hidden" name="parentid" value="$!parentid">
 				<input type="hidden" name="getcommenthtmlcode" value="true">
 			</div>
-			<div class="unit size1of5  center">
+			<div class="col s2 center">
 				<button type="submit" class="btn waves-effect waves-light new-comment-btn">$!lang.get('add')</button>
 			</div>
 		</div>
@@ -116,11 +116,11 @@
 	#commentbox("") ## empty box to be cloned
 #end
 ################# QUESTIONS MACROS #####################
-#macro(newanswerform $_form $showpost $hidden)
+#macro(newanswerform $showpost $hidden)
 #if ($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
 <div class="${hide}">
 	<form method="post" id="answer-question-form">
-		#sectoken(false)
+		#sectoken(false "CREATE_POST")
 		<span class="mediumText">
 			#if ($showpost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
 		</span>
@@ -305,30 +305,41 @@
 		#if (!$viewcount) #set($viewcount = 0) #end
 		#if (!$answercount) #set($answercount = 0) #end
 		#if ($showpost.answerid) #set($bgclass = "light-green white-text" ) #else #set($bgclass = "orange lighten-5" ) #end
+		#if ($votes < 0) #set($bgclass1 = "red lighten-4 white-text" ) #elseif($votes == 0) #set($bgclass1 = "light-blue lighten-5" ) #end
 		<div class="col m1 center-align">
 			<div class="qstatsbox">
-				<div class="largeText lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
-				<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
+				<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
+				<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
 				<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
 					<small>$!lang.get('posts.views')</small>
 				</div>
 			</div>
 		</div>
-		<div class="col m8">
-			<div class="mbm mediumText">
-				<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+		<div class="col m11">
+
+			<div class="row mbn">
+				<div class="col m9">
+					<div class="mbm mediumText">
+						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+					</div>
+					<div class="mbs">
+						#set($showBody = $utils.stripHtml($utils.markdownToHtml($showpost.body)) )
+						<div>$!utils.abbreviate($showBody, 160)</div>
+					</div>
+				</div>
+				<div class="col m3">
+					#smallpersonbox($showpost.author)
+				</div>
 			</div>
-			<div class="mbs">
-				#set($showBody = $utils.stripHtml($utils.markdownToHtml($showpost.body)) )
-				<div>$!utils.abbreviate($showBody, 160)</div>
+			<div class="row mbn">
+				<div class="col m10 mlm">
+					<div>#tagsbox($showpost.tags $actionlink2)</div>
+				</div>
+				<div class="col m2 mlm grey-text r">
+					<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
+				</div>
 			</div>
-			<div>#tagsbox($showpost.tags $actionlink2)</div>
-		</div>
-		<div class="col m3 mlm">
-			#smallpersonbox($showpost.author)
-			<div class="right grey-text">
-				<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
-			</div>
+
 		</div>
 	</div>
 </div>
@@ -400,7 +411,7 @@
 			</div>
 			<div class="col m4">
 				<div class="ptl center-align">
-					<span class="mrl">$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</span>
+					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if ($showpost.lasteditby)
 					<a href="$postlink/$showpost.id/revisions" title="Revision history">
 						$!lang.get("posts.edited") #formatdate($showpost.updated "")
@@ -460,7 +471,15 @@
 	#if ($canEdit)
 	<div class="editbox pvm hide">
 		<form method="post">
-			#sectoken(false)
+			#sectoken(false "EDIT_POST_$!showpost.id")
+			<div class="input-field">
+				<i class="fa fa-paragraph pvm prefix grey-text"></i>
+				<label for="title_text">$!lang.get('posts.title')</label>
+				<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6"
+							 value="$!showpost.title" onkeyup="$('#post-title').text($(this).val())" required>
+				#getmessagebox("red white-text" $error.get("title"))
+			</div>
+
 			<div class="input-field">
 				<i class="fa fa-pencil pvm prefix grey-text"></i>
 				<label for="body_text">$!lang.get('feedback.write')</label>
@@ -504,42 +523,40 @@
 </div>
 #end
 ###################################
-#macro(translationspage $translations $approvedmap)
-#foreach($trans in $translations)
-#set($approved = $approvedmap.containsKey($trans.key) && $approvedmap.get($trans.key).equals($trans.id))
-#translationbox($trans $approved)
-#end
+#macro(translationspage $translations)
+	#foreach($trans in $translations)
+		#translationbox($trans)
+	#end
 #end
 ###################################
-#macro(translationbox $showtrans $approved)
-#set($timestamp = "#formatdate($showtrans.timestamp '')")
+#macro(translationbox $showtrans)
 #set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
-<div class="translationbox media">
-	<div class="img mrm">
-		#if ($isAdmin)
-			#if ($approved)
-				#set($onclass = "green")
-			#else
-				#set($onclass = "")
-			#end
-			<a href="${thisuri}?approve=$showtrans.id" class="megaText approve-translation $!{onclass}"
-					 title="Approve"><i class="fa fa-check-circle"></i></a>
-			&nbsp;
-		#end
-		#votebox($showtrans "mediumText")
-	</div>
-	<div class="bd pts">
-		<div class="trans-value">$!showtrans.value</div>
-		<div class="right">
+<div class="card-panel translationbox">
+	<div class="row">
+		<div class="col m1">
+			#votebox($showtrans "mediumText")
+		</div>
+		$showtrans
+		<div class="col m7 trans-value">
+			<span class="mediumText">$!showtrans.value</span> <br>
 			#set($translAuthor = $!showtrans.author)
-			#personlink($translAuthor)
-			<span class="trans-timestamp"><i class="fa fa-clock-o"></i> $!timestamp</span>
+			<i class="fa fa-user-circle grey-text"></i> #personlink($translAuthor)
+			<span class="grey-text trans-timestamp"><i class="fa fa-clock-o"></i> #formatdate($showtrans.timestamp '')</span>
+		</div>
+		<div class="col m4 mediumText r">
 			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
-			<a href="${thisuri}?delete=$!showtrans.id" title="Delete" class="delete-translation red white-text chip">
-				<i class="fa fa-times"></i>
-			</a>
+				#if ($isAdmin)
+					#if ($showtrans.approved)#set($onclass = "green-text")#else#set($onclass = "")#end
+					<a href="${thisuri}?approve=$showtrans.id" class="approve-translation $!{onclass}"
+						 title="Approve"><i class="fa fa-check-circle"></i> Approve
+					</a>
+					&nbsp;
+				#end
+				<a href="${thisuri}?delete=$!showtrans.id" title="Delete" class="delete-translation red-text mll">
+					<i class="fa fa-times"></i> $!lang.get('delete')
+				</a>
 			#else
-			#getreportlink($showtrans "$translatelink/$!showtrans.id" "chip notext")
+				#getreportlink($showtrans "$translatelink/$!showtrans.id" "chip notext")
 			#end
 		</div>
 	</div>
@@ -547,23 +564,22 @@
 #end
 ###################################
 #macro(langbox $showLangKey $showLangName $progress  )
-#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "selected-lang") #else #set($selclass = "") #end
-<div class="mrl mbm center langbox ${selclass}">
-	<div class="mediumText mbs">
+#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "green white-text") #else #set($selclass = "") #end
+<div class="card-panel ${selclass}">
+	<div class="mediumText mbs center-align">
 		#if ($selclass == "")
 		<form action="$languageslink" method="post">
 			#sectoken(false)
 			<input type="hidden" name="setlocale" value="$!showLangKey">
-			<button type="submit" class="btn waves-effect waves-light">$showLangName</button>
+			<button type="submit" class="btn-flat waves-effect waves-light">$showLangName</button>
 		</form>
 		#else
-		<span class="capitalize">$!{showLangName}</span>
+		<div class="capitalize pts pbm">$!{showLangName}</div>
 		#end
 	</div>
-	<div>
-		#if ($progress >= 90) #set($gclass = "green" )#elseif ($progress >= 50)#set($gclass = "orange" )#else #set($gclass = "red" )#end
+	<div class="center-align">
+		#if ($progress >= 90) #set($gclass = "green" )#elseif ($progress >= 50)#set($gclass = "orange" )#else#set($gclass = "")#end
 		<span class="chip $!{gclass}" title="$!{progress}%">$!{progress}%</span>
-
 		#if (!$showLangKey.equals("en"))
 		<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
 		#end
@@ -745,8 +761,15 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 		$!session.get($!seccsrfkey)
 	#else
 		<input type="hidden" name="_csrf" value="$!session.get($!seccsrfkey)">
-		<input type="hidden" name="_time" value="$!session.get($!sectimekey)">
-		<input type="hidden" name="_timekey" value="$!sectimekey">
+		#if($formId && !$formId.isEmpty())
+			#set($timetoken = $session.get($sectimekey))
+			#if(!$timetoken)
+				#set($timetoken = $utils.timestamp())
+				$!session.put($sectimekey, $timetoken)
+			#end
+			<input type="hidden" name="_time" value="$!timetoken">
+			<input type="hidden" name="_timekey" value="$!sectimekey">
+		#end
 	#end
 #end
 ################# END MACROS ###################################################

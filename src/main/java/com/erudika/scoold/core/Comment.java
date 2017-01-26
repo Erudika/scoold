@@ -23,6 +23,7 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.Collections;
+import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -91,31 +92,14 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Comment other = (Comment) obj;
-		if ((getId() == null) ? (other.getId() != null) : !getId().equals(other.getId())) {
-			return false;
-		}
-		if (getCreatorid() == null || !getCreatorid().equals(other.getCreatorid())) {
-			return false;
-		}
-		if ((this.comment == null) ? (other.comment != null) : !this.comment.equals(other.comment)) {
-			return false;
-		}
-		return true;
+		return Objects.equal(obj, (Comment) obj);
 	}
 
 	public int hashCode() {
-		int hash = 3;
-		hash = 17 * hash + (getId() != null ? getId().hashCode() : 0);
-		hash = 17 * hash + (getCreatorid() != null ? getCreatorid().hashCode() : 0);
-		hash = 17 * hash + (this.comment != null ? this.comment.hashCode() : 0);
-		return hash;
+		return Objects.hashCode(getComment(), getCreatorid());
 	}
 
 	public int compareTo(Comment o) {

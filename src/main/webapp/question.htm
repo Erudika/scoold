@@ -9,7 +9,7 @@
 				$!lang.get("posts.unanswered")
 			#end
 			</span>
-			<div class="largeText">$!{showPost.title}</div>
+			<div id="post-title" class="largeText">$!{showPost.title}</div>
 			<hr>
 
 			<div class="mbl">
@@ -32,7 +32,7 @@
 
 				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.count "" "pageless")
 
-				#if ($request.getParameter("write") && $authenticated || !$aForm.isValid())
+				#if ($request.getParameter("write") && $authenticated)
 					#set($hideForm = false)
 					#set($hideBtn = "hide")
 				#else
@@ -41,7 +41,7 @@
 				#end
 
 				#if ($authenticated && $showPost.isClosed())
-					#newanswerform($aForm $showPost $hideForm)
+					#newanswerform($showPost $hideForm)
 					#set($btnclass = "open-answer-form")
 				#else
 					#set($btnclass = "")

@@ -17,10 +17,11 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Report;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 /**
  *
@@ -31,14 +32,11 @@ public class Reports extends Base{
 	public String title;
 	public String showtype;
 	public List<Report> reportslist;
+	public Map<String, String> error = Collections.emptyMap();
 
 	public Reports() {
 		title = lang.get("reports.title");
-		if (param("merge") && param("id") && isAdmin) {
-			title += " - Merge operation";
-		} else {
-			title += lang.get("reports.title");
-		}
+		addModel("reportsSelected", "navbtn-hover");
 	}
 
 	public void onGet() {
@@ -46,7 +44,6 @@ public class Reports extends Base{
 			setRedirect(getParamValue("ref"));
 			return;
 		}
-
 		reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
 	}
 
@@ -69,21 +66,20 @@ public class Reports extends Base{
 			}
 			if (!isAjaxRequest()) setRedirect(reportslink);
 		} else {
-			Report rep = new Report();
-
-
-
-			ParaObjectUtils.populate(rep, req.getParameterMap());
-			if (authenticated) {
-				rep.setAuthor(authUser.getName());
-				rep.setCreatorid(authUser.getId());
-
-				addBadge(com.erudika.scoold.core.Profile.Badge.REPORTER, true);
-			} else {
-				//allow anonymous reports
-				rep.setAuthor(lang.get("anonymous"));
+			Report rep = populate(new Report(), "link", "description", "parentid", "subType", "authorName");
+			rep.setCreatorid(authUser.getId());
+			error = validate(rep);
+			if (error.isEmpty()) {
+				if (authenticated) {
+					rep.setAuthorName(authUser.getName());
+					rep.setCreatorid(authUser.getId());
+					addBadge(com.erudika.scoold.core.Profile.Badge.REPORTER, true);
+				} else {
+					//allow anonymous reports
+					rep.setAuthorName(lang.get("anonymous"));
+				}
+				rep.create();
 			}
-			rep.create();
 		}
 	}
 }

@@ -22,7 +22,6 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,24 +86,25 @@ public class LanguageUtils {
 		TreeMap<String, String> lang = new TreeMap<String, String>();
 
 		if (s == null || s.getProperties().isEmpty()) {
-			Map<String, Object> terms = new HashMap<String, Object>();
-			terms.put("locale", langCode);
-			terms.put("approved", true);
-			List<Translation> tlist = AppConfig.client().findTerms(Utils.type(Translation.class), terms, true);
-
-			Sysprop saved = new Sysprop(keyPrefix.concat(langCode));
-			lang.putAll(getDefaultLanguage());	// copy default langmap
-			int approved = 0;
-
-			for (Translation trans : tlist) {
-				lang.put(trans.getThekey(), trans.getValue());
-				saved.addProperty(trans.getThekey(), trans.getValue());
-				approved++;
-			}
-			if (approved > 0) {
-				updateTranslationProgressMap(appid, langCode, approved);
-			}
-			AppConfig.client().create(saved);
+//			Map<String, Object> terms = new HashMap<String, Object>();
+//			terms.put("locale", langCode);
+//			terms.put("approved", true);
+//			List<Translation> tlist = AppConfig.client().findTerms(Utils.type(Translation.class), terms, true);
+//
+//			Sysprop saved = new Sysprop(keyPrefix.concat(langCode));
+//			lang.putAll(getDefaultLanguage());	// copy default langmap
+//			int approved = 0;
+//
+//			for (Translation trans : tlist) {
+//				lang.put(trans.getThekey(), trans.getValue());
+//				saved.addProperty(trans.getThekey(), trans.getValue());
+//				approved++;
+//			}
+//			if (approved > 0) {
+//				updateTranslationProgressMap(appid, langCode, approved);
+//			}
+//			AppConfig.client().create(saved);
+			return getDefaultLanguage();
 		} else {
 			Map<String, Object> loaded = s.getProperties();
 			for (String key : loaded.keySet()) {
@@ -207,8 +207,10 @@ public class LanguageUtils {
 	 * @return a list of translations
 	 */
 	public List<Translation> readAllTranslationsForKey(String appid, String locale, String key, Pager pager) {
-		return AppConfig.client().findTerms(Utils.type(Translation.class),
-				Collections.singletonMap(Config._PARENTID, key), true, pager);
+		Map<String, Object> terms = new HashMap<String, Object>(2);
+		terms.put("thekey", key);
+		terms.put("locale", locale);
+		return AppConfig.client().findTerms(Utils.type(Translation.class), terms, true, pager);
 	}
 
 	/**

@@ -23,6 +23,7 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.core.User;
 import com.erudika.scoold.utils.AppConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jersey.repackaged.com.google.common.base.Objects;
 
 /**
  *
@@ -124,31 +125,14 @@ public class Revision extends Sysprop {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Revision other = (Revision) obj;
-		if ((this.body == null) ? (other.body != null) : !this.body.equals(other.body)) {
-			return false;
-		}
-		if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-			return false;
-		}
-		if (getTimestamp() == null || !getTimestamp().equals(other.getTimestamp())) {
-			return false;
-		}
-		return true;
+		return Objects.equal(obj, (Revision) obj);
 	}
 
 	public int hashCode() {
-		int hash = 7;
-		hash = 31 * hash + (this.body != null ? this.body.hashCode() : 0);
-		hash = 31 * hash + (this.description != null ? this.description.hashCode() : 0);
-		hash = 31 * hash + (getTimestamp() != null ? getTimestamp().hashCode() : 0);
-		return hash;
+		return Objects.hashCode(getBody(), getDescription(), getTimestamp());
 	}
 
 

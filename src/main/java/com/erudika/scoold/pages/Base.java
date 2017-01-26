@@ -234,12 +234,6 @@ public class Base extends Page {
 		}
 	}
 
-	public final void initTimeToken(String formId) {
-		if (!StringUtils.isBlank(formId)) {
-			getContext().setSessionAttribute(TOKEN_PREFIX + formId, System.currentTimeMillis());
-		}
-	}
-
 	private void initLanguage() {
 		langutils.setDefaultLanguage(Language.ENGLISH);
 		String cookieLoc = ClickUtils.getCookieValue(req, localeCookieName);
@@ -256,11 +250,15 @@ public class Base extends Page {
 	public final void setCurrentLocale(String langname, boolean setCookie) {
 		currentLocale = langutils.getProperLocale(langname);
 		lang = langutils.readLanguage(Config.APP_NAME_NS, currentLocale.getLanguage());
-
-		if (setCookie) {
-			//create a cookie
-			int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
-			ClickUtils.setCookie(req, resp, localeCookieName, currentLocale.getLanguage(), maxAge, "/");
+		if (lang == null || lang.isEmpty()) {
+			currentLocale = langutils.getProperLocale("en");
+			lang = langutils.getDefaultLanguage();
+		} else {
+			if (setCookie) {
+				//create a cookie
+				int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
+				ClickUtils.setCookie(req, resp, localeCookieName, currentLocale.getLanguage(), maxAge, "/");
+			}
 		}
 	}
 
@@ -352,7 +350,7 @@ public class Base extends Page {
 						rep.setLink(getPostLink(p, false, false));
 						rep.setDescription(lang.get("posts.forclosing"));
 						rep.setSubType(ReportType.OTHER);
-						rep.setAuthor("System");
+						rep.setAuthorName("System");
 						rep.create();
 					}
 					if (author != null) {

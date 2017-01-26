@@ -1,13 +1,11 @@
 <div class="ptl">
 	<h2>$!lang.get("translate.select")</h2>
 	<hr>
-	<div class="center">
-		#set($enLoc =  $allLocales.get("en"))
-		#langbox("en" $!enLoc.getDisplayName($enLoc) $!langProgressMap.get("en"))
+	<div class="row">
 		#foreach($entry in $allLocales.entrySet())
-			#if (!$entry.key.equals("en"))
-				#langbox($entry.key $!entry.value.getDisplayName($!entry.value) $!langProgressMap.get($!entry.key))
-			#end
+		<div class="col m4">
+			#langbox($entry.key $!entry.value.getDisplayName($!entry.value) $!langProgressMap.get($!entry.key))
+		</div>
 		#end
 	</div>
 </div>

@@ -1,56 +1,60 @@
 #macro(reportspage $reports )
 #foreach($showreport in $reports)
-	<div class="reportbox card-panel hoverable">
-		<div class="mediumText lightgray mbm">
-			$!lang.get("reports.$!{showreport.type.toLowerCase()}"):
-			$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
-			<span class="right"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
-		</div>
-		#if ($showreport.closed)
-		#set($hide = "" )
-		#else
-		#set($hide = "hide" )
-		#end
-
-		<div class="left mrl hugeText green-text ${hide}"><i class="fa fa-check"></i></div>
-		<div class="right">
-			<a href="$showreport.link" class="btn"><i class="fa fa-external-link-square"></i> $!lang.get("open")</a>
-			#if (!$showreport.closed)
-			<a href="#" class="btn close-report" title="Close report"><i class="fa fa-check"></i> $!lang.get("close")</a>
-			#else
-			<a href="$reportslink/close/$!showreport.id" title="Reopen report" class="btn"><i class="fa fa-undo"></i> $!lang.get("reopen")</a>
-			#end
-			#if ($isAdmin)
-			<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red white-text delete-report">
-				<i class="fa fa-times"></i> $!lang.get("delete")
-			</a>
-			#end
-		</div>
-		<div>
-			<strong> <i class="fa fa-user-circle"></i>
-				#if ($showreport.creatorid && $showreport.creatorid > 0)
-				<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.author:</a>
-				#else
-				<span>$!showreport.author:</span>
+	<div class="reportbox card-panel">
+		<div class="row">
+			<div class="col m7 largeText">
+				#if ($showreport.closed)
+					<div class="left mrl green-text ${hide}"><i class="fa fa-check"></i></div>
 				#end
-			</strong>
-			#if ($showreport.description && !$showreport.description.isEmpty())
-			<span>$showreport.description</span>
-			#end
-			#if ($showreport.solution && !$showreport.solution.isEmpty())
-			#set($hide = "" )
-			#else
-			#set($hide = "hide" )
-			#end
-			<p class="report-solution ${hide}"><i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
-				<span class="report-solution-text">$!showreport.solution</span>
-			</p>
+				$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
+			</div>
+			<div class="col m5 r">
+				#if (!$showreport.closed)
+				<a href="#" class="btn editlink green darken-1" title="Close report"><i class="fa fa-check"></i> $!lang.get("close")</a>
+				#end
+
+				#if ($isAdmin)
+				<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red white-text delete-report">
+					<i class="fa fa-times"></i> $!lang.get("delete")
+				</a>
+				#end
+			</div>
 		</div>
 
-		<div class="hide report-solution-box mtm center">
-			<form method="post" class="report-solution-form" action="$reportslink/close/$!showreport.id">
+		<div class="row viewbox">
+			<div class="col m10">
+				<div class="c">
+					<strong> <i class="fa fa-user-circle grey-text"></i>
+						#if ($showreport.creatorid)
+							<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.authorName:</a>
+						#else
+							<span>$!showreport.authorName:</span>
+						#end
+					</strong>
+					#if ($showreport.description && !$showreport.description.isEmpty())
+					<span>$showreport.description</span>
+					#end
+					#if ($showreport.solution && !$showreport.solution.isEmpty())
+					#set($hide = "" )#else#set($hide = "hide" )#end
+				</div>
+				<i class="fa fa-external-link-square grey-text"></i> <a href="$!showreport.link"> $!showreport.link</a>
+				<div class="${hide}">
+					<i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
+					<span class="report-solution-text">$!showreport.solution</span>
+				</div>
+			</div>
+			<div class="col m2 r">
+				<span class="right"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
+			</div>
+		</div>
+
+		<div class="hide editbox mtm">
+			<form method="post" action="$reportslink/close/$!showreport.id">
 				#sectoken(false)
-				<textarea name="solution" cols="10" rows="1" class="hintbox mbm">$!lang.get("reports.actionstaken")...</textarea>
+				<div class="input-field">
+					<label>$!lang.get('reports.actionstaken')</label>
+					<textarea name="solution" class="materialize-textarea mbm"></textarea>
+				</div>
 				<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
 			</form>
 		</div>

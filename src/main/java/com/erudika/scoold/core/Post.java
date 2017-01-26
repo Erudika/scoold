@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.Size;
+import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -174,12 +175,12 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String create() {
+		createTags();
 		Post p = AppConfig.client().create(this);
 		if (p != null) {
 			if (canHaveRevisions()) {
 				setRevisionid(Revision.createRevisionFromPost(p, true).create());
 			}
-			createTags();
 			setId(p.getId());
 			setTimestamp(p.getTimestamp());
 			return p.getId();
@@ -345,29 +346,14 @@ public abstract class Post extends Sysprop {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Post other = (Post) obj;
-		if ((this.body == null) ? (other.body != null) : !this.body.equals(other.body)) {
-			return false;
-		}
-		if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
-			return false;
-		}
-		if ((getTags() == null) ? (other.getTags() != null) : !getTags().equals(other.getTags())) {
-			return false;
-		}
-		return true;
+		return Objects.equal(obj, (Post) obj);
 	}
 
 	public int hashCode() {
-		int hash = 7;
-		hash = 97 * hash + (this.body != null ? this.body.hashCode() : 0);
-		return hash;
+		return Objects.hashCode(getTitle(), getBody(), getTags());
 	}
 
 	public abstract boolean canHaveChildren();

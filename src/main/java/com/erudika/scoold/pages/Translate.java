@@ -48,7 +48,7 @@ public class Translate extends Base{
 		langkeys = new ArrayList<String>();
 
 		if (param("locale")) {
-			showLocale = langutils.getAllLocales().get(getParamValue("locale"));
+			showLocale = langutils.getProperLocale(getParamValue("locale"));
 			if (showLocale == null || showLocale.getLanguage().equals("en")) {
 				setRedirect(languageslink);
 				return;
@@ -94,7 +94,7 @@ public class Translate extends Base{
 			if (!StringUtils.isBlank(value) && (!isTranslated || isAdmin)) {
 				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
 				trans.setCreatorid(authUser.getId());
-				trans.create();
+				pc.create(trans);
 				addModel("newtranslation", trans);
 			}
 			if (!isAjaxRequest()) {
@@ -117,7 +117,7 @@ public class Translate extends Base{
 			String id = getParamValue("approve");
 			Translation trans = (Translation) pc.read(id);
 			if (trans != null) {
-				if (trans.isApproved()) {
+				if (trans.getApproved()) {
 					trans.setApproved(false);
 					langutils.disapproveTranslation(trans.getAppid(), trans.getLocale(), trans.getId());
 				} else {
@@ -125,17 +125,17 @@ public class Translate extends Base{
 					langutils.approveTranslation(trans.getAppid(), trans.getLocale(), trans.getThekey(), trans.getValue());
 					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true);
 				}
-				trans.update();
+				pc.update(trans);
 			}
 			if (!isAjaxRequest())
 				setRedirect(translatelink+"/"+showLocale.getLanguage()+"/"+(showIndex+1));
 		} else if (param("delete")) {
 			String id = getParamValue("delete");
 			if (id != null) {
-				Translation t = (Translation) pc.read(id);
-				if (authUser.getId().equals(t.getCreatorid()) || isAdmin) {
-					langutils.disapproveTranslation(t.getAppid(), t.getLocale(), t.getId());
-					t.delete();
+				Translation trans = (Translation) pc.read(id);
+				if (authUser.getId().equals(trans.getCreatorid()) || isAdmin) {
+					langutils.disapproveTranslation(trans.getAppid(), trans.getLocale(), trans.getId());
+					pc.delete(trans);
 				}
 				if (!isAjaxRequest())
 					setRedirect(translatelink+"/"+showLocale.getLanguage()+"/"+(showIndex+1));

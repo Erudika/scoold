@@ -17,19 +17,22 @@
  */
 package com.erudika.scoold.pages;
 
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Reply;
-import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import static com.erudika.scoold.pages.Base.logger;
 import com.erudika.scoold.utils.AppConfig;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,7 +49,6 @@ public class Question extends Base{
 	public List<Reply> answerslist;
 	public List<Post> similarquestions;
 	public String markdownHtml;
-	public String FORM_ID = "EDIT_POST_";
 
 	private String postlink;
 
@@ -70,9 +72,7 @@ public class Question extends Base{
 				canEdit = false;
 			}
 			itemcount.setSortby("newest".equals(getParamValue("sortby")) ? "" : "votes");
-			answerslist = showPost.getAnswers(itemcount);
 			postlink = getPostLink(showPost, false, false);
-			initTimeToken(FORM_ID + showPost.getId());
 		}
 	}
 
@@ -81,6 +81,23 @@ public class Question extends Base{
 			setRedirect(questionslink + (param("delete") ? "?success=true&code=16" : ""));
 			return;
 		}
+		answerslist = showPost.getAnswers(itemcount);
+		Map<String, String> authorids = new HashMap<String, String>(answerslist.size() + 1);
+		Map<String, Profile> authors = new HashMap<String, Profile>(answerslist.size() + 1);
+		authorids.put(showPost.getId(), showPost.getCreatorid());
+		for (Reply reply : answerslist) {
+			authorids.put(reply.getId(), reply.getCreatorid());
+		}
+		// read all post authors in batch
+		for (ParaObject author : pc.readAll(new ArrayList<String>(authorids.values()))) {
+			authors.put(author.getId(), (Profile) author);
+		}
+		// set author object for each post
+		showPost.setAuthor(authors.get(authorids.get(showPost.getId())));
+		for (Reply reply : answerslist) {
+			reply.setAuthor(authors.get(authorids.get(reply.getId())));
+		}
+
 		//get the comments for each answer
 		Post.readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
 		updateViewCount();
@@ -97,7 +114,7 @@ public class Question extends Base{
 			if (param("getcomments") && param(Config._PARENTID)) {
 				String parentid = getParamValue(Config._PARENTID);
 				Comment parent = new Comment(parentid);
-				commentslist = AppConfig.client().getChildren(parent, Utils.type(Comment.class), itemcount);
+				commentslist = pc.getChildren(parent, Utils.type(Comment.class), itemcount);
 			}
 		}
 	}
@@ -158,7 +175,7 @@ public class Question extends Base{
 					showPost.setCloserid("0");
 				}
 				// update without adding revisions
-				AppConfig.client().update(showPost);
+				pc.update(showPost);
 
 				addBadge(Badge.EUREKA, newq.getCreatorid().equals(showPost.getCreatorid()));
 //				if (!isAjaxRequest()) setRedirect(escapelink+"#post-"+newq.getId());
@@ -240,14 +257,6 @@ public class Question extends Base{
 		} else if (param("delete")) {
 			if (!showPost.isReply()) {
 				if ((isMine || isMod)) {
-					Report rep = new Report();
-					rep.setParentid(showPost.getId());
-					rep.setLink(postlink);
-					rep.setDescription(lang.get("posts.marked"));
-					rep.setSubType(Report.ReportType.OTHER);
-					rep.setAuthor(authUser.getName());
-					rep.setCreatorid(authUser.getId());
-					rep.create();
 					showPost.delete();
 					postlink = questionslink + "?success=true&code=16";
 				}
@@ -289,7 +298,7 @@ public class Question extends Base{
 			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 			showPost.setViewcount(views + 1); //increment count
 			setStateParam("postviews", postviews + "," + showPost.getId());
-			AppConfig.client().update(showPost);
+			pc.update(showPost);
 		}
 	}
 

@@ -142,7 +142,7 @@
 								#if ($authenticated)
 									#if ($isMod)
 										<li>
-											<a href="$reportslink" title="Reports">$!lang.get("reports.title")
+											<a href="$reportslink" title="Reports" class="$!{reportsSelected}">$!lang.get("reports.title")
 												#if ($authUser.countNewReports() > 0)
 													<span class="badge new">$authUser.countNewReports()</span>
 												#end
@@ -192,7 +192,7 @@
 								#if ($authenticated)
 									#if ($isMod)
 										<li>
-											<a href="$reportslink" title="Reports">$!lang.get("reports.title")
+											<a href="$reportslink" title="Reports" class="$!{reportsSelected}">$!lang.get("reports.title")
 												#if ($authUser.countNewReports() > 0)
 													<span class="badge new">$authUser.countNewReports()</span>
 												#end
@@ -226,9 +226,9 @@
 			</header>
 
 			<main class="container">
-				$session.keySet()$session.values()
 				#infostrip()
 				#parse($path)
+				$session.keySet()$session.values()
 			</main>
 
 			<footer class="page-footer">

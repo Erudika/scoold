@@ -53,6 +53,9 @@ public class Error extends ErrorPage {
 		langutils.setDefaultLanguage(Language.ENGLISH);
 		Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
 		lang = langutils.readLanguage(Config.APP_NAME_NS, loc.getLanguage());
+		if (lang == null || lang.isEmpty()) {
+			lang = langutils.getDefaultLanguage();
+		}
         title = lang.get("error.title");
 	}
 

@@ -203,38 +203,18 @@
 		<to>/profile.htm</to>
 	</rule>
 	<rule>
-		<from>^/profile/(\d+)(/?)$</from>
+		<from>^/profile/([a-zA-Z0-9[^/]]+)(/?)$</from>
 		<to>/profile.htm?id=$1</to>
 	</rule>
 	<rule>
-		<from>^/profile/(\d+)/update(/?)$</from>
+		<from>^/profile/([a-zA-Z0-9[^/]]+)/update(/?)$</from>
 		<to>/profile.htm?update=true&amp;id=$1</to>
 	</rule>
 	<rule>
-		<from>^/profile/(\d+)/edit(/?)$</from>
+		<from>^/profile/([a-zA-Z0-9[^/]]+)/edit(/?)$</from>
 		<to>/profile.htm?edit=true&amp;id=$1</to>
 	</rule>
 
-	<rule>
-		<from>^/profile/(\d+)/contacts((/?)(.*?))$</from>
-		<to>/profile.htm?show=contacts&amp;id=$1</to>
-	</rule>
-	<rule>
-		<from>^/profile/(\d+)/add(/?)$</from>
-		<to>/profile.htm?addcontact=true&amp;id=$1</to>
-	</rule>
-	<rule>
-		<from>^/profile/(\d+)/remove(/?)$</from>
-		<to>/profile.htm?removecontact=$1&amp;id=$1</to>
-	</rule>
-	<rule>
-		<from>^/profile/(\d+)/questions((/?)(.*?))$</from>
-		<to>/profile.htm?show=questions&amp;id=$1</to>
-	</rule>
-	<rule>
-		<from>^/profile/(\d+)/answers((/?)(.*?))$</from>
-		<to>/profile.htm?show=answers&amp;id=$1</to>
-	</rule>
 
 	<!--SEO URLs-->
 	<rule>
@@ -338,10 +318,6 @@
 		<to>/search.htm</to>
 	</rule>
 	<rule>
-		<from>^/search/schools/(.*)(/?)$</from>
-		<to last="true">/search.htm?q=$1&amp;show=schools</to>
-	</rule>
-	<rule>
 		<from>^/search/feedback/(.*)(/?)$</from>
 		<to last="true">/search.htm?q=$1&amp;show=feedback</to>
 	</rule>
@@ -352,10 +328,6 @@
 	<rule>
 		<from>^/search/people/(.*)(/?)$</from>
 		<to last="true">/search.htm?q=$1&amp;show=people</to>
-	</rule>
-	<rule>
-		<from>^/search/classes/(.*)(/?)$</from>
-		<to last="true">/search.htm?q=$1&amp;show=classes</to>
 	</rule>
 
 </urlrewrite>

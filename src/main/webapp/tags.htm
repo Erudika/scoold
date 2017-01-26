@@ -11,11 +11,12 @@
 		<div class="row">
 			#foreach($showtag in $tagslist)
 			<div class="col m3">
-				<div class="card-panel pvl">
+				<div class="card-panel pvl hoverable">
+					<span class="right mediumText">&times; $!showtag.count</span>
 					<i class="fa fa-tag grey-text"></i>&nbsp;
 					<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="mrs">
 						$!showtag.tag
-					</a> <span class="right mediumText">&times; $!showtag.count</span>
+					</a>
 				</div>
 			</div>
 			#end

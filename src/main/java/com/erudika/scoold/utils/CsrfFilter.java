@@ -70,6 +70,13 @@ public class CsrfFilter implements Filter {
 				}
 			}
 
+			if (csrfToken == null) {
+				csrfToken = request.getHeader("X-CSRF-TOKEN");
+				if (csrfToken == null) {
+					csrfToken = request.getHeader("X-XSRF-TOKEN");
+				}
+			}
+
 			if (csrfToken == null || StringUtils.isBlank(csrfInCookie) || !csrfToken.equals(csrfInCookie)) {
 				response.sendError(403);
 				return;

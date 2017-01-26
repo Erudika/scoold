@@ -230,11 +230,6 @@ public final class Language {
 			put("reports."+Report.ReportType.DUPLICATE.toString(), "Duplicate content");
 			put("reports."+Report.ReportType.INCORRECT.toString(), "Incorrect or outdated content");
 			put("reports."+Report.ReportType.OTHER.toString(), "Other problems that need attention");
-			put("reports.all", "All reports");
-			put("reports.post", "Posts");
-			put("reports.user", "Users");
-			put("reports.comment", "Comments");
-			put("reports.translation", "Translations");
 			put("reports.category", "Report category");
 			put("reports.description", "Describe what's wrong");
 			put("reports.actionstaken", "Actions taken");

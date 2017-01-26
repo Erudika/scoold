@@ -381,9 +381,10 @@ public class Profile extends Sysprop implements Comparable<Profile>{
     }
 
 	public int countNewReports() {
-		if (newreports == null)
-			newreports = AppConfig.client().getCount(Utils.type(Report.class)).intValue();
-
+		if (newreports == null) {
+			newreports = AppConfig.client().getCount(Utils.type(Report.class),
+					Collections.singletonMap("properties.closed", false)).intValue();
+		}
 		return newreports;
 	}
 

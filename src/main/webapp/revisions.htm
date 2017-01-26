@@ -10,15 +10,15 @@
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
 <div class="card-panel hoverable">
-	<div class="line lightgraybg chip">
-		<div class="unit size1of3">
+	<div class="row chip">
+		<div class="col m4">
 			#set($author = $showrev.getAuthor())
 			#smallpersonbox($author)
 		</div>
-		<div class="unit size1of3 center">
+		<div class="col m4 center">
 			<span class="lightgray mediumText">#if ($showrev.original) $!lang.get("original") #else  #$!showrev.id #end </span>
 		</div>
-		<div class="unit size1of3  r">
+		<div class="col m4 r">
 			<div class="lightgray mediumText">
 				<span class="mrs"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
 			</div>

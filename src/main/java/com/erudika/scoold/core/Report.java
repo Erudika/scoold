@@ -20,6 +20,7 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.scoold.utils.AppConfig;
+import jersey.repackaged.com.google.common.base.Objects;
 
 /**
  *
@@ -30,7 +31,7 @@ public class Report extends Sysprop {
 
 	@Stored private String subType;
 	@Stored private String description;
-	@Stored private String author;
+	@Stored private String authorName;
 	@Stored private String link;
 	@Stored private String grandparentid;
 	@Stored private String solution;
@@ -45,21 +46,20 @@ public class Report extends Sysprop {
 	}
 
 	public Report() {
+		this.subType = ReportType.OTHER.toString();
+		this.description = subType;
 		this.closed = false;
 	}
 
 	public Report(String id) {
+		this();
 		setId(id);
-		this.closed = false;
 	}
 
-	public Report(String parentid, String type, String description,
-			String creatorid) {
+	public Report(String parentid, String type, String description, String creatorid) {
+		this();
 		setParentid(parentid);
-		this.subType = type;
-		this.description = description;
 		setCreatorid(creatorid);
-		this.closed = false;
 	}
 
 	public Boolean getClosed() {
@@ -94,12 +94,12 @@ public class Report extends Sysprop {
 		this.link = link;
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getAuthorName() {
+		return authorName;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 	public String getDescription() {
@@ -111,6 +111,9 @@ public class Report extends Sysprop {
 	}
 
 	public String getSubType() {
+		if (subType == null) {
+			subType = ReportType.OTHER.toString();
+		}
 		return subType;
 	}
 
@@ -140,32 +143,15 @@ public class Report extends Sysprop {
 		return null;
 	}
 
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Report other = (Report) obj;
-		if ((getParentid() == null) ? (other.getParentid() != null) : !getParentid().equals(other.getParentid())) {
-			return false;
-		}
-		if ((this.subType == null) ? (other.subType != null) : !this.subType.equals(other.subType)) {
-			return false;
-		}
-		if (getCreatorid() == null || !getCreatorid().equals(other.getCreatorid())) {
-			return false;
-		}
-		return true;
+	public int hashCode() {
+		return Objects.hashCode(getSubType(), getDescription(), getCreatorid(), getParentid());
 	}
 
-	public int hashCode() {
-		int hash = 5;
-		hash = 37 * hash + (getParentid() != null ? getParentid().hashCode() : 0);
-		hash = 37 * hash + (this.subType != null ? this.subType.hashCode() : 0);
-		hash = 37 * hash + (getCreatorid() != null ? getCreatorid().hashCode() : 0);
-		return hash;
+	public boolean equals(Object obj) {
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		return Objects.equal(obj, (Report) obj);
 	}
 
 }

@@ -4,7 +4,7 @@
 		<hr>
 		<div class="ptl">
 			<form method="post" id="ask-question-form">
-				#sectoken(false $FORM_ID)
+				#sectoken(false "CREATE_POST")
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
@@ -32,8 +32,6 @@
 					<input type="hidden" name="tags" class="ac-hidden" value="">
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
-
-				<input type="hidden" name="parentid">
 				<div class="edit-preview"></div>
 
 				<br>
@@ -47,7 +45,7 @@
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
 			#if (!$request.getParameter("tag") && $tagFilterOn)
-				<a href="$settingslink" class="chip"> <span class="fa fa-check">3</span> $!lang.get("settings.tagfilter")</a>
+				<a href="$settingslink" class="chip"> <span class="fa fa-check"></span> $!lang.get("settings.tagfilter")</a>
 			#end
 			<a href="${questionslink}$!{filterparam}" class="chip $sortarr.newest">$!lang.get("newest")</a>
 			<a href="${questionslink}/votes$!{filterparam}" class="chip $sortarr.votes">$!lang.get("votes")</a>
@@ -64,15 +62,19 @@
 				</div>
 			#end
 		</div>
+
 		<h2>
 			#if ($request.getParameter("tag"))
-				#set($showTag = $request.getParameter("tag"))
-				$!lang.get("questions.title") / #tagsbox($showTag $questionslink)
+				<small>
+					#set($showTag = $request.getParameter("tag"))
+					$!lang.get("posts.tagged") <span class="grey-text text-darken-2">$!showTag</span>
+				</small>
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end
 		</h2>
 		<hr>
+
 
 		#if ($questionslist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">

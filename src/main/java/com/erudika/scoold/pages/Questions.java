@@ -36,7 +36,6 @@ public class Questions extends Base{
 	public String title;
 	public List<Question> questionslist;
 	public Map<String, String> error = Collections.emptyMap();
-	public String FORM_ID = "CREATE_POST";
 
 	public Questions() {
 		title = lang.get("home.title");
@@ -45,7 +44,6 @@ public class Questions extends Base{
 			if (!authenticated) {
 				setRedirect(signinlink);
 			} else {
-				initTimeToken(FORM_ID);
 				addModel("askSelected", "navbtn-hover");
 				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
 			}
@@ -94,6 +92,7 @@ public class Questions extends Base{
 
 	public void onPost() {
 		Question q = populate(new Question(), "title", "body", "tags|,");
+		q.setCreatorid(authUser.getId());
 		error = validate(q);
 		if (error.isEmpty()) {
 			createAndGoToPost(q);

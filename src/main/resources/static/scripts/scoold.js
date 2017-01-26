@@ -326,9 +326,7 @@ $(function () {
 
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
-			if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-				xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
-			}
+			xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
 		}
 	});
 
@@ -444,12 +442,6 @@ $(function () {
      *                    REPORTS
      ****************************************************/
 
-	$("a.close-report").click(function() {
-		var dis = $(this);
-		dis.closest(".reportbox").find(".report-solution-box").toggle();
-		return false;
-	});
-
 	$("a.delete-report").click(function() {
 		var dis = $(this);
 		return areYouSure(function() {
@@ -458,25 +450,9 @@ $(function () {
 		 }, rusuremsg, false);
 	});
 
-	submitFormBind("form.report-solution-form", function(data, status, xhr, form) {
-		var dis = $(form);
-		var parent = dis.closest(".reportbox");
-		$(".report-solution", parent).show().children("span.report-solution-text").text(dis.find("textarea").val());
-		$("a.close-report", parent).hide();
-		$("div:hidden:first", parent).show();
-		$(".report-solution-box").hide();
-		clearForm(form);
-	});
-
 	/****************************************************
      *                    PROFILE
      ****************************************************/
-
-//	submitFormBind("form#about-edit-form", function(data, status, xhr, form) {
-//		var dis = $(form);
-//		dis.closest("div.editbox").siblings("div.viewbox").text(data);
-//		dis.find("input.canceledit").click();
-//	});
 
 	$("#use-gravatar-switch").change(function () {
 		var dis = $(this);
@@ -507,7 +483,7 @@ $(function () {
 		appender: {
 			el: '.ac-tags',
 			tagTemplate: '<div class="chip" data-id="<%= item.id %>" data-text="<%= item.text %>">\n\
-							<%= item.text %> &nbsp;<i class="fa fa-close"></i></div>'
+							<%= item.text %><i class="fa fa-close close"></i></div>'
 		},
 		dropdown: {
 			el: '#tags-dropdown'
@@ -517,9 +493,14 @@ $(function () {
 			el: '.ac-hidden'
 		},
 		getData: function (value, callback) {
-			$.get("/ajax/" + value, function (data) {
-				data.push({id: value.toLowerCase(), text: value.toLowerCase()});
-				callback(value, data);
+			var val = value.toLowerCase();
+			$.get("/ajax/" + val, function (data) {
+				console.log(data);
+				var tags = data.map(function (t) {
+					return {id: t.tag, text: t.tag};
+				});
+				tags.push({id: val, text: val});
+				callback(value, tags);
 			});
 		}
 	});
@@ -631,13 +612,13 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(document).on("click", "input#addcont-translation-btn",  function() {
+	$(document).on("click", "#addcont-translation-btn",  function() {
 		return validateTrans($(this).closest("form"));
 	});
-	$(document).on("click", "input#add-translation-btn",  function() {
+	$(document).on("click", "#add-translation-btn",  function() {
 		var that = $(this);
 		var form = that.closest("form");
-		var isValid = validateTrans(form);
+		var isValid = true; //validateTrans(form);
 		var textbox = $("textarea[name='value']", form);
 		var father = that.closest("div.newtranslationform");
 		if ($.trim(textbox.val()) !== "" && isValid) {
@@ -715,16 +696,14 @@ $(function () {
 	});
 
 	$(document).on("click", "a.approve-answer, a.approve-translation", function() {
-		var on = "green";
+		var on = "green-text";
 		var that = $(this);
-		$(".approve-answer, .approve-translation").not(that).removeClass(on).text("3");
+		$(".approve-answer, .approve-translation").not(that).removeClass(on);
 
 		if (that.hasClass(on)) {
 			that.removeClass(on);
-			that.text("3");
 		} else {
 			that.addClass(on);
-			that.text("2");
 		}
 
 		$.post(this.href);

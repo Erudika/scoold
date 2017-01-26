@@ -1,15 +1,15 @@
-<div id="translate">
+<div class="ptl">
 	#if ($request.getParameter("locale"))
 		<h2>
-			<a href="$translatelink">$!lang.get("translate.title")</a> /
+			<a href="$translatelink"><i class="fa fa-globe"></i></a>
 			#if ($request.getParameter("index"))
 				#set($indx = $showIndex + 1)
-				<a href="$translatelink/$showLocale" class="capitalize">$showLocale.getDisplayName($showLocale)</a> / #$indx
+				<a href="$translatelink/$showLocale" class="capitalize">$showLocale.getDisplayName($showLocale)</a>
+				<span class="grey-text">#$indx</span>
 			#else
 				<span class="capitalize">$showLocale.getDisplayName($showLocale)</span>
 			#end
-
-			<span class="right">$!{showLocaleProgress}%</span>
+			<span class="grey-text right">$!{showLocaleProgress}%</span>
 		</h2>
 		<hr>
 
@@ -19,51 +19,56 @@
 			#set($previ = $indx - 1)
 			#if ($nexti > $!langkeys.size()) #set($nexti = 1) #end
 			#if ($previ <= 0) #set($previ = $!langkeys.size()) #end
-			<div class="line mediumText">
-				<div class="unit size1of3">
+			<div class="row mediumText">
+				<div class="col m4">
 					<a href="$translatelink/$showLocale/$!previ" title="Previous"><i class="fa fa-arrow-left"></i> $!lang.get("prev")</a>
 				</div>
-				<div class="unit size1of3 center">
+				<div class="col m4 center">
 					<span class="chip">$indx / $!lang.size()</span>
 				</div>
-				<div class="unit size1of3  r">
+				<div class="col m4 r">
 					<a href="$translatelink/$showLocale/$!nexti" title="Next">$!lang.get("next") <i class="fa fa-arrow-right"></i></a>
 				</div>
 			</div>
 
 			#set($langkey = $!langkeys.get($showIndex))
-			<div class="mvl center mediumText lightborder pvs">$!deflang.get($!langkey)</div>
+			<div class="mvl center mediumText">$!deflang.get($!langkey)</div>
 
-			<div id="translations">
-				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.count "" "pageless")
-			</div>
-			<br>
+			<div class="pvl center-align"><i class="fa fa-arrow-down fa-2x grey-text"></i></div>
 
 			#if (!$isTranslated)
 				<div class="newtranslationform">
 					<form method="post" class="new-translation-form">
-						#sectoken(false)
-						<textarea rows="2" cols="3" name="value"></textarea>
+						#sectoken(false "ADD_TRANSLATION")
+						<div class="input-field">
+							<label>Translate the above</label>
+							<textarea class="materialize-textarea" rows="2" cols="3" name="value" tabindex="1"></textarea>
+						</div>
 						<input type="hidden" name="gettranslationhtmlcode" value="true">
 						<div class="center mtm">
-							<input id="add-translation-btn" type="button" value="$!lang.get('add')" class="btn waves-effect waves-light"> &nbsp;
-							<input id="addcont-translation-btn" type="submit" value="$!lang.get('add') &amp; $!lang.get('continue')" class="btn waves-effect waves-light">
+							<button id="add-translation-btn" type="button" class="btn waves-effect waves-light">$!lang.get('add')</button> &nbsp;
+							<button id="addcont-translation-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('add') &amp; $!lang.get('continue')</button>
 						</div>
 					</form>
 				</div>
 			#end
 
+			<br>
+			<div id="translations">
+				#paginate($pagenum.longValue() "\#translationspage(\$translationslist)" $itemcount.count "" "pageless")
+			</div>
+
 			#if ($isAdmin && $isTranslated)
 				<br>
-				<div class="line center">
-					<div class="unit size1of2 r prm">
+				<div class="row center">
+					<div class="col m6 r prm">
 						<form action="$translatelink/$showLocale/?reset=$!langkey" method="post">
 							#sectoken(false)
 							<input type="submit" value="Reset" class="btn waves-effect waves-light red rusure">
 							<input type="hidden" name="reset" value="$!langkey">
 						</form>
 					</div>
-					<div class="unit size1of2  l plm">
+					<div class="col m6 l plm">
 						<form action="$translatelink/$showLocale" method="post">
 							#sectoken(false)
 							<input type="submit" value="Global reset" class="btn waves-effect waves-light red rusure">
@@ -76,13 +81,13 @@
 		#else
 			<div class="center">
 				#foreach($!langKey in $!langkeys)
-					<div class="mrl l pvs">
+					<span class="mrl l pvs">
 						#if ($isTranslated)
 							<i class="fa fa-check-circle green-text mediumText mrs" title="Translated and approved" ></i>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )
-						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!utils.abbreviate($!transthis, 25)</a>
-					</div>
+						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!utils.abbreviate($!transthis, 35)</a>
+					</span>
 				#end
 			</div>
 		#end
