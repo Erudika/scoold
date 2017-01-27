@@ -86,6 +86,7 @@ public class Questions extends Base{
 					}
 				}
 			}
+			fetchProfiles(questionslist);
 			addModel("tagFilterOn", authenticated && authUser.hasFavtags());
 		}
 	}

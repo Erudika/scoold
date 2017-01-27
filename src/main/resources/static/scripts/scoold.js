@@ -9,9 +9,9 @@ $(function () {
 	var ajaxpath = window.location.pathname,
 		ipdbkey = "da8cac8c9dd7287636b06a0421c0efa05872f65f70d3902e927cf66f530b9fd6",
 		ipdburl = "http://api.ipinfodb.com/v3/ip-city/?key="+ipdbkey+"&format=json&callback=?&ip=",
-		infobox = $("div.infostrip"),
 		hideMsgBoxAfter = 10 * 1000, //10 sec
 		mapCanvas = $("div#map-canvas"),
+		locationbox = $("input.locationbox"),
 		rusuremsg = lang.areyousure,
 		highlightfn = function(element) {$(element).addClass("error");clearLoading();},
 		unhighlightfn = function(element) {$(element).removeClass("error");},
@@ -22,10 +22,14 @@ $(function () {
 	 *    Google Maps API
 	 **************************/
 
+	if (locationbox.length && !mapCanvas.length) {
+		new google.maps.places.SearchBox(locationbox.get(0));
+	}
+
 	function initMap(elem) {
 		var geocoder = new google.maps.Geocoder(),
 			marker = new google.maps.Marker({}),
-			locbox = $("input.locationbox:first"),
+			locbox = locationbox,
 			latlngbox = $("input.latlngbox:first"),
 			mapElem = elem || mapCanvas.get(0),
 			mapZoom = 3,
@@ -152,14 +156,18 @@ $(function () {
 
 	function crossfadeToggle(elem1, elem2) {
 		if ($(elem1).hasClass("hide") || $(elem1).css("display") === "none") {
+			$(elem2).trigger("event:hide");
             $(elem2).animate({opacity: "hide"}, 200, function() {
 				$(this).addClass("hide");
                 $(elem1).animate({opacity: "show"}, 200).removeClass("hide");
+				$(elem1).trigger("event:show");
 			});
 		} else {
+			$(elem1).trigger("event:hide");
             $(elem1).animate({opacity: "hide"}, 200, function() {
 				$(this).addClass("hide");
                 $(elem2).animate({opacity: "show"}, 200).removeClass("hide");
+				$(elem2).trigger("event:show");
 			});
 		}
 	}
@@ -184,131 +192,6 @@ $(function () {
 			return false;
 		});
 	}
-
-//	function autocompleteBind(elem, params) {
-//		var that = $(elem);
-//		that.attr("autocomplete", "off");
-//		that.autocomplete(ajaxpath, {
-//			minChars: 3,
-//			width: that.attr("width"),
-//			matchContains: true,
-//			highlight: false,
-//            extraParams: params,
-//			autoFill: true,
-//			formatItem: function(row) {
-//				return row[0] + "<br/>" + row[1];
-//			}
-//		});
-//		that.result(function(event, data, formatted) {
-//			$(this).next("input:hidden").val(data[2]);
-//		});
-//		//clear hidden fields on keypress except enter
-//		that.keypress(function(e) {
-//			if (e.which !== 13 || e.keyCode !== 13) {
-//				$(this).next("input:hidden").val("");
-//			}
-//		});
-//	}
-
-//	function autocompleteTagBind(elem, params) {
-//		var that = $(elem);
-//		that.attr("autocomplete", "off");
-//		that.autocomplete(ajaxpath, {
-//			minChars: 2,
-//			width: that.attr("width"),
-//			matchContains: true,
-//			multiple: true,
-//			highlight: false,
-//            extraParams: params,
-//			autoFill: true,
-//			scroll: true,
-//			formatItem: function(row) {
-//				return row[0];
-//			}
-//		});
-//	}
-
-//	function autocompleteUserBind(elem, params) {
-//		autocompleteBind(elem, params);
-//		$(elem).keypress(function(e) {
-//			if (e.which === 13 || e.keyCode === 13) {
-//				$(this).closest("form").submit();
-//			}
-//		});
-//	}
-
-//	function autocompleteContactBind(elem, params) {
-//		if (typeof contacts !== "undefined") {
-//			var that = $(elem);
-//			that.attr("autocomplete", "off");
-//			that.autocomplete(contacts, {
-//				minChars: 3,
-//				width: that.attr("width"),
-//				matchContains: true,
-//				multiple: true,
-//				highlight: false,
-//				extraParams: params,
-////				autoFill: true,
-//				scroll: true,
-//				formatItem: function(row) {
-//					return row.name;
-//				}
-//			});
-//			that.result(function(event, data, formatted) {
-//				var that = $(this),
-//					hidden = that.nextAll("input:hidden:first"),
-//					newHidden = hidden.clone();
-//				newHidden.val(data.id);
-//				hidden.after(newHidden);
-//			});
-//
-//			var clear = function(e) {
-//				$(e).nextAll("input:hidden").not(":first").remove();
-//				$(e).val("");
-//			};
-//
-//			//clear hidden fields on keypress except enter
-//			that.keyup(function(e) {
-//				if (e.keyCode === 8 || e.keyCode === 46) {
-//					clear(this);
-//				}
-//			}).on('copy', function(e) {
-//				clear(this);
-//			}).on('paste', function(e) {
-//				clear(this);
-//			}).on('cut', function(e) {
-//				clear(this);
-//			});
-//		}
-//	}
-
-//	function showMsgBox(msg, clazz, hideafter) {
-//		infobox.removeClass("infoBox errorBox successBox");
-//		infobox.find(".ico").hide();
-//		infobox.find("."+clazz+"Icon").show();
-//		infobox.addClass(clazz).children(".infostrip-msg").text(msg);
-//		infobox.show();
-//
-//		if (hideafter && hideafter > 0) {
-//			setTimeout(function() {
-//				infobox.hide();
-//			}, hideafter);
-//		}
-//	}
-//
-//	function showInfoBox(msg) {
-//		showMsgBox(msg, "infoBox", hideMsgBoxAfter);
-//	}
-//	function showErrorBox(msg) {
-//		showMsgBox(msg, "errorBox", 0);
-//	}
-//	function showSuccessBox(msg) {
-//		showMsgBox(msg, "successBox", hideMsgBoxAfter);
-//	}
-//
-//	function hideMsgBoxes() {
-//		infobox.hide();
-//	}
 
 	function areYouSure(func, msg, returns) {
 		if (confirm(msg)) {
@@ -444,10 +327,20 @@ $(function () {
 
 	$("a.delete-report").click(function() {
 		var dis = $(this);
-		return areYouSure(function() {
-			$.post(dis.attr("href"));
-			dis.closest(".reportbox").hide(function() {dis.remove();});
-		 }, rusuremsg, false);
+		$.post(dis.attr("href"));
+		dis.closest(".reportbox").fadeOut("fast", function() {dis.remove();});
+		return false;
+	});
+
+	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
+		$("#main-modal").modal("close");
+		clearForm(form);
+	});
+
+	submitFormBind("form.close-report-form", function(data, status, xhr, form) {
+		var parent = $(form).closest(".reportbox");
+		parent.find(".report-closed-icon").removeClass("hide");
+		parent.find(".report-close-btn").click().hide();
 	});
 
 	/****************************************************
@@ -460,6 +353,7 @@ $(function () {
 		$("img.profile-pic:first").attr("src", newPic);
 		$.post(dis.closest("form").attr("action"), {picture: newPic});
 	});
+
 	$("#picture_url").on('focusout', function () {
 		var dis = $(this);
 		$("img.profile-pic:first").attr("src", dis.val());
@@ -476,7 +370,7 @@ $(function () {
 	/****************************************************
      *                    AUTOCOMPLETE
      ****************************************************/
-	var autocomplete = $('input.tagbox').materialize_autocomplete({
+	var tagsAutocomplete = $('input.tagbox').materialize_autocomplete({
 		multiple: {
 			enable: true
 		},
@@ -495,7 +389,6 @@ $(function () {
 		getData: function (value, callback) {
 			var val = value.toLowerCase();
 			$.get("/ajax/" + val, function (data) {
-				console.log(data);
 				var tags = data.map(function (t) {
 					return {id: t.tag, text: t.tag};
 				});
@@ -505,14 +398,18 @@ $(function () {
 		}
 	});
 
-	var tags = $("input.ac-hidden");
-	if (tags.length) {
+	function displayTags(tags) {
 		var tagsVal = tags.val().split(",");
 		for (var i = 0; i < tagsVal.length; i++) {
 			if (tagsVal[i].length > 0) {
-				autocomplete.append({id: tagsVal[i], text: tagsVal[i]});
+				tagsAutocomplete.append({id: tagsVal[i], text: tagsVal[i]});
 			}
 		}
+	}
+
+	var tagsInput = $("input[name=tags].ac-hidden");
+	if (tagsInput.length) {
+		displayTags(tagsInput);
 	}
 
 //	autocompleteBind("input.locationbox", {find: "locations"});
@@ -548,14 +445,6 @@ $(function () {
 		complete: function () {}
 	});
 
-//	$(document).on("click", ".modal-close",  function() {
-//		return false;
-//	});
-	submitFormBind("form.create-report-form", function(data, status, xhr, form) {
-		$("#main-modal").modal("close");
-		clearForm(form);
-	});
-
 
 	/****************************************************
      *                    COMMENTS
@@ -572,7 +461,7 @@ $(function () {
 	$(document).on("click", "a.delete-comment",  function() {
 		var that = $(this);
 		return areYouSure(function() {
-			that.closest("div.commentbox").hide(function() {that.remove();});
+			that.closest("div.commentbox").fadeOut("fast", function() {that.remove();});
 			$.post(that.attr("href"));
 		}, rusuremsg, false);
 	});
@@ -605,7 +494,7 @@ $(function () {
 	$(document).on("click", "a.delete-translation",  function() {
 		var that = $(this);
 		return areYouSure(function() {
-			that.closest("div.translationbox").hide(function() {
+			that.closest("div.translationbox").fadeOut("fast", function() {
 				that.remove();
 			});
 			$.post(that.attr("href"));
@@ -680,10 +569,65 @@ $(function () {
      *                     QUESTIONS
      ****************************************************/
 
-	$("input.close", "form#ask-question-form").click(function() {
-		$(this).closest("div").hide();
-		return false;
+
+	function initPostEditor(elem) {
+		return new SimpleMDE({
+			element: elem,
+			showIcons: ["code", "table"],
+			spellChecker: false
+		});
+	}
+
+	$(".editbox").on("event:show", function () {
+		var el = $(this).find("textarea.edit-post:visible");
+		if (el.length) {
+			initPostEditor(el.get(0));
+		}
 	});
+
+	var newAnswerForm = $("#answer-question-form");
+	if (newAnswerForm.length) {
+		initPostEditor(newAnswerForm.find("textarea.edit-post:visible").get(0));
+	}
+
+	var askForm = $("form#ask-question-form");
+	if (askForm.length) {
+
+		var title = askForm.find("input[name=title]");
+		var tags = askForm.find("input[name=tags]");
+		var body = initPostEditor(askForm.find("textarea[name=body]").get(0));
+
+		try {
+			if (!title.val()) title.val(localStorage.getItem("ask-form-title"));
+			if (!body.value()) body.value(localStorage.getItem("ask-form-body"));
+			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags"));
+			displayTags(tagsInput);
+			setInterval(function () {
+				var saved = false;
+				if (localStorage.getItem("ask-form-title") !== title.val()) {
+					localStorage.setItem("ask-form-title", title.val());
+					saved = true;
+				}
+				if (localStorage.getItem("ask-form-body") !== body.value()) {
+					localStorage.setItem("ask-form-body", body.value());
+					saved = true;
+				}
+				if (localStorage.getItem("ask-form-tags") !== tags.val()) {
+					localStorage.setItem("ask-form-tags", tags.val());
+					saved = true;
+				}
+				if (saved) {
+					askForm.find(".save-icon").show().delay(2000).fadeOut();
+				}
+			}, 2000);
+
+			askForm.on("submit", function () {
+				localStorage.removeItem("ask-form-title");
+				localStorage.removeItem("ask-form-body");
+				localStorage.removeItem("ask-form-tags");
+			});
+		} catch (exception) {}
+	}
 
 	$(".close-answer-form", "form#answer-question-form").click(function() {
 		crossfadeToggle($(this).closest("form").parent("div").get(0), $(".open-answer-form").closest("div").get(0));
@@ -710,78 +654,6 @@ $(function () {
 		return false;
 	});
 
-	function markdownToHTML(text, last, converter) {
-		// if there's no change to input, cancel conversion
-		if (text && text !== last) {
-			last = text;
-		}
-		// Do the conversion
-		text = converter.makeHtml(text);
-		return text;
-	}
-
-	function initPostEditor(index, elem) {
-//		var that = $(elem).addClass("markedUp"),
-//			lastText,
-//			preview = that.nextAll("div.edit-preview"),
-//			converter = new Showdown.converter();
-//
-//		that.markItUp(miu_set_markdown);
-//
-//		// First, try registering for keyup events
-//		// (There's no harm in calling onInput() repeatedly)
-//		that.keyup(function(e) {
-//			preview.html(markdownToHTML(that.val(), lastText, converter));
-//		});
-//
-//		// In case we can't capture paste events, poll for them
-//		var pollingFallback = window.setInterval(function() {
-//			if (that.html() !== lastText) {
-//				preview.html(markdownToHTML(that.val(), lastText, converter));
-//			}
-//		}, 1000);
-//
-//		// Try registering for paste events
-//		that.on("paste", function() {
-//			// It worked! Cancel paste polling.
-//			if (pollingFallback !== undefined) {
-//				window.clearInterval(pollingFallback);
-//				pollingFallback = undefined;
-//			}
-//			preview.html(markdownToHTML(that.val(), lastText, converter));
-//		});
-//
-//		// Try registering for input events (the best solution)
-//		that.on("input", function() {
-//			// It worked! Cancel paste polling.
-//			if (pollingFallback !== undefined) {
-//				window.clearInterval(pollingFallback);
-//				pollingFallback = undefined;
-//			}
-//			preview.html(markdownToHTML(that.val(), lastText, converter));
-//		});
-//
-//		// do an initial conversion to avoid a hiccup
-//		preview.html(markdownToHTML(that.val(), lastText, converter));
-	}
-
-	var inputPane = $("textarea.edit-post");
-	if (inputPane.length > 0) {
-		inputPane.each(initPostEditor);
-
-//		window.onbeforeunload = function() {
-//			var txtbox = $("textarea.unload-confirm");
-//			if (txtbox.length && txtbox.text() !== "") {
-//				return lang["posts.unloadconfirm"];
-//			}
-//		};
-
-		$(document).on("click", "a.more-link",  function() {
-			return loadMoreHandler(this, function(updatedContainer) {
-				updatedContainer.find("textarea.edit-post").not(".markedUp").each(initPostEditor);
-			});
-		});
-	}
 
 	var dmp = new diff_match_patch();
 

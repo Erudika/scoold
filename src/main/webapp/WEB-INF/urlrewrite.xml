@@ -140,12 +140,6 @@
 		<to>/question.htm?id=$1</to>
 	</rule>
 
-	<!-- PROTECTED -->
-	<rule>
-		<from>^/feedback/reply/(\d+)((/?)(.*?))$</from>
-		<to type="redirect">%{context-path}/feedback/$1/?write=true</to>
-	</rule>
-
 	<!-- ======== REPORTS ========== -->
 	<rule>
 		<from>^/reports(/?)$</from>
@@ -306,24 +300,22 @@
 		<to>/question.htm?id=$1</to>
 	</rule>
 
-	<!-- PROTECTED -->
-	<rule>
-		<from>^/question/answer/(\d+)((/?)(.*?))$</from>
-		<to type="redirect">%{context-path}/question/$1/?write=true</to>
-	</rule>
-
 	<!-- ======== SEARCH ========== -->
 	<rule>
 		<from>^/search(/?)$</from>
 		<to>/search.htm</to>
 	</rule>
 	<rule>
-		<from>^/search/feedback/(.*)(/?)$</from>
-		<to last="true">/search.htm?q=$1&amp;show=feedback</to>
-	</rule>
-	<rule>
 		<from>^/search/questions/(.*)(/?)$</from>
 		<to last="true">/search.htm?q=$1&amp;show=questions</to>
+	</rule>
+	<rule>
+		<from>^/search/answers/(.*)(/?)$</from>
+		<to last="true">/search.htm?q=$1&amp;show=answers</to>
+	</rule>
+	<rule>
+		<from>^/search/feedback/(.*)(/?)$</from>
+		<to last="true">/search.htm?q=$1&amp;show=feedback</to>
 	</rule>
 	<rule>
 		<from>^/search/people/(.*)(/?)$</from>

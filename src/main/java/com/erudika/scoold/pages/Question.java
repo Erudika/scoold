@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
@@ -30,9 +29,7 @@ import static com.erudika.scoold.pages.Base.logger;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,22 +79,9 @@ public class Question extends Base{
 			return;
 		}
 		answerslist = showPost.getAnswers(itemcount);
-		Map<String, String> authorids = new HashMap<String, String>(answerslist.size() + 1);
-		Map<String, Profile> authors = new HashMap<String, Profile>(answerslist.size() + 1);
-		authorids.put(showPost.getId(), showPost.getCreatorid());
-		for (Reply reply : answerslist) {
-			authorids.put(reply.getId(), reply.getCreatorid());
-		}
-		// read all post authors in batch
-		for (ParaObject author : pc.readAll(new ArrayList<String>(authorids.values()))) {
-			authors.put(author.getId(), (Profile) author);
-		}
-		// set author object for each post
-		showPost.setAuthor(authors.get(authorids.get(showPost.getId())));
-		for (Reply reply : answerslist) {
-			reply.setAuthor(authors.get(authorids.get(reply.getId())));
-		}
-
+		ArrayList<Post> list = new ArrayList<Post>(answerslist);
+		list.add(showPost);
+		fetchProfiles(list);
 		//get the comments for each answer
 		Post.readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
 		updateViewCount();
@@ -118,42 +102,6 @@ public class Question extends Base{
 			}
 		}
 	}
-//
-//	private Form getPostEditForm(Post post) {
-//		if (post == null) return null;
-//		Form form = new Form("editPostForm"+post.getId());
-//		form.setId("post-edit-form-"+post.getId());
-//
-//		TextArea  body = new TextArea("body", true);
-//		if (post.isReply()) {
-//			body.setLabel(lang.get("posts.answer"));
-//		} else {
-//			body.setLabel(lang.get("posts.question"));
-//		}
-//		body.setMinLength(15);
-//		body.setMaxLength(AppConfig.MAX_TEXT_LENGTH);
-//		body.setRows(4);
-//		body.setCols(5);
-//		body.setValue(post.getBody());
-//
-//		if (post.isQuestion()) {
-//			TextField tags = new TextField("tags", false);
-//			tags.setLabel(lang.get("tags.tags"));
-//			tags.setMaxLength(255);
-//			tags.setValue(post.getTagsString());
-//			form.add(tags);
-//		}
-//
-//        Submit submit = new Submit("editbtn",
-//				lang.get("save"), this, "onPostEditClick");
-//        submit.setAttribute("class", "btn waves-effect waves-light post-edit-btn");
-//		submit.setId("post-edit-btn-"+post.getId());
-//
-//        form.add(body);
-//        form.add(submit);
-//
-//		return form;
-//	}
 
 	public void onPost() {
 		if (!canEdit || showPost == null) {

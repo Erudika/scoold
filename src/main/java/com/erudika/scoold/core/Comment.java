@@ -95,7 +95,8 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(obj, (Comment) obj);
+		return Objects.equal(getComment(), ((Comment) obj).getComment()) &&
+				Objects.equal(getCreatorid(), ((Comment) obj).getCreatorid());
 	}
 
 	public int hashCode() {

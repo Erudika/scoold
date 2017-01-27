@@ -3,16 +3,15 @@
 	<div class="reportbox card-panel">
 		<div class="row">
 			<div class="col m7 largeText">
-				#if ($showreport.closed)
-					<div class="left mrl green-text ${hide}"><i class="fa fa-check"></i></div>
-				#end
+				#if ($showreport.closed)#set($hideCheck = "")#else#set($hideCheck = "hide")#end
+				<div class="left mrl green-text report-closed-icon ${hideCheck}"><i class="fa fa-check"></i></div>
 				$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
 			</div>
 			<div class="col m5 r">
-				#if (!$showreport.closed)
-				<a href="#" class="btn editlink green darken-1" title="Close report"><i class="fa fa-check"></i> $!lang.get("close")</a>
-				#end
-
+				#if ($showreport.closed)#set($hideClose = "hide")#else#set($hideClose = "")#end
+				<a href="#" class="btn editlink green darken-1 report-close-btn ${hideClose}" title="Close report">
+					<i class="fa fa-check"></i> $!lang.get("close")
+				</a>
 				#if ($isAdmin)
 				<a href="$reportslink/delete/$showreport.id" title="Delete" class="btn red white-text delete-report">
 					<i class="fa fa-times"></i> $!lang.get("delete")
@@ -49,7 +48,7 @@
 		</div>
 
 		<div class="hide editbox mtm">
-			<form method="post" action="$reportslink/close/$!showreport.id">
+			<form method="post" action="$reportslink/close/$!showreport.id" class="close-report-form">
 				#sectoken(false)
 				<div class="input-field">
 					<label>$!lang.get('reports.actionstaken')</label>

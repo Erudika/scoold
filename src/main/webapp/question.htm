@@ -12,7 +12,7 @@
 			<div id="post-title" class="largeText">$!{showPost.title}</div>
 			<hr>
 
-			<div class="mbl">
+			<div class="mbl pbl">
 				#postbox($showPost $showPost)
 			</div>
 
@@ -26,42 +26,44 @@
 						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers"
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
-					<h2>$!lang.get("answers.title") #showcount($itemcount.count)</h2>
+					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4 class="">
 					<hr>
 				#end
 
 				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.count "" "pageless")
 
-				#if ($request.getParameter("write") && $authenticated)
-					#set($hideForm = false)
-					#set($hideBtn = "hide")
-				#else
-					#set($hideForm = true)
-					#set($hideBtn = "")
+				#if ($authenticated && !$showPost.isClosed())
+					<div class="ptl">
+						<form method="post" id="answer-question-form">
+							#sectoken(false "CREATE_POST")
+							<hr>
+							<h4 class="grey-text">
+								#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
+							</h4>
+
+							<textarea class="edit-post" name="body" length="$MAX_TEXT_LENGTH" minlength="10"></textarea>
+							#getmessagebox("red white-text" $error.get("body"))
+
+							<input type="hidden" name="answer" value="true">
+							<div class="edit-preview"></div>
+
+							<div class="">
+								<button class="btn mtl waves-effect waves-light" type="submit">
+									<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+								</button>
+								<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light close-answer-form">
+							</div>
+						</form>
+					</div>
 				#end
 
-				#if ($authenticated && $showPost.isClosed())
-					#newanswerform($showPost $hideForm)
-					#set($btnclass = "open-answer-form")
-				#else
-					#set($btnclass = "")
+				#if ($showPost.isClosed())
+					<div class="center mtm">
+						<h3 class="grey-text">
+								<i class="fa fa-lock"></i> $!lang.get("posts.closed")
+							</h3>
+					</div>
 				#end
-
-				<div class="center mtm ${hideBtn}">
-					#if ($showPost.isClosed())
-						<h2>
-							<i class="fa fa-lock"></i> $!lang.get("posts.closed")
-						</h2>
-					#else
-						#if ($showPost.isQuestion())
-							<a href="$questionlink/answer/$showPost.id" rel="nofollow" class="btn ${btnclass}"
-								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
-						#else
-							<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="btn ${btnclass}"
-								 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
-						#end
-					#end
-				</div>
 			#end
 		</div>
 

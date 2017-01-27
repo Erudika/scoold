@@ -179,24 +179,16 @@
 	</div>
 </div>
 
+#if (!$questionslist.isEmpty())
 <h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
-<div id="questions-edit">
-	#if ($questionslist.isEmpty())
-		<div class="mvl">$!{lang.get("profile.posts.noquestions")}</div>
-	#else
+<div class="mvm">
 		#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
-	#end
 </div>
+#end
 
+#if (!$answerslist.isEmpty())
 <h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
-<div id="answers-edit">
-	#if ($answerslist.isEmpty())
-		<div class="mvl">$!{lang.get("profile.posts.noanswers")}</div>
-	#else
-		#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
-	#end
+<div class="mvm">
+	#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
 </div>
-
-<script>
-
-</script>
+#end

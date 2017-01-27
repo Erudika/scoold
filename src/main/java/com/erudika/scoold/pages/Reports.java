@@ -22,7 +22,7 @@ import com.erudika.scoold.core.Report;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
@@ -51,12 +51,9 @@ public class Reports extends Base{
 		if (param("close")) {
 			Report rep = pc.read(getParamValue("id"));
 			if (rep != null && !rep.getClosed()) {
-				String sol = getParamValue("solution");
-				if (StringUtils.length(sol) >= 5 && StringUtils.length(sol) < 255) {
-					rep.setClosed(true);
-					rep.setSolution(sol);
-					rep.update();
-				}
+				rep.setClosed(true);
+				rep.setSolution(getParamValue("solution"));
+				rep.update();
 			}
 			if (!isAjaxRequest()) setRedirect(reportslink);
 		} else if (param("delete") && isAdmin) {
@@ -67,7 +64,6 @@ public class Reports extends Base{
 			if (!isAjaxRequest()) setRedirect(reportslink);
 		} else {
 			Report rep = populate(new Report(), "link", "description", "parentid", "subType", "authorName");
-			rep.setCreatorid(authUser.getId());
 			error = validate(rep);
 			if (error.isEmpty()) {
 				if (authenticated) {

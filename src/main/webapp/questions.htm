@@ -12,11 +12,9 @@
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>
 
-				<div class="input-field">
-					<i class="fa fa-pencil pvm prefix grey-text"></i>
-					<label for="body_text">$!lang.get('feedback.write')</label>
-					<textarea id="body_text" class="materialize-textarea validate edit-post" name="body"
-										length="$MAX_TEXT_LENGTH" minlength="10" required></textarea>
+				<i class="fa fa-pencil fa-2x left grey-text"></i>
+				<div class="pll mll">
+					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
@@ -34,7 +32,7 @@
 				#getmessagebox("red white-text" $error.get("tags"))
 				<div class="edit-preview"></div>
 
-				<br>
+				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
 					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 				</button>

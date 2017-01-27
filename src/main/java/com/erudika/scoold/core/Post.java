@@ -349,7 +349,9 @@ public abstract class Post extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(obj, (Post) obj);
+		return Objects.equal(getTitle(), ((Post) obj).getTitle()) &&
+				Objects.equal(getBody(), ((Post) obj).getBody()) &&
+				Objects.equal(getTags(), ((Post) obj).getTags());
 	}
 
 	public int hashCode() {

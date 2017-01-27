@@ -37,6 +37,7 @@ import com.erudika.scoold.utils.LanguageUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class Base extends Page {
 
 	public static final String APPNAME = Config.APP_NAME; //app name
 	public static final String CDN_URL = Config.getConfigParam("cdn_url", "");
+	public static final String DESCRIPTION = Config.getConfigParam("meta_description", "");
+	public static final String KEYWORDS = Config.getConfigParam("meta_keywords", "");
 	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
 	public static final boolean IN_DEVELOPMENT = !IN_PRODUCTION;
 	public static final int MAX_ITEMS_PER_PAGE = Config.MAX_ITEMS_PER_PAGE;
@@ -191,7 +194,6 @@ public class Base extends Page {
 						authUser.setAppid(u.getAppid());
 						authUser.setCreatorid(u.getId());
 						authUser.setTimestamp(u.getTimestamp());
-						authUser.setLastseen(u.getUpdated());
 						authUser.setGroups(u.getIdentifier().equals(Config.ADMIN_IDENT) ?
 								User.Groups.ADMINS.toString() : u.getGroups());
 						authUser.create();
@@ -201,10 +203,7 @@ public class Base extends Page {
 					isMod = isAdmin || User.Groups.MODS.toString().equals(authUser.getGroups());
 					infoStripMsg = "";
 					authenticated = true;
-					if (!StringUtils.isBlank(authUser.getNewbadges())) {
-						badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
-						authUser.setNewbadges("none");
-					}
+					checkForBadges();
 				} else {
 					authenticated = false;
 				}
@@ -239,11 +238,8 @@ public class Base extends Page {
 		String langFromLocation = getLanguageFromLocation();
 		String langname = (cookieLoc != null) ? cookieLoc : (langFromLocation != null) ?
 				langFromLocation : requestLocale.getLanguage();
-		//locale cookie set?
 		setCurrentLocale(langname, false);
 	}
-
-	/* * PUBLIC METHODS * */
 
 	public final void setCurrentLocale(String langname, boolean setCookie) {
 		currentLocale = langutils.getProperLocale(langname);
@@ -251,12 +247,9 @@ public class Base extends Page {
 		if (lang == null || lang.isEmpty()) {
 			currentLocale = langutils.getProperLocale("en");
 			lang = langutils.getDefaultLanguage();
-		} else {
-			if (setCookie) {
-				//create a cookie
-				int maxAge = 5 * 60 * 60 * 24 * 365;  //5 years
-				ClickUtils.setCookie(req, resp, localeCookieName, currentLocale.getLanguage(), maxAge, "/");
-			}
+		} else if (setCookie) {
+			int maxAge = 60 * 60 * 24 * 365;  //1 year
+			ClickUtils.setCookie(req, resp, localeCookieName, currentLocale.getLanguage(), maxAge, "/");
 		}
 	}
 
@@ -276,19 +269,33 @@ public class Base extends Page {
     }
 
 	public final boolean isAjaxRequest() {
-		//context.isAjaxRequest()
 		return getContext().isAjaxRequest();
 	}
-
-	/* COMMENTS */
-
 
 	/****  POSTS  ****/
 
 	public final void createAndGoToPost(Post p) {
 		if (p != null) {
 			p.create();
+			authUser.setLastseen(System.currentTimeMillis());
 			setRedirect(getPostLink(p, false, false));
+		}
+	}
+
+	public final void fetchProfiles(List<? extends Post> posts) {
+		if (posts == null || posts.isEmpty()) return;
+		Map<String, String> authorids = new HashMap<String, String>(posts.size());
+		Map<String, Profile> authors = new HashMap<String, Profile>(posts.size());
+		for (Post post : posts) {
+			authorids.put(post.getId(), post.getCreatorid());
+		}
+		// read all post authors in batch
+		for (ParaObject author : pc.readAll(new ArrayList<String>(new HashSet<String>(authorids.values())))) {
+			authors.put(author.getId(), (Profile) author);
+		}
+		// set author object for each post
+		for (Post post : posts) {
+			post.setAuthor(authors.get(authorids.get(post.getId())));
 		}
 	}
 
@@ -390,6 +397,7 @@ public class Base extends Page {
 			for (String param : paramName) {
 				String[] values;
 				if (param.matches(".+?\\|.$")) {
+					// convert comma-separated value to list of strings
 					String cleanParam = param.substring(0, param.length() - 2);
 					values = req.getParameterValues(cleanParam);
 					String firstValue = (values != null && values.length > 0) ? values[0] : null;
@@ -427,12 +435,6 @@ public class Base extends Page {
 
 	public String getPostLink(Post p, boolean plural, boolean noid) {
 		return p.getPostLink(plural, noid, questionslink, questionlink, feedbacklink);
-	}
-
-	public final int getIndexInBounds(int index, int count) {
-		if (index >= count) index = count - 1;
-		if (index < 0) index = 0;
-		return index;
 	}
 
 	public final void setStateParam(String name, String value) {
@@ -499,7 +501,7 @@ public class Base extends Page {
 		return true;
 	}
 
-	public void onDestroy() {
+	private void checkForBadges() {
 		if (authenticated && !isAjaxRequest()) {
 			long oneYear = authUser.getTimestamp() + ONE_YEAR;
 
@@ -509,19 +511,15 @@ public class Base extends Page {
 			addBadgeOnce(Badge.TEACHER, authUser.getVotes() >= AppConfig.TEACHER_IFHAS);
 			addBadgeOnce(Badge.PROFESSOR, authUser.getVotes() >= AppConfig.PROFESSOR_IFHAS);
 			addBadgeOnce(Badge.GEEK, authUser.getVotes() >= AppConfig.GEEK_IFHAS);
-			addBadgeOnce(Badge.SENIOR, System.currentTimeMillis() >= oneYear);
+			addBadgeOnce(Badge.SENIOR, (System.currentTimeMillis() - authUser.getTimestamp()) >= oneYear);
 
 			if (!StringUtils.isBlank(authUser.getNewbadges())) {
-				if (authUser.getNewbadges().equals("none")) {
-					authUser.setNewbadges(null);
-				}
+				badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
+				authUser.setNewbadges(null);
 				authUser.update();
 			}
 		}
 	}
-
-	public static final String DESCRIPTION = "Scoold is friendly place where you can get answers to your questions.";
-	public static final String KEYWORDS = "scoold, knowledge sharing, collaboration, wiki, forum, Q&A, questions and answers";
 
 	public String getTemplate() {
 		return "base.htm";

@@ -363,6 +363,7 @@ public class Profile extends Sysprop implements Comparable<Profile>{
     }
 
     public void update() {
+		setLastseen(System.currentTimeMillis());
 		AppConfig.client().update(this);
     }
 
@@ -392,7 +393,9 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(obj, (Profile) obj);
+		return Objects.equal(getName(), ((Profile) obj).getName()) &&
+				Objects.equal(getLocation(), ((Profile) obj).getLocation()) &&
+				Objects.equal(getId(), ((Profile) obj).getId());
 	}
 
 	public int hashCode() {

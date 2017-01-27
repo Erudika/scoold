@@ -15,6 +15,7 @@
 	<link href="$ilink/logosq.png" rel="image_src">
 	<link href="$ilink/logosq.png" rel="apple-touch-icon">
 	<link href="$ilink/favicon.ico" rel="shortcut icon">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
 	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" media="screen">
 	#if ($showdesc && !$showdesc.isEmpty())
@@ -116,36 +117,6 @@
 	#commentbox("") ## empty box to be cloned
 #end
 ################# QUESTIONS MACROS #####################
-#macro(newanswerform $showpost $hidden)
-#if ($hidden) #set($hide = "hide") #else #set($hide = "noclass") #end
-<div class="${hide}">
-	<form method="post" id="answer-question-form">
-		#sectoken(false "CREATE_POST")
-		<span class="mediumText">
-			#if ($showpost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
-		</span>
-
-		<div class="input-field">
-			<i class="fa fa-pencil pvm prefix grey-text"></i>
-			<label for="body_text">$!lang.get('posts.answer')</label>
-			<textarea id="body_text" class="materialize-textarea validate edit-post" name="body"
-								length="$MAX_TEXT_LENGTH" minlength="10" required></textarea>
-			#getmessagebox("red white-text" $error.get("body"))
-		</div>
-
-		<input type="hidden" name="answer" value="true">
-		<div class="edit-preview"></div>
-
-		<div class="center">
-			<button class="btn mtl waves-effect waves-light" type="submit">
-				<i class="fa fa-paper-plane left"></i>$!lang.get('post')
-			</button>
-			<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light close-answer-form">
-		</div>
-	</form>
-</div>
-#end
-###########################################
 #macro(tagsbox $tags $link)
 	#foreach($showtag in $tags)
 		#if ($showtag && $showtag.trim() != "")
@@ -279,9 +250,9 @@
 #if ($reportable.parentid && !$reportable.parentid.isEmpty())
 #set($_href = "${_href}&grandparentid=$reportable.parentid")
 #end
-#if ($clazz.contains("notext")) #set($showtxt = "" ) #else #set($showtxt = " $!lang.get('report')") #end
+#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
 <a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
-	<span class="fa fa-flag"></span> $showtxt
+	<span class="fa fa-flag"></span> $!_showtxt
 </a>
 #end
 #end
@@ -328,7 +299,9 @@
 					</div>
 				</div>
 				<div class="col m3">
-					#smallpersonbox($showpost.author)
+					#if(!$request.request.requestURI.startsWith("/profile"))
+						#smallpersonbox($showpost.author)
+					#end
 				</div>
 			</div>
 			<div class="row mbn">
@@ -377,22 +350,20 @@
 #end
 ####################################
 #macro(postbox $showpost $parentpost)
-#if ($showpost.isReply())	#set($boxclass = "card") #else #set($boxclass = "" ) #end
 
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
 
-<div class="postbox ${boxclass}">
+<div class="postbox">
 	<div id="post-$!showpost.id" class="viewbox mbm">
-		<div class="mvl pvl">
+		<div class="pvs">
 			#set($_bodyHtml = $utils.markdownToHtml("$!showpost.body"))
 			$!{_bodyHtml}
 		</div>
 
 		<div class="row">
 			<div class="col m4">
-				#votebox($showpost "hugeText mtm mrl")
-				<span class="right mtm">
+				<div class="left mtm mrl">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
 					#if ($approvedAnswer)
 						#set($onclass = "green")
@@ -402,12 +373,13 @@
 						#set($picon = "3")
 					#end
 					#if ($authenticated && $showpost.isReply() && $parentpost.creatorid.equals($authUser.id))
-					<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="megaText approve-answer $!{onclass}"
-						 title="Approve answer"><i class="fa fa-check-circle"></i></a>
+						<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="approve-answer $!{onclass}"
+							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
 					#elseif ($approvedAnswer)
-					<span class="megaText green-text"><i class="fa fa-check-circle"></i></span>
+						<span class="green-text"><i class="fa fa-check-circle fa-3x"></i></span>
 					#end
-				</span>
+				</div>
+				#votebox($showpost "hugeText mtm")
 			</div>
 			<div class="col m4">
 				<div class="ptl center-align">
@@ -453,7 +425,7 @@
 				#end
 
 				#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
-					#getreportlink($showpost "$questionlink/$!showpost.id" "right")
+					#getreportlink($showpost "$questionlink/$!showpost.id" "")
 				#end
 
 				#if ($canComment)
@@ -480,11 +452,9 @@
 				#getmessagebox("red white-text" $error.get("title"))
 			</div>
 
-			<div class="input-field">
-				<i class="fa fa-pencil pvm prefix grey-text"></i>
-				<label for="body_text">$!lang.get('feedback.write')</label>
-				<textarea id="body_text" class="materialize-textarea validate edit-post" name="body"
-									length="$MAX_TEXT_LENGTH" minlength="10" required>$!showpost.body</textarea>
+			<i class="fa fa-pencil fa-2x left grey-text"></i>
+			<div class="pll mll">
+				<textarea class="edit-post" name="body" length="$MAX_TEXT_LENGTH" minlength="10">$!showpost.body</textarea>
 				#getmessagebox("red white-text" $error.get("body"))
 			</div>
 
@@ -578,7 +548,7 @@
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
 		<div class="votebox ${sizeClass}">
-			#if ($votable && $authenticated && $votable.creatorid == $authUser.id)
+			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
 				<i class="fa fa-chevron-up upvote grey-text mrl" title="Vote up"></i>
 				<i class="fa fa-chevron-down downvote grey-text mrl" title="Vote down"></i>
 				<span class="votecount">$votable.votes</span>
@@ -680,7 +650,7 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 	#elseif ($request.getParameter("error"))
 		#set($infoStripClass = "red white-text" )
 	#else
-		#set($infoStripClass = "light-blue white-text" )
+		#set($infoStripClass = "" )
 	#end
 
 	#if ((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
@@ -698,15 +668,15 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 		#set($_infoStripMsg = $infoStripMsg )
 		<span class="mediumText">
 			#if (!$badgelist.isEmpty())
-			#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
-			&nbsp;
-			#foreach($badge in $badgelist)
-			#badgebox($badge 0)
-			#end
+				#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
+				&nbsp;
+				#foreach($badge in $badgelist)
+					#badgebox($badge 0)
+				#end
 			#elseif ($request.getParameter("code"))
-			$!lang.get("msgcode.${request.getParameter('code')}")
+				$!lang.get("msgcode.${request.getParameter('code')}")
 			#else
-			$!_infoStripMsg
+				$!_infoStripMsg
 			#end
 		</span>
 	</div>
@@ -730,19 +700,16 @@ $!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 
 #####################################
 #macro(sectoken $bare $formId)
 	#set($seccsrfkey = "${TOKEN_PREFIX}CSRF")
-	#set($sectimekey = "${TOKEN_PREFIX}$!formId")
 	#if ($bare && $bare == true)
-		$!session.get($!seccsrfkey)
+		$!request.session.getAttribute($!seccsrfkey)
 	#else
-		<input type="hidden" name="_csrf" value="$!session.get($!seccsrfkey)">
+		<input type="hidden" name="_csrf" value="$!request.session.getAttribute($!seccsrfkey)">
 		#if($formId && !$formId.isEmpty())
-			#set($timetoken = $session.get($sectimekey))
-			#if(!$timetoken)
-				#set($timetoken = $utils.timestamp())
-				$!session.put($sectimekey, $timetoken)
+			#if(!$request.session.getAttribute("${TOKEN_PREFIX}$!formId"))
+				$request.session.setAttribute("${TOKEN_PREFIX}$!formId", $utils.timestamp())
 			#end
-			<input type="hidden" name="_time" value="$!timetoken">
-			<input type="hidden" name="_timekey" value="$!sectimekey">
+			<input type="hidden" name="_time" value='$!request.session.getAttribute("${TOKEN_PREFIX}$!formId")'>
+			<input type="hidden" name="_timekey" value="${TOKEN_PREFIX}$!formId">
 		#end
 	#end
 #end

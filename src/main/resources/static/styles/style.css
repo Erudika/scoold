@@ -251,8 +251,8 @@ p{ margin-bottom: 1em;}
 	position: relative;
 	text-align: left;
 }
-a.approve-answer, a.approve-translation{ color: #777777;}
-a.approve-answer:hover, a.approve-translation:hover{ color: #88AF12;}
+*/.approve-answer, .approve-translation{ color: #777777;}
+.approve-answer:hover, .approve-translation:hover{ color: #88AF12;}/*
 a.info-placeholder{ border: 4px #CCCCCC dashed; color: #CCCCCC; padding: 50px 0; text-decoration: none; }
 pre, code, .chat-msg{
 	font-family: Monaco, Consolas,Menlo,"Lucida Console","Liberation Mono",
@@ -701,3 +701,13 @@ main {
 .upvote, .downvote {color: #888888;}
 .upvote:hover {color: #4CAF50;}
 .downvote:hover {color: #F44336;}
+
+.CodeMirror, .CodeMirror-scroll {
+	min-height: 200px;
+}
+
+code {
+	background: #ececec;
+	padding: 2px;
+	border-radius: 2px;
+}

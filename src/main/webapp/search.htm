@@ -6,6 +6,8 @@
 			<a href="$searchlink?q=$!searchQuery">$!lang.get("search.title")</a>
 			#if ($showParam == "questions")
 				/ $!lang.get("questions.title") #showcount($itemcount.count)
+			#elseif ($showParam == "answers")
+				/ $!lang.get("answers.title") #showcount($itemcount.count)
 			#elseif ($showParam == "feedback")
 				/ $!lang.get("feedback.title") #showcount($itemcount.count)
 			#elseif ($showParam == "people")
@@ -14,6 +16,7 @@
 		#else
 			$!lang.get("search.title")
 		#end
+		<span class="grey-text text-darken-1 smallText">$searchQuery</span>
 	</h2>
 	<hr>
 
@@ -28,6 +31,8 @@
 	#elseif ($showParam)
 		#if ($showParam == "questions")
 			#paginate($pagenum "\#questionspage(\$questionlist)" $itemcount.count $params "pageless")
+		#elseif ($showParam == "answers")
+			#paginate($pagenum "\#answerspage(\$answerlist)" $itemcount.count $params "pageless")
 		#elseif ($showParam == "feedback")
 			#paginate($pagenum "\#questionspage(\$feedbacklist)" $itemcount.count $params "pageless")
 		#elseif ($showParam == "people")
@@ -36,36 +41,35 @@
 	#else
 
 		#if (!$questionlist.isEmpty())
-			<div class="largeText pvl">$!lang.get("questions.title") #showcount($questioncount.count)</div>
+			<div class="largeText pvl">$!lang.get("questions.title")</div>
 			#questionspage($questionlist)
-			#if ($questioncount > $maxSearchResults)
-				<div class="center mtl">
-					<a href="$searchlink/questions/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
-				</div>
-			#end
-			<br>
+			<div class="mvl">
+				<a href="$searchlink/questions/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
+		#end
+
+		#if (!$answerlist.isEmpty())
+			<div class="largeText pvl">$!lang.get("answers.title")</div>
+			#answerspage($answerlist)
+			<div class="mvl">
+				<a href="$searchlink/answers/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
 		#end
 
 		#if (!$feedbacklist.isEmpty())
-			<div class="largeText pvl">$!lang.get("feedback.title") #showcount($feedbackcount.count)</div>
+			<div class="largeText pvl">$!lang.get("feedback.title")</div>
 			#questionspage($feedbacklist)
-			#if ($feedbackcount > $maxSearchResults)
-				<div class="center mtl">
-					<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
-				</div>
-			#end
-			<br>
+			<div class="mvl">
+				<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
 		#end
 
 		#if (!$userlist.isEmpty())
-			<div class="largeText pvl">$!lang.get("people.title") #showcount($usercount.count)</div>
+			<div class="largeText pvl">$!lang.get("people.title")</div>
 			#peoplepage($userlist)
-			#if ($usercount > $maxSearchResults)
-				<div class="center mtl">
-					<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
-				</div>
-			#end
-			<br>
+			<div class="mvl">
+				<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
 		#end
 
 	#end

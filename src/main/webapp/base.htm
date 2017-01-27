@@ -9,22 +9,7 @@
 		<span class="$!{pnext}"></span>
 		#stop
 	#end
-  ################ AUTOCOMPLETE AJAX REQUESTS ################
 
-	#if($request.getParameter("q") && $request.getParameter("find"))
-		#set($q = $request.getParameter("q"))
-		#if($request.getParameter("find") == "tags")
-			#foreach($showtag in $pc.findTags($q.trim()))
-				$!{showtag.tag}| |$!{showtag.id}
-			#end
-			#stop
-		#elseif($request.getParameter("find") == "people")
-			#foreach($showuser in $utils.readAndRepair("user", $utils.findQuery("user", $pagenum, $itemcount, $q.trim())))
-				$!{showuser.name}| |$!{showuser.id}
-			#end
-			#stop
-		#end
-	#end
 	################# SPECIAL AJAX REQUESTS #################
 
 	#if($request.getParameter("getcommenthtmlcode"))
@@ -84,10 +69,9 @@
 		<link href="$context/opensearch.xml" title="$APPNAME" type="application/opensearchdescription+xml" rel="search">
 		<link href="$context/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css">
 		<!--<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>-->
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>
+			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>
 		#end
 		<style media="screen" type="text/css">
 			a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: ${txtcolor1};}
@@ -228,7 +212,9 @@
 			<main class="container">
 				#infostrip()
 				#parse($path)
-				$session.keySet()$session.values()
+				#foreach($k in $request.session.getAttributeNames())
+					$k = $request.session.getAttribute($k)<br>
+				#end
 			</main>
 
 			<footer class="page-footer">

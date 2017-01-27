@@ -151,7 +151,9 @@ public class Report extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(obj, (Report) obj);
+		return Objects.equal(getSubType(), ((Report) obj).getSubType()) &&
+				Objects.equal(getDescription(), ((Report) obj).getDescription()) &&
+				Objects.equal(getCreatorid(), ((Report) obj).getCreatorid());
 	}
 
 }

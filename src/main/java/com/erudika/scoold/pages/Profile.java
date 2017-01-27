@@ -83,6 +83,7 @@ public class Profile extends Base{
 		if (param("getsmallpersonbox")) {
 			addModel("showAjaxUser", showUser);
 		}
+		addModel("includeGMapsScripts", true);
     }
 
     public void onGet() {

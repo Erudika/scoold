@@ -128,7 +128,8 @@ public class Revision extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(obj, (Revision) obj);
+		return Objects.equal(getBody(), ((Revision) obj).getBody()) &&
+				Objects.equal(getDescription(), ((Revision) obj).getDescription());
 	}
 
 	public int hashCode() {
