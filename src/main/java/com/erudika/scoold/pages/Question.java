@@ -83,13 +83,13 @@ public class Question extends Base{
 		list.add(showPost);
 		fetchProfiles(list);
 		//get the comments for each answer
-		Post.readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
+		//Post.readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
 		updateViewCount();
 
 		if (!showPost.isReply()) {
 			if (!isAjaxRequest()) {
 				String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
-				if (StringUtils.isBlank(likeTxt)) {
+				if (!StringUtils.isBlank(likeTxt)) {
 					similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
 							new String[]{"title", "body", "tags"}, likeTxt, itemcount);
 				}

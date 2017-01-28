@@ -21,6 +21,7 @@ package com.erudika.scoold.pages;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Signin extends Base{
 
@@ -38,10 +39,15 @@ public class Signin extends Base{
 				User u = pc.signIn(getParamValue("provider"), getParamValue("access_token"), false);
 				if (u != null) {
 					Utils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, resp, true);
-					setRedirect(HOMEPAGE);
+					String backto = Utils.urlDecode(getStateParam("returnto"));
+					setRedirect(StringUtils.isBlank(backto) ? HOMEPAGE : backto);
 				} else {
 					setRedirect(signinlink + "?code=3&error=true");
 				}
+			} else if (param("returnto")) {
+				setStateParam("returnto", Utils.urlEncode(getParamValue("returnto")));
+			} else {
+				removeStateParam("returnto");
 			}
 		}
 	}

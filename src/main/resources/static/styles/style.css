@@ -711,3 +711,7 @@ code {
 	padding: 2px;
 	border-radius: 2px;
 }
+.selected-post {
+	border-left: 2px solid #039be5;
+	padding-left: 10px;
+}

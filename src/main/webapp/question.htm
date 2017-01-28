@@ -37,6 +37,7 @@
 						<form method="post" id="answer-question-form">
 							#sectoken(false "CREATE_POST")
 							<hr>
+							<a id="write-post"></a>
 							<h4 class="grey-text">
 								#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
 							</h4>
@@ -55,6 +56,14 @@
 							</div>
 						</form>
 					</div>
+				#else
+					#if ($showPost.isQuestion())
+						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn ${btnclass}"
+							 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+					#else
+						<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="btn ${btnclass}"
+							 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
+					#end
 				#end
 
 				#if ($showPost.isClosed())
@@ -86,10 +95,11 @@
 			</div>
 
 			#if ($similarquestions && !$similarquestions.isEmpty())
-				<div class="similar mbl">
-					<h3>$!lang.get("posts.similar")</h3>
+				<div class="card-panel similar mbl mediumText">
+					<div class="mbl">$!lang.get("posts.similar")</div>
 					#foreach($showSimilar in $similarquestions)
 						#set($plink = "#getpostlink($showSimilar false false)")
+						<small><i class="fa fa-chevron-right grey-text"></i></small> 
 						<a href="$plink" class="smallText">$!showSimilar.title</a>
 					#end
 				</div>

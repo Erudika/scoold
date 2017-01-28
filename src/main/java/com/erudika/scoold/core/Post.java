@@ -337,10 +337,7 @@ public abstract class Post extends Sysprop {
 		} else if (p.isFeedback()) {
 			return plural ? feedbacklink : feedbacklink + pid;
 		} else if (p.isReply()) {
-			Post parentp = AppConfig.client().read(p.getParentid());
-			if (parentp != null) {
-				return parentp.getPostLink(plural, noid, questionslink, questionlink, feedbacklink);
-			}
+			return questionlink + "/" + p.getParentid() + "#post-" + p.getId();
 		}
 		return "";
 	}

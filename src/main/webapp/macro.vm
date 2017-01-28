@@ -240,21 +240,21 @@
 #end
 ####################################
 #macro(getreportlink $reportable $link $clazz)
-#if ($reportable)
-#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
-#set($_href = "${requri}?getreportform=true&parentid=$!reportable.id&type=$!reportable.type")
-#if (!$link.isEmpty())
-#set($encodedLink = $utils.urlEncode($link))
-#set($_href = "${_href}&link=$encodedLink")
-#end
-#if ($reportable.parentid && !$reportable.parentid.isEmpty())
-#set($_href = "${_href}&grandparentid=$reportable.parentid")
-#end
-#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
-<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
-	<span class="fa fa-flag"></span> $!_showtxt
-</a>
-#end
+	#if ($reportable)
+		#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
+		#set($_href = "${requri}?getreportform=true&parentid=$!reportable.id&type=$!reportable.type")
+		#if (!$link.isEmpty())
+			#set($encodedLink = $utils.urlEncode($link))
+			#set($_href = "${_href}&link=$encodedLink")
+		#end
+		#if ($reportable.parentid && !$reportable.parentid.isEmpty())
+			#set($_href = "${_href}&grandparentid=$reportable.parentid")
+		#end
+		#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
+		<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
+			<span class="fa fa-flag"></span> $!_showtxt
+		</a>
+	#end
 #end
 ####################################
 #macro(questionspage $posts )
@@ -401,6 +401,10 @@
 		<div class="row">
 			<div class="col s12">
 				<div class="lightborder pam">
+				#if ($isAdmin)
+					<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
+				#end
+
 				#if ($canEdit)
 					<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
 				#end
@@ -428,13 +432,12 @@
 					#getreportlink($showpost "$questionlink/$!showpost.id" "")
 				#end
 
+				<a href="#post-$!showpost.id" onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
+
 				#if ($canComment)
 					#newcommentform($showpost.id true "$questionlink/$showpost.id")
 				#end
 
-				#if ($isAdmin)
-					<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
-				#end
 				</div>
 			</div>
 		</div>

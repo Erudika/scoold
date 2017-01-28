@@ -569,6 +569,9 @@ $(function () {
      *                     QUESTIONS
      ****************************************************/
 
+	if (window.location.hash !== "" && window.location.hash.match(/^#post-.*/)) {
+		$(window.location.hash).addClass("selected-post");
+	}
 
 	function initPostEditor(elem) {
 		return new SimpleMDE({
