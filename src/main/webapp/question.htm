@@ -3,7 +3,7 @@
 		<div class="col m9">
 			<span class="grey-text">
 			#if ($showPost.answercount > 0)
-				#if ($showPost.answerid) <i class="fa fa-check-circle tooltipped" data-tootlip="Approved answer"></i> #end
+				#if ($showPost.answerid) <i class="fa fa-check-circle tooltipped" data-tooltip="Approved answer"></i> #end
 				$!lang.get("posts.answered")
 			#else
 				$!lang.get("posts.unanswered")
@@ -99,7 +99,7 @@
 					<div class="mbl">$!lang.get("posts.similar")</div>
 					#foreach($showSimilar in $similarquestions)
 						#set($plink = "#getpostlink($showSimilar false false)")
-						<small><i class="fa fa-chevron-right grey-text"></i></small> 
+						<small><i class="fa fa-caret-right grey-text"></i></small>
 						<a href="$plink" class="smallText">$!showSimilar.title</a>
 					#end
 				</div>

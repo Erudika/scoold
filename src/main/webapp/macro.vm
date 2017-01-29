@@ -30,11 +30,11 @@
 #macro(newcommentform $parentid $hidden $uri)
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
 <div class="newcommentform mvm ${hide}">
-	<form method="post" class="new-comment-form">
+	<form method="post" action="$commentlink" class="new-comment-form">
 		#sectoken(false "ADD_COMMENT_$!parentid")
 		<div class="row">
 			<div class="col s10">
-				<textarea rows="2" cols="4" name="comment"></textarea>
+				<input type="text" name="comment">
 				<input type="hidden" name="parentid" value="$!parentid">
 				<input type="hidden" name="getcommenthtmlcode" value="true">
 			</div>
@@ -49,35 +49,34 @@
 #macro(commentbox $showcomment)
 #set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 #if ($showcomment == "")	#set($hide = "hide") #else #set($hide = "")	#end
-<div class="commentbox pas ${hide}">
+<div class="commentbox pll smallText ${hide}">
 	#if ($showcomment.hidden)
-	#set($hidden = "hide")
-	<span>$!lang.get("comments.hidden") &nbsp;</span>
-	<a href="#" title="$!lang.get('comments.show')" class="show-comment">$!lang.get("comments.show")</a>
+		#set($hidden = "hide")
+		<span>$!lang.get("comments.hidden") &nbsp;</span>
+		<a href="#" title="$!lang.get('comments.show')" class="show-comment">$!lang.get("comments.show")</a>
 	#else
-	#set($hidden = "noclass")
+		#set($hidden = "noclass")
 	#end
 
-	<div class="${hidden}">
-		<div class="left">
-			<i class="fa fa-commenting grey-text"></i>
-			#set($commentAuthor = {'name': $!showcomment.author, 'id': $showcomment.creatorid})
-			<span class="comment-author">#personlink($commentAuthor):</span>&nbsp;
+	<div class="row mbm ${hidden}">
+		<div class="col s8">
+			#votebox($showcomment "left mrs")
 			<span class="comment-text">$!showcomment.comment</span>
 		</div>
-		<div class="right">
-			<span class="comment-timestamp mrs"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
-			#votebox($showcomment "mrs")
+		<div class="col s4 r">
+			#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
+			<i class="fa fa-commenting grey-text"></i>
+			<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
+			<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
 			#if ($showcomment == "")
-			#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
-			<a href="${thisuri}" title="$!lang.get('delete')" class="delete-comment red white-text">
-				<i class="fa fa-check-circle"></i>
-			</a>
+				#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
+				<a href="$commentlink?deletecomment=$!showcomment.id" title="$!lang.get('delete')"
+					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $isMod))
-			<a href="${thisuri}${amp}deletecomment=$!showcomment.id" title="$!lang.get('delete')"
-				 class="delete-comment red white-text"><i class="fa fa-check-circle"></i></a>
+				<a href="$commentlink?deletecomment=$!showcomment.id" title="$!lang.get('delete')"
+					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#else
-			#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
+				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
 			#end
 		</div>
 	</div>
@@ -366,14 +365,14 @@
 				<div class="left mtm mrl">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
 					#if ($approvedAnswer)
-						#set($onclass = "green")
+						#set($onclass = "green-text text-lighten-1")
 						#set($picon = "2")
 					#else
 						#set($onclass = "")
 						#set($picon = "3")
 					#end
 					#if ($authenticated && $showpost.isReply() && $parentpost.creatorid.equals($authUser.id))
-						<a href="$!actionlink/$parentpost.id/approve/$showpost.id" class="approve-answer $!{onclass}"
+						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
 							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
 					#elseif ($approvedAnswer)
 						<span class="green-text"><i class="fa fa-check-circle fa-3x"></i></span>
@@ -489,9 +488,7 @@
 	#end
 
 	<div class="comments post-comments">
-		#if ($showpost && $showpost.commentcount > 0)
-		#paginate($showpost.pagenum.longValue() "\#commentspagepreview(\$showpost.comments 2)" $showpost.commentcount "getcomments=true&parentid=$showpost.id" "pageless")
-		#end
+		#paginate($showpost.pagenum.longValue() "\#commentspage(\$showpost.comments)" $showpost.commentcount "getcomments=true&parentid=$showpost.id" "pageless")
 	</div>
 </div>
 #end

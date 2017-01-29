@@ -35,7 +35,7 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 
 	@Stored private String comment;
 	@Stored private Boolean hidden;
-	@Stored private String author;
+	@Stored private String authorName;
 
 	public Comment() {
 		this(null, null, null);
@@ -53,12 +53,12 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 		setTimestamp(System.currentTimeMillis()); //now
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getAuthorName() {
+		return authorName;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 	public Boolean getHidden() {
@@ -89,6 +89,14 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 			return c.getId();
 		}
 		return null;
+	}
+
+	public void update() {
+		AppConfig.client().update(this);
+	}
+
+	public void delete() {
+		AppConfig.client().delete(this);
 	}
 
 	public boolean equals(Object obj) {

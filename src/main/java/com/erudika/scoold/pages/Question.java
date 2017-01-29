@@ -83,7 +83,7 @@ public class Question extends Base{
 		list.add(showPost);
 		fetchProfiles(list);
 		//get the comments for each answer
-		//Post.readAllCommentsForPosts(answerslist, MAX_ITEMS_PER_PAGE);
+		Post.readAllCommentsForPosts(list, MAX_ITEMS_PER_PAGE);
 		updateViewCount();
 
 		if (!showPost.isReply()) {
@@ -97,8 +97,7 @@ public class Question extends Base{
 
 			if (param("getcomments") && param(Config._PARENTID)) {
 				String parentid = getParamValue(Config._PARENTID);
-				Comment parent = new Comment(parentid);
-				commentslist = pc.getChildren(parent, Utils.type(Comment.class), itemcount);
+				commentslist = pc.getChildren(new Comment(parentid), Utils.type(Comment.class), itemcount);
 			}
 		}
 	}
@@ -140,7 +139,7 @@ public class Question extends Base{
 
 						if (ansid.equals(showPost.getAnswerid())) {
 							// Answer approved award - UNDO
-							showPost.setAnswerid(null);
+							showPost.setAnswerid("");
 							if (!same) {
 								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
 								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
@@ -162,7 +161,7 @@ public class Question extends Base{
 					}
 				}
 			}
-		} else if (param("editpostid") || param("title")) {
+		} else if (param("editpostid")) {
 			Post beforeUpdate = null;
 			try {
 				beforeUpdate = (Post) BeanUtils.cloneBean(showPost);
@@ -222,20 +221,6 @@ public class Question extends Base{
 			setRedirect(postlink);
 		}
 	}
-
-//	public boolean onAnswerClick() {
-//		if (isValidAnswerForm(aForm, showPost)) {
-//			processPostEditRequest(showPost, postlink, canEdit);
-//		}
-//		return false;
-//	}
-
-//	public boolean onPostEditClick() {
-//		if (isValidPostEditForm(showPost.getEditForm())) {
-//			processPostEditRequest(showPost, postlink, canEdit);
-//		}
-//		return false;
-//	}
 
 	private void updateViewCount() {
 		//do not count views from author

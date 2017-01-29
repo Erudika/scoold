@@ -724,6 +724,7 @@ $(function () {
 			var d = dmp.diff_main(oldText, newText);
 			dmp.diff_cleanupSemantic(d);
 			ds = diffToHtml(d, oldText, newText);
+			console.log(ds);
 		}
 
 		return ds;

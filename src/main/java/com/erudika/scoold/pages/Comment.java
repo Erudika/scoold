@@ -18,9 +18,8 @@
 
 package com.erudika.scoold.pages;
 
-import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import static com.erudika.scoold.pages.Base.logger;
+import com.erudika.para.utils.Config;
 import static com.erudika.scoold.pages.Base.pc;
 import com.erudika.scoold.utils.AppConfig;
 import org.apache.commons.lang3.StringUtils;
@@ -50,58 +49,34 @@ public class Comment extends Base{
 	}
 
 	public void onPost() {
-		processNewCommentRequest(null);
-	}
-
-	public final void processNewCommentRequest(Sysprop parent) {
 		if (param("deletecomment") && authenticated) {
 			String id = getParamValue("deletecomment");
 			com.erudika.scoold.core.Comment c = pc.read(id);
 			if (c != null && (c.getCreatorid().equals(authUser.getId()) || isMod)) {
 				// check parent and correct (for multi-parent-object pages)
-				if (parent == null || !c.getParentid().equals(parent.getId())) {
-					parent = pc.read(c.getParentid());
-				}
 				c.delete();
 				if (!isMod) {
 					addBadge(com.erudika.scoold.core.Profile.Badge.DISCIPLINED, true);
 				}
-				if (parent != null) {
-					try {
-//						Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
-//						pc.putColumn(parent.getId(), "commentcount", Long.toString(count - 1));
-						parent.addProperty("commentcount", Long.toString(((Long) parent.getProperty("commentcount")) - 1));
-						parent.update();
-					} catch (Exception ex) {
-						logger.error(null, ex);
-					}
-				}
 			}
-		} else if (canComment && param("comment") && parent != null) {
+		} else if (canComment && param("comment")) {
 			String comment = getParamValue("comment");
-			String parentid = parent.getId();
-			if (StringUtils.isBlank(comment)) return;
-			com.erudika.scoold.core.Comment lastComment = new com.erudika.scoold.core.Comment();
-			lastComment.setComment(comment);
-			lastComment.setParentid(parentid);
-			lastComment.setCreatorid(authUser.getId());
-			lastComment.setAuthor(authUser.getName());
+			String parentid = getParamValue(Config._PARENTID);
+			if (StringUtils.isBlank(comment) || StringUtils.isBlank(parentid)) {
+				com.erudika.scoold.core.Comment lastComment = new com.erudika.scoold.core.Comment();
+				lastComment.setComment(comment);
+				lastComment.setParentid(parentid);
+				lastComment.setCreatorid(authUser.getId());
+				lastComment.setAuthorName(authUser.getName());
 
-			if (lastComment.create() != null) {
-				long commentCount = authUser.getComments();
-				addBadgeOnce(com.erudika.scoold.core.Profile.Badge.COMMENTATOR, commentCount >= AppConfig.COMMENTATOR_IFHAS);
-				authUser.setComments(commentCount + 1);
-				authUser.update();
-				commentslist.add(lastComment);
-				addModel("newcomment", lastComment);
-
-				try{
-//					Long count = (Long) PropertyUtils.getProperty(parent, "commentcount");
-//					pc.putColumn(parent.getId(), "commentcount", Long.toString(count + 1));
-					parent.addProperty("commentcount", Long.toString(((Long) parent.getProperty("commentcount")) + 1));
-					parent.update();
-				} catch (Exception ex) {
-					logger.error(null, ex);
+				if (lastComment.create() != null) {
+					long commentCount = authUser.getComments();
+					addBadgeOnce(com.erudika.scoold.core.Profile.Badge.COMMENTATOR,
+							commentCount >= AppConfig.COMMENTATOR_IFHAS);
+					authUser.setComments(commentCount + 1);
+					authUser.update();
+					commentslist.add(lastComment);
+					addModel("newcomment", lastComment);
 				}
 			}
 		}

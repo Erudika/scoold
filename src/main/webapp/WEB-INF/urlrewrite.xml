@@ -173,14 +173,14 @@
 	</rule>
 
 	<rule>
+		<from>^/comment(/?)$</from>
+		<to>/comment.htm</to>
+	</rule>
+	<rule>
 		<from>^/comment/(\d+)(/?)$</from>
 		<to>/comment.htm?id=$1</to>
 	</rule>
 
-	<rule>
-		<from>^/delete/comment/(\d+)(/?)$</from>
-		<to>/?show=comment&amp;delete=$1</to>
-	</rule>
 
 	<rule>
 		<from>^/voteup/(\w+)/(\d+)(/?)$</from>
