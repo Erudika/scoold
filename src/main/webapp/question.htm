@@ -26,7 +26,7 @@
 						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers"
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
-					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4 class="">
+					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
 					<hr>
 				#end
 
@@ -42,7 +42,7 @@
 								#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
 							</h4>
 
-							<textarea class="edit-post" name="body" length="$MAX_TEXT_LENGTH" minlength="10"></textarea>
+							<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
 							#getmessagebox("red white-text" $error.get("body"))
 
 							<input type="hidden" name="answer" value="true">
@@ -52,7 +52,6 @@
 								<button class="btn mtl waves-effect waves-light" type="submit">
 									<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 								</button>
-								<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light close-answer-form">
 							</div>
 						</form>
 					</div>
@@ -99,8 +98,10 @@
 					<div class="mbl">$!lang.get("posts.similar")</div>
 					#foreach($showSimilar in $similarquestions)
 						#set($plink = "#getpostlink($showSimilar false false)")
-						<small><i class="fa fa-caret-right grey-text"></i></small>
-						<a href="$plink" class="smallText">$!showSimilar.title</a>
+						<div>
+							<small><i class="fa fa-caret-right grey-text"></i></small>
+							<a href="$plink" class="smallText">$!showSimilar.title</a>
+						</div>
 					#end
 				</div>
 			#end

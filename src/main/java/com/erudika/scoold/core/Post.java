@@ -280,10 +280,12 @@ public abstract class Post extends Sysprop {
 		this.comments = comments;
 	}
 
+	@JsonIgnore
 	public List<Comment> getComments() {
 		return this.comments;
 	}
 
+	@JsonIgnore
 	public List<Comment> getComments(Pager pager) {
 		this.comments = AppConfig.client().getChildren(this, Utils.type(Comment.class), pager);
 		this.commentcount = pager.getCount();

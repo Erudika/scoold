@@ -51,6 +51,8 @@ public class ScooldServer  {
 
 	public static void main(String[] args) {
 		System.setProperty("click.mode", Config.IN_PRODUCTION ? "production" : "debug");
+		ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) logger;
+		logbackLogger.setLevel(ch.qos.logback.classic.Level.TRACE);
 		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);

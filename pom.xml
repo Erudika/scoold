@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.3.RELEASE</version>
+		<version>1.4.4.RELEASE</version>
 	</parent>
 
 	<organization>
@@ -43,20 +43,6 @@
 	</properties>
 
 	<dependencies>
-<!--		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-autoconfigure</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-velocity</artifactId>
@@ -150,54 +136,7 @@
 					</compilerArguments>
 				</configuration>
 			</plugin>
-<!--			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>src/main/webapp/WEB-INF/classes</directory>
-						</fileset>
-						<fileset>
-							<directory>src/main/webapp/WEB-INF/lib</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>-->
-<!--			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.4.0.v20161208</version>
-				<configuration>
-					<webApp>
-						<contextPath>/</contextPath>
-						<webInfIncludeJarPattern>^((?!bouncycastle).)*$</webInfIncludeJarPattern>
-					</webApp>
-					<httpConnector>
-						<port>8000</port>
-					</httpConnector>
-					<reload>manual</reload>
-				</configuration>
-			</plugin>-->
-<!--			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>yuicompressor-maven-plugin</artifactId>
-				<version>1.5.1</version>
-				<configuration>
-					<force>true</force>
-					<jswarn>false</jswarn>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>compress</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>-->
 		</plugins>
-		<!--<finalName>scoold</finalName>-->
 	</build>
 
 

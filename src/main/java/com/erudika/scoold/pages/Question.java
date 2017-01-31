@@ -19,6 +19,7 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
@@ -29,7 +30,9 @@ import static com.erudika.scoold.pages.Base.logger;
 import com.erudika.scoold.utils.AppConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,14 +49,12 @@ public class Question extends Base{
 	public List<Reply> answerslist;
 	public List<Post> similarquestions;
 	public String markdownHtml;
-
-	private String postlink;
+	public Map<String, String> error = Collections.emptyMap();
 
 	public Question() {
 		title = lang.get("questions.title");
 		showPost = null;
 		canEdit = false;
-		postlink = "";
 		String id = param("editpostid") ? getParamValue("editpostid") : getParamValue("id");
 		showPost = pc.read(id);
 
@@ -69,7 +70,6 @@ public class Question extends Base{
 				canEdit = false;
 			}
 			itemcount.setSortby("newest".equals(getParamValue("sortby")) ? "" : "votes");
-			postlink = getPostLink(showPost, false, false);
 		}
 	}
 
@@ -91,13 +91,13 @@ public class Question extends Base{
 				String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
 				if (!StringUtils.isBlank(likeTxt)) {
 					similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
-							new String[]{"title", "body", "tags"}, likeTxt, itemcount);
+							new String[]{"title", "body", "tags"}, likeTxt, new Pager(10));
 				}
 			}
 
 			if (param("getcomments") && param(Config._PARENTID)) {
-				String parentid = getParamValue(Config._PARENTID);
-				commentslist = pc.getChildren(new Comment(parentid), Utils.type(Comment.class), itemcount);
+				commentslist = pc.getChildren(new Comment(getParamValue(Config._PARENTID)),
+						Utils.type(Comment.class), new Pager(5));
 			}
 		}
 	}
@@ -107,25 +107,30 @@ public class Question extends Base{
 			return;
 		}
 
+		String next = getPostLink(showPost, false, false);
+
 		if (param("answer")) {
 			// add new answer
-			if (!showPost.isClosed() && !showPost.isReply() && showPost.getAnswercount() < AppConfig.MAX_REPLIES_PER_POST) {
+			if (!showPost.isClosed() && !showPost.isReply()) {
 				//create new answer
-				Reply newq = new Reply();
-				newq.setCreatorid(authUser.getId());
-				newq.setParentid(showPost.getId());
-				newq.setBody(getParamValue("body"));
-				newq.create();
+				Reply answer = populate(new Reply(), "body");
+				error = validate(answer);
+				if (!error.containsKey("body")) {
+					answer.setTitle(showPost.getTitle());
+					answer.setCreatorid(authUser.getId());
+					answer.setParentid(showPost.getId());
+					answer.create();
 
-				showPost.setAnswercount(showPost.getAnswercount() + 1);
-				if (showPost.getAnswercount() >= AppConfig.MAX_REPLIES_PER_POST) {
-					showPost.setCloserid("0");
+					showPost.setAnswercount(showPost.getAnswercount() + 1);
+					if (showPost.getAnswercount() >= AppConfig.MAX_REPLIES_PER_POST) {
+						showPost.setCloserid("0");
+					}
+					// update without adding revisions
+					pc.update(showPost);
+					addBadge(Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+				} else {
+					next = null;
 				}
-				// update without adding revisions
-				pc.update(showPost);
-
-				addBadge(Badge.EUREKA, newq.getCreatorid().equals(showPost.getCreatorid()));
-//				if (!isAjaxRequest()) setRedirect(escapelink+"#post-"+newq.getId());
 			}
 		} else if (param("approve")) {
 			String ansid = getParamValue("answerid");
@@ -205,7 +210,7 @@ public class Question extends Base{
 			if (!showPost.isReply()) {
 				if ((isMine || isMod)) {
 					showPost.delete();
-					postlink = questionslink + "?success=true&code=16";
+					next = questionslink + "?success=true&code=16";
 				}
 			} else if (showPost.isReply()) {
 				if (isMine || isMod) {
@@ -217,8 +222,8 @@ public class Question extends Base{
 			}
 		}
 
-		if (postlink != null) {
-			setRedirect(postlink);
+		if (next != null) {
+			setRedirect(next);
 		}
 	}
 

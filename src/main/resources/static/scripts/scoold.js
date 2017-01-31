@@ -209,7 +209,7 @@ $(function () {
 
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
-				xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
+			xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
 		}
 	});
 
@@ -269,12 +269,6 @@ $(function () {
 		return false;
 	});
 
-	//target=_blank is not valid XHTML
-	$(document).on("click", "a.extlink",  function() {
-		$(this).attr("target", "_blank");
-		return true;
-	});
-
 	$(document).on("click", "a.votelink",  function() {
 		var up = false;
 		up = $(this).hasClass("upvote");
@@ -312,13 +306,6 @@ $(function () {
 		$.post($(this).attr("href"), function() {
 			window.location.reload(true);
 		});
-	});
-
-	$(".set-sys-param").click(function() {
-		var form = $("form#sys-param-form"), title = $(this).attr("title");
-		form.find("input[name=name]").val(title.substring(0, title.indexOf(":")));
-		form.find("input[name=value]").val(title.substring(title.indexOf(":")+1, title.length));
-		return false;
 	});
 
 	/****************************************************
@@ -504,6 +491,7 @@ $(function () {
 	$(document).on("click", "#addcont-translation-btn",  function() {
 		return validateTrans($(this).closest("form"));
 	});
+
 	$(document).on("click", "#add-translation-btn",  function() {
 		var that = $(this);
 		var form = that.closest("form");
@@ -595,7 +583,6 @@ $(function () {
 
 	var askForm = $("form#ask-question-form");
 	if (askForm.length) {
-
 		var title = askForm.find("input[name=title]");
 		var tags = askForm.find("input[name=tags]");
 		var body = initPostEditor(askForm.find("textarea[name=body]").get(0));
@@ -632,16 +619,6 @@ $(function () {
 		} catch (exception) {}
 	}
 
-	$(".close-answer-form", "form#answer-question-form").click(function() {
-		crossfadeToggle($(this).closest("form").parent("div").get(0), $(".open-answer-form").closest("div").get(0));
-		return false;
-	});
-
-	$(".open-answer-form").click(function() {
-		crossfadeToggle($(".close-answer-form").closest("form").parent("div").get(0), $(this).closest("div").get(0));
-		return false;
-	});
-
 	$(document).on("click", "a.approve-answer, a.approve-translation", function() {
 		var on = "green-text";
 		var that = $(this);
@@ -657,37 +634,23 @@ $(function () {
 		return false;
 	});
 
+	/****************************************************
+     *                   REVISIONS
+     ****************************************************/
 
 	var dmp = new diff_match_patch();
 
 	function diffToHtml(diffs, oldText, newText) {
 		var html = [];
-		var intag = false;
 		var appendMe = "";
 		var done = false;
-
-		function reconstruct(diffArray, what) {
-			var out = "", i;
-			if (what === 0) {
-				return out;
-			}
-			for (i = 0; i < diffArray.length; i++) {
-				var o = diffArray[i][0];
-				var t = diffArray[i][1];
-
-				if (o === what || o === 0) {
-					out = out.concat(t);
-				}
-			}
-			return out;
-		}
 
 		function diffMarkup(text, op) {
 			var t1,t2 = "";
 			switch (op) {
-				case 1:t1 = '<span class="diff-ins">';t2 = '</span>';break;
-				case -1:t1 = '<span class="diff-del">';t2 = '</span>';break;
-				case 0:t1 = "";t2 = "";break;
+				case 1:  t1 = '<span class="diff-ins">';t2 = '</span>'; break;
+				case -1: t1 = '<span class="diff-del">';t2 = '</span>'; break;
+				case 0:  t1 = "";t2 = ""; break;
 			}
 
 			var trimed = $.trim(text);
@@ -754,4 +717,4 @@ $(function () {
 		return result;
 	});
 
-});//end of scoold script
+});

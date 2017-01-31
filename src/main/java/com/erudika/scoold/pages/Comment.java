@@ -62,7 +62,7 @@ public class Comment extends Base{
 		} else if (canComment && param("comment")) {
 			String comment = getParamValue("comment");
 			String parentid = getParamValue(Config._PARENTID);
-			if (StringUtils.isBlank(comment) || StringUtils.isBlank(parentid)) {
+			if (!StringUtils.isBlank(comment) && !StringUtils.isBlank(parentid)) {
 				com.erudika.scoold.core.Comment lastComment = new com.erudika.scoold.core.Comment();
 				lastComment.setComment(comment);
 				lastComment.setParentid(parentid);

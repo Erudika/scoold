@@ -186,6 +186,25 @@
 </div>
 #end
 
+#macro(compactanswerspage $answers)
+	#foreach($answer in $answers)
+		<div class="card-panel">
+			<div class="right">
+				<i class="fa fa-clock-o"></i> #formatdate($answer.timestamp "")
+			</div>
+			<div class="mediumText grey-text text-darken-1">$!answer.title</div>
+			<div>
+				<span class="chip mrl">$!answer.votes</span>
+				<span>
+					<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">
+						$!utils.abbreviate($answer.body, 100).replaceAll('\s', ' ')
+					</a>
+				</span>
+			</div>
+		</div>
+	#end
+#end
+
 #if (!$answerslist.isEmpty())
 <h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
 <div class="mvm">

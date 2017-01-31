@@ -34,7 +34,7 @@
 		#sectoken(false "ADD_COMMENT_$!parentid")
 		<div class="row">
 			<div class="col s10">
-				<input type="text" name="comment">
+				<input type="text" name="comment" value="">
 				<input type="hidden" name="parentid" value="$!parentid">
 				<input type="hidden" name="getcommenthtmlcode" value="true">
 			</div>
@@ -47,7 +47,6 @@
 #end
 ###########################################
 #macro(commentbox $showcomment)
-#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 #if ($showcomment == "")	#set($hide = "hide") #else #set($hide = "")	#end
 <div class="commentbox pll smallText ${hide}">
 	#if ($showcomment.hidden)
@@ -69,7 +68,7 @@
 			<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
 			<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
 			#if ($showcomment == "")
-				#getreportlink($showcomment "$commentlink/$!showcomment.id" "chip notext")
+				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
 				<a href="$commentlink?deletecomment=$!showcomment.id" title="$!lang.get('delete')"
 					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $isMod))
@@ -86,32 +85,6 @@
 #macro(commentspage $comments)
 	#foreach($comment in $comments)
 		#commentbox($comment)
-	#end
-	#commentbox("") ## empty box to be cloned
-#end
-####################################
-#macro(commentspagepreview $comments $count)
-	#if ($comments)
-		#if ($comments.size() > $count)
-			#set($countmo = $count - 1 )
-			#foreach($c in [0..$countmo])
-			#commentbox($comments.get($c))
-		#end
-
-		#if ($comments.size() > $count)
-			<a href="#" class="more-comments-btn chip">$!lang.get("more")</a>
-			<div class="hide">
-				#set($countmo = $comments.size() - 1 )
-				#foreach($c in [$count..$countmo])
-					#commentbox($comments.get($c))
-				#end
-			</div>
-			#end
-		#else
-			#foreach($comment in $comments)
-				#commentbox($comment)
-			#end
-		#end
 	#end
 	#commentbox("") ## empty box to be cloned
 #end
@@ -211,7 +184,7 @@
 <div class="row">
 	#foreach($showFriend in $people)
 	<div class="col s12 m6 l4">
-		<div class="card hoverable">
+		<div class="card">
 			<div class="row valign-wrapper">
 				<div class="col s4">
 					<img src="#profilepic($showFriend)" alt="$showFriend.name" class="responsive-img pts pls">
@@ -323,31 +296,6 @@
 	#end
 #end
 ####################################
-#macro(compactanswerspage $answers)
-	#foreach($answer in $answers)
-		#answerbox($answer)
-	#end
-#end
-####################################
-#macro(answerbox $showpost )
-<div class="card-panel hoverable">
-	<div class="right p">
-		<i class="fa fa-clock-o"></i> #formatdate($showpost.timestamp "")
-	</div>
-	<div>
-		#set($votes = $showpost.votes)
-		#if (!$votes) #set($votes = 0) #end
-
-		<span class="chip mediumText mrl">$!votes</span>
-		<span>
-			<a href="$questionlink/$showpost.parentid#post-$!showpost.id" title="View answer">
-				$!utils.abbreviate($showpost.body, 100).replaceAll('\s', ' ')
-			</a>
-		</span>
-	</div>
-</div>
-#end
-####################################
 #macro(postbox $showpost $parentpost)
 
 #set($actionlink = "#getpostlink($showpost false true)")
@@ -412,7 +360,7 @@
 				#end
 
 				#if ($canComment)
-					<a href="#" class="next-div-toggle prm" title="Add a comment"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
+					<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
 				#end
 
 				#if ($showpost.lasteditby)
@@ -428,10 +376,11 @@
 				#end
 
 				#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
-					#getreportlink($showpost "$questionlink/$!showpost.id" "")
+					#getreportlink($showpost "$questionlink/$!showpost.id" "prm")
 				#end
 
-				<a href="#post-$!showpost.id" onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
+				<a href="#post-$!showpost.id" title="Permalink"
+					 onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
 
 				#if ($canComment)
 					#newcommentform($showpost.id true "$questionlink/$showpost.id")
@@ -500,7 +449,6 @@
 #end
 ###################################
 #macro(translationbox $showtrans)
-#set($thisuri = $request.getAttribute('javax.servlet.forward.request_uri'))
 <div class="card-panel translationbox">
 	<div class="row">
 		<div class="col m1">
@@ -515,7 +463,7 @@
 			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
 				#if ($isAdmin)
 					#if ($showtrans.approved)#set($onclass = "green-text")#else#set($onclass = "")#end
-					<a href="${thisuri}?approve=$showtrans.id" class="approve-translation $!{onclass}" title="Toogle approved status">
+					<a href="$translatelink/$!{showtrans.id}?approve=$showtrans.id" class="approve-translation $!{onclass}" title="Toogle approved status">
 						<i class="fa fa-check-circle"></i>#if ($showtrans.approved) Approved #else Approve #end
 					</a>
 					&nbsp;
@@ -524,7 +472,7 @@
 					<i class="fa fa-times"></i> $!lang.get('delete')
 				</a>
 			#else
-				#getreportlink($showtrans "$translatelink/$!showtrans.id" "chip notext")
+				#getreportlink($showtrans "$translatelink/$!showtrans.id" "notext")
 			#end
 		</div>
 	</div>
@@ -574,23 +522,19 @@
 #end
 #####################################
 #macro(formatdate $date $format)
-#if ($date && !$format.trim().isEmpty() && $format != "slim")
+#if ($date && !$format.trim().isEmpty())
 $utils.formatDate($date, $format, $currentLocale)
 #elseif ($date)
 #set($delta = $utils.timestamp() - $date)
 #set($approxtime = $utils.humanTime.approximately($delta))
-#if (!$approxtime || $approxtime.isEmpty()) #set($approxtime = "1s") #end
+#if (!$approxtime || $approxtime.isEmpty() || $approxtime.endsWith("ms")) #set($approxtime = "2s") #end
 #set($lastindx = $approxtime.length() - 1 )
 #set($suffix = $approxtime.substring($lastindx))
 #set($approx = $approxtime.substring(0, $lastindx))
 #set($sufstr = "humantime.$suffix" )
-#if ($format == "slim")
-$!utils.formatMessage($!lang.get($!sufstr), $!approx) [$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)]
-#else
 <span title="$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
 	$!utils.formatMessage($!lang.get($!sufstr), $!approx)
 </span>
-#end
 #end
 #end
 #####################################
