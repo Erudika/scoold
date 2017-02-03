@@ -119,7 +119,7 @@
 						<span class="black-text">$!{showUser.location}</span></h4>
 				#end
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-list grey-text text-darken-1"></i> &nbsp;
-						$qpager.count $!{lang.get("questions.title")}, $apager.count $!{lang.get("answers.title")}</h5>
+						$itemcount1.count $!{lang.get("questions.title")}, $itemcount2.count $!{lang.get("answers.title")}</h5>
 				#if ($showUser.timestamp)
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-birthday-cake"></i> &nbsp;
 						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</h5>
@@ -180,9 +180,9 @@
 </div>
 
 #if (!$questionslist.isEmpty())
-<h2>$!{lang.get("questions.title")} #showcount($qpager.count)</h2>
+<h2>$!{lang.get("questions.title")} #showcount($itemcount1.count)</h2>
 <div class="mvm">
-		#paginate($pagenum.longValue() "\#questionspage(\$questionslist)" $qpager.count "" "pageless")
+		#paginate("\#questionspage(\$questionslist)" $itemcount1 "" "page1")
 </div>
 #end
 
@@ -206,8 +206,8 @@
 #end
 
 #if (!$answerslist.isEmpty())
-<h2>$!{lang.get("answers.title")} #showcount($apager.count)</h2>
+<h2>$!{lang.get("answers.title")} #showcount($itemcount2.count)</h2>
 <div class="mvm">
-	#paginate($pagenum.longValue() "\#compactanswerspage(\$answerslist)" $apager.count "" "pageless")
+	#paginate("\#compactanswerspage(\$answerslist)" $itemcount2 "" "page2")
 </div>
 #end

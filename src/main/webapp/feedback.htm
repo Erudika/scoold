@@ -21,6 +21,6 @@
 			<a href="$feedbacklink/updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
 		</div>
 
-		#paginate($pagenum.longValue() "\#questionspage(\$feedbacklist)" $itemcount.count "" "pageless")
+		#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
 	#end
 </div>

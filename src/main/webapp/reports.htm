@@ -68,7 +68,7 @@
 	#if ($itemcount.count == 0)
 		<div class="mediumText">$!{lang.get("search.notfound")}</div>
 	#else
-		#paginate($pagenum.longValue() "\#reportspage(\$reportslist)" $itemcount.count "" "pageless")
+		#paginate("\#reportspage(\$reportslist)" $itemcount "" "page")
 	#end
 </div>
 

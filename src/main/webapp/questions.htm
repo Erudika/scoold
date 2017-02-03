@@ -30,7 +30,6 @@
 					<input type="hidden" name="tags" class="ac-hidden" value="">
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
-				<div class="edit-preview"></div>
 
 				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
@@ -73,7 +72,6 @@
 		</h2>
 		<hr>
 
-
 		#if ($questionslist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">
 				<div class="em5v">
@@ -81,7 +79,7 @@
 				</div>
 			</div>
 		#else
-			#paginate($pagenum "\#questionspage(\$questionslist)" $itemcount.count "" "pageless")
+			#paginate("\#questionspage(\$questionslist)" $itemcount "" "page")
 		#end
 	#end
 </div>

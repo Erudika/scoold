@@ -93,5 +93,5 @@
 <div class="">
 	<h2>$!lang.get("revisions.title") #showcount($itemcount.count)</h2>
 	<hr>
-	#paginate($pagenum.longValue() "\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount.count "" "")
+	#paginate("\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount "" "page")
 </div>

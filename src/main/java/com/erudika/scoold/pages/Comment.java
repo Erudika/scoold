@@ -20,9 +20,12 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
-import static com.erudika.scoold.pages.Base.pc;
+import com.erudika.para.utils.Utils;
+import com.erudika.scoold.core.Post;
 import com.erudika.scoold.utils.AppConfig;
 import org.apache.commons.lang3.StringUtils;
+import static com.erudika.scoold.core.Profile.Badge.*;
+import static com.erudika.scoold.pages.Base.pc;
 
 /**
  *
@@ -45,6 +48,16 @@ public class Comment extends Base{
 			if (showComment == null || !ParaObjectUtils.typesMatch(showComment)) {
 				setRedirect(HOMEPAGE);
 			}
+		} else if (param("getcomments") && param(Config._PARENTID)) {
+			Post parent = pc.read(getParamValue(Config._PARENTID));
+			if (parent != null) {
+				parent.getItemcount().setPage(itemcount.getPage());
+				commentslist = pc.getChildren(parent, Utils.type(com.erudika.scoold.core.Comment.class),
+						parent.getItemcount());
+				parent.setComments(commentslist);
+				addModel("showpost", parent);
+				addModel("itemcount", parent.getItemcount());
+			}
 		}
 	}
 
@@ -56,7 +69,7 @@ public class Comment extends Base{
 				// check parent and correct (for multi-parent-object pages)
 				c.delete();
 				if (!isMod) {
-					addBadge(com.erudika.scoold.core.Profile.Badge.DISCIPLINED, true);
+					addBadgeAndUpdate(DISCIPLINED, true);
 				}
 			}
 		} else if (canComment && param("comment")) {
@@ -71,8 +84,7 @@ public class Comment extends Base{
 
 				if (lastComment.create() != null) {
 					long commentCount = authUser.getComments();
-					addBadgeOnce(com.erudika.scoold.core.Profile.Badge.COMMENTATOR,
-							commentCount >= AppConfig.COMMENTATOR_IFHAS);
+					addBadgeOnce(COMMENTATOR, commentCount >= AppConfig.COMMENTATOR_IFHAS);
 					authUser.setComments(commentCount + 1);
 					authUser.update();
 					commentslist.add(lastComment);

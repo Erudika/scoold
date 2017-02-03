@@ -36,6 +36,8 @@ public class Tags extends Base {
     }
 
 	public void onGet() {
+		itemcount.setSortby("name".equals(getParamValue("sortby")) ? "tag" : "count");
+		itemcount.setDesc(!"name".equals(getParamValue("sortby")));
 		tagslist = pc.findTags("*", itemcount);
 	}
 }

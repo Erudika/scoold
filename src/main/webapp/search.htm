@@ -30,13 +30,13 @@
 		</div>
 	#elseif ($showParam)
 		#if ($showParam == "questions")
-			#paginate($pagenum "\#questionspage(\$questionlist)" $itemcount.count $params "pageless")
+			#paginate("\#questionspage(\$questionlist)" $itemcount $params "page")
 		#elseif ($showParam == "answers")
-			#paginate($pagenum "\#answerspage(\$answerlist)" $itemcount.count $params "pageless")
+			#paginate("\#answerspage(\$answerlist)" $itemcount $params "page")
 		#elseif ($showParam == "feedback")
-			#paginate($pagenum "\#questionspage(\$feedbacklist)" $itemcount.count $params "pageless")
+			#paginate("\#questionspage(\$feedbacklist)" $itemcount $params "page")
 		#elseif ($showParam == "people")
-			#paginate($pagenum "\#peoplepage(\$userlist)" $itemcount.count $params "pageless")
+			#paginate("\#peoplepage(\$userlist)" $itemcount $params "page")
 		#end
 	#else
 

@@ -50,6 +50,10 @@
 		<to>/tags.htm</to>
 	</rule>
 	<rule>
+		<from>^/tags/name(/?)$</from>
+		<to>/tags.htm?sortby=name</to>
+	</rule>
+	<rule>
 		<from>^/terms(/?)$</from>
 		<to>/terms.htm</to>
 	</rule>

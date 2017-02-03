@@ -34,7 +34,7 @@
 		#sectoken(false "ADD_COMMENT_$!parentid")
 		<div class="row">
 			<div class="col s10">
-				<input type="text" name="comment" value="">
+				<input type="text" name="comment" value="" required>
 				<input type="hidden" name="parentid" value="$!parentid">
 				<input type="hidden" name="getcommenthtmlcode" value="true">
 			</div>
@@ -86,7 +86,6 @@
 	#foreach($comment in $comments)
 		#commentbox($comment)
 	#end
-	#commentbox("") ## empty box to be cloned
 #end
 ################# QUESTIONS MACROS #####################
 #macro(tagsbox $tags $link)
@@ -105,25 +104,30 @@
 	#end
 #end
 ################# PAGINATION #####################
-#macro(paginate $page $macroCode $count $params $mode)
-#if ($pagenum && $pagenum.longValue() > 10000) #set($next = $page) #else #set($next = $page + 1) #end
-#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
-#set($classes = "pagelink btn waves-effect waves-light")
-#if ($params && !$params.isEmpty()) #set($reqURL = "$requri?${params}&page") #else #set($reqURL = "$requri?page") #end
-
-<div class="page-content">#evaluate($macroCode)</div>
-#if ($count && $count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
-<div class="pages center mtl">
-	#if ($mode == "pageless") #set($classes = "$classes more-link" ) #else #set($classes = "$classes more-link-na" ) #end
-	<a href="$reqURL=$!next" class="more-link-na ${classes}" title="Load more">$!lang.get("more")</a>
-	<span class="hide page-macro-code">$!macroCode</span>
-</div>
+#macro(paginate $macroCode $pager $_rpath $pageparam)
+#if($pager.count > 0)
+	#if ($pager && $pager.page > 1000) #set($next = 1) #else #set($next = $pager.page + 1) #end
+	#if(!$_rpath || $_rpath.isEmpty())
+		#set($_rpath = $request.getAttribute("javax.servlet.forward.request_uri"))
+	#end
+	<div class="page-content">#evaluate($macroCode)</div>
+	#if ($pager.count && $pager.count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
+	<div class="pages center mtl">
+		#if ($_rpath.contains("?"))
+			<a href="${_rpath}&${pageparam}=$!next" class="more-link pagelink chip" title="Load more">$!lang.get("more")</a>
+		#else
+			<a href="${_rpath}?${pageparam}=$!next" class="more-link pagelink chip" title="Load more">$!lang.get("more")</a>
+		#end
+		<span class="hide page-macro-code">$!macroCode</span>
+		<span class="$!{next}"></span>
+	</div>
+	#end
 #end
 #end
 ####################################
 #macro(smallpersonbox $showu)
 <div class="row mbn userbox user-$!{showu.id}">
-	<div class="col s2">
+	<div class="col s4 m4 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
 				<img src="#profilepic($!showu)" width="50" height="50" alt="Profile picture">
@@ -132,8 +136,16 @@
 			<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="50" height="50" alt="Profile picture">
 		#end
 	</div>
-	<div class="col s10">
-		<div class="plm">
+	<div class="col s8 m8 l9">
+		<div class="right">
+			#set($contextboxid = $utils.generateSecurityToken(10, true))
+			<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
+				 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+			<ul id="${contextboxid}" class="dropdown-content">
+				<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
+			</ul>
+		</div>
+		<div>
 			#if ($showu)
 				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="smallText">$showu.name</a>
 			#else
@@ -190,6 +202,14 @@
 					<img src="#profilepic($showFriend)" alt="$showFriend.name" class="responsive-img pts pls">
 				</div>
 				<div class="col s8">
+					<div class="right mrm">
+						#set($contextboxid = $utils.generateSecurityToken(10, true))
+						<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
+							 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+						<ul id="${contextboxid}" class="dropdown-content">
+							<li>#getreportlink($showFriend "$profilelink/$!showFriend.id" "")</li>
+						</ul>
+					</div>
 					<div class="mediumText">
 						<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 					</div>
@@ -249,7 +269,7 @@
 		#if (!$answercount) #set($answercount = 0) #end
 		#if ($showpost.answerid) #set($bgclass = "light-green white-text" ) #else #set($bgclass = "orange lighten-5" ) #end
 		#if ($votes < 0) #set($bgclass1 = "red lighten-4 white-text" ) #elseif($votes == 0) #set($bgclass1 = "light-blue lighten-5" ) #end
-		<div class="col m1 center-align">
+		<div class="col m2 l1 center-align">
 			<div class="qstatsbox">
 				<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
 				<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
@@ -258,10 +278,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="col m11">
-
+		<div class="col m10 l11">
 			<div class="row mbn">
-				<div class="col m9">
+				<div class="col s10 m11 l9">
 					<div class="mbm mediumText">
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 					</div>
@@ -270,9 +289,14 @@
 						<div>$!utils.abbreviate($showBody, 160)</div>
 					</div>
 				</div>
-				<div class="col m3">
+				<div class="col s1 m1 l3">
 					#if(!$request.request.requestURI.startsWith("/profile"))
-						#smallpersonbox($showpost.author)
+						<div class=" hide-on-med-and-down">
+							#smallpersonbox($showpost.author)
+						</div>
+						<div class="hide-on-large-only">
+							#tinypersonbox($showpost.author)
+						</div>
 					#end
 				</div>
 			</div>
@@ -284,7 +308,6 @@
 					<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
 				</div>
 			</div>
-
 		</div>
 	</div>
 </div>
@@ -293,6 +316,7 @@
 #macro(answerspage $answers $parentpost)
 	#foreach($answer in $answers)
 		#postbox($answer $parentpost)
+		<hr>
 	#end
 #end
 ####################################
@@ -309,7 +333,7 @@
 		</div>
 
 		<div class="row">
-			<div class="col m4">
+			<div class="col s12 m4 l4">
 				<div class="left mtm mrl">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
 					#if ($approvedAnswer)
@@ -328,7 +352,7 @@
 				</div>
 				#votebox($showpost "hugeText mtm")
 			</div>
-			<div class="col m4">
+			<div class="col s12 m3 l4">
 				<div class="ptl center-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if ($showpost.lasteditby)
@@ -338,7 +362,7 @@
 					#end
 				</div>
 			</div>
-			<div class="col m4">
+			<div class="col s12 m5 l4">
 				<div class="card pam">
 					#smallpersonbox($showpost.author)
 				</div>
@@ -423,8 +447,6 @@
 			#getmessagebox("red white-text" $error.get("tags"))
 
 			<input type="hidden" name="editpostid" value="$!showpost.id">
-			<div class="edit-preview"></div>
-
 			<br>
 			<div class="mts mbl">
 				<button class="btn waves-effect waves-light" type="submit">
@@ -437,7 +459,7 @@
 	#end
 
 	<div class="comments post-comments">
-		#paginate($showpost.pagenum.longValue() "\#commentspage(\$showpost.comments)" $showpost.commentcount "getcomments=true&parentid=$showpost.id" "pageless")
+		#paginate("\#commentspage(\$showpost.comments)" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
 	</div>
 </div>
 #end
@@ -499,15 +521,19 @@
 			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
 				<i class="fa fa-chevron-up upvote grey-text mrl" title="Vote up"></i>
 				<i class="fa fa-chevron-down downvote grey-text mrl" title="Vote down"></i>
-				<span class="votecount">$votable.votes</span>
+				#if($votable.votes && $votable.votes > 0)
+					<span class="votecount">$votable.votes</span>
+				#end
 			#else
-			<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
-				<i class="fa fa-chevron-up upvote mrl" title="Vote up"></i>
-			</a>
-			<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
-				<i class="fa fa-chevron-down downvote mrl" title="Vote down"></i>
-			</a>
-			<span class="votecount">$votable.votes</span>
+				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
+					<i class="fa fa-chevron-up upvote mrl" title="Vote up"></i>
+				</a>
+				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
+					<i class="fa fa-chevron-down downvote mrl" title="Vote down"></i>
+				</a>
+				#if($votable.votes && $votable.votes > 0)
+					<span class="votecount">$votable.votes</span>
+				#end
 			#end
 		</div>
 	#end

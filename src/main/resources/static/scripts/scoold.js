@@ -386,10 +386,12 @@ $(function () {
 	});
 
 	function displayTags(tags) {
-		var tagsVal = tags.val().split(",");
-		for (var i = 0; i < tagsVal.length; i++) {
-			if (tagsVal[i].length > 0) {
-				tagsAutocomplete.append({id: tagsVal[i], text: tagsVal[i]});
+		if (tags && tags.val() && tags.val().length > 1) {
+			var tagsVal = tags.val().split(",");
+			for (var i = 0; i < tagsVal.length; i++) {
+				if (tagsVal[i].length > 0) {
+					tagsAutocomplete.append({id: tagsVal[i], text: tagsVal[i]});
+				}
 			}
 		}
 	}
@@ -521,7 +523,7 @@ $(function () {
 			macroCode = that.siblings(".page-macro-code").text(),
 			contentDiv = that.parent("div").prev("div"),
 			href = that.attr("href"),
-			cleanHref = href.substring(0, href.lastIndexOf("page=") + 5);
+			cleanHref = href.substring(0, href.lastIndexOf("=") + 1);
 
 		that.addClass("loading");
 		$.get(dis.href, {pageMacroCode: macroCode}, function(data) {
@@ -576,11 +578,7 @@ $(function () {
 		}
 	});
 
-	var newAnswerForm = $("#answer-question-form");
-	if (newAnswerForm.length) {
-		initPostEditor(newAnswerForm.find("textarea.edit-post:visible").get(0));
-	}
-
+	// save draft in localstorage
 	var askForm = $("form#ask-question-form");
 	if (askForm.length) {
 		var title = askForm.find("input[name=title]");
@@ -588,9 +586,9 @@ $(function () {
 		var body = initPostEditor(askForm.find("textarea[name=body]").get(0));
 
 		try {
-			if (!title.val()) title.val(localStorage.getItem("ask-form-title"));
-			if (!body.value()) body.value(localStorage.getItem("ask-form-body"));
-			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags"));
+			if (!title.val()) title.val(localStorage.getItem("ask-form-title") || "");
+			if (!body.value()) body.value(localStorage.getItem("ask-form-body") || "");
+			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags") || "");
 			displayTags(tagsInput);
 			setInterval(function () {
 				var saved = false;
@@ -615,6 +613,24 @@ $(function () {
 				localStorage.removeItem("ask-form-title");
 				localStorage.removeItem("ask-form-body");
 				localStorage.removeItem("ask-form-tags");
+			});
+		} catch (exception) {}
+	}
+
+	var answerForm = $("form#answer-question-form");
+	if (answerForm.length) {
+		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
+		try {
+			if (!answerBody.value()) answerBody.value(localStorage.getItem("answer-form-body") || "");
+			setInterval(function () {
+				if (localStorage.getItem("answer-form-body") !== answerBody.value()) {
+					localStorage.setItem("answer-form-body", answerBody.value());
+					answerForm.find(".save-icon").show().delay(2000).fadeOut();
+				}
+			}, 2000);
+
+			answerForm.on("submit", function () {
+				localStorage.removeItem("answer-form-body");
 			});
 		} catch (exception) {}
 	}

@@ -1,4 +1,12 @@
 <div class="ptl">
+	#set($sortarr = {'popular': "", 'name': ""} )
+	#setsortbyselection($sortarr 'popular')
+	<div class="right mtl ptl">
+		<a href="$tagslink" title="Most used tags"
+			 class="chip $sortarr.popular">$!lang.get("posts.mostpopular")</a>
+		<a href="$tagslink/name" title="Tags by name"
+			 class="chip $sortarr.name">$!lang.get("name")</a>
+	</div>
 	<h2>$!lang.get("tags.title") #showcount($itemcount.count)</h2>
 	<hr>
 	#if($tagslist.isEmpty())
@@ -8,7 +16,7 @@
 			</div>
 		</div>
 	#else
-		<div class="row">
+		#macro(tagspage )
 			#foreach($showtag in $tagslist)
 			<div class="col m3">
 				<div class="card-panel pvl">
@@ -20,6 +28,10 @@
 				</div>
 			</div>
 			#end
+		#end
+
+		<div class="row">
+			#paginate("\#tagspage(\$tagslist)" $itemcount "" "page")
 		</div>
 	#end
 </div>

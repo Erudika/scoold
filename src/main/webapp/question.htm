@@ -1,6 +1,6 @@
 <div class="ptl">
 	<div class="row">
-		<div class="col m9">
+		<div class="col m12 l9">
 			<span class="grey-text">
 			#if ($showPost.answercount > 0)
 				#if ($showPost.answerid) <i class="fa fa-check-circle tooltipped" data-tooltip="Approved answer"></i> #end
@@ -30,13 +30,12 @@
 					<hr>
 				#end
 
-				#paginate($pagenum.longValue() "\#answerspage(\$answerslist \$showPost)" $itemcount.count "" "pageless")
+				#paginate("\#answerspage(\$answerslist \$showPost)" $itemcount "" "page")
 
 				#if ($authenticated && !$showPost.isClosed())
-					<div class="ptl">
+					<div class="pvl mbm">
 						<form method="post" id="answer-question-form">
 							#sectoken(false "CREATE_POST")
-							<hr>
 							<a id="write-post"></a>
 							<h4 class="grey-text">
 								#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
@@ -46,13 +45,10 @@
 							#getmessagebox("red white-text" $error.get("body"))
 
 							<input type="hidden" name="answer" value="true">
-							<div class="edit-preview"></div>
-
-							<div class="">
-								<button class="btn mtl waves-effect waves-light" type="submit">
-									<i class="fa fa-paper-plane left"></i>$!lang.get('post')
-								</button>
-							</div>
+							<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
+							<button class="btn mtl waves-effect waves-light" type="submit">
+								<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+							</button>
 						</form>
 					</div>
 				#else
@@ -66,7 +62,7 @@
 				#end
 
 				#if ($showPost.isClosed())
-					<div class="center mtm">
+					<div class="center mvm">
 						<h3 class="grey-text">
 								<i class="fa fa-lock"></i> $!lang.get("posts.closed")
 							</h3>
@@ -75,7 +71,7 @@
 			#end
 		</div>
 
-		<div class="col m3">
+		<div class="col m12 l3">
 			<div class="card-panel">
 				<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
 				<div class="mediumText pvs"><b>$!showPost.answercount</b> $!lang.get('answers.title')</div>

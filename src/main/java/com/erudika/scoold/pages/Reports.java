@@ -22,7 +22,7 @@ import com.erudika.scoold.core.Report;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
@@ -69,7 +69,7 @@ public class Reports extends Base{
 				if (authenticated) {
 					rep.setAuthorName(authUser.getName());
 					rep.setCreatorid(authUser.getId());
-					addBadge(com.erudika.scoold.core.Profile.Badge.REPORTER, true);
+					addBadgeAndUpdate(REPORTER, true);
 				} else {
 					//allow anonymous reports
 					rep.setAuthorName(lang.get("anonymous"));

@@ -18,10 +18,7 @@
 package com.erudika.scoold.pages;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
-import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Profile;
@@ -94,11 +91,6 @@ public class Question extends Base{
 							new String[]{"title", "body", "tags"}, likeTxt, new Pager(10));
 				}
 			}
-
-			if (param("getcomments") && param(Config._PARENTID)) {
-				commentslist = pc.getChildren(new Comment(getParamValue(Config._PARENTID)),
-						Utils.type(Comment.class), new Pager(5));
-			}
 		}
 	}
 
@@ -127,7 +119,7 @@ public class Question extends Base{
 					}
 					// update without adding revisions
 					pc.update(showPost);
-					addBadge(Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+					addBadgeAndUpdate(Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
 				} else {
 					next = null;
 				}
@@ -148,8 +140,7 @@ public class Question extends Base{
 							if (!same) {
 								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
 								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
-								author.update();
-								authUser.update();
+								pc.updateAll(Arrays.asList(author, authUser));
 							}
 						} else {
 							// Answer approved award - GIVE
@@ -158,8 +149,7 @@ public class Question extends Base{
 								author.addRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
 								authUser.addRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
 								addBadgeOnce(Badge.NOOB, true);
-								author.update();
-								authUser.update();
+								pc.updateAll(Arrays.asList(author, authUser));
 							}
 						}
 						showPost.update();
@@ -189,7 +179,7 @@ public class Question extends Base{
 			//note: update only happens if something has changed
 			if (!showPost.equals(beforeUpdate)) {
 				showPost.update();
-				addBadgeOnce(Badge.EDITOR, true);
+				addBadgeOnceAndUpdate(Badge.EDITOR, true);
 			}
 		} else if (param("close")) {
 			if (isMod) {
@@ -203,7 +193,7 @@ public class Question extends Base{
 		} else if (param("restore")) {
 			String revid = getParamValue("revisionid");
 			if (canEdit && revid != null) {
-				addBadge(Badge.BACKINTIME, true);
+				addBadgeAndUpdate(Badge.BACKINTIME, true);
 				showPost.restoreRevisionAndUpdate(revid);
 			}
 		} else if (param("delete")) {

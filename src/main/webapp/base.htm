@@ -1,11 +1,20 @@
 #if($isAjaxRequest || false)
 	################# PAGINATION AJAX REQUESTS #################
 	#if($request.getParameter("page"))
-		#if(!$pageMacroCode || $pageMacroCode.trim().isEmpty())
-			#set($pageMacroCode = "$!request.getParameter('pageMacroCode')" )
-		#end
-		#evaluate($pageMacroCode)
-		#if($pagenum.longValue() > 10000) #set($pnext = $pagenum.intValue()) #else #set($pnext = $pagenum.intValue() + 1) #end
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount.page + 1) #end
+		<span class="$!{pnext}"></span>
+		#stop
+	#end
+	#if($request.getParameter("page1"))
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount1.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount1.page + 1) #end
+		<span class="$!{pnext}"></span>
+		#stop
+	#end
+	#if($request.getParameter("page2"))
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount2.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount2.page + 1) #end
 		<span class="$!{pnext}"></span>
 		#stop
 	#end
@@ -17,14 +26,8 @@
 		#stop
 
 	#elseif($request.getParameter("getallcommentscode"))
-		#if($request.getParameter("page"))
-			#set($Int = 0)
-			#set($page = $Int.parseInt($request.getParameter("page")))
-		#else
-			#set($page = $pagenum.longValue())
-		#end
-		#if($commentslist && $itemcount.count && $commentslist.size() > 0)
-			#paginate($page "\#commentspage(\$commentslist)" $itemcount.count "" "pageless" )
+		#if($commentslist && $commentslist.size() > 0)
+			#paginate("\#commentspage(\$commentslist)" $itemcount "" "page" )
 		#end
 		#stop
 
@@ -99,7 +102,7 @@
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
 									<li class="divider"></li>
 									<li>
-										<form method="post" action="$signoutlink">
+										<form method="post" action="$signoutlink" class="center-align">
 											#sectoken(false)
 											<button type="submit" class="btn-flat mtm">$!lang.get('signout')</button>
 										</form>

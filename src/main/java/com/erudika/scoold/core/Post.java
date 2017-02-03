@@ -61,21 +61,22 @@ public abstract class Post extends Sysprop {
 	private transient Profile author;
 	private transient Profile lastEditor;
 	private transient List<Comment> comments;
-	private transient Long pagenum;
+	private transient Pager itemcount;
 
 	public Post() {
 		this.answercount = 0L;
 		this.viewcount = 0L;
-		this.commentcount = 0L;
-		this.pagenum = 0L;
 	}
 
-	public Long getPagenum() {
-		return pagenum;
+	public Pager getItemcount() {
+		if (itemcount == null) {
+			itemcount = new Pager(5);
+		}
+		return itemcount;
 	}
 
-	public void setPagenum(Long pagenum) {
-		this.pagenum = pagenum;
+	public void setItemcount(Pager itemcount) {
+		this.itemcount = itemcount;
 	}
 
 	public String getDeletereportid() {
@@ -221,12 +222,15 @@ public abstract class Post extends Sysprop {
 	}
 
 	private void createTags() {
-		if (getTags() == null) return;
+		if (getTags() == null || getTags().isEmpty()) return;
 		ArrayList<Tag> tagz = new ArrayList<Tag>();
 		for (int i = 0; i < getTags().size(); i++) {
 			String ntag = getTags().get(i);
 			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
 			if (!StringUtils.isBlank(t.getTag())) {
+				Pager tagged = new Pager(1);
+				AppConfig.client().findTagged(getType(), new String[]{t.getTag()}, tagged);
+				t.setCount((int) tagged.getCount() + 1);
 				getTags().set(i, t.getTag());
 				tagz.add(t);
 			}
@@ -237,10 +241,9 @@ public abstract class Post extends Sysprop {
 	public static <P extends Post> void readAllCommentsForPosts(List<P> list, int maxPerPage) {
 		if (list != null) {
 			for (P post : list) {
-				Pager page = new Pager(post.getPagenum(), null, true, 5);
-				List<Comment> commentz = AppConfig.client().getChildren(post, Utils.type(Comment.class), page);
+				List<Comment> commentz = AppConfig.client().
+						getChildren(post, Utils.type(Comment.class), post.getItemcount());
 				post.setComments(commentz);
-				post.setPagenum(page.getPage());
 			}
 		}
 	}
@@ -288,8 +291,7 @@ public abstract class Post extends Sysprop {
 	@JsonIgnore
 	public List<Comment> getComments(Pager pager) {
 		this.comments = AppConfig.client().getChildren(this, Utils.type(Comment.class), pager);
-		this.commentcount = pager.getCount();
-		this.pagenum = pager.getPage();
+		this.itemcount = pager;
 		return this.comments;
 	}
 

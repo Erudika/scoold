@@ -3,7 +3,7 @@
 	<hr>
 	<div class="row">
 		#foreach($entry in $allLocales.entrySet())
-		<div class="col m4">
+		<div class="col s12 m6 l4">
 			#set($showLangKey = $entry.key)
 			#set($showLangName = $!entry.value.getDisplayName($!entry.value))
 			#set($progress = $!langProgressMap.get($!entry.key))
@@ -30,7 +30,7 @@
 						#end
 					</span>
 					#if ($progress < 100)
-					<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
+					<!--<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>-->
 					#end
 				</div>
 			</div>

@@ -23,7 +23,6 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile.Badge;
 import static com.erudika.para.core.User.Groups.*;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import java.util.List;
 
@@ -41,14 +40,10 @@ public class Profile extends Base{
 	public List<? extends Post> questionslist;
 	public List<? extends Post> answerslist;
 	public String gravatarPicture;
-	public Pager qpager;
-	public Pager apager;
 
     public Profile() {
         title = lang.get("profile.title");
 		canEdit = false;
-		qpager = new Pager();
-		apager = new Pager();
 
 		if (!authenticated && !param("id")) {
 			setRedirect(HOMEPAGE);
@@ -76,9 +71,6 @@ public class Profile extends Base{
 		}
 
 		title = lang.get("profile.title") + " - " + showUser.getName();
-		questionslist = showUser.getAllQuestions(qpager);
-		answerslist = showUser.getAllAnswers(apager);
-		gravatarPicture = "https://www.gravatar.com/avatar/" + Utils.md5(showUser.getUser().getEmail()) + "?size=400&d=mm";
 
 		if (param("getsmallpersonbox")) {
 			addModel("showAjaxUser", showUser);
@@ -87,7 +79,6 @@ public class Profile extends Base{
     }
 
     public void onGet() {
-		if (!authenticated || showUser == null) return;
 		if (!isMyProfile) {
 			boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
 			boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
@@ -97,6 +88,9 @@ public class Profile extends Base{
 				showUser.update();
 			}
 		}
+		questionslist = showUser.getAllQuestions(itemcount1);
+		answerslist = showUser.getAllAnswers(itemcount2);
+		gravatarPicture = "https://www.gravatar.com/avatar/" + Utils.md5(showUser.getUser().getEmail()) + "?size=400&d=mm";
     }
 
     public void onPost() {
@@ -124,7 +118,7 @@ public class Profile extends Base{
 				update = true;
 			}
 
-			addBadgeOnce(Badge.NICEPROFILE, showUser.isComplete() && isMyid(showUser.getId()));
+			update = update || addBadgeOnce(Badge.NICEPROFILE, showUser.isComplete() && isMyid(showUser.getId()));
 
 			if (update) {
 				showUser.update();

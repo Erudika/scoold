@@ -310,11 +310,11 @@ public class LanguageUtils {
 		double approved = value;
 
 		Sysprop progress = getProgressMap();
-
+		Integer percent = (Integer) progress.getProperty(langCode);
 		if (value == PLUS) {
-			approved = Math.round((Integer) progress.getProperty(langCode) * (defsize / 100) + 1);
+			approved = Math.round(percent * (defsize / 100) + 1);
 		} else if (value == MINUS) {
-			approved = Math.round((Integer) progress.getProperty(langCode) * (defsize / 100) - 1);
+			approved = Math.round(percent * (defsize / 100) - 1);
 		}
 
 		// allow 3 identical words per language (i.e. Email, etc)
@@ -327,7 +327,9 @@ public class LanguageUtils {
 		} else {
 			progress.addProperty(langCode, (int) ((approved / defsize) * 100));
 		}
-		AppConfig.client().update(progress);
+		if (percent < 100 && approved >= (percent * defsize) / 100) {
+			AppConfig.client().update(progress);
+		}
 	}
 
 	private Sysprop getProgressMap() {
@@ -366,7 +368,7 @@ public class LanguageUtils {
 							langmap.put(propKey, propVal);
 						}
 						if (langCode.equals(getDefaultLanguageCode())) {
-							progress = langmap.size();
+							progress = langmap.size(); // 100%
 						}
 						if (progress > 0) {
 							updateTranslationProgressMap(langCode, progress);

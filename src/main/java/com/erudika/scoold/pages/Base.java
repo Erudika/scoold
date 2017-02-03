@@ -49,7 +49,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import org.apache.click.Page;
 import org.apache.click.util.ClickUtils;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 /**
@@ -122,6 +122,8 @@ public class Base extends Page {
 	public List<Comment> commentslist;
 	public List<String> badgelist;
 	public Pager itemcount;
+	public Pager itemcount1;
+	public Pager itemcount2;
 	public String showParam;
 
 	public transient Utils utils = Utils.getInstance();
@@ -138,7 +140,9 @@ public class Base extends Page {
 	public Base() {
 		commentslist = new ArrayList<Comment>();
 		badgelist = new ArrayList<String>();
-		itemcount = new Pager();
+		itemcount = new Pager(NumberUtils.toInt(getParamValue("page"), 1), MAX_ITEMS_PER_PAGE);
+		itemcount1 = new Pager(NumberUtils.toInt(getParamValue("page1"), 1), MAX_ITEMS_PER_PAGE);
+		itemcount2 = new Pager(NumberUtils.toInt(getParamValue("page2"), 1), MAX_ITEMS_PER_PAGE);
 		checkAuth();
 		cdnSwitch();
 		showParam = getParamValue("show");
@@ -304,50 +308,50 @@ public class Base extends Page {
 	public void processVoteRequest(String type, String id) {
 		if (id == null) return;
 		ParaObject votable = pc.read(id);
+		Profile author = null;
 		boolean result = false;
-		Integer votes = 0;
+		boolean updateAuthUser = false;
+		boolean updateVoter = false;
 
 		if (votable != null && authenticated) {
 			try {
-				Profile author = pc.read(votable.getCreatorid());
-				votes = (Integer) PropertyUtils.getProperty(votable, "votes");
+				author = pc.read(votable.getCreatorid());
+				Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
 
-				if (param("voteup")) {
-					result = votable.voteUp(authUser.getId());
-					if (!result) return;
+				if (param("voteup") && pc.voteUp(votable, authUser.getId())) {
 					votes++;
 					authUser.incrementUpvotes();
-					int award = 0;
+					updateAuthUser = true;
+					int reward = 0;
 
 					if (votable instanceof Post) {
 						Post p = (Post) votable;
 						if (p.isReply()) {
-							addBadge(Badge.GOODANSWER, votes >= AppConfig.GOODANSWER_IFHAS);
-							award = AppConfig.ANSWER_VOTEUP_REWARD_AUTHOR;
+							addBadge(Badge.GOODANSWER, author, votes >= AppConfig.GOODANSWER_IFHAS, false);
+							reward = AppConfig.ANSWER_VOTEUP_REWARD_AUTHOR;
 						} else if (p.isQuestion()) {
-							addBadge(Badge.GOODQUESTION, votes >= AppConfig.GOODQUESTION_IFHAS);
-							award = AppConfig.QUESTION_VOTEUP_REWARD_AUTHOR;
+							addBadge(Badge.GOODQUESTION, author, votes >= AppConfig.GOODQUESTION_IFHAS, false);
+							reward = AppConfig.QUESTION_VOTEUP_REWARD_AUTHOR;
 						} else {
-							award = AppConfig.VOTEUP_REWARD_AUTHOR;
+							reward = AppConfig.VOTEUP_REWARD_AUTHOR;
 						}
 					} else {
-						award = AppConfig.VOTEUP_REWARD_AUTHOR;
+						reward = AppConfig.VOTEUP_REWARD_AUTHOR;
 					}
 
-					if (author != null) {
-						author.addRep(award);
-						author.update();
+					if (author != null && reward > 0) {
+						author.addRep(reward);
+						updateVoter = true;
 					}
-				} else if (param("votedown")) {
-					result = votable.voteDown(authUser.getId());
-					if (!result) return;
+				} else if (param("votedown") && pc.voteDown(votable, authUser.getId())) {
 					votes--;
 					authUser.incrementDownvotes();
+					updateAuthUser = true;
 
-					if (StringUtils.equalsIgnoreCase(type, Comment.class.getSimpleName()) && votes <= -5) {
+					if (votable instanceof Comment && votes <= -5) {
 						//treat comment as offensive or spam - hide
 						((Comment) votable).setHidden(true);
-					} else if (StringUtils.equalsIgnoreCase(type, Post.class.getSimpleName()) && votes <= -5) {
+					} else if (votable instanceof Post && votes <= -5) {
 						Post p = (Post) votable;
 						//mark post for closing
 						Report rep = new Report();
@@ -360,7 +364,7 @@ public class Base extends Page {
 					}
 					if (author != null) {
 						author.removeRep(AppConfig.POST_VOTEDOWN_PENALTY_AUTHOR);
-						author.update();
+						updateVoter = true;
 						//small penalty to voter
 						authUser.removeRep(AppConfig.POST_VOTEDOWN_PENALTY_VOTER);
 					}
@@ -372,9 +376,15 @@ public class Base extends Page {
 			addBadgeOnce(Badge.CRITIC, authUser.getDownvotes() >= AppConfig.CRITIC_IFHAS);
 			addBadgeOnce(Badge.VOTER, authUser.getTotalVotes() >= AppConfig.VOTER_IFHAS);
 
-			if (result) {
-				votable.setVotes(votes);
-				votable.update();
+			if (updateAuthUser || updateVoter) {
+				ArrayList<Profile> list = new ArrayList<Profile>(2);
+				if (updateVoter) {
+					list.add(author);
+				}
+				if (updateAuthUser) {
+					list.add(authUser);
+				}
+				pc.updateAll(list);
 			}
 		}
 
@@ -462,14 +472,18 @@ public class Base extends Page {
 	}
 
 	public final boolean addBadgeOnce(Badge b, boolean condition) {
-		return addBadge(b, condition && !authUser.hasBadge(b));
+		return addBadge(b, authUser, condition && !authUser.hasBadge(b), false);
 	}
 
-	public final boolean addBadge(Badge b, boolean condition) {
-		return addBadge(b, null, condition);
+	public final boolean addBadgeOnceAndUpdate(Badge b, boolean condition) {
+		return addBadgeAndUpdate(b, condition && !authUser.hasBadge(b));
 	}
 
-	public final boolean addBadge(Badge b, Profile u, boolean condition) {
+	public final boolean addBadgeAndUpdate(Badge b, boolean condition) {
+		return addBadge(b, null, condition, true);
+	}
+
+	public final boolean addBadge(Badge b, Profile u, boolean condition, boolean update) {
 		if (u == null) u = authUser;
 		if (!authenticated || !condition) return false;
 
@@ -478,8 +492,9 @@ public class Base extends Page {
 
 		u.addBadge(b);
 		u.setNewbadges(newb);
-		u.update();
-
+		if (update) {
+			u.update();
+		}
 		return true;
 	}
 

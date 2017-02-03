@@ -113,7 +113,7 @@ public class Translate extends Base{
 				} else {
 					trans.setApproved(true);
 					langutils.approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
-					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true);
+					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true, true);
 				}
 				pc.update(trans);
 			}
