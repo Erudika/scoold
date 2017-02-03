@@ -74,6 +74,7 @@ public class Base extends Page {
 
 	public static final String FEED_KEY_SALT = ":scoold";
 	public static final String FB_APP_ID = Config.FB_APP_ID;
+	public static final String GOOGLE_CLIENT_ID = Config.getConfigParam("google_client_id", "");
 
 	public final String prefix = getContext().getServletContext().getContextPath()+"/";
 	public final String localeCookieName = Config.APP_NAME_NS + "-locale";

@@ -21,7 +21,7 @@
 
 /* SITE */
 
-   Last update: 2017/01/08
+   Last update: 2017/02/03
    Standards: HTML5, CSS3, OpenSearch, RSS
    Components: ParaIO.com, JS, CSS, HTML5 (clientside), Java (serverside)
    Software: Apache Click, Amazon DynamoDB, Elasticsearch, Heroku, jQuery
