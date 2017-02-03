@@ -31,6 +31,18 @@
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
 
+				<a href="#" class="next-div-toggle mll pll" onclick="$(this).hide()">
+					<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
+					<span class="grey-text text-darken-1">($!lang.get("posts.locationtxt"))</span>
+				</a>
+				<div class="input-field hide">
+					<i class="fa fa-map-marker ptm prefix grey-text"></i>
+					<label for="location_text">$!{lang.get("profile.about.location")}</label>
+					<input id="location_text" name="location" class="locationbox validate" type="text" value="">
+					<input type="hidden" name="latlng" value="">
+					<input type="hidden" name="address" value="">
+				</div>
+
 				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
 					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
@@ -51,10 +63,10 @@
 
 			#if ($authenticated)
 				<a href="#" class="chip next-div-toggle $sortarr.filter">$!lang.get("posts.filtered")</a>
-				<div class="hide mtm">
+				<div class="hide r">
 					<form method="get" id="filter-questions-form" action="$questionslink/filter/">
-						TODO: filter by location
-						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
+						<a href="$questionslink/filter/local" class="chip">$!lang.get("posts.locationfilter")</a>
+						<a href="$questionslink/filter/favtags" class="chip">$!lang.get("posts.tagfilter")</a>
 					</form>
 				</div>
 			#end
@@ -72,7 +84,7 @@
 		</h2>
 		<hr>
 
-		#if ($questionslist.isEmpty())
+		#if (!$questionslist || $questionslist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">
 				<div class="em5v">
 					$!{lang.get("profile.posts.noquestions")}

@@ -23,7 +23,21 @@ $(function () {
 	 **************************/
 
 	if (locationbox.length && !mapCanvas.length) {
-		new google.maps.places.SearchBox(locationbox.get(0));
+		var searchLocation = new google.maps.places.SearchBox(locationbox.get(0));
+		searchLocation.addListener('places_changed', function () {
+			var lat = searchLocation.getPlaces()[0].geometry.location.lat();
+			var lng = searchLocation.getPlaces()[0].geometry.location.lng();
+			if (lat && lng) {
+				locationbox.siblings("input[name=latlng]").val(lat + "," + lng);
+			}
+			if (searchLocation.getPlaces()[0].formatted_address) {
+				locationbox.siblings("input[name=address]").val(searchLocation.getPlaces()[0].formatted_address);
+			}
+		});
+		// prevent form submit on enter pressed
+		locationbox.keypress(function (event) {
+			if (event.keyCode === 10 || event.keyCode === 13) event.preventDefault();
+		});
 	}
 
 	function initMap(elem) {
@@ -607,7 +621,7 @@ $(function () {
 				if (saved) {
 					askForm.find(".save-icon").show().delay(2000).fadeOut();
 				}
-			}, 2000);
+			}, 3000);
 
 			askForm.on("submit", function () {
 				localStorage.removeItem("ask-form-title");
@@ -627,7 +641,7 @@ $(function () {
 					localStorage.setItem("answer-form-body", answerBody.value());
 					answerForm.find(".save-icon").show().delay(2000).fadeOut();
 				}
-			}, 2000);
+			}, 3000);
 
 			answerForm.on("submit", function () {
 				localStorage.removeItem("answer-form-body");

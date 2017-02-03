@@ -44,7 +44,7 @@ public class Settings extends Base {
 			clearSession();
 			redirectto = signinlink + "?code=4&success=true";
 		} else {
-			String favtags = getParamValue("favtags");
+			String favtags = getParamValue("tags");
 			String latlng = getParamValue("latlng");
 			if (!StringUtils.isBlank(favtags)) {
 				Set<String> ts = new LinkedHashSet<String>();

@@ -65,7 +65,9 @@ public class Feedback <P extends Post> extends Base{
 		Post post = populate(new com.erudika.scoold.core.Feedback(), "title", "body", "tags|,");
 		error = validate(post);
 		if (error.isEmpty()) {
-			createAndGoToPost(post);
+			post.create();
+			authUser.setLastseen(System.currentTimeMillis());
+			setRedirect(getPostLink(post, false, false));
 		}
 	}
 

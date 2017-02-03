@@ -258,7 +258,6 @@
 #macro(questionbox $showpost )
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
-
 <div class="card-panel">
 	<div class="row mbn">
 		#set($votes = $showpost.votes)
@@ -372,44 +371,43 @@
 		<div class="row">
 			<div class="col s12">
 				<div class="lightborder pam">
-				#if ($isAdmin)
-					<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
-				#end
-
-				#if ($canEdit)
-					<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
-				#end
-				#if ($isMine || $isMod)
-					<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
-				#end
-
-				#if ($canComment)
-					<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
-				#end
-
-				#if ($showpost.lasteditby)
-				<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
-				#end
-
-				#if ($isMod && $showpost.isQuestion())
-					#if ($showPost.isClosed())
-					<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm"><i class="fa fa-unlock"></i> $!lang.get("reopen")</a>
-					#else
-					<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
+					#if ($isAdmin)
+						<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
 					#end
-				#end
 
-				#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
-					#getreportlink($showpost "$questionlink/$!showpost.id" "prm")
-				#end
+					<a href="#post-$!showpost.id" title="Permalink" class="right"
+						 onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
 
-				<a href="#post-$!showpost.id" title="Permalink"
-					 onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
+					#if ($canEdit)
+						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
+					#end
+					#if ($isMine || $isMod)
+						<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
+					#end
 
-				#if ($canComment)
-					#newcommentform($showpost.id true "$questionlink/$showpost.id")
-				#end
+					#if ($canComment)
+						<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
+					#end
 
+					#if ($showpost.lasteditby)
+					<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
+					#end
+
+					#if ($isMod && $showpost.isQuestion())
+						#if ($showPost.isClosed())
+						<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm"><i class="fa fa-unlock"></i> $!lang.get("reopen")</a>
+						#else
+						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
+						#end
+					#end
+
+					#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
+						#getreportlink($showpost "$questionlink/$!showpost.id" "prm")
+					#end
+
+					#if ($canComment)
+						#newcommentform($showpost.id true "$questionlink/$showpost.id")
+					#end
 				</div>
 			</div>
 		</div>

@@ -18,6 +18,7 @@
 
 package com.erudika.scoold.pages;
 
+import com.erudika.para.core.Address;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Question;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -45,6 +47,7 @@ public class Questions extends Base{
 				setRedirect(signinlink);
 			} else {
 				addModel("askSelected", "navbtn-hover");
+				addModel("includeGMapsScripts", true);
 				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
 			}
 		} else {
@@ -75,28 +78,50 @@ public class Questions extends Base{
 					itemcount.setSortby("votes");
 					questionslist = pc.findQuery(type, "*", itemcount);
 				} else if ("unanswered".equals(getParamValue("sortby"))) {
-					itemcount.setSortby("answercount");
-					questionslist = pc.findTerms(type, Collections.singletonMap("answercount", 0L), true, itemcount);
-				} else {
-					if (authenticated && authUser.hasFavtags()) {
+					itemcount.setSortby("timestamp");
+					itemcount.setDesc(false);
+					questionslist = pc.findQuery(type, "properties.answercount:0", itemcount);
+				} else if ("filter".equals(getParamValue("sortby")) && authenticated) {
+					if ("favtags".equals(getParamValue("filter")) && authUser.hasFavtags()) {
+						addModel("tagFilterOn", true);
 						questionslist = pc.findTermInList(type,
 								Config._TAGS, new ArrayList<String>(authUser.getFavtags()), itemcount);
-					} else {
-						questionslist = pc.findQuery(type, "*", itemcount);
+					} else if (!StringUtils.isBlank(authUser.getLatlng())) {
+						addModel("localFilterOn", true);
+						String[] ll = authUser.getLatlng().split(",");
+						if (ll.length == 2) {
+							double lat = NumberUtils.toDouble(ll[0]);
+							double lng = NumberUtils.toDouble(ll[1]);
+							questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
+						}
 					}
+				} else {
+					questionslist = pc.findQuery(type, "*", itemcount);
 				}
 			}
 			fetchProfiles(questionslist);
-			addModel("tagFilterOn", authenticated && authUser.hasFavtags());
 		}
 	}
 
 	public void onPost() {
-		Question q = populate(new Question(), "title", "body", "tags|,");
+		Question q = populate(new Question(), "title", "body", "tags|,", "location");
 		q.setCreatorid(authUser.getId());
 		error = validate(q);
 		if (error.isEmpty()) {
-			createAndGoToPost(q);
+			q.setLocation(getParamValue("location"));
+			String qid = q.create();
+			String latlng = getParamValue("latlng");
+			if (!StringUtils.isBlank(latlng)) {
+				Address addr = new Address();
+				addr.setAddress(getParamValue("address"));
+				addr.setCountry(getParamValue("location"));
+				addr.setLatlng(latlng);
+				addr.setParentid(qid);
+				addr.setCreatorid(authUser.getId());
+				pc.create(addr);
+			}
+			authUser.setLastseen(System.currentTimeMillis());
+			setRedirect(getPostLink(q, false, false));
 		}
 	}
 

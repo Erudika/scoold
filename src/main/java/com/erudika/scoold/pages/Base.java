@@ -278,14 +278,6 @@ public class Base extends Page {
 
 	/****  POSTS  ****/
 
-	public final void createAndGoToPost(Post p) {
-		if (p != null) {
-			p.create();
-			authUser.setLastseen(System.currentTimeMillis());
-			setRedirect(getPostLink(p, false, false));
-		}
-	}
-
 	public final void fetchProfiles(List<? extends Post> posts) {
 		if (posts == null || posts.isEmpty()) return;
 		Map<String, String> authorids = new HashMap<String, String>(posts.size());

@@ -57,6 +57,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String lasteditby;
 	@Stored private Long commentcount;
 	@Stored private String deletereportid;
+	@Stored private String location;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -86,6 +87,14 @@ public abstract class Post extends Sysprop {
 	public void setDeletereportid(String deletereportid) {
 		this.deletereportid = deletereportid;
 	}
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
 	public List<String> getTags() {
 		return tags;
