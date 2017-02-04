@@ -45,7 +45,7 @@ import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
  */
 @Configuration
 @SpringBootApplication
-public class ScooldServer  {
+public class ScooldServer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 

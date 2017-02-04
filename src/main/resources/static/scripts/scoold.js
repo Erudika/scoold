@@ -7,16 +7,9 @@
 $(function () {
 	"use strict";
 	var ajaxpath = window.location.pathname,
-		ipdbkey = "da8cac8c9dd7287636b06a0421c0efa05872f65f70d3902e927cf66f530b9fd6",
-		ipdburl = "http://api.ipinfodb.com/v3/ip-city/?key="+ipdbkey+"&format=json&callback=?&ip=",
-		hideMsgBoxAfter = 10 * 1000, //10 sec
 		mapCanvas = $("div#map-canvas"),
 		locationbox = $("input.locationbox"),
-		rusuremsg = lang.areyousure,
-		highlightfn = function(element) {$(element).addClass("error");clearLoading();},
-		unhighlightfn = function(element) {$(element).removeClass("error");},
-		errorplacefn = function(error, element) {error.insertBefore(element);},
-		reqmsg = lang['signup.form.error.required'];
+		rusuremsg = lang.areyousure;
 
 	/**************************
 	 *    Google Maps API
@@ -130,19 +123,6 @@ $(function () {
 	if (mapCanvas.length && mapCanvas.is(":visible")) {
 		initMap();
 	}
-
-	try {
-		if (typeof userip !== "undefined" && userip !== "" && userip !== "127.0.0.1") {
-			$.getJSON(ipdburl + userip, function(data) {
-				if (data && data.statusCode === 'OK' && $.trim(data.cityName).length > 1) {
-					var found = data.cityName + ", " + data.countryName;
-					found = found.toLowerCase();
-					localStorage.setItem("scoold-country", data.countryCode);
-				}
-			});
-		}
-	} catch(err) {}
-
 
 	/****************************************************
      *					MISC FUNCTIONS
@@ -415,12 +395,6 @@ $(function () {
 		displayTags(tagsInput);
 	}
 
-//	autocompleteBind("input.locationbox", {find: "locations"});
-//	autocompleteContactBind("input.contactnamebox", {find: "contacts"});
-//	autocompleteTagBind("input.tagbox", {find: "tags"});
-//	autocompleteUserBind("input.personbox", {find: "people"});
-//	autocompleteBind("input.typebox", {find: "classes"});
-
 	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/
@@ -483,17 +457,6 @@ $(function () {
      *                    TRANSLATIONS
      ****************************************************/
 
-	var validateTrans = function(form) {
-		form.validate({
-			highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn,
-			rules: {value: {required: true, notEmpty: true}},
-			messages: {
-				value: {required: reqmsg, notEmpty: reqmsg}
-			}
-		});
-		return form.valid();
-	};
-
 	$(document).on("click", "a.delete-translation",  function() {
 		var that = $(this);
 		return areYouSure(function() {
@@ -504,14 +467,10 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(document).on("click", "#addcont-translation-btn",  function() {
-		return validateTrans($(this).closest("form"));
-	});
-
 	$(document).on("click", "#add-translation-btn",  function() {
 		var that = $(this);
 		var form = that.closest("form");
-		var isValid = true; //validateTrans(form);
+		var isValid = true;
 		var textbox = $("textarea[name='value']", form);
 		var father = that.closest("div.newtranslationform");
 		if ($.trim(textbox.val()) !== "" && isValid) {
@@ -532,15 +491,15 @@ $(function () {
      *                  PAGINATION
      ****************************************************/
 
-	function loadMoreHandler(dis, callback) {
-		var that = $(dis),
+	$(document).on("click", "a.more-link",  function() {
+		var that = $(this),
 			macroCode = that.siblings(".page-macro-code").text(),
 			contentDiv = that.parent("div").prev("div"),
 			href = that.attr("href"),
 			cleanHref = href.substring(0, href.lastIndexOf("=") + 1);
 
 		that.addClass("loading");
-		$.get(dis.href, {pageMacroCode: macroCode}, function(data) {
+		$.get(this.href, {pageMacroCode: macroCode}, function(data) {
 			clearLoading();
 			var trimmed = $.trim(data);
 			if (trimmed !== "") {
@@ -563,10 +522,6 @@ $(function () {
 		});
 
 		return false;
-	}
-
-	$(document).on("click", "a.more-link",  function() {
-		return loadMoreHandler(this, function() {});
 	});
 
 	/****************************************************
@@ -723,28 +678,9 @@ $(function () {
 		return ds;
 	});
 
-
 	var questionFilterForm = $("form#filter-questions-form");
 	questionFilterForm.find("select").change(function() {
 		questionFilterForm.submit();
 	}).end().find(":submit").hide();
-
-
-	/************************************************************************
-     *                           JS VALIDATION
-     ************************************************************************/
-	var valobj = {highlight: highlightfn, unhighlight: unhighlightfn, errorPlacement: errorplacefn};
-
-	$(document).on("click touchend", "input[type=submit], button[type=submit]",  function() {
-		var form = $(this).closest("form"),
-			vj = form.find("input[name=vj]").val(),
-			result = true;
-		if (vj && vj !== "") {
-			$.extend(valobj, JSON.parse(vj.replace(/'/g, "\"")));
-			form.validate(valobj);
-			result = form.valid();
-		}
-		return result;
-	});
 
 });

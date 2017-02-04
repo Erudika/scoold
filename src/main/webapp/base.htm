@@ -273,15 +273,10 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize-autocomplete/1.0.7/jquery.materialize-autocomplete.min.js"></script>
 
-		#macro(langjs)
-			#set($jslang = ["areyousure","more","signup.form.error.required","signup.form.error.email","maxlength","minlength", "tags.toomany","close","save","clickedit"])
-			{#foreach($!langkey in $jslang)"$!langkey":"$utils.escapeJavascript($!lang.get($!langkey))"#if($velocityCount < $jslang.size()),#end#end}
-		#end
-		#set($_langjs = "#langjs()")
 		#set($sectok = "#sectoken(true)")
 		#set($sectok = "$sectok.trim()")
 		<script type="text/javascript">
-			var lang = $_langjs.trim(), userip = "$request.remoteAddr", csrftoken = "$sectok";
+			var lang = {areyousure: "$!lang.get('areyousure')", csrftoken = "$!sectok";
 			$(".button-collapse").sideNav();
 			$('select').material_select();
 			$('textarea').characterCounter();

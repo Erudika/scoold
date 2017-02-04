@@ -23,7 +23,6 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile.Badge;
 import static com.erudika.para.core.User.Groups.*;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Utils;
 import java.util.List;
 
 /**
@@ -90,7 +89,7 @@ public class Profile extends Base{
 		}
 		questionslist = showUser.getAllQuestions(itemcount1);
 		answerslist = showUser.getAllAnswers(itemcount2);
-		gravatarPicture = "https://www.gravatar.com/avatar/" + Utils.md5(showUser.getUser().getEmail()) + "?size=400&d=mm";
+		gravatarPicture = getGravatar(showUser.getUser().getEmail());
     }
 
     public void onPost() {
