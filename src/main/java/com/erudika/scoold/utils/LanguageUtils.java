@@ -176,7 +176,9 @@ public class LanguageUtils {
 	 * @param deflang the default language map
 	 */
 	public void setDefaultLanguage(Map<String, String> deflang) {
-		LANG_CACHE.put(getDefaultLanguageCode(), deflang);
+		if (deflang != null && !deflang.isEmpty()) {
+			LANG_CACHE.put(getDefaultLanguageCode(), deflang);
+		}
 	}
 
 	/**
