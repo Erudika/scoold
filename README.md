@@ -2,8 +2,7 @@
 
 ## Yet another Stack Overflow clone
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.erudika/scoold/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.erudika/scoold)
-[![Join the chat at https://gitter.im/Erudika/para](https://badges.gitter.im/Erudika/para.svg)](https://gitter.im/Erudika/para?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Scoold is a Q&A platform written in Java. It's an old project (~2011) which was recently refactored and open-sourced.
 The primary goal of this project is educational but it can also be integrated as Q&A section within your website.
