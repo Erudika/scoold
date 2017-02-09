@@ -252,11 +252,13 @@ public class Profile extends Sysprop implements Comparable<Profile>{
         this.aboutme = aboutme;
     }
 
+	@SuppressWarnings("unchecked")
 	public List<Question> getAllQuestions(Pager pager) {
 		if (getId() == null) return new ArrayList<Question>();
 		return (List<Question>) getPostsForUser(Utils.type(Question.class), pager);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Reply> getAllAnswers(Pager pager) {
 		if (getId() == null) return new ArrayList<Reply>();
 		return (List<Reply>) getPostsForUser(Utils.type(Reply.class), pager);

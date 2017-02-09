@@ -1,30 +1,21 @@
 #macro(basichead $showdesc $showkeyw)
-	#if ($IN_PRODUCTION)
-		#set($slink = $CDN_URL)
-		#set($ilink = $CDN_URL)
-		#set($minsuffix = "-min")
-	#else
-		#set($slink = "$context/styles")
-		#set($ilink = "$context/images")
-		#set($minsuffix = "")
-	#end
 	<title>$APPNAME $!title </title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-	<link href="$ilink/logosq.png" rel="image_src">
-	<link href="$ilink/logosq.png" rel="apple-touch-icon">
-	<link href="$ilink/favicon.ico" rel="shortcut icon">
+	<link href="$!imageslink/logosq.png" rel="image_src">
+	<link href="$imageslink/logosq.png" rel="apple-touch-icon">
+	<link href="$imageslink/favicon.ico" rel="shortcut icon">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
-	<link href="$slink/style$!{minsuffix}.css" rel="stylesheet" media="screen">
+	<link href="$!styleslink/style.css" rel="stylesheet" media="screen">
 	#if ($showdesc && !$showdesc.isEmpty())
 		<meta name="description" content="$showdesc">
 	#end
 	#if ($showkeyw && !$showkeyw.isEmpty())
 		<meta name="keywords" content="$showkeyw">
 	#end
-	<meta property="fb:app_id" content="99517177417">
+	<meta property="fb:app_id" content="$!FB_APP_ID">
 #end
 ################# COMMENTS MACROS #####################
 #macro(newcommentform $parentid $hidden $uri)

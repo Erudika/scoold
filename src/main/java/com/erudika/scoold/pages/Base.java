@@ -61,7 +61,7 @@ public class Base extends Page {
 	public static final Logger logger = LoggerFactory.getLogger(Base.class);
 
 	public static final String APPNAME = Config.APP_NAME; //app name
-	public static final String CDN_URL = Config.getConfigParam("cdn_url", "");
+	public static final String CDN_URL = Config.getConfigParam("cdn_url", "/");
 	public static final String DESCRIPTION = Config.getConfigParam("meta_description", "");
 	public static final String KEYWORDS = Config.getConfigParam("meta_keywords", "");
 	public static final boolean IN_PRODUCTION = Config.IN_PRODUCTION;
@@ -83,10 +83,9 @@ public class Base extends Page {
 	public final String peoplelink = prefix + "people";
 	public final String profilelink = prefix + "profile";
 
-	public String minsuffix = "-min";
-	public String imageslink = prefix + "images";
-	public String scriptslink = prefix + "scripts";
-	public String styleslink = prefix + "styles";
+	public String imageslink = (Config.IN_PRODUCTION ? CDN_URL : prefix) + "images";
+	public String scriptslink = (Config.IN_PRODUCTION ? CDN_URL : prefix) + "scripts";
+	public String styleslink = (Config.IN_PRODUCTION ? CDN_URL : prefix) + "styles";
 
 	public final String searchlink = prefix + "search";
 	public final String searchquestionslink = searchlink + "/questions";
@@ -145,7 +144,6 @@ public class Base extends Page {
 		itemcount1 = new Pager(NumberUtils.toInt(getParamValue("page1"), 1), MAX_ITEMS_PER_PAGE);
 		itemcount2 = new Pager(NumberUtils.toInt(getParamValue("page2"), 1), MAX_ITEMS_PER_PAGE);
 		checkAuth();
-		cdnSwitch();
 		showParam = getParamValue("show");
 		canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || isMod);
 		addModel("userip", req.getRemoteAddr());
@@ -162,7 +160,6 @@ public class Base extends Page {
 		addModel("txtcolor1", Config.getConfigParam("text_color1", "#039be5"));
 		addModel("txtcolor2", Config.getConfigParam("text_color2", "#ec407a"));
 		addModel("txtcolor3", Config.getConfigParam("text_color3", "#444444"));
-
 	}
 
 	public void onInit() {
@@ -171,20 +168,6 @@ public class Base extends Page {
 	}
 
 	/* * PRIVATE METHODS * */
-
-	private void cdnSwitch() {
-		if (IN_PRODUCTION) {
-			scriptslink = CDN_URL;
-			imageslink = CDN_URL;
-			styleslink = CDN_URL;
-			minsuffix = "-min";
-		} else {
-			scriptslink = prefix + "scripts";
-			imageslink = prefix + "images";
-			styleslink = prefix + "styles";
-			minsuffix = "";
-		}
-	}
 
 	private void checkAuth() {
 		try{
