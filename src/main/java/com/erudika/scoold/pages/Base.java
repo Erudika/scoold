@@ -154,7 +154,7 @@ public class Base extends Page {
 		addModel("returnto", req.getAttribute("javax.servlet.forward.request_uri"));
 		addModel("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
 		addModel("showBranding", Config.getConfigBoolean("show_branding", true));
-		addModel("logoUrl", Config.getConfigParam("logo_url", imageslink + "/logo.png"));
+		addModel("logoUrl", Config.getConfigParam("logo_url", imageslink + "/logo.svg"));
 		addModel("logoWidth", Config.getConfigInt("logo_width", 90));
 		addModel("bgcolor1", Config.getConfigParam("background_color1", "#03a9f4"));
 		addModel("bgcolor2", Config.getConfigParam("background_color2", "#0277bd"));

@@ -4,12 +4,11 @@
  * (CC) BY-SA
  */
 /*global window: false, jQuery: false, $: false, lang, google: false */
+"use strict";
 $(function () {
-	"use strict";
-	var ajaxpath = window.location.pathname,
-		mapCanvas = $("div#map-canvas"),
-		locationbox = $("input.locationbox"),
-		rusuremsg = lang.areyousure;
+	var mapCanvas = $("div#map-canvas");
+	var locationbox = $("input.locationbox");
+	var rusuremsg = lang.areyousure;
 
 	/**************************
 	 *    Google Maps API

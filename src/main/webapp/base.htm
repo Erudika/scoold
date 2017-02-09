@@ -276,7 +276,7 @@
 		#set($sectok = "#sectoken(true)")
 		#set($sectok = "$sectok.trim()")
 		<script type="text/javascript">
-			var lang = {areyousure: "$!lang.get('areyousure')", csrftoken = "$!sectok";
+			var lang = {areyousure: "$!lang.get('areyousure')"}, csrftoken = "$!sectok";
 			$(".button-collapse").sideNav();
 			$('select').material_select();
 			$('textarea').characterCounter();
