@@ -29,12 +29,6 @@ public class NotFound extends Base {
 
 	public NotFound() {
         title = lang.get("notfound.title");
-
-		addModel("APPNAME", Base.APPNAME);
-		addModel("DESCRIPTION", Base.DESCRIPTION);
-		addModel("KEYWORDS", Base.KEYWORDS);
-		addModel("CDN_URL", Base.CDN_URL);
-		addModel("IN_PRODUCTION", Base.IN_PRODUCTION);
 	}
 
 	public String getTemplate() {

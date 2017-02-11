@@ -44,16 +44,23 @@ public class Error extends ErrorPage {
 		addModel("KEYWORDS", Base.KEYWORDS);
 		addModel("CDN_URL", Base.CDN_URL);
 		addModel("IN_PRODUCTION", Base.IN_PRODUCTION);
+		addModel("imageslink", "/images");
+		addModel("styleslink", "/styles");
+		addModel("scriptslink", "/scripts");
     }
 
 	public void onInit() {
 		super.onInit();
-		Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
-		lang = langutils.readLanguage(loc.getLanguage());
-		if (lang == null || lang.isEmpty()) {
+		try {
+			Locale loc = langutils.getProperLocale(getContext().getRequest().getLocale().getLanguage());
+			lang = langutils.readLanguage(loc.getLanguage());
+			if (lang == null || lang.isEmpty()) {
+				lang = langutils.getDefaultLanguage();
+			}
+		} catch (Exception e) {
 			lang = langutils.getDefaultLanguage();
 		}
-        title = lang.get("error.title");
+		title = lang.get("error.title");
 	}
 
 	public String getTemplate() {
