@@ -342,7 +342,7 @@ public class LanguageUtils {
 		} else {
 			progress.put(langCode, (int) ((approved / defsize) * 100));
 		}
-		if (percent < 100 && approved >= (percent * defsize) / 100) {
+		if (percent < 100 && !percent.equals(progress.get(langCode))) {
 			Sysprop s = new Sysprop(progressKey);
 			for (Map.Entry<String, Integer> entry : progress.entrySet()) {
 				s.addProperty(entry.getKey(), entry.getValue());

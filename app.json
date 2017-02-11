@@ -1,0 +1,84 @@
+{
+	"name": "Scoold Q&A",
+	"description": "An open-source questions and answers platform inspired by StackOverflow.",
+	"keywords": [
+		"q&a",
+		"java",
+		"questions and answers",
+		"stackexchange",
+		"stackoverflow clone",
+		"forum"
+	],
+	"website": "https://scoold.com/",
+	"repository": "https://github.com/Erudika/scoold",
+	"logo": "http://static.scoold.com/logosq.png",
+	"scripts": {
+		"postdeploy": "java -Dserver.port=$PORT -jar target/*.jar"
+	},
+	"env": {
+		"para_access_key": {
+			"description": "Your Para access key.",
+			"value": ""
+		},
+		"para_secret_key": {
+			"description": "Your Para secret key.",
+			"value": ""
+		},
+		"para_endpoint": {
+			"description": "Para server endpoint.",
+			"value": "https://paraio.com"
+		},
+		"para_env": {
+			"description": "Should be set to 'production'.",
+			"value": "production"
+		},
+		"para_app_name": {
+			"description": "The name of the app.",
+			"value": "Scoold"
+		},
+		"para_core_package_name": {
+			"description": "Core package name.",
+			"value": "com.erudika.scoold.core"
+		},
+		"para_app_secret_key": {
+			"description": "A secret string for this particular app (any random string)",
+			"value": "db7f15cf0700e2f771b248ba0853f046"
+		},
+		"para_meta_keywords": {
+			"description": "Keywords meta tag value.",
+			"value": ""
+		},
+		"para_meta_description": {
+			"description": "Description meta tag value.",
+			"value": ""
+		},
+		"para_admin_ident": {
+			"description": "Administrator identifier - used to recognize user as admin (can be an email or a social id).",
+			"value": ""
+		},
+		"para_fb_app_id": {
+			"description": "Facebook APP ID (for login with Facebook)",
+			"value": ""
+		},
+		"para_google_client_id": {
+			"description": "Google OAuth client id (for login with Google)",
+			"value": ""
+		},
+		"para_gmaps_api_key": {
+			"description": "Google Maps API key",
+			"value": ""
+		}
+	},
+	"formation": {
+		"web": {
+			"quantity": 1,
+			"size": "free"
+		}
+	},
+	"addons": [],
+	"buildpacks": [
+		{
+			"url": "heroku/java"
+		}
+	]
+}

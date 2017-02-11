@@ -28,6 +28,8 @@ delegated to Para. This makes the code easier to read and can be learned quickly
 
 ### Quick Start
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+
 1. Clone and build the project
 2. Execute it with `java -jar target/scoold-X.Y.Z.jar` or `mvn spring-boot:run`
 3. Start a Para server
