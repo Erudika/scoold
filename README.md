@@ -4,12 +4,13 @@
 
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Scoold is a Q&A platform written in Java. It's an old project (~2011) which was recently refactored and open-sourced.
+Scoold is a Q&A platform written in Java. It's an old project (~2011) that was recently refactored and open-sourced.
 The primary goal of this project is educational but it can also be integrated as Q&A section within your website.
 
-Scoold can run on Heroku or any other PaaS. It's built on top of another project called [Para](https://github.com/Erudika/para).
-Scoold does not require a database, and the controller logic is really simple because all the backend services are
-delegated to Para. This makes the code easier to read and can be learned quickly by junior programmers.
+Scoold can run on Heroku or any other PaaS. It's lightweight - the backend is handled by a separate service called
+[Para](https://github.com/Erudika/para). Scoold does not require a database, and the controller logic is really simple
+because all the heavy lifting is delegated to Para. This makes the code easier to read and can be learned
+quickly by junior programmers.
 
 ### Features
 
@@ -26,13 +27,18 @@ delegated to Para. This makes the code easier to read and can be learned quickly
 - Social login (Facebook, Google) with Gravatar support
 - SEO friendly
 
+### Live Demo
+
+*Scoold is deployed on a free dyno and might take a minute to wake up.*
+###[Live demo on Heroku](https://live.scoold.com)
+
 ### Quick Start
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
-1. Clone and build the project
+1. Clone and build the project with `mvn install`
 2. Execute it with `java -jar target/scoold-X.Y.Z.jar` or `mvn spring-boot:run`
-3. Start a Para server
+3. Start a [Para server instance](https://paraio.org/docs)
 4. Open `localhost:8000` in your browser
 
 ### Configuration
@@ -61,11 +67,12 @@ para.core_package_name = "com.erudika.scoold.core"
 
 ## Documentation
 
-[Para Docs](https://paraio.org/docs)
+[Read the Para documentation](https://paraio.org/docs)
+
+Also, please refer to the documentation for Spring Boot and Spring MVC.
 
 ## TODO
 
-- Detailed docs on how to deploy to Heroku
 - Remove Click dependency
 - Add Checkstyle, Travis and SonarQube support
 
