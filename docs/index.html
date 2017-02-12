@@ -1,11 +1,293 @@
+<!--                      __    __
+   ______________  ____  / /___/ /
+  / ___/ ___/ __ \/ __ \/ / __  /
+ (__  ) /__/ /_/ / /_/ / / /_/ /
+/____/\___/\____/\____/_/\__,_/ .com
+-->
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Scoold</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
+<html lang="en">
+	<head>
+		<title>Scoold Home </title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<link href="https://static.scoold.com/logosq.png" rel="image_src">
+		<link href="https://static.scoold.com/logosq.png" rel="apple-touch-icon">
+		<link href="/favicon.ico" rel="shortcut icon">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
+		<meta name="description" content="Scoold is friendly place where you can get answers to your questions.">
+		<meta name="keywords" content="scoold, knowledge sharing, collaboration, wiki, forum, Q&amp;A, questions and answers, stackoverflow clone">
+		<meta property="fb:app_id" content="99517177417">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<style media="screen" type="text/css">
+			a, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
+			h1, h2, h3, h4, h5, h6 {color: #444444; font-weight: 200;}
+			.btn, .btn-large {background-color: #303030;}
+			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: transparent; opacity: 0.7;}
+			.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: #039be5;}
+			body, footer.page-footer {background-color: #444444;}
+			main {background-color: white;}
+			nav ul a {color: #303030;}
+
+			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 100;}
+			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 100;}
+			body { font-weight: 300; }
+			#header {
+				min-height: 400px;
+				background-image: url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v6H0V0zm28 8h12v6H28V8zm14-8h12v6H42V0zm14 0h12v6H56V0zm0 8h12v6H56V8zM42 8h12v6H42V8zm0 16h12v6H42v-6zm14-8h12v6H56v-6zm14 0h12v6H70v-6zm0-16h12v6H70V0zM28 32h12v6H28v-6zM14 16h12v6H14v-6zM0 24h12v6H0v-6zm0 8h12v6H0v-6zm14 0h12v6H14v-6zm14 8h12v6H28v-6zm-14 0h12v6H14v-6zm28 0h12v6H42v-6zm14-8h12v6H56v-6zm0-8h12v6H56v-6zm14 8h12v6H70v-6zm0 8h12v6H70v-6zM14 24h12v6H14v-6zm14-8h12v6H28v-6zM14 8h12v6H14V8zM0 8h12v6H0V8z' fill='%230ea4f6' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+				background-color: white;
+			}
+			#features, #contact {background-color: white;}
+
+			.pan{padding:0}
+			.pas{padding:5px}
+			.pam{padding:10px}
+			.pal{padding:20px}
+			.ptn{padding-top:0}
+			.pts{padding-top:5px}
+			.ptm{padding-top:10px}
+			.ptl{padding-top:20px}
+			.prn{padding-right:0}
+			.prs{padding-right:5px}
+			.prm{padding-right:10px}
+			.prl{padding-right:20px}
+			.pbn{padding-bottom:0}
+			.pbs{padding-bottom:5px}
+			.pbm{padding-bottom:10px}
+			.pbl{padding-bottom:20px}
+			.pln{padding-left:0}
+			.pls{padding-left:5px}
+			.plm{padding-left:10px}
+			.pll{padding-left:20px}
+			.phn{padding-left:0;padding-right:0}
+			.phs{padding-left:5px;padding-right:5px}
+			.phm{padding-left:10px;padding-right:10px}
+			.phl{padding-left:20px;padding-right:20px}
+			.pvn{padding-top:0;padding-bottom:0}
+			.pvs{padding-top:5px;padding-bottom:5px}
+			.pvm{padding-top:10px;padding-bottom:10px}
+			.pvl{padding-top:20px;padding-bottom:20px}
+			.man{margin:0}
+			.mas{margin:5px}
+			.mam{margin:10px}
+			.mal{margin:20px}
+			.mtn{margin-top:0}
+			.mts{margin-top:5px}
+			.mtm{margin-top:10px}
+			.mtl{margin-top:20px}
+			.mrn{margin-right:0}
+			.mrs{margin-right:5px}
+			.mrm{margin-right:10px}
+			.mrl{margin-right:20px}
+			.mbn{margin-bottom:0}
+			.mbs{margin-bottom:5px}
+			.mbm{margin-bottom:10px}
+			.mbl{margin-bottom:20px}
+			.mln{margin-left:0}
+			.mls{margin-left:5px}
+			.mlm{margin-left:10px}
+			.mll{margin-left:20px}
+			.mhn{margin-left:0;margin-right:0}
+			.mhs{margin-left:5px;margin-right:5px}
+			.mhm{margin-left:10px;margin-right:10px}
+			.mhl{margin-left:20px;margin-right:20px}
+			.mvn{margin-top:0;margin-bottom:0}
+			.mvs{margin-top:5px;margin-bottom:5px}
+			.mvm{margin-top:10px;margin-bottom:10px}
+			.mvl{margin-top:20px;margin-bottom:20px}
+
+			header {
+				margin-bottom: 20px;
+				font-weight: 400;
+			}
+			main {
+				min-height: 600px;
+			}
+
+		</style>
+	</head>
   <body>
-		<div>The new Scoold is coming soon.</div>
+		<div class="scoold-wrapper">
+			<header class="mbn">
+				<div class="none">
+					<nav class="white z-depth-0">
+						<div class="nav-wrapper container">
+							<a href="#" data-activates="mobile-drawer" class="button-collapse"><i class="fa fa-bars fa-2x"></i></a>
+							<div class="brand-logo">
+								<a href="/">
+									<img src="https://static.scoold.com/logo.svg" class="scoold-logo ptm" width="100" alt="scoold logo">
+								</a>
+							</div>
+							<ul class="right hide-on-med-and-down">
+								<li><a href="https://github.com/Erudika/scoold/" target="_blank" title="Download">Download</a></li>
+								<li><a href="https://github.com/Erudika/scoold/" target="_blank" title="Source">Source</a></li>
+								<li><a href="https://live.scoold.com" target="_blank" title="Demo">Demo</a></li>
+							</ul>
+							<ul class="side-nav" id="mobile-drawer">
+								<li>
+									<nav class="light-blue z-depth-0">
+										<div class="nav-wrapper">
+											<form action="/search">
+												<div class="input-field">
+													<input type="search" name="q" placeholder="Search" required>
+													<label for="search"><i class="fa fa-search fa-2x"></i></label>
+													<i class="material-icons fa fa-close"></i>
+												</div>
+											</form>
+										</div>
+									</nav>
+								</li>
+								<li><a href="https://github.com/Erudika/scoold/" target="_blank" title="Download">Download</a></li>
+								<li><a href="https://github.com/Erudika/scoold/" target="_blank" title="Source">Source</a></li>
+								<li><a href="https://live.scoold.com" target="_blank" title="Demo">Demo</a></li>
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</header>
+
+			<section id="header">
+				<div class="container ptl">
+					<div class="row mbn">
+						<div class="col m4 center-align">
+							<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
+								Scoold is an open source Q&A platform written in Java.
+							</h4>
+							<h5 class="white pam" style="line-height: 1.5em;">
+								Scoold is lightweight &mdash; the backend completely separated and handled by Para.
+								It can be deployed on Heroku or integrated as a forum for your website.
+							</h5>
+							<div class="mtl ptl">
+								<a href="" class="btn-large green">Download</a>
+							</div>
+							<div>
+								<small>Requires Java 7+</small>
+							</div>
+						</div>
+						<div class="col m8">
+							<img src="scoold-grab-site.png" width="900" height="" alt="Scoold screenshot"/>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="features">
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Full featured Q&A platform</h5>
+						<hr style="width: 50%">
+						<p>Scoold is inspired by StackOverflow and implements most of its features.
+							You can ask and answer questions, upvote and downvote posts, earn badges and reputation.
+							Each edit creates an new revision, making it easy to follow the history of edits.</p>
+					</div>
+					<div class="col m4">
+						<h5>Ready for the cloud deployment</h5>
+						<hr style="width: 50%">
+						<p>Scoold is optimized for the cloud. You can simply click the 'Deploy to Heroku' button and get
+							up-and-running in minutes. You can deploy in on your favourite PaaS, too.</p>
+						<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold">
+							<img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy" style="max-width:100%;">
+						</a>
+					</div>
+					<div class="col m4">
+						<h5>Full-text search</h5>
+						<hr style="width: 50%">
+						<p>Each post is indexed and analyzed by Para, which uses Elasticsearch &mdash; a powerful search engine.
+							You can search for users, questions and answers from the search bar on top.</p>
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Geolocation filtering of posts</h5>
+						<hr style="width: 50%">
+						<p>Questions can be associated with a specific location and then filtered based on that location.
+						This feature enables geolocation queries an gives you the option to search for questions around you.</p>
+					</div>
+					<div class="col m4">
+						<h5>Reputation system with badges</h5>
+						<hr style="width: 50%">
+						<p>Like all StackExchange sites, Scoold implements a simple but effective reputation system with badges.
+						People are awarded reputation points for good questions and answers, as well as various
+						badges for their achievements on the site.</p>
+					</div>
+					<div class="col m4">
+						<h5>Minimal frontend with jQuery</h5>
+						<hr style="width: 50%">
+						<p>We kept things simple on the frontend, that's why we chose to use jQuery, the proven JavaScript library.
+						It makes AJAX requests and toggles elements on the screen, nothing more.</p>
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Modern and responsive layout</h5>
+						<hr style="width: 50%">
+						<p>The frontend code is powered by Materialize CSS &mdash; a framework based on Google's Material Design Lite.
+						It's responsive and beautiful. Icons are from FontAwesome.</p>
+					</div>
+					<div class="col m4">
+						<h5>Social login and Gravatar support</h5>
+						<hr style="width: 50%">
+						<p>People can get in quickly without any registration forms or passwords. Initially, Facebook and Google are
+						supported as identity providers, but other services are also available, like Microsoft, Twitter and Github.</p>
+					</div>
+					<div class="col m4">
+						<h5>SEO-friendly</h5>
+						<hr style="width: 50%">
+						<p>Pages are rendered on the server, just like in the good old days, making them easily crawlable by search
+						engines. Page URLs are pretty tidy, too. </p>
+					</div>
+				</div>
+				<div class="container pvl center-align">
+					<a href="https://live.scoold.com" class="btn-large light-blue"><b>Live Demo!</b></a>
+					<p>Takes a minute to load as it's running on Heroku's free dynos.</p>
+				</div>
+			</section>
+
+			<section id="contact">
+				<div class="container pvl center-align">
+					<h3>Get in touch</h3>
+					<div class="pvl">
+						<a href="https://twitter.com/getscoold" target="_blank"><i class="fa fa-twitter fa-4x mrl prl"></i></a>
+						<a href="https://www.facebook.com/getscoold/" target="_blank"><i class="fa fa-facebook fa-4x mrl prl"></i></a>
+						<a href="https://github.com/Erudika/scoold" target="_blank"><i class="fa fa-github fa-4x"></i></a>
+					</div>
+				</div>
+			</section>
+
+			<footer class="page-footer">
+				<div class="container">
+					<div class="row mbn">
+						<div class="col l6 s12">
+							<h5 class="white-text">
+								Powered by <a href="https://paraio.com" target="_blank">
+									<img src="https://static.scoold.com/paradark.svg" width="100" style="margin-bottom: -6px;" alt="Para logo"></a>
+							</h5>
+						</div>
+						<div class="col l4 offset-l2 s12 right-align">
+							<div class="pvl white-text">
+								Made with <i class="fa fa-coffee"></i> by
+								<a href="https://erudika.com" target="_blank">Erudika</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="container">
+						<i class="fa fa-creative-commons"></i> Excluding logos, this site is licensed under a <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons</a> license.
+					</div>
+				</div>
+			</footer>
+		</div>
+
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-648525-8', 'auto');
+			ga('send', 'pageview');
+		</script>
   </body>
 </html>

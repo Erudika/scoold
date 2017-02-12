@@ -1,0 +1,24 @@
+# humanstxt.org
+# The humans responsible & technology colophon
+                          __    __
+   ______________  ____  / /___/ /
+  / ___/ ___/ __ \/ __ \/ / __  /
+ (__  ) /__/ /_/ / /_/ / / /_/ /
+/____/\___/\____/\____/_/\__,_/    
+
+# TEAM
+
+   Alex Bogdanovski
+   Contact: alex [at] erudika.com
+   Twitter: @albogdano
+
+# THANKS
+
+	ParaIO.com - backend
+	GitHub.com - hosting
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    Materialize CSS, jQuery, Para
+		

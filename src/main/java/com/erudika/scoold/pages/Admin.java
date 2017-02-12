@@ -19,6 +19,9 @@ package com.erudika.scoold.pages;
 
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
+import com.typesafe.config.ConfigValue;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -30,7 +33,13 @@ public class Admin extends Base {
 
 	public Admin() {
 		title = lang.get("admin.title");
-		addModel("configMap", Config.getConfig());
+		Map<String, Object> configMap = new HashMap<String, Object>();
+		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
+			ConfigValue value = entry.getValue();
+			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");
+		}
+		configMap.putAll(System.getenv());
+		addModel("configMap", configMap);
 		addModel("version", pc.getServerVersion());
 	}
 
