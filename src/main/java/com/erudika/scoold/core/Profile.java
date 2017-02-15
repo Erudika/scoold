@@ -18,12 +18,13 @@
 package com.erudika.scoold.core;
 
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.utils.AppConfig;
+import com.erudika.scoold.ScooldServer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
-public class Profile extends Sysprop implements Comparable<Profile>{
+public class Profile extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
     @Stored private Long lastseen;
@@ -97,6 +98,16 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 	};
 
     public Profile () {
+		this(null, null);
+	}
+
+	public Profile (String id) {
+		this(id, null);
+	}
+
+    public Profile (String userid, String name) {
+		setId(id(userid));
+		setName(name);
 		this.status = "";
         this.aboutme = "";
         this.location = "";
@@ -104,17 +115,6 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
-	}
-
-	public Profile (String id) {
-		this();
-		setId(id(id));
-	}
-
-    public Profile (String userid, String name) {
-        this();
-		setId(id(userid));
-		setName(name);
     }
 
 	public static final String id(String userid) {
@@ -125,10 +125,14 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 		}
 	}
 
+	ParaClient client() {
+		return ScooldServer.getContext().getBean(ParaClient.class);
+	}
+
 	@JsonIgnore
 	public User getUser() {
 		if (user == null) {
-			user = AppConfig.client().read(getCreatorid());
+			user = client().read(getCreatorid());
 		}
 		return user;
 	}
@@ -266,7 +270,7 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 
 	private List<? extends Post> getPostsForUser(String type, Pager pager) {
 		pager.setSortby("votes");
-		return AppConfig.client().findTerms(type, Collections.singletonMap(Config._CREATORID, getId()), true, pager);
+		return client().findTerms(type, Collections.singletonMap(Config._CREATORID, getId()), true, pager);
 	}
 
 	public String getFavtagsString() {
@@ -360,18 +364,18 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 
 	public String create() {
 		setLastseen(System.currentTimeMillis());
-		AppConfig.client().create(this);
+		client().create(this);
 		return getId();
     }
 
     public void update() {
 		setLastseen(System.currentTimeMillis());
-		AppConfig.client().update(this);
+		client().update(this);
     }
 
     public void delete() {
-		AppConfig.client().delete(this);
-		AppConfig.client().delete(getUser());
+		client().delete(this);
+		client().delete(getUser());
     }
 
     public String getLastname() {
@@ -385,7 +389,7 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 
 	public int countNewReports() {
 		if (newreports == null) {
-			newreports = AppConfig.client().getCount(Utils.type(Report.class),
+			newreports = client().getCount(Utils.type(Report.class),
 					Collections.singletonMap("properties.closed", false)).intValue();
 		}
 		return newreports;
@@ -402,14 +406,6 @@ public class Profile extends Sysprop implements Comparable<Profile>{
 
 	public int hashCode() {
 		return Objects.hashCode(getName(), getId());
-	}
-
-	public int compareTo(Profile u) {
-		int deptComp = -1;
-		if (getName() != null)
-			deptComp = getName().compareTo(u.getName());
-
-		return deptComp;
 	}
 }
 

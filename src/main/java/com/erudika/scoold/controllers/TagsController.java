@@ -15,26 +15,29 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-package com.erudika.scoold.core;
+package com.erudika.scoold.controllers;
 
-import java.io.Serializable;
+import com.erudika.para.core.Tag;
+import java.util.List;
+
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Question extends Post {
-	private static final long serialVersionUID = 1L;
+public class TagsController {
 
-	public Question() {
-		super();
-	}
+    public String title;
+	public List<Tag> tagslist;
 
-	public boolean canHaveChildren() {
-		return true;
-	}
-
-	public boolean canHaveRevisions() {
-		return true;
-	}
+//    public TagsController() {
+//        title = lang.get("tags.title");
+//		addModel("tagsSelected", "navbtn-hover");
+//    }
+//
+//	public void onGet() {
+//		itemcount.setSortby("name".equals(getParamValue("sortby")) ? "tag" : "count");
+//		itemcount.setDesc(!"name".equals(getParamValue("sortby")));
+//		tagslist = pc.findTags("*", itemcount);
+//	}
 }

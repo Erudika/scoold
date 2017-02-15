@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Translation;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
@@ -36,10 +37,13 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * Utility class for language operations.
@@ -47,6 +51,8 @@ import org.slf4j.LoggerFactory;
  * @author Alex Bogdanovski [alex@erudika.com]
  * @see Translation
  */
+@Component
+@Singleton
 public class LanguageUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(LanguageUtils.class);
@@ -70,14 +76,15 @@ public class LanguageUtils {
 
 	private static final int PLUS = -1;
 	private static final int MINUS = -2;
-
+	private final ParaClient pc;
 
 	/**
 	 * Default constructor.
-	 * @param search a core search instance
-	 * @param dao a core persistence instance
+	 * @param pc ParaClient
 	 */
-	public LanguageUtils() {
+	@Inject
+	public LanguageUtils(ParaClient pc) {
+		this.pc = pc;
 	}
 
 	/**
@@ -99,7 +106,7 @@ public class LanguageUtils {
 		Map<String, String> lang = readLanguageFromFile(langCode);
 		if (lang == null || lang.isEmpty()) {
 			// or try to load from DB
-			Sysprop s = AppConfig.client().read(keyPrefix.concat(langCode));
+			Sysprop s = pc.read(keyPrefix.concat(langCode));
 			if (s != null && !s.getProperties().isEmpty()) {
 				Map<String, Object> loaded = s.getProperties();
 				lang = new TreeMap<String, String>();
@@ -139,7 +146,7 @@ public class LanguageUtils {
 					s.addProperty(key, dlang.get(key));
 				}
 			}
-			AppConfig.client().create(s);
+			pc.create(s);
 		}
 	}
 
@@ -211,7 +218,7 @@ public class LanguageUtils {
 		Map<String, Object> terms = new HashMap<String, Object>(2);
 		terms.put("thekey", key);
 		terms.put("locale", locale);
-		return AppConfig.client().findTerms(Utils.type(Translation.class), terms, true, pager);
+		return pc.findTerms(Utils.type(Translation.class), terms, true, pager);
 	}
 
 	/**
@@ -238,7 +245,7 @@ public class LanguageUtils {
 	 * @return a map indicating translation progress
 	 */
 	public Map<String, Integer> getTranslationProgressMap() {
-		Sysprop progress = AppConfig.client().read(progressKey);
+		Sysprop progress = pc.read(progressKey);
 		Map<String, Integer> progressMap = new HashMap<String, Integer>(ALL_LOCALES.size());
 		boolean isMissing = progress == null;
 		if (isMissing) {
@@ -254,7 +261,7 @@ public class LanguageUtils {
 			}
 		}
 		if (isMissing) {
-			AppConfig.client().create(progress);
+			pc.create(progress);
 		}
 		return progressMap;
 	}
@@ -278,11 +285,11 @@ public class LanguageUtils {
 		if (langCode == null || key == null || value == null || getDefaultLanguageCode().equals(langCode)) {
 			return false;
 		}
-		Sysprop s = AppConfig.client().read(keyPrefix.concat(langCode));
+		Sysprop s = pc.read(keyPrefix.concat(langCode));
 
 		if (s != null && !value.equals(s.getProperty(key))) {
 			s.addProperty(key, value);
-			AppConfig.client().update(s);
+			pc.update(s);
 			updateTranslationProgressMap(langCode, PLUS);
 			return true;
 		}
@@ -299,12 +306,12 @@ public class LanguageUtils {
 		if (langCode == null || key == null || getDefaultLanguageCode().equals(langCode)) {
 			return false;
 		}
-		Sysprop s = AppConfig.client().read(keyPrefix.concat(langCode));
+		Sysprop s = pc.read(keyPrefix.concat(langCode));
 		String defStr = getDefaultLanguage().get(key);
 
 		if (s != null && !defStr.equals(s.getProperty(key))) {
 			s.addProperty(key, defStr);
-			AppConfig.client().update(s);
+			pc.update(s);
 			updateTranslationProgressMap(langCode, MINUS);
 			return true;
 		}
@@ -347,7 +354,7 @@ public class LanguageUtils {
 			for (Map.Entry<String, Integer> entry : progress.entrySet()) {
 				s.addProperty(entry.getKey(), entry.getValue());
 			}
-			AppConfig.client().create(s);
+			pc.create(s);
 		}
 	}
 

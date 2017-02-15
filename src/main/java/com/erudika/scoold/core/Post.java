@@ -20,12 +20,14 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Tag;
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.utils.AppConfig;
+import com.erudika.scoold.ScooldServer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,12 +43,13 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public abstract class Post extends Sysprop {
 	private static final long serialVersionUID = 1L;
+	private ParaClient pc;
 
-	@Stored @NotBlank @Size(min = 10, max = AppConfig.MAX_TEXT_LENGTH)
+	@Stored @NotBlank @Size(min = 10, max = 20000)
 	private String body;
 	@Stored @NotBlank @Size(min = 6, max = 255)
 	private String title;
-	@Stored @NotEmpty @Size(min = 1, max = AppConfig.MAX_TAGS_PER_POST)
+	@Stored @NotEmpty @Size(min = 1, max = 5)
 	private List<String> tags;
 
 	@Stored private Long viewcount;
@@ -67,6 +70,7 @@ public abstract class Post extends Sysprop {
 	public Post() {
 		this.answercount = 0L;
 		this.viewcount = 0L;
+		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
 	}
 
 	public Pager getItemcount() {
@@ -160,7 +164,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void setTitle(String title) {
-		title = Utils.stripAndTrim(title);
+		title = StringUtils.trimToEmpty(title);
 		if (!StringUtils.isBlank(title)) {
 			this.title = title;
 			setName(title);
@@ -186,7 +190,7 @@ public abstract class Post extends Sysprop {
 
 	public String create() {
 		createTags();
-		Post p = AppConfig.client().create(this);
+		Post p = pc.create(this);
 		if (p != null) {
 			if (canHaveRevisions()) {
 				setRevisionid(Revision.createRevisionFromPost(p, true).create());
@@ -203,7 +207,7 @@ public abstract class Post extends Sysprop {
 			setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		}
 		createTags();
-		AppConfig.client().update(this);
+		pc.update(this);
 	}
 
 	public void delete() {
@@ -211,23 +215,23 @@ public abstract class Post extends Sysprop {
 		ArrayList<ParaObject> children = new ArrayList<ParaObject>();
 		ArrayList<String> ids = new ArrayList<String>();
 		// delete Comments
-		children.addAll(AppConfig.client().getChildren(this, Utils.type(Comment.class)));
+		children.addAll(pc.getChildren(this, Utils.type(Comment.class)));
 		// delete Revisions
-		children.addAll(AppConfig.client().getChildren(this, Utils.type(Revision.class)));
+		children.addAll(pc.getChildren(this, Utils.type(Revision.class)));
 
 		if (canHaveChildren()) {
-			for (ParaObject reply : AppConfig.client().getChildren(this, Utils.type(Reply.class))) {
+			for (ParaObject reply : pc.getChildren(this, Utils.type(Reply.class))) {
 				// delete Comments
-				children.addAll(AppConfig.client().getChildren(reply, Utils.type(Comment.class)));
+				children.addAll(pc.getChildren(reply, Utils.type(Comment.class)));
 				// delete Revisions
-				children.addAll(AppConfig.client().getChildren(reply, Utils.type(Revision.class)));
+				children.addAll(pc.getChildren(reply, Utils.type(Revision.class)));
 			}
 		}
 		for (ParaObject child : children) {
 			ids.add(child.getId());
 		}
-		AppConfig.client().deleteAll(ids);
-		AppConfig.client().delete(this);
+		pc.deleteAll(ids);
+		pc.delete(this);
 	}
 
 	private void createTags() {
@@ -238,23 +242,13 @@ public abstract class Post extends Sysprop {
 			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
 			if (!StringUtils.isBlank(t.getTag())) {
 				Pager tagged = new Pager(1);
-				AppConfig.client().findTagged(getType(), new String[]{t.getTag()}, tagged);
+				pc.findTagged(getType(), new String[]{t.getTag()}, tagged);
 				t.setCount((int) tagged.getCount() + 1);
 				getTags().set(i, t.getTag());
 				tagz.add(t);
 			}
 		}
-		AppConfig.client().createAll(tagz);
-	}
-
-	public static <P extends Post> void readAllCommentsForPosts(List<P> list, int maxPerPage) {
-		if (list != null) {
-			for (P post : list) {
-				List<Comment> commentz = AppConfig.client().
-						getChildren(post, Utils.type(Comment.class), post.getItemcount());
-				post.setComments(commentz);
-			}
-		}
+		pc.createAll(tagz);
 	}
 
 	@JsonIgnore
@@ -276,7 +270,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void restoreRevisionAndUpdate(String revisionid) {
-		Revision rev = AppConfig.client().read(revisionid);
+		Revision rev = pc.read(revisionid);
 		if (rev != null) {
 			//copy rev data to post
 			setTitle(rev.getTitle());
@@ -299,7 +293,7 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public List<Comment> getComments(Pager pager) {
-		this.comments = AppConfig.client().getChildren(this, Utils.type(Comment.class), pager);
+		this.comments = pc.getChildren(this, Utils.type(Comment.class), pager);
 		this.itemcount = pager;
 		return this.comments;
 	}
@@ -317,12 +311,12 @@ public abstract class Post extends Sysprop {
 		if (isReply()) {
 			return Collections.emptyList();
 		}
-		return AppConfig.client().getChildren(this, Utils.type(Reply.class), pager);
+		return pc.getChildren(this, Utils.type(Reply.class), pager);
 	}
 
 	@JsonIgnore
 	public List<Revision> getRevisions(Pager pager) {
-		return AppConfig.client().getChildren(this, Utils.type(Revision.class), pager);
+		return pc.getChildren(this, Utils.type(Revision.class), pager);
 	}
 
 	@JsonIgnore
@@ -340,17 +334,17 @@ public abstract class Post extends Sysprop {
 		return this instanceof Feedback;
 	}
 
-	public String getPostLink(boolean plural, boolean noid, String questionslink, String questionlink, String feedbacklink) {
+	public String getPostLink(boolean plural, boolean noid) {
 		Post p = this;
 		if (p == null) return "/";
-		String ptitle = Utils.noSpaces(p.getTitle(), "-");
-		String pid = (noid ? "" : "/"+p.getId()+"/"+ ptitle);
+		String ptitle = Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-");
+		String pid = (noid ? "" : "/" + p.getId() + "/" + ptitle);
 		if (p.isQuestion()) {
-			return plural ? questionslink : questionlink + pid;
+			return plural ? "/questions" : "/question" + pid;
 		} else if (p.isFeedback()) {
-			return plural ? feedbacklink : feedbacklink + pid;
+			return plural ? "/feedback" : "/feedback" + pid;
 		} else if (p.isReply()) {
-			return questionlink + "/" + p.getParentid() + "#post-" + p.getId();
+			return "/question/" + p.getParentid() + "#post-" + p.getId();
 		}
 		return "";
 	}

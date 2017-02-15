@@ -352,7 +352,8 @@ $(function () {
      ****************************************************/
 	var tagsAutocomplete = $('input.tagbox').materialize_autocomplete({
 		multiple: {
-			enable: true
+			enable: true,
+			maxSize: 5
 		},
 		appender: {
 			el: '.ac-tags',

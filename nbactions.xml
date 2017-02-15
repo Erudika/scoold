@@ -94,6 +94,10 @@
             <goals>
                 <goal>spring-boot:run</goal>
                 
+                
+                
+                
+                
             </goals>
             <properties>
                 
@@ -105,6 +109,24 @@
                 
                 
                 <config.file>src/main/resources/application.conf</config.file>
+                
+                
+                <jpda.listen>maven</jpda.listen>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 
                 
                 

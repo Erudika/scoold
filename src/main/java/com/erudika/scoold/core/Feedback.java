@@ -17,11 +17,13 @@
  */
 package com.erudika.scoold.core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Feedback extends Post{
+public class Feedback extends Post {
 	private static final long serialVersionUID = 1L;
 
 	public Feedback() {

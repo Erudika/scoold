@@ -19,7 +19,9 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
-import com.erudika.scoold.utils.AppConfig;
+import com.erudika.para.client.ParaClient;
+import com.erudika.scoold.ScooldServer;
+import java.io.Serializable;
 import jersey.repackaged.com.google.common.base.Objects;
 
 /**
@@ -28,6 +30,7 @@ import jersey.repackaged.com.google.common.base.Objects;
  */
 public class Report extends Sysprop {
 	private static final long serialVersionUID = 1L;
+	private final ParaClient pc;
 
 	@Stored private String subType;
 	@Stored private String description;
@@ -46,20 +49,21 @@ public class Report extends Sysprop {
 	}
 
 	public Report() {
-		this.subType = ReportType.OTHER.toString();
-		this.description = subType;
-		this.closed = false;
+		this(null, null, null, null);
 	}
 
 	public Report(String id) {
-		this();
+		this(null, null, null, null);
 		setId(id);
 	}
 
 	public Report(String parentid, String type, String description, String creatorid) {
-		this();
 		setParentid(parentid);
 		setCreatorid(creatorid);
+		this.subType = ReportType.OTHER.toString();
+		this.description = subType;
+		this.closed = false;
+		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
 	}
 
 	public Boolean getClosed() {
@@ -126,15 +130,15 @@ public class Report extends Sysprop {
 	}
 
 	public void delete() {
-		AppConfig.client().delete(this);
+		pc.delete(this);
 	}
 
 	public void update() {
-		AppConfig.client().update(this);
+		pc.update(this);
 	}
 
 	public String create() {
-		Report r = AppConfig.client().create(this);
+		Report r = pc.create(this);
 		if (r != null) {
 			setId(r.getId());
 			setTimestamp(r.getTimestamp());

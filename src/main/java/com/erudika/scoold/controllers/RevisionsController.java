@@ -15,26 +15,33 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-package com.erudika.scoold.core;
+package com.erudika.scoold.controllers;
 
-import java.io.Serializable;
+import com.erudika.scoold.core.Post;
+import com.erudika.scoold.core.Revision;
+import java.util.List;
+
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Question extends Post {
-	private static final long serialVersionUID = 1L;
+public class RevisionsController {
 
-	public Question() {
-		super();
-	}
+    public String title;
+	public List<Revision> revisionslist;
+	public Post showPost;
 
-	public boolean canHaveChildren() {
-		return true;
-	}
-
-	public boolean canHaveRevisions() {
-		return true;
-	}
+//    public RevisionsController() {
+//        title = title + " - " + lang.get("revisions.title");
+//		showPost = pc.read(getParamValue("id"));
+//		if (showPost != null) {
+//			revisionslist = showPost.getRevisions(itemcount);
+//		} else {
+//			setRedirect(questionlink);
+//		}
+//    }
+//
+//	public void onGet() {
+//	}
 }

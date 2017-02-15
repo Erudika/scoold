@@ -1,0 +1,298 @@
+#if($isAjaxRequest || false)
+	################# PAGINATION AJAX REQUESTS #################
+	#if($request.getParameter("page"))
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount.page + 1) #end
+		<span class="$!{pnext}"></span>
+		#stop
+	#end
+	#if($request.getParameter("page1"))
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount1.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount1.page + 1) #end
+		<span class="$!{pnext}"></span>
+		#stop
+	#end
+	#if($request.getParameter("page2"))
+		#evaluate($!request.getParameter('pageMacroCode'))
+		#if($itemcount2.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount2.page + 1) #end
+		<span class="$!{pnext}"></span>
+		#stop
+	#end
+
+	################# SPECIAL AJAX REQUESTS #################
+
+	#if($request.getParameter("getcommenthtmlcode"))
+		#commentbox($!newcomment)
+		#stop
+
+	#elseif($request.getParameter("getallcommentscode"))
+		#if($commentslist && $commentslist.size() > 0)
+			#paginate("\#commentspage(\$commentslist)" $itemcount "" "page" )
+		#end
+		#stop
+
+	#elseif($request.getParameter("getreportform"))
+		#if($request.getParameter("parentid")  && $request.getParameter("parentid") && $request.getParameter("type"))
+			#reportform($request.getParameter("type")
+				$request.getParameter("parentid")
+				$!request.getParameter("grandparentid")
+				$request.getParameter("parentid")
+				$!request.getParameter("link"))
+		#end
+		#stop
+
+	#elseif($request.getParameter("voteup") || $request.getParameter("votedown"))
+		$!voteresult
+		#stop
+
+	#elseif($request.getParameter("addlabel"))
+		$!labeladded
+		#stop
+
+	#elseif($request.getParameter("gettranslationhtmlcode"))
+		#translationbox($!newtranslation)
+		#stop
+
+	#elseif($request.getParameter("getsmallpersonbox"))
+		#if($showAjaxUser)
+			#smallpersonbox($showAjaxUser)
+		#end
+		#stop
+
+	#end
+	#stop
+
+#elseif($request.getRequestURI() == "/feed.xml")
+	#stop
+#end
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		#basichead($!DESCRIPTION $!KEYWORDS)
+		<link href="/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
+		<link href="/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<!--<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>-->
+		#if ($includeGMapsScripts && $includeGMapsScripts == true)
+			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>
+		#end
+		<style media="screen" type="text/css">
+			a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: ${txtcolor1};}
+			.btn, .btn-large, .navbtn-hover {background-color: ${txtcolor2};}
+			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: ${txtcolor2}; opacity: 0.7;}
+			.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: ${txtcolor3};}
+			body, footer.page-footer {background-color: ${txtcolor3};}
+			main {background-color: white;}
+		</style>
+	</head>
+	<body>
+		<div class="scoold-wrapper">
+			<header>
+				<div class="${navbarFixedClass}">
+					<nav class="light-blue">
+						<div class="nav-wrapper container">
+							<a href="#" data-activates="mobile-drawer" class="button-collapse"><i class="fa fa-bars fa-2x"></i></a>
+
+							#if($authenticated)
+								<ul id="user-dropdown" class="dropdown-content">
+									<li><a href="$profilelink" title="$!{authUser.name}">$!lang.get('profile.title')</a></li>
+									#if($isAdmin)
+										<li><a href="$adminlink" title="Admin">Admin</a></li>
+									#end
+									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+									<li class="divider"></li>
+									<li>
+										<form method="post" action="$signoutlink" class="center-align">
+											#sectoken(false)
+											<button type="submit" class="btn-flat mtm">$!lang.get('signout')</button>
+										</form>
+									</li>
+								</ul>
+							#end
+
+							<div class="brand-logo">
+								<a href="/">
+									<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo">
+								</a>
+							</div>
+
+							<ul class="right hide-on-med-and-down">
+								<li>
+									<a href="#" onclick="$('#search-drawer').toggleClass('hide'); $('#search-box').focus()" class="$!{searchSelected}">
+										<i class="fa fa-search fa"></i>
+									</a>
+								</li>
+								<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+								<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+								<li><a href="$questionslink/ask" title="Ask Question" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+								#if ($authenticated)
+									#if ($isMod)
+										<li>
+											<a href="$reportslink" title="Reports" class="$!{reportsSelected}">$!lang.get("reports.title")
+												#if ($authUser.countNewReports() > 0)
+													<span class="badge new">$authUser.countNewReports()</span>
+												#end
+											</a>
+										</li>
+									#end
+									<li>
+										<a class="dropdown-button scoold-user-dropdown" href="#!" data-constrainwidth="false"
+											 data-alignment="right" data-beloworigin="true" data-activates="user-dropdown">
+											<img src="#profilepic($authUser)" height="50" alt="Avatar">
+											<i class="fa fa-caret-down right"></i></a>
+									</li>
+								#else
+									<li><a href="${signinlink}?returnto=$!{returnto}" title="Sign in"
+												 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
+								#end
+							</ul>
+
+							<ul class="side-nav" id="mobile-drawer">
+								<li>
+									<nav class="light-blue z-depth-0">
+										<div class="nav-wrapper">
+											<form action="$searchlink">
+												<div class="input-field">
+													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
+													<label for="search"><i class="fa fa-search fa-2x"></i></label>
+													<i class="material-icons fa fa-close"></i>
+												</div>
+											</form>
+										</div>
+									</nav>
+								</li>
+								#if ($authenticated)
+									<li>
+										<img src="#profilepic($authUser)" height="50" alt="Avatar" class="left mll mrl">
+										<a href="$profilelink" class="black-text mvl pll">$!authUser.name</a>
+									</li>
+									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+								#else
+									<li><a href="${signinlink}?returnto=$!{returnto}" title="Sign in"
+												 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
+								#end
+								<li><a href="$questionslink/ask" title="Ask Question" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+								<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+								<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+								#if ($authenticated)
+									#if ($isMod)
+										<li>
+											<a href="$reportslink" title="Reports" class="$!{reportsSelected}">$!lang.get("reports.title")
+												#if ($authUser.countNewReports() > 0)
+													<span class="badge new">$authUser.countNewReports()</span>
+												#end
+											</a>
+										</li>
+									#end
+									<li class="divider"></li>
+									<li>
+										<form method="post" action="$signoutlink">
+											#sectoken(false)
+											<button type="submit" class="btn-flat mts">$!lang.get('signout')</button>
+										</form>
+									</li>
+								#end
+							</ul>
+						</div>
+					</nav>
+
+					<nav id="search-drawer" class="white z-depth-0 hide">
+						<div class="nav-wrapper container">
+							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
+								<div class="input-field">
+									<input id="search-box" type="search" name="q" placeholder="$!lang.get('search.search')" required>
+									<label for="search"><i class="fa fa-search fa-2x grey-text"></i></label>
+									<i class="material-icons fa fa-close grey-text" onclick="$('#search-drawer').toggleClass('hide')"></i>
+								</div>
+							</form>
+						</div>
+					</nav>
+				</div>
+			</header>
+
+			<main class="container">
+				#infostrip()
+				path=$path title=$title ////
+				#foreach($s in $request.session.getAttributeNames())
+				$request.session.getAttribute($s) <br>
+				#end
+				#parse($path)
+			</main>
+
+			<footer class="page-footer">
+				<div class="container">
+					<div class="row mbn">
+						<div class="col l6 s12">
+							<h5 class="white-text">
+								#if($showBranding)
+									Powered by <a href="https://paraio.com" target="_blank">
+										<img src="/images/paradark.svg" width="100" style="margin-bottom: -6px;" alt="Para logo"></a>
+								#end
+							</h5>
+							<div class="pvl">
+								<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
+								<a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a>&nbsp;&nbsp;
+								<a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
+								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
+							</div>
+						</div>
+						<div class="col l4 offset-l2 s12 r">
+							<div class="pvl white-text">
+								#if($showBranding)
+									Made with <i class="fa fa-coffee"></i> by
+									<a href="https://erudika.com" target="_blank">Erudika</a>
+								#end
+							</div>
+							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey right capitalize">
+								$!currentLocale.getDisplayLanguage($currentLocale)
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="container">
+						#set($_liclink = $utils.formatMessage("$!lang.get('license')",
+						'<a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
+						<i class="fa fa-creative-commons"></i> $_liclink
+					</div>
+				</div>
+			</footer>
+		</div>
+
+		<div id="main-modal" class="modal">
+			<div class="modal-content">
+				#ajaxloading(false)
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">$!lang.get('close')</a>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize-autocomplete/1.0.7/jquery.materialize-autocomplete.min.js"></script>
+
+		#set($sectok = "#sectoken(true)")
+		#set($sectok = "$sectok.trim()")
+		<script type="text/javascript">
+			var lang = {areyousure: "$!lang.get('areyousure')"}, csrftoken = "$!sectok";
+			$(".button-collapse").sideNav();
+			$('select').material_select();
+			$('textarea').characterCounter();
+		</script>
+		<script src="$!scriptslink/scoold.js"></script>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-648525-8', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>

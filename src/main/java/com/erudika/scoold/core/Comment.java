@@ -20,8 +20,10 @@ package com.erudika.scoold.core;
 
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
-import com.erudika.scoold.utils.AppConfig;
+import com.erudika.scoold.ScooldServer;
+import java.io.Serializable;
 import java.util.Collections;
 import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +32,11 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-public class Comment extends Sysprop implements Comparable<Comment> {
+public class Comment extends Sysprop {
+
 	private static final long serialVersionUID = 1L;
+	private ParaClient pc;
+	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 
 	@Stored private String comment;
 	@Stored private Boolean hidden;
@@ -41,16 +46,12 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 		this(null, null, null);
 	}
 
-	public Comment(String id) {
-		this();
-		setId(id);
-	}
-
 	public Comment(String creatorid, String comment, String parentid) {
 		setCreatorid(creatorid);
 		this.comment = comment;
 		setParentid(parentid);
 		setTimestamp(System.currentTimeMillis()); //now
+		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
 	}
 
 	public String getAuthorName() {
@@ -79,10 +80,9 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 
 	public String create() {
 		if (StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
-		int count = AppConfig.client().getCount(getType(),
-				Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
-		if (count > AppConfig.MAX_COMMENTS_PER_ID) return null;
-		Comment c = AppConfig.client().create(this);
+		int count = pc.getCount(getType(), Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
+		if (count > MAX_COMMENTS_PER_ID) return null;
+		Comment c = pc.create(this);
 		if (c != null) {
 			setId(c.getId());
 			setTimestamp(c.getTimestamp());
@@ -92,11 +92,11 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 	}
 
 	public void update() {
-		AppConfig.client().update(this);
+		pc.update(this);
 	}
 
 	public void delete() {
-		AppConfig.client().delete(this);
+		pc.delete(this);
 	}
 
 	public boolean equals(Object obj) {
@@ -109,14 +109,6 @@ public class Comment extends Sysprop implements Comparable<Comment> {
 
 	public int hashCode() {
 		return Objects.hashCode(getComment(), getCreatorid());
-	}
-
-	public int compareTo(Comment o) {
-		int deptComp = 0;
-		if (getTimestamp() != null)
-			deptComp = getTimestamp().compareTo(o.getTimestamp());
-
-		return deptComp;
 	}
 
 }

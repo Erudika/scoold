@@ -1,6 +1,6 @@
 ![Scoold Q&A](assets/header.png)
 
-## Yet another Stack Overflow clone
+## Yet another StackOverflow clone
 
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -10,7 +10,7 @@ The primary goal of this project is educational but it can also be integrated as
 Scoold can run on Heroku or any other PaaS. It's lightweight - the backend is handled by a separate service called
 [Para](https://github.com/Erudika/para). Scoold does not require a database, and the controller logic is really simple
 because all the heavy lifting is delegated to Para. This makes the code easier to read and can be learned
-quickly by junior programmers.
+quickly by junior developers.
 
 ### Features
 

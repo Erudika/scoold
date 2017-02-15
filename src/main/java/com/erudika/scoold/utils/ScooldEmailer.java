@@ -19,6 +19,7 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.email.Emailer;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ScooldEmailer implements Emailer {
 	@Override
 	public boolean sendEmail(List<String> emails, String subject, String body) {
 		// TODO: connect to a real email service
-		System.out.println("EMAIL SENT: " + subject);
+		LoggerFactory.getLogger(ScooldEmailer.class).info("EMAIL SENT: " + subject);
 		return true;
 	}
 

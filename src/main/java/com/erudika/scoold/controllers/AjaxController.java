@@ -21,8 +21,8 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Pager;
-import com.erudika.scoold.utils.AppConfig;
 import java.util.List;
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +39,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AjaxController {
 
 	private static Sysprop s = new Sysprop();
-	private static ParaClient pc = AppConfig.client();
+	private static ParaClient pc;
 //	@RequestMapping("/greeting")
 //	public String greeting(@RequestParam(value = "name", required = false, defaultValue = "World") String name, Model model) {
 //		model.addAttribute("name", name);
 //		return "greeting";
 //	}
 
-	public AjaxController() {
+	@Inject
+	public AjaxController(ParaClient pc) {
+		this.pc = pc;
 	}
 
 
