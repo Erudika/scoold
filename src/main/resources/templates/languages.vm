@@ -12,9 +12,8 @@
 			<div class="card-panel $!{selclass}">
 				<div class="mediumText mbs center-align">
 					#if ($selclass == "")
-					<form action="$languageslink" method="post">
+					<form action="$languageslink/$!showLangKey" method="post">
 						#sectoken(false)
-						<input type="hidden" name="setlocale" value="$!showLangKey">
 						<button type="submit" class="btn-flat waves-effect waves-light"><span class="capitalize">$!showLangName</span></button>
 					</form>
 					#else

@@ -27,7 +27,6 @@
 			<div class="col s10">
 				<input type="text" name="comment" value="" required>
 				<input type="hidden" name="parentid" value="$!parentid">
-				<input type="hidden" name="getcommenthtmlcode" value="true">
 			</div>
 			<div class="col s2 center">
 				<button type="submit" class="btn waves-effect waves-light new-comment-btn">$!lang.get('add')</button>
@@ -60,10 +59,10 @@
 			<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
 			#if ($showcomment == "")
 				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
-				<a href="$commentlink?deletecomment=$!showcomment.id" title="$!lang.get('delete')"
+				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
 					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $isMod))
-				<a href="$commentlink?deletecomment=$!showcomment.id" title="$!lang.get('delete')"
+				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
 					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#else
 				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")

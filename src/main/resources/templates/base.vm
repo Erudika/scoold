@@ -21,17 +21,7 @@
 
 	################# SPECIAL AJAX REQUESTS #################
 
-	#if($request.getParameter("getcommenthtmlcode"))
-		#commentbox($!newcomment)
-		#stop
-
-	#elseif($request.getParameter("getallcommentscode"))
-		#if($commentslist && $commentslist.size() > 0)
-			#paginate("\#commentspage(\$commentslist)" $itemcount "" "page" )
-		#end
-		#stop
-
-	#elseif($request.getParameter("getreportform"))
+	#if($request.getParameter("getreportform"))
 		#if($request.getParameter("parentid")  && $request.getParameter("parentid") && $request.getParameter("type"))
 			#reportform($request.getParameter("type")
 				$request.getParameter("parentid")
@@ -43,10 +33,6 @@
 
 	#elseif($request.getParameter("voteup") || $request.getParameter("votedown"))
 		$!voteresult
-		#stop
-
-	#elseif($request.getParameter("addlabel"))
-		$!labeladded
 		#stop
 
 	#elseif($request.getParameter("gettranslationhtmlcode"))

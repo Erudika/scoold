@@ -22,6 +22,7 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
@@ -43,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,8 +124,20 @@ public final class ScooldUtils {
 		}
 	}
 
+	public Profile getAuthUser(HttpServletRequest req) {
+		return (Profile) req.getAttribute(AUTH_USER_ATTRIBUTE);
+	}
+
 	public boolean isAuthenticated(HttpServletRequest req) {
-		return req.getAttribute(AUTH_USER_ATTRIBUTE) != null;
+		return getAuthUser(req) != null;
+	}
+
+	public boolean canComment(Profile authUser, HttpServletRequest req) {
+		return isAuthenticated(req) && (authUser.hasBadge(Profile.Badge.ENTHUSIAST) || isMod(authUser));
+	}
+
+	public Pager getPager(String pageParamName, HttpServletRequest req) {
+		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
 	}
 
 	public String getLanguageCode(HttpServletRequest req) {

@@ -41,14 +41,14 @@
 		<from>^/about(/?)$</from>
 		<to>/about.htm</to>
 	</rule>-->
-	<rule>
+<!--	<rule>
 		<from>^/tags(/?)$</from>
 		<to>/tags.htm</to>
 	</rule>
 	<rule>
 		<from>^/tags/name(/?)$</from>
 		<to>/tags.htm?sortby=name</to>
-	</rule>
+	</rule>-->
 <!--	<rule>
 		<from>^/terms(/?)$</from>
 		<to>/terms.htm</to>
@@ -57,10 +57,10 @@
 		<from>^/privacy(/?)$</from>
 		<to>/privacy.htm</to>
 	</rule>-->
-	<rule>
+<!--	<rule>
 		<from>^/favicon\.ico$</from>
 		<to>/images/favicon.ico</to>
-	</rule>
+	</rule>-->
 	<!-- ======== LANGUAGES ========== -->
 	<rule>
 		<from>^/languages(/?)$</from>
@@ -84,28 +84,28 @@
 		<to>/search.htm?feed=true</to>
 	</rule>
 	<!-- ======== FEEDBACK ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/feedback(/?)$</from>
 		<to>/feedback.htm</to>
 	</rule>
 	<rule>
 		<from>^/feedback/write(/?)$</from>
 		<to>/feedback.htm?write=true</to>
-	</rule>
-	<rule>
+	</rule>-->
+<!--	<rule>
 		<from>^/feedback/votes(/?)$</from>
 		<to>/feedback.htm?sortby=votes</to>
 	</rule>
 	<rule>
 		<from>^/feedback/updated(/?)$</from>
 		<to>/feedback.htm?sortby=activity</to>
-	</rule>
-	<rule>
+	</rule>-->
+<!--	<rule>
 		<from>^/feedback/tag/([%\w\S][^/]+)(/?)$</from>
 		<to>/feedback.htm?tag=$1</to>
-	</rule>
+	</rule>-->
 
-	<rule>
+<!--	<rule>
 		<from>^/feedback/(\d+)(/?)$</from>
 		<to>/question.htm?id=$1</to>
 	</rule>
@@ -132,16 +132,16 @@
 	<rule>
 		<from>^/feedback/(\d+)/newest((/?)(.*?))$</from>
 		<to>/question.htm?id=$1&amp;sortby=newest</to>
-	</rule>
+	</rule>-->
 
 	<!--SEO URLs-->
-	<rule>
+<!--	<rule>
 		<from>^/feedback/(\d+)/([^write][^reply][^tag][^restore][^undelete][^undelete][^approve][^close][^newest][^updated][^votes])*.*(/?)$</from>
 		<to>/question.htm?id=$1</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== REPORTS ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/reports(/?)$</from>
 		<to>/reports.htm</to>
 	</rule>
@@ -160,26 +160,26 @@
 	<rule>
 		<from>^/reports/delete/(\d+)(/?)$</from>
 		<to>/reports.htm?delete=true&amp;id=$1</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== PROFILE PROTECTED RESOURCES ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/admin(/?)$</from>
 		<to>/admin.htm</to>
-	</rule>
-	<rule>
+	</rule>-->
+<!--	<rule>
 		<from>^/settings(/?)$</from>
 		<to>/settings.htm</to>
-	</rule>
+	</rule>-->
 
-	<rule>
+<!--	<rule>
 		<from>^/comment(/?)$</from>
 		<to>/comment.htm</to>
 	</rule>
 	<rule>
 		<from>^/comment/(\d+)(/?)$</from>
 		<to>/comment.htm?id=$1</to>
-	</rule>
+	</rule>-->
 
 
 	<rule>
@@ -223,14 +223,14 @@
 	</rule>
 
 	<!-- ======== PEOPLE ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/people(/?)$</from>
 		<to>/people.htm</to>
 	</rule>
 	<rule>
 		<from>^/people/reputation(/?)$</from>
 		<to>/people.htm?sortby=rep</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== QUESTIONS ========== -->
 	<rule>

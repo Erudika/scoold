@@ -17,42 +17,75 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.utils.Config;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.adminlink;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
+import com.typesafe.config.ConfigValue;
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/admin")
 public class AdminController {
 
-	public String title;
+	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
-//	public AdminController() {
-//		title = lang.get("admin.title");
-//		Map<String, Object> configMap = new HashMap<String, Object>();
-//		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
-//			ConfigValue value = entry.getValue();
-//			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");
-//		}
-//		configMap.putAll(System.getenv());
-//		addModel("configMap", configMap);
-//		addModel("version", pc.getServerVersion());
-//	}
-//
-//	public void onGet() {
-//		if (!authenticated || !isAdmin) {
-//			setRedirect(HOMEPAGE);
-//		}
-//	}
-//
-//	public void onPost() {
-//		if (param("confirmdelete")) {
-//			String id = getParamValue("id");
-//			ParaObject sobject = pc.read(id);
-//			if (sobject != null) {
-//				sobject.delete();
-//				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
-//						sobject.getClass().getName(), sobject.getId());
-//			}
-//		}
-//		setRedirect(adminlink);
-//	}
+	private final ScooldUtils utils;
+	private final ParaClient pc;
+
+	@Inject
+	public AdminController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
+
+	@GetMapping
+    public String get(HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		}
+		Map<String, Object> configMap = new HashMap<String, Object>();
+		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
+			ConfigValue value = entry.getValue();
+			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");
+		}
+		configMap.putAll(System.getenv());
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("title", utils.getLang(req).get("admin.title"));
+		model.addAttribute("configMap", configMap);
+		model.addAttribute("version", pc.getServerVersion());
+        return "base";
+    }
+
+	@PostMapping
+    public String post(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (confirmdelete && utils.isAdmin(authUser)) {
+			ParaObject sobject = pc.read(id);
+			if (sobject != null) {
+				sobject.delete();
+				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
+						sobject.getClass().getName(), sobject.getId());
+			}
+		}
+		return "redirect:" + adminlink;
+	}
 }

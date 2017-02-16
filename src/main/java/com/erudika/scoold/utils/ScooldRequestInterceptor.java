@@ -17,25 +17,17 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.*;
-import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Profile;
-import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Report.ReportType;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -50,19 +42,17 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(ScooldRequestInterceptor.class);
-	private final ParaClient pc;
 	private final ScooldUtils utils;
 
 	@Inject
 	public ScooldRequestInterceptor(ScooldUtils utils) {
 		this.utils = utils;
-		this.pc = utils.getParaClient();
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		if (pc == null) {
-			throw new IllegalStateException("ParaClient not initialized properly.");
+		if (utils == null) {
+			throw new IllegalStateException("ScooldUtils not initialized properly.");
 		}
 		request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
 		return true;
@@ -161,36 +151,24 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("txtcolor3", Config.getConfigParam("text_color3", "#444444"));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
-		boolean authenticated = authUser != null;
-		boolean isMod = utils.isMod(authUser);
-		boolean isAdmin = utils.isAdmin(authUser);
-		boolean canComment = authenticated && (authUser.hasBadge(Badge.ENTHUSIAST) || isMod);
-		List<Comment> commentslist = new ArrayList<Comment>();
-		List<String> badgelist = utils.checkForBadges(authUser, request);
 		modelAndView.addObject("infoStripMsg", "");
-		modelAndView.addObject("authenticated", authenticated);
-		modelAndView.addObject("canComment", canComment);
-		modelAndView.addObject("isMod", isMod);
-		modelAndView.addObject("isAdmin", isAdmin);
-		modelAndView.addObject("authUser", authUser);
-		modelAndView.addObject("commentslist", commentslist);
-		modelAndView.addObject("badgelist", badgelist);
+		modelAndView.addObject("authenticated", authUser != null);
+		modelAndView.addObject("canComment", utils.canComment(authUser, request));
+		modelAndView.addObject("isMod", utils.isMod(authUser));
+		modelAndView.addObject("isAdmin", utils.isAdmin(authUser));
 		modelAndView.addObject("utils", Utils.getInstance());
+		modelAndView.addObject("authUser", authUser);
+		modelAndView.addObject("badgelist", utils.checkForBadges(authUser, request));
 		modelAndView.addObject("request", request);
 		// Language
-		String langCode = utils.getLanguageCode(request);
-		Locale currentLocale = utils.getCurrentLocale(langCode, request);
-		Map<String, String> lang = utils.getLang(currentLocale);
+		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request), request);
 		modelAndView.addObject("currentLocale", currentLocale);
-		modelAndView.addObject("lang", lang);
+		modelAndView.addObject("lang", utils.getLang(currentLocale));
 		// Pagers
-		Pager itemcount = new Pager(NumberUtils.toInt(request.getParameter("page"), 1), Config.MAX_ITEMS_PER_PAGE);
-		Pager itemcount1 = new Pager(NumberUtils.toInt(request.getParameter("page1"), 1), Config.MAX_ITEMS_PER_PAGE);
-		Pager itemcount2 = new Pager(NumberUtils.toInt(request.getParameter("page2"), 1), Config.MAX_ITEMS_PER_PAGE);
-		modelAndView.addObject("showParam", request.getParameter("show"));
-		modelAndView.addObject("itemcount", itemcount);
-		modelAndView.addObject("itemcount1", itemcount1);
-		modelAndView.addObject("itemcount2", itemcount2);
+//		modelAndView.addObject("showParam", request.getParameter("show"));
+//		modelAndView.addObject("itemcount", utils.getPager("page", request));
+//		modelAndView.addObject("itemcount1", utils.getPager("page1", request));
+//		modelAndView.addObject("itemcount2", utils.getPager("page2", request));
 	}
 
 }

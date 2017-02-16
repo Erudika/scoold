@@ -18,26 +18,44 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Tag;
+import com.erudika.para.utils.Pager;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
-
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/tags")
 public class TagsController {
 
-    public String title;
-	public List<Tag> tagslist;
+	private final ScooldUtils utils;
 
-//    public TagsController() {
-//        title = lang.get("tags.title");
-//		addModel("tagsSelected", "navbtn-hover");
-//    }
-//
-//	public void onGet() {
-//		itemcount.setSortby("name".equals(getParamValue("sortby")) ? "tag" : "count");
-//		itemcount.setDesc(!"name".equals(getParamValue("sortby")));
-//		tagslist = pc.findTags("*", itemcount);
-//	}
+	@Inject
+	public TagsController(ScooldUtils utils) {
+		this.utils = utils;
+	}
+
+	@GetMapping
+    public String get(@RequestParam(required = false, defaultValue = "count") String sortby,
+			HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		itemcount.setSortby(sortby);
+		itemcount.setDesc(!"name".equals(sortby));
+		List<Tag> tagslist = utils.getParaClient().findTags("*", itemcount);
+		model.addAttribute("path", "tags.vm");
+		model.addAttribute("title", utils.getLang(req).get("tags.title"));
+		model.addAttribute("tagsSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("tagslist", tagslist);
+        return "base";
+    }
 }

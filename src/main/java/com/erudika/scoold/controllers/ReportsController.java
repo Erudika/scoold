@@ -17,63 +17,110 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.reportslink;
+import com.erudika.scoold.core.Profile;
+import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
-import java.util.Collections;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/reports")
 public class ReportsController {
 
-	public String title;
-	public String showtype;
-	public List<Report> reportslist;
-	public Map<String, String> error = Collections.emptyMap();
+	private final ScooldUtils utils;
+	private final ParaClient pc;
 
-//	public ReportsController() {
-//		title = lang.get("reports.title");
-//		addModel("reportsSelected", "navbtn-hover");
-//	}
-//
-//	public void onGet() {
-//		if (param("ref")) {
-//			setRedirect(getParamValue("ref"));
-//			return;
-//		}
-//		reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
-//	}
-//
-//	public void onPost() {
-//		if (param("close")) {
-//			Report rep = pc.read(getParamValue("id"));
-//			if (rep != null && !rep.getClosed()) {
-//				rep.setClosed(true);
-//				rep.setSolution(getParamValue("solution"));
-//				rep.update();
-//			}
-//			if (!isAjaxRequest()) setRedirect(reportslink);
-//		} else if (param("delete") && isAdmin) {
-//			Report rep = pc.read(getParamValue("id"));
-//			if (rep != null) {
-//				rep.delete();
-//			}
-//			if (!isAjaxRequest()) setRedirect(reportslink);
-//		} else {
-//			Report rep = populate(new Report(), "link", "description", "parentid", "subType", "authorName");
-//			error = validate(rep);
-//			if (error.isEmpty()) {
-//				if (authenticated) {
-//					rep.setAuthorName(authUser.getName());
-//					rep.setCreatorid(authUser.getId());
-//					addBadgeAndUpdate(REPORTER, true);
-//				} else {
-//					//allow anonymous reports
-//					rep.setAuthorName(lang.get("anonymous"));
-//				}
-//				rep.create();
-//			}
-//		}
-//	}
+	@Inject
+	public ReportsController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
+
+	@GetMapping
+    public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+			HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		itemcount.setSortby(sortby);
+		List<Report> reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
+		model.addAttribute("path", "reports.vm");
+		model.addAttribute("title", utils.getLang(req).get("reports.title"));
+		model.addAttribute("reportsSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("reportslist", reportslist);
+
+        return "base";
+    }
+
+	@PostMapping
+    public void create(HttpServletRequest req, HttpServletResponse res) {
+		Report rep = utils.populate(req, new Report(), "link", "description", "parentid", "subType", "authorName");
+		Map<String, String> error = utils.validate(rep);
+		if (error.isEmpty()) {
+			if (utils.isAuthenticated(req)) {
+				Profile authUser = utils.getAuthUser(req);
+				rep.setAuthorName(authUser.getName());
+				rep.setCreatorid(authUser.getId());
+				utils.addBadgeAndUpdate(authUser, REPORTER, true);
+			} else {
+				//allow anonymous reports
+				rep.setAuthorName(utils.getLang(req).get("anonymous"));
+			}
+			rep.create();
+		} else {
+			throw new BadRequestException();
+		}
+    }
+
+	@PostMapping("/{id}/close")
+    public String close(@PathVariable String id, @RequestParam(required = false, defaultValue = "") String solution,
+			HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			Report report = pc.read(id);
+			if (report != null && !report.getClosed() && utils.isMod(authUser)) {
+				report.setClosed(true);
+				report.setSolution(solution);
+				report.update();
+			}
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + reportslink;
+		}
+        return "base";
+    }
+
+	@PostMapping("/{id}/delete")
+    public String delete(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			Report rep = pc.read(id);
+			if (rep != null && utils.isAdmin(authUser)) {
+				rep.delete();
+			}
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + reportslink;
+		}
+        return "base";
+    }
 }

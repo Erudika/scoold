@@ -6,7 +6,7 @@
 			<div class="center">
 				<h1 class="black-text">$!lang.get("settings.delete.confirm")</h1>
 				<br>
-				<form method="post" action="$settingslink?deleteaccount=true">
+				<form method="post" action="$settingslink/goodbye">
 					#sectoken(false)
 					<div class="input-field">
 						<button type="submit" class="btn-large waves-effect waves-light mrl red white-text">$!lang.get('delete')</button>

@@ -1,25 +1,101 @@
 <div class="ptl">
-	#if ($request.getParameter("write"))
-		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a> / $!lang.get("feedback.write")</h2>
-	#else
-		<a href="$feedbacklink/write" class="btn waves-effect waves-light right" title="Write something">$!{lang.get('feedback.write')}</a>
-		#if ($request.getParameter("tag"))
-			#set($showTag = $request.getParameter("tag"))
-			<h2>$!lang.get("feedback.tagged") &ldquo;$!{showTag}&rdquo;</h2>
-		#elseif ($request.getParameter("search"))
-			<h2><a href="$feedbacklink" title="Feedback">$!lang.get("feedback.title")</a> / $!lang.get("search.title") </h2>
-		#else
-			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
-		#end
+	#if ($write)
+		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a></h2>
 		<hr>
+		<div class="ptl">
+			<form method="post" id="write-feedback-form">
+				#sectoken(false "CREATE_FEEDBACK")
+				<div class="input-field mbl">
+					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					<label for="title_text">$!lang.get('posts.title')</label>
+					<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6" required>
+					#getmessagebox("red white-text" $error.get("title"))
+				</div>
 
-		#set($sortarr = {'votes': "", 'newest': "", 'activity': ""} )
+				<i class="fa fa-pencil fa-2x left grey-text"></i>
+				<div class="pll mll">
+					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
+					#getmessagebox("red white-text" $error.get("body"))
+				</div>
+
+				<div class="autocomplete">
+					<i class="fa fa-tag fa-2x ptl grey-text"></i>
+					<div class="ac-tags"></div>
+					<div class="ac-input input-field">
+						<label for="tags_text">$!lang.get('tags.title')</label>
+						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
+									 data-beloworigin="true" autocomplete="off">
+					</div>
+					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
+					<input type="hidden" name="tags" class="ac-hidden" value="">
+				</div>
+				#getmessagebox("red white-text" $error.get("tags"))
+
+				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
+				<button class="btn mtl waves-effect waves-light" type="submit">
+					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+				</button>
+			</form>
+		</div>
+	#elseif ($showPost)
+		<div class="row">
+			<div class="col m12 l9">
+				<div id="post-title" class="largeText">$!{showPost.title}</div>
+				<hr>
+				#postbox($showPost $showPost)
+			</div>
+			<div class="col m12 l3">
+				<div class="card-panel">
+					<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
+					<div class="mediumText pvs"><b>$!showPost.answercount</b> $!lang.get('answers.title')</div>
+					<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
+						<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
+					</div>
+					#if($showPost.updated)
+						<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('profile.about.lastseen')">
+							<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.updated "")
+						</div>
+					#end
+					#if($showPost.location && !$showPost.location.isEmpty())
+						<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
+					#end
+					#if ($showPost.tags && !$showPost.tags.isEmpty())
+						<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
+						<div class="mtm">#tagsbox($showPost.tags $questionslink)</div>
+					#end
+				</div>
+
+				#if ($similarquestions && !$similarquestions.isEmpty())
+					<div class="card-panel similar mbl mediumText">
+						<div class="mbl">$!lang.get("posts.similar")</div>
+						#foreach($showSimilar in $similarquestions)
+							#set($plink = "#getpostlink($showSimilar false false)")
+							<div>
+								<small><i class="fa fa-caret-right grey-text"></i></small>
+								<a href="$plink" class="smallText">$!showSimilar.title</a>
+							</div>
+						#end
+					</div>
+				#end
+			</div>
+		</div>
+	#else
+		#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
 		#setsortbyselection($sortarr 'newest')
-		<div class="mvm">
+		<div class="right mtl ptl">
 			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
 			<a href="$feedbacklink/votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
 			<a href="$feedbacklink/updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
 		</div>
+		#if ($request.getParameter("tag"))
+			#set($showTag = $request.getParameter("tag"))
+			<h2>$!lang.get("feedback.tagged") &ldquo;$!{showTag}&rdquo;</h2>
+		#else
+			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
+		#end
+		<hr>
+		<a href="$feedbacklink/write" class="btn-floating btn-large waves-effect waves-light right tooltipped" data-tooltip="$!{lang.get('feedback.write')}"><i class="fa fa-plus"></i></a>
+
 
 		#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
 	#end

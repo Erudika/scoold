@@ -44,11 +44,10 @@ public class SigninController {
 		this.utils = utils;
     }
 
-	@GetMapping(path = "/signin")
+	@GetMapping("/signin")
     public String get(HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
-			System.out.println("aaaaaaaaaaa " + HOMEPAGE);
-			return "redirect:terms";
+			return "redirect:" + HOMEPAGE;
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
@@ -64,10 +63,8 @@ public class SigninController {
 			if (u != null) {
 				Utils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 				String backto = Utils.urlDecode(returnto);
-				System.out.println("reeeeeeeeee1 " + backto);
 				return "redirect:" + (StringUtils.isBlank(backto) ? HOMEPAGE : backto);
 			} else {
-				System.out.println("reeeeeeeeee2 " + signinlink);
 				return "redirect:" + signinlink + "?code=3&error=true";
 			}
 		}
@@ -76,12 +73,11 @@ public class SigninController {
 		} else {
 			Utils.removeStateParam("returnto", req, res);
 		}
-		System.out.println("reeeeeeeeee " + returnto);
 		return "redirect:" + returnto;
 	}
 
-	@PostMapping(path = "/signout")
-    public String post(HttpServletRequest req, HttpServletResponse res, Model model) {
+	@PostMapping("/signout")
+    public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			utils.clearSession(req, res);
 			return "redirect:" + signinlink + "?code=5&success=true";

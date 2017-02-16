@@ -18,71 +18,112 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import com.erudika.scoold.core.Comment;
+import com.erudika.scoold.core.Post;
+import com.erudika.scoold.core.Profile;
+import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
+import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
+import com.erudika.scoold.utils.ScooldUtils;
+import java.util.List;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ForbiddenException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/comment")
 public class CommentController {
 
-	public com.erudika.scoold.core.Comment showComment;
+	private final ScooldUtils utils;
+	private final ParaClient pc;
 
-	public String title;
+	@Inject
+	public CommentController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
 
-//	public CommentController() {
-//		title = lang.get("comment.title");
-//	}
-//
-//	public void onGet() {
-//		if (param("id")) {
-//			String id = getParamValue("id");
-//			showComment = pc.read(id);
-//			if (showComment == null || !ParaObjectUtils.typesMatch(showComment)) {
-//				setRedirect(HOMEPAGE);
-//			}
-//		} else if (param("getcomments") && param(Config._PARENTID)) {
-//			Post parent = pc.read(getParamValue(Config._PARENTID));
-//			if (parent != null) {
-//				parent.getItemcount().setPage(itemcount.getPage());
-//				commentslist = pc.getChildren(parent, Utils.type(com.erudika.scoold.core.CommentController.class),
-//						parent.getItemcount());
-//				parent.setComments(commentslist);
-//				addModel("showpost", parent);
-//				addModel("itemcount", parent.getItemcount());
-//			}
-//		}
-//	}
-//
-//	public void onPost() {
-//		if (param("deletecomment") && authenticated) {
-//			String id = getParamValue("deletecomment");
-//			com.erudika.scoold.core.CommentController c = pc.read(id);
-//			if (c != null && (c.getCreatorid().equals(authUser.getId()) || isMod)) {
-//				// check parent and correct (for multi-parent-object pages)
-//				c.delete();
-//				if (!isMod) {
-//					addBadgeAndUpdate(DISCIPLINED, true);
-//				}
-//			}
-//		} else if (canComment && param("comment")) {
-//			String comment = getParamValue("comment");
-//			String parentid = getParamValue(Config._PARENTID);
-//			if (!StringUtils.isBlank(comment) && !StringUtils.isBlank(parentid)) {
-//				com.erudika.scoold.core.CommentController lastComment = new com.erudika.scoold.core.CommentController();
-//				lastComment.setComment(comment);
-//				lastComment.setParentid(parentid);
-//				lastComment.setCreatorid(authUser.getId());
-//				lastComment.setAuthorName(authUser.getName());
-//
-//				if (lastComment.create() != null) {
-//					long commentCount = authUser.getComments();
-//					addBadgeOnce(COMMENTATOR, commentCount >= AppConfig.COMMENTATOR_IFHAS);
-//					authUser.setComments(commentCount + 1);
-//					authUser.update();
-//					commentslist.add(lastComment);
-//					addModel("newcomment", lastComment);
-//				}
-//			}
-//		}
-//	}
+	@GetMapping("/{id}")
+    public String get(@PathVariable String id, HttpServletRequest req, Model model) {
+		Comment showComment = pc.read(id);
+		if (showComment == null || !ParaObjectUtils.typesMatch(showComment)) {
+			return "redirect:" + HOMEPAGE;
+		}
+		model.addAttribute("path", "comment.vm");
+		model.addAttribute("title", utils.getLang(req).get("comment.title"));
+		model.addAttribute("showComment", showComment);
+        return "base";
+    }
 
+	@GetMapping(params = {Config._PARENTID, "getcomments"})
+    public String getAjax(@RequestParam String parentid, @RequestParam Boolean getcomments,
+			@RequestParam(required = false, defaultValue = "1") Integer page, HttpServletRequest req, Model model) {
+		Post parent = pc.read(parentid);
+		if (parent != null) {
+			parent.getItemcount().setPage(page);
+			List<Comment> commentslist = pc.getChildren(parent, Utils.type(Comment.class), parent.getItemcount());
+			parent.setComments(commentslist);
+//			model.addAttribute("showpost", parent);
+			model.addAttribute("itemcount", parent.getItemcount());
+			model.addAttribute("commentslist", commentslist);
+		}
+		return "comment";
+	}
+
+	@PostMapping("/{id}/delete")
+    public void deleteAjax(@RequestParam String id, HttpServletRequest req) {
+		if (utils.isAuthenticated(req)) {
+			Comment comment = pc.read(id);
+			Profile authUser = utils.getAuthUser(req);
+			boolean isMod = utils.isMod(authUser);
+			if (comment != null && (comment.getCreatorid().equals(authUser.getId()) || isMod)) {
+				// check parent and correct (for multi-parent-object pages)
+				comment.delete();
+				if (!isMod) {
+					utils.addBadgeAndUpdate(authUser, DISCIPLINED, true);
+				}
+			}
+		}
+	}
+
+	@PostMapping
+    public String createAjax(@RequestParam String comment, @RequestParam String parentid,
+			HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.canComment(authUser, req) && !StringUtils.isBlank(comment) && !StringUtils.isBlank(parentid)) {
+			Comment showComment = new Comment();
+			showComment.setComment(comment);
+			showComment.setParentid(parentid);
+			showComment.setCreatorid(authUser.getId());
+			showComment.setAuthorName(authUser.getName());
+
+			if (showComment.create() != null) {
+				long commentCount = authUser.getComments();
+				utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= COMMENTATOR_IFHAS);
+				authUser.setComments(commentCount + 1);
+				authUser.update();
+//				commentslist.add(lastComment);
+				model.addAttribute("showComment", showComment);
+				return "comment";
+			}
+		}
+		throw new ForbiddenException();
+	}
 }

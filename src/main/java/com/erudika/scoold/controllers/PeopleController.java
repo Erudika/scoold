@@ -18,26 +18,52 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/people")
 public class PeopleController {
 
-	public String title;
-	public List<com.erudika.scoold.core.Profile> userlist;
+	private final ScooldUtils utils;
 
-//	public PeopleController() {
-//		title = lang.get("people.title");
-//		addModel("peopleSelected", "navbtn-hover");
-//	}
-//
-//	public void onGet() {
-//		String sortBy = "";
-//		if ("rep".equals(getParamValue("sortby"))) sortBy = "votes";
-//		itemcount.setSortby(sortBy);
-//		userlist = pc.findQuery(Utils.type(com.erudika.scoold.core.Profile.class), "*", itemcount);
-//	}
+	@Inject
+	public PeopleController(ScooldUtils utils) {
+		this.utils = utils;
+	}
+
+	@GetMapping
+    public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+			HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		itemcount.setSortby(sortby);
+		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), "*", itemcount);
+		model.addAttribute("path", "people.vm");
+		model.addAttribute("title", utils.getLang(req).get("people.title"));
+		model.addAttribute("peopleSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("userlist", userlist);
+        return "base";
+    }
+
+	@GetMapping("/{sortby}")
+	public String sorted(@PathVariable String sortby, HttpServletRequest req, Model model) {
+		return get(sortby, req, model);
+	}
 }

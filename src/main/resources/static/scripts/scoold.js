@@ -548,7 +548,7 @@ $(function () {
 	});
 
 	// save draft in localstorage
-	var askForm = $("form#ask-question-form");
+	var askForm = $("form#ask-question-form, form#write-feedback-form");
 	if (askForm.length) {
 		var title = askForm.find("input[name=title]");
 		var tags = askForm.find("input[name=tags]");
