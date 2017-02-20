@@ -19,112 +19,154 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.User;
+import static com.erudika.para.core.User.Groups.MODS;
+import static com.erudika.para.core.User.Groups.USERS;
+import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.utils.Pager;
+import static com.erudika.scoold.ScooldServer.profilelink;
+import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Post;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Profile.Badge;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/profile")
 public class ProfileController {
 
-    public String title;
-    public boolean isMyProfile;
-	public boolean canEdit;
-	public com.erudika.scoold.core.Profile showUser;
-	public List<User> contactlist;
-	public List<? extends Post> questionslist;
-	public List<? extends Post> answerslist;
-	public String gravatarPicture;
+//    public String title;
+//    public boolean isMyProfile;
+//	public boolean canEdit;
+//	public com.erudika.scoold.core.Profile showUser;
+//	public List<User> contactlist;
+//	public List<? extends Post> questionslist;
+//	public List<? extends Post> answerslist;
+//	public String gravatarPicture;
 
-//    public ProfileController() {
-//        title = lang.get("profile.title");
-//		canEdit = false;
-//
-//		if (!authenticated && !param("id")) {
-//			setRedirect(HOMEPAGE);
-//			return;
-//		}
-//
-//		String showuid = com.erudika.scoold.core.ProfileController.id(param("id") ? getParamValue("id") : authUser.getId());
-//
-//		if (isMyid(showuid)) {
-//			//requested userid !exists or = my userid => show my profile
-//			showUser = authUser;
-//			isMyProfile = true;
-//		} else if (showuid != null) {
-//			showUser = pc.read(showuid);
-//			isMyProfile = false;
-//		}
-//
-//		if (showUser == null || !ParaObjectUtils.typesMatch(showUser)) {
-//			setRedirect(profilelink);
-//			return;
-//		}
-//
-//		if (authenticated && (isMyid(showuid) || isAdmin)) {
-//			canEdit = true;
-//		}
-//
-//		title = lang.get("profile.title") + " - " + showUser.getName();
-//
-//		if (param("getsmallpersonbox")) {
-//			addModel("showAjaxUser", showUser);
-//		}
-//		addModel("includeGMapsScripts", true);
-//    }
-//
-//    public void onGet() {
-//		if (!isMyProfile) {
-//			boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
-//			boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
-//			if (param("makemod") && isAdmin && !isShowUserAdmin) {
-//				boolean makemod = Boolean.parseBoolean(getParamValue("makemod")) && !isShowUserMod;
-//				showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
-//				showUser.update();
-//			}
-//		}
-//		questionslist = showUser.getAllQuestions(itemcount1);
-//		answerslist = showUser.getAllAnswers(itemcount2);
-//		gravatarPicture = getGravatar(showUser.getUser().getEmail());
-//    }
-//
-//    public void onPost() {
-//		if (canEdit) {
-//			boolean update = false;
-//
-//			if (param("name")) {
-//				showUser.setName(getParamValue("name"));
-//				update = true;
-//			}
-//			if (param("location")) {
-//				showUser.setLocation(getParamValue("location"));
-//				update = true;
-//			}
-//			if (param("website")) {
-//				showUser.setWebsite(getParamValue("website"));
-//				update = true;
-//			}
-//			if (param("aboutme")) {
-//				showUser.setAboutme(getParamValue("aboutme"));
-//				update = true;
-//			}
-//			if (param("picture") && !getParamValue("picture").equals(showUser.getUser().getPicture())) {
-//				showUser.setPicture(getParamValue("picture"));
-//				update = true;
-//			}
-//
-//			update = update || addBadgeOnce(Badge.NICEPROFILE, showUser.isComplete() && isMyid(showUser.getId()));
-//
-//			if (update) {
-//				showUser.update();
-//			}
-//			if (!isAjaxRequest())
-//				setRedirect(profilelink); //redirect after post
-//		}
-//	}
-//
-//	private boolean isMyid(String id) {
-//		return authenticated && authUser.getId().equals(id);
-//	}
+
+	private final ScooldUtils utils;
+
+	@Inject
+	public ProfileController(ScooldUtils utils) {
+		this.utils = utils;
+	}
+
+	@GetMapping("/{id}")
+    public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req) && !StringUtils.isBlank(id)) {
+			return "redirect:" + signinlink;
+		}
+		Profile authUser = utils.getAuthUser(req);
+		Profile showUser;
+		boolean isMyProfile;
+
+		if (StringUtils.isBlank(id)) {
+			//requested userid !exists or = my userid => show my profile
+			showUser = authUser;
+			isMyProfile = true;
+		} else {
+			showUser = utils.getParaClient().read(Profile.id(id));
+			isMyProfile = isMyid(authUser, Profile.id(id));
+		}
+
+		if (showUser == null || !ParaObjectUtils.typesMatch(showUser)) {
+			return "redirect:" + profilelink;
+		}
+		Pager itemcount1 = utils.getPager("page1", req);
+		Pager itemcount2 = utils.getPager("page2", req);
+		List<? extends Post> questionslist = showUser.getAllQuestions(itemcount1);
+		List<? extends Post> answerslist = showUser.getAllAnswers(itemcount2);
+
+		model.addAttribute("path", "profile.vm");
+		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
+		model.addAttribute("includeGMapsScripts", true);
+		model.addAttribute("showUser", showUser);
+		model.addAttribute("isMyProfile", isMyProfile);
+		model.addAttribute("canEdit", canEdit(authUser, id));
+		model.addAttribute("gravatarPicture", utils.getGravatar(showUser.getUser().getEmail()));
+		model.addAttribute("itemcount1", itemcount1);
+		model.addAttribute("itemcount2", itemcount2);
+		model.addAttribute("questionslist", questionslist);
+		model.addAttribute("answerslist", answerslist);
+        return "base";
+    }
+
+	@PostMapping("/{id}")
+    public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!isMyid(authUser, Profile.id(id))) {
+			Profile showUser = utils.getParaClient().read(Profile.id(id));
+			if (showUser != null) {
+				boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
+				boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
+				if (makemod && utils.isAdmin(authUser) && !isShowUserAdmin) {
+					showUser.setGroups((makemod && !isShowUserMod) ? MODS.toString() : USERS.toString());
+					showUser.update();
+				}
+			}
+		}
+        return "redirect:" + profilelink;
+    }
+
+	@PostMapping("/{id}")
+    public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
+			@RequestParam(required = false) String location, @RequestParam(required = false) String website,
+			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		String showId = StringUtils.isBlank(id) ? authUser.getId() : id;
+		if (canEdit(authUser, showId)) {
+			Profile showUser = utils.getParaClient().read(Profile.id(id));
+			boolean update = false;
+
+			if (!StringUtils.isBlank(name)) {
+				showUser.setName(name);
+				update = true;
+			}
+			if (!StringUtils.isBlank(location)) {
+				showUser.setLocation(location);
+				update = true;
+			}
+			if (!StringUtils.isBlank(website)) {
+				showUser.setWebsite(website);
+				update = true;
+			}
+			if (!StringUtils.isBlank(aboutme)) {
+				showUser.setAboutme(aboutme);
+				update = true;
+			}
+			if (!StringUtils.isBlank(picture) && !picture.equals(showUser.getUser().getPicture())) {
+				showUser.setPicture(picture);
+				update = true;
+			}
+
+			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
+			if (update || utils.addBadgeOnce(authUser, Badge.NICEPROFILE, isComplete)) {
+				showUser.update();
+			}
+		}
+		return "redirect:" + profilelink;
+    }
+
+	private boolean isMyid(Profile authUser, String id) {
+		return authUser != null && authUser.getId().equals(id);
+	}
+
+	private boolean canEdit(Profile authUser, String id) {
+		return isMyid(authUser, Profile.id(id)) || utils.isAdmin(authUser);
+	}
 }

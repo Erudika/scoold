@@ -1,9 +1,7 @@
 <div class="ptl">
-	#set($searchQuery = $request.getParameter("q") )
-
 	<h2>
 		#if ($showParam)
-			<a href="$searchlink?q=$!searchQuery">$!lang.get("search.title")</a>
+			<a href="$searchlink/all/$!searchQuery">$!lang.get("search.title")</a>
 			#if ($showParam == "questions")
 				/ $!lang.get("questions.title") #showcount($itemcount.count)
 			#elseif ($showParam == "answers")
@@ -20,9 +18,7 @@
 	</h2>
 	<hr>
 
-	#if ($request.queryString.contains("q=") ) #set($params = "q=$!searchQuery") #else #set($params = "") #end
-
-	#if (!$request.getParameter("q") || $totalCount == 0)
+	#if ($itemcount.count == 0)
 		<div class="card-panel hugeText center-align grey-text">
 			<div class="em5v">
 				$!lang.get("search.notfound")

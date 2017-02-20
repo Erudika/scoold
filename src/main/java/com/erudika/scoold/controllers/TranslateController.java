@@ -17,124 +17,178 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Translation;
+import com.erudika.para.utils.Pager;
+import static com.erudika.scoold.ScooldServer.languageslink;
+import static com.erudika.scoold.ScooldServer.translatelink;
+import com.erudika.scoold.core.Profile;
+import static com.erudika.scoold.core.Profile.Badge.POLYGLOT;
+import com.erudika.scoold.utils.ScooldUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/translate")
 public class TranslateController {
 
-	public String title;
+	private final ScooldUtils utils;
+	private final ParaClient pc;
+	private List<String> langkeys;
+	private Map<String, String> deflang;
 
-//	public Locale showLocale;
-//	public int showLocaleProgress;
-//	public List<Translation> translationslist;	// only the translations for given key
-//	public List<String> langkeys;
-//	public int showIndex;
-//	public boolean isTranslated = false;
-//	public Map<String, String> deflang;
-//
-//	public TranslateController() {
-//		title = lang.get("translate.title");
-//		langkeys = new ArrayList<String>();
-//		deflang = langutils.getDefaultLanguage();
-//		if (param("locale")) {
-//			showLocale = langutils.getProperLocale(getParamValue("locale"));
-//			if (showLocale == null || showLocale.getLanguage().equals("en")) {
-//				setRedirect(languageslink);
-//				return;
-//			}
-//			title += " - " + showLocale.getDisplayName(showLocale);
-//
-//			for (String key : deflang.keySet()) {
-//				langkeys.add(key);
-//			}
-//
-//			if (param("index")) {
-//				showIndex = NumberUtils.toInt(getParamValue("index"), 1) - 1;
-//				if (showIndex <= 0) {
-//					showIndex = 0;
-//				} else if (showIndex >= langkeys.size()) {
-//					showIndex = langkeys.size() - 1;
-//				}
-//			}
-//		} else {
-//			setRedirect(languageslink);
-//		}
-//	}
-//
-//	public void onGet() {
-//		if (isAjaxRequest()) return;
-//		if (param("locale")) {
-//			showLocaleProgress = langutils.getTranslationProgressMap().get(showLocale.getLanguage());
-//			if (param("index")) {
-//				// this is what is currently shown for translation
-//				String langkey = langkeys.get(showIndex);
-//				translationslist = langutils.readAllTranslationsForKey(showLocale.getLanguage(),
-//						langkey, itemcount);
-//			}
-//		}
-//	}
-//
-//	public void onPost() {
-//		if (param("locale") && param("gettranslationhtmlcode")) {
-//			String value = StringUtils.trim(getParamValue("value"));
-//			String langkey = langkeys.get(showIndex);
-//			Set<String> approved = langutils.getApprovedTransKeys(showLocale.getLanguage());
-//			isTranslated = approved.contains(langkey);
-//			if (!StringUtils.isBlank(value) && (!isTranslated || isAdmin)) {
-//				Translation trans = new Translation(showLocale.getLanguage(), langkey, value);
-//				trans.setCreatorid(authUser.getId());
-//				trans.setAuthorName(authUser.getName());
-//				trans.setTimestamp(System.currentTimeMillis());
-//				pc.create(trans);
-//				addModel("newtranslation", trans);
-//			}
-//			if (!isAjaxRequest()) {
-//				setRedirect(translatelink + "/" + showLocale.getLanguage()+"/"+getNextIndex(showIndex, approved));
-//			}
-//		} else if (param("approve") && isAdmin) {
-//			String id = getParamValue("approve");
-//			Translation trans = (Translation) pc.read(id);
-//			if (trans != null) {
-//				if (trans.getApproved()) {
-//					trans.setApproved(false);
-//					langutils.disapproveTranslation(trans.getLocale(), trans.getId());
-//				} else {
-//					trans.setApproved(true);
-//					langutils.approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
-//					addBadge(Badge.POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true, true);
-//				}
-//				pc.update(trans);
-//			}
-//			if (!isAjaxRequest())
-//				setRedirect(translatelink+"/"+showLocale.getLanguage()+"/"+(showIndex+1));
-//		} else if (param("delete")) {
-//			String id = getParamValue("delete");
-//			if (id != null) {
-//				Translation trans = (Translation) pc.read(id);
-//				if (authUser.getId().equals(trans.getCreatorid()) || isAdmin) {
-//					langutils.disapproveTranslation(trans.getLocale(), trans.getId());
-//					pc.delete(trans);
-//				}
-//				if (!isAjaxRequest())
-//					setRedirect(translatelink+"/"+showLocale.getLanguage()+"/"+(showIndex+1));
-//			}
-//		}
-//	}
-//
-//	private int getNextIndex(int start, Set<String> approved) {
-//		if (start < 0) start = 0;
-//		if (start >= approved.size()) start = approved.size() - 1;
-//		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);
-//
-//		// if there are untranslated strings go directly there
-//		if (approved.size() != langkeys.size()) {
-//			while(approved.contains(langkeys.get(nexti))) {
-//				nexti = (nexti + 1) >= langkeys.size() ? 0 : (nexti + 1);
-//			}
-//		}
-//
-//		return nexti;
-//	}
+	@Inject
+	public TranslateController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+		langkeys = new ArrayList<String>();
+		deflang = utils.getLangutils().getDefaultLanguage();
+		for (String key : deflang.keySet()) {
+			langkeys.add(key);
+		}
+	}
 
+	@GetMapping
+    public String get(HttpServletRequest req, Model model) {
+		return "redirect:" + languageslink;
+	}
+
+	@GetMapping(path = "/{locale}/{index}")
+    public String translate(@PathVariable String locale, @PathVariable(required = false) String index,
+			HttpServletRequest req, Model model) {
+
+		Locale showLocale = utils.getLangutils().getProperLocale(locale);
+		if (showLocale == null || showLocale.getLanguage().equals("en")) {
+			// can't translate default language
+			return "redirect:" + languageslink;
+		}
+
+		int showIndex = -1;
+		List<Translation> translationslist = Collections.emptyList();
+		Pager itemcount = utils.getPager("page", req);
+		if (!StringUtils.isBlank(index)) {
+			showIndex = getIndex(index, langkeys);
+			// this is what is currently shown for translation
+			translationslist = utils.getLangutils().
+					readAllTranslationsForKey(showLocale.getLanguage(), langkeys.get(showIndex), itemcount);
+		}
+
+		String title = utils.getLang(req).get("translate.title") + " - " + showLocale.getDisplayName(showLocale);
+		int showLocaleProgress = utils.getLangutils().getTranslationProgressMap().get(showLocale.getLanguage());
+		model.addAttribute("path", "translate.vm");
+		model.addAttribute("title", title);
+		model.addAttribute("showIndex", showIndex);
+		model.addAttribute("showLocale", showLocale);
+		model.addAttribute("langkeys", langkeys);
+		model.addAttribute("deflang", deflang);
+		model.addAttribute("showLocaleProgress", showLocaleProgress);
+		model.addAttribute("translationslist", translationslist);
+		model.addAttribute("itemcount", itemcount);
+        return "base";
+    }
+
+	@PostMapping("/{locale}/{index}")
+    public String post(@PathVariable String locale, @PathVariable String index, @RequestParam String value,
+			HttpServletRequest req, Model model) {
+		Locale showLocale = utils.getLangutils().getProperLocale(locale);
+		if (utils.isAuthenticated(req) && showLocale != null && !showLocale.getLanguage().equals("en")) {
+			Set<String> approved = utils.getLangutils().getApprovedTransKeys(showLocale.getLanguage());
+			Profile authUser = utils.getAuthUser(req);
+			String langkey = langkeys.get(getIndex(index, langkeys));
+			boolean isTranslated = approved.contains(langkey);
+			if (!StringUtils.isBlank(value) && (!isTranslated || utils.isAdmin(authUser))) {
+				Translation trans = new Translation(showLocale.getLanguage(), langkey, StringUtils.trim(value));
+				trans.setCreatorid(authUser.getId());
+				trans.setAuthorName(authUser.getName());
+				trans.setTimestamp(System.currentTimeMillis());
+				pc.create(trans);
+				model.addAttribute("newtranslation", trans);
+			}
+			if (!utils.isAjaxRequest(req)) {
+				return "redirect:" + translatelink + "/" + showLocale.getLanguage() + "/" +
+						getNextIndex(getIndex(index, langkeys), approved, langkeys);
+			}
+		}
+
+		return "base";
+    }
+
+	@PostMapping("/approve/{id}")
+    public String approve(@PathVariable String id, HttpServletRequest req, Model model) {
+		Translation trans = (Translation) pc.read(id);
+		if (trans != null && utils.isAuthenticated(req)) {
+			if (trans.getApproved()) {
+				trans.setApproved(false);
+				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getId());
+			} else {
+				trans.setApproved(true);
+				utils.getLangutils().approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
+				utils.addBadge(utils.getAuthUser(req), POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true, true);
+			}
+			pc.update(trans);
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + req.getRequestURI();
+		}
+		return "base";
+	}
+
+	@PostMapping("/delete/{id}")
+    public String delete(@PathVariable String id, HttpServletRequest req, Model model) {
+		if (id != null && utils.isAuthenticated(req)) {
+			Translation trans = (Translation) pc.read(id);
+			Profile authUser = utils.getAuthUser(req);
+			if (authUser.getId().equals(trans.getCreatorid()) || utils.isAdmin(authUser)) {
+				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getId());
+				pc.delete(trans);
+			}
+			if (!utils.isAjaxRequest(req)) {
+				return "redirect:" + req.getRequestURI();
+			}
+		}
+		return "base";
+	}
+
+	private int getNextIndex(int start, Set<String> approved, List<String> langkeys) {
+		if (start < 0) start = 0;
+		if (start >= approved.size()) start = approved.size() - 1;
+		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);
+
+		// if there are untranslated strings go directly there
+		if (approved.size() != langkeys.size()) {
+			while(approved.contains(langkeys.get(nexti))) {
+				nexti = (nexti + 1) >= langkeys.size() ? 0 : (nexti + 1);
+			}
+		}
+		return nexti;
+	}
+
+	private int getIndex(String index, List<String> langkeys) {
+		int showIndex = NumberUtils.toInt(index, 1) - 1;
+		if (showIndex <= 0) {
+			showIndex = 0;
+		} else if (showIndex >= langkeys.size()) {
+			showIndex = langkeys.size() - 1;
+		}
+		return showIndex;
+	}
 }

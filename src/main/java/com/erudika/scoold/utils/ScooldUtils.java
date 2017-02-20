@@ -187,22 +187,23 @@ public final class ScooldUtils {
 	}
 
 	/****** VOTING ******/
-	public boolean processVoteRequest(Profile authUser, String type, String id, HttpServletRequest req) {
-		if (id == null || authUser == null || pc == null) {
+	public boolean processVoteRequest(boolean isUpvote, String type, String id, HttpServletRequest req) {
+		if (StringUtils.isBlank(id) || StringUtils.isBlank(type)) {
 			return false;
 		}
 		ParaObject votable = pc.read(id);
 		Profile author = null;
+		Profile authUser = getAuthUser(req);
 		boolean result = false;
 		boolean updateAuthUser = false;
 		boolean updateVoter = false;
 
-		if (votable != null && isAuthenticated(req)) {
+		if (votable != null && authUser != null) {
 			try {
 				author = pc.read(votable.getCreatorid());
 				Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
 
-				if (param(req, "voteup") && pc.voteUp(votable, authUser.getId())) {
+				if (isUpvote && pc.voteUp(votable, authUser.getId())) {
 					votes++;
 					authUser.incrementUpvotes();
 					updateAuthUser = true;
@@ -227,7 +228,7 @@ public final class ScooldUtils {
 						author.addRep(reward);
 						updateVoter = true;
 					}
-				} else if (param(req, "votedown") && pc.voteDown(votable, authUser.getId())) {
+				} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
 					votes--;
 					authUser.incrementDownvotes();
 					updateAuthUser = true;
@@ -271,7 +272,6 @@ public final class ScooldUtils {
 				pc.updateAll(list);
 			}
 		}
-//		addModel("voteresult", result);
 		return result;
 	}
 

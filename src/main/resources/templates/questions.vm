@@ -1,5 +1,5 @@
 <div class="ptl">
-	#if ($request.getParameter("ask"))
+	#if ($askSelected)
 		<h2>$!lang.get("posts.ask")</h2>
 		<hr>
 		<div class="ptl">

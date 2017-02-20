@@ -23,11 +23,14 @@ import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -58,4 +61,10 @@ public class TagsController {
 		model.addAttribute("tagslist", tagslist);
         return "base";
     }
+
+	@ResponseBody
+	@GetMapping(path = "/{keyword}", produces = MediaType.APPLICATION_JSON)
+	public List<?> findTags(@PathVariable String keyword) {
+		return utils.getParaClient().findTags(keyword, new Pager(10));
+	}
 }

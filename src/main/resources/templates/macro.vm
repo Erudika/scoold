@@ -223,8 +223,7 @@
 ####################################
 #macro(getreportlink $reportable $link $clazz)
 	#if ($reportable)
-		#set($requri = $request.getAttribute("javax.servlet.forward.request_uri"))
-		#set($_href = "${requri}?getreportform=true&parentid=$!reportable.id&type=$!reportable.type")
+		#set($_href = "$reportslink/form?parentid=$!reportable.id&type=$!reportable.type")
 		#if (!$link.isEmpty())
 			#set($encodedLink = $utils.urlEncode($link))
 			#set($_href = "${_href}&link=$encodedLink")
@@ -473,12 +472,12 @@
 			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
 				#if ($isAdmin)
 					#if ($showtrans.approved)#set($onclass = "green-text")#else#set($onclass = "")#end
-					<a href="$translatelink/$!{showtrans.id}?approve=$showtrans.id" class="approve-translation $!{onclass}" title="Toogle approved status">
+					<a href="$translatelink/approve/$!{showtrans.id}" class="approve-translation $!{onclass}" title="Toogle approved status">
 						<i class="fa fa-check-circle"></i>#if ($showtrans.approved) Approved #else Approve #end
 					</a>
 					&nbsp;
 				#end
-				<a href="${thisuri}?delete=$!showtrans.id" title="Delete" class="delete-translation red-text mll">
+				<a href="$translatelink/delete/$!{showtrans.id}" title="Delete" class="delete-translation red-text mll">
 					<i class="fa fa-times"></i> $!lang.get('delete')
 				</a>
 			#else
@@ -552,7 +551,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #end
 #####################################
-#macro(reportform $type $parentid $grandparentid $parentid $link)
+#macro(reportform $type $parentid $grandparentid $link)
 <form method="post" class="create-report-form pal" action="$reportslink">
 		#sectoken(false)
 		<h3>$!lang.get("reportproblem")</h3>

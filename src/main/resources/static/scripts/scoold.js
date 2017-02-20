@@ -369,7 +369,7 @@ $(function () {
 		},
 		getData: function (value, callback) {
 			var val = value.toLowerCase();
-			$.get("/ajax/" + val, function (data) {
+			$.get("/tags/" + val, function (data) {
 				var tags = data.map(function (t) {
 					return {id: t.tag, text: t.tag};
 				});

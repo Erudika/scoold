@@ -18,131 +18,150 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
-import java.util.List;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.utils.ScooldUtils;
+import com.sun.syndication.feed.synd.SyndContent;
+import com.sun.syndication.feed.synd.SyndContentImpl;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.SyndFeedOutput;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
 public class SearchController {
 
-	public String title;
-	public List<Profile> userlist;
-	public List<Post> questionlist;
-	public List<Post> answerlist;
-	public List<Post> feedbacklist;
-	public String url;
+	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
 
-	public long totalCount;
+	private final ScooldUtils utils;
+	private final ParaClient pc;
 
-	private static final String DEFAULT_FEED_TYPE = "atom_1.0";
-    private static final String MIME_TYPE = "application/xml; charset=UTF-8";
-    private static final String COULD_NOT_GENERATE_FEED_ERROR = "Could not generate feed";
+	@Inject
+	public SearchController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
 
-//	public SearchController() {
-//		title = lang.get("search.title");
-//		addModel("searchSelected", "navbtn-hover");
-//		questionlist = new ArrayList<Post>();
-//		answerlist = new ArrayList<Post>();
-//		feedbacklist = new ArrayList<Post>();
-//		userlist = new ArrayList<Profile>();
-//		totalCount = 0;
-//	}
-//
-//	public void onGet() {
-//		if (param("q") && !StringUtils.isBlank(getParamValue("q"))) {
-//			String query = getParamValue("q");
-//
-//			if (showParam != null) {
-//				if ("questions".equals(showParam)) {
-//					questionlist = pc.findQuery(Utils.type(Question.class), query, itemcount);
-//				} else if ("answers".equals(showParam)) {
-//					answerlist = pc.findQuery(Utils.type(Reply.class), query, itemcount);
-//				} else if ("feedback".equals(showParam)) {
-//					feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
-//				} else if ("people".equals(showParam)) {
-//					userlist = pc.findQuery(Utils.type(Profile.class), query, itemcount);
-//				}
-//			} else {
-//				List<ParaObject> results = pc.findQuery(null, query, itemcount);
-//				for (ParaObject result : results) {
-//					if (Utils.type(Question.class).equals(result.getType())) {
-//						questionlist.add((Post) result);
-//					} else if (Utils.type(Reply.class).equals(result.getType())) {
-//						answerlist.add((Post) result);
-//					} else if (Utils.type(Feedback.class).equals(result.getType())) {
-//						feedbacklist.add((Post) result);
-//					} else if (Utils.type(Profile.class).equals(result.getType())) {
-//						userlist.add((Profile) result);
-//					}
-//				}
-//
-//			}
-//			ArrayList<Post> list = new ArrayList<Post>();
-//			list.addAll(questionlist);
-//			list.addAll(answerlist);
-//			list.addAll(feedbacklist);
-//			fetchProfiles(list);
-//			totalCount = itemcount.getCount();
-//		} else if (param("feed")) {
-//			try {
-//				SyndFeed feed = getFeed();
-//				String feedType = (param("type")) ? getParamValue("type") : DEFAULT_FEED_TYPE;
-//				feed.setFeedType(feedType);
-//
-//				resp.setContentType(MIME_TYPE);
-//				SyndFeedOutput output = new SyndFeedOutput();
-//				output.output(feed, resp.getWriter());
-//			} catch (Exception ex) {
-//				logger.error(COULD_NOT_GENERATE_FEED_ERROR, ex);
-//				try {
-//					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-//							COULD_NOT_GENERATE_FEED_ERROR);
-//				} catch (IOException ex1) {
-//					logger.error(null, ex1);
-//				}
-//			}
-//		}
-//	}
-//
-//	private SyndFeed getFeed() throws IOException,FeedException {
-//		SyndFeed feed = new SyndFeedImpl();
-//
-//		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
-//		String baseurl = Config.getConfigParam("base_url", "http://scoold.com");
-//		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
-//		feed.setTitle("Scoold - Recent questions");
-//        feed.setLink(baseurl);
-//        feed.setDescription("A summary of the most recent questions asked on Scoold.");
-//
-//        List<SyndEntry> entries = new ArrayList<SyndEntry>();
-//
-//		for (Post post : questions) {
-//			SyndEntry entry;
-//			SyndContent description;
-//			String baselink = baseurl.concat("question/").concat(post.getId());
-//
-//			entry = new SyndEntryImpl();
-//			entry.setTitle(post.getTitle());
-//			entry.setLink(baselink);
-//			entry.setPublishedDate(new Date(post.getTimestamp()));
-//			entry.setAuthor(baseurl.concat("profile/").concat(post.getCreatorid()));
-//			entry.setUri(baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).
-//					replaceAll("\\p{Z}+","-").toLowerCase()));
-//
-//			description = new SyndContentImpl();
-//			description.setType("text/html");
-//			description.setValue(Utils.markdownToHtml(post.getBody()));
-//
-//			entry.setDescription(description);
-//			entries.add(entry);
-//		}
-//
-//		feed.setEntries(entries);
-//
-//        return feed;
-//    }
+	@GetMapping("/search/{type}/{query}")
+    public String get(@PathVariable String type, @PathVariable String query, HttpServletRequest req, Model model) {
+		List<Profile> userlist = new ArrayList<Profile>();
+		List<Post> questionlist = new ArrayList<Post>();
+		List<Post> answerlist = new ArrayList<Post>();
+		List<Post> feedbacklist = new ArrayList<Post>();
+		Pager itemcount = utils.getPager("page", req);
 
+		if ("questions".equals(type)) {
+			questionlist = pc.findQuery(Utils.type(Question.class), query, itemcount);
+		} else if ("answers".equals(type)) {
+			answerlist = pc.findQuery(Utils.type(Reply.class), query, itemcount);
+		} else if ("feedback".equals(type)) {
+			feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
+		} else if ("people".equals(type)) {
+			userlist = pc.findQuery(Utils.type(Profile.class), query, itemcount);
+		} else {
+			List<ParaObject> results = pc.findQuery(null, query, itemcount);
+			for (ParaObject result : results) {
+				if (Utils.type(Question.class).equals(result.getType())) {
+					questionlist.add((Post) result);
+				} else if (Utils.type(Reply.class).equals(result.getType())) {
+					answerlist.add((Post) result);
+				} else if (Utils.type(Feedback.class).equals(result.getType())) {
+					feedbacklist.add((Post) result);
+				} else if (Utils.type(Profile.class).equals(result.getType())) {
+					userlist.add((Profile) result);
+				}
+			}
+		}
+		ArrayList<Post> list = new ArrayList<Post>();
+		list.addAll(questionlist);
+		list.addAll(answerlist);
+		list.addAll(feedbacklist);
+		utils.fetchProfiles(list);
+
+		model.addAttribute("path", "search.vm");
+		model.addAttribute("title", utils.getLang(req).get("search.title"));
+		model.addAttribute("searchSelected", "navbtn-hover");
+		model.addAttribute("showParam", type);
+		model.addAttribute("searchQuery", query);
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("userlist", userlist);
+		model.addAttribute("questionlist", questionlist);
+		model.addAttribute("answerlist", answerlist);
+		model.addAttribute("feedbacklist", feedbacklist);
+
+        return "base";
+    }
+
+	@GetMapping(path = "/feed.xml", produces = MediaType.APPLICATION_ATOM_XML)
+    public void feed(HttpServletRequest req, Writer writer) {
+		try {
+			new SyndFeedOutput().output(getFeed(), writer);
+		} catch (Exception ex) {
+			logger.error("Could not generate feed", ex);
+		}
+	}
+
+	private SyndFeed getFeed() throws IOException, FeedException {
+		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
+        List<SyndEntry> entries = new ArrayList<SyndEntry>();
+		String baseurl = Config.getConfigParam("base_url", "https://scoold.com");
+		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
+
+		SyndFeed feed = new SyndFeedImpl();
+		feed.setFeedType("atom_1.0");
+		feed.setTitle("Scoold - Recent questions");
+        feed.setLink(baseurl);
+        feed.setDescription("A summary of the most recent questions asked on Scoold.");
+
+		for (Post post : questions) {
+			SyndEntry entry;
+			SyndContent description;
+			String baselink = baseurl.concat("question/").concat(post.getId());
+
+			entry = new SyndEntryImpl();
+			entry.setTitle(post.getTitle());
+			entry.setLink(baselink);
+			entry.setPublishedDate(new Date(post.getTimestamp()));
+			entry.setAuthor(baseurl.concat("profile/").concat(post.getCreatorid()));
+			entry.setUri(baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).
+					replaceAll("\\p{Z}+","-").toLowerCase()));
+
+			description = new SyndContentImpl();
+			description.setType("text/html");
+			description.setValue(Utils.markdownToHtml(post.getBody()));
+
+			entry.setDescription(description);
+			entries.add(entry);
+		}
+		feed.setEntries(entries);
+        return feed;
+    }
 }

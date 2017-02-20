@@ -20,36 +20,6 @@
 	#end
 
 	################# SPECIAL AJAX REQUESTS #################
-
-	#if($request.getParameter("getreportform"))
-		#if($request.getParameter("parentid")  && $request.getParameter("parentid") && $request.getParameter("type"))
-			#reportform($request.getParameter("type")
-				$request.getParameter("parentid")
-				$!request.getParameter("grandparentid")
-				$request.getParameter("parentid")
-				$!request.getParameter("link"))
-		#end
-		#stop
-
-	#elseif($request.getParameter("voteup") || $request.getParameter("votedown"))
-		$!voteresult
-		#stop
-
-	#elseif($request.getParameter("gettranslationhtmlcode"))
-		#translationbox($!newtranslation)
-		#stop
-
-	#elseif($request.getParameter("getsmallpersonbox"))
-		#if($showAjaxUser)
-			#smallpersonbox($showAjaxUser)
-		#end
-		#stop
-
-	#end
-	#stop
-
-#elseif($request.getRequestURI() == "/feed.xml")
-	#stop
 #end
 <!DOCTYPE html>
 <html lang="en">
@@ -138,7 +108,7 @@
 								<li>
 									<nav class="light-blue z-depth-0">
 										<div class="nav-wrapper">
-											<form action="$searchlink">
+											<form action="$searchlink/all">
 												<div class="input-field">
 													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
 													<label for="search"><i class="fa fa-search fa-2x"></i></label>

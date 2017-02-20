@@ -67,9 +67,15 @@ public class ReportsController {
 		model.addAttribute("reportsSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("reportslist", reportslist);
-
         return "base";
     }
+
+	@GetMapping("/form")
+    public String getReportForm(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+			HttpServletRequest req, Model model) {
+		model.addAttribute("getreportform", true);
+		return "reports";
+	}
 
 	@PostMapping
     public void create(HttpServletRequest req, HttpServletResponse res) {

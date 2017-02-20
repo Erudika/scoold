@@ -61,16 +61,22 @@
 #end
 #end
 
-<div class="ptl">
-	<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
-	<hr>
-	<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
-	#if ($itemcount.count == 0)
-		<div class="mediumText">$!{lang.get("search.notfound")}</div>
-	#else
-		#paginate("\#reportspage(\$reportslist)" $itemcount "" "page")
+#if($getreportform)
+	#if($request.getParameter("parentid") && $request.getParameter("grandparentid") && $request.getParameter("type"))
+		#reportform($request.getParameter("type") $request.getParameter("parentid") $!request.getParameter("grandparentid") $!request.getParameter("link"))
 	#end
-</div>
+#else
+	<div class="ptl">
+		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
+		<hr>
+		<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
+		#if ($itemcount.count == 0)
+			<div class="mediumText">$!{lang.get("search.notfound")}</div>
+		#else
+			#paginate("\#reportspage(\$reportslist)" $itemcount "" "page")
+		#end
+	</div>
+#end
 
 
 

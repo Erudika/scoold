@@ -62,11 +62,11 @@
 		<to>/images/favicon.ico</to>
 	</rule>-->
 	<!-- ======== LANGUAGES ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/languages(/?)$</from>
 		<to>/languages.htm</to>
-	</rule>
-	<rule>
+	</rule>-->
+<!--	<rule>
 		<from>^/translate(/?)$</from>
 		<to>/translate.htm</to>
 	</rule>
@@ -77,12 +77,12 @@
 	<rule>
 		<from>^/translate/(\w+)/(\d+)(/?)$</from>
 		<to>/translate.htm?locale=$1&amp;index=$2</to>
-	</rule>
+	</rule>-->
 	<!-- ======== FEED ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/feed\.xml$</from>
 		<to>/search.htm?feed=true</to>
-	</rule>
+	</rule>-->
 	<!-- ======== FEEDBACK ========== -->
 <!--	<rule>
 		<from>^/feedback(/?)$</from>
@@ -181,7 +181,7 @@
 		<to>/comment.htm?id=$1</to>
 	</rule>-->
 
-
+<!--
 	<rule>
 		<from>^/voteup/(\w+)/(\d+)(/?)$</from>
 		<to>/?voteup=true&amp;type=$1&amp;id=$2</to>
@@ -189,10 +189,10 @@
 	<rule>
 		<from>^/votedown/(\w+)/(\d+)(/?)$</from>
 		<to>/?votedown=true&amp;type=$1&amp;id=$2</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== PROFILE ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/profile(/?)$</from>
 		<to>/profile.htm</to>
 	</rule>
@@ -207,20 +207,20 @@
 	<rule>
 		<from>^/profile/([a-zA-Z0-9[^/]]+)/edit(/?)$</from>
 		<to>/profile.htm?edit=true&amp;id=$1</to>
-	</rule>
+	</rule>-->
 
 
 	<!--SEO URLs-->
-	<rule>
+<!--	<rule>
 		<from>^/profile/(\d+)/([^contacts][^questions][^answers][^edit])*.*(/?)$</from>
 		<to>/profile.htm?id=$1</to>
 	</rule>
 
-	<!-- PROTECTED -->
+	 PROTECTED 
 	<rule>
 		<from>^/profile/p/(\d+)(.*)$</from>
 		<to type="redirect">%{context-path}/profile/$1$2</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== PEOPLE ========== -->
 <!--	<rule>
@@ -265,12 +265,12 @@
 		<from>^/question/(\d+)/close((/?)(.*?))$</from>
 		<to>/question.htm?id=$1&amp;close=true</to>
 	</rule>
-	<rule>
+<!--	<rule>
 		<from>^/questions/ask(/?)$</from>
 		<to>/questions.htm?ask=true</to>
-	</rule>
+	</rule>-->
 
-	<rule>
+<!--	<rule>
 		<from>^/question/(\d+)/newest((/?)(.*?))$</from>
 		<to>/question.htm?id=$1&amp;sortby=newest</to>
 	</rule>
@@ -293,7 +293,7 @@
 	<rule>
 		<from>^/questions/tag/([%\w\S][^/]+)(/?)$</from>
 		<to>/questions.htm?tag=$1</to>
-	</rule>
+	</rule>-->
 	<!--SEO URLs-->
 	<rule>
 		<from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^delete][^undelete][^approve][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
@@ -301,7 +301,7 @@
 	</rule>
 
 	<!-- ======== SEARCH ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/search(/?)$</from>
 		<to>/search.htm</to>
 	</rule>
@@ -320,6 +320,6 @@
 	<rule>
 		<from>^/search/people/(.*)(/?)$</from>
 		<to last="true">/search.htm?q=$1&amp;show=people</to>
-	</rule>
+	</rule>-->
 
 </urlrewrite>

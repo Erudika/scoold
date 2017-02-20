@@ -18,105 +18,152 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Address;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.signinlink;
+import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
+import com.erudika.scoold.utils.ScooldUtils;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
 public class QuestionsController {
 
-	public String title;
-	public List<Question> questionslist;
-	public Map<String, String> error = Collections.emptyMap();
+	private final ScooldUtils utils;
+	private final ParaClient pc;
 
-//	public QuestionsController() {
-//		title = lang.get("home.title");
-//
-//		if (param("ask") && !isAjaxRequest()) {
-//			if (!authenticated) {
-//				setRedirect(signinlink);
-//			} else {
-//				addModel("askSelected", "navbtn-hover");
-//				addModel("includeGMapsScripts", true);
-//				title = lang.get("questions.title") + " - " + lang.get("posts.ask");
-//			}
-//		} else {
-//			addModel("questionsSelected", "navbtn-hover");
-//		}
-//	}
-//
-//	public void onGet() {
-//		String type = Utils.type(Question.class);
-//		if (!param("ask")) {
-//			if (param("tag")) {
-//				String tag = getParamValue("tag");
-//				questionslist = pc.findTagged(type, new String[]{tag}, itemcount);
-//			} else if (param("voteup") || param("votedown")) {
-//				processVoteRequest(getParamValue("type"), getParamValue("id"));
-//
-//				//serve AJAX requests for each photo (comments)
-//				String refUrl = req.getHeader("Referer");
-//				if (!isAjaxRequest() && !StringUtils.isBlank(refUrl)) {
-//					setRedirect(refUrl);
-//					return;
-//				}
-//			} else {
-//				if ("activity".equals(getParamValue("sortby"))) {
-//					itemcount.setSortby("updated");
-//					questionslist = pc.findQuery(type, "*", itemcount);
-//				} else if ("votes".equals(getParamValue("sortby"))) {
-//					itemcount.setSortby("votes");
-//					questionslist = pc.findQuery(type, "*", itemcount);
-//				} else if ("unanswered".equals(getParamValue("sortby"))) {
-//					itemcount.setSortby("timestamp");
-//					itemcount.setDesc(false);
-//					questionslist = pc.findQuery(type, "properties.answercount:0", itemcount);
-//				} else if ("filter".equals(getParamValue("sortby")) && authenticated) {
-//					if ("favtags".equals(getParamValue("filter")) && authUser.hasFavtags()) {
-//						addModel("tagFilterOn", true);
-//						questionslist = pc.findTermInList(type,
-//								Config._TAGS, new ArrayList<String>(authUser.getFavtags()), itemcount);
-//					} else if (!StringUtils.isBlank(authUser.getLatlng())) {
-//						addModel("localFilterOn", true);
-//						String[] ll = authUser.getLatlng().split(",");
-//						if (ll.length == 2) {
-//							double lat = NumberUtils.toDouble(ll[0]);
-//							double lng = NumberUtils.toDouble(ll[1]);
-//							questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
-//						}
-//					}
-//				} else {
-//					questionslist = pc.findQuery(type, "*", itemcount);
-//				}
-//			}
-//			fetchProfiles(questionslist);
-//		}
-//	}
-//
-//	public void onPost() {
-//		Question q = populate(new Question(), "title", "body", "tags|,", "location");
-//		q.setCreatorid(authUser.getId());
-//		error = validate(q);
-//		if (error.isEmpty()) {
-//			q.setLocation(getParamValue("location"));
-//			String qid = q.create();
-//			String latlng = getParamValue("latlng");
-//			if (!StringUtils.isBlank(latlng)) {
-//				Address addr = new Address();
-//				addr.setAddress(getParamValue("address"));
-//				addr.setCountry(getParamValue("location"));
-//				addr.setLatlng(latlng);
-//				addr.setParentid(qid);
-//				addr.setCreatorid(authUser.getId());
-//				pc.create(addr);
-//			}
-//			authUser.setLastseen(System.currentTimeMillis());
-//			setRedirect(getPostLink(q, false, false));
-//		}
-//	}
+	@Inject
+	public QuestionsController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
 
+	@GetMapping(path = {"/", "/questions"})
+    public String get(HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), "*", itemcount);
+		model.addAttribute("path", "questions.vm");
+		model.addAttribute("title", utils.getLang(req).get("questions.title"));
+		model.addAttribute("questionsSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("questionslist", questionslist);
+        return "base";
+    }
+
+	@GetMapping("/questions/tag/{tag}")
+    public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tag}, itemcount);
+		model.addAttribute("path", "questions.vm");
+		model.addAttribute("title", utils.getLang(req).get("posts.tagged") + " - " + tag);
+		model.addAttribute("questionsSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("questionslist", questionslist);
+        return "base";
+	}
+
+	@GetMapping("/questions/{sortby}/{filter}")
+    public String getSorted(@PathVariable String sortby, @PathVariable(required = false) String filter,
+			HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		List<Question> questionslist = Collections.emptyList();
+		String type = Utils.type(Question.class);
+
+		if ("activity".equals(sortby)) {
+			itemcount.setSortby("updated");
+			questionslist = pc.findQuery(type, "*", itemcount);
+		} else if ("votes".equals(sortby)) {
+			itemcount.setSortby("votes");
+			questionslist = pc.findQuery(type, "*", itemcount);
+		} else if ("unanswered".equals(sortby)) {
+			itemcount.setSortby("timestamp");
+			itemcount.setDesc(false);
+			questionslist = pc.findQuery(type, "properties.answercount:0", itemcount);
+		} else if ("filter".equals(sortby) && !StringUtils.isBlank(filter) && utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			if ("favtags".equals(filter) && authUser.hasFavtags()) {
+				model.addAttribute("tagFilterOn", true);
+				questionslist = pc.findTermInList(type, Config._TAGS,
+						new ArrayList<String>(authUser.getFavtags()), itemcount);
+			} else if (!StringUtils.isBlank(authUser.getLatlng())) {
+				model.addAttribute("localFilterOn", true);
+				String[] ll = authUser.getLatlng().split(",");
+				if (ll.length == 2) {
+					double lat = NumberUtils.toDouble(ll[0]);
+					double lng = NumberUtils.toDouble(ll[1]);
+					questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
+				}
+			}
+		}
+		utils.fetchProfiles(questionslist);
+		model.addAttribute("path", "questions.vm");
+		model.addAttribute("title", utils.getLang(req).get("questions.title"));
+		model.addAttribute("questionsSelected", "navbtn-hover");
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("questionslist", questionslist);
+        return "base";
+    }
+
+	@GetMapping("/questions/ask")
+    public String ask(HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req)) {
+			return "redirect:" + signinlink;
+		}
+		model.addAttribute("path", "questions.vm");
+		model.addAttribute("askSelected", "navbtn-hover");
+		model.addAttribute("includeGMapsScripts", true);
+		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " +
+				utils.getLang(req).get("posts.ask"));
+        return "base";
+	}
+
+	@PostMapping("/questions/ask")
+    public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
+			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			Question q = utils.populate(req, new Question(), "title", "body", "tags|,", "location");
+			q.setCreatorid(authUser.getId());
+			Map<String, String> error = utils.validate(q);
+			if (error.isEmpty()) {
+				q.setLocation(location);
+				String qid = q.create();
+				if (!StringUtils.isBlank(latlng)) {
+					Address addr = new Address();
+					addr.setAddress(address);
+					addr.setCountry(location);
+					addr.setLatlng(latlng);
+					addr.setParentid(qid);
+					addr.setCreatorid(authUser.getId());
+					pc.create(addr);
+				}
+				authUser.setLastseen(System.currentTimeMillis());
+			} else {
+				model.addAttribute("error", error);
+				return "base";
+			}
+			return "redirect:" + q.getPostLink(false, false);
+		}
+        return "redirect:" + signinlink;
+    }
 }
