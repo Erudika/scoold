@@ -164,11 +164,11 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request), request);
 		modelAndView.addObject("currentLocale", currentLocale);
 		modelAndView.addObject("lang", utils.getLang(currentLocale));
-		// Pagers
-//		modelAndView.addObject("showParam", request.getParameter("show"));
-//		modelAndView.addObject("itemcount", utils.getPager("page", request));
-//		modelAndView.addObject("itemcount1", utils.getPager("page1", request));
-//		modelAndView.addObject("itemcount2", utils.getPager("page2", request));
+		// Pagination
+		// check for AJAX pagination requests
+		if (utils.isAjaxRequest(request) && (utils.param(request, "page") ||
+				utils.param(request, "page1") || utils.param(request, "page2"))) {
+			modelAndView.setViewName("pagination"); // switch to page fragment view
+		}
 	}
-
 }

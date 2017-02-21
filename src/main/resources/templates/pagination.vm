@@ -1,0 +1,18 @@
+#if($request.getParameter("page"))
+	#evaluate($!request.getParameter('pageMacroCode'))
+	#if($itemcount.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount.page + 1) #end
+	<span class="$!{pnext}"></span>
+	#stop
+#end
+#if($request.getParameter("page1"))
+	#evaluate($!request.getParameter('pageMacroCode'))
+	#if($itemcount1.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount1.page + 1) #end
+	<span class="$!{pnext}"></span>
+	#stop
+#end
+#if($request.getParameter("page2"))
+	#evaluate($!request.getParameter('pageMacroCode'))
+	#if($itemcount2.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount2.page + 1) #end
+	<span class="$!{pnext}"></span>
+	#stop
+#end

@@ -50,7 +50,7 @@
 		},
 		"para_meta_description": {
 			"description": "Description meta tag value.",
-			"value": "Scoold is friendly place where you can get answers to your questions."
+			"value": "Scoold is an open source Q&A platform written in Java."
 		},
 		"para_admin_ident": {
 			"description": "Administrator identifier - used to recognize user as admin (can be an email or a social id).",
