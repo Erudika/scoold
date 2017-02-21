@@ -24,10 +24,22 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		#basichead($!DESCRIPTION $!KEYWORDS)
+		<title>$!APPNAME | $!title</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<meta name="description" content="$!DESCRIPTION">
+		<meta name="keywords" content="$!KEYWORDS">
+		<meta property="fb:app_id" content="$!FB_APP_ID">
 		<link href="/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
 		<link href="/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
+		<link href="$!imageslink/logosq.png" rel="image_src">
+		<link href="$!imageslink/logosq.png" rel="apple-touch-icon">
+		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="$!styleslink/style.css" rel="stylesheet" media="screen">
 		<!--<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>-->
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>

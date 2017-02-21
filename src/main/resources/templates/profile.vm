@@ -67,15 +67,13 @@
 		<div class="mvm center-align">
 			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
 			#if ($isAdmin)
-				#if ($isMod)
-					<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip">
-						<i class="fa fa-chevron-down"></i>
-						Unmake mod</a>
-				#else
-					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip">
-						<i class="fa fa-chevron-up"></i>
-						Make mod</a>
-				#end
+				#if ($isMod)#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
+				<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip make-mod-btn $!{unhidemakemod}">
+					<i class="fa fa-chevron-down"></i> Unmake mod
+				</a>
+				<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip make-mod-btn $!{hidemakemod}">
+					<i class="fa fa-chevron-up"></i> Make mod
+				</a>
 				<a href="${adminlink}?delete=user&id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
 					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")
 				</a>
@@ -102,7 +100,7 @@
 					</div>
 				</div>
 			</div>
-			#if ($request.getParameter("edit") && $authenticated)
+			#if ($request.requestURI.endsWith("/edit") && $authenticated)
 				#set($hideedit1 = "")
 				#set($hideview1 = "hide")
 			#else

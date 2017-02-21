@@ -17,212 +17,284 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
+import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
+import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
+import static com.erudika.scoold.ScooldServer.questionslink;
+import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
+import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.utils.ScooldUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
+@Controller
+@RequestMapping("/question")
 public class QuestionController {
 
-	public String title;
-	public boolean canEdit;
-	public boolean isMine;
-	public Post showPost;
-	public List<Reply> answerslist;
-	public List<Post> similarquestions;
-	public String markdownHtml;
-	public Map<String, String> error = Collections.emptyMap();
+	public static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
-//	public QuestionController() {
-//		title = lang.get("questions.title");
-//		canEdit = false;
-//		String id = param("editpostid") ? getParamValue("editpostid") : getParamValue("id");
-//		showPost = pc.read(id);
-//
-//		if (showPost != null && ParaObjectUtils.typesMatch(showPost)) {
-//			if (showPost.getTitle() != null) {
-//				title = title + " - " + showPost.getTitle();
-//			}
-//
-//			// author can edit, mods can edit & ppl with rep > 100 can edit
-//			isMine = (authenticated) ? authUser.getId().equals(showPost.getCreatorid()) : false;
-//			canEdit = (authenticated) ?	(authUser.hasBadge(Badge.TEACHER) || isMod || isMine) : false;
-//			if (!isMine && !isMod && showPost.isFeedback()) {
-//				canEdit = false;
-//			}
-//			itemcount.setSortby("newest".equals(getParamValue("sortby")) ? "" : "votes");
-//		}
-//	}
-//
-//	public void onGet() {
-//		if (showPost == null) {
-//			setRedirect(questionslink + (param("delete") ? "?success=true&code=16" : ""));
-//			return;
-//		}
-//		answerslist = showPost.getAnswers(itemcount);
-//		ArrayList<Post> list = new ArrayList<Post>(answerslist);
-//		list.add(showPost);
-//		fetchProfiles(list);
-//		//get the comments for each answer
-//		Post.readAllCommentsForPosts(list, MAX_ITEMS_PER_PAGE);
-//		if (list != null) {
-//			for (P post : list) {
-//				List<com.erudika.scoold.core.Comment> commentz = pc.getChildren(post, Utils.type(com.erudika.scoold.core.Comment.class), post.getItemcount());
-//				post.setComments(commentz);
-//			}
-//		}
-//		updateViewCount();
-//
-//		if (!showPost.isReply()) {
-//			if (!isAjaxRequest()) {
-//				String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
-//				if (!StringUtils.isBlank(likeTxt)) {
-//					similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
-//							new String[]{"title", "body", "tags"}, likeTxt, new Pager(10));
-//				}
-//			}
-//		}
-//	}
-//
-//	public void onPost() {
-//		if (!canEdit || showPost == null) {
-//			return;
-//		}
-//
-//		String next = getPostLink(showPost, false, false);
-//
-//		if (param("answer")) {
-//			// add new answer
-//			if (!showPost.isClosed() && !showPost.isReply()) {
-//				//create new answer
-//				Reply answer = populate(new Reply(), "body");
-//				error = validate(answer);
-//				if (!error.containsKey("body")) {
-//					answer.setTitle(showPost.getTitle());
-//					answer.setCreatorid(authUser.getId());
-//					answer.setParentid(showPost.getId());
-//					answer.create();
-//
-//					showPost.setAnswercount(showPost.getAnswercount() + 1);
-//					if (showPost.getAnswercount() >= AppConfig.MAX_REPLIES_PER_POST) {
-//						showPost.setCloserid("0");
-//					}
-//					// update without adding revisions
-//					pc.update(showPost);
-//					addBadgeAndUpdate(Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
-//				} else {
-//					next = null;
-//				}
-//			}
-//		} else if (param("approve")) {
-//			String ansid = getParamValue("answerid");
-//			if (canEdit && ansid != null && isMine) {
-//				Reply answer = (Reply) pc.read(ansid);
-//
-//				if (answer != null && answer.isReply()) {
-//					Profile author = pc.read(answer.getCreatorid());
-//					if (author != null && authenticated) {
-//						boolean same = author.equals(authUser);
-//
-//						if (ansid.equals(showPost.getAnswerid())) {
-//							// Answer approved award - UNDO
-//							showPost.setAnswerid("");
-//							if (!same) {
-//								author.removeRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
-//								authUser.removeRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
-//								pc.updateAll(Arrays.asList(author, authUser));
-//							}
-//						} else {
-//							// Answer approved award - GIVE
-//							showPost.setAnswerid(ansid);
-//							if (!same) {
-//								author.addRep(AppConfig.ANSWER_APPROVE_REWARD_AUTHOR);
-//								authUser.addRep(AppConfig.ANSWER_APPROVE_REWARD_VOTER);
-//								addBadgeOnce(Badge.NOOB, true);
-//								pc.updateAll(Arrays.asList(author, authUser));
-//							}
-//						}
-//						showPost.update();
-//					}
-//				}
-//			}
-//		} else if (param("editpostid")) {
-//			Post beforeUpdate = null;
-//			try {
-//				beforeUpdate = (Post) BeanUtils.cloneBean(showPost);
-//			} catch (Exception ex) {
-//				logger.error(null, ex);
-//			}
-//
-//			String postTitle = getParamValue("title");
-//			if (!StringUtils.isBlank(postTitle) && postTitle.length() > 10) {
-//				showPost.setTitle(postTitle);
-//			}
-//			if (param("body")) {
-//				showPost.setBody(getParamValue("body"));
-//			}
-//			if (param("tags") && showPost.isQuestion()) {
-//				showPost.setTags(Arrays.asList(StringUtils.split(getParamValue("tags"), ",")));
-//			}
-//
-//			showPost.setLasteditby(authUser.getId());
-//			//note: update only happens if something has changed
-//			if (!showPost.equals(beforeUpdate)) {
-//				showPost.update();
-//				addBadgeOnceAndUpdate(Badge.EDITOR, true);
-//			}
-//		} else if (param("close")) {
-//			if (isMod) {
-//				if (showPost.isClosed()) {
-//					showPost.setCloserid(null);
-//				} else {
-//					showPost.setCloserid(authUser.getId());
-//				}
-//				showPost.update();
-//			}
-//		} else if (param("restore")) {
-//			String revid = getParamValue("revisionid");
-//			if (canEdit && revid != null) {
-//				addBadgeAndUpdate(Badge.BACKINTIME, true);
-//				showPost.restoreRevisionAndUpdate(revid);
-//			}
-//		} else if (param("delete")) {
-//			if (!showPost.isReply()) {
-//				if ((isMine || isMod)) {
-//					showPost.delete();
-//					next = questionslink + "?success=true&code=16";
-//				}
-//			} else if (showPost.isReply()) {
-//				if (isMine || isMod) {
-//					Post parent = pc.read(showPost.getParentid());
-//					parent.setAnswercount(parent.getAnswercount() - 1);
-//					parent.update();
-//					showPost.delete();
-//				}
-//			}
-//		}
-//
-//		if (next != null) {
-//			setRedirect(next);
-//		}
-//	}
-//
-//	private void updateViewCount() {
-//		//do not count views from author
-//		if (showPost == null || isMine) return;
-//		String postviews = getStateParam("postviews");
-//		if (postviews == null) postviews = "";
-//		if (!postviews.contains(showPost.getId())) {
-//			long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
-//			showPost.setViewcount(views + 1); //increment count
-//			setStateParam("postviews", postviews + "," + showPost.getId());
-//			pc.update(showPost);
-//		}
-//	}
+	private final ScooldUtils utils;
+	private final ParaClient pc;
 
+	@Inject
+	public QuestionController(ScooldUtils utils) {
+		this.utils = utils;
+		this.pc = utils.getParaClient();
+	}
+
+	@GetMapping("/{id}/{title}")
+    public String get(@PathVariable String id, @PathVariable(required = false) String title,
+			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
+		Post showPost = pc.read(id);
+		if (showPost == null || !ParaObjectUtils.typesMatch(showPost)) {
+			return "redirect:" + questionslink;
+		}
+
+		Pager itemcount = utils.getPager("page", req);
+		itemcount.setSortby("newest".equals(sortby) ? "" : "votes");
+		List<Reply> answerslist = showPost.getAnswers(itemcount);
+		ArrayList<Post> list = new ArrayList<Post>(answerslist);
+		list.add(showPost);
+		utils.fetchProfiles(list);
+		//get the comments for each answer
+		for (Post post : list) {
+			List<Comment> commentz = pc.getChildren(post, Utils.type(Comment.class), post.getItemcount());
+			post.setComments(commentz);
+		}
+		updateViewCount(showPost, req, res);
+
+		List<Post> similarquestions = Collections.emptyList();
+		if (!showPost.isReply() && !utils.isAjaxRequest(req)) {
+			String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
+			if (!StringUtils.isBlank(likeTxt)) {
+				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
+						new String[]{"title", "body", "tags"}, likeTxt, new Pager(10));
+			}
+		}
+
+		model.addAttribute("path", "question.vm");
+		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("isMine", isMine(showPost, utils.getAuthUser(req)));
+		model.addAttribute("canEdit", canEdit(showPost, utils.getAuthUser(req)));
+		model.addAttribute("showPost", showPost);
+		model.addAttribute("answerslist", answerslist);
+		model.addAttribute("similarquestions", similarquestions);
+        return "base";
+    }
+
+	@PostMapping("/{id}/edit")
+    public String edit(@PathVariable String id, @RequestParam(required = false) String title,
+			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
+			HttpServletRequest req) {
+
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		Post beforeUpdate = null;
+		try {
+			beforeUpdate = (Post) BeanUtils.cloneBean(showPost);
+		} catch (Exception ex) {
+			logger.error(null, ex);
+		}
+
+		if (!StringUtils.isBlank(title) && title.length() > 10) {
+			showPost.setTitle(title);
+		}
+		if (!StringUtils.isBlank(body)) {
+			showPost.setBody(body);
+		}
+		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
+			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
+		}
+
+		showPost.setLasteditby(authUser.getId());
+		//note: update only happens if something has changed
+		if (!showPost.equals(beforeUpdate)) {
+			showPost.update();
+			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	@PostMapping("/{id}/reply")
+    public String reply(@PathVariable String id, HttpServletRequest req, Model model) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		// add new answer
+		if (!showPost.isClosed() && !showPost.isReply()) {
+			//create new answer
+			Reply answer = utils.populate(req, new Reply(), "body");
+			Map<String, String> error = utils.validate(answer);
+			if (!error.containsKey("body")) {
+				answer.setTitle(showPost.getTitle());
+				answer.setCreatorid(authUser.getId());
+				answer.setParentid(showPost.getId());
+				answer.create();
+
+				showPost.setAnswercount(showPost.getAnswercount() + 1);
+				if (showPost.getAnswercount() >= MAX_REPLIES_PER_POST) {
+					showPost.setCloserid("0");
+				}
+				// update without adding revisions
+				pc.update(showPost);
+				utils.addBadgeAndUpdate(authUser, Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+			} else {
+				model.addAttribute("error", error);
+				return "base";
+			}
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	@PostMapping("/{id}/approve/{answerid}")
+    public String approve(@PathVariable String id, @PathVariable String answerid, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (canEdit(showPost, authUser) && answerid != null && isMine(showPost, authUser)) {
+			Reply answer = (Reply) pc.read(answerid);
+
+			if (answer != null && answer.isReply()) {
+				Profile author = pc.read(answer.getCreatorid());
+				if (author != null && utils.isAuthenticated(req)) {
+					boolean same = author.equals(authUser);
+
+					if (answerid.equals(showPost.getAnswerid())) {
+						// Answer approved award - UNDO
+						showPost.setAnswerid("");
+						if (!same) {
+							author.removeRep(ANSWER_APPROVE_REWARD_AUTHOR);
+							authUser.removeRep(ANSWER_APPROVE_REWARD_VOTER);
+							pc.updateAll(Arrays.asList(author, authUser));
+						}
+					} else {
+						// Answer approved award - GIVE
+						showPost.setAnswerid(answerid);
+						if (!same) {
+							author.addRep(ANSWER_APPROVE_REWARD_AUTHOR);
+							authUser.addRep(ANSWER_APPROVE_REWARD_VOTER);
+							utils.addBadgeOnce(authUser, Badge.NOOB, true);
+							pc.updateAll(Arrays.asList(author, authUser));
+						}
+					}
+					showPost.update();
+				}
+			}
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	@PostMapping("/{id}/close")
+    public String close(@PathVariable String id, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (utils.isMod(authUser)) {
+			if (showPost.isClosed()) {
+				showPost.setCloserid(null);
+			} else {
+				showPost.setCloserid(authUser.getId());
+			}
+			showPost.update();
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	@PostMapping("/{id}/restore/{revisionid}")
+    public String restore(@PathVariable String id, @PathVariable String revisionid, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (canEdit(showPost, authUser)) {
+			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
+			showPost.restoreRevisionAndUpdate(revisionid);
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	@PostMapping("/{id}")
+    public String delete(@PathVariable String id, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (!showPost.isReply()) {
+			if ((isMine(showPost, authUser) || utils.isMod(authUser))) {
+				showPost.delete();
+				return "redirect:" + questionslink + "?success=true&code=16";
+			}
+		} else if (showPost.isReply()) {
+			if (isMine(showPost, authUser) || utils.isMod(authUser)) {
+				Post parent = pc.read(showPost.getParentid());
+				parent.setAnswercount(parent.getAnswercount() - 1);
+				parent.update();
+				showPost.delete();
+			}
+		}
+        return "redirect:" + showPost.getPostLink(false, false);
+    }
+
+	private boolean isMine(Post showPost, Profile authUser) {
+		// author can edit, mods can edit & ppl with rep > 100 can edit
+		return showPost != null && authUser != null ? authUser.getId().equals(showPost.getCreatorid()) : false;
+	}
+
+	private boolean canEdit(Post showPost, Profile authUser) {
+		return authUser != null ? (authUser.hasBadge(Badge.TEACHER) || utils.isMod(authUser) ||
+				isMine(showPost, authUser)) : false;
+	}
+
+	private void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
+		//do not count views from author
+		if (showPost != null && !isMine(showPost, utils.getAuthUser(req))) {
+			String postviews = Utils.getStateParam("postviews", req);
+			if (!StringUtils.contains(postviews, showPost.getId())) {
+				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
+				showPost.setViewcount(views + 1); //increment count
+				Utils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
+				pc.update(showPost);
+			}
+		}
+	}
 }

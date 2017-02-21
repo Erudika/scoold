@@ -51,6 +51,7 @@ public class SigninController {
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
+		model.addAttribute("signinSelected", "navbtn-hover");
         return "base";
     }
 

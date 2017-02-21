@@ -23,7 +23,7 @@
 					<span class="right">
 						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers"
 							 class="chip $sortarr.votes">$!lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/newest/#stripstr($showPost.title)" title="Newest answers"
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest" title="Newest answers"
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
@@ -34,7 +34,7 @@
 
 				#if ($authenticated && !$showPost.isClosed())
 					<div class="pvl mbm">
-						<form method="post" id="answer-question-form">
+						<form method="post" action="$questionlink/$!showPost.id/reply" id="answer-question-form">
 							#sectoken(false "CREATE_POST")
 							<a id="write-post"></a>
 							<h4 class="grey-text">

@@ -45,12 +45,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -70,13 +72,15 @@ public class SearchController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping("/search/{type}/{query}")
-    public String get(@PathVariable String type, @PathVariable String query, HttpServletRequest req, Model model) {
+	@GetMapping({"/search/{type}/{query}", "/search"})
+    public String get(@PathVariable(required = false) String type, @PathVariable(required = false) String query,
+			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
 		List<Profile> userlist = new ArrayList<Profile>();
 		List<Post> questionlist = new ArrayList<Post>();
 		List<Post> answerlist = new ArrayList<Post>();
 		List<Post> feedbacklist = new ArrayList<Post>();
 		Pager itemcount = utils.getPager("page", req);
+		query = StringUtils.isBlank(q) ? query : q;
 
 		if ("questions".equals(type)) {
 			questionlist = pc.findQuery(Utils.type(Question.class), query, itemcount);

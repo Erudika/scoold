@@ -102,15 +102,14 @@ public class FeedbackController {
 		List<Post> feedbacklist = pc.findTagged(Utils.type(Feedback.class), new String[]{tag}, itemcount);
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title"));
+		model.addAttribute("tag", tag);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("feedbacklist", feedbacklist);
 		return "base";
 	}
 
-
 	@PostMapping
-    public String createAjax(@RequestParam String comment, @RequestParam String parentid,
-			HttpServletRequest req, Model model) {
+    public String createAjax(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "feedback.vm");
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);

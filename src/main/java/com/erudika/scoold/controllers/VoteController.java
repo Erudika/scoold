@@ -18,7 +18,6 @@ package com.erudika.scoold.controllers;
  * For issues and patches go to: https://github.com/erudika
  */
 
-import com.erudika.para.client.ParaClient;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +34,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class VoteController {
 
 	private final ScooldUtils utils;
-	private final ParaClient pc;
 
 	@Inject
 	public VoteController(ScooldUtils utils) {
 		this.utils = utils;
-		this.pc = utils.getParaClient();
 	}
 
 	@ResponseBody

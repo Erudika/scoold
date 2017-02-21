@@ -62,6 +62,7 @@ public class QuestionsController {
     public String get(HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), "*", itemcount);
+		utils.fetchProfiles(questionslist);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
@@ -74,9 +75,11 @@ public class QuestionsController {
     public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tag}, itemcount);
+		utils.fetchProfiles(questionslist);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("posts.tagged") + " - " + tag);
 		model.addAttribute("questionsSelected", "navbtn-hover");
+		model.addAttribute("tag", tag);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("questionslist", questionslist);
         return "base";

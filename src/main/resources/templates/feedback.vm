@@ -87,15 +87,14 @@
 			<a href="$feedbacklink/votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
 			<a href="$feedbacklink/updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
 		</div>
-		#if ($request.getParameter("tag"))
-			#set($showTag = $request.getParameter("tag"))
-			<h2>$!lang.get("feedback.tagged") &ldquo;$!{showTag}&rdquo;</h2>
+		#if ($tag)
+			<h2>$!lang.get("feedback.tagged") '$!{tag}'</h2>
 		#else
 			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
 		#end
 		<hr>
-		<a href="$feedbacklink/write" class="btn-floating btn-large waves-effect waves-light right tooltipped" data-tooltip="$!{lang.get('feedback.write')}"><i class="fa fa-plus"></i></a>
-
+		<a href="$feedbacklink/write" class="btn-floating btn-large waves-effect waves-light right tooltipped"
+			 data-tooltip="$!{lang.get('feedback.write')}"><i class="fa fa-plus"></i></a>
 
 		#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
 	#end

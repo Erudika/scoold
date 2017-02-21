@@ -53,7 +53,7 @@
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
-			#if (!$request.getParameter("tag") && $tagFilterOn)
+			#if ($tagFilterOn)
 				<a href="$settingslink" class="chip"> <span class="fa fa-check"></span> $!lang.get("settings.tagfilter")</a>
 			#end
 			<a href="${questionslink}$!{filterparam}" class="chip $sortarr.newest">$!lang.get("newest")</a>
@@ -73,11 +73,8 @@
 		</div>
 
 		<h2>
-			#if ($request.getParameter("tag"))
-				<small>
-					#set($showTag = $request.getParameter("tag"))
-					$!lang.get("posts.tagged") <span class="grey-text text-darken-2">$!showTag</span>
-				</small>
+			#if ($tag)
+				<small>$!lang.get("posts.tagged") <span class="grey-text text-darken-2">$!tag</span></small>
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end

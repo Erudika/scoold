@@ -49,16 +49,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/profile")
 public class ProfileController {
 
-//    public String title;
-//    public boolean isMyProfile;
-//	public boolean canEdit;
-//	public com.erudika.scoold.core.Profile showUser;
-//	public List<User> contactlist;
-//	public List<? extends Post> questionslist;
-//	public List<? extends Post> answerslist;
-//	public String gravatarPicture;
-
-
 	private final ScooldUtils utils;
 
 	@Inject
@@ -66,7 +56,7 @@ public class ProfileController {
 		this.utils = utils;
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(path = {"/{id}", "/{id}/edit"})
     public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req) && !StringUtils.isBlank(id)) {
 			return "redirect:" + signinlink;
@@ -106,7 +96,7 @@ public class ProfileController {
         return "base";
     }
 
-	@PostMapping("/{id}")
+	@PostMapping(path = "/{id}", params = {"makemod"})
     public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {

@@ -62,9 +62,7 @@
 #end
 
 #if($getreportform)
-	#if($request.getParameter("parentid") && $request.getParameter("grandparentid") && $request.getParameter("type"))
-		#reportform($request.getParameter("type") $request.getParameter("parentid") $!request.getParameter("grandparentid") $!request.getParameter("link"))
-	#end
+	#reportform($type $parentid $grandparentid $link)
 #else
 	<div class="ptl">
 		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>

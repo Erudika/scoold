@@ -347,6 +347,13 @@ $(function () {
 		$("#edit-picture-link").hide();
 	});
 
+	$("a.make-mod-btn").on('click', function () {
+		var dis = $(this);
+		$.post(dis.attr("href"));
+		dis.siblings(".make-mod-btn.hide").removeClass("hide");
+		dis.addClass("hide");
+	});
+
 	/****************************************************
      *                    AUTOCOMPLETE
      ****************************************************/

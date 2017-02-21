@@ -3,7 +3,7 @@
         "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
 <urlrewrite>
 	<!-- ======== ERROR PAGES ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/not-found$</from>
 		<to>/click/not-found.htm</to>
 	</rule>
@@ -14,7 +14,7 @@
 	<rule>
 		<from>^/error$</from>
 		<to>/click/error.htm</to>
-	</rule>
+	</rule>-->
 	<!-- ======== PROTECTED ========== -->
 	<rule>
 		<from>^/p/(.*)$</from>
@@ -25,10 +25,10 @@
 		<to type="redirect">%{context-path}/</to>
 	</rule>
 	<!-- ======== PUBLIC RESOURCES ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/$</from>
 		<to>/questions.htm</to>
-	</rule>
+	</rule>-->
 <!--	<rule>
 		<from>^/signin(/?)$</from>
 		<to>/signin.htm</to>
@@ -216,7 +216,7 @@
 		<to>/profile.htm?id=$1</to>
 	</rule>
 
-	 PROTECTED 
+	 PROTECTED
 	<rule>
 		<from>^/profile/p/(\d+)(.*)$</from>
 		<to type="redirect">%{context-path}/profile/$1$2</to>
@@ -233,7 +233,7 @@
 	</rule>-->
 
 	<!-- ======== QUESTIONS ========== -->
-	<rule>
+<!--	<rule>
 		<from>^/questions(/?)$</from>
 		<to>/questions.htm</to>
 	</rule>
@@ -264,7 +264,7 @@
 	<rule>
 		<from>^/question/(\d+)/close((/?)(.*?))$</from>
 		<to>/question.htm?id=$1&amp;close=true</to>
-	</rule>
+	</rule>-->
 <!--	<rule>
 		<from>^/questions/ask(/?)$</from>
 		<to>/questions.htm?ask=true</to>
@@ -295,10 +295,10 @@
 		<to>/questions.htm?tag=$1</to>
 	</rule>-->
 	<!--SEO URLs-->
-	<rule>
+<!--	<rule>
 		<from>^/question/(\d+)/([^answer][^reply][^tag][^restore][^delete][^undelete][^approve][^close][^newest][^ask][^selected][^votes][^updated][^unanswered][^filter])*.*(/?)$</from>
 		<to>/question.htm?id=$1</to>
-	</rule>
+	</rule>-->
 
 	<!-- ======== SEARCH ========== -->
 <!--	<rule>

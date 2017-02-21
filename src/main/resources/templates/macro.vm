@@ -1,22 +1,3 @@
-#macro(basichead $showdesc $showkeyw)
-	<title>$!APPNAME | $!title</title>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-	<link href="$!imageslink/logosq.png" rel="image_src">
-	<link href="$imageslink/logosq.png" rel="apple-touch-icon">
-	<link href="$imageslink/favicon.ico" rel="shortcut icon">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
-	<link href="$!styleslink/style.css" rel="stylesheet" media="screen">
-	#if ($showdesc && !$showdesc.isEmpty())
-		<meta name="description" content="$showdesc">
-	#end
-	#if ($showkeyw && !$showkeyw.isEmpty())
-		<meta name="keywords" content="$showkeyw">
-	#end
-	<meta property="fb:app_id" content="$!FB_APP_ID">
-#end
 ################# COMMENTS MACROS #####################
 #macro(newcommentform $parentid $hidden $uri)
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
@@ -98,7 +79,7 @@
 #if($pager.count > 0)
 	#if ($pager && $pager.page > 1000) #set($next = 1) #else #set($next = $pager.page + 1) #end
 	#if(!$_rpath || $_rpath.isEmpty())
-		#set($_rpath = $request.getAttribute("javax.servlet.forward.request_uri"))
+		#set($_rpath = $returnto)
 	#end
 	<div class="page-content">#evaluate($macroCode)</div>
 	#if ($pager.count && $pager.count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
@@ -278,7 +259,7 @@
 					</div>
 				</div>
 				<div class="col s1 m1 l3">
-					#if(!$request.request.requestURI.startsWith("/profile"))
+					#if(!$request.requestURI.startsWith("/profile"))
 						<div class=" hide-on-med-and-down">
 							#smallpersonbox($showpost.author)
 						</div>
@@ -404,7 +385,7 @@
 
 	#if ($canEdit)
 	<div class="editbox pvm hide">
-		<form method="post">
+		<form method="post" action="$questionlink/$!showpost.id/edit">
 			#sectoken(false "EDIT_POST_$!showpost.id")
 			<div class="input-field">
 				<i class="fa fa-paragraph pvm prefix grey-text"></i>
@@ -433,7 +414,6 @@
 			</div>
 			#getmessagebox("red white-text" $error.get("tags"))
 
-			<input type="hidden" name="editpostid" value="$!showpost.id">
 			<br>
 			<div class="mts mbl">
 				<button class="btn waves-effect waves-light" type="submit">
@@ -592,7 +572,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #end
 #####################################
-#macro(getpostlink $p $plural $noid)$p.getPostLink($plural,$noid,$questionslink,$questionlink,$feedbacklink)#end
+#macro(getpostlink $p $plural $noid)$p.getPostLink($plural, $noid)#end
 #####################################
 #macro(ajaxloading $hide)
 #if ($hide) #set($hidden = "hide") #else #set($hidden = "") #end

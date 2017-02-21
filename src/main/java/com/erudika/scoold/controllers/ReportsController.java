@@ -71,9 +71,13 @@ public class ReportsController {
     }
 
 	@GetMapping("/form")
-    public String getReportForm(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
-			HttpServletRequest req, Model model) {
+    public String getReportForm(@RequestParam String parentid, @RequestParam String type,
+			@RequestParam(required = false) String grandparentid, @RequestParam(required = false) String link, Model model) {
 		model.addAttribute("getreportform", true);
+		model.addAttribute("grandparentid", grandparentid);
+		model.addAttribute("parentid", parentid);
+		model.addAttribute("type", type);
+		model.addAttribute("link", link);
 		return "reports";
 	}
 
