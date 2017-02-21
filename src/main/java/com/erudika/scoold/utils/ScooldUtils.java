@@ -26,10 +26,8 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
-import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
-import com.erudika.scoold.core.Report;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,7 +76,6 @@ public final class ScooldUtils {
 	}
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) {
-//		try{
 		Profile authUser = null;
 		if (Utils.getStateParam(Config.AUTH_COOKIE, req) != null) {
 			User u = pc.me(Utils.getStateParam(Config.AUTH_COOKIE, req));
@@ -95,20 +92,9 @@ public final class ScooldUtils {
 					authUser.create();
 				}
 				authUser.setUser(u);
-			} else {
-//					authenticated = false;
 			}
-		} else {
-//				authenticated = false;
 		}
 		initCSRFToken(req, res);
-//		} catch (Exception e) {
-//			authenticated = false;
-//			logger.warn("CheckAuth failed for {}: {}", req.getRemoteUser(), e);
-//			clearSession();
-//			if (!req.getRequestURI().startsWith("/index.htm"))
-//				setRedirect(HOMEPAGE);
-//		}
 		return authUser;
 	}
 
@@ -166,7 +152,6 @@ public final class ScooldUtils {
 		return lang;
 	}
 
-	/***  POSTS  ***/
 	public  void fetchProfiles(List<? extends Post> posts) {
 		if (posts == null || posts.isEmpty()) {
 			return;
@@ -184,95 +169,6 @@ public final class ScooldUtils {
 		for (Post post : posts) {
 			post.setAuthor(authors.get(authorids.get(post.getId())));
 		}
-	}
-
-	/****** VOTING ******/
-	public boolean processVoteRequest(boolean isUpvote, String type, String id, HttpServletRequest req) {
-		if (StringUtils.isBlank(id) || StringUtils.isBlank(type)) {
-			return false;
-		}
-		ParaObject votable = pc.read(id);
-		Profile author = null;
-		Profile authUser = getAuthUser(req);
-		boolean result = false;
-		boolean updateAuthUser = false;
-		boolean updateVoter = false;
-
-		if (votable != null && authUser != null) {
-			try {
-				author = pc.read(votable.getCreatorid());
-				Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
-
-				if (isUpvote && pc.voteUp(votable, authUser.getId())) {
-					votes++;
-					authUser.incrementUpvotes();
-					updateAuthUser = true;
-					int reward = 0;
-
-					if (votable instanceof Post) {
-						Post p = (Post) votable;
-						if (p.isReply()) {
-							addBadge(authUser, Profile.Badge.GOODANSWER, author, votes >= GOODANSWER_IFHAS, false);
-							reward = ANSWER_VOTEUP_REWARD_AUTHOR;
-						} else if (p.isQuestion()) {
-							addBadge(authUser, Profile.Badge.GOODQUESTION, author, votes >= GOODQUESTION_IFHAS, false);
-							reward = QUESTION_VOTEUP_REWARD_AUTHOR;
-						} else {
-							reward = VOTEUP_REWARD_AUTHOR;
-						}
-					} else {
-						reward = VOTEUP_REWARD_AUTHOR;
-					}
-
-					if (author != null && reward > 0) {
-						author.addRep(reward);
-						updateVoter = true;
-					}
-				} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
-					votes--;
-					authUser.incrementDownvotes();
-					updateAuthUser = true;
-
-					if (votable instanceof Comment && votes <= -5) {
-						//treat comment as offensive or spam - hide
-						((Comment) votable).setHidden(true);
-					} else if (votable instanceof Post && votes <= -5) {
-						Post p = (Post) votable;
-						//mark post for closing
-						Report rep = new Report();
-						rep.setParentid(id);
-						rep.setLink(p.getPostLink(false, false));
-						rep.setDescription(getLang(req).get("posts.forclosing"));
-						rep.setSubType(Report.ReportType.OTHER);
-						rep.setAuthorName("System");
-						rep.create();
-					}
-					if (author != null) {
-						author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
-						updateVoter = true;
-						//small penalty to voter
-						authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
-					}
-				}
-			} catch (Exception ex) {
-				logger.error(null, ex);
-			}
-			addBadgeOnce(authUser, Profile.Badge.SUPPORTER, authUser.getUpvotes() >= SUPPORTER_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
-
-			if (updateAuthUser || updateVoter) {
-				ArrayList<Profile> list = new ArrayList<Profile>(2);
-				if (updateVoter) {
-					list.add(author);
-				}
-				if (updateAuthUser) {
-					list.add(authUser);
-				}
-				pc.updateAll(list);
-			}
-		}
-		return result;
 	}
 
 	/**

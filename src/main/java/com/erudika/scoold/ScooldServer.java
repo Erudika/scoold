@@ -176,42 +176,6 @@ public class ScooldServer {
 	}
 
 	/**
-	 * @return Click servlet bean
-	 */
-//	@Bean
-//	public ServletRegistrationBean clickServletRegistrationBean() {
-//		ServletRegistrationBean reg = new ServletRegistrationBean(new ClickServlet(), "*.htm");
-//		logger.debug("Initializing Click servlet...");
-//		reg.setName("ClickServlet");
-//		reg.setAsyncSupported(true);
-//		reg.setEnabled(true);
-//		reg.setOrder(3);
-//		return reg;
-//	}
-
-	/**
-	 * @return URL Rewrite filter bean
-	 */
-//	@Bean
-//	public FilterRegistrationBean urlRewriteFilterRegistrationBean() {
-//		String path = "/*";
-//		logger.debug("Initializing UrlRewrite filter [{}]...", path);
-//		FilterRegistrationBean frb = new FilterRegistrationBean(new UrlRewriteFilter());
-//		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.FORWARD));
-////		frb.addInitParameter("confPath", Config.IN_PRODUCTION ? "/WEB-INF/urw-prod.xml" : "/WEB-INF/urw-dev.xml");
-////		frb.addInitParameter("confPath", "urlrewrite.xml");
-//		frb.addInitParameter("statusEnabled", "false");
-//		frb.addInitParameter("logLevel", "slf4j");
-//		frb.setName("urlRewriteFilter");
-//		frb.setAsyncSupported(true);
-//		frb.addUrlPatterns(path);
-//		frb.setMatchAfter(true);
-//		frb.setEnabled(true);
-//		frb.setOrder(1);
-//		return frb;
-//	}
-
-	/**
 	 * @return CSRF protection filter bean
 	 */
 	@Bean
