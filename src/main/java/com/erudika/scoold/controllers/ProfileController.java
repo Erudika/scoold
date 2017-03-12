@@ -56,7 +56,7 @@ public class ProfileController {
 		this.utils = utils;
 	}
 
-	@GetMapping(path = {"/{id}", "/{id}/edit"})
+	@GetMapping(path = {"", "/{id}/**"})
     public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req) && !StringUtils.isBlank(id)) {
 			return "redirect:" + signinlink;

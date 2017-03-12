@@ -167,8 +167,8 @@
 
 					<div class="center mtl">
 						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
-						<input type="button" value="$!{lang.get('close')}" class="btn waves-effect waves-light canceledit ${hideview1}">
-						<a href="$profilelink/$authUser.creatorid" class="${hideedit1}">$!{lang.get('close')}</a>
+						<button type="button" class="btn waves-effect waves-light canceledit ${hideview1}">$!{lang.get('close')}</button>
+						<a href="$profilelink/$authUser.creatorid" class="btn waves-effect waves-light ${hideedit1}">$!{lang.get('close')}</a>
 					</div>
 				</form>
 			</div>
