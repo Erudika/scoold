@@ -60,6 +60,7 @@ public final class ScooldUtils {
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
+	private static ScooldUtils instance;
 
 	@Inject
 	public ScooldUtils(ParaClient pc, LanguageUtils langutils) {
@@ -73,6 +74,14 @@ public final class ScooldUtils {
 
 	public LanguageUtils getLangutils() {
 		return langutils;
+	}
+
+	public static ScooldUtils getInstance() {
+		return instance;
+	}
+
+	static void setInstance(ScooldUtils instance) {
+		ScooldUtils.instance = instance;
 	}
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) {

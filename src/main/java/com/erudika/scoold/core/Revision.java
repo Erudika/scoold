@@ -22,9 +22,8 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.User;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
 import jersey.repackaged.com.google.common.base.Objects;
 
 /**
@@ -33,7 +32,6 @@ import jersey.repackaged.com.google.common.base.Objects;
  */
 public class Revision extends Sysprop {
 	private static final long serialVersionUID = 1L;
-	private ParaClient pc;
 
 	@Stored private String body;
 	@Stored private String description;
@@ -48,7 +46,10 @@ public class Revision extends Sysprop {
 
 	public Revision(String id) {
 		setId(id);
-		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
+	}
+
+	private ParaClient client() {
+		return ScooldUtils.getInstance().getParaClient();
 	}
 
 	public Boolean getOriginal() {
@@ -112,15 +113,15 @@ public class Revision extends Sysprop {
 	}
 
 	public void delete() {
-		pc.delete(this);
+		client().delete(this);
 	}
 
 	public void update() {
-		pc.update(this);
+		client().update(this);
 	}
 
 	public String create() {
-		Revision r = pc.create(this);
+		Revision r = client().create(this);
 		if (r != null) {
 			setId(r.getId());
 			setTimestamp(r.getTimestamp());

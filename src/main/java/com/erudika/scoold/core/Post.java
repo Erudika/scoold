@@ -25,9 +25,8 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public abstract class Post extends Sysprop {
 	private static final long serialVersionUID = 1L;
-	private ParaClient pc;
 
 	@Stored @NotBlank @Size(min = 10, max = 20000)
 	private String body;
@@ -70,7 +68,10 @@ public abstract class Post extends Sysprop {
 	public Post() {
 		this.answercount = 0L;
 		this.viewcount = 0L;
-		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
+	}
+
+	private ParaClient client() {
+		return ScooldUtils.getInstance().getParaClient();
 	}
 
 	public Pager getItemcount() {
@@ -190,7 +191,7 @@ public abstract class Post extends Sysprop {
 
 	public String create() {
 		createTags();
-		Post p = pc.create(this);
+		Post p = client().create(this);
 		if (p != null) {
 			if (canHaveRevisions()) {
 				setRevisionid(Revision.createRevisionFromPost(p, true).create());
@@ -207,7 +208,7 @@ public abstract class Post extends Sysprop {
 			setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		}
 		createTags();
-		pc.update(this);
+		client().update(this);
 	}
 
 	public void delete() {
@@ -215,23 +216,23 @@ public abstract class Post extends Sysprop {
 		ArrayList<ParaObject> children = new ArrayList<ParaObject>();
 		ArrayList<String> ids = new ArrayList<String>();
 		// delete Comments
-		children.addAll(pc.getChildren(this, Utils.type(Comment.class)));
+		children.addAll(client().getChildren(this, Utils.type(Comment.class)));
 		// delete Revisions
-		children.addAll(pc.getChildren(this, Utils.type(Revision.class)));
+		children.addAll(client().getChildren(this, Utils.type(Revision.class)));
 
 		if (canHaveChildren()) {
-			for (ParaObject reply : pc.getChildren(this, Utils.type(Reply.class))) {
+			for (ParaObject reply : client().getChildren(this, Utils.type(Reply.class))) {
 				// delete Comments
-				children.addAll(pc.getChildren(reply, Utils.type(Comment.class)));
+				children.addAll(client().getChildren(reply, Utils.type(Comment.class)));
 				// delete Revisions
-				children.addAll(pc.getChildren(reply, Utils.type(Revision.class)));
+				children.addAll(client().getChildren(reply, Utils.type(Revision.class)));
 			}
 		}
 		for (ParaObject child : children) {
 			ids.add(child.getId());
 		}
-		pc.deleteAll(ids);
-		pc.delete(this);
+		client().deleteAll(ids);
+		client().delete(this);
 	}
 
 	private void createTags() {
@@ -242,13 +243,13 @@ public abstract class Post extends Sysprop {
 			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
 			if (!StringUtils.isBlank(t.getTag())) {
 				Pager tagged = new Pager(1);
-				pc.findTagged(getType(), new String[]{t.getTag()}, tagged);
+				client().findTagged(getType(), new String[]{t.getTag()}, tagged);
 				t.setCount((int) tagged.getCount() + 1);
 				getTags().set(i, t.getTag());
 				tagz.add(t);
 			}
 		}
-		pc.createAll(tagz);
+		client().createAll(tagz);
 	}
 
 	@JsonIgnore
@@ -270,7 +271,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void restoreRevisionAndUpdate(String revisionid) {
-		Revision rev = pc.read(revisionid);
+		Revision rev = client().read(revisionid);
 		if (rev != null) {
 			//copy rev data to post
 			setTitle(rev.getTitle());
@@ -293,7 +294,7 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public List<Comment> getComments(Pager pager) {
-		this.comments = pc.getChildren(this, Utils.type(Comment.class), pager);
+		this.comments = client().getChildren(this, Utils.type(Comment.class), pager);
 		this.itemcount = pager;
 		return this.comments;
 	}
@@ -311,12 +312,12 @@ public abstract class Post extends Sysprop {
 		if (isReply()) {
 			return Collections.emptyList();
 		}
-		return pc.getChildren(this, Utils.type(Reply.class), pager);
+		return client().getChildren(this, Utils.type(Reply.class), pager);
 	}
 
 	@JsonIgnore
 	public List<Revision> getRevisions(Pager pager) {
-		return pc.getChildren(this, Utils.type(Revision.class), pager);
+		return client().getChildren(this, Utils.type(Revision.class), pager);
 	}
 
 	@JsonIgnore

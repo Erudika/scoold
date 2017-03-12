@@ -47,6 +47,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 	@Inject
 	public ScooldRequestInterceptor(ScooldUtils utils) {
 		this.utils = utils;
+		ScooldUtils.setInstance(utils);
 	}
 
 	@Override

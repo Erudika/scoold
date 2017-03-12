@@ -37,7 +37,6 @@ import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.boot.web.servlet.ErrorPageRegistrar;
 import org.springframework.boot.web.servlet.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -111,7 +110,6 @@ public class ScooldServer {
 	public static String languageslink = HOMEPAGE + "languages";
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
-	private static ConfigurableApplicationContext appContext;
 
 	public static void main(String[] args) {
 		((ch.qos.logback.classic.Logger) logger).setLevel(ch.qos.logback.classic.Level.TRACE);
@@ -120,14 +118,7 @@ public class ScooldServer {
 		System.setProperty("spring.velocity.prefer-file-system-access", Boolean.toString(!Config.IN_PRODUCTION));
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);
-		appContext = app.run(args);
-	}
-
-	public static ConfigurableApplicationContext getContext() {
-		if (appContext == null) {
-			logger.error("Application not started from main(). App context is null.");
-		}
-		return appContext;
+		app.run(args);
 	}
 
 	@Bean

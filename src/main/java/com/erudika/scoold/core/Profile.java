@@ -24,7 +24,7 @@ import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,8 +125,8 @@ public class Profile extends Sysprop {
 		}
 	}
 
-	ParaClient client() {
-		return ScooldServer.getContext().getBean(ParaClient.class);
+	private ParaClient client() {
+		return ScooldUtils.getInstance().getParaClient();
 	}
 
 	@JsonIgnore

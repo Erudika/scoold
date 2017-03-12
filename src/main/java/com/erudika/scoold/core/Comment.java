@@ -22,8 +22,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
-import com.erudika.scoold.ScooldServer;
-import java.io.Serializable;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
 import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 public class Comment extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
-	private ParaClient pc;
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 
 	@Stored private String comment;
@@ -51,7 +49,10 @@ public class Comment extends Sysprop {
 		this.comment = comment;
 		setParentid(parentid);
 		setTimestamp(System.currentTimeMillis()); //now
-		this.pc = ScooldServer.getContext().getBean(ParaClient.class);
+	}
+
+	private ParaClient client() {
+		return ScooldUtils.getInstance().getParaClient();
 	}
 
 	public String getAuthorName() {
@@ -80,9 +81,9 @@ public class Comment extends Sysprop {
 
 	public String create() {
 		if (StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
-		int count = pc.getCount(getType(), Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
+		int count = client().getCount(getType(), Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
 		if (count > MAX_COMMENTS_PER_ID) return null;
-		Comment c = pc.create(this);
+		Comment c = client().create(this);
 		if (c != null) {
 			setId(c.getId());
 			setTimestamp(c.getTimestamp());
@@ -92,11 +93,11 @@ public class Comment extends Sysprop {
 	}
 
 	public void update() {
-		pc.update(this);
+		client().update(this);
 	}
 
 	public void delete() {
-		pc.delete(this);
+		client().delete(this);
 	}
 
 	public boolean equals(Object obj) {
