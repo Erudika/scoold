@@ -58,7 +58,7 @@ public class QuestionsController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping(path = {"/", "/questions"})
+	@GetMapping({"/", "/questions"})
     public String get(HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), "*", itemcount);
@@ -85,9 +85,9 @@ public class QuestionsController {
         return "base";
 	}
 
-	@GetMapping("/questions/{sortby}/{filter}")
-    public String getSorted(@PathVariable String sortby, @PathVariable(required = false) String filter,
-			HttpServletRequest req, Model model) {
+	@GetMapping("/questions/{filter}")
+    public String getSorted(@PathVariable(required = false) String filter,
+			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);

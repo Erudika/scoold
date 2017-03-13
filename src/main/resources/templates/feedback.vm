@@ -84,8 +84,8 @@
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
 			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$feedbacklink/votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-			<a href="$feedbacklink/updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
+			<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+			<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
 		</div>
 		#if ($tag)
 			<h2>$!lang.get("feedback.tagged") '$!{tag}'</h2>

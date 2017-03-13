@@ -56,9 +56,9 @@ public class ProfileController {
 		this.utils = utils;
 	}
 
-	@GetMapping(path = {"", "/{id}/**"})
+	@GetMapping({"", "/{id}/**"})
     public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
-		if (!utils.isAuthenticated(req) && !StringUtils.isBlank(id)) {
+		if (!utils.isAuthenticated(req) && StringUtils.isBlank(id)) {
 			return "redirect:" + signinlink;
 		}
 		Profile authUser = utils.getAuthUser(req);
@@ -87,7 +87,7 @@ public class ProfileController {
 		model.addAttribute("includeGMapsScripts", true);
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
-		model.addAttribute("canEdit", canEdit(authUser, id));
+		model.addAttribute("canEdit", isMyProfile || canEdit(authUser, id));
 		model.addAttribute("gravatarPicture", utils.getGravatar(showUser.getUser().getEmail()));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
@@ -110,7 +110,7 @@ public class ProfileController {
 				}
 			}
 		}
-        return "redirect:" + profilelink;
+        return "redirect:" + profilelink + "/" + id;
     }
 
 	@PostMapping("/{id}")

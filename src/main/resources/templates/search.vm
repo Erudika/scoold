@@ -1,15 +1,14 @@
 <div class="ptl">
 	<h2>
 		#if ($showParam)
-			<a href="$searchlink/all/$!searchQuery">$!lang.get("search.title")</a>
 			#if ($showParam == "questions")
-				/ $!lang.get("questions.title") #showcount($itemcount.count)
+				$!lang.get("questions.title") #showcount($itemcount.count)
 			#elseif ($showParam == "answers")
-				/ $!lang.get("answers.title") #showcount($itemcount.count)
+				$!lang.get("answers.title") #showcount($itemcount.count)
 			#elseif ($showParam == "feedback")
-				/ $!lang.get("feedback.title") #showcount($itemcount.count)
+				$!lang.get("feedback.title") #showcount($itemcount.count)
 			#elseif ($showParam == "people")
-				/ $!lang.get("people.title") #showcount($itemcount.count)
+				$!lang.get("people.title") #showcount($itemcount.count)
 			#end
 		#else
 			$!lang.get("search.title")
@@ -18,13 +17,14 @@
 	</h2>
 	<hr>
 
-	#if ($itemcount.count == 0)
-		<div class="card-panel hugeText center-align grey-text">
-			<div class="em5v">
-				$!lang.get("search.notfound")
+	#if ($showParam)
+		#if ($itemcount.count == 0)
+			<div class="card-panel hugeText center-align grey-text">
+				<div class="em5v">
+					$!lang.get("search.notfound")
+				</div>
 			</div>
-		</div>
-	#elseif ($showParam)
+		#end
 		#if ($showParam == "questions")
 			#paginate("\#questionspage(\$questionlist)" $itemcount $params "page")
 		#elseif ($showParam == "answers")
@@ -36,6 +36,14 @@
 		#end
 	#else
 
+		#if ($questionlist.isEmpty() && $answerlist.isEmpty() && $feedbacklist.isEmpty() && $userlist.isEmpty())
+			<div class="card-panel hugeText center-align grey-text">
+				<div class="em5v">
+					$!lang.get("search.notfound")
+				</div>
+			</div>
+		#end
+
 		#if (!$questionlist.isEmpty())
 			<div class="largeText pvl">$!lang.get("questions.title")</div>
 			#questionspage($questionlist)
@@ -46,7 +54,7 @@
 
 		#if (!$answerlist.isEmpty())
 			<div class="largeText pvl">$!lang.get("answers.title")</div>
-			#answerspage($answerlist)
+			#compactanswerspage($answerlist)
 			<div class="mvl">
 				<a href="$searchlink/answers/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 			</div>

@@ -4,7 +4,7 @@
 		#setsortbyselection($sortarr 'newest')
 		<div class="mvm">
 			<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$peoplelink/votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
+			<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
 		</div>
 	</div>
 	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>

@@ -28,6 +28,7 @@ import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Revision;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -161,22 +162,26 @@ public final class ScooldUtils {
 		return lang;
 	}
 
-	public  void fetchProfiles(List<? extends Post> posts) {
-		if (posts == null || posts.isEmpty()) {
+	public  void fetchProfiles(List<? extends ParaObject> objects) {
+		if (objects == null || objects.isEmpty()) {
 			return;
 		}
-		Map<String, String> authorids = new HashMap<String, String>(posts.size());
-		Map<String, Profile> authors = new HashMap<String, Profile>(posts.size());
-		for (Post post : posts) {
-			authorids.put(post.getId(), post.getCreatorid());
+		Map<String, String> authorids = new HashMap<String, String>(objects.size());
+		Map<String, Profile> authors = new HashMap<String, Profile>(objects.size());
+		for (ParaObject obj : objects) {
+			authorids.put(obj.getId(), obj.getCreatorid());
 		}
 		// read all post authors in batch
 		for (ParaObject author : pc.readAll(new ArrayList<String>(new HashSet<String>(authorids.values())))) {
 			authors.put(author.getId(), (Profile) author);
 		}
 		// set author object for each post
-		for (Post post : posts) {
-			post.setAuthor(authors.get(authorids.get(post.getId())));
+		for (ParaObject obj : objects) {
+			if (obj instanceof Post) {
+				((Post) obj).setAuthor(authors.get(authorids.get(obj.getId())));
+			} else if (obj instanceof Revision) {
+				((Revision) obj).setAuthor(authors.get(authorids.get(obj.getId())));
+			}
 		}
 	}
 

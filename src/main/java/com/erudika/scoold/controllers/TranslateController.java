@@ -72,7 +72,7 @@ public class TranslateController {
 		return "redirect:" + languageslink;
 	}
 
-	@GetMapping(path = "/{locale}/{index}")
+	@GetMapping({"/{locale}", "/{locale}/{index}"})
     public String translate(@PathVariable String locale, @PathVariable(required = false) String index,
 			HttpServletRequest req, Model model) {
 

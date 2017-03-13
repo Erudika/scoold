@@ -63,7 +63,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 
-		if (StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
+		if (modelAndView == null || StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
 			return; // skip if redirect
 		}
 
@@ -137,6 +137,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("questionslink", questionslink);
 		modelAndView.addObject("commentlink", commentlink);
 		modelAndView.addObject("postlink", postlink);
+		modelAndView.addObject("revisionslink", revisionslink);
 		modelAndView.addObject("feedbacklink", feedbacklink);
 		modelAndView.addObject("languageslink", languageslink);
 		// Visual customization

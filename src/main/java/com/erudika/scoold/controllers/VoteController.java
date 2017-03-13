@@ -70,14 +70,14 @@ public class VoteController {
 	}
 
 	@ResponseBody
-	@GetMapping(path = "/voteup/{type}/{id}")
+	@GetMapping("/voteup/{type}/{id}")
 	public Boolean voteup(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
 		return processVoteRequest(true, type, id, req);
 	}
 
 	@ResponseBody
-	@GetMapping(path = "/votedown/{type}/{id}")
+	@GetMapping("/votedown/{type}/{id}")
 	public Boolean votedown(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
 		return processVoteRequest(false, type, id, req);
@@ -93,80 +93,81 @@ public class VoteController {
 		boolean result = false;
 		boolean updateAuthUser = false;
 		boolean updateVoter = false;
+		if (votable == null || authUser == null) {
+			return false;
+		}
 
-		if (votable != null && authUser != null) {
-			try {
-				author = pc.read(votable.getCreatorid());
-				Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
+		try {
+			author = pc.read(votable.getCreatorid());
+			Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
 
-				if (isUpvote && pc.voteUp(votable, authUser.getId())) {
-					votes++;
-					authUser.incrementUpvotes();
-					updateAuthUser = true;
-					int reward = 0;
+			if (isUpvote && (result = pc.voteUp(votable, authUser.getId()))) {
+				votes++;
+				authUser.incrementUpvotes();
+				updateAuthUser = true;
+				int reward = 0;
 
-					if (votable instanceof Post) {
-						Post p = (Post) votable;
-						if (p.isReply()) {
-							utils.addBadge(authUser, GOODANSWER, author, votes >= GOODANSWER_IFHAS, false);
-							reward = ANSWER_VOTEUP_REWARD_AUTHOR;
-						} else if (p.isQuestion()) {
-							utils.addBadge(authUser, GOODQUESTION, author, votes >= GOODQUESTION_IFHAS, false);
-							reward = QUESTION_VOTEUP_REWARD_AUTHOR;
-						} else {
-							reward = VOTEUP_REWARD_AUTHOR;
-						}
+				if (votable instanceof Post) {
+					Post p = (Post) votable;
+					if (p.isReply()) {
+						utils.addBadge(authUser, GOODANSWER, author, votes >= GOODANSWER_IFHAS, false);
+						reward = ANSWER_VOTEUP_REWARD_AUTHOR;
+					} else if (p.isQuestion()) {
+						utils.addBadge(authUser, GOODQUESTION, author, votes >= GOODQUESTION_IFHAS, false);
+						reward = QUESTION_VOTEUP_REWARD_AUTHOR;
 					} else {
 						reward = VOTEUP_REWARD_AUTHOR;
 					}
-
-					if (author != null && reward > 0) {
-						author.addRep(reward);
-						updateVoter = true;
-					}
-				} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
-					votes--;
-					authUser.incrementDownvotes();
-					updateAuthUser = true;
-
-					if (votable instanceof Comment && votes <= -5) {
-						//treat comment as offensive or spam - hide
-						((Comment) votable).setHidden(true);
-					} else if (votable instanceof Post && votes <= -5) {
-						Post p = (Post) votable;
-						//mark post for closing
-						Report rep = new Report();
-						rep.setParentid(id);
-						rep.setLink(p.getPostLink(false, false));
-						rep.setDescription(utils.getLang(req).get("posts.forclosing"));
-						rep.setSubType(Report.ReportType.OTHER);
-						rep.setAuthorName("System");
-						rep.create();
-					}
-					if (author != null) {
-						author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
-						updateVoter = true;
-						//small penalty to voter
-						authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
-					}
+				} else {
+					reward = VOTEUP_REWARD_AUTHOR;
 				}
-			} catch (Exception ex) {
-				logger.error(null, ex);
+
+				if (author != null && reward > 0) {
+					author.addRep(reward);
+					updateVoter = true;
+				}
+			} else if (!isUpvote && (result = pc.voteDown(votable, authUser.getId()))) {
+				votes--;
+				authUser.incrementDownvotes();
+				updateAuthUser = true;
+
+				if (votable instanceof Comment && votes <= -5) {
+					//treat comment as offensive or spam - hide
+					((Comment) votable).setHidden(true);
+				} else if (votable instanceof Post && votes <= -5) {
+					Post p = (Post) votable;
+					//mark post for closing
+					Report rep = new Report();
+					rep.setParentid(id);
+					rep.setLink(p.getPostLink(false, false));
+					rep.setDescription(utils.getLang(req).get("posts.forclosing"));
+					rep.setSubType(Report.ReportType.OTHER);
+					rep.setAuthorName("System");
+					rep.create();
+				}
+				if (author != null) {
+					author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
+					updateVoter = true;
+					//small penalty to voter
+					authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
+				}
 			}
-			utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= SUPPORTER_IFHAS);
-			utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
-			utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
+		} catch (Exception ex) {
+			logger.error(null, ex);
+		}
+		utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= SUPPORTER_IFHAS);
+		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
+		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
 
-			if (updateAuthUser || updateVoter) {
-				ArrayList<Profile> list = new ArrayList<Profile>(2);
-				if (updateVoter) {
-					list.add(author);
-				}
-				if (updateAuthUser) {
-					list.add(authUser);
-				}
-				pc.updateAll(list);
+		if (updateAuthUser || updateVoter) {
+			ArrayList<Profile> list = new ArrayList<Profile>(2);
+			if (updateVoter) {
+				list.add(author);
 			}
+			if (updateAuthUser) {
+				list.add(authUser);
+			}
+			pc.updateAll(list);
 		}
 		return result;
 	}

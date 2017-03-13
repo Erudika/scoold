@@ -19,7 +19,6 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -91,18 +90,10 @@ public class SearchController {
 		} else if ("people".equals(type)) {
 			userlist = pc.findQuery(Utils.type(Profile.class), query, itemcount);
 		} else {
-			List<ParaObject> results = pc.findQuery(null, query, itemcount);
-			for (ParaObject result : results) {
-				if (Utils.type(Question.class).equals(result.getType())) {
-					questionlist.add((Post) result);
-				} else if (Utils.type(Reply.class).equals(result.getType())) {
-					answerlist.add((Post) result);
-				} else if (Utils.type(Feedback.class).equals(result.getType())) {
-					feedbacklist.add((Post) result);
-				} else if (Utils.type(Profile.class).equals(result.getType())) {
-					userlist.add((Profile) result);
-				}
-			}
+			questionlist = pc.findQuery(Utils.type(Question.class), query);
+			answerlist = pc.findQuery(Utils.type(Reply.class), query);
+			feedbacklist = pc.findQuery(Utils.type(Feedback.class), query);
+			userlist = pc.findQuery(Utils.type(Profile.class), query);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
 		list.addAll(questionlist);

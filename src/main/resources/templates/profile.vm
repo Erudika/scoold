@@ -17,6 +17,7 @@
 				<div class="pal editbox hide">
 					<a href="#" class="canceledit right"><i class="fa fa-close"></i></a>
 					<form action="$profilelink/$!authUser.creatorid" method="post">
+						#sectoken(false)
 						<div class="input-field">
 							<label for="picture_url">URL</label>
 							<input id="picture_url" type="url" name="picture" value="$!showUser.picture">
@@ -182,25 +183,6 @@
 <div class="mvm">
 		#paginate("\#questionspage(\$questionslist)" $itemcount1 "" "page1")
 </div>
-#end
-
-#macro(compactanswerspage $answers)
-	#foreach($answer in $answers)
-		<div class="card-panel">
-			<div class="right">
-				<i class="fa fa-clock-o"></i> #formatdate($answer.timestamp "")
-			</div>
-			<div class="mediumText grey-text text-darken-1">$!answer.title</div>
-			<div>
-				<span class="chip mrl">$!answer.votes</span>
-				<span>
-					<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">
-						$!utils.abbreviate($answer.body, 100).replaceAll('\s', ' ')
-					</a>
-				</span>
-			</div>
-		</div>
-	#end
 #end
 
 #if (!$answerslist.isEmpty())

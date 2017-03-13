@@ -87,27 +87,28 @@ public class ScooldServer {
 	public static final int PROFESSOR_IFHAS = Config.getConfigInt("professor_ifhas", 5000);
 	public static final int GEEK_IFHAS = Config.getConfigInt("geek_ifhas", 9000);
 
-	public static String peoplelink = HOMEPAGE + "people";
-	public static String profilelink = HOMEPAGE + "profile";
-	public static String searchlink = HOMEPAGE + "search";
-	public static String signinlink = HOMEPAGE + "signin";
-	public static String signoutlink = HOMEPAGE + "signout";
-	public static String aboutlink = HOMEPAGE + "about";
-	public static String privacylink = HOMEPAGE + "privacy";
-	public static String termslink = HOMEPAGE + "terms";
-	public static String tagslink = HOMEPAGE + "tags";
-	public static String settingslink = HOMEPAGE + "settings";
-	public static String translatelink = HOMEPAGE + "translate";
-	public static String reportslink = HOMEPAGE + "reports";
-	public static String adminlink = HOMEPAGE + "admin";
-	public static String votedownlink = HOMEPAGE + "votedown";
-	public static String voteuplink = HOMEPAGE + "voteup";
-	public static String questionlink = HOMEPAGE + "question";
-	public static String questionslink = HOMEPAGE + "questions";
-	public static String commentlink = HOMEPAGE + "comment";
-	public static String postlink = HOMEPAGE + "post";
-	public static String feedbacklink = HOMEPAGE + "feedback";
-	public static String languageslink = HOMEPAGE + "languages";
+	public static final String peoplelink = HOMEPAGE + "people";
+	public static final String profilelink = HOMEPAGE + "profile";
+	public static final String searchlink = HOMEPAGE + "search";
+	public static final String signinlink = HOMEPAGE + "signin";
+	public static final String signoutlink = HOMEPAGE + "signout";
+	public static final String aboutlink = HOMEPAGE + "about";
+	public static final String privacylink = HOMEPAGE + "privacy";
+	public static final String termslink = HOMEPAGE + "terms";
+	public static final String tagslink = HOMEPAGE + "tags";
+	public static final String settingslink = HOMEPAGE + "settings";
+	public static final String translatelink = HOMEPAGE + "translate";
+	public static final String reportslink = HOMEPAGE + "reports";
+	public static final String adminlink = HOMEPAGE + "admin";
+	public static final String votedownlink = HOMEPAGE + "votedown";
+	public static final String voteuplink = HOMEPAGE + "voteup";
+	public static final String questionlink = HOMEPAGE + "question";
+	public static final String questionslink = HOMEPAGE + "questions";
+	public static final String commentlink = HOMEPAGE + "comment";
+	public static final String postlink = HOMEPAGE + "post";
+	public static final String revisionslink = HOMEPAGE + "revisions";
+	public static final String feedbacklink = HOMEPAGE + "feedback";
+	public static final String languageslink = HOMEPAGE + "languages";
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
@@ -116,6 +117,7 @@ public class ScooldServer {
 		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
 		System.setProperty("spring.velocity.cache", Boolean.toString(Config.IN_PRODUCTION));
 		System.setProperty("spring.velocity.prefer-file-system-access", Boolean.toString(!Config.IN_PRODUCTION));
+		System.setProperty("spring.velocity.properties.velocimacro.library.autoreload", Boolean.toString(!Config.IN_PRODUCTION));
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);
 		app.run(args);

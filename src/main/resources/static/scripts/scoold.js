@@ -263,8 +263,7 @@ $(function () {
 	});
 
 	$(document).on("click", "a.votelink",  function() {
-		var up = false;
-		up = $(this).hasClass("upvote");
+		var up = $(this).hasClass("upvote");
 		var votes = $(this).closest("div.votebox").find(".votecount");
 		var newvotes = parseInt(votes.text(), 10);
 		if (!isNaN(newvotes)) {
@@ -276,7 +275,7 @@ $(function () {
 						newvotes--;
 					}
 				}
-				votes.text(newvotes);
+				votes.text(newvotes).removeClass("hide");
 			}, "json");
 		}
 		return false;
@@ -522,7 +521,6 @@ $(function () {
 						that.hide();
 					} else {
 						contentDiv.append(trimmed);
-						callback(contentDiv);
 					}
 				}
 			}
@@ -542,6 +540,7 @@ $(function () {
 	function initPostEditor(elem) {
 		return new SimpleMDE({
 			element: elem,
+			autoDownloadFontAwesome: false,
 			showIcons: ["code", "table"],
 			spellChecker: false
 		});
@@ -684,10 +683,4 @@ $(function () {
 
 		return ds;
 	});
-
-	var questionFilterForm = $("form#filter-questions-form");
-	questionFilterForm.find("select").change(function() {
-		questionFilterForm.submit();
-	}).end().find(":submit").hide();
-
 });

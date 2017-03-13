@@ -40,7 +40,7 @@ public class ErrorController {
 		this.utils = utils;
 	}
 
-	@GetMapping(path = "/error/{code}")
+	@GetMapping("/error/{code}")
     public String get(@PathVariable String code, HttpServletRequest req, Model model) {
 		model.addAttribute("path", "error.vm");
 		model.addAttribute("title", utils.getLang(req).get("error.title"));

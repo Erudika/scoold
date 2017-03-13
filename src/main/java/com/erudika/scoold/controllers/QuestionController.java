@@ -70,7 +70,7 @@ public class QuestionController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping("/{id}/{title}")
+	@GetMapping({"/{id}", "/{id}/{title}"})
     public String get(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);

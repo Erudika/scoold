@@ -21,7 +21,6 @@ package com.erudika.scoold.core;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.User;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jersey.repackaged.com.google.common.base.Objects;
@@ -38,7 +37,7 @@ public class Revision extends Sysprop {
 	@Stored private String title;
 	@Stored private Boolean original;
 
-	private transient User author;
+	private transient Profile author;
 
 	public Revision() {
 		this(null);
@@ -86,11 +85,11 @@ public class Revision extends Sysprop {
 	}
 
 	@JsonIgnore
-	public User getAuthor() {
+	public Profile getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(User author) {
+	public void setAuthor(Profile author) {
 		this.author = author;
 	}
 

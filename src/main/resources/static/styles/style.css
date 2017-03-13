@@ -6,7 +6,7 @@ body {
 	word-spacing: normal;
 	letter-spacing: 0;
 }
-p {font-size: 1.2em;}
+p, ul, ol, table {font-size: 1.1em;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
@@ -24,6 +24,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .l{ text-align: left;}
 .lightborder{ border: 1px solid #CCCCCC; border-radius: 2px;}
 .capitalize{ text-transform: capitalize; }
+.pages{ clear: both; }
 .diff-ins{ background-color: #E6FFE6;}
 .diff-del{ background-color: #FFE6E6;}
 .diff-ins .button-tiny{ background-color: #E6FFE6;}

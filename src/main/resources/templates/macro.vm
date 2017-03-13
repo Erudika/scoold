@@ -109,12 +109,14 @@
 	</div>
 	<div class="col s8 m8 l9">
 		<div class="right">
-			#set($contextboxid = $utils.generateSecurityToken(10, true))
-			<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
-				 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
-			<ul id="${contextboxid}" class="dropdown-content">
-				<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
-			</ul>
+			#if($showu && $showu.id)
+				#set($contextboxid = $utils.generateSecurityToken(10, true))
+				<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
+					 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+				<ul id="${contextboxid}" class="dropdown-content">
+					<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
+				</ul>
+			#end
 		</div>
 		<div>
 			#if ($showu)
@@ -258,7 +260,7 @@
 						<div>$!utils.abbreviate($showBody, 160)</div>
 					</div>
 				</div>
-				<div class="col s1 m1 l3">
+				<div class="col s2 m1 l3">
 					#if(!$request.requestURI.startsWith("/profile"))
 						<div class=" hide-on-med-and-down">
 							#smallpersonbox($showpost.author)
@@ -280,6 +282,39 @@
 		</div>
 	</div>
 </div>
+#end
+####################################
+#macro(compactanswerspage $answers)
+	#foreach($answer in $answers)
+		<div class="card-panel">
+			<div class="row">
+				<div class="col s10 m11 l9 columns">
+					<div class="mediumText grey-text text-darken-1">$!answer.title</div>
+					<div>
+						<span class="chip mrl">$!answer.votes</span>
+						<span>
+							<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">
+								$!utils.abbreviate($answer.body, 200).replaceAll('\s', ' ')
+							</a>
+						</span>
+					</div>
+				</div>
+				<div class="col s2 m1 l3 columns">
+					#if(!$request.requestURI.startsWith("/profile"))
+						<div class=" hide-on-med-and-down">
+							#smallpersonbox($answer.author)
+						</div>
+						<div class="hide-on-large-only">
+							#tinypersonbox($showpost.author)
+						</div>
+					#end
+					<div class="grey-text r">
+						<i class="fa fa-clock-o"></i> #formatdate($answer.timestamp "")
+					</div>
+				</div>
+			</div>
+		</div>
+	#end
 #end
 ####################################
 #macro(answerspage $answers $parentpost)
@@ -325,7 +360,7 @@
 				<div class="ptl center-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if ($showpost.lasteditby)
-					<a href="$postlink/$showpost.id/revisions" title="Revision history">
+					<a href="$revisionslink/$!showpost.id" title="Revision history">
 						$!lang.get("posts.edited") #formatdate($showpost.updated "")
 					</a>
 					#end
@@ -360,7 +395,7 @@
 					#end
 
 					#if ($showpost.lasteditby)
-					<a href="$!postlink/$showpost.id/revisions" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
+					<a href="$revisionslink/$!showpost.id" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
 					#end
 
 					#if ($isMod && $showpost.isQuestion())
@@ -485,12 +520,12 @@
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
 		<div class="votebox ${sizeClass}">
+			#if($votable.votes && $votable.votes > 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
 			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
 				<i class="fa fa-chevron-up upvote grey-text mrl" title="Vote up"></i>
 				<i class="fa fa-chevron-down downvote grey-text mrl" title="Vote down"></i>
-				#if($votable.votes && $votable.votes > 0)
-					<span class="votecount">$votable.votes</span>
-				#end
+				#if($votable.votes && $votable.votes > 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
+				<span class="votecount ${hideVotes}">$!votable.votes</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
 					<i class="fa fa-chevron-up upvote mrl" title="Vote up"></i>
@@ -498,9 +533,7 @@
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
 					<i class="fa fa-chevron-down downvote mrl" title="Vote down"></i>
 				</a>
-				#if($votable.votes && $votable.votes > 0)
-					<span class="votecount">$votable.votes</span>
-				#end
+				<span class="votecount ${hideVotes}">$!votable.votes</span>
 			#end
 		</div>
 	#end

@@ -55,6 +55,7 @@ public class RevisionsController {
 		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Revision> revisionslist = showPost.getRevisions(itemcount);
+		utils.fetchProfiles(revisionslist);
 		model.addAttribute("path", "revisions.vm");
 		model.addAttribute("title", utils.getLang(req).get("revisions.title"));
 		model.addAttribute("showPost", showPost);
