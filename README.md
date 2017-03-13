@@ -29,12 +29,14 @@ quickly by junior developers.
 
 ### Live Demo
 
-*Scoold is deployed on a free dyno and might take a minute to wake up.*
+*Scoold is deployed on a free dyno and it might take a minute to wake up.*
 ###[Live demo on Heroku](https://live.scoold.com)
 
 ### Quick Start
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+
+**OR**
 
 1. Clone and build the project with `mvn install`
 2. Execute it with `java -jar target/scoold-X.Y.Z.jar` or `mvn spring-boot:run`
