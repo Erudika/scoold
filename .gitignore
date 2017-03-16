@@ -10,6 +10,8 @@ reference.conf
 nbactions.xml
 Tomcat.dpf
 nb-configuration.xml
+nbactions*.xml
+nbactions.xml
 rebel.xml
 scoold-search/dist/
 scoold-search/build/

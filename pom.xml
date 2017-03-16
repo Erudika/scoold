@@ -102,6 +102,16 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>application.conf</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -115,6 +125,7 @@
 							<executable>true</executable>
 							<finalName>scoold-${project.version}</finalName>
 							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
+							<excludeDevtools>true</excludeDevtools>
 						</configuration>
 					</execution>
 				</executions>

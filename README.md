@@ -63,7 +63,6 @@ para.google_client_id = "********************************"
 para.admin_ident = "admin@domain.com"
 para.auth_cookie = "scoold-auth"
 para.support_email = "support@scoold.com"
-para.app_secret_key = "secret"
 para.core_package_name = "com.erudika.scoold.core"
 ```
 
