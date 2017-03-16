@@ -21,8 +21,8 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.CSRF_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.TOKEN_PREFIX;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
@@ -91,7 +91,7 @@ public class SigninController {
     public String globals(HttpServletRequest req, HttpServletResponse res) {
 		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
-		sb.append("CSRF_TOKEN = \"").append(req.getSession().getAttribute(TOKEN_PREFIX + "CSRF")).append("\"; ");
+		sb.append("CSRF_COOKIE = \"").append(CSRF_COOKIE).append("\"; ");
 		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
 		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
 		sb.append("GOOGLE_ANALYTICS_ID = \"").append(Config.getConfigParam("google_analytics_id", "")).append("\"; ");
