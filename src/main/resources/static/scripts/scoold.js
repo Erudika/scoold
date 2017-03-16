@@ -3,7 +3,7 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, google, CSRF_TOKEN: false */
+/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -201,6 +201,18 @@ $(function () {
 		return false;
 	}
 
+	function getCookie(cookie) {
+		var name = cookie + "=";
+		var ca = document.cookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = (ca[i] || "").trim();
+			if (c.indexOf(name) === 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
 	/****************************************************
      *					GLOBAL BINDINGS
      ****************************************************/
@@ -208,7 +220,7 @@ $(function () {
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
 			if (settings.type !== "GET") {
-				xhr.setRequestHeader("X-CSRF-TOKEN", CSRF_TOKEN);
+				xhr.setRequestHeader("X-CSRF-TOKEN", getCookie(CSRF_COOKIE));
 			}
 		}
 	});

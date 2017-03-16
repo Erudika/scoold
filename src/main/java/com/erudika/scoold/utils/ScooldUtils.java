@@ -115,9 +115,7 @@ public final class ScooldUtils {
 			csrfInSession = Utils.generateSecurityToken();
 			req.getSession(true).setAttribute(TOKEN_PREFIX + "CSRF", csrfInSession);
 		}
-		if (!csrfInSession.equals(csrfInCookie)) {
-			Utils.setStateParam(CSRF_COOKIE, csrfInSession, req, res);
-		}
+		Utils.setStateParam(CSRF_COOKIE, csrfInSession, req, res);
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
