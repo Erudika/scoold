@@ -30,7 +30,7 @@ quickly by junior developers.
 ### Live Demo
 
 *Scoold is deployed on a free dyno and it might take a minute to wake up.*
-###[Live demo on Heroku](https://live.scoold.com)
+### [Live demo on Heroku](https://live.scoold.com)
 
 ### Quick Start
 
