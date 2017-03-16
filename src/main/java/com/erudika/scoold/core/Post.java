@@ -165,9 +165,8 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void setTitle(String title) {
-		title = StringUtils.trimToEmpty(title);
 		if (!StringUtils.isBlank(title)) {
-			this.title = title;
+			this.title = StringUtils.trimToEmpty(title);
 			setName(title);
 		}
 	}
@@ -337,7 +336,6 @@ public abstract class Post extends Sysprop {
 
 	public String getPostLink(boolean plural, boolean noid) {
 		Post p = this;
-		if (p == null) return "/";
 		String ptitle = Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-");
 		String pid = (noid ? "" : "/" + p.getId() + "/" + ptitle);
 		if (p.isQuestion()) {

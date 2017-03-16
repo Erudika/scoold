@@ -142,14 +142,10 @@
 			</header>
 
 			<main class="container">
+				## DEBUG INFO ##
+				##foreach($s in $request.session.getAttributeNames())$s = $request.session.getAttribute($s)<br>#end
+
 				#infostrip()
-
-				## DEBUG
-				##path=$path title=$title ////
-				##foreach($s in $request.session.getAttributeNames())
-				##$request.session.getAttribute($s) <br>
-				##end
-
 				#parse($path)
 			</main>
 

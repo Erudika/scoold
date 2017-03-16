@@ -106,7 +106,7 @@ public class ProfileController {
 				boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
 				boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
 				if (makemod && utils.isAdmin(authUser) && !isShowUserAdmin) {
-					showUser.setGroups((makemod && !isShowUserMod) ? MODS.toString() : USERS.toString());
+					showUser.setGroups(isShowUserMod ? USERS.toString() : MODS.toString());
 					showUser.update();
 				}
 			}

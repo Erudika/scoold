@@ -40,7 +40,7 @@ import static com.erudika.scoold.core.Profile.Badge.SUPPORTER;
 import static com.erudika.scoold.core.Profile.Badge.VOTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.util.ArrayList;
+import java.util.Arrays;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -105,15 +105,15 @@ public class VoteController {
 				votes++;
 				authUser.incrementUpvotes();
 				updateAuthUser = true;
-				int reward = 0;
+				int reward;
 
 				if (votable instanceof Post) {
 					Post p = (Post) votable;
 					if (p.isReply()) {
-						utils.addBadge(authUser, GOODANSWER, author, votes >= GOODANSWER_IFHAS, false);
+						utils.addBadge(author, GOODANSWER, votes >= GOODANSWER_IFHAS, false);
 						reward = ANSWER_VOTEUP_REWARD_AUTHOR;
 					} else if (p.isQuestion()) {
-						utils.addBadge(authUser, GOODQUESTION, author, votes >= GOODQUESTION_IFHAS, false);
+						utils.addBadge(author, GOODQUESTION, votes >= GOODQUESTION_IFHAS, false);
 						reward = QUESTION_VOTEUP_REWARD_AUTHOR;
 					} else {
 						reward = VOTEUP_REWARD_AUTHOR;
@@ -159,15 +159,14 @@ public class VoteController {
 		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
 		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
 
-		if (updateAuthUser || updateVoter) {
-			ArrayList<Profile> list = new ArrayList<Profile>(2);
-			if (updateVoter) {
-				list.add(author);
-			}
-			if (updateAuthUser) {
-				list.add(authUser);
-			}
-			pc.updateAll(list);
+		if (updateVoter) {
+			pc.update(author);
+		}
+		if (updateAuthUser) {
+			pc.update(authUser);
+		}
+		if (updateAuthUser && updateVoter) {
+			pc.updateAll(Arrays.asList(author, authUser));
 		}
 		return result;
 	}

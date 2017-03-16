@@ -71,6 +71,14 @@
 		"para_gmaps_api_key": {
 			"description": "Google Maps API key",
 			"value": ""
+		},
+		"para_csp_header_enabled": {
+			"description": "Enable or disable the Content-Security-Policy header.",
+			"value": "true"
+		},
+		"para_csp_header": {
+			"description": "The value of the CSP header (leave blank to use the default value)",
+			"value": ""
 		}
 	},
 	"formation": {

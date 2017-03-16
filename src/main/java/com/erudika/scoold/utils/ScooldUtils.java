@@ -268,7 +268,7 @@ public final class ScooldUtils {
 	}
 
 	public boolean addBadgeOnce(Profile authUser, Profile.Badge b, boolean condition) {
-		return addBadge(authUser, b, authUser, condition && !authUser.hasBadge(b), false);
+		return addBadge(authUser, b, condition && !authUser.hasBadge(b), false);
 	}
 
 	public boolean addBadgeOnceAndUpdate(Profile authUser, Profile.Badge b, boolean condition) {
@@ -276,47 +276,20 @@ public final class ScooldUtils {
 	}
 
 	public boolean addBadgeAndUpdate(Profile authUser, Profile.Badge b, boolean condition) {
-		return addBadge(authUser, b, null, condition, true);
+		return addBadge(authUser, b, condition, true);
 	}
 
-	public boolean addBadge(Profile authUser, Profile.Badge b, Profile u, boolean condition, boolean update) {
-		if (u == null) {
-			u = authUser;
-		}
-		if (authUser == null || !condition) {
-			return false;
-		}
+	public boolean addBadge(Profile user, Profile.Badge b, boolean condition, boolean update) {
+		if (user != null && condition) {
+			String newb = StringUtils.isBlank(user.getNewbadges()) ? "" : user.getNewbadges().concat(",");
+			newb = newb.concat(b.toString());
 
-		String newb = StringUtils.isBlank(u.getNewbadges()) ? "" : u.getNewbadges().concat(",");
-		newb = newb.concat(b.toString());
-
-		u.addBadge(b);
-		u.setNewbadges(newb);
-		if (update) {
-			u.update();
+			user.addBadge(b);
+			user.setNewbadges(newb);
+			if (update) {
+				user.update();
+			}
 		}
-		return true;
-	}
-
-	public boolean removeBadge(Profile authUser, Profile.Badge b, Profile u, boolean condition) {
-		if (u == null) {
-			u = authUser;
-		}
-		if (authUser == null || !condition) {
-			return false;
-		}
-
-		if (StringUtils.contains(u.getNewbadges(), b.toString())) {
-			String newb = u.getNewbadges();
-			newb = newb.replaceAll(b.toString().concat(","), "");
-			newb = newb.replaceAll(b.toString(), "");
-			newb = newb.replaceFirst(",$", "");
-			u.setNewbadges(newb);
-		}
-
-		u.removeBadge(b);
-		u.update();
-
 		return true;
 	}
 
@@ -339,5 +312,16 @@ public final class ScooldUtils {
 			}
 		}
 		return badgelist;
+	}
+
+	public String getDefaultContentSecurityPolicy() {
+		return "default-src 'self'; base-uri 'self'; "
+				+ "connect-src 'self' scoold.com www.google-analytics.com; "
+				+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
+				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "
+				+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net "
+					+ "cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; "
+				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
+				+ "img-src 'self' https:; report-uri /reports/cspv";
 	}
 }

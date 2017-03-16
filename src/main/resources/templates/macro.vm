@@ -194,9 +194,6 @@
 					#if($showFriend.badges && $showFriend.badges.length() > 2)
 						$showFriend.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i>
 					#end
-					#if (!$authenticated || ($authenticated && $showFriend.id != $authUser.id))
-						#getreportlink($showFriend "$profilelink/$showFriend.id" "mll notext")
-					#end
 					<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
 					</div>
@@ -240,17 +237,30 @@
 		#if (!$viewcount) #set($viewcount = 0) #end
 		#if (!$answercount) #set($answercount = 0) #end
 		#if ($showpost.answerid) #set($bgclass = "light-green white-text" ) #else #set($bgclass = "orange lighten-5" ) #end
-		#if ($votes < 0) #set($bgclass1 = "red lighten-2 white-text" ) #elseif($votes == 0) #set($bgclass1 = "light-blue lighten-5" ) #end
-		<div class="col m2 l1 center-align">
+		#if ($votes < 0)
+			#set($bgclass1 = "red lighten-2 white-text" )
+		#elseif($votes >= 100)
+			#set($bgclass1 = "yellow lighten-3" )
+		#else
+			#set($bgclass1 = "" )
+		#end
+		<div class="col m2 l1 center-align hide-on-med-and-down">
 			<div class="qstatsbox">
 				<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
 				<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
 				<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
-					<small>$!lang.get('posts.views')</small>
+					<small class="hide-on-med-and-down">$!lang.get('posts.views')</small>
 				</div>
 			</div>
 		</div>
 		<div class="col m10 l11">
+			<div class="qstatsbox hide-on-large-only">
+				<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
+				<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
+				<span class="mvs phm lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
+					<small>$!lang.get('posts.views')</small>
+				</span>
+			</div>
 			<div class="row mbn">
 				<div class="col s10 m11 l9">
 					<div class="mbm mediumText">
@@ -273,7 +283,7 @@
 				</div>
 			</div>
 			<div class="row mbn">
-				<div class="col m10 mlm">
+				<div class="col m10">
 					<div>#tagsbox($showpost.tags $actionlink2)</div>
 				</div>
 				<div class="col m2 mlm grey-text r">

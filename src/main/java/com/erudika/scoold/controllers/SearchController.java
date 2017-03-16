@@ -79,21 +79,21 @@ public class SearchController {
 		List<Post> answerlist = new ArrayList<Post>();
 		List<Post> feedbacklist = new ArrayList<Post>();
 		Pager itemcount = utils.getPager("page", req);
-		query = StringUtils.isBlank(q) ? query : q;
+		String queryString = StringUtils.isBlank(q) ? query : q;
 
 		if ("questions".equals(type)) {
-			questionlist = pc.findQuery(Utils.type(Question.class), query, itemcount);
+			questionlist = pc.findQuery(Utils.type(Question.class), queryString, itemcount);
 		} else if ("answers".equals(type)) {
-			answerlist = pc.findQuery(Utils.type(Reply.class), query, itemcount);
+			answerlist = pc.findQuery(Utils.type(Reply.class), queryString, itemcount);
 		} else if ("feedback".equals(type)) {
-			feedbacklist = pc.findQuery(Utils.type(Feedback.class), query, itemcount);
+			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
-			userlist = pc.findQuery(Utils.type(Profile.class), query, itemcount);
+			userlist = pc.findQuery(Utils.type(Profile.class), queryString, itemcount);
 		} else {
-			questionlist = pc.findQuery(Utils.type(Question.class), query);
-			answerlist = pc.findQuery(Utils.type(Reply.class), query);
-			feedbacklist = pc.findQuery(Utils.type(Feedback.class), query);
-			userlist = pc.findQuery(Utils.type(Profile.class), query);
+			questionlist = pc.findQuery(Utils.type(Question.class), queryString);
+			answerlist = pc.findQuery(Utils.type(Reply.class), queryString);
+			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
+			userlist = pc.findQuery(Utils.type(Profile.class), queryString);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
 		list.addAll(questionlist);
@@ -105,7 +105,7 @@ public class SearchController {
 		model.addAttribute("title", utils.getLang(req).get("search.title"));
 		model.addAttribute("searchSelected", "navbtn-hover");
 		model.addAttribute("showParam", type);
-		model.addAttribute("searchQuery", query);
+		model.addAttribute("searchQuery", queryString);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
 		model.addAttribute("questionlist", questionlist);

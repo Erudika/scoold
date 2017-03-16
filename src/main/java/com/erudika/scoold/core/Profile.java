@@ -56,7 +56,7 @@ public class Profile extends Sysprop {
 	private transient Integer newreports;
 	private transient User user;
 
-	public static enum Badge{
+	public static enum Badge {
 		VETERAN(10),		//regular visitor		//TODO: IMPLEMENT!
 
 		NICEPROFILE(10),	//100% profile completed
@@ -82,9 +82,9 @@ public class Profile extends Sysprop {
 		DISCIPLINED(0),		//each time user deletes own comment
 		POLYGLOT(5);		//for every approved translation
 
-		private int reward;
+		private final int reward;
 
-		Badge(int reward) {
+		Badge (int reward) {
 			this.reward = reward;
 		}
 
@@ -95,7 +95,7 @@ public class Profile extends Sysprop {
 		public Integer getReward() {
 			return this.reward;
 		}
-	};
+	}
 
     public Profile () {
 		this(null, null);

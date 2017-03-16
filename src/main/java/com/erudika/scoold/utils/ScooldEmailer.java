@@ -30,7 +30,7 @@ public class ScooldEmailer implements Emailer {
 	@Override
 	public boolean sendEmail(List<String> emails, String subject, String body) {
 		// TODO: connect to a real email service
-		LoggerFactory.getLogger(ScooldEmailer.class).info("EMAIL SENT: " + subject);
+		LoggerFactory.getLogger(ScooldEmailer.class).info("EMAIL SENT to {}, {}", emails, subject);
 		return true;
 	}
 

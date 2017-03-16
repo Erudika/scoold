@@ -169,15 +169,10 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 				utils.param(request, "page1") || utils.param(request, "page2"))) {
 			modelAndView.setViewName("pagination"); // switch to page fragment view
 		}
-
+		// CSP Header
 		if (Config.getConfigBoolean("csp_header_enabled", true)) {
-			response.addHeader("Content-Security-Policy", "default-src 'self'; base-uri 'self'; "
-					+ "connect-src 'self' scoold.com www.google-analytics.com; "
-					+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
-					+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "
-					+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; "
-					+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
-					+ "img-src 'self' https:; report-uri /reports/cspv");
+			response.addHeader("Content-Security-Policy",
+					Config.getConfigParam("csp_header", utils.getDefaultContentSecurityPolicy()));
 		}
 	}
 }

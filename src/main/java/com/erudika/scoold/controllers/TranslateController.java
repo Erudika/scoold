@@ -77,7 +77,7 @@ public class TranslateController {
 			HttpServletRequest req, Model model) {
 
 		Locale showLocale = utils.getLangutils().getProperLocale(locale);
-		if (showLocale == null || showLocale.getLanguage().equals("en")) {
+		if (showLocale == null || "en".equals(showLocale.getLanguage())) {
 			// can't translate default language
 			return "redirect:" + languageslink;
 		}
@@ -110,7 +110,7 @@ public class TranslateController {
     public String post(@PathVariable String locale, @PathVariable String index, @RequestParam String value,
 			HttpServletRequest req, Model model) {
 		Locale showLocale = utils.getLangutils().getProperLocale(locale);
-		if (utils.isAuthenticated(req) && showLocale != null && !showLocale.getLanguage().equals("en")) {
+		if (utils.isAuthenticated(req) && showLocale != null && !"en".equals(showLocale.getLanguage())) {
 			Set<String> approved = utils.getLangutils().getApprovedTransKeys(showLocale.getLanguage());
 			Profile authUser = utils.getAuthUser(req);
 			String langkey = langkeys.get(getIndex(index, langkeys));
@@ -142,7 +142,7 @@ public class TranslateController {
 			} else {
 				trans.setApproved(true);
 				utils.getLangutils().approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
-				utils.addBadge(utils.getAuthUser(req), POLYGLOT, (Profile) pc.read(trans.getCreatorid()), true, true);
+				utils.addBadge((Profile) pc.read(trans.getCreatorid()), POLYGLOT, true, true);
 			}
 			pc.update(trans);
 		}
@@ -168,7 +168,8 @@ public class TranslateController {
 		return "base";
 	}
 
-	private int getNextIndex(int start, Set<String> approved, List<String> langkeys) {
+	private int getNextIndex(int fromIndex, Set<String> approved, List<String> langkeys) {
+		int start = fromIndex;
 		if (start < 0) start = 0;
 		if (start >= approved.size()) start = approved.size() - 1;
 		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);

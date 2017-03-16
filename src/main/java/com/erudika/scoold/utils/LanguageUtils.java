@@ -110,8 +110,8 @@ public class LanguageUtils {
 			if (s != null && !s.getProperties().isEmpty()) {
 				Map<String, Object> loaded = s.getProperties();
 				lang = new TreeMap<String, String>();
-				for (String key : loaded.keySet()) {
-					lang.put(key, loaded.get(key).toString());
+				for (Map.Entry<String, Object> entry : loaded.entrySet()) {
+					lang.put(entry.getKey(), String.valueOf(entry.getValue()));
 				}
 			}
 		}
@@ -139,11 +139,12 @@ public class LanguageUtils {
 			// this will overwrite a saved language map!
 			Sysprop s = new Sysprop(keyPrefix.concat(langCode));
 			Map<String, String> dlang = getDefaultLanguage();
-			for (String key : dlang.keySet()) {
+			for (Map.Entry<String, String> entry : dlang.entrySet()) {
+				String key = entry.getKey();
 				if (lang.containsKey(key)) {
 					s.addProperty(key, lang.get(key));
 				} else {
-					s.addProperty(key, dlang.get(key));
+					s.addProperty(key, entry.getValue());
 				}
 			}
 			pc.create(s);
@@ -156,10 +157,9 @@ public class LanguageUtils {
 	 * @return a locale. default is English
 	 */
 	public Locale getProperLocale(String langCode) {
-		langCode = StringUtils.substring(langCode, 0, 2);
-		langCode = (StringUtils.isBlank(langCode) || !ALL_LOCALES.containsKey(langCode)) ?
-				"en" : langCode.trim().toLowerCase();
-		return ALL_LOCALES.get(langCode);
+		String lang = StringUtils.substring(langCode, 0, 2);
+		lang = (StringUtils.isBlank(lang) || !ALL_LOCALES.containsKey(lang)) ? "en" : lang.trim().toLowerCase();
+		return ALL_LOCALES.get(lang);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class LanguageUtils {
 			approved = defsize;
 		}
 
-		if (defsize == 0) {
+		if (((int) defsize) == 0) {
 			progress.put(langCode, 0);
 		} else {
 			progress.put(langCode, (int) ((approved / defsize) * 100));
@@ -390,7 +390,7 @@ public class LanguageUtils {
 					}
 				}
 			} catch (Exception e) {
-				logger.info("Could not read language file " + file + ": {}", e.toString());
+				logger.info("Could not read language file " + file + ": ", e);
 			} finally {
 				try {
 					if (ins != null) ins.close();
@@ -422,7 +422,7 @@ public class LanguageUtils {
 					updateTranslationProgressMap(langCode, progress);
 				}
 			} catch (Exception ex) {
-				logger.error("Could not write language to file: {}", ex.toString());
+				logger.error("Could not write language to file: ", ex);
 			} finally {
 				try {
 					if (fos != null) fos.close();
