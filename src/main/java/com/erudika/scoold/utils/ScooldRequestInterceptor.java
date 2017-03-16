@@ -83,7 +83,9 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("SESSION_TIMEOUT_SEC", Config.SESSION_TIMEOUT_SEC);
 		modelAndView.addObject("TOKEN_PREFIX", TOKEN_PREFIX);
 		modelAndView.addObject("FB_APP_ID", Config.FB_APP_ID);
+		modelAndView.addObject("GMAPS_API_KEY", Config.getConfigParam("gmaps_api_key", ""));
 		modelAndView.addObject("GOOGLE_CLIENT_ID", Config.getConfigParam("google_client_id", ""));
+		modelAndView.addObject("includeGAjs", !StringUtils.isBlank(Config.getConfigParam("google_analytics_id", "")));
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", request.getRequestURI());
@@ -145,12 +147,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));
 		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", IMAGESLINK + "/logo.svg"));
 		modelAndView.addObject("logoWidth", Config.getConfigInt("logo_width", 90));
-		modelAndView.addObject("bgcolor1", Config.getConfigParam("background_color1", "#03a9f4"));
-		modelAndView.addObject("bgcolor2", Config.getConfigParam("background_color2", "#0277bd"));
-		modelAndView.addObject("bgcolor3", Config.getConfigParam("background_color3", "#e0e0e0"));
-		modelAndView.addObject("txtcolor1", Config.getConfigParam("text_color1", "#039be5"));
-		modelAndView.addObject("txtcolor2", Config.getConfigParam("text_color2", "#ec407a"));
-		modelAndView.addObject("txtcolor3", Config.getConfigParam("text_color3", "#444444"));
+		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("infoStripMsg", "");
@@ -171,6 +168,16 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		if (utils.isAjaxRequest(request) && (utils.param(request, "page") ||
 				utils.param(request, "page1") || utils.param(request, "page2"))) {
 			modelAndView.setViewName("pagination"); // switch to page fragment view
+		}
+
+		if (Config.getConfigBoolean("csp_header_enabled", true)) {
+			response.addHeader("Content-Security-Policy", "default-src 'self'; base-uri 'self'; "
+					+ "connect-src 'self' scoold.com www.google-analytics.com; "
+					+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
+					+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "
+					+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; "
+					+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
+					+ "img-src 'self' https:; report-uri /reports/cspv");
 		}
 	}
 }

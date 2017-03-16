@@ -4,7 +4,6 @@
 		<title>$!APPNAME | $!title</title>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self' scoold.com www.google-analytics.com; font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; script-src 'self' maps.googleapis.com cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; style-src 'self' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; img-src 'self' https: http:;">-->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 		<meta name="description" content="$!DESCRIPTION">
 		<meta name="keywords" content="$!KEYWORDS">
@@ -17,19 +16,11 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet">
-		<link href="$!styleslink/style.css" rel="stylesheet" media="screen">
-		<!--<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>-->
+		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
+		<script src="$!scriptslink/globals.js"></script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyB5DVwrEn0bWOjqsgHw5XwpjyujAZSkh9U"></script>
+			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
-		<style media="screen" type="text/css">
-			a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: ${txtcolor1};}
-			.btn, .btn-large, .navbtn-hover {background-color: ${txtcolor2};}
-			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: ${txtcolor2}; opacity: 0.7;}
-			.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: ${txtcolor3};}
-			body, footer.page-footer {background-color: ${txtcolor3};}
-			main {background-color: white;}
-		</style>
 	</head>
 	<body>
 		<div class="scoold-wrapper">
@@ -47,12 +38,7 @@
 									#end
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
 									<li class="divider"></li>
-									<li>
-										<form method="post" action="$signoutlink" class="center-align">
-											#sectoken(false)
-											<button type="submit" class="btn-flat mtm">$!lang.get('signout')</button>
-										</form>
-									</li>
+									<li><a href="$signoutlink" title="Sign out" class="mtm signout">$!lang.get('signout')</a></li>
 								</ul>
 							#end
 
@@ -64,7 +50,7 @@
 
 							<ul class="right hide-on-med-and-down">
 								<li>
-									<a href="#" onclick="$('#search-drawer').toggleClass('hide'); $('#search-box').focus()" class="$!{searchSelected}">
+									<a href="#" class="toggle-drawer $!{searchSelected}">
 										<i class="fa fa-search fa"></i>
 									</a>
 								</li>
@@ -134,10 +120,7 @@
 									#end
 									<li class="divider"></li>
 									<li>
-										<form method="post" action="$signoutlink">
-											#sectoken(false)
-											<button type="submit" class="btn-flat mts">$!lang.get('signout')</button>
-										</form>
+										<li><a href="$signoutlink" title="Sign out" class="mts signout">$!lang.get('signout')</a></li>
 									</li>
 								#end
 							</ul>
@@ -150,7 +133,7 @@
 								<div class="input-field">
 									<input id="search-box" type="search" name="q" placeholder="$!lang.get('search.search')" required>
 									<label for="search"><i class="fa fa-search fa-2x grey-text"></i></label>
-									<i class="material-icons fa fa-close grey-text" onclick="$('#search-drawer').toggleClass('hide')"></i>
+									<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
 								</div>
 							</form>
 						</div>
@@ -160,10 +143,13 @@
 
 			<main class="container">
 				#infostrip()
-				path=$path title=$title ////
-				#foreach($s in $request.session.getAttributeNames())
-				$request.session.getAttribute($s) <br>
-				#end
+
+				## DEBUG
+				##path=$path title=$title ////
+				##foreach($s in $request.session.getAttributeNames())
+				##$request.session.getAttribute($s) <br>
+				##end
+
 				#parse($path)
 			</main>
 
@@ -174,7 +160,7 @@
 							<h5 class="white-text">
 								#if($showBranding)
 									Powered by <a href="https://paraio.com" target="_blank">
-										<img src="/images/paradark.svg" width="100" style="margin-bottom: -6px;" alt="Para logo"></a>
+										<img src="/images/paradark.svg" width="100" alt="Para logo" class="para-logo-footer"></a>
 								#end
 							</h5>
 							<div class="pvl">
@@ -222,23 +208,9 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize-autocomplete/1.0.7/jquery.materialize-autocomplete.min.js"></script>
-
-		#set($sectok = "#sectoken(true)")
-		#set($sectok = "$sectok.trim()")
-		<script type="text/javascript">
-			var lang = {areyousure: "$!lang.get('areyousure')"}, csrftoken = "$!sectok";
-			$(".button-collapse").sideNav();
-			$('select').material_select();
-			$('textarea').characterCounter();
-		</script>
 		<script src="$!scriptslink/scoold.js"></script>
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-			ga('create', 'UA-648525-8', 'auto');
-			ga('send', 'pageview');
-		</script>
+		#if($includeGAjs)
+		<script src="$!scriptslink/analytics.js"></script>
+		#end
 	</body>
 </html>

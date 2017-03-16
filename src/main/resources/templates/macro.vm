@@ -1,3 +1,7 @@
+#######################################################
+##                                                   ##
+##              COMMONLY USED MACROS                 ##
+##                                                   ##
 ################# COMMENTS MACROS #####################
 #macro(newcommentform $parentid $hidden $uri)
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
@@ -211,9 +215,6 @@
 			#set($encodedLink = $utils.urlEncode($link))
 			#set($_href = "${_href}&link=$encodedLink")
 		#end
-		#if ($reportable.parentid && !$reportable.parentid.isEmpty())
-			#set($_href = "${_href}&grandparentid=$reportable.parentid")
-		#end
 		#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
 		<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
 			<span class="fa fa-flag"></span> $!_showtxt
@@ -239,7 +240,7 @@
 		#if (!$viewcount) #set($viewcount = 0) #end
 		#if (!$answercount) #set($answercount = 0) #end
 		#if ($showpost.answerid) #set($bgclass = "light-green white-text" ) #else #set($bgclass = "orange lighten-5" ) #end
-		#if ($votes < 0) #set($bgclass1 = "red lighten-4 white-text" ) #elseif($votes == 0) #set($bgclass1 = "light-blue lighten-5" ) #end
+		#if ($votes < 0) #set($bgclass1 = "red lighten-2 white-text" ) #elseif($votes == 0) #set($bgclass1 = "light-blue lighten-5" ) #end
 		<div class="col m2 l1 center-align">
 			<div class="qstatsbox">
 				<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
@@ -380,8 +381,7 @@
 						<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
 					#end
 
-					<a href="#post-$!showpost.id" title="Permalink" class="right"
-						 onclick="this.innerHTML = '#post-$!showpost.id'; return false;"><i class="fa fa-bookmark"></i></a>
+					<a href="#post-$!showpost.id" title="Permalink" class="right permalink"><i class="fa fa-bookmark"></i></a>
 
 					#if ($canEdit)
 						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
@@ -506,7 +506,7 @@
 #macro(badgebox $showbadge $num)
 #set($badgeinfo = $!lang.get("about.badges.$showbadge") )
 <span class="chip" title="$!badgeinfo">
-	<span class="fa fa-star"></span>
+	<span class="fa fa-star yellow-text text-darken-3"></span>
 	#if ($num && $num > 1) $!lang.get("$showbadge") <sup>$num</sup> #else $!lang.get("$showbadge") #end
 </span>
 #end
@@ -520,11 +520,10 @@
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
 		<div class="votebox ${sizeClass}">
-			#if($votable.votes && $votable.votes > 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
+			#if($votable.votes && $votable.votes != 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
 			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
 				<i class="fa fa-chevron-up upvote grey-text mrl" title="Vote up"></i>
 				<i class="fa fa-chevron-down downvote grey-text mrl" title="Vote down"></i>
-				#if($votable.votes && $votable.votes > 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
 				<span class="votecount ${hideVotes}">$!votable.votes</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
@@ -564,7 +563,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #end
 #####################################
-#macro(reportform $type $parentid $grandparentid $link)
+#macro(reportform $type $parentid $link)
 <form method="post" class="create-report-form pal" action="$reportslink">
 		#sectoken(false)
 		<h3>$!lang.get("reportproblem")</h3>
@@ -583,9 +582,6 @@ $utils.formatDate($date, $format, $currentLocale)
 			<textarea name="description" class="materialize-textarea"></textarea>
 		</div>
 		<input type="hidden" name="parentid" value="$!parentid">
-		#if ($grandparentid && $grandparentid != "")
-		<input type="hidden" name="grandparentid" value="$!grandparentid">
-		#end
 		#if ($link && !$link.isEmpty())
 		<input type="hidden" name="link" value="$!link">
 		#end
@@ -616,14 +612,24 @@ $utils.formatDate($date, $format, $currentLocale)
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
-		#set($infoStripClass = "green white-text" )
+		#set($infoStripClass = "green white-text")
 	#elseif ($request.getParameter("error"))
-		#set($infoStripClass = "red white-text" )
+		#set($infoStripClass = "red white-text")
 	#else
-		#set($infoStripClass = "" )
+		#set($infoStripClass = "")
 	#end
 
-	#if ((!$infoStripMsg || $infoStripMsg.isEmpty()) && !$request.getParameter("code") && $badgelist.isEmpty())
+	#if ($badgelist && !$badgelist.isEmpty())
+		#if ($badgelist.size() > 1)
+			#set($infoStripMsg = $!lang.get("newbadges"))
+		#else
+			#set($infoStripMsg = $!lang.get("newbadge"))
+		#end
+	#elseif ($request.getParameter("code"))
+		#set($infoStripMsg = $!lang.get("msgcode.${request.getParameter('code')}"))
+	#end
+
+	#if (!$infoStripMsg || $infoStripMsg.trim().isEmpty())
 		#set($hideInfoStrip = "hide")
 	#else
 		#set($hideInfoStrip = "")
@@ -634,25 +640,20 @@ $utils.formatDate($date, $format, $currentLocale)
 			<i class="fa fa-warning"></i> $!{lang.get("nojavascript")}
 		</div>
 	</noscript>
-	<div class="card-panel center ${hideInfoStrip} ${infoStripClass}" onclick="$(this).hide()" style="cursor: pointer">
+	<div class="card-panel infostrip center click2hide ${hideInfoStrip} ${infoStripClass}">
 		#set($_infoStripMsg = $infoStripMsg )
 		<span class="mediumText">
+			$!_infoStripMsg
 			#if (!$badgelist.isEmpty())
-				#if ($badgelist.size() > 1) $!lang.get("newbadges") #else $!lang.get("newbadge") #end
-				&nbsp;
 				#foreach($badge in $badgelist)
 					#badgebox($badge 0)
 				#end
-			#elseif ($request.getParameter("code"))
-				$!lang.get("msgcode.${request.getParameter('code')}")
-			#else
-				$!_infoStripMsg
 			#end
 		</span>
 	</div>
 #end
 #####################################
-#macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($str, "-"))#end
+#macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($!utils.stripAndTrim($str, " "), "-"))#end
 #####################################
 #macro(usertitlebadge $showu)
 #if ($showu.groups == "admins")

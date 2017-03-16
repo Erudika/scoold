@@ -36,11 +36,18 @@
 					#if ($showreport.solution && !$showreport.solution.isEmpty())
 					#set($hide = "" )#else#set($hide = "hide" )#end
 				</div>
-				<i class="fa fa-external-link-square grey-text"></i> <a href="$!showreport.link"> $!showreport.link</a>
+				#if($showreport.link && $showreport.link.length() > 1)
+					<i class="fa fa-external-link-square grey-text"></i> <a href="$!showreport.link"> $!showreport.link</a>
+				#end
 				<div class="${hide}">
 					<i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
 					<span class="report-solution-text">$!showreport.solution</span>
 				</div>
+				#if($showreport.properties.size() > 0)
+					#foreach($entry in $showreport.properties.entrySet())
+						<div><tt><b>$entry.key</b>: $entry.value</tt></div>
+					#end
+				#end
 			</div>
 			<div class="col m2 r">
 				<span class="right"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
@@ -62,7 +69,7 @@
 #end
 
 #if($getreportform)
-	#reportform($type $parentid $grandparentid $link)
+	#reportform($type $parentid $link)
 #else
 	<div class="ptl">
 		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>

@@ -59,7 +59,7 @@ public class ProfileController {
 	@GetMapping({"", "/{id}/**"})
     public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req) && StringUtils.isBlank(id)) {
-			return "redirect:" + signinlink;
+			return "redirect:" + signinlink + "?returnto=" + profilelink;
 		}
 		Profile authUser = utils.getAuthUser(req);
 		Profile showUser;
@@ -87,6 +87,7 @@ public class ProfileController {
 		model.addAttribute("includeGMapsScripts", true);
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
+		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEdit(authUser, id));
 		model.addAttribute("gravatarPicture", utils.getGravatar(showUser.getUser().getEmail()));
 		model.addAttribute("itemcount1", itemcount1);

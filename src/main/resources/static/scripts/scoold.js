@@ -3,12 +3,17 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, lang, google: false */
+/*global window: false, jQuery: false, $: false, google, CSRF_TOKEN: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
 	var locationbox = $("input.locationbox");
-	var rusuremsg = lang.areyousure;
+	var rusuremsg = "Are you sure about that?"; // john cena :)
+
+	// Materialize CSS init
+	$(".button-collapse").sideNav();
+	$('select').material_select();
+	$('textarea').characterCounter();
 
 	/**************************
 	 *    Google Maps API
@@ -202,7 +207,9 @@ $(function () {
 
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
-			xhr.setRequestHeader("X-CSRF-TOKEN", csrftoken);
+			if (settings.type !== "GET") {
+				xhr.setRequestHeader("X-CSRF-TOKEN", CSRF_TOKEN);
+			}
 		}
 	});
 
@@ -298,13 +305,41 @@ $(function () {
 		$.post($(this).attr("href"), function() {
 			window.location.reload(true);
 		});
+		return false;
+	});
+
+	$(document).on("click", ".permalink",  function() {
+		if ($(this).attr("href") === $(this).text()) {
+			return true;
+		} else {
+			$(this).text($(this).attr("href"));
+			return false;
+		}
+	});
+
+	$(document).on("click", ".click2hide",  function() {
+		$(this).hide();
+		return false;
+	});
+
+	$(document).on("click", ".toggle-drawer",  function() {
+		$('#search-drawer').toggleClass('hide');
+		$('#search-box').focus();
+		return false;
+	});
+
+	$(".signout").click(function () {
+		$.post($(this).attr("href"), function (data) {
+			window.location = "/signin?code=5&success=true";
+		});
+		return false;
 	});
 
 	/****************************************************
      *                    REPORTS
      ****************************************************/
 
-	$("a.delete-report").click(function() {
+	$(document).on("click", "a.delete-report", function() {
 		var dis = $(this);
 		$.post(dis.attr("href"));
 		dis.closest(".reportbox").fadeOut("fast", function() {dis.remove();});
@@ -520,7 +555,7 @@ $(function () {
 					if (parsedData.length === 1) {
 						that.hide();
 					} else {
-						contentDiv.append(trimmed);
+						contentDiv.append(trimmed).find(".dropdown-button").dropdown();
 					}
 				}
 			}
@@ -678,7 +713,6 @@ $(function () {
 			var d = dmp.diff_main(oldText, newText);
 			dmp.diff_cleanupSemantic(d);
 			ds = diffToHtml(d, oldText, newText);
-			console.log(ds);
 		}
 
 		return ds;

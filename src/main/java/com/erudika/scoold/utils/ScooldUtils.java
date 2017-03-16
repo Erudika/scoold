@@ -169,10 +169,16 @@ public final class ScooldUtils {
 		Map<String, String> authorids = new HashMap<String, String>(objects.size());
 		Map<String, Profile> authors = new HashMap<String, Profile>(objects.size());
 		for (ParaObject obj : objects) {
-			authorids.put(obj.getId(), obj.getCreatorid());
+			if (obj.getCreatorid() != null) {
+				authorids.put(obj.getId(), obj.getCreatorid());
+			}
+		}
+		List<String> ids = new ArrayList<String>(new HashSet<String>(authorids.values()));
+		if (ids.isEmpty()) {
+			return;
 		}
 		// read all post authors in batch
-		for (ParaObject author : pc.readAll(new ArrayList<String>(new HashSet<String>(authorids.values())))) {
+		for (ParaObject author : pc.readAll(ids)) {
 			authors.put(author.getId(), (Profile) author);
 		}
 		// set author object for each post
@@ -247,7 +253,7 @@ public final class ScooldUtils {
 	}
 
 	public String getGravatar(String email) {
-		return "https://www.gravatar.com/avatar/" + Utils.md5(email) + "?size=400&d=mm";
+		return "https://www.gravatar.com/avatar/" + Utils.md5(email) + "?size=400&d=retro";
 	}
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {

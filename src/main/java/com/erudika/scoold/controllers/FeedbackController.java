@@ -22,6 +22,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.feedbacklink;
+import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -61,6 +62,7 @@ public class FeedbackController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		List<Post> feedbacklist = pc.findQuery(Utils.type(Feedback.class), "*", itemcount);
+		utils.fetchProfiles(feedbacklist);
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title"));
 		model.addAttribute("itemcount", itemcount);
@@ -87,7 +89,7 @@ public class FeedbackController {
 	@GetMapping("/write")
 	public String write(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + feedbacklink;
+			return "redirect:" + signinlink + "?returnto=" + feedbacklink + "/write";
 		}
 		model.addAttribute("write", true);
 		model.addAttribute("path", "feedback.vm");
@@ -116,6 +118,7 @@ public class FeedbackController {
 			Post post = utils.populate(req, new Feedback(), "title", "body", "tags|,");
 			Map<String, String> error = utils.validate(post);
 			if (error.isEmpty()) {
+				post.setCreatorid(authUser.getId());
 				post.create();
 				authUser.setLastseen(System.currentTimeMillis());
 				return "redirect:" + feedbacklink;

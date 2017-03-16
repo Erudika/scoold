@@ -22,7 +22,7 @@
 		<form method="post">
 			<p>$!lang.get('settings.location')</p>
 			<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
-			<div id="map-canvas" class="gmap center" style="height: 300px">#ajaxloading(false)</div>
+			<div id="map-canvas" class="gmap center">#ajaxloading(false)</div>
 
 			<p>$!lang.get("settings.tagfilter.text")</p>
 			#sectoken(false)

@@ -3,7 +3,7 @@
 		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a></h2>
 		<hr>
 		<div class="ptl">
-			<form method="post" id="write-feedback-form">
+			<form method="post" action="$feedbacklink" id="write-feedback-form">
 				#sectoken(false "CREATE_FEEDBACK")
 				<div class="input-field mbl">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
@@ -31,7 +31,7 @@
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
 
-				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
+				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
 					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 				</button>
@@ -93,9 +93,19 @@
 			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
 		#end
 		<hr>
-		<a href="$feedbacklink/write" class="btn-floating btn-large waves-effect waves-light right tooltipped"
-			 data-tooltip="$!{lang.get('feedback.write')}"><i class="fa fa-plus"></i></a>
 
-		#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
+		#if($feedbacklist.isEmpty())
+			<div class="card-panel hugeText center-align grey-text">
+				<div class="em5v">
+					$!{lang.get("search.notfound")}
+				</div>
+			</div>
+		#else
+			#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
+		#end
+
+		<div class="center-align">
+			<a href="$feedbacklink/write" class="btn btn-large waves-effect waves-light"><b>$!{lang.get('feedback.write')}</b></a>
+		</div>
 	#end
 </div>

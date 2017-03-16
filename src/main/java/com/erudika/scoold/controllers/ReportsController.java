@@ -18,6 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -26,6 +27,7 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -72,9 +74,8 @@ public class ReportsController {
 
 	@GetMapping("/form")
     public String getReportForm(@RequestParam String parentid, @RequestParam String type,
-			@RequestParam(required = false) String grandparentid, @RequestParam(required = false) String link, Model model) {
+			@RequestParam(required = false) String link, Model model) {
 		model.addAttribute("getreportform", true);
-		model.addAttribute("grandparentid", grandparentid);
 		model.addAttribute("parentid", parentid);
 		model.addAttribute("type", type);
 		model.addAttribute("link", link);
@@ -99,6 +100,22 @@ public class ReportsController {
 		} else {
 			throw new BadRequestException();
 		}
+    }
+
+	@PostMapping("/cspv")
+	@SuppressWarnings("unchecked")
+    public String createCSPViolationReport(HttpServletRequest req) throws IOException {
+		Report rep = new Report();
+		rep.setDescription("CSP Violation Report");
+		rep.setSubType(Report.ReportType.OTHER);
+		rep.setLink("-");
+		rep.setAuthorName("Scoold");
+		Map<String, Object> body = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
+		if (body != null && !body.isEmpty()) {
+			rep.setProperties((Map<String, Object>) (body.containsKey("csp-report") ? body.get("csp-report") : body));
+		}
+		rep.create();
+		return "redirect:/";
     }
 
 	@PostMapping("/{id}/close")

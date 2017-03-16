@@ -11,14 +11,14 @@
 	#set($actionlink2 = "#getpostlink($showpost true true)")
 	<div class="card-panel">
 		<div class="row">
-			<div class="col m4">
+			<div class="col m3">
 				#smallpersonbox($showrev.author)
 			</div>
 			<div class="col m4 center">
 				<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
 				<div class="grey-text largeText">#if ($showrev.original) $!lang.get("original") #end </div>
 			</div>
-			<div class="col m4 r">
+			<div class="col m5 r">
 				<div class="lightgray mediumText">
 
 				</div>

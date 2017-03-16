@@ -104,6 +104,18 @@ main {
 .scoold-logo {
 	padding: 10px 0;
 }
+.para-logo-footer {
+	margin-bottom: -6px;
+}
+.hidden-save-icon {
+	display: none;
+}
+.infostrip {
+	cursor: pointer;
+}
+.gmap {
+	height: 300px;
+}
 .scoold-wrapper {
 	background-color: white;
 }
@@ -125,7 +137,6 @@ main {
 	background-color: white;
 	display: none;
 }
-
 .autocomplete {
 	display: -ms-flexbox;
 	display: flex;
@@ -170,3 +181,11 @@ code {
 	border-left: 2px solid #039be5;
 	padding-left: 10px;
 }
+
+/**** FEEL FREE TO MODIFY THESE PROPETIES ****/
+a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
+.btn, .btn-large, .navbtn-hover {background-color: #ec407a;}
+.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: #ec407a; opacity: 0.7;}
+.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: #444444;}
+body, footer.page-footer {background-color: #444444;}
+main {background-color: white;}

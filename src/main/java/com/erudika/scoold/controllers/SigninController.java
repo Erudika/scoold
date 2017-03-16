@@ -22,6 +22,7 @@ import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.TOKEN_PREFIX;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SigninController {
@@ -45,9 +47,15 @@ public class SigninController {
     }
 
 	@GetMapping("/signin")
-    public String get(HttpServletRequest req, Model model) {
+    public String get(@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			return "redirect:" + HOMEPAGE;
+		}
+		if (!HOMEPAGE.equals(returnto) && !signinlink.equals(returnto)) {
+			Utils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
+		} else {
+			Utils.removeStateParam("returnto", req, res);
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
@@ -57,24 +65,16 @@ public class SigninController {
 
 	@GetMapping(path = "/signin", params = {"access_token", "provider"})
     public String getAuth(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
-			@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
-			HttpServletRequest req, HttpServletResponse res, Model model) {
+			HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
 			User u = utils.getParaClient().signIn(provider, accessToken, false);
 			if (u != null) {
 				Utils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
-				String backto = Utils.urlDecode(returnto);
-				return "redirect:" + (StringUtils.isBlank(backto) ? HOMEPAGE : backto);
 			} else {
 				return "redirect:" + signinlink + "?code=3&error=true";
 			}
 		}
-		if (!HOMEPAGE.equals(returnto)) {
-			Utils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
-		} else {
-			Utils.removeStateParam("returnto", req, res);
-		}
-		return "redirect:" + returnto;
+		return "redirect:" + getBackToUrl(req);
 	}
 
 	@PostMapping("/signout")
@@ -85,4 +85,21 @@ public class SigninController {
 		}
         return "redirect:" + HOMEPAGE;
     }
+
+	@ResponseBody
+	@GetMapping("/scripts/globals.js")
+    public String globals(HttpServletRequest req, HttpServletResponse res) {
+		res.setContentType("text/javascript");
+		StringBuilder sb = new StringBuilder();
+		sb.append("CSRF_TOKEN = \"").append(req.getSession().getAttribute(TOKEN_PREFIX + "CSRF")).append("\"; ");
+		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
+		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
+		sb.append("GOOGLE_ANALYTICS_ID = \"").append(Config.getConfigParam("google_analytics_id", "")).append("\"; ");
+		return sb.toString();
+	}
+
+	private String getBackToUrl(HttpServletRequest req) {
+		String backtoFromCookie = Utils.urlDecode(Utils.getStateParam("returnto", req));
+		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
+	}
 }

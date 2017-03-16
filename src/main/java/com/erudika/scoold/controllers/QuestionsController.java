@@ -23,6 +23,7 @@ import com.erudika.para.core.Address;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.questionslink;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
@@ -130,7 +131,7 @@ public class QuestionsController {
 	@GetMapping("/questions/ask")
     public String ask(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + signinlink;
+			return "redirect:" + signinlink + "?returnto=" + questionslink + "/ask";
 		}
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("askSelected", "navbtn-hover");
@@ -167,6 +168,6 @@ public class QuestionsController {
 			}
 			return "redirect:" + q.getPostLink(false, false);
 		}
-        return "redirect:" + signinlink;
+		return "redirect:" + signinlink + "?returnto=" + questionslink + "/ask";
     }
 }

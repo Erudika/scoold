@@ -31,7 +31,7 @@
 				</div>
 				#getmessagebox("red white-text" $error.get("tags"))
 
-				<a href="#" class="next-div-toggle mll pll" onclick="$(this).hide()">
+				<a href="#" class="next-div-toggle mll pll click2hide">
 					<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
 					<span class="grey-text text-darken-1">($!lang.get("posts.locationtxt"))</span>
 				</a>
@@ -43,7 +43,7 @@
 					<input type="hidden" name="address" value="">
 				</div>
 
-				<div><i class="fa fa-save save-icon green-text" style="display: none"></i> &nbsp;</div>
+				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
 					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 				</button>

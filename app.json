@@ -64,6 +64,10 @@
 			"description": "Google OAuth client id (for login with Google)",
 			"value": ""
 		},
+		"para_google_analytics_id": {
+			"description": "Google Analytics ID for the GA snippet (leave blank to disable GA)",
+			"value": ""
+		},
 		"para_gmaps_api_key": {
 			"description": "Google Maps API key",
 			"value": ""

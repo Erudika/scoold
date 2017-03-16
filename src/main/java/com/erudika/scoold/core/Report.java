@@ -34,7 +34,6 @@ public class Report extends Sysprop {
 	@Stored private String description;
 	@Stored private String authorName;
 	@Stored private String link;
-	@Stored private String grandparentid;
 	@Stored private String solution;
 	@Stored private Boolean closed;
 
@@ -81,14 +80,6 @@ public class Report extends Sysprop {
 
 	public void setSolution(String solution) {
 		this.solution = solution;
-	}
-
-	public String getGrandparentid() {
-		return grandparentid;
-	}
-
-	public void setGrandparentid(String grandparentid) {
-		this.grandparentid = grandparentid;
 	}
 
 	public String getLink() {
