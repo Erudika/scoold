@@ -51,7 +51,7 @@ The most important settings are `para.endpoint` - the URL of the Para server, as
 This is an example of what your **`application.conf`** should look like:
 ```
 para.app_name = "Scoold"
-para.port = 8000
+para.port = 8080
 para.env = "development"
 para.endpoint = "http://localhost:8080"
 para.access_key = "app:scoold"
@@ -64,6 +64,11 @@ para.admin_ident = "admin@domain.com"
 para.auth_cookie = "scoold-auth"
 para.support_email = "support@scoold.com"
 para.core_package_name = "com.erudika.scoold.core"
+```
+
+Here's how you run Scoold by pointing it to the `application.conf` file in the same folder:
+```sh
+java -jar -Dconfig.file=./application.conf -Dserver.port=8000 scoold-x.y.z.jar
 ```
 
 ## Documentation
