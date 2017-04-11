@@ -109,16 +109,18 @@ public class ReportsController {
 	@PostMapping("/cspv")
 	@SuppressWarnings("unchecked")
     public String createCSPViolationReport(HttpServletRequest req) throws IOException {
-		Report rep = new Report();
-		rep.setDescription("CSP Violation Report");
-		rep.setSubType(Report.ReportType.OTHER);
-		rep.setLink("-");
-		rep.setAuthorName("Scoold");
-		Map<String, Object> body = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
-		if (body != null && !body.isEmpty()) {
-			rep.setProperties((Map<String, Object>) (body.containsKey("csp-report") ? body.get("csp-report") : body));
+		if (Config.getConfigBoolean("csp_reports_enabled", false)) {
+			Report rep = new Report();
+			rep.setDescription("CSP Violation Report");
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setLink("-");
+			rep.setAuthorName("Scoold");
+			Map<String, Object> body = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
+			if (body != null && !body.isEmpty()) {
+				rep.setProperties((Map<String, Object>) (body.containsKey("csp-report") ? body.get("csp-report") : body));
+			}
+			rep.create();
 		}
-		rep.create();
 		return "redirect:/";
     }
 
