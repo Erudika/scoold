@@ -64,7 +64,10 @@ para.admin_ident = "admin@domain.com"
 para.auth_cookie = "scoold-auth"
 para.support_email = "support@scoold.com"
 para.core_package_name = "com.erudika.scoold.core"
+para.google_analytics_id = "UA-123456-7"
 ```
+
+**Note**: On Heroku, the config variables above **must** be written without ".", for example `para.endpoint` becomes `para_endpoint`.
 
 Here's how you run Scoold by pointing it to the `application.conf` file in the same folder:
 ```sh
@@ -79,7 +82,6 @@ Also, please refer to the documentation for Spring Boot and Spring MVC.
 
 ## TODO
 
-- Remove Click dependency
 - Add Checkstyle, Travis and SonarQube support
 
 ## Contributing
