@@ -252,7 +252,7 @@ public class QuestionController {
         return "redirect:" + showPost.getPostLink(false, false);
     }
 
-	@PostMapping("/{id}")
+	@PostMapping("/{id}/delete")
     public String delete(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);

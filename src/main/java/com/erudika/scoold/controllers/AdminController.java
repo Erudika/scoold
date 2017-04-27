@@ -76,7 +76,7 @@ public class AdminController {
     }
 
 	@PostMapping
-    public String post(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
+    public String forceDelete(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		if (confirmdelete && utils.isAdmin(authUser)) {
 			ParaObject sobject = pc.read(id);

@@ -1,5 +1,5 @@
 #if ($request.getParameter("delete"))
-	#set($confirmlink = "$adminlink?confirmdelete=$request.getParameter('delete')&id=$request.getParameter('id')")
+	#set($confirmlink = "$adminlink?confirmdelete=true&id=$request.getParameter('id')")
 
 	<div class="pvl center">
 		<h2 class="black-text">$!lang.get("areyousure")</h2>
@@ -26,7 +26,7 @@
 	<table class="striped">
 		#foreach($conf in $configMap.entrySet())
 			<tr>
-				<td><code>para.$conf.key</code>:</td>
+				<td><code>$conf.key</code>:</td>
 				<td><code class="green-text text-darken-2">
 						#if($conf.key.contains("secret"))
 							***************************
