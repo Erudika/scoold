@@ -35,16 +35,16 @@ quickly by junior developers.
 ### Quick Start
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
-2. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
 **OR**
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys OR [run it locally](https://paraio.org/docs/#001-intro)
 2. Create `application.conf` and configure Scoold to connect to Para
-3. Run Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+3. Run `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
 
-[Read the Para doc for more information.](https://paraio.org/docs)
+[Read the Para docs for more information.](https://paraio.org/docs)
 
 ### Configuration
 
@@ -70,12 +70,7 @@ para.core_package_name = "com.erudika.scoold.core"
 para.google_analytics_id = "UA-123456-7"
 ```
 
-**Note**: On Heroku, the config variables above **must** be written without ".", for example `para.endpoint` becomes `para_endpoint`.
-
-Here's how you run Scoold by pointing it to the `application.conf` file in the same folder:
-```sh
-java -jar -Dconfig.file=./application.conf -Dserver.port=8000 scoold-x.y.z.jar
-```
+**Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
 
 ## Customizing the UI
 
