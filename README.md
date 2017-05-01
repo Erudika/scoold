@@ -34,14 +34,17 @@ quickly by junior developers.
 
 ### Quick Start
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
+2. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
 **OR**
 
-1. Clone and build the project with `mvn install`
-2. Execute it with `java -jar target/scoold-X.Y.Z.jar` or `mvn spring-boot:run`
-3. Start a [Para server instance](https://paraio.org/docs)
-4. Open `localhost:8000` in your browser
+1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys OR [run it locally](https://paraio.org/docs/#001-intro)
+2. Create `application.conf` and configure Scoold to connect to Para
+3. Run Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+4. Open `http://localhost:8000` in your browser
+
+[Read the Para doc for more information.](https://paraio.org/docs)
 
 ### Configuration
 
@@ -74,15 +77,14 @@ Here's how you run Scoold by pointing it to the `application.conf` file in the s
 java -jar -Dconfig.file=./application.conf -Dserver.port=8000 scoold-x.y.z.jar
 ```
 
-## Documentation
+## Customizing the UI
 
-[Read the Para documentation](https://paraio.org/docs)
+- **HTML** templates are in `src/main/resources/templates/`
+- **CSS** stylesheets can be found in `src/main/resources/static/styles/`
+- **JavaScript** files can be found in `src/main/resources/static/scripts`
+- **Images** are in located in `src/main/resources/static/images/`
 
 Also, please refer to the documentation for Spring Boot and Spring MVC.
-
-## TODO
-
-- Add Checkstyle, Travis and SonarQube support
 
 ## Contributing
 

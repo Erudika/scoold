@@ -52,7 +52,7 @@
 			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 100;}
 			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 100;}
 			body { font-weight: 300; }
-			#header {
+			#header, #instructions {
 				min-height: 400px;
 				background-image: url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v6H0V0zm28 8h12v6H28V8zm14-8h12v6H42V0zm14 0h12v6H56V0zm0 8h12v6H56V8zM42 8h12v6H42V8zm0 16h12v6H42v-6zm14-8h12v6H56v-6zm14 0h12v6H70v-6zm0-16h12v6H70V0zM28 32h12v6H28v-6zM14 16h12v6H14v-6zM0 24h12v6H0v-6zm0 8h12v6H0v-6zm14 0h12v6H14v-6zm14 8h12v6H28v-6zm-14 0h12v6H14v-6zm28 0h12v6H42v-6zm14-8h12v6H56v-6zm0-8h12v6H56v-6zm14 8h12v6H70v-6zm0 8h12v6H70v-6zM14 24h12v6H14v-6zm14-8h12v6H28v-6zM14 8h12v6H14V8zM0 8h12v6H0V8z' fill='%230ea4f6' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
 				background-color: white;
@@ -261,6 +261,35 @@
 				<div class="container pvl center-align">
 					<a href="https://live.scoold.com" class="btn-large light-blue"><b>Live Demo!</b></a>
 					<p>Takes a minute to load as it's running on Heroku's free dynos.</p>
+				</div>
+			</section>
+
+			<section id="instructions">
+				<div class="container pvl center-align">
+					<h3><span class="white phl">Getting started</span></h3>
+					<div class="pvl">
+						<ul>
+							<li class="mvm"><span class="white pam mediumText"><b>1.</b> Create a new app on <a href="https://paraio.com">ParaIO.com</a> and save the access keys <sup>1</sup></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>2.</b> Create <tt>application.conf</tt> and configure Scoold to connect to Para <sup>2</sup></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>3.</b> Run Scoold with <tt>java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar</tt></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>4.</b> Open <tt>http://localhost:8000</tt></span></li>
+						</ul>
+						<p class="white pam">
+							<sup>1</sup> Alternatively, you can <a href="https://paraio.org/docs/#001-intro">start a local instance of Para</a> <br>
+							<sup>2</sup> When deploying to Heroku, config variables are set through the web interface and must not contain dots ".", e.g.
+							<tt>para.endpoint</tt> becomes <tt>para_endpoint</tt>. For other deployments
+							<a href="https://github.com/Erudika/scoold/blob/master/README.md#configuration">see the config file example.</a></p>
+					</div>
+					<h3><span class="white phl">Customizing the UI</span></h3>
+					<div class="pvl white">
+						<ul>
+							<li class="mvm"><span class="white pam mediumText"><b>HTML</b> templates are in <tt>src/main/resources/templates/</tt></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>CSS</b> stylesheets can be found in <tt>src/main/resources/static/styles/</tt></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>JavaScript</b> files can be found in <tt>src/main/resources/static/scripts</tt></span></li>
+							<li class="mvm"><span class="white pam mediumText"><b>Images</b> are in located in <tt>src/main/resources/static/images/</tt></span></li>
+						</ul>
+					</div>
+
 				</div>
 			</section>
 

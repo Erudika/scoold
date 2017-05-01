@@ -191,8 +191,8 @@
 						<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 					</div>
 					<span class="chip mtm" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
-					#if($showFriend.badges && $showFriend.badges.length() > 2)
-						$showFriend.badges.split(",").size() <i class="fa fa-star yellow-text text-darken-3"></i>
+					#if($showFriend.badges && $showFriend.badgesMap)
+						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 					#end
 					<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
