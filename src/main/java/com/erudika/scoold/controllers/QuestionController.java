@@ -154,12 +154,9 @@ public class QuestionController {
 			HttpServletRequest req, Model model) throws IOException {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
-			return "redirect:" + req.getRequestURI();
-		}
 		// add new answer
 		String errorMsg = "";
-		if (!showPost.isClosed() && !showPost.isReply()) {
+		if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
