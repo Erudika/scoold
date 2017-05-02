@@ -31,6 +31,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ForbiddenException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -147,14 +149,16 @@ public class QuestionController {
         return "redirect:" + showPost.getPostLink(false, false);
     }
 
-	@PostMapping("/{id}/reply")
-    public String reply(@PathVariable String id, HttpServletRequest req, Model model) {
+	@PostMapping({"/{id}", "/{id}/{title}"})
+    public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
+			HttpServletRequest req, Model model) throws IOException {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
 		// add new answer
+		String errorMsg = "";
 		if (!showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
@@ -172,12 +176,14 @@ public class QuestionController {
 				// update without adding revisions
 				pc.update(showPost);
 				utils.addBadgeAndUpdate(authUser, Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
-			} else {
-				model.addAttribute("error", error);
-				return "base";
+				answer.setAuthor(authUser);
+				model.addAttribute("showPost", showPost);
+				model.addAttribute("answerslist", Collections.singletonList(answer));
+				return "reply";
 			}
+			errorMsg = error.get("body");
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
+		throw new ForbiddenException(errorMsg);
     }
 
 	@PostMapping("/{id}/approve/{answerid}")

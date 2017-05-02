@@ -170,7 +170,7 @@ $(function () {
 		}
 	}
 
-	function submitForm(form, method, callbackfn) {
+	function submitForm(form, method, callbackfn, errorfn) {
 		if (method === "GET" || method === "POST") {
 			$.ajax({
 				type: method,
@@ -179,14 +179,19 @@ $(function () {
 				success: function(data, status, xhr) {
 					clearLoading();
 					callbackfn(data, status, xhr, form);
+				},
+				error: function (xhr, statusText, error) {
+					clearLoading();
+					var cb = errorfn || $.noop;
+					cb(xhr, statusText, error);
 				}
 			});
 		}
 	}
 
-	function submitFormBind(formname, callbackfn) {
+	function submitFormBind(formname, callbackfn, errorfn) {
 		return $(document).on("submit", formname,  function() {
-			submitForm(this, "POST", callbackfn);
+			submitForm(this, "POST", callbackfn, errorfn);
 			return false;
 		});
 	}
@@ -651,8 +656,13 @@ $(function () {
 				}
 			}, 3000);
 
-			answerForm.on("submit", function () {
+			submitFormBind("#answer-question-form", function (data, status, xhr, form) {
+				answerForm.closest("div").before(data);
+				answerForm.hide();
+				answerBody.value("");
 				localStorage.removeItem("answer-form-body");
+			}, function (xhr, status, error) {
+				location.reload();
 			});
 		} catch (exception) {}
 	}

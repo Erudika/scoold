@@ -164,6 +164,9 @@ public class QuestionsController {
 				authUser.setLastseen(System.currentTimeMillis());
 			} else {
 				model.addAttribute("error", error);
+				model.addAttribute("path", "questions.vm");
+				model.addAttribute("includeGMapsScripts", true);
+				model.addAttribute("askSelected", "navbtn-hover");
 				return "base";
 			}
 			return "redirect:" + q.getPostLink(false, false);

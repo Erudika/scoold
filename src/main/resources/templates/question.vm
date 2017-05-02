@@ -34,8 +34,8 @@
 
 				#if ($authenticated && !$showPost.isClosed())
 					<div class="pvl mbm">
-						<form method="post" action="$questionlink/$!showPost.id/reply" id="answer-question-form">
-							#sectoken(false "CREATE_POST")
+						<form method="post" id="answer-question-form">
+							#sectoken(false "CREATE_REPLY")
 							<a id="write-post"></a>
 							<h4 class="grey-text">
 								#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end

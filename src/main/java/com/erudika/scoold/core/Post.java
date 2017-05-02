@@ -43,7 +43,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public abstract class Post extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
-	@Stored @NotBlank @Size(min = 10, max = 20000)
+	@Stored @NotBlank @Size(min = 2, max = 20000)
 	private String body;
 	@Stored @NotBlank @Size(min = 6, max = 255)
 	private String title;
