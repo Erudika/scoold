@@ -396,7 +396,8 @@
 					#if ($canEdit)
 						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
 					#end
-					#if ($isMine || $isMod)
+
+					#if (($authenticated && $showpost.creatorid == $authUser.id) || $isMod)
 						<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
