@@ -81,7 +81,7 @@ public class QuestionController {
 		}
 
 		Pager itemcount = utils.getPager("page", req);
-		itemcount.setSortby("newest".equals(sortby) ? "" : "votes");
+		itemcount.setSortby("newest".equals(sortby) ? "timestamp" : "votes");
 		List<Reply> answerslist = showPost.getAnswers(itemcount);
 		ArrayList<Post> list = new ArrayList<Post>(answerslist);
 		list.add(showPost);
