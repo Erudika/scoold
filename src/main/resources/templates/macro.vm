@@ -170,7 +170,6 @@
 #end
 ####################################
 #macro(peoplepage $people)
-<div class="row">
 	#foreach($showFriend in $people)
 	<div class="col s12 m6 l4">
 		<div class="card">
@@ -202,7 +201,6 @@
 		</div>
 	</div>
 	#end
-</div>
 #end
 ####################################
 #macro(getreportlink $reportable $link $clazz)

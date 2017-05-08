@@ -9,5 +9,7 @@
 	</div>
 	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>
 	<hr>
-	#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
+	<div class="row">
+		#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
+	</div>
 </div>

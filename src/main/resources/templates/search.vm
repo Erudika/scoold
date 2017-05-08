@@ -25,6 +25,7 @@
 				</div>
 			</div>
 		#end
+
 		#if ($showParam == "questions")
 			#paginate("\#questionspage(\$questionlist)" $itemcount $params "page")
 		#elseif ($showParam == "answers")
@@ -32,7 +33,9 @@
 		#elseif ($showParam == "feedback")
 			#paginate("\#questionspage(\$feedbacklist)" $itemcount $params "page")
 		#elseif ($showParam == "people")
-			#paginate("\#peoplepage(\$userlist)" $itemcount $params "page")
+			<div class="row">
+				#paginate("\#peoplepage(\$userlist)" $itemcount $params "page")
+			</div>
 		#end
 	#else
 
@@ -70,7 +73,9 @@
 
 		#if (!$userlist.isEmpty())
 			<div class="largeText pvl">$!lang.get("people.title")</div>
-			#peoplepage($userlist)
+			<div class="row">
+				#peoplepage($userlist)
+			</div>
 			<div class="mvl">
 				<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 			</div>

@@ -4,7 +4,7 @@
 
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Scoold is a Q&A platform written in Java. The project was created back in 2008, released in 2012 as social network for 
+Scoold is a Q&A platform written in Java. The project was created back in 2008, released in 2012 as social network for
 schools inspired by StackOverflow, and as of 2017 it has been refactored, repackaged and open-sourced.
 The primary goal of this project is educational but it can also work great as a Q&A/support section for your website.
 
@@ -56,11 +56,11 @@ This is an example of what your **`application.conf`** should look like:
 para.app_name = "Scoold"
 para.port = 8080
 para.env = "development"
+para.host_url = "https://live.scoold.com"
 para.endpoint = "http://localhost:8080"
 para.access_key = "app:scoold"
 para.secret_key = "*****************"
 para.fb_app_id = "123456789"
-para.fb_secret = "***********************"
 para.gmaps_api_key = "********************************"
 para.google_client_id = "********************************"
 para.admin_ident = "admin@domain.com"
@@ -71,6 +71,31 @@ para.google_analytics_id = "UA-123456-7"
 ```
 
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
+
+## Social login
+
+Facebook is the default identity provider for Scoold, and you don't have to specify you FB app secret.
+For "Login with Google" you only need your client id (e.g. `123-abcd.apps.googleusercontent.com`).
+For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
+```
+# GitHub
+para.gh_app_id = ""
+para.gh_secret = ""
+# LinkedIn
+para.in_app_id = ""
+para.in_secret = ""
+# Twitter
+para.tw_app_id = ""
+para.tw_secret = ""
+# Microsoft
+para.ms_app_id = ""
+para.ms_secret = ""
+```
+You also need to set your host URL when running Scoold in production:
+```
+para.host_url = "https://your.scoold.url"
+```
+This is required for authentication requests, which will be redirected back to that address.
 
 ## Customizing the UI
 

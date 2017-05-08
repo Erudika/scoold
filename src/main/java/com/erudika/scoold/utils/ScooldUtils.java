@@ -110,7 +110,7 @@ public final class ScooldUtils {
 
 	public void initCSRFToken(HttpServletRequest req, HttpServletResponse res) {
 		String csrfInSession = (String) req.getSession(true).getAttribute(TOKEN_PREFIX + "CSRF");
-		String csrfInCookie = Utils.getStateParam(CSRF_COOKIE, req);
+		//String csrfInCookie = Utils.getStateParam(CSRF_COOKIE, req);
 		if (StringUtils.isBlank(csrfInSession)) {
 			csrfInSession = Utils.generateSecurityToken();
 			req.getSession(true).setAttribute(TOKEN_PREFIX + "CSRF", csrfInSession);
@@ -310,6 +310,15 @@ public final class ScooldUtils {
 			}
 		}
 		return badgelist;
+	}
+
+	/**
+	 * @return the host URL of this Scoold server
+	 */
+	public String getServerURL() {
+		String defaultHost = "http://localhost:" + Config.getConfigInt("port", 8080);
+		String host = Config.IN_PRODUCTION ? Config.getConfigParam("host_url", defaultHost) : defaultHost;
+		return StringUtils.removeEnd(host, "/");
 	}
 
 	public String getDefaultContentSecurityPolicy() {

@@ -23,7 +23,10 @@ import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
+import com.erudika.scoold.utils.ScooldUtils;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Named;
 import javax.servlet.DispatcherType;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -145,14 +148,30 @@ public class ScooldServer {
 	}
 
 	@Bean
-	public ParaClient paraClientBean() {
-		ParaClient pc = new ParaClient(Config.getConfigParam("access_key", "x"), Config.getConfigParam("secret_key", "x"));
+	public ParaClient paraClientBean(ScooldUtils utils) {
+		String accessKey = Config.getConfigParam("access_key", "x");
+		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
+		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
+		// update the Scoold App settings through the Para App settings API.
+		Map<String, Object> settings = new HashMap<String, Object>();
+		settings.put("gh_app_id", Config.GITHUB_APP_ID);
+		settings.put("gh_secret", Config.GITHUB_SECRET);
+		settings.put("in_app_id", Config.LINKEDIN_APP_ID);
+		settings.put("in_secret", Config.LINKEDIN_SECRET);
+		settings.put("tw_app_id", Config.TWITTER_APP_ID);
+		settings.put("tw_secret", Config.TWITTER_SECRET);
+		settings.put("ms_app_id", Config.MICROSOFT_APP_ID);
+		settings.put("ms_secret", Config.MICROSOFT_SECRET);
+		settings.put("signin_success", utils.getServerURL() + "/signin/success?jwt=?");
+		settings.put("signin_failure", utils.getServerURL() + "/signin?code=3&error=true");
+		pc.setAppSettings(settings);
 		return pc;
 	}
 
 	@Bean
 	public Emailer scooldEmailerBean() {
+		// Dummy emailer. You can implement your own emailer and instantiate it here
 		return new ScooldEmailer();
 	}
 

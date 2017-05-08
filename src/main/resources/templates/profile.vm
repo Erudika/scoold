@@ -4,10 +4,18 @@
 			<div class="card-image">
 				<img src="#profilepic($showUser)" alt="Profile picture" class="profile-pic">
 				<span class="card-title">
-					#if($showUser.identifier.startsWith("gp"))
-						<i class="fa fa-google fa-2x"></i>
-					#else
+					#if($showUser.user.identifier.startsWith("fb"))
 						<i class="fa fa-facebook fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("gp"))
+						<i class="fa fa-google fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("gh"))
+						<i class="fa fa-github fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("in"))
+						<i class="fa fa-linkedin fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("tw"))
+						<i class="fa fa-twitter fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("ms"))
+						<i class="fa fa-windows fa-2x"></i>
 					#end
 				</span>
 			</div>

@@ -60,6 +60,11 @@ public class SigninController {
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
 		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("gpLoginEnabled", !Config.getConfigParam("google_client_id", "").isEmpty());
+		model.addAttribute("ghLoginEnabled", !Config.GITHUB_APP_ID.isEmpty());
+		model.addAttribute("inLoginEnabled", !Config.LINKEDIN_APP_ID.isEmpty());
+		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
+		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
         return "base";
     }
 
@@ -73,6 +78,16 @@ public class SigninController {
 			} else {
 				return "redirect:" + signinlink + "?code=3&error=true";
 			}
+		}
+		return "redirect:" + getBackToUrl(req);
+	}
+
+	@GetMapping("/signin/success")
+    public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
+			Utils.setStateParam(Config.AUTH_COOKIE, jwt, req, res, true);
+		} else {
+			return "redirect:" + signinlink + "?code=3&error=true";
 		}
 		return "redirect:" + getBackToUrl(req);
 	}
@@ -91,10 +106,16 @@ public class SigninController {
     public String globals(HttpServletRequest req, HttpServletResponse res) {
 		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
+		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
+		sb.append("ENDPOINT = \"").append(utils.getParaClient().getEndpoint()).append("\"; ");
 		sb.append("CSRF_COOKIE = \"").append(CSRF_COOKIE).append("\"; ");
 		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
 		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
 		sb.append("GOOGLE_ANALYTICS_ID = \"").append(Config.getConfigParam("google_analytics_id", "")).append("\"; ");
+		sb.append("GITHUB_APP_ID = \"").append(Config.GITHUB_APP_ID).append("\"; ");
+		sb.append("LINKEDIN_APP_ID = \"").append(Config.LINKEDIN_APP_ID).append("\"; ");
+		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
+		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
 		return sb.toString();
 	}
 
