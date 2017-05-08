@@ -4,7 +4,7 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.24.5</version>
+	<version>1.24.6</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
