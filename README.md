@@ -60,11 +60,8 @@ para.host_url = "https://live.scoold.com"
 para.endpoint = "http://localhost:8080"
 para.access_key = "app:scoold"
 para.secret_key = "*****************"
-para.fb_app_id = "123456789"
 para.gmaps_api_key = "********************************"
-para.google_client_id = "********************************"
 para.admin_ident = "admin@domain.com"
-para.auth_cookie = "scoold-auth"
 para.support_email = "support@scoold.com"
 para.core_package_name = "com.erudika.scoold.core"
 para.google_analytics_id = "UA-123456-7"
@@ -75,9 +72,13 @@ para.google_analytics_id = "UA-123456-7"
 ## Social login
 
 Facebook is the default identity provider for Scoold, and you don't have to specify you FB app secret.
-For "Login with Google" you only need your client id (e.g. `123-abcd.apps.googleusercontent.com`).
+For authenticating with Google, you only need your client id (e.g. `123-abcd.apps.googleusercontent.com`).
 For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
 ```
+# Facebook
+para.fb_app_id = "123456789"
+# Google
+para.google_client_id = "123-abcd.apps.googleusercontent.com"
 # GitHub
 para.gh_app_id = ""
 para.gh_secret = ""
@@ -95,7 +96,7 @@ You also need to set your host URL when running Scoold in production:
 ```
 para.host_url = "https://your.scoold.url"
 ```
-This is required for authentication requests, which will be redirected back to that address.
+This is required for authentication requests to be redirected back to the origin.
 
 ## Customizing the UI
 
