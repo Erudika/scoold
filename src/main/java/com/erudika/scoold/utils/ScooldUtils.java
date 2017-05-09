@@ -312,15 +312,6 @@ public final class ScooldUtils {
 		return badgelist;
 	}
 
-	/**
-	 * @return the host URL of this Scoold server
-	 */
-	public String getServerURL() {
-		String defaultHost = "http://localhost:" + Config.getConfigInt("port", 8080);
-		String host = Config.IN_PRODUCTION ? Config.getConfigParam("host_url", defaultHost) : defaultHost;
-		return StringUtils.removeEnd(host, "/");
-	}
-
 	public String getDefaultContentSecurityPolicy() {
 		return "default-src 'self'; base-uri 'self'; "
 				+ "connect-src 'self' scoold.com www.google-analytics.com; "

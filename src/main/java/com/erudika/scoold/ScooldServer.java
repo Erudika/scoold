@@ -23,12 +23,12 @@ import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
-import com.erudika.scoold.utils.ScooldUtils;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Named;
 import javax.servlet.DispatcherType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +126,15 @@ public class ScooldServer {
 		app.run(args);
 	}
 
+	/**
+	 * @return the host URL of this Scoold server
+	 */
+	public static String getServerURL() {
+		String defaultHost = "http://localhost:" + Config.getConfigInt("port", 8080);
+		String host = Config.IN_PRODUCTION ? Config.getConfigParam("host_url", defaultHost) : defaultHost;
+		return StringUtils.removeEnd(host, "/");
+	}
+
 	@Bean
 	public WebMvcConfigurerAdapter baseConfigurerBean(@Named final ScooldRequestInterceptor sri) {
 		return new WebMvcConfigurerAdapter() {
@@ -148,7 +157,7 @@ public class ScooldServer {
 	}
 
 	@Bean
-	public ParaClient paraClientBean(ScooldUtils utils) {
+	public ParaClient paraClientBean() {
 		String accessKey = Config.getConfigParam("access_key", "x");
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
@@ -163,9 +172,13 @@ public class ScooldServer {
 		settings.put("tw_secret", Config.TWITTER_SECRET);
 		settings.put("ms_app_id", Config.MICROSOFT_APP_ID);
 		settings.put("ms_secret", Config.MICROSOFT_SECRET);
-		settings.put("signin_success", utils.getServerURL() + "/signin/success?jwt=?");
-		settings.put("signin_failure", utils.getServerURL() + "/signin?code=3&error=true");
-		pc.setAppSettings(settings);
+		settings.put("signin_success", getServerURL() + "/signin/success?jwt=?");
+		settings.put("signin_failure", getServerURL() + "/signin?code=3&error=true");
+		try {
+			pc.setAppSettings(settings);
+		} catch (Exception e) {
+			logger.error("No connection to Para backend.");
+		}
 		return pc;
 	}
 
