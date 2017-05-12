@@ -130,9 +130,16 @@ public class ScooldServer {
 	 * @return the host URL of this Scoold server
 	 */
 	public static String getServerURL() {
-		String defaultHost = "http://localhost:" + Config.getConfigInt("port", 8080);
+		String defaultHost = "http://localhost:" + getServerPort();
 		String host = Config.IN_PRODUCTION ? Config.getConfigParam("host_url", defaultHost) : defaultHost;
 		return StringUtils.removeEnd(host, "/");
+	}
+
+	/**
+	 * @return the port of this Scoold server
+	 */
+	public static int getServerPort() {
+		return NumberUtils.toInt(System.getProperty("server.port"), Config.getConfigInt("port", 8080));
 	}
 
 	@Bean
@@ -194,8 +201,7 @@ public class ScooldServer {
 	@Bean
 	public EmbeddedServletContainerFactory jettyConfigBean() {
 		JettyEmbeddedServletContainerFactory jef = new JettyEmbeddedServletContainerFactory();
-		int defaultPort = Config.getConfigInt("port", 8080);
-		jef.setPort(NumberUtils.toInt(System.getProperty("server.port"), defaultPort));
+		jef.setPort(getServerPort());
 		logger.info("Listening on port {}...", jef.getPort());
 		return jef;
 	}
