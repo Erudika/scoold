@@ -60,6 +60,7 @@ public class SigninController {
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
 		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("fbLoginEnabled", !Config.FB_APP_ID.isEmpty());
 		model.addAttribute("gpLoginEnabled", !Config.getConfigParam("google_client_id", "").isEmpty());
 		model.addAttribute("ghLoginEnabled", !Config.GITHUB_APP_ID.isEmpty());
 		model.addAttribute("inLoginEnabled", !Config.LINKEDIN_APP_ID.isEmpty());
