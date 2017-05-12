@@ -277,8 +277,8 @@ public abstract class Post extends Sysprop {
 			setBody(rev.getBody());
 			setTags(rev.getTags());
 			setRevisionid(rev.getId());
-			//update post
-			update();
+			//update post without creating a new revision
+			client().update(this);
 		}
 	}
 

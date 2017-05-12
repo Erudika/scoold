@@ -77,7 +77,7 @@
 		<div class="mvm center-align">
 			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
 			#if ($isAdmin)
-				#if ($isMod)#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
+				#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
 				<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip make-mod-btn $!{unhidemakemod}">
 					<i class="fa fa-chevron-down"></i> Unmake mod
 				</a>

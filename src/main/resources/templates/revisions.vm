@@ -26,9 +26,12 @@
 					#if ($showpost.revisionid == $showrev.id)
 					<i class="fa fa-check-circle green-text fa-3x tooltipped" data-tooltip="$!lang.get('revisions.current')"></i>
 					#elseif ($canrestore || $isMod)
-					<a href="$!actionlink/$showrev.parentid/restore/$!showrev.id" class="post-refresh-ask btn waves-effect waves-light" title="Restore">
-						<i class="fa fa-undo"></i> $!lang.get("restore")
-					</a>
+					<form method="post" action="$!actionlink/$showrev.parentid/restore/$!showrev.id">
+						#sectoken(false)
+						<button type="submit" class="btn waves-effect waves-light" title="Restore">
+							<i class="fa fa-undo"></i> $!lang.get("restore")
+						</button>
+					</form>
 					#end
 				</div>
 			</div>
@@ -42,13 +45,9 @@
 				<hr>
 			#end
 			#if ($showrev.body)
-				#set($revHtml = $utils.markdownToHtml($showrev.body))
-				#set($showRevBody = $utils.stripHtml($revHtml) )
-				<div class="newrev mtl">$!showRevBody</div>
+				<div class="newrev mtl">$!showrev.body</div>
 				#if ($showorigrev.body)
-					#set($origHtml = $utils.markdownToHtml($showorigrev.body))
-					#set($showOrigBody = $utils.stripHtml($origHtml) )
-					<span class="hide oldrev">$!showOrigBody</span>
+					<span class="hide oldrev">$!showorigrev.body</span>
 				#end
 			#end
 			#if ($showrev.tags)
@@ -72,15 +71,11 @@
 		#if ($revisions.size() == 1)
 			#revisionbox($lastrev $lastrev $canrestore $showpost)
 		#else
-			#if ($revisions.size() > $MAX_ITEMS_PER_PAGE)
-				#set($lastrev = $revisions.remove($lastIndex))
-			#end
-
 			#foreach($revision in $revisions)
 				#if ($velocityCount < $revisions.size())
 					#set($prevrev = $revisions.get($velocityCount))
 				#else
-					#set($prevrev = $lastrev)
+					#set($prevrev = $lastOnPage)
 				#end
 				#revisionbox($revision $prevrev $canrestore $showpost)
 			#end

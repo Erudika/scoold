@@ -175,7 +175,7 @@
 		<div class="card">
 			<div class="row valign-wrapper">
 				<div class="col s4">
-					<img src="#profilepic($showFriend)" alt="$showFriend.name" class="responsive-img pts pls">
+					<img src="#profilepic($showFriend)" alt="$showFriend.name" class="responsive-img pts pls" width="100%">
 				</div>
 				<div class="col s8">
 					<div class="right mrm">
@@ -192,6 +192,12 @@
 					<span class="chip mtm" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
 					#if($showFriend.badges && $showFriend.badgesMap)
 						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
+					#end
+					#if ($showFriend.groups == "admins")
+					<i class="fa fa-asterisk orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+					#end
+					#if ($showFriend.groups == "mods")
+					<i class="fa fa-dot-circle-o orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 					#end
 					<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
@@ -329,7 +335,6 @@
 #macro(answerspage $answers $parentpost)
 	#foreach($answer in $answers)
 		#postbox($answer $parentpost)
-		<hr>
 	#end
 #end
 ####################################

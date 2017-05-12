@@ -574,6 +574,7 @@ $(function () {
 					} else {
 						contentDiv.append(trimmed).find(".dropdown-button").dropdown();
 					}
+					$(document).trigger("event:page");
 				}
 			}
 		});
@@ -722,21 +723,28 @@ $(function () {
 		}
 	}
 
-	$(".newrev").html(function(index, html) {
-		var newText = html;
-		var dis = $(this);
-		var oldText = dis.next(".oldrev").html();
-		var ds = newText;
+	function diffInit(elem) {
+		$(elem).html(function(index, html) {
+			var dis = $(this);
+			var undiffed = dis.data("undiffedHTML");
+			var newText = undiffed || html;
+			var oldText = dis.next(".oldrev").html();
+			var ds = newText;
+			if (!undiffed) {
+				dis.data("undiffedHTML", html);
+			}
+			if (newText && oldText) {
+				var d = dmp.diff_main(oldText, newText);
+				dmp.diff_cleanupSemantic(d);
+				ds = diffToHtml(d, oldText, newText);
+			}
+			return ds;
+		});
+	}
 
-		if (newText && oldText) {
-//			var dd = diff_linesToHtml(oldText, newText);
-//			var d = dmp.diff_main(dd[0], dd[1], false);
+	diffInit(".newrev");
 
-			var d = dmp.diff_main(oldText, newText);
-			dmp.diff_cleanupSemantic(d);
-			ds = diffToHtml(d, oldText, newText);
-		}
-
-		return ds;
+	$(document).on("event:page", function() {
+		diffInit(".newrev");
 	});
 });
