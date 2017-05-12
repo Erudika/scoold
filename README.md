@@ -24,7 +24,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Reputation and voting system with badges
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
-- Social login (Facebook, Google) with Gravatar support
+- Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
 - SEO friendly
 
 ### Live Demo
