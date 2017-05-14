@@ -44,6 +44,9 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 3. Run `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
 
+**Important:** Do not use the same `application.conf` file for both Para and Scoold!
+Keep the two applications in separate directories, each with its own configuration file.
+
 [Read the Para docs for more information.](https://paraio.org/docs)
 
 ### Configuration
