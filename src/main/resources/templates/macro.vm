@@ -131,7 +131,15 @@
 			#if ($showu)
 				<br>
 				<span class="chip">$!utils.abbreviateInt($!showu.votes, 0)</span>
-				<span>#usertitlebadge($showu)</span>
+				#if($showu.badges && $showu.badgesMap)
+					$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
+				#end
+				#if ($showu.groups == "admins")
+					<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+				#end
+				#if ($showu.groups == "mods")
+					<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+				#end
 			#end
 		</div>
 	</div>
@@ -153,11 +161,14 @@
 #macro(personlink $showu)
 <span>
 	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
+		#if($showu.badges && $showu.badgesMap)
+			$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
+		#end
 		#if ($showu.groups == "admins")
-		<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+			<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
 		#end
 		#if ($showu.groups == "mods")
-		<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+			<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 		#end
 	#end
 	#if ($showu)
@@ -668,15 +679,6 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #####################################
 #macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($!utils.stripAndTrim($str, " "), "-"))#end
-#####################################
-#macro(usertitlebadge $showu)
-#if ($showu.groups == "admins")
-	<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
-#end
-#if ($showu.groups == "mods")
-	<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
-#end
-#end
 #####################################
 #macro(setsortbyselection $paramMap $defkey )
 #set($sbparam = $request.getParameter("sortby")) #set($sbclazz = "grey darken-2 white-text" )

@@ -5,8 +5,12 @@ body {
 	text-decoration: none;
 	word-spacing: normal;
 	letter-spacing: 0;
+	/*font-size: 13pt;*/
+	font-size: 16px;
 }
-p, ul, ol, table {font-size: 1.1em;}
+.postbox ul li {list-style-type: disc;}
+.postbox ul {padding-left: 40px;}
+
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
