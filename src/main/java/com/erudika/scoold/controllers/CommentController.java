@@ -33,6 +33,7 @@ import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ForbiddenException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -88,7 +89,7 @@ public class CommentController {
 	}
 
 	@PostMapping("/{id}/delete")
-    public void deleteAjax(@RequestParam String id, HttpServletRequest req) {
+    public void deleteAjax(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Comment comment = pc.read(id);
 			Profile authUser = utils.getAuthUser(req);
@@ -101,6 +102,7 @@ public class CommentController {
 				}
 			}
 		}
+		res.setStatus(200);
 	}
 
 	@PostMapping
