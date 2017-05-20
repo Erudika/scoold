@@ -52,6 +52,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @SpringBootApplication
 public class ScooldServer {
 
+	static {
+		// tells ParaClient where to look for classes that implement ParaObject
+		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
+	}
+
 	public static final String LOCALE_COOKIE = Config.APP_NAME_NS + "-locale";
 	public static final String CSRF_COOKIE = Config.APP_NAME_NS + "-csrf";
 	public static final String TOKEN_PREFIX = "ST_";

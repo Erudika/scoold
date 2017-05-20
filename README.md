@@ -66,7 +66,6 @@ para.secret_key = "*****************"
 para.gmaps_api_key = "********************************"
 para.admin_ident = "admin@domain.com"
 para.support_email = "support@scoold.com"
-para.core_package_name = "com.erudika.scoold.core"
 para.google_analytics_id = "UA-123456-7"
 ```
 
