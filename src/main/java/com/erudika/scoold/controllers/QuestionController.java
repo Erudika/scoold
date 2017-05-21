@@ -98,7 +98,7 @@ public class QuestionController {
 			String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
 			if (!StringUtils.isBlank(likeTxt)) {
 				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
-						new String[]{"title", "body", "tags"}, likeTxt, new Pager(10));
+						new String[]{"title", "body", "tags"}, Utils.stripAndTrim(likeTxt, " "), new Pager(10));
 			}
 		}
 
