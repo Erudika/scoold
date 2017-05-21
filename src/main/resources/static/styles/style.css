@@ -10,7 +10,8 @@ body {
 }
 .postbox ul li {list-style-type: disc;}
 .postbox ul {padding-left: 40px;}
-
+.postbox img {max-width: 100%;}
+.viewbox pre {background-color: #ececec;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
@@ -192,4 +193,5 @@ a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {co
 .btn:focus, .btn-large:focus, .btn-floating:focus {background-color: #ec407a; opacity: 0.7;}
 .btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: #444444;}
 body, footer.page-footer {background-color: #444444;}
+footer.page-footer {margin-top: 20px;}
 main {background-color: white;}

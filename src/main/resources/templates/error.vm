@@ -1,7 +1,7 @@
 <div class="ptl">
 	<div class="container center pal">
 		<div class="mbl">
-			<a href="/"><img src="$CDN_URL/logosq.png" width="220" height="220" alt="Error"></a>
+			<a href="/"><img src="$!imageslink/logosq.png" width="220" height="220" alt="Error"></a>
 		</div>
 		#if ($code == "403")
 		<h1>$!lang.get("forbidden")</h1>
