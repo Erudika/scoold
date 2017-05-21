@@ -3,7 +3,7 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google: false */
+/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -682,6 +682,12 @@ $(function () {
 		$.post(this.href);
 		return false;
 	});
+
+	if (typeof hljs !== "undefined") {
+		$("pre code").each(function (i, block) {
+			hljs.highlightBlock(block);
+		});
+	}
 
 	/****************************************************
      *                   REVISIONS

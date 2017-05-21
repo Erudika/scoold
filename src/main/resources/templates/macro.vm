@@ -282,7 +282,7 @@
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 					</div>
 					<div class="mbs">
-						#set($showBody = $utils.stripHtml($utils.markdownToHtml($showpost.body)) )
+						#set($showBody = $utils.stripHtml($utils.markdownToHtml($!showpost.body)) )
 						<div>$!utils.abbreviate($showBody, 160)</div>
 					</div>
 				</div>
@@ -357,7 +357,7 @@
 <div class="postbox">
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="pvs">
-			#set($_bodyHtml = $utils.markdownToHtml("$!showpost.body"))
+			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body))
 			$!{_bodyHtml}
 		</div>
 
