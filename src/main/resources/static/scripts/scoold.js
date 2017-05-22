@@ -580,6 +580,7 @@ $(function () {
 						contentDiv.append(trimmed).find(".dropdown-button").dropdown();
 					}
 					$(document).trigger("event:page");
+					$('.tooltipped').tooltip(); // fix for tooltips after ajax load
 				}
 			}
 		});
@@ -641,6 +642,28 @@ $(function () {
 					askForm.find(".save-icon").show().delay(2000).fadeOut();
 				}
 			}, 3000);
+
+			var titleTimeout = null;
+			var similarContainer = title.next(".similar-posts");
+			var similarTitle = similarContainer.find(".similar-posts-title").first().remove();
+			title.on("input", function () {
+				if (titleTimeout) {
+					clearTimeout(titleTimeout);
+				}
+				if (title.val() && title.val().trim().length > 0) {
+					titleTimeout = setTimeout(function () {
+						$.get("/questions/similar/" + title.val(), function (data) {
+							if (data && data.trim().length > 0) {
+								similarContainer.html(data).prepend(similarTitle);
+							} else {
+								similarContainer.html("");
+							}
+						});
+					}, 1000);
+				} else {
+					similarContainer.html("");
+				}
+			});
 
 			askForm.on("submit", function () {
 				localStorage.removeItem("ask-form-title");

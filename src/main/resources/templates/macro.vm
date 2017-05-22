@@ -633,7 +633,7 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
-#macro(profilepic $user)$!{user.picture}#end
+#macro(profilepic $user)#if($user && $user.picture.matches("^(http:|https:|data:).*"))$!{user.picture}#else https://www.gravatar.com/avatar/?size=350&d=mm #end#end
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))

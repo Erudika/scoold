@@ -31,6 +31,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Revision;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -160,7 +161,7 @@ public final class ScooldUtils {
 		return lang;
 	}
 
-	public  void fetchProfiles(List<? extends ParaObject> objects) {
+	public void fetchProfiles(List<? extends ParaObject> objects) {
 		if (objects == null || objects.isEmpty()) {
 			return;
 		}
@@ -187,6 +188,19 @@ public final class ScooldUtils {
 				((Revision) obj).setAuthor(authors.get(authorids.get(obj.getId())));
 			}
 		}
+	}
+
+	public List<Post> getSimilarPosts(Post showPost, Pager pager) {
+		List<Post> similarquestions = Collections.emptyList();
+		if (!showPost.isReply()) {
+			String likeTxt = Utils.stripAndTrim((showPost.getTitle() + " " +
+					showPost.getBody() + " " + showPost.getTags()), " ");
+			if (!StringUtils.isBlank(likeTxt)) {
+				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
+						new String[]{"properties.title", "properties.body", "properties.tags"}, likeTxt, pager);
+			}
+		}
+		return similarquestions;
 	}
 
 	/**

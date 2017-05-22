@@ -93,15 +93,6 @@ public class QuestionController {
 		}
 		updateViewCount(showPost, req, res);
 
-		List<Post> similarquestions = Collections.emptyList();
-		if (!showPost.isReply() && !utils.isAjaxRequest(req)) {
-			String likeTxt = (showPost.getTitle() + " " + showPost.getBody() + " " + showPost.getTags()).trim();
-			if (!StringUtils.isBlank(likeTxt)) {
-				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
-						new String[]{"title", "body", "tags"}, Utils.stripAndTrim(likeTxt, " "), new Pager(10));
-			}
-		}
-
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
 		model.addAttribute("itemcount", itemcount);
@@ -109,7 +100,7 @@ public class QuestionController {
 		model.addAttribute("canEdit", canEdit(showPost, utils.getAuthUser(req)));
 		model.addAttribute("showPost", showPost);
 		model.addAttribute("answerslist", answerslist);
-		model.addAttribute("similarquestions", similarquestions);
+		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
         return "base";
     }
 

@@ -5,10 +5,13 @@
 		<div class="ptl">
 			<form method="post" id="ask-question-form">
 				#sectoken(false "CREATE_POST")
-				<div class="input-field mbl">
+				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
 					<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6" required>
+					<div class="similar-posts pll mll mbs">
+						<div class="similar-posts-title smallText grey-text mbs">$!lang.get('posts.similar')</div>
+					</div>
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>
 

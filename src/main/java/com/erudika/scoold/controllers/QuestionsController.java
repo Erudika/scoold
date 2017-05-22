@@ -25,15 +25,19 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.questionslink;
 import static com.erudika.scoold.ScooldServer.signinlink;
+import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -84,6 +88,24 @@ public class QuestionsController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("questionslist", questionslist);
         return "base";
+	}
+
+	@GetMapping("/questions/similar/{like}")
+    public void getSimilarAjax(@PathVariable String like, HttpServletRequest req, HttpServletResponse res) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		Question q = new Question();
+		q.setTitle(like);
+		q.setBody("");
+		q.setTags(Arrays.asList(""));
+		for (Post similarPost : utils.getSimilarPosts(q, new Pager(Config.getConfigInt("max_similar_posts", 7)))) {
+			boolean hasAnswer = !StringUtils.isBlank(similarPost.getAnswerid());
+			sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");
+			sb.append(similarPost.getVotes());
+			sb.append("</span> <a href=\"").append(similarPost.getPostLink(false, false)).append("\">");
+			sb.append(similarPost.getTitle()).append("</a><br>");
+		}
+		res.getWriter().print(sb.toString());
+		res.setStatus(200);
 	}
 
 	@GetMapping("/questions/{filter}")
