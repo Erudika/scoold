@@ -380,9 +380,14 @@ $(function () {
 
 	$("#use-gravatar-switch").change(function () {
 		var dis = $(this);
-		var newPic = dis.is(":checked") ? $("#picture_url").next("input[type=hidden]").val() : $("#picture_url").val();
-		$("img.profile-pic:first").attr("src", newPic);
-		$.post(dis.closest("form").attr("action"), {picture: newPic});
+		var currentPic = $("#picture_url");
+		var newPic = $("#picture_url").next("input[type=hidden]");
+		var newPicValue = newPic.val();
+		$("img.profile-pic:first").attr("src", newPicValue);
+		$.post(dis.closest("form").attr("action"), {picture: newPicValue});
+		// swap
+		newPic.val(currentPic.val());
+		currentPic.val(newPicValue);
 	});
 
 	$("#picture_url").on('focusout', function () {

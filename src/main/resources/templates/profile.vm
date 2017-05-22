@@ -29,7 +29,12 @@
 						<div class="input-field">
 							<label for="picture_url">URL</label>
 							<input id="picture_url" type="url" name="picture" value="$!showUser.picture">
-							<input type="hidden" value="$!gravatarPicture">
+							#if($showUser.picture.contains("gravatar.com"))
+								#set($secondaryPicture = $!$showUser.user.picture)
+							#else
+								#set($secondaryPicture = $!gravatarPicture)
+							#end
+							<input type="hidden" value="$!secondaryPicture">
 						</div>
 						<div class="switch right">
 							<label>

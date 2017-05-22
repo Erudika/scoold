@@ -140,7 +140,7 @@ public class ProfileController {
 				showUser.setAboutme(aboutme);
 				update = true;
 			}
-			if (!StringUtils.isBlank(picture) && !picture.equals(showUser.getUser().getPicture())) {
+			if (!StringUtils.isBlank(picture)) {
 				showUser.setPicture(picture);
 				update = true;
 			}

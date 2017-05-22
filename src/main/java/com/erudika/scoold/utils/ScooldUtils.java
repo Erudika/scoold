@@ -93,7 +93,7 @@ public final class ScooldUtils {
 				authUser = pc.read(Profile.id(u.getId()));
 				if (authUser == null) {
 					authUser = new Profile(u.getId(), u.getName());
-					authUser.setPicture(u.isGooglePlusUser() ? getGravatar(u.getEmail()) : u.getPicture());
+					authUser.setPicture(u.getPicture());
 					authUser.setAppid(u.getAppid());
 					authUser.setCreatorid(u.getId());
 					authUser.setTimestamp(u.getTimestamp());
@@ -320,6 +320,6 @@ public final class ScooldUtils {
 				+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net "
 					+ "cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
-				+ "img-src 'self' https:; report-uri /reports/cspv";
+				+ "img-src 'self' https: data:; report-uri /reports/cspv";
 	}
 }
