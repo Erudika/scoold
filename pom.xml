@@ -4,7 +4,7 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.24.8</version>
+	<version>1.24.9</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.24.3</version>
+			<version>1.24.4</version>
 		</dependency>
 		<dependency>
 			<groupId>rome</groupId>
