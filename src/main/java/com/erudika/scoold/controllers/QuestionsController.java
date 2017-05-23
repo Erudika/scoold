@@ -30,7 +30,6 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -64,15 +63,11 @@ public class QuestionsController {
 	}
 
 	@GetMapping({"/", "/questions"})
-    public String get(HttpServletRequest req, Model model) {
-		Pager itemcount = utils.getPager("page", req);
-		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), "*", itemcount);
-		utils.fetchProfiles(questionslist);
+    public String get(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
+		getQuestions(sortby, null, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
-		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("questionslist", questionslist);
         return "base";
     }
 
@@ -111,42 +106,10 @@ public class QuestionsController {
 	@GetMapping("/questions/{filter}")
     public String getSorted(@PathVariable(required = false) String filter,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
-		Pager itemcount = utils.getPager("page", req);
-		List<Question> questionslist = Collections.emptyList();
-		String type = Utils.type(Question.class);
-
-		if ("activity".equals(sortby)) {
-			itemcount.setSortby("updated");
-			questionslist = pc.findQuery(type, "*", itemcount);
-		} else if ("votes".equals(sortby)) {
-			itemcount.setSortby("votes");
-			questionslist = pc.findQuery(type, "*", itemcount);
-		} else if ("unanswered".equals(sortby)) {
-			itemcount.setSortby("timestamp");
-			itemcount.setDesc(false);
-			questionslist = pc.findQuery(type, "properties.answercount:0", itemcount);
-		} else if ("filter".equals(sortby) && !StringUtils.isBlank(filter) && utils.isAuthenticated(req)) {
-			Profile authUser = utils.getAuthUser(req);
-			if ("favtags".equals(filter) && authUser.hasFavtags()) {
-				model.addAttribute("tagFilterOn", true);
-				questionslist = pc.findTermInList(type, Config._TAGS,
-						new ArrayList<String>(authUser.getFavtags()), itemcount);
-			} else if (!StringUtils.isBlank(authUser.getLatlng())) {
-				model.addAttribute("localFilterOn", true);
-				String[] ll = authUser.getLatlng().split(",");
-				if (ll.length == 2) {
-					double lat = NumberUtils.toDouble(ll[0]);
-					double lng = NumberUtils.toDouble(ll[1]);
-					questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
-				}
-			}
-		}
-		utils.fetchProfiles(questionslist);
+		getQuestions(sortby, filter, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
-		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("questionslist", questionslist);
         return "base";
     }
 
@@ -195,4 +158,46 @@ public class QuestionsController {
 		}
 		return "redirect:" + signinlink + "?returnto=" + questionslink + "/ask";
     }
+
+	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
+		Pager itemcount = utils.getPager("page", req);
+		List<Question> questionslist = Collections.emptyList();
+		String type = Utils.type(Question.class);
+		String query = "*";
+
+		if ("activity".equals(sortby)) {
+			itemcount.setSortby("updated");
+		} else if ("votes".equals(sortby)) {
+			itemcount.setSortby("votes");
+		} else if ("unanswered".equals(sortby)) {
+			itemcount.setSortby("timestamp");
+			itemcount.setDesc(false);
+			query = "properties.answercount:0";
+		}
+
+		if (!StringUtils.isBlank(filter) && utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+
+			if ("favtags".equals(filter)) {
+				questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
+			} else if ("favtags".equals(filter)) {
+				String[] ll = authUser.getLatlng() == null ? new String[0] : authUser.getLatlng().split(",");
+				if (ll.length == 2) {
+					double lat = NumberUtils.toDouble(ll[0]);
+					double lng = NumberUtils.toDouble(ll[1]);
+					questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
+				}
+			}
+			model.addAttribute("localFilterOn", "local".equals(filter));
+			model.addAttribute("tagFilterOn", "favtags".equals(filter));
+			model.addAttribute("filter", "/" + Utils.stripAndTrim(filter));
+		} else {
+			questionslist = pc.findQuery(type, query, itemcount);
+		}
+
+		utils.fetchProfiles(questionslist);
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("questionslist", questionslist);
+		return questionslist;
+	}
 }

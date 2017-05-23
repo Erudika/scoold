@@ -52,7 +52,7 @@ public class TagsController {
 			HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
-		itemcount.setDesc(!"name".equals(sortby));
+		itemcount.setDesc(!"tag".equals(sortby));
 		List<Tag> tagslist = utils.getParaClient().findTags("*", itemcount);
 		model.addAttribute("path", "tags.vm");
 		model.addAttribute("title", utils.getLang(req).get("tags.title"));

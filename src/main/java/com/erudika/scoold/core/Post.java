@@ -185,6 +185,7 @@ public abstract class Post extends Sysprop {
 
 	public String getTagsString() {
 		if (getTags() == null || getTags().isEmpty()) return "";
+		Collections.sort(getTags());
 		return StringUtils.join(getTags(), ",");
 	}
 
