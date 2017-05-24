@@ -61,11 +61,12 @@ public class ScooldServer {
 	public static final String CSRF_COOKIE = Config.APP_NAME_NS + "-csrf";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
-	public static final String CDN_URL = Config.getConfigParam("cdn_url", "/");
+	public static final String HOST_URL = Config.getConfigParam("host_url", HOMEPAGE);
+	public static final String CDN_URL = Config.getConfigParam("cdn_url", Config.IN_PRODUCTION ? HOST_URL : HOMEPAGE);
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
-	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL : HOMEPAGE) + "images";
-	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL : HOMEPAGE) + "scripts";
-	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL : HOMEPAGE) + "styles";
+	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "images";
+	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "scripts";
+	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "styles";
 
 	public static final int MAX_CONTACTS_PER_USER = Config.getConfigInt("max_contacts_per_user", 2000);
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
