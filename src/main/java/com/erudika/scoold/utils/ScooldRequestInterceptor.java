@@ -157,6 +157,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("isMod", utils.isMod(authUser));
 		modelAndView.addObject("isAdmin", utils.isAdmin(authUser));
 		modelAndView.addObject("utils", Utils.getInstance());
+		modelAndView.addObject("scooldUtils", utils);
 		modelAndView.addObject("authUser", authUser);
 		modelAndView.addObject("badgelist", utils.checkForBadges(authUser, request));
 		modelAndView.addObject("request", request);

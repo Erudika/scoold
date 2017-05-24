@@ -6,9 +6,10 @@
 	#end
 #end
 
-#macro(revisionbox $showrev $showorigrev $canrestore $showpost)
+#macro(revisionbox $showrev $showorigrev $showpost)
 	#set($actionlink = "#getpostlink($showpost false true)")
 	#set($actionlink2 = "#getpostlink($showpost true true)")
+	#set($canrestore = $scooldUtils.canEdit($showpost, $authUser))
 	<div class="card-panel">
 		<div class="row">
 			<div class="col m3">
@@ -25,7 +26,7 @@
 				<div class="mts">
 					#if ($showpost.revisionid == $showrev.id)
 					<i class="fa fa-check-circle green-text fa-3x tooltipped" data-tooltip="$!lang.get('revisions.current')"></i>
-					#elseif ($canrestore || $isMod)
+					#elseif ($canrestore)
 					<form method="post" action="$!actionlink/$showrev.parentid/restore/$!showrev.id">
 						#sectoken(false)
 						<button type="submit" class="btn waves-effect waves-light" title="Restore">
@@ -63,13 +64,13 @@
 	<br>
 #end
 
-#macro(revisionspage $revisions $canrestore $showpost)
+#macro(revisionspage $revisions $showpost)
 	#if ($revisions && !$revisions.isEmpty())
 		#set($lastIndex = $revisions.size() - 1)
 		#set($lastrev = $revisions.get($lastIndex))
 
 		#if ($revisions.size() == 1)
-			#revisionbox($lastrev $lastrev $canrestore $showpost)
+			#revisionbox($lastrev $lastrev $showpost)
 		#else
 			#foreach($revision in $revisions)
 				#if ($velocityCount < $revisions.size())
@@ -77,7 +78,7 @@
 				#else
 					#set($prevrev = $lastOnPage)
 				#end
-				#revisionbox($revision $prevrev $canrestore $showpost)
+				#revisionbox($revision $prevrev $showpost)
 			#end
 		#end
 	#end
@@ -88,5 +89,5 @@
 <div class="">
 	<h2>$!lang.get("revisions.title") #showcount($itemcount.count)</h2>
 	<hr>
-	#paginate("\#revisionspage(\$revisionslist \$canEdit \$showPost)" $itemcount "" "page")
+	#paginate("\#revisionspage(\$revisionslist \$showPost)" $itemcount "" "page")
 </div>

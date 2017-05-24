@@ -171,6 +171,9 @@ main {
 .autocomplete .ac-input input {
 	height: 2.4rem;
 }
+.ac-input ul {
+	padding: 0;
+}
 .upvote, .downvote {color: #888888;}
 .upvote:hover {color: #4CAF50;}
 .downvote:hover {color: #F44336;}

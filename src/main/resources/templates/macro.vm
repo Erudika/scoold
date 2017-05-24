@@ -46,7 +46,7 @@
 				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
 				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
 					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
-			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $isMod))
+			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $scooldUtils.isMod($authUser)))
 				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
 					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
 			#else
@@ -407,11 +407,11 @@
 
 					<a href="#post-$!showpost.id" title="Permalink" class="right permalink"><i class="fa fa-bookmark"></i></a>
 
-					#if ($canEdit)
+					#if ($scooldUtils.canEdit($showpost, $authUser))
 						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
 					#end
 
-					#if (($authenticated && $showpost.creatorid == $authUser.id) || $isMod)
+					#if (($authenticated && $showpost.creatorid == $authUser.id) || $scooldUtils.isMod($authUser))
 						<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
@@ -423,8 +423,8 @@
 					<a href="$revisionslink/$!showpost.id" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
 					#end
 
-					#if ($isMod && $showpost.isQuestion())
-						#if ($showPost.isClosed())
+					#if ($scooldUtils.isMod($authUser) && $showpost.isQuestion())
+						#if ($parentpost.isClosed())
 						<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm"><i class="fa fa-unlock"></i> $!lang.get("reopen")</a>
 						#else
 						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
@@ -443,17 +443,20 @@
 		</div>
 	</div>
 
-	#if ($canEdit)
+	#if ($scooldUtils.canEdit($showpost, $authUser))
 	<div class="editbox pvm hide">
 		<form method="post" action="$questionlink/$!showpost.id/edit">
 			#sectoken(false "EDIT_POST_$!showpost.id")
-			<div class="input-field">
-				<i class="fa fa-paragraph pvm prefix grey-text"></i>
-				<label for="title_text">$!lang.get('posts.title')</label>
-				<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6"
-							 value="$!showpost.title" onkeyup="$('#post-title').text($(this).val())" required>
-				#getmessagebox("red white-text" $error.get("title"))
-			</div>
+
+			#if(!$showpost.isReply())
+				<div class="input-field">
+					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					<label for="title_text">$!lang.get('posts.title')</label>
+					<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6"
+								 value="$!showpost.title" onkeyup="$('#post-title').text($(this).val())" required>
+					#getmessagebox("red white-text" $error.get("title"))
+				</div>
+			#end
 
 			<i class="fa fa-pencil fa-2x left grey-text"></i>
 			<div class="pll mll">
@@ -461,18 +464,20 @@
 				#getmessagebox("red white-text" $error.get("body"))
 			</div>
 
-			<div class="autocomplete">
-				<i class="fa fa-tag fa-2x ptl grey-text"></i>
-				<div class="ac-tags"></div>
-				<div class="ac-input input-field">
-					<label for="tags_text">$!lang.get('tags.title')</label>
-					<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
-								 data-beloworigin="true" autocomplete="off">
+			#if(!$showpost.isReply())
+				<div class="autocomplete">
+					<i class="fa fa-tag fa-2x ptl grey-text"></i>
+					<div class="ac-tags"></div>
+					<div class="ac-input input-field">
+						<label for="tags_text">$!lang.get('tags.title')</label>
+						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
+									 data-beloworigin="true" autocomplete="off">
+					</div>
+					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
+					<input type="hidden" name="tags" class="ac-hidden" value="$!showpost.tagsString">
 				</div>
-				<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-				<input type="hidden" name="tags" class="ac-hidden" value="$!showpost.tagsString">
-			</div>
-			#getmessagebox("red white-text" $error.get("tags"))
+				#getmessagebox("red white-text" $error.get("tags"))
+			#end
 
 			<br>
 			<div class="mts mbl">

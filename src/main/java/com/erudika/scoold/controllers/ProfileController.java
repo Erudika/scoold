@@ -88,7 +88,7 @@ public class ProfileController {
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
-		model.addAttribute("canEdit", isMyProfile || canEdit(authUser, id));
+		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("gravatarPicture", utils.getGravatar(showUser.getUser().getEmail()));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
@@ -120,7 +120,7 @@ public class ProfileController {
 			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		String showId = StringUtils.isBlank(id) ? authUser.getId() : id;
-		if (canEdit(authUser, showId)) {
+		if (canEditProfile(authUser, showId)) {
 			Profile showUser = utils.getParaClient().read(Profile.id(id));
 			boolean update = false;
 
@@ -157,7 +157,7 @@ public class ProfileController {
 		return authUser != null && authUser.getId().equals(id);
 	}
 
-	private boolean canEdit(Profile authUser, String id) {
+	private boolean canEditProfile(Profile authUser, String id) {
 		return isMyid(authUser, Profile.id(id)) || utils.isAdmin(authUser);
 	}
 }

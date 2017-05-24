@@ -96,8 +96,6 @@ public class QuestionController {
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
 		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("isMine", isMine(showPost, utils.getAuthUser(req)));
-		model.addAttribute("canEdit", canEdit(showPost, utils.getAuthUser(req)));
 		model.addAttribute("showPost", showPost);
 		model.addAttribute("answerslist", answerslist);
 		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
@@ -111,7 +109,7 @@ public class QuestionController {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
 		Post beforeUpdate = null;
@@ -178,10 +176,10 @@ public class QuestionController {
     public String approve(@PathVariable String id, @PathVariable String answerid, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
-		if (canEdit(showPost, authUser) && answerid != null && isMine(showPost, authUser)) {
+		if (utils.canEdit(showPost, authUser) && answerid != null && utils.isMine(showPost, authUser)) {
 			Reply answer = (Reply) pc.read(answerid);
 
 			if (answer != null && answer.isReply()) {
@@ -218,7 +216,7 @@ public class QuestionController {
     public String close(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.isMod(authUser)) {
@@ -236,10 +234,10 @@ public class QuestionController {
     public String restore(@PathVariable String id, @PathVariable String revisionid, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
-		if (canEdit(showPost, authUser)) {
+		if (utils.canEdit(showPost, authUser)) {
 			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
 			showPost.restoreRevisionAndUpdate(revisionid);
 		}
@@ -250,16 +248,16 @@ public class QuestionController {
     public String delete(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!canEdit(showPost, authUser) || showPost == null) {
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (!showPost.isReply()) {
-			if ((isMine(showPost, authUser) || utils.isMod(authUser))) {
+			if ((utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
 				showPost.delete();
 				return "redirect:" + questionslink + "?success=true&code=16";
 			}
 		} else if (showPost.isReply()) {
-			if (isMine(showPost, authUser) || utils.isMod(authUser)) {
+			if (utils.isMine(showPost, authUser) || utils.isMod(authUser)) {
 				Post parent = pc.read(showPost.getParentid());
 				parent.setAnswercount(parent.getAnswercount() - 1);
 				parent.update();
@@ -269,19 +267,9 @@ public class QuestionController {
         return "redirect:" + showPost.getPostLink(false, false);
     }
 
-	private boolean isMine(Post showPost, Profile authUser) {
-		// author can edit, mods can edit & ppl with rep > 100 can edit
-		return showPost != null && authUser != null ? authUser.getId().equals(showPost.getCreatorid()) : false;
-	}
-
-	private boolean canEdit(Post showPost, Profile authUser) {
-		return authUser != null ? (authUser.hasBadge(Badge.TEACHER) || utils.isMod(authUser) ||
-				isMine(showPost, authUser)) : false;
-	}
-
 	private void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
 		//do not count views from author
-		if (showPost != null && !isMine(showPost, utils.getAuthUser(req))) {
+		if (showPost != null && !utils.isMine(showPost, utils.getAuthUser(req))) {
 			String postviews = Utils.getStateParam("postviews", req);
 			if (!StringUtils.contains(postviews, showPost.getId())) {
 				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();

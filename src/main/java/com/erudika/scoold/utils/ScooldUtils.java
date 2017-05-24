@@ -28,6 +28,8 @@ import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
+import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
+import static com.erudika.scoold.core.Profile.Badge.TEACHER;
 import com.erudika.scoold.core.Revision;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,10 +129,6 @@ public final class ScooldUtils {
 		return getAuthUser(req) != null;
 	}
 
-	public boolean canComment(Profile authUser, HttpServletRequest req) {
-		return isAuthenticated(req) && (authUser.hasBadge(Profile.Badge.ENTHUSIAST) || isMod(authUser));
-	}
-
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
 		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
 	}
@@ -220,6 +218,19 @@ public final class ScooldUtils {
 
 	public boolean isMod(Profile authUser) {
 		return authUser != null && (isAdmin(authUser) || User.Groups.MODS.toString().equals(authUser.getGroups()));
+	}
+
+	public boolean canComment(Profile authUser, HttpServletRequest req) {
+		return isAuthenticated(req) && (authUser.hasBadge(ENTHUSIAST) || isMod(authUser));
+	}
+
+	public boolean isMine(Post showPost, Profile authUser) {
+		// author can edit, mods can edit & ppl with rep > 100 can edit
+		return showPost != null && authUser != null ? authUser.getId().equals(showPost.getCreatorid()) : false;
+	}
+
+	public boolean canEdit(Post showPost, Profile authUser) {
+		return authUser != null ? (authUser.hasBadge(TEACHER) || isMod(authUser) || isMine(showPost, authUser)) : false;
 	}
 
 	public <P extends ParaObject> P populate(HttpServletRequest req, P pobj, String... paramName) {

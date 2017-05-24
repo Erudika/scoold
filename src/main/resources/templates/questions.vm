@@ -64,13 +64,11 @@
 			#if ($authenticated)
 				#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
 				#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
-				<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip tooltipped $!{filterSelected1}"
-					 data-tooltip="$!lang.get('posts.tagfilter')">
+				<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
 					<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
 				</a>
 				#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
-				<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip tooltipped $!{filterSelected2}"
-					 data-tooltip="$!lang.get('posts.locationfilter')">
+				<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
 					<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
 				</a>
 			#end
