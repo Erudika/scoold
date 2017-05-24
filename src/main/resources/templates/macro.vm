@@ -313,25 +313,22 @@
 #macro(compactanswerspage $answers)
 	#foreach($answer in $answers)
 		<div class="card-panel">
-			<div class="row">
+			<div class="row mbn">
 				<div class="col s10 m11 l9 columns">
-					<div class="mediumText grey-text text-darken-1">$!answer.title</div>
-					<div>
-						<span class="chip mrl">$!answer.votes</span>
-						<span>
-							<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">
+					<span class="lightborder phm mrm">$!answer.votes</span>
+					<span>
+						<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">$!answer.title</a>
+					</span>
+					#if(!$request.requestURI.startsWith("/profile"))
+						<div>
 								$!utils.abbreviate($answer.body, 200).replaceAll('\s', ' ')
-							</a>
-						</span>
-					</div>
+						</div>
+					#end
 				</div>
 				<div class="col s2 m1 l3 columns">
 					#if(!$request.requestURI.startsWith("/profile"))
-						<div class=" hide-on-med-and-down">
-							#smallpersonbox($answer.author)
-						</div>
-						<div class="hide-on-large-only">
-							#tinypersonbox($showpost.author)
+						<div class="r">
+							#tinypersonbox($answer.author)
 						</div>
 					#end
 					<div class="grey-text r">
