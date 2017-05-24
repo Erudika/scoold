@@ -95,6 +95,7 @@ public class QuestionController {
 
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
+		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("showPost", showPost);
 		model.addAttribute("answerslist", answerslist);

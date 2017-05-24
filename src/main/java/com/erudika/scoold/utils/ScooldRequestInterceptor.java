@@ -176,5 +176,15 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 			response.addHeader("Content-Security-Policy",
 					Config.getConfigParam("csp_header", utils.getDefaultContentSecurityPolicy()));
 		}
+		// default metadata for social meta tags
+		if (!modelAndView.getModel().containsKey("title")) {
+			modelAndView.addObject("title", Config.APP_NAME);
+		}
+		if (!modelAndView.getModel().containsKey("description")) {
+			modelAndView.addObject("description", Config.getConfigParam("meta_description", ""));
+		}
+		if (!modelAndView.getModel().containsKey("ogimage")) {
+			modelAndView.addObject("ogimage", IMAGESLINK + "/logowhite.png");
+		}
 	}
 }

@@ -23,6 +23,7 @@ import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.profilelink;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Post;
@@ -84,6 +85,8 @@ public class ProfileController {
 
 		model.addAttribute("path", "profile.vm");
 		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
+		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
+		model.addAttribute("ogimage", showUser.getPicture());
 		model.addAttribute("includeGMapsScripts", true);
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
@@ -159,5 +162,16 @@ public class ProfileController {
 
 	private boolean canEditProfile(Profile authUser, String id) {
 		return isMyid(authUser, Profile.id(id)) || utils.isAdmin(authUser);
+	}
+
+	private Object getUserDescription(Profile showUser, Long questions, Long answers) {
+		if (showUser == null) {
+			return "";
+		}
+		return showUser.getVotes() + " points, " +
+				showUser.getBadgesMap().size() + " badges, " +
+				questions + " questions, " +
+				answers + " answers " +
+				Utils.abbreviate(showUser.getAboutme(), 150);
 	}
 }

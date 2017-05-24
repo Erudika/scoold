@@ -78,6 +78,7 @@ public class FeedbackController {
 		}
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - " + showPost.getTitle());
+		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
 		return "base";
 	}
 

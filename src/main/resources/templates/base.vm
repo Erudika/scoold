@@ -5,13 +5,23 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-		<meta name="description" content="$!DESCRIPTION">
+		<meta name="description" content="$!description">
 		<meta name="keywords" content="$!KEYWORDS">
 		<meta property="fb:app_id" content="$!FB_APP_ID">
+		<meta property="og:title" content="$!title">
+		<meta property="og:type" content="article">
+		<meta property="og:url" content="$!request.getRequestURL()">
+		<meta property="og:image" content="$!ogimage">
+		<meta property="og:description" content="$!description">
+		<meta name="twitter:card" content="summary">
+		<meta name="twitter:site" content="@getscoold">
+		<meta name="twitter:title" content="$!title">
+		<meta name="twitter:description" content="$!description">
+		<meta name="twitter:image" content="$!ogimage">
 		<link href="/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
 		<link href="/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
-		<link href="$!imageslink/logosq.png" rel="image_src">
-		<link href="$!imageslink/logosq.png" rel="apple-touch-icon">
+		<link href="$!imageslink/logowhite.png" rel="image_src">
+		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
 		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
