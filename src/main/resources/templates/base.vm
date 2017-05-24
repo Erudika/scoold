@@ -8,14 +8,14 @@
 		<meta name="description" content="$!description">
 		<meta name="keywords" content="$!KEYWORDS">
 		<meta property="fb:app_id" content="$!FB_APP_ID">
-		<meta property="og:title" content="$!title">
+		<meta property="og:title" content="$!APPNAME | $!title">
 		<meta property="og:type" content="article">
 		<meta property="og:url" content="$!request.getRequestURL()">
 		<meta property="og:image" content="$!ogimage">
 		<meta property="og:description" content="$!description">
 		<meta name="twitter:card" content="summary">
 		<meta name="twitter:site" content="@getscoold">
-		<meta name="twitter:title" content="$!title">
+		<meta name="twitter:title" content="$!APPNAME | $!title">
 		<meta name="twitter:description" content="$!description">
 		<meta name="twitter:image" content="$!ogimage">
 		<link href="/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
