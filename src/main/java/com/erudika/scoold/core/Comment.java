@@ -24,6 +24,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
+import javax.validation.constraints.Size;
 import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,7 +37,7 @@ public class Comment extends Sysprop {
 	private static final long serialVersionUID = 1L;
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 
-	@Stored private String comment;
+	@Stored @Size(max = 255) private String comment;
 	@Stored private Boolean hidden;
 	@Stored private String authorName;
 

@@ -605,7 +605,7 @@ $(function () {
 		});
 	}
 
-	$(".editbox").on("event:show", function () {
+	$(document).on("event:show", ".editbox", function () {
 		var el = $(this).find("textarea.edit-post:visible");
 		if (el.length) {
 			initPostEditor(el.get(0));
@@ -673,7 +673,7 @@ $(function () {
 		} catch (exception) {}
 	}
 
-	var answerForm = $("form#answer-question-form");
+	var answerForm = $("form#answer-question-form, form#write-feedback-form");
 	if (answerForm.length) {
 		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
 		try {
@@ -686,7 +686,7 @@ $(function () {
 			}, 3000);
 
 			submitFormBind("#answer-question-form", function (data, status, xhr, form) {
-				answerForm.closest("div").before(data);
+				answerForm.closest(".row").find(".page-content").append(data);
 				answerForm.hide();
 				answerBody.value("");
 				localStorage.removeItem("answer-form-body");

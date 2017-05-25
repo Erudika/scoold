@@ -31,6 +31,8 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
 import com.erudika.scoold.core.Revision;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +41,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +65,7 @@ import org.springframework.stereotype.Component;
 public final class ScooldUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldUtils.class);
+	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -335,6 +340,36 @@ public final class ScooldUtils {
 			}
 		}
 		return badgelist;
+	}
+
+	public String loadEmailTemplate(String name) {
+		if (name == null) {
+			return "";
+		}
+		if (EMAIL_TEMPLATES.containsKey(name)) {
+			return EMAIL_TEMPLATES.get(name);
+		}
+		String template = "";
+		InputStream in = getClass().getClassLoader().getResourceAsStream("emails/" + name + ".html");
+		try {
+			if (in != null) {
+				Scanner s = new Scanner(in).useDelimiter("\\A");
+				template = s.hasNext() ? s.next() : "";
+				s.close();
+				if (!StringUtils.isBlank(template)) {
+					EMAIL_TEMPLATES.put(name, template);
+				}
+			}
+		} catch (Exception ex) {
+			logger.info("Couldn't load email template '{0}'. - {1}", name, ex.getMessage());
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {}
+		}
+		return template;
 	}
 
 	public String getDefaultContentSecurityPolicy() {

@@ -18,7 +18,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -65,11 +68,13 @@ public class QuestionController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final Emailer emailer;
 
 	@Inject
-	public QuestionController(ScooldUtils utils) {
+	public QuestionController(ScooldUtils utils, Emailer emailer) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.emailer = emailer;
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}"})
@@ -166,6 +171,8 @@ public class QuestionController {
 				answer.setAuthor(authUser);
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
+				// send email to the question author
+				sendReplyNotification(showPost, answer);
 				return "reply";
 			}
 			errorMsg = error.get("body");
@@ -277,6 +284,26 @@ public class QuestionController {
 				showPost.setViewcount(views + 1); //increment count
 				Utils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
 				pc.update(showPost);
+			}
+		}
+	}
+
+	private void sendReplyNotification(Post parentPost, Post reply) {
+		// send email notification to author of post except when the reply is by the same person
+		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
+			Profile authorProfile = pc.read(parentPost.getCreatorid());
+			if (authorProfile != null && authorProfile.getReplyEmailsEnabled()) {
+				User author = authorProfile.getUser();
+				if (author != null) {
+					Map<String, Object> model = new HashMap<String, Object>();
+					String name = author.getName();
+					String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
+					String picture = Utils.formatMessage("<img src='{0}' width='25'>", author.getPicture());
+					model.put("heading", Utils.formatMessage("New reply to <b>{0}</b>", parentPost.getTitle()));
+					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
+					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " replied to your post",
+							Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
+				}
 			}
 		}
 	}

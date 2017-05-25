@@ -65,6 +65,7 @@ public class SettingsController {
 
 	@PostMapping
     public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
+			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -80,6 +81,8 @@ public class SettingsController {
 			if (!StringUtils.isBlank(latlng)) {
 				authUser.setLatlng(latlng);
 			}
+			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
+			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.update();
 		}
 		return "redirect:" + settingslink;

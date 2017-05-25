@@ -39,7 +39,39 @@
 				<input type="hidden" name="tags" class="ac-hidden" value="$!authUser.favtagsString">
 			</div>
 
-			<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
+			<h4>$!lang.get('settings.notifications')</h4>
+			<p class="mvl grey-text text-darken-2">$!lang.get('signup.form.email'): <tt>$!authUser.user.email</tt></p>
+			<div class="mbm">
+				<div class="switch">
+					<label>
+						$!lang.get('off')
+						#if($authUser.replyEmailsEnabled)
+						<input type="checkbox" name="replyEmailsOn" checked="checked" value="true">
+						#else
+						<input type="checkbox" name="replyEmailsOn" value="true">
+						#end
+						<span class="lever"></span>
+						$!lang.get('on')
+					</label>
+					<span class="mll mediumText">$!lang.get('settings.replyemails')</span>
+				</div>
+			</div>
+			<div class="mbl">
+				<div class="switch">
+					<label>
+						$!lang.get('off')
+						#if($authUser.commentEmailsEnabled)
+						<input type="checkbox" name="commentEmailsOn" checked="checked" value="true">
+						#else
+						<input type="checkbox" name="commentEmailsOn" value="true">
+						#end
+						<span class="lever"></span>
+						$!lang.get('on')
+					</label>
+					<span class="mll mediumText">$!lang.get('settings.commentemails')</span>
+				</div>
+			</div>
+			<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('save')</button>
 		</form>
 		<br>
 		<br>

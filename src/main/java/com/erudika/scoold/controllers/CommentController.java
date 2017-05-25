@@ -19,7 +19,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
@@ -30,7 +32,10 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
 import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,11 +59,13 @@ public class CommentController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final Emailer emailer;
 
 	@Inject
-	public CommentController(ScooldUtils utils) {
+	public CommentController(ScooldUtils utils, Emailer emailer) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.emailer = emailer;
 	}
 
 	@GetMapping("/{id}")
@@ -121,11 +128,32 @@ public class CommentController {
 				utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= COMMENTATOR_IFHAS);
 				authUser.setComments(commentCount + 1);
 				authUser.update();
-//				commentslist.add(lastComment);
 				model.addAttribute("showComment", showComment);
+				// send email to the author of parent post
+				sendCommentNotification((Post) pc.read(parentid), showComment);
 				return "comment";
 			}
 		}
 		throw new ForbiddenException();
+	}
+
+	private void sendCommentNotification(Post parentPost, Comment comment) {
+		// send email notification to author of post except when the comment is by the same person
+		if (parentPost != null && comment != null && !StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid())) {
+			Profile authorProfile = pc.read(parentPost.getCreatorid());
+			if (authorProfile != null && authorProfile.getCommentEmailsEnabled()) {
+				User author = authorProfile.getUser();
+				if (author != null) {
+					Map<String, Object> model = new HashMap<String, Object>();
+					String name = author.getName();
+					String body = Utils.markdownToHtml(Utils.abbreviate(comment.getComment(), 255));
+					String pic = Utils.formatMessage("<img src='{0}' width='25'>", author.getPicture());
+					model.put("heading", Utils.formatMessage("New comment on <b>{0}</b>", parentPost.getTitle()));
+					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
+					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " commented on your post",
+							Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
+				}
+			}
+		}
 	}
 }

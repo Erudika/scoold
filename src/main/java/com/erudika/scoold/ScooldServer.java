@@ -42,6 +42,7 @@ import org.springframework.boot.web.servlet.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -124,9 +125,7 @@ public class ScooldServer {
 	public static void main(String[] args) {
 		((ch.qos.logback.classic.Logger) logger).setLevel(ch.qos.logback.classic.Level.TRACE);
 		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
-		System.setProperty("spring.velocity.cache", Boolean.toString(Config.IN_PRODUCTION));
-		System.setProperty("spring.velocity.prefer-file-system-access", Boolean.toString(!Config.IN_PRODUCTION));
-		System.setProperty("spring.velocity.properties.velocimacro.library.autoreload", Boolean.toString(!Config.IN_PRODUCTION));
+		initConfig();
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebEnvironment(true);
 		app.run(args);
@@ -146,6 +145,21 @@ public class ScooldServer {
 	 */
 	public static int getServerPort() {
 		return NumberUtils.toInt(System.getProperty("server.port"), Config.getConfigInt("port", 8080));
+	}
+
+	private static void initConfig() {
+		System.setProperty("spring.velocity.cache", Boolean.toString(Config.IN_PRODUCTION));
+		System.setProperty("spring.velocity.prefer-file-system-access", Boolean.toString(!Config.IN_PRODUCTION));
+		System.setProperty("spring.velocity.properties.velocimacro.library.autoreload", Boolean.toString(!Config.IN_PRODUCTION));
+		// JavaMail configuration properties
+		System.setProperty("spring.mail.host", Config.getConfigParam("mail.host", ""));
+		System.setProperty("spring.mail.port", String.valueOf(Config.getConfigInt("mail.port", 587)));
+		System.setProperty("spring.mail.username", Config.getConfigParam("mail.username" ,""));
+		System.setProperty("spring.mail.password", Config.getConfigParam("mail.password", ""));
+		System.setProperty("spring.mail.properties.mail.smtp.starttls.enable",
+				Boolean.toString(Config.getConfigBoolean("mail.tls", true)));
+		System.setProperty("spring.mail.properties.mail.smtp.ssl.enable",
+				Boolean.toString(Config.getConfigBoolean("mail.ssl", false)));
 	}
 
 	@Bean
@@ -196,9 +210,8 @@ public class ScooldServer {
 	}
 
 	@Bean
-	public Emailer scooldEmailerBean() {
-		// Dummy emailer. You can implement your own emailer and instantiate it here
-		return new ScooldEmailer();
+	public Emailer scooldEmailerBean(JavaMailSender mailSender) {
+		return new ScooldEmailer(mailSender);
 	}
 
 	/**

@@ -25,6 +25,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
+- Email notifications for post replies and comments
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
 - SEO friendly
 
@@ -72,6 +73,21 @@ para.code_highlighting_enabled = true
 ```
 
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
+
+### SMTP configuration
+
+Scoold uses the JavaMail API to send emails. If you want Scoold to send notification emails you should add the
+following SMTP settings to your config file:
+
+```
+para.mail.host = "smtp.example.com"
+para.mail.port = 587
+para.mail.username = "user@example.com"
+para.mail.password = "password"
+para.mail.tls = true
+para.mail.ssl = false
+```
+The email template is located in `src/main/resources/emails/notify.html`. 
 
 ## Social login
 

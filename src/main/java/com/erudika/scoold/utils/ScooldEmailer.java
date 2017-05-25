@@ -18,20 +18,73 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.email.Emailer;
+import com.erudika.para.utils.Config;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import javax.mail.internet.MimeMessage;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
- *
+ * A simple JavaMail implementation of {@link Emailer}.
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 public class ScooldEmailer implements Emailer {
 
+	private static final Logger logger = LoggerFactory.getLogger(ScooldEmailer.class);
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Config.EXECUTOR_THREADS);
+	private JavaMailSender mailSender;
+
+	public ScooldEmailer(JavaMailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+
 	@Override
-	public boolean sendEmail(List<String> emails, String subject, String body) {
-		// TODO: connect to a real email service
-		LoggerFactory.getLogger(ScooldEmailer.class).info("EMAIL SENT to {}, {}", emails, subject);
+	public boolean sendEmail(final List<String> emails, final String subject, final String body) {
+		if (emails == null || emails.isEmpty()) {
+			return false;
+		}
+		asyncExecute(new Runnable() {
+			public void run() {
+				MimeMessagePreparator preparator = new MimeMessagePreparator() {
+					public void prepare(MimeMessage mimeMessage) throws Exception {
+						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+						msg.setTo(emails.toArray(new String[0]));
+						msg.setSubject(subject);
+						msg.setFrom(Config.SUPPORT_EMAIL);
+						msg.setText(body, true); // body is assumed to be HTML
+					}
+				};
+				try {
+					mailSender.send(preparator);
+					logger.info("Email sent to {}, {}", emails, subject);
+				} catch (MailException ex) {
+					logger.error("Failed to send email. {}", ex.getMessage());
+				}
+			}
+		});
 		return true;
+	}
+
+	private void asyncExecute(Runnable runnable) {
+		if (runnable != null) {
+			try {
+				EXECUTOR.execute(runnable);
+			} catch (RejectedExecutionException ex) {
+				logger.warn(ex.getMessage());
+				try {
+					runnable.run();
+				} catch (Exception e) {
+					logger.error(null, e);
+				}
+			}
+		}
 	}
 
 }

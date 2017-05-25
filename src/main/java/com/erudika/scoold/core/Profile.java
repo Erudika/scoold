@@ -51,6 +51,8 @@ public class Profile extends Sysprop {
 	@Stored @URL private String picture;
 	@Stored @URL private String website;
 	@Stored private List<String> favtags;
+	@Stored private Boolean replyEmailsEnabled;
+	@Stored private Boolean commentEmailsEnabled;
 
 	private transient String newbadges;
 	private transient Integer newreports;
@@ -115,6 +117,8 @@ public class Profile extends Sysprop {
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
+		this.replyEmailsEnabled = false;
+		this.commentEmailsEnabled = false;
     }
 
 	public static final String id(String userid) {
@@ -132,9 +136,26 @@ public class Profile extends Sysprop {
 	@JsonIgnore
 	public User getUser() {
 		if (user == null) {
-			user = client().read(getCreatorid());
+			user = client().read(getCreatorid() == null ?
+					StringUtils.removeEnd(getId(), Config.SEPARATOR + "profile") : getCreatorid());
 		}
 		return user;
+	}
+
+	public Boolean getReplyEmailsEnabled() {
+		return replyEmailsEnabled;
+	}
+
+	public void setReplyEmailsEnabled(Boolean replyEmailsEnabled) {
+		this.replyEmailsEnabled = replyEmailsEnabled;
+	}
+
+	public Boolean getCommentEmailsEnabled() {
+		return commentEmailsEnabled;
+	}
+
+	public void setCommentEmailsEnabled(Boolean commentEmailsEnabled) {
+		this.commentEmailsEnabled = commentEmailsEnabled;
 	}
 
 	public String getGroups() {
