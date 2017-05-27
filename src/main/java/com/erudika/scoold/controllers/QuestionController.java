@@ -18,6 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.email.Emailer;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -88,23 +90,23 @@ public class QuestionController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby("newest".equals(sortby) ? "timestamp" : "votes");
 		List<Reply> answerslist = showPost.getAnswers(itemcount);
-		ArrayList<Post> list = new ArrayList<Post>(answerslist);
-		list.add(showPost);
-		utils.fetchProfiles(list);
-		//get the comments for each answer
-		for (Post post : list) {
-			List<Comment> commentz = pc.getChildren(post, Utils.type(Comment.class), post.getItemcount());
-			post.setComments(commentz);
-		}
+		LinkedList<Post> allPosts = new LinkedList<Post>();
+		allPosts.add(showPost);
+		allPosts.addAll(answerslist);
+		utils.fetchProfiles(allPosts);
+		getComments(allPosts);
 		updateViewCount(showPost, req, res);
 
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
 		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
 		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("showPost", showPost);
-		model.addAttribute("answerslist", answerslist);
+		model.addAttribute("showPost", allPosts.removeFirst());
+		model.addAttribute("answerslist", allPosts);
 		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
+		model.addAttribute("maxCommentLength", Comment.MAX_COMMENT_LENGTH);
+		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
+				Comment.MAX_COMMENT_LENGTH));
         return "base";
     }
 
@@ -306,5 +308,60 @@ public class QuestionController {
 				}
 			}
 		}
+	}
+
+	//get the comments for each answer and the question
+	private void getComments(List<Post> allPosts) {
+		Map<String, List<Comment>> allComments = new HashMap<String, List<Comment>>();
+		List<String> allCommentIds = new ArrayList<String>();
+		List<Post> forUpdate = new ArrayList<Post>(allPosts.size());
+		// get the comment ids of the first 5 comments for each post
+		for (Post post : allPosts) {
+			// not set => read comments if any and embed ids in post object
+			if (post.getCommentIds() == null) {
+				forUpdate.add(reloadFirstPageOfComments(post));
+				allComments.put(post.getId(), post.getComments());
+			} else {
+				// ids are set => add them to list for bulk read
+				allCommentIds.addAll(post.getCommentIds());
+			}
+		}
+		if (!allCommentIds.isEmpty()) {
+			// read all comments for all posts on page in bulk
+			for (ParaObject comment : pc.readAll(allCommentIds)) {
+				List<Comment> postComments = allComments.get(comment.getParentid());
+				if (postComments == null) {
+					allComments.put(comment.getParentid(), new ArrayList<Comment>());
+				}
+				allComments.get(comment.getParentid()).add((Comment) comment);
+			}
+		}
+		// embed comments in each post for use within the view
+		for (Post post : allPosts) {
+			List<Comment> cl = allComments.get(post.getId());
+			int clSize = (cl == null) ? 0 : cl.size();
+			if (post.getCommentIds().size() != clSize) {
+				logger.info("OPAA neshto stava.. {} {}", post.getCommentIds().size(), clSize);
+				forUpdate.add(reloadFirstPageOfComments(post));
+				clSize = post.getComments().size();
+			} else {
+				post.setComments(cl);
+			}
+			post.getItemcount().setCount(clSize + 1); // hack to show the "more" button
+		}
+		if (!forUpdate.isEmpty()) {
+			pc.updateAll(allPosts);
+		}
+	}
+
+	private Post reloadFirstPageOfComments(Post post) {
+		List<Comment> commentz = pc.getChildren(post, Utils.type(Comment.class), post.getItemcount());
+		ArrayList<String> ids = new ArrayList<String>(commentz.size());
+		for (Comment comment : commentz) {
+			ids.add(comment.getId());
+		}
+		post.setCommentIds(ids);
+		post.setComments(commentz);
+		return post;
 	}
 }

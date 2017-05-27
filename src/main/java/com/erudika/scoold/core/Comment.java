@@ -35,9 +35,11 @@ import org.apache.commons.lang3.StringUtils;
 public class Comment extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
+	private static final int DEFAULT_MAX_COMMENT_LENGTH = 255;
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
+	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", DEFAULT_MAX_COMMENT_LENGTH);
 
-	@Stored @Size(max = 255) private String comment;
+	@Stored @Size(max = DEFAULT_MAX_COMMENT_LENGTH) private String comment;
 	@Stored private Boolean hidden;
 	@Stored private String authorName;
 

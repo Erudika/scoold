@@ -10,7 +10,10 @@
 		#sectoken(false "ADD_COMMENT_$!parentid")
 		<div class="row">
 			<div class="col s10">
-				<input type="text" name="comment" value="" required>
+				<div class="input-field">
+					<input type="text" name="comment" value="" data-length="$!maxCommentLength" class="validate" required>
+					<label data-error="$!maxCommentLengthError" data-success="&check;">$!lang.get('comment.title')</label>
+				</div>
 				<input type="hidden" name="parentid" value="$!parentid">
 			</div>
 			<div class="col s2 center">
@@ -32,27 +35,23 @@
 		#set($hidden = "noclass")
 	#end
 
-	<div class="row mbm ${hidden}">
-		<div class="col s8">
-			#votebox($showcomment "left mrs")
-			<span class="comment-text">$!showcomment.comment</span>
-		</div>
-		<div class="col s4 r">
-			#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
-			<i class="fa fa-commenting grey-text"></i>
-			<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-			<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
-			#if ($showcomment == "")
-				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
-				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
-					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
-			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $scooldUtils.isMod($authUser)))
-				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
-					 class="delete-comment red-text"><i class="fa fa-times"></i></a>
-			#else
-				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
-			#end
-		</div>
+	<div class="mbs ${hidden}">
+		#votebox($showcomment "left mrm pbs")
+		<span class="comment-text">$!showcomment.comment</span>
+		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
+		&mdash;
+		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
+		<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
+		#if ($showcomment == "")
+			#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
+			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
+				 class="delete-comment red-text">$!lang.get('delete')</a>
+		#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $scooldUtils.isMod($authUser)))
+			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
+				 class="delete-comment red-text">$!lang.get('delete')</a>
+		#else
+			#getreportlink($showcomment "$commentlink/$!showcomment.id" "noicon")
+		#end
 	</div>
 </div>
 #end
@@ -80,13 +79,13 @@
 #end
 ################# PAGINATION #####################
 #macro(paginate $macroCode $pager $_rpath $pageparam)
-#if($pager.count > 0)
+#if($pager && $pager.count > 0)
 	#if ($pager && $pager.page > 1000) #set($next = 1) #else #set($next = $pager.page + 1) #end
 	#if(!$_rpath || $_rpath.isEmpty())
 		#set($_rpath = $returnto)
 	#end
 	<div class="page-content">#evaluate($macroCode)</div>
-	#if ($pager.count && $pager.count > $MAX_ITEMS_PER_PAGE && $macroCode && !$macroCode.trim().isEmpty())
+	#if ($pager.count && $pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
 	<div class="pages center mtl">
 		#if ($_rpath.contains("?"))
 			<a href="${_rpath}&${pageparam}=$!next" class="more-link pagelink chip" title="Load more">$!lang.get("more")</a>
@@ -229,7 +228,7 @@
 		#end
 		#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
 		<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
-			<span class="fa fa-flag"></span> $!_showtxt
+			#if(!$clazz.contains("noicon"))<span class="fa fa-flag"></span>#end $!_showtxt
 		</a>
 	#end
 #end
@@ -251,7 +250,13 @@
 		#if (!$votes) #set($votes = 0) #end
 		#if (!$viewcount) #set($viewcount = 0) #end
 		#if (!$answercount) #set($answercount = 0) #end
-		#if ($showpost.answerid) #set($bgclass = "light-green white-text" ) #else #set($bgclass = "orange lighten-5" ) #end
+
+		#if ($showpost.answerid && !$showpost.answerid.isEmpty())
+			#set($bgclass = "light-green white-text" )
+		#else
+			#set($bgclass = "orange lighten-5" )
+		#end
+
 		#if ($votes < 0)
 			#set($bgclass1 = "red lighten-2 white-text" )
 		#elseif($votes >= 100)
@@ -342,6 +347,7 @@
 ####################################
 #macro(answerspage $answers $parentpost)
 	#foreach($answer in $answers)
+		<hr>
 		#postbox($answer $parentpost)
 	#end
 #end
@@ -361,14 +367,8 @@
 		<div class="row">
 			<div class="col s12 m4 l4">
 				<div class="left mtm mrl">
-					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid) )
-					#if ($approvedAnswer)
-						#set($onclass = "green-text text-lighten-1")
-						#set($picon = "2")
-					#else
-						#set($onclass = "")
-						#set($picon = "3")
-					#end
+					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
+					#if ($approvedAnswer)	#set($onclass = "green-text text-lighten-1") #else #set($onclass = "") #end
 					#if ($authenticated && $showpost.isReply() && $parentpost.creatorid.equals($authUser.id))
 						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
 							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
@@ -412,7 +412,7 @@
 						<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
-					#if ($canComment)
+					#if ($canComment && !$showpost.isFeedback())
 						<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
 					#end
 
@@ -547,19 +547,19 @@
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
 		<div class="votebox ${sizeClass}">
-			#if($votable.votes && $votable.votes != 0)#set($hideVotes = "")#else#set($hideVotes = "hide")#end
+			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
-				<i class="fa fa-chevron-up upvote grey-text mrl" title="Vote up"></i>
-				<i class="fa fa-chevron-down downvote grey-text mrl" title="Vote down"></i>
-				<span class="votecount ${hideVotes}">$!votable.votes</span>
+				<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
+				<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+				<span class="votecount">$!_vvotes</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
-					<i class="fa fa-chevron-up upvote mrl" title="Vote up"></i>
+					<i class="fa fa-chevron-up upvote mrs" title="Vote up"></i>
 				</a>
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
-					<i class="fa fa-chevron-down downvote mrl" title="Vote down"></i>
+					<i class="fa fa-chevron-down downvote mrs" title="Vote down"></i>
 				</a>
-				<span class="votecount ${hideVotes}">$!votable.votes</span>
+				<span class="votecount">$!_vvotes</span>
 			#end
 		</div>
 	#end

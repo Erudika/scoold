@@ -56,9 +56,9 @@ public abstract class Post extends Sysprop {
 	@Stored private String closerid;
 	@Stored private Long answercount;
 	@Stored private String lasteditby;
-	@Stored private Long commentcount;
 	@Stored private String deletereportid;
 	@Stored private String location;
+	@Stored private List<String> commentIds;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -77,6 +77,7 @@ public abstract class Post extends Sysprop {
 	public Pager getItemcount() {
 		if (itemcount == null) {
 			itemcount = new Pager(5);
+			itemcount.setDesc(false);
 		}
 		return itemcount;
 	}
@@ -292,19 +293,18 @@ public abstract class Post extends Sysprop {
 		return this.comments;
 	}
 
-	@JsonIgnore
-	public List<Comment> getComments(Pager pager) {
-		this.comments = client().getChildren(this, Utils.type(Comment.class), pager);
-		this.itemcount = pager;
-		return this.comments;
+	public List<String> getCommentIds() {
+		return commentIds;
 	}
 
-	public Long getCommentcount() {
-		return this.commentcount;
+	public void setCommentIds(List<String> commentIds) {
+		this.commentIds = commentIds;
 	}
 
-	public void setCommentcount(Long count) {
-		this.commentcount = count;
+	public void addCommentId(String id) {
+		if (getCommentIds() != null && getCommentIds().size() < getItemcount().getLimit()) {
+			getCommentIds().add(id);
+		}
 	}
 
 	@JsonIgnore

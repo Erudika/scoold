@@ -3,7 +3,9 @@
 		<div class="col m12 l9">
 			<span class="grey-text">
 			#if ($showPost.answercount > 0)
-				#if ($showPost.answerid) <i class="fa fa-check-circle tooltipped" data-tooltip="Approved answer"></i> #end
+				#if ($showPost.answerid && !$showPost.answerid.isEmpty())
+					<i class="fa fa-check-circle tooltipped" data-tooltip="Approved answer"></i>
+				#end
 				$!lang.get("posts.answered")
 			#else
 				$!lang.get("posts.unanswered")
@@ -27,7 +29,6 @@
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
-					<hr>
 				#end
 
 				#paginate("\#answerspage(\$answerslist \$showPost)" $itemcount "" "page")

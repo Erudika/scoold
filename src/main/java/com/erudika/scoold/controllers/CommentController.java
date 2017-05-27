@@ -39,7 +39,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ForbiddenException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,9 +87,8 @@ public class CommentController {
 			parent.getItemcount().setPage(page);
 			List<Comment> commentslist = pc.getChildren(parent, Utils.type(Comment.class), parent.getItemcount());
 			parent.setComments(commentslist);
-//			model.addAttribute("showpost", parent);
+			model.addAttribute("showpost", parent);
 			model.addAttribute("itemcount", parent.getItemcount());
-			model.addAttribute("commentslist", commentslist);
 		}
 		return "comment";
 	}
@@ -117,24 +115,31 @@ public class CommentController {
 			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.canComment(authUser, req) && !StringUtils.isBlank(comment) && !StringUtils.isBlank(parentid)) {
-			Comment showComment = new Comment();
-			showComment.setComment(comment);
-			showComment.setParentid(parentid);
+			Comment showComment = utils.populate(req, new Comment(), "comment");
 			showComment.setCreatorid(authUser.getId());
-			showComment.setAuthorName(authUser.getName());
+			Map<String, String> error = utils.validate(showComment);
+			if (error.isEmpty()) {
+				showComment.setComment(comment);
+				showComment.setParentid(parentid);
+				showComment.setAuthorName(authUser.getName());
 
-			if (showComment.create() != null) {
-				long commentCount = authUser.getComments();
-				utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= COMMENTATOR_IFHAS);
-				authUser.setComments(commentCount + 1);
-				authUser.update();
-				model.addAttribute("showComment", showComment);
-				// send email to the author of parent post
-				sendCommentNotification((Post) pc.read(parentid), showComment);
-				return "comment";
+				if (showComment.create() != null) {
+					long commentCount = authUser.getComments();
+					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= COMMENTATOR_IFHAS);
+					authUser.setComments(commentCount + 1);
+					authUser.update();
+					model.addAttribute("showComment", showComment);
+					// send email to the author of parent post
+					Post parentPost = pc.read(parentid);
+					if (parentPost != null) {
+						parentPost.addCommentId(showComment.getId());
+						parentPost.update();
+					}
+					sendCommentNotification(parentPost, showComment);
+				}
 			}
 		}
-		throw new ForbiddenException();
+		return "comment";
 	}
 
 	private void sendCommentNotification(Post parentPost, Comment comment) {

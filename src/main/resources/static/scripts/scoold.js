@@ -289,19 +289,17 @@ $(function () {
 	$(document).on("click", "a.votelink",  function() {
 		var up = $(this).hasClass("upvote");
 		var votes = $(this).closest("div.votebox").find(".votecount");
-		var newvotes = parseInt(votes.text(), 10);
-		if (!isNaN(newvotes)) {
-			$.get(this.href, function(data) {
-				if (data === true ) {
-					if (up) {
-						newvotes++;
-					} else {
-						newvotes--;
-					}
+		var newvotes = parseInt(votes.text(), 10) || 0;
+		$.get(this.href, function(data) {
+			if (data === true ) {
+				if (up) {
+					newvotes++;
+				} else {
+					newvotes--;
 				}
-				votes.text(newvotes).removeClass("hide");
-			}, "json");
-		}
+			}
+			votes.text(newvotes).removeClass("hide");
+		}, "json");
 		return false;
 	});
 
@@ -490,11 +488,19 @@ $(function () {
      *                    COMMENTS
      ****************************************************/
 
+	var commentInput = $("input[name='comment']", "form.new-comment-form");
+	commentInput.characterCounter();
 	submitFormBind("form.new-comment-form", function(data, status, xhr, form) {
-		var textbox = $("textarea[name='comment']", form);
+		var textbox = commentInput;
 		var that = $(form);
-		that.closest("div.newcommentform").hide();
-		that.closest("div.postbox").find("div.comments").prepend(data);
+		var commentsbox = that.closest("div.postbox").find("div.comments");
+		var pageContentDiv = commentsbox.find(".page-content");
+		if (pageContentDiv.length) {
+			pageContentDiv.append(data);
+		} else {
+			commentsbox.append(data);
+		}
+		that.closest("div.newcommentform").addClass("hide");
 		textbox.val("");
 	});
 
@@ -504,11 +510,6 @@ $(function () {
 			that.closest("div.commentbox").fadeOut("fast", function() {that.remove();});
 			$.post(that.attr("href"));
 		}, rusuremsg, false);
-	});
-
-	$(document).on("click", ".more-comments-btn",  function() {
-		$(this).nextAll("div:first").show().end().remove();
-		return false;
 	});
 
 	$(document).on("click", "a.show-comment",  function() {
@@ -673,7 +674,7 @@ $(function () {
 		} catch (exception) {}
 	}
 
-	var answerForm = $("form#answer-question-form, form#write-feedback-form");
+	var answerForm = $("form#answer-question-form");
 	if (answerForm.length) {
 		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
 		try {
