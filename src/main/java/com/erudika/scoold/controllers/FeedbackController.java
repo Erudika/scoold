@@ -70,15 +70,20 @@ public class FeedbackController {
 		return "base";
 	}
 
-	@GetMapping("/{id}")
-	public String getById(@PathVariable String id, HttpServletRequest req, Model model) {
+	@GetMapping({"/{id}", "/{id}/{title}"})
+	public String getById(@PathVariable String id, @PathVariable(required = false) String title,
+			HttpServletRequest req, Model model) {
 		Feedback showPost = pc.read(id);
 		if (showPost == null) {
 			return "redirect:" + feedbacklink;
 		}
+		Pager itemcount = utils.getPager("page", req);
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - " + showPost.getTitle());
 		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
+		model.addAttribute("showPost", showPost);
+		model.addAttribute("answerslist", showPost.getAnswers(itemcount));
+		model.addAttribute("itemcount", itemcount);
 		return "base";
 	}
 
