@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -70,6 +71,7 @@ public final class ScooldUtils {
 	private ParaClient pc;
 	private LanguageUtils langutils;
 	private static ScooldUtils instance;
+	@Inject private Emailer emailer;
 
 	@Inject
 	public ScooldUtils(ParaClient pc, LanguageUtils langutils) {
@@ -108,12 +110,29 @@ public final class ScooldUtils {
 					authUser.setGroups(u.getIdentifier().equals(Config.ADMIN_IDENT)
 							? User.Groups.ADMINS.toString() : u.getGroups());
 					authUser.create();
+					sendWelcomeEmail(u, authUser, req);
 				}
 				authUser.setUser(u);
 			}
 		}
 		initCSRFToken(req, res);
 		return authUser;
+	}
+
+	private void sendWelcomeEmail(User user, Profile profile, HttpServletRequest req) {
+		// send welcome email notification
+		if (user != null && profile != null) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
+			String subject = lang.get("signin.welcome");
+			String body1 = lang.get("signin.welcome.body1") + "<br><br>";
+			String body2 = lang.get("signin.welcome.body2") + "<br><br>";
+			String body3 = "Best, <br>The Scoold team";
+			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
+			model.put("body", body1 + body2 + body3);
+			emailer.sendEmail(Arrays.asList(user.getEmail()), subject,
+					Utils.compileMustache(model, loadEmailTemplate("notify")));
+		}
 	}
 
 	public void initCSRFToken(HttpServletRequest req, HttpServletResponse res) {
