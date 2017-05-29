@@ -19,7 +19,8 @@
 			</div>
 
 			#if (!$showPost.isReply())
-				#if ($answerslist && !$answerslist.isEmpty())
+				#if ($answerslist && !$answerslist.isEmpty()) #set($hideAnswersHead = "") #else #set($hideAnswersHead = "hide")#end
+				<div class="answers-head $!{hideAnswersHead}">
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
@@ -29,7 +30,7 @@
 							 class="chip $sortarr.newest">$!lang.get("newest")</a>
 					</span>
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
-				#end
+				</div>
 
 				#paginate("\#answerspage(\$answerslist \$showPost)" $itemcount "" "page")
 

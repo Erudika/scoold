@@ -687,7 +687,12 @@ $(function () {
 			}, 3000);
 
 			submitFormBind("#answer-question-form", function (data, status, xhr, form) {
-				answerForm.closest(".row").find(".page-content").append(data);
+				var allPosts = answerForm.closest(".row").find(".postbox");
+				if (allPosts.length > 1) {
+					allPosts.last().after(data);
+				} else {
+					$(".answers-head").removeClass("hide").after(data);
+				}
 				answerForm.hide();
 				answerBody.value("");
 				localStorage.removeItem("answer-form-body");
@@ -710,6 +715,14 @@ $(function () {
 
 		$.post(this.href);
 		return false;
+	});
+
+	$(document).on("click", ".delete-post",  function() {
+		var dis = $(this);
+		return areYouSure(function () {
+			$.post(dis.attr("href"));
+			dis.closest(".postbox").fadeOut("fast", function() {dis.remove();});
+		}, rusuremsg, false);
 	});
 
 	if (typeof hljs !== "undefined") {

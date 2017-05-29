@@ -353,10 +353,7 @@
 #end
 ####################################
 #macro(postbox $showpost $parentpost)
-
 #set($actionlink = "#getpostlink($showpost false true)")
-#set($actionlink2 = "#getpostlink($showpost true true)")
-
 <div class="postbox">
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="pvs">
@@ -409,7 +406,7 @@
 					#end
 
 					#if (($authenticated && $showpost.creatorid == $authUser.id) || $scooldUtils.isMod($authUser))
-						<a href="$!actionlink/$showpost.id/delete" class="post-refresh-ask red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
+						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
 					#if ($canComment && !$showpost.isFeedback())

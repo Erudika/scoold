@@ -344,7 +344,7 @@ public abstract class Post extends Sysprop {
 		} else if (p.isFeedback()) {
 			return plural ? "/feedback" : "/feedback" + pid;
 		} else if (p.isReply()) {
-			return "/question/" + p.getParentid() + "#post-" + p.getId();
+			return "/question" + (noid ?  "" : "/" + p.getParentid());
 		}
 		return "";
 	}
