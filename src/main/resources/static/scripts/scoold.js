@@ -719,9 +719,14 @@ $(function () {
 
 	$(document).on("click", ".delete-post",  function() {
 		var dis = $(this);
+		var postBox = dis.closest(".postbox");
 		return areYouSure(function () {
-			$.post(dis.attr("href"));
-			dis.closest(".postbox").fadeOut("fast", function() {dis.remove();});
+			$.post(dis.attr("href"), function () {
+				if (!postBox.hasClass("replybox")) {
+					window.location.reload(true);
+				}
+			});
+			postBox.fadeOut("fast", function() {postBox.remove();});
 		}, rusuremsg, false);
 	});
 

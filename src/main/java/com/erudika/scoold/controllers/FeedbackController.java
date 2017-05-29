@@ -21,16 +21,21 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
 import static com.erudika.scoold.ScooldServer.feedbacklink;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ForbiddenException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -136,8 +141,42 @@ public class FeedbackController {
 		return "redirect:" + feedbacklink;
 	}
 
+	@PostMapping({"/{id}", "/{id}/{title}"})
+	public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
+			HttpServletRequest req, Model model) throws IOException {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		// add new answer
+		String errorMsg = "";
+		if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
+			//create new answer
+			Reply answer = utils.populate(req, new Reply(), "body");
+			Map<String, String> error = utils.validate(answer);
+			if (!error.containsKey("body")) {
+				answer.setTitle(showPost.getTitle());
+				answer.setCreatorid(authUser.getId());
+				answer.setParentid(showPost.getId());
+				answer.create();
+
+				showPost.setAnswercount(showPost.getAnswercount() + 1);
+				if (showPost.getAnswercount() >= MAX_REPLIES_PER_POST) {
+					showPost.setCloserid("0");
+				}
+				// update without adding revisions
+				pc.update(showPost);
+				utils.addBadgeAndUpdate(authUser, Profile.Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+				answer.setAuthor(authUser);
+				model.addAttribute("showPost", showPost);
+				model.addAttribute("answerslist", Collections.singletonList(answer));
+				return "reply";
+			}
+			errorMsg = error.get("body");
+		}
+		throw new ForbiddenException(errorMsg);
+	}
+
 	@PostMapping("/{id}/delete")
-    public String deleteAjax(@RequestParam String id, HttpServletRequest req) {
+    public String deleteAjax(@PathVariable String id, HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Feedback showPost = pc.read(id);
 			if (showPost != null) {

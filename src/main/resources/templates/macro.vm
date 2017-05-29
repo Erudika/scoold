@@ -347,14 +347,14 @@
 ####################################
 #macro(answerspage $answers $parentpost)
 	#foreach($answer in $answers)
-		<hr>
 		#postbox($answer $parentpost)
 	#end
 #end
 ####################################
 #macro(postbox $showpost $parentpost)
 #set($actionlink = "#getpostlink($showpost false true)")
-<div class="postbox">
+<div class="postbox $!{showpost.type}box">
+	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="pvs">
 			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body))

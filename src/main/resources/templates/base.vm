@@ -100,7 +100,7 @@
 											<form action="$searchlink/all">
 												<div class="input-field">
 													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
-													<label for="search"><i class="fa fa-search fa-2x"></i></label>
+													<label class="label-icon" for="search"><i class="fa fa-search fa-2x"></i></label>
 													<i class="material-icons fa fa-close"></i>
 												</div>
 											</form>
@@ -145,7 +145,7 @@
 							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
 								<div class="input-field">
 									<input id="search-box" type="search" name="q" placeholder="$!lang.get('search.search')" required>
-									<label for="search"><i class="fa fa-search fa-2x grey-text"></i></label>
+									<label class="label-icon" for="search-box"><i class="fa fa-search fa-2x grey-text"></i></label>
 									<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
 								</div>
 							</form>

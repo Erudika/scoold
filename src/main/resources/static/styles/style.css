@@ -12,6 +12,7 @@ body {
 .postbox ul {padding-left: 40px;}
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #ececec;}
+.userbox img {max-width: inherit;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
