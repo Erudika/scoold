@@ -135,14 +135,14 @@ public class CommentController {
 						parentPost.addCommentId(showComment.getId());
 						parentPost.update();
 					}
-					sendCommentNotification(parentPost, showComment);
+					sendCommentNotification(parentPost, showComment, authUser);
 				}
 			}
 		}
 		return "comment";
 	}
 
-	private void sendCommentNotification(Post parentPost, Comment comment) {
+	private void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor) {
 		// send email notification to author of post except when the comment is by the same person
 		if (parentPost != null && comment != null && !StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid())) {
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
@@ -150,9 +150,9 @@ public class CommentController {
 				User author = authorProfile.getUser();
 				if (author != null) {
 					Map<String, Object> model = new HashMap<String, Object>();
-					String name = author.getName();
+					String name = commentAuthor.getName();
 					String body = Utils.markdownToHtml(Utils.abbreviate(comment.getComment(), 255));
-					String pic = Utils.formatMessage("<img src='{0}' width='25'>", author.getPicture());
+					String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
 					model.put("heading", Utils.formatMessage("New comment on <b>{0}</b>", parentPost.getTitle()));
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
 					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " commented on your post",

@@ -296,11 +296,12 @@ public class QuestionController {
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null && authorProfile.getReplyEmailsEnabled()) {
 				User author = authorProfile.getUser();
+				Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 				if (author != null) {
 					Map<String, Object> model = new HashMap<String, Object>();
-					String name = author.getName();
+					String name = replyAuthor.getName();
 					String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
-					String picture = Utils.formatMessage("<img src='{0}' width='25'>", author.getPicture());
+					String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
 					model.put("heading", Utils.formatMessage("New reply to <b>{0}</b>", parentPost.getTitle()));
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
 					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " replied to your post",
