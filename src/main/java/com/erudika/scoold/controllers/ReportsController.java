@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,8 +100,9 @@ public class ReportsController {
 				rep.setAuthorName(utils.getLang(req).get("anonymous"));
 			}
 			rep.create();
+			res.setStatus(200);
 		} else {
-			throw new BadRequestException();
+			res.setStatus(400);
 		}
     }
 

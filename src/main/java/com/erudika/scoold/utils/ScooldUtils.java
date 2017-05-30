@@ -128,6 +128,7 @@ public final class ScooldUtils {
 			String body1 = lang.get("signin.welcome.body1") + "<br><br>";
 			String body2 = lang.get("signin.welcome.body2") + "<br><br>";
 			String body3 = "Best, <br>The Scoold team";
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject,

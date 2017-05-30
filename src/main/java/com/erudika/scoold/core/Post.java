@@ -23,13 +23,16 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.User;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.Size;
 import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +62,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String deletereportid;
 	@Stored private String location;
 	@Stored private List<String> commentIds;
+	@Stored private Set<String> followers;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -84,6 +88,14 @@ public abstract class Post extends Sysprop {
 
 	public void setItemcount(Pager itemcount) {
 		this.itemcount = itemcount;
+	}
+
+	public Set<String> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(Set<String> followers) {
+		this.followers = followers;
 	}
 
 	public String getDeletereportid() {
@@ -271,19 +283,6 @@ public abstract class Post extends Sysprop {
 		this.lastEditor = lastEditor;
 	}
 
-	public void restoreRevisionAndUpdate(String revisionid) {
-		Revision rev = client().read(revisionid);
-		if (rev != null) {
-			//copy rev data to post
-			setTitle(rev.getTitle());
-			setBody(rev.getBody());
-			setTags(rev.getTags());
-			setRevisionid(rev.getId());
-			//update post without creating a new revision
-			client().update(this);
-		}
-	}
-
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
@@ -347,6 +346,38 @@ public abstract class Post extends Sysprop {
 			return "/question" + (noid ?  "" : "/" + p.getParentid());
 		}
 		return "";
+	}
+
+	public void restoreRevisionAndUpdate(String revisionid) {
+		Revision rev = client().read(revisionid);
+		if (rev != null) {
+			//copy rev data to post
+			setTitle(rev.getTitle());
+			setBody(rev.getBody());
+			setTags(rev.getTags());
+			setRevisionid(rev.getId());
+			//update post without creating a new revision
+			client().update(this);
+		}
+	}
+
+	public void addFollower(User user) {
+		if (followers == null) {
+			followers = new HashSet<String>();
+		}
+		if (user != null && !StringUtils.isBlank(user.getEmail())) {
+			followers.add(user.getEmail());
+		}
+	}
+
+	public void removeFollower(User user) {
+		if (followers != null && user != null) {
+			followers.remove(user.getEmail());
+		}
+	}
+
+	public boolean hasFollowers() {
+		return (followers != null && !followers.isEmpty());
 	}
 
 	public boolean equals(Object obj) {

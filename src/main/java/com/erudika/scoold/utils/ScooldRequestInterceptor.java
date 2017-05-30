@@ -151,7 +151,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
-		modelAndView.addObject("infoStripMsg", "");
+		modelAndView.addObject("infoStripMsg", authUser == null ? Config.getConfigParam("welcome_message", "") : "");
 		modelAndView.addObject("authenticated", authUser != null);
 		modelAndView.addObject("canComment", utils.canComment(authUser, request));
 		modelAndView.addObject("isMod", utils.isMod(authUser));

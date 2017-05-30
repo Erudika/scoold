@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.ForbiddenException;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -143,11 +143,9 @@ public class FeedbackController {
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
 	public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
-			HttpServletRequest req, Model model) throws IOException {
+			HttpServletRequest req, HttpServletResponse res, Model model) throws IOException {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		// add new answer
-		String errorMsg = "";
 		if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
@@ -170,9 +168,13 @@ public class FeedbackController {
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				return "reply";
 			}
-			errorMsg = error.get("body");
 		}
-		throw new ForbiddenException(errorMsg);
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + feedbacklink + "/" + id;
+		}
 	}
 
 	@PostMapping("/{id}/delete")

@@ -47,6 +47,13 @@
 							#getmessagebox("red white-text" $error.get("body"))
 
 							<input type="hidden" name="answer" value="true">
+							#if($showPost.followers && $showPost.followers.contains($authUser.user.email))
+								#set($emailmeChecked = "checked")
+							#else
+								#set($emailmeChecked = "")
+							#end
+							<input type="checkbox" class="filled-in" id="follow-thread-check" checked="$emailmeChecked">
+							<label for="follow-thread-check"><strong class="mediumText">$!lang.get('posts.emailme')</strong></label>
 							<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 							<button class="btn mtl waves-effect waves-light" type="submit">
 								<i class="fa fa-paper-plane left"></i>$!lang.get('post')

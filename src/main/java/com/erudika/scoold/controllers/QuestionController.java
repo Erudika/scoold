@@ -22,11 +22,13 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.email.Emailer;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
+import static com.erudika.scoold.ScooldServer.getServerURL;
 import static com.erudika.scoold.ScooldServer.questionslink;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
@@ -45,7 +47,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ForbiddenException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -148,12 +149,18 @@ public class QuestionController {
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
     public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
-			HttpServletRequest req, Model model) throws IOException {
+			@RequestParam(required = false) Boolean emailme, HttpServletRequest req,
+			HttpServletResponse res, Model model) throws IOException {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		// add new answer
-		String errorMsg = "";
-		if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
+		if (showPost != null && emailme != null) {
+			if (emailme) {
+				showPost.addFollower(authUser.getUser());
+			} else {
+				showPost.removeFollower(authUser.getUser());
+			}
+			pc.update(showPost);// update without adding revisions
+		} else if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
@@ -174,12 +181,16 @@ public class QuestionController {
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
-				sendReplyNotification(showPost, answer);
+				sendReplyNotifications(showPost, answer);
 				return "reply";
 			}
-			errorMsg = error.get("body");
 		}
-		throw new ForbiddenException(errorMsg);
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + questionslink + "/" + id;
+		}
     }
 
 	@PostMapping("/{id}/approve/{answerid}")
@@ -290,11 +301,11 @@ public class QuestionController {
 		}
 	}
 
-	private void sendReplyNotification(Post parentPost, Post reply) {
+	private void sendReplyNotifications(Post parentPost, Post reply) {
 		// send email notification to author of post except when the reply is by the same person
 		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
-			if (authorProfile != null && authorProfile.getReplyEmailsEnabled()) {
+			if (authorProfile != null) {
 				User author = authorProfile.getUser();
 				Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 				if (author != null) {
@@ -302,10 +313,18 @@ public class QuestionController {
 					String name = replyAuthor.getName();
 					String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
 					String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
-					model.put("heading", Utils.formatMessage("New reply to <b>{0}</b>", parentPost.getTitle()));
+					String postURL = getServerURL() + parentPost.getPostLink(false, false);
+					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+					model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
-					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " replied to your post",
-							Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
+					if (authorProfile.getReplyEmailsEnabled()) {
+						parentPost.addFollower(author);
+					}
+					if (parentPost.hasFollowers()) {
+						emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers()),
+								name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
+								Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
+					}
 				}
 			}
 		}

@@ -730,6 +730,11 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
+	$("#follow-thread-check").click(function () {
+		var dis = $(this);
+		$.post(dis.closest("form").attr("action"), {emailme: dis.is(":checked")});
+	});
+
 	if (typeof hljs !== "undefined") {
 		$("pre code").each(function (i, block) {
 			hljs.highlightBlock(block);

@@ -117,8 +117,8 @@ public class Profile extends Sysprop {
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
-		this.replyEmailsEnabled = false;
-		this.commentEmailsEnabled = false;
+		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
+		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
     }
 
 	public static final String id(String userid) {

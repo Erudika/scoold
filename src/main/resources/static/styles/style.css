@@ -8,8 +8,8 @@ body {
 	/*font-size: 13pt;*/
 	font-size: 16px;
 }
-.postbox ul li {list-style-type: disc;}
-.postbox ul {padding-left: 40px;}
+.postbody ul li {list-style-type: disc;}
+.postbody ul {padding-left: 40px;}
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #ececec;}
 .userbox img {max-width: inherit;}

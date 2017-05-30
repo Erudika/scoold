@@ -356,7 +356,7 @@
 <div class="postbox $!{showpost.type}box">
 	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
-		<div class="pvs">
+		<div class="postbody pvs">
 			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body))
 			$!{_bodyHtml}
 		</div>
