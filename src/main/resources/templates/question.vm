@@ -64,13 +64,10 @@
 						</form>
 					</div>
 				#else
-					#if ($showPost.isQuestion())
-						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn ${btnclass}"
-							 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
-					#else
-						<a href="$feedbacklink/reply/$showPost.id" rel="nofollow" class="btn ${btnclass}"
-							 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
-					#end
+					<div class="mtl ptl center">
+							<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn"
+								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+					</div>
 				#end
 
 				#if ($showPost.isClosed())

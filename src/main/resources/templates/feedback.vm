@@ -79,6 +79,11 @@
 						</button>
 					</form>
 				</div>
+				#else
+					<div class="mtl ptl center">
+						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn"
+									 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
+					</div>
 				#end
 			</div>
 
