@@ -242,7 +242,12 @@
 #macro(questionbox $showpost )
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
-<div class="card-panel">
+#if($authenticated && $showpost.followers && $showpost.followers.containsKey($authUser.user.id))
+	#set($followedPostClass = "following-post")
+#else
+	#set($followedPostClass = "")
+#end
+<div class="card-panel ${followedPostClass}">
 	<div class="row mbn">
 		#set($votes = $showpost.votes)
 		#set($viewcount = $showpost.viewcount)
@@ -395,10 +400,6 @@
 		<div class="row">
 			<div class="col s12">
 				<div class="lightborder pam">
-					#if ($isAdmin)
-						<a href="${adminlink}?delete=post&id=$showpost.id" title="Delete" class="red-text phs right"><i class="fa fa-trash"></i></a>
-					#end
-
 					<a href="#post-$!showpost.id" title="Permalink" class="right permalink"><i class="fa fa-bookmark"></i></a>
 
 					#if ($scooldUtils.canEdit($showpost, $authUser))

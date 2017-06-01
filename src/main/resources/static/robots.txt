@@ -8,4 +8,7 @@ Disallow: /signout/
 Disallow: /signin/
 Disallow: /search/
 Disallow: /*?getreportform*
+Disallow: /languages/
+Disallow: /translate/
+Disallow: /translation/
 Allow: /

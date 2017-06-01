@@ -30,9 +30,9 @@ import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import javax.validation.constraints.Size;
 import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +62,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String deletereportid;
 	@Stored private String location;
 	@Stored private List<String> commentIds;
-	@Stored private Set<String> followers;
+	@Stored private Map<String, String> followers;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -90,11 +90,11 @@ public abstract class Post extends Sysprop {
 		this.itemcount = itemcount;
 	}
 
-	public Set<String> getFollowers() {
+	public Map<String, String> getFollowers() {
 		return followers;
 	}
 
-	public void setFollowers(Set<String> followers) {
+	public void setFollowers(Map<String, String> followers) {
 		this.followers = followers;
 	}
 
@@ -363,16 +363,16 @@ public abstract class Post extends Sysprop {
 
 	public void addFollower(User user) {
 		if (followers == null) {
-			followers = new HashSet<String>();
+			followers = new LinkedHashMap<String, String>();
 		}
 		if (user != null && !StringUtils.isBlank(user.getEmail())) {
-			followers.add(user.getEmail());
+			followers.put(user.getId(), user.getEmail());
 		}
 	}
 
 	public void removeFollower(User user) {
 		if (followers != null && user != null) {
-			followers.remove(user.getEmail());
+			followers.remove(user.getId());
 		}
 	}
 

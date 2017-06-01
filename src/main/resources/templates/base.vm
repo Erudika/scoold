@@ -140,7 +140,7 @@
 						</div>
 					</nav>
 
-					<nav id="search-drawer" class="white z-depth-0 hide">
+					<nav id="search-drawer" class="white z-depth-1 hide">
 						<div class="nav-wrapper container">
 							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
 								<div class="input-field">

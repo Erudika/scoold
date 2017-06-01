@@ -304,28 +304,29 @@ public class QuestionController {
 	private void sendReplyNotifications(Post parentPost, Post reply) {
 		// send email notification to author of post except when the reply is by the same person
 		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
+			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
+			Map<String, Object> model = new HashMap<String, Object>();
+			String name = replyAuthor.getName();
+			String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
+			String postURL = getServerURL() + parentPost.getPostLink(false, false);
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
+			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
+
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {
 				User author = authorProfile.getUser();
-				Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 				if (author != null) {
-					Map<String, Object> model = new HashMap<String, Object>();
-					String name = replyAuthor.getName();
-					String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
-					String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
-					String postURL = getServerURL() + parentPost.getPostLink(false, false);
-					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-					model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
 					if (authorProfile.getReplyEmailsEnabled()) {
 						parentPost.addFollower(author);
 					}
-					if (parentPost.hasFollowers()) {
-						emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers()),
-								name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
-								Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
-					}
 				}
+			}
+			if (parentPost.hasFollowers()) {
+				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
+						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
+						Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
 			}
 		}
 	}

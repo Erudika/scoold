@@ -13,6 +13,7 @@ body {
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #ececec;}
 .userbox img {max-width: inherit;}
+.following-post {border-right: 5px solid #8bc34a;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
@@ -150,6 +151,9 @@ main {
 .autocomplete .ac-tags {
 	padding-top: 10px;
 	padding-right: 15px
+}
+.chip {
+	background-color: #f1f1f1;
 }
 .autocomplete .ac-tags .chip {
 	-ms-flex: auto;
