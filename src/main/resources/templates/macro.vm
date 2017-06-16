@@ -130,7 +130,7 @@
 			#if ($showu)
 				<br>
 				<span class="chip">$!utils.abbreviateInt($!showu.votes, 0)</span>
-				#if($showu.badges && $showu.badgesMap)
+				#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
 					$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 				#end
 				#if ($showu.groups == "admins")
@@ -160,7 +160,7 @@
 #macro(personlink $showu)
 <span>
 	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
-		#if($showu.badges && $showu.badgesMap)
+		#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
 			$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 		#end
 		#if ($showu.groups == "admins")
@@ -200,7 +200,7 @@
 						<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 					</div>
 					<span class="chip mtm" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
-					#if($showFriend.badges && $showFriend.badgesMap)
+					#if($showFriend.badges && $showFriend.badgesMap && $showFriend.badgesMap.size() > 0)
 						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 					#end
 					#if ($showFriend.groups == "admins")

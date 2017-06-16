@@ -1,5 +1,5 @@
 <div class="comment">
-	#if(!$utils.isAjaxRequest($request))
+	#if(!$scooldUtils.isAjaxRequest($request))
 		<h2>$!lang.get("comment.title")</h2>
 	#end
 
@@ -7,7 +7,7 @@
 		#commentbox($showComment)
 	#elseif($commentslist && $commentslist.size() > 0)
 		#paginate("\#commentspage(\$commentslist)" $itemcount "" "page" )
-	#elseif(!$utils.isAjaxRequest($request))
+	#elseif(!$scooldUtils.isAjaxRequest($request))
 		$!lang.get("search.notfound")
 	#end
 </div>
