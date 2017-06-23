@@ -73,6 +73,7 @@ para.code_highlighting_enabled = true
 ```
 
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
+These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
 
 ### SMTP configuration
 
@@ -87,7 +88,7 @@ para.mail.password = "password"
 para.mail.tls = true
 para.mail.ssl = false
 ```
-The email template is located in `src/main/resources/emails/notify.html`. 
+The email template is located in `src/main/resources/emails/notify.html`.
 
 ## Social login
 
