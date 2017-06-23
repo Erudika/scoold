@@ -99,6 +99,7 @@ public class QuestionsController {
 			sb.append("</span> <a href=\"").append(similarPost.getPostLink(false, false)).append("\">");
 			sb.append(similarPost.getTitle()).append("</a><br>");
 		}
+		res.setCharacterEncoding("UTF-8");
 		res.getWriter().print(sb.toString());
 		res.setStatus(200);
 	}

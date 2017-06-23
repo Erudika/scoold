@@ -105,10 +105,9 @@
 				<div class="card-panel similar mbl mediumText">
 					<div class="mbl">$!lang.get("posts.similar")</div>
 					#foreach($showSimilar in $similarquestions)
-						#set($plink = "#getpostlink($showSimilar false false)")
 						<div>
 							<small><i class="fa fa-caret-right grey-text"></i></small>
-							<a href="$plink" class="smallText">$!showSimilar.title</a>
+							<a href="#getpostlink($showSimilar false false)" class="smallText">$!showSimilar.title</a>
 						</div>
 					#end
 				</div>
