@@ -36,6 +36,9 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 
 ### Quick Start
 
+0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
+[Google](https://console.developers.google.com) or any other identity provider that you wish to use.
+
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
 2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
@@ -70,6 +73,10 @@ para.admin_ident = "admin@domain.com"
 para.support_email = "support@scoold.com"
 para.google_analytics_id = "UA-123456-7"
 para.code_highlighting_enabled = true
+# Facebook - create a new dev app first!
+para.fb_app_id = "123456789"
+# Google - create a new dev app first!
+para.google_client_id = "123-abcd.apps.googleusercontent.com"
 ```
 
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
@@ -95,6 +102,7 @@ The email template is located in `src/main/resources/emails/notify.html`.
 Facebook is the default identity provider for Scoold, and you don't have to specify you FB app secret.
 For authenticating with Google, you only need your client id (e.g. `123-abcd.apps.googleusercontent.com`).
 For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
+**Note:** if the credentials are blank, the sign in button is hidden for that provider.
 ```
 # Facebook
 para.fb_app_id = "123456789"
