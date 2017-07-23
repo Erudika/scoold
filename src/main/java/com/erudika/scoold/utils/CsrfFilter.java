@@ -18,7 +18,6 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -57,7 +56,7 @@ public class CsrfFilter implements Filter {
 
 		if ("POST".equals(request.getMethod()) && !isCSPReportRequest) {
 			String csrfToken = request.getParameter("_csrf");
-			String csrfInCookie = Utils.getStateParam(Config.APP_NAME_NS + "-csrf", request);
+			String csrfInCookie = HttpUtils.getStateParam(Config.getRootAppIdentifier() + "-csrf", request);
 
 			Long time = NumberUtils.toLong(request.getParameter("_time"), 0);
 			String timekey = request.getParameter("_timekey");

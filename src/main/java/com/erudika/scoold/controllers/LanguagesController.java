@@ -17,9 +17,9 @@
  */
 package com.erudika.scoold.controllers;
 
-import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.LOCALE_COOKIE;
 import static com.erudika.scoold.ScooldServer.languageslink;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Locale;
 import java.util.TreeMap;
@@ -62,7 +62,7 @@ public class LanguagesController {
 		Locale locale = utils.getCurrentLocale(langkey, req);
 		if (locale != null) {
 			int maxAge = 60 * 60 * 24 * 365;  //1 year
-			Utils.setRawCookie(LOCALE_COOKIE, locale.getLanguage(), req, res, false, maxAge);
+			HttpUtils.setRawCookie(LOCALE_COOKIE, locale.getLanguage(), req, res, false, maxAge);
 		}
 		return "redirect:" + languageslink;
 	}

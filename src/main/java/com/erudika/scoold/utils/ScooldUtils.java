@@ -97,8 +97,8 @@ public final class ScooldUtils {
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = null;
-		if (Utils.getStateParam(Config.AUTH_COOKIE, req) != null) {
-			User u = pc.me(Utils.getStateParam(Config.AUTH_COOKIE, req));
+		if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null) {
+			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
 			if (u != null) {
 				authUser = pc.read(Profile.id(u.getId()));
 				if (authUser == null) {
@@ -143,7 +143,7 @@ public final class ScooldUtils {
 			csrfInSession = Utils.generateSecurityToken();
 			req.getSession(true).setAttribute(TOKEN_PREFIX + "CSRF", csrfInSession);
 		}
-		Utils.setStateParam(CSRF_COOKIE, csrfInSession, req, res);
+		HttpUtils.setStateParam(CSRF_COOKIE, csrfInSession, req, res);
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
@@ -159,7 +159,7 @@ public final class ScooldUtils {
 	}
 
 	public String getLanguageCode(HttpServletRequest req) {
-		String cookieLoc = Utils.getCookieValue(req, LOCALE_COOKIE);
+		String cookieLoc = HttpUtils.getCookieValue(req, LOCALE_COOKIE);
 		Locale requestLocale = langutils.getProperLocale(req.getLocale().getLanguage());
 		return (cookieLoc != null) ? cookieLoc : requestLocale.getLanguage();
 	}
@@ -310,8 +310,8 @@ public final class ScooldUtils {
 			if (session != null) {
 				session.invalidate();
 			}
-			Utils.removeStateParam(Config.AUTH_COOKIE, req, res);
-			Utils.removeStateParam(CSRF_COOKIE, req, res);
+			HttpUtils.removeStateParam(Config.AUTH_COOKIE, req, res);
+			HttpUtils.removeStateParam(CSRF_COOKIE, req, res);
 		}
 	}
 

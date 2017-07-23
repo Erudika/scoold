@@ -24,6 +24,7 @@ import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.CSRF_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.signinlink;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +54,9 @@ public class SigninController {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!HOMEPAGE.equals(returnto) && !signinlink.equals(returnto)) {
-			Utils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
+			HttpUtils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
 		} else {
-			Utils.removeStateParam("returnto", req, res);
+			HttpUtils.removeStateParam("returnto", req, res);
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
@@ -75,7 +76,7 @@ public class SigninController {
 		if (!utils.isAuthenticated(req)) {
 			User u = utils.getParaClient().signIn(provider, accessToken, false);
 			if (u != null) {
-				Utils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
+				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 			} else {
 				return "redirect:" + signinlink + "?code=3&error=true";
 			}
@@ -86,7 +87,7 @@ public class SigninController {
 	@GetMapping("/signin/success")
     public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
-			Utils.setStateParam(Config.AUTH_COOKIE, jwt, req, res, true);
+			HttpUtils.setStateParam(Config.AUTH_COOKIE, jwt, req, res, true);
 		} else {
 			return "redirect:" + signinlink + "?code=3&error=true";
 		}
@@ -121,7 +122,7 @@ public class SigninController {
 	}
 
 	private String getBackToUrl(HttpServletRequest req) {
-		String backtoFromCookie = Utils.urlDecode(Utils.getStateParam("returnto", req));
+		String backtoFromCookie = Utils.urlDecode(HttpUtils.getStateParam("returnto", req));
 		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
 	}
 }

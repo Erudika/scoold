@@ -26,6 +26,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
+- LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
 - SEO friendly
 

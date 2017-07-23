@@ -58,8 +58,8 @@ public class ScooldServer {
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
 	}
 
-	public static final String LOCALE_COOKIE = Config.APP_NAME_NS + "-locale";
-	public static final String CSRF_COOKIE = Config.APP_NAME_NS + "-csrf";
+	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
+	public static final String CSRF_COOKIE = Config.getRootAppIdentifier() + "-csrf";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
 	public static final String HOST_URL = Config.getConfigParam("host_url", HOMEPAGE);

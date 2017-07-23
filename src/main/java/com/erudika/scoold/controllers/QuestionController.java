@@ -35,6 +35,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -291,11 +292,11 @@ public class QuestionController {
 	private void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
 		//do not count views from author
 		if (showPost != null && !utils.isMine(showPost, utils.getAuthUser(req))) {
-			String postviews = Utils.getStateParam("postviews", req);
+			String postviews = HttpUtils.getStateParam("postviews", req);
 			if (!StringUtils.contains(postviews, showPost.getId())) {
 				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 				showPost.setViewcount(views + 1); //increment count
-				Utils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
+				HttpUtils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
 				pc.update(showPost);
 			}
 		}
