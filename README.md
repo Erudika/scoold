@@ -128,6 +128,21 @@ para.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
+## LDAP configuration
+
+LDAP authentication is initiated with a request like this `GET /ldap_auth?username=bob&password=secret`. There are
+several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
+
+```
+para.security.ldap.server_url = "ldap://localhost:8389/"
+para.security.ldap.ldap.base_dn = "dc=springframework,dc=org"
+para.security.ldap.user_search_base = ""
+para.security.ldap.user_search_filter = "(cn={0})"
+para.security.ldap.user_dn_pattern = "uid={0},ou=people"
+para.security.ldap.password_attribute = "userPassword"
+para.security.ldap.active_directory_domain = ""
+```
+
 ## Customizing the UI
 
 - **HTML** templates are in `src/main/resources/templates/`
