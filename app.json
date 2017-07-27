@@ -52,32 +52,38 @@
 			"description": "Description meta tag value.",
 			"value": "Scoold is an open source Q&A platform written in Java."
 		},
+		"para_gmaps_api_key": {
+			"description": "Google Maps API key for showing a map for geolocation filtering of posts.",
+			"value": ""
+		},
 		"para_admin_ident": {
 			"description": "Administrator identifier - used to recognize user as admin (can be an email or a social id).",
+			"required": false,
 			"value": ""
 		},
 		"para_fb_app_id": {
 			"description": "Facebook APP ID (for login with Facebook)",
+			"required": false,
 			"value": ""
 		},
 		"para_google_client_id": {
 			"description": "Google OAuth client id (for login with Google)",
+			"required": false,
 			"value": ""
 		},
 		"para_google_analytics_id": {
 			"description": "Google Analytics ID for the GA snippet (leave blank to disable GA)",
-			"value": ""
-		},
-		"para_gmaps_api_key": {
-			"description": "Google Maps API key",
+			"required": false,
 			"value": ""
 		},
 		"para_csp_header_enabled": {
 			"description": "Enable or disable the Content-Security-Policy header.",
+			"required": false,
 			"value": "true"
 		},
 		"para_csp_header": {
 			"description": "The value of the CSP header (leave blank to use the default value)",
+			"required": false,
 			"value": ""
 		}
 	},
