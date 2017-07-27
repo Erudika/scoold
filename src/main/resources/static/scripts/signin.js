@@ -3,10 +3,21 @@
 function onClick(buttonId, fn) {
 	var loginBtn = document.getElementById(buttonId);
 	if (loginBtn) {
-		if( document.body.attachEvent) {
+		if (document.body.attachEvent) {
 			loginBtn.attachEvent("onclick", fn);
 		} else {
 			loginBtn.addEventListener("click", fn);
+		}
+	}
+}
+
+function onSubmit(formId, fn) {
+	var form = document.getElementById(formId);
+	if (form) {
+		if (document.body.attachEvent) {
+			form.attachEvent("onsubmit", fn);
+		} else {
+			form.addEventListener("submit", fn);
 		}
 	}
 }
@@ -110,3 +121,15 @@ if (MICROSOFT_APP_ID && MICROSOFT_APP_ID.trim() !== "") {
 		return false;
 	});
 }
+/********************
+ * LDAP integration *
+ ********************/
+onSubmit('ldap-login-form', function (e) {
+	e.preventDefault();
+	var username = document.getElementById("username");
+	var password = document.getElementById("password");
+	if (username && password) {
+		window.location = "/signin?provider=ldap&access_token=" + username.value + ":" + password.value;
+	}
+	return false;
+});

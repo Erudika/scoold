@@ -67,6 +67,7 @@ public class SigninController {
 		model.addAttribute("inLoginEnabled", !Config.LINKEDIN_APP_ID.isEmpty());
 		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
+		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
         return "base";
     }
 

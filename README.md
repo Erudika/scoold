@@ -38,7 +38,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 ### Quick Start
 
 0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
-[Google](https://console.developers.google.com) or any other identity provider that you wish to use.
+[Google](https://console.developers.google.com) or any other identity provider that you wish to use, or enable LDAP.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
 2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
@@ -50,8 +50,9 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 3. Run `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
 
-**Important:** Do not use the same `application.conf` file for both Para and Scoold!
+**Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
+The settings shown below are all meant to part of the Scoold config file.
 
 [Read the Para docs for more information.](https://paraio.org/docs)
 
@@ -130,16 +131,19 @@ This is required for authentication requests to be redirected back to the origin
 
 ## LDAP configuration
 
-LDAP authentication is initiated with a request like this `GET /ldap_auth?username=bob&password=secret`. There are
-several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
+LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
+There are several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
 
 ```
 para.security.ldap.server_url = "ldap://localhost:8389/"
-para.security.ldap.ldap.base_dn = "dc=springframework,dc=org"
+para.security.ldap.base_dn = "dc=springframework,dc=org"
+para.security.ldap.bind_dn = ""
+para.security.ldap.bind_pass = ""
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
 para.security.ldap.user_dn_pattern = "uid={0},ou=people"
 para.security.ldap.password_attribute = "userPassword"
+# set this only if you are connecting to Active Directory
 para.security.ldap.active_directory_domain = ""
 ```
 

@@ -2,57 +2,89 @@
 
 <div class="ptl">
 	<div class="row ptl">
-		<div class="col s12 m6 offset-m3 center">
+		<div class="col s12 m8 offset-m2 center">
 			<div class="card-panel grey lighten-4">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signin.title")</h2>
 
-				#if($fbLoginEnabled)
-				<div class="mvl pvs">
-					<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
-						<i class="fa fa-facebook left"></i> $!lang.get("signin.facebook")
-					</a>
+				#if($ldapLoginEnabled)
+					#set($leftColSize = "col l6 s12" )
+					#set($rightColSize = "col l6 s12" )
+				#else
+					#set($leftColSize = "hide" )
+					#set($rightColSize = "col l12 s12" )
+				#end
+
+				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && $inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled)
+					#set($leftColSize = "col l6 offset-l3 s12" )
+					#set($rightColSize = "hide" )
+				#end
+
+				<div class="row">
+					<div class="${leftColSize}">
+						<h4>LDAP</h4>
+						<div class="card-panel white">
+							<form id="ldap-login-form">
+								<div class="mvm">
+									<input id="username" type="text" name="username" value="" placeholder="Username" required>
+								</div>
+								<div class="mvm">
+									<input id="password" type="password" name="password" value="" placeholder="Password" required>
+								</div>
+								<button type="submit" class="btn">$!lang.get('signin.title')</button>
+							</form>
+						</div>
+					</div>
+					<div class="${rightColSize}">
+						#if($fbLoginEnabled)
+						<div class="mvl pvs">
+							<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
+								<i class="fa fa-facebook left"></i> $!lang.get("signin.facebook")
+							</a>
+						</div>
+						#end
+
+						#if($gpLoginEnabled)
+							<div class="mvl pvs">
+								<a id="gp-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
+									<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
+									$!lang.get("signin.google")
+								</a>
+							</div>
+						#end
+
+						#if($ghLoginEnabled)
+							<div class="mvl pvs">
+								<a id="gh-login-btn" href="#" class="btn-large grey darken-3 white-text truncate">
+									<i class="fa fa-github left"></i> $!lang.get("signin.github")
+								</a>
+							</div>
+						#end
+
+						#if($inLoginEnabled)
+							<div class="mvl pvs">
+								<a id="in-login-btn" href="#" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
+									<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
+								</a>
+							</div>
+						#end
+
+						#if($twLoginEnabled)
+							<div class="mvl pvs">
+								<a id="tw-login-btn" href="#" class="btn-large light-blue white-text lighten-1 truncate">
+									<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
+								</a>
+							</div>
+						#end
+
+						#if($msLoginEnabled)
+							<div class="mvl pvs">
+								<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
+									<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
+								</a>
+							</div>
+						#end
+					</div>
 				</div>
-				#end
-
-				#if($gpLoginEnabled)
-					<div class="mvl pvs">
-						<a id="gp-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
-							<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/> $!lang.get("signin.google")
-						</a>
-					</div>
-				#end
-
-				#if($ghLoginEnabled)
-					<div class="mvl pvs">
-						<a id="gh-login-btn" href="#" class="btn-large grey darken-3 white-text truncate">
-							<i class="fa fa-github left"></i> $!lang.get("signin.github")
-						</a>
-					</div>
-				#end
-
-				#if($inLoginEnabled)
-					<div class="mvl pvs">
-						<a id="in-login-btn" href="#" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
-							<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
-						</a>
-					</div>
-				#end
-
-				#if($twLoginEnabled)
-					<div class="mvl pvs">
-						<a id="tw-login-btn" href="#" class="btn-large light-blue white-text lighten-1 truncate">
-							<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
-						</a>
-					</div>
-				#end
-
-				#if($msLoginEnabled)
-					<div class="mvl pvs">
-						<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
-							<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
-						</a>
-					</div>
-				#end
 
 			</div>
 		</div>

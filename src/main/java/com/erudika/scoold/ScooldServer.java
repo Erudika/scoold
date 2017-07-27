@@ -199,6 +199,20 @@ public class ScooldServer {
 		settings.put("tw_secret", Config.TWITTER_SECRET);
 		settings.put("ms_app_id", Config.MICROSOFT_APP_ID);
 		settings.put("ms_secret", Config.MICROSOFT_SECRET);
+		// LDAP settings
+		settings.put("security.ldap.server_url", Config.getConfigParam("security.ldap.server_url", ""));
+		settings.put("security.ldap.base_dn", Config.getConfigParam("security.ldap.base_dn", ""));
+		settings.put("security.ldap.bind_dn", Config.getConfigParam("security.ldap.bind_dn", ""));
+		settings.put("security.ldap.bind_pass", Config.getConfigParam("security.ldap.bind_pass", ""));
+		settings.put("security.ldap.user_search_base", Config.getConfigParam("security.ldap.user_search_base", ""));
+		settings.put("security.ldap.user_search_filter", Config.getConfigParam("security.ldap.user_search_filter", ""));
+		settings.put("security.ldap.user_dn_pattern", Config.getConfigParam("security.ldap.user_dn_pattern", ""));
+		settings.put("security.ldap.password_attribute", Config.getConfigParam("security.ldap.password_attribute", ""));
+		settings.put("security.ldap.active_directory_domain", Config.getConfigParam("security.ldap.active_directory_domain", ""));
+		if (!Config.getConfigParam("security.ldap.compare_passwords", "").isEmpty()) {
+			settings.put("security.ldap.compare_passwords", Config.getConfigParam("security.ldap.compare_passwords", ""));
+		}
+		// URLs for success and failure
 		settings.put("signin_success", getServerURL() + "/signin/success?jwt=?");
 		settings.put("signin_failure", getServerURL() + "/signin?code=3&error=true");
 		try {
