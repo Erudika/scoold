@@ -84,6 +84,21 @@ para.google_client_id = "123-abcd.apps.googleusercontent.com"
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
 These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
 
+### Content-Security-Policy header
+
+This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
+The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
+```
+default-src 'self';
+base-uri 'self';
+connect-src 'self' scoold.com www.google-analytics.com;
+frame-src 'self' accounts.google.com staticxx.facebook.com;
+font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com;
+script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com;
+style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com;
+img-src 'self' https: data:; report-uri /reports/cspv
+```
+
 ### SMTP configuration
 
 Scoold uses the JavaMail API to send emails. If you want Scoold to send notification emails you should add the
