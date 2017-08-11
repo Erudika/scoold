@@ -188,6 +188,13 @@ public class ScooldServer {
 		String accessKey = Config.getConfigParam("access_key", "x");
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
+
+		boolean connectedToPara = pc.getTimestamp() > 0;
+		if (!connectedToPara) {
+			logger.error("No connection to Para backend - make sure that your keys are valid.");
+			return pc;
+		}
+
 		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
 		// update the Scoold App settings through the Para App settings API.
 		Map<String, Object> settings = new HashMap<String, Object>();
