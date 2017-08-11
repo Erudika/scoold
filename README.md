@@ -62,22 +62,33 @@ The most important settings are `para.endpoint` - the URL of the Para server, as
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
 
 This is an example of what your **`application.conf`** should look like:
-```
+```ini
 para.app_name = "Scoold"
+# the port for Scoold
 para.port = 8080
+# change this to "production" later
 para.env = "development"
+# the URL where Scoold is hosted, e.g. https://scoold.yourhost.com
 para.host_url = "https://live.scoold.com"
-para.endpoint = "http://localhost:8080"
+# the URL of Para - could also be "http://localhost:8080"
+para.endpoint = "https://paraio.com"
+# access key for your Para app
 para.access_key = "app:scoold"
+# secret key for your Para app
 para.secret_key = "*****************"
+# needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
+# the identifier of admin user - check Para user object
 para.admin_ident = "admin@domain.com"
+# system email address
 para.support_email = "support@scoold.com"
+# GA code
 para.google_analytics_id = "UA-123456-7"
+# enables syntax highlighting in posts
 para.code_highlighting_enabled = true
-# Facebook - create a new dev app first!
+# Facebook - create your own Facebook app first!
 para.fb_app_id = "123456789"
-# Google - create a new dev app first!
+# Google - create your own Google app first!
 para.google_client_id = "123-abcd.apps.googleusercontent.com"
 ```
 
