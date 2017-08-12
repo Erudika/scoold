@@ -17,8 +17,10 @@
  */
 package com.erudika.scoold.utils;
 
+import com.eaio.uuid.UUID;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.email.Emailer;
@@ -110,7 +112,9 @@ public final class ScooldUtils {
 					authUser.setGroups(u.getIdentifier().equals(Config.ADMIN_IDENT)
 							? User.Groups.ADMINS.toString() : u.getGroups());
 					authUser.create();
-					sendWelcomeEmail(u, authUser, req);
+					if (!u.getIdentityProvider().equals("generic")) {
+						sendWelcomeEmail(u, false, req);
+					}
 				}
 				authUser.setUser(u);
 			}
@@ -119,15 +123,28 @@ public final class ScooldUtils {
 		return authUser;
 	}
 
-	private void sendWelcomeEmail(User user, Profile profile, HttpServletRequest req) {
+	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {
 		// send welcome email notification
-		if (user != null && profile != null) {
+		if (user != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = lang.get("signin.welcome");
 			String body1 = lang.get("signin.welcome.body1") + "<br><br>";
 			String body2 = lang.get("signin.welcome.body2") + "<br><br>";
 			String body3 = "Best, <br>The Scoold team";
+
+			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
+				Sysprop s = pc.read(user.getIdentifier());
+				if (s != null) {
+					String token = Utils.base64encURL(new UUID().toString().getBytes());
+					s.addProperty(Config._EMAIL_TOKEN, token);
+					pc.update(s);
+					token = HOST_URL + signinlink + "/register?id=" + user.getId() + "&token=" + token;
+					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>";
+					body3 += "Best, <br>The Scoold team";
+				}
+			}
+
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
 			model.put("body", body1 + body2 + body3);

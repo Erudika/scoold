@@ -133,3 +133,15 @@ onSubmit('ldap-login-form', function (e) {
 	}
 	return false;
 });
+/*******************
+ *  Password Auth  *
+ *******************/
+onSubmit('password-login-form', function (e) {
+	e.preventDefault();
+	var email = document.getElementById("email");
+	var passw = document.getElementById("passw");
+	if (email && passw) {
+		window.location = "/signin?provider=password&access_token=" + email.value + "::" + passw.value;
+	}
+	return false;
+});

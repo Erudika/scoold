@@ -38,7 +38,8 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 ### Quick Start
 
 0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
-[Google](https://console.developers.google.com) or any other identity provider that you wish to use, or enable LDAP.
+[Google](https://console.developers.google.com) or any other identity provider that you wish to use.
+This isn't necessary only if you enable LDAP or password authentication.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
 2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
@@ -76,6 +77,8 @@ para.endpoint = "https://paraio.com"
 para.access_key = "app:scoold"
 # secret key for your Para app
 para.secret_key = "*****************"
+# enable or disable email&password authentication
+para.password_auth_enabled = false
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object
@@ -99,7 +102,7 @@ These are set through the Heroku admin panel, under "Settings", "Reveal Config V
 
 This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
 The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
-```
+```ini
 default-src 'self';
 base-uri 'self';
 connect-src 'self' scoold.com www.google-analytics.com;
@@ -115,7 +118,7 @@ img-src 'self' https: data:; report-uri /reports/cspv
 Scoold uses the JavaMail API to send emails. If you want Scoold to send notification emails you should add the
 following SMTP settings to your config file:
 
-```
+```ini
 para.mail.host = "smtp.example.com"
 para.mail.port = 587
 para.mail.username = "user@example.com"
@@ -131,7 +134,7 @@ Facebook is the default identity provider for Scoold, and you don't have to spec
 For authenticating with Google, you only need your client id (e.g. `123-abcd.apps.googleusercontent.com`).
 For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
-```
+```ini
 # Facebook
 para.fb_app_id = "123456789"
 # Google
@@ -150,7 +153,7 @@ para.ms_app_id = ""
 para.ms_secret = ""
 ```
 You also need to set your host URL when running Scoold in production:
-```
+```ini
 para.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
@@ -160,7 +163,7 @@ This is required for authentication requests to be redirected back to the origin
 LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
 There are several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
 
-```
+```ini
 para.security.ldap.server_url = "ldap://localhost:8389/"
 para.security.ldap.base_dn = "dc=springframework,dc=org"
 para.security.ldap.bind_dn = ""

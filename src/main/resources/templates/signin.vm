@@ -1,12 +1,48 @@
 <div id="fb-root"></div>
 
+#if($register)
+<div class="ptl">
+	<div class="row ptl">
+		<div class="col s12 m12 l6 offset-l3 center">
+			<div class="card-panel grey lighten-4">
+				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signup.title")</h2>
+				<div class="card-panel white">
+					#if($verify)
+						<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
+						<p>$!lang.get('signin.verify.text')</p>
+					#elseif($verified)
+						<h1><i class="fa fa-check-circle fa-2x green-text"></i></h1>
+						<p>$!lang.get('signin.verify.done')</p>
+						<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
+					#else
+						<form method="post">
+							#sectoken(false "REGISTER_USER")
+							<div class="mvm">
+								<input id="name" type="text" name="name" value="$!name" placeholder="Name" required>
+							</div>
+							<div class="mvm">
+								<input id="email" type="email" name="email" value="$!bademail" placeholder="Email" required>
+								#getmessagebox("red white-text" $error.get("email"))
+							</div>
+							<div class="mvm">
+								<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="Password" required>
+							</div>
+							<button type="submit" class="btn">$!lang.get('signup.title')</button>
+						</form>
+					#end
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+#else
 <div class="ptl">
 	<div class="row ptl">
 		<div class="col s12 m8 offset-m2 center">
 			<div class="card-panel grey lighten-4">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signin.title")</h2>
 
-				#if($ldapLoginEnabled)
+				#if($ldapLoginEnabled || $passwordLoginEnabled)
 					#set($leftColSize = "col l6 s12" )
 					#set($rightColSize = "col l6 s12" )
 				#else
@@ -21,6 +57,24 @@
 
 				<div class="row">
 					<div class="${leftColSize}">
+						#if($passwordLoginEnabled)
+						<h4>$!lang.get('signin.password')</h4>
+						<div class="card-panel white">
+							<form id="password-login-form">
+								<div class="mvm">
+									<input id="email" type="email" name="email" value="" placeholder="Email" required>
+								</div>
+								<div class="mvm">
+									<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="Password" required>
+								</div>
+								<button type="submit" class="btn">$!lang.get('signin.title')</button>
+							</form>
+							<br>
+							<small><a href="$signinlink/register">$!lang.get('signup.title')</a></small>
+						</div>
+						#end
+
+						#if($ldapLoginEnabled)
 						<h4>LDAP</h4>
 						<div class="card-panel white">
 							<form id="ldap-login-form">
@@ -33,6 +87,7 @@
 								<button type="submit" class="btn">$!lang.get('signin.title')</button>
 							</form>
 						</div>
+						#end
 					</div>
 					<div class="${rightColSize}">
 						#if($fbLoginEnabled)
@@ -90,5 +145,6 @@
 		</div>
 	</div>
 </div>
+#end
 
 <script src="$scriptslink/signin.js"></script>

@@ -18,6 +18,7 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
@@ -26,6 +27,7 @@ import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.util.Collections;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,6 +70,7 @@ public class SigninController {
 		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
 		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
+		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", false));
         return "base";
     }
 
@@ -79,6 +82,7 @@ public class SigninController {
 			if (u != null) {
 				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 			} else {
+				verifyEmailIfNecessary(provider, "Anonymous", accessToken.split(":")[0], req);
 				return "redirect:" + signinlink + "?code=3&error=true";
 			}
 		}
@@ -94,6 +98,51 @@ public class SigninController {
 		}
 		return "redirect:" + getBackToUrl(req);
 	}
+
+	@GetMapping(path = "/signin/register")
+    public String register(@RequestParam(name = "verify", required = false, defaultValue = "false") Boolean verify,
+			@RequestParam(name = "id", required = false) String id,
+			@RequestParam(name = "token", required = false) String token,
+			HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req)) {
+			return "redirect:" + HOMEPAGE;
+		}
+		model.addAttribute("path", "signin.vm");
+		model.addAttribute("title", utils.getLang(req).get("signup.title"));
+		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("register", true);
+		model.addAttribute("verify", verify);
+		if (id != null && token != null) {
+			boolean verified = activateWithEmailToken((User) utils.getParaClient().read(id), token);
+			if (verified) {
+				model.addAttribute("verified", verified);
+			} else {
+				return "redirect:" + signinlink;
+			}
+		}
+		return "base";
+	}
+
+	@PostMapping("/signin/register")
+    public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
+			HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req)) {
+			if (utils.getParaClient().read(email) == null) {
+				utils.getParaClient().signIn("password", email + ":" + name + ":" + passw, false);
+				verifyEmailIfNecessary("password", name, email, req);
+			} else {
+				model.addAttribute("path", "signin.vm");
+				model.addAttribute("title", utils.getLang(req).get("signup.title"));
+				model.addAttribute("signinSelected", "navbtn-hover");
+				model.addAttribute("register", true);
+				model.addAttribute("name", name);
+				model.addAttribute("bademail", email);
+				model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.1")));
+				return "base";
+			}
+		}
+        return "redirect:" + signinlink + "/register?verify=true";
+    }
 
 	@PostMapping("/signout")
     public String post(HttpServletRequest req, HttpServletResponse res) {
@@ -125,5 +174,33 @@ public class SigninController {
 	private String getBackToUrl(HttpServletRequest req) {
 		String backtoFromCookie = Utils.urlDecode(HttpUtils.getStateParam("returnto", req));
 		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
+	}
+
+	private boolean activateWithEmailToken(User u, String token) {
+		if (u != null && token != null) {
+			Sysprop s = utils.getParaClient().read(u.getIdentifier());
+			if (s != null && token.equals(s.getProperty(Config._EMAIL_TOKEN))) {
+				s.addProperty(Config._EMAIL_TOKEN, "");
+				utils.getParaClient().update(s);
+				u.setActive(true);
+				utils.getParaClient().update(u);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void verifyEmailIfNecessary(String provider, String name, String email, HttpServletRequest req) {
+		if ("password".equals(provider)) {
+			Sysprop ident = utils.getParaClient().read(email);
+			if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
+				User u = new User(ident.getCreatorid());
+				u.setActive(false);
+				u.setName(name);
+				u.setEmail(email);
+				u.setIdentifier(email);
+				utils.sendWelcomeEmail(u, true, req);
+			}
+		}
 	}
 }

@@ -61,6 +61,11 @@
 			"required": false,
 			"value": ""
 		},
+		"para_password_auth_enabled": {
+			"description": "Enable or disable password authentication",
+			"required": false,
+			"value": "false"
+		},
 		"para_fb_app_id": {
 			"description": "Facebook APP ID (for login with Facebook)",
 			"required": false,
@@ -68,6 +73,91 @@
 		},
 		"para_google_client_id": {
 			"description": "Google OAuth client id (for login with Google)",
+			"required": false,
+			"value": ""
+		},
+		"para_gh_app_id": {
+			"description": "GitHub OAuth client id (for login with GitHub)",
+			"required": false,
+			"value": ""
+		},
+		"para_gh_secret": {
+			"description": "GitHub OAuth secret",
+			"required": false,
+			"value": ""
+		},
+		"para_in_app_id": {
+			"description": "LinkedIn OAuth client id (for login with LinkedIn)",
+			"required": false,
+			"value": ""
+		},
+		"para_in_secret": {
+			"description": "LinkedIn OAuth secret",
+			"required": false,
+			"value": ""
+		},
+		"para_tw_app_id": {
+			"description": "Twitter OAuth client id (for login with Twitter)",
+			"required": false,
+			"value": ""
+		},
+		"para_tw_secret": {
+			"description": "Twitter OAuth secret",
+			"required": false,
+			"value": ""
+		},
+		"para_ms_app_id": {
+			"description": "Microsoft OAuth client id (for login with Microsoft)",
+			"required": false,
+			"value": ""
+		},
+		"para_ms_secret": {
+			"description": "Microsoft OAuth secret",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_server_url": {
+			"description": "LDAP server URL",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_base_dn": {
+			"description": "LDAP base DN",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_bind_dn": {
+			"description": "LDAP bind DN for connections to server",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_bind_pass": {
+			"description": "LDAP bind password for connections to server",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_user_search_base": {
+			"description": "LDAP user search base",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_user_search_filter": {
+			"description": "LDAP user search filter",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_user_dn_pattern": {
+			"description": "LDAP user DN pattern",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_password_attribute": {
+			"description": "LDAP password attribute",
+			"required": false,
+			"value": ""
+		},
+		"para_security_ldap_active_directory_domain": {
+			"description": "LDAP Active Directory domain (set this only if you are connecting to AD servers)",
 			"required": false,
 			"value": ""
 		},
