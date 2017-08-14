@@ -385,7 +385,7 @@
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if ($showpost.lasteditby)
 					<a href="$revisionslink/$!showpost.id" title="Revision history">
-						$!lang.get("posts.edited") #formatdate($showpost.updated "")
+						$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
 					</a>
 					#end
 				</div>

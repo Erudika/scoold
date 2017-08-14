@@ -58,6 +58,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String revisionid;
 	@Stored private String closerid;
 	@Stored private Long answercount;
+	@Stored private Long lastedited;
 	@Stored private String lasteditby;
 	@Stored private String deletereportid;
 	@Stored private String location;
@@ -76,6 +77,17 @@ public abstract class Post extends Sysprop {
 
 	private ParaClient client() {
 		return ScooldUtils.getInstance().getParaClient();
+	}
+
+	public Long getLastedited() {
+		if (lastedited == null || lastedited <= 0) {
+			lastedited = getUpdated();
+		}
+		return lastedited;
+	}
+
+	public void setLastedited(Long lastedited) {
+		this.lastedited = lastedited;
 	}
 
 	public Pager getItemcount() {

@@ -139,9 +139,10 @@ public class QuestionController {
 			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
 		}
 
-		showPost.setLasteditby(authUser.getId());
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
+			showPost.setLasteditby(authUser.getId());
+			showPost.setLastedited(System.currentTimeMillis());
 			showPost.update();
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 		}
