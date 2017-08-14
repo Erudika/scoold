@@ -17,6 +17,10 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.User;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
 import static com.erudika.scoold.ScooldServer.settingslink;
@@ -66,6 +70,7 @@ public class SettingsController {
 	@PostMapping
     public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
+			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
 			HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -84,6 +89,10 @@ public class SettingsController {
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.update();
+
+			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
+				return "redirect:" + settingslink + "?passChanged=true";
+			}
 		}
 		return "redirect:" + settingslink;
 	}
@@ -95,5 +104,19 @@ public class SettingsController {
 			utils.clearSession(req, res);
 		}
 		return "redirect:" + signinlink + "?code=4&success=true";
+	}
+
+	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {
+		if (u != null && !StringUtils.isBlank(pass) && !StringUtils.isBlank(newpass)) {
+			Sysprop s = utils.getParaClient().read(u.getEmail());
+			if (s != null && Utils.bcryptMatches(pass, (String) s.getProperty(Config._PASSWORD))) {
+				String hashed = Utils.bcrypt(newpass);
+				s.addProperty(Config._PASSWORD, hashed);
+				u.setPassword(hashed);
+				utils.getParaClient().update(s);
+				return true;
+			}
+		}
+		return false;
 	}
 }

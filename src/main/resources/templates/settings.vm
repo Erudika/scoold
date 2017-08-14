@@ -39,6 +39,22 @@
 				<input type="hidden" name="tags" class="ac-hidden" value="$!authUser.favtagsString">
 			</div>
 
+			#if($authUser.user.identityProvider == "generic")
+				<h4>$!lang.get('password')
+					#if($request.getParameter("passChanged"))
+						<small class="green-text"><i class="fa fa-check"></i></small>
+					#end
+				</h4>
+				<div class="row">
+					<div class="col m3">
+						<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')" required>
+					</div>
+					<div class="col m3">
+						<input type="password" name="newpassword" value="" minlength="6" placeholder="$!lang.get('newpassword')" required>
+					</div>
+				</div>
+			#end
+
 			<h4>$!lang.get('settings.notifications')</h4>
 			<p class="mvl grey-text text-darken-2">$!lang.get('signup.form.email'): <tt>$!authUser.user.email</tt></p>
 			<div class="mbm">

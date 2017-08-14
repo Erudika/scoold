@@ -25,7 +25,7 @@
 								#getmessagebox("red white-text" $error.get("email"))
 							</div>
 							<div class="mvm">
-								<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="Password" required>
+								<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="$!lang.get('password')" required>
 							</div>
 							<button type="submit" class="btn">$!lang.get('signup.title')</button>
 						</form>
@@ -66,7 +66,7 @@
 									<input id="email" type="email" value="" placeholder="Email" required>
 								</div>
 								<div class="mvm">
-									<input id="passw" type="password" value="" minlength="6" placeholder="Password" required>
+									<input id="passw" type="password" value="" minlength="6" placeholder="$!lang.get('password')" required>
 								</div>
 								<input type="hidden" name="provider" value="password">
 								<input type="hidden" name="access_token" value="">
@@ -86,7 +86,7 @@
 									<input id="username" type="text" value="" placeholder="Username" required>
 								</div>
 								<div class="mvm">
-									<input id="password" type="password" value="" placeholder="Password" required>
+									<input id="password" type="password" value="" placeholder="$!lang.get('password')" required>
 								</div>
 								<input type="hidden" name="provider" value="ldap">
 								<input type="hidden" name="access_token" value="">
