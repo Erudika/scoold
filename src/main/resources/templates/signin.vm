@@ -60,13 +60,16 @@
 						#if($passwordLoginEnabled)
 						<h4>$!lang.get('signin.password')</h4>
 						<div class="card-panel white">
-							<form id="password-login-form">
+							<form method="post" id="password-login-form">
+								#sectoken(false "SIGNIN_PASS")
 								<div class="mvm">
-									<input id="email" type="email" name="email" value="" placeholder="Email" required>
+									<input id="email" type="email" value="" placeholder="Email" required>
 								</div>
 								<div class="mvm">
-									<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="Password" required>
+									<input id="passw" type="password" value="" minlength="6" placeholder="Password" required>
 								</div>
+								<input type="hidden" name="provider" value="password">
+								<input type="hidden" name="access_token" value="">
 								<button type="submit" class="btn">$!lang.get('signin.title')</button>
 							</form>
 							<br>
@@ -77,13 +80,16 @@
 						#if($ldapLoginEnabled)
 						<h4>LDAP</h4>
 						<div class="card-panel white">
-							<form id="ldap-login-form">
+							<form method="post" id="ldap-login-form">
+								#sectoken(false "SIGNIN_LDAP")
 								<div class="mvm">
-									<input id="username" type="text" name="username" value="" placeholder="Username" required>
+									<input id="username" type="text" value="" placeholder="Username" required>
 								</div>
 								<div class="mvm">
-									<input id="password" type="password" name="password" value="" placeholder="Password" required>
+									<input id="password" type="password" value="" placeholder="Password" required>
 								</div>
+								<input type="hidden" name="provider" value="ldap">
+								<input type="hidden" name="access_token" value="">
 								<button type="submit" class="btn">$!lang.get('signin.title')</button>
 							</form>
 						</div>
@@ -146,5 +152,3 @@
 	</div>
 </div>
 #end
-
-<script src="$scriptslink/signin.js"></script>

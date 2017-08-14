@@ -75,18 +75,15 @@ public class SigninController {
     }
 
 	@GetMapping(path = "/signin", params = {"access_token", "provider"})
-    public String getAuth(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
+    public String signinGet(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
 			HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isAuthenticated(req)) {
-			User u = utils.getParaClient().signIn(provider, accessToken, false);
-			if (u != null) {
-				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
-			} else {
-				verifyEmailIfNecessary(provider, "Anonymous", accessToken.split(":")[0], req);
-				return "redirect:" + signinlink + "?code=3&error=true";
-			}
-		}
-		return "redirect:" + getBackToUrl(req);
+		return getAuth(provider, accessToken, req, res);
+	}
+
+	@PostMapping(path = "/signin", params = {"access_token", "provider"})
+    public String signinPost(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
+			HttpServletRequest req, HttpServletResponse res) {
+		return getAuth(provider, accessToken, req, res);
 	}
 
 	@GetMapping("/signin/success")
@@ -169,6 +166,19 @@ public class SigninController {
 		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
 		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
 		return sb.toString();
+	}
+
+	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isAuthenticated(req)) {
+			User u = utils.getParaClient().signIn(provider, accessToken, false);
+			if (u != null) {
+				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
+			} else {
+				verifyEmailIfNecessary(provider, "Anonymous", accessToken.split(":")[0], req);
+				return "redirect:" + signinlink + "?code=3&error=true";
+			}
+		}
+		return "redirect:" + getBackToUrl(req);
 	}
 
 	private String getBackToUrl(HttpServletRequest req) {

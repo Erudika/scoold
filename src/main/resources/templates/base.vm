@@ -221,8 +221,11 @@
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
 		#end
 		<script src="$!scriptslink/scoold.js"></script>
-		#if($includeGAjs)
-		<script src="$!scriptslink/analytics.js"></script>
+		#if ($request.getRequestURI().startsWith($signinlink))
+			<script src="$!scriptslink/signin.js"></script>
+		#end
+		#if ($includeGAjs)
+			<script src="$!scriptslink/analytics.js"></script>
 		#end
 	</body>
 </html>
