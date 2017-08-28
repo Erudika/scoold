@@ -36,7 +36,7 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "") {
 	}(document, 'script', 'google-jssdk'));
 
 	function gpLogin() {
-		if ($('gp-login-btn').length) {
+		if ($('#gp-login-btn').length) {
 			gapi.load('auth2', function(){
 				auth2 = gapi.auth2.init({
 					client_id: GOOGLE_CLIENT_ID,
