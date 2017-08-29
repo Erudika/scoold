@@ -117,6 +117,11 @@ public final class ScooldUtils {
 					}
 				}
 				authUser.setUser(u);
+				if (!StringUtils.equals(u.getPicture(), authUser.getPicture()) &&
+						!StringUtils.contains(authUser.getPicture(), "gravatar.com")) {
+					authUser.setPicture(u.getPicture());
+					authUser.update();
+				}
 			}
 		}
 		initCSRFToken(req, res);
