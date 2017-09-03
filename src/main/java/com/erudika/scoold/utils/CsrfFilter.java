@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.utils.Config;
+import static com.erudika.scoold.ScooldServer.CSRF_COOKIE;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -56,7 +56,7 @@ public class CsrfFilter implements Filter {
 
 		if ("POST".equals(request.getMethod()) && !isCSPReportRequest) {
 			String csrfToken = request.getParameter("_csrf");
-			String csrfInCookie = HttpUtils.getStateParam(Config.getRootAppIdentifier() + "-csrf", request);
+			String csrfInCookie = HttpUtils.getStateParam(CSRF_COOKIE, request);
 
 			Long time = NumberUtils.toLong(request.getParameter("_time"), 0);
 			String timekey = request.getParameter("_timekey");
