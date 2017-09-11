@@ -18,6 +18,7 @@
 
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
@@ -43,10 +44,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SigninController {
 
 	private final ScooldUtils utils;
+	private final ParaClient pc;
 
 	@Inject
     public SigninController(ScooldUtils utils) {
 		this.utils = utils;
+		this.pc = utils.getParaClient();
     }
 
 	@GetMapping("/signin")
@@ -110,7 +113,7 @@ public class SigninController {
 		model.addAttribute("register", true);
 		model.addAttribute("verify", verify);
 		if (id != null && token != null) {
-			boolean verified = activateWithEmailToken((User) utils.getParaClient().read(id), token);
+			boolean verified = activateWithEmailToken((User) pc.read(id), token);
 			if (verified) {
 				model.addAttribute("verified", verified);
 			} else {
@@ -124,8 +127,8 @@ public class SigninController {
     public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
 			HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			if (utils.getParaClient().read(email) == null) {
-				utils.getParaClient().signIn("password", email + ":" + name + ":" + passw, false);
+			if (pc.read(email) == null) {
+				pc.signIn("password", email + ":" + name + ":" + passw, false);
 				verifyEmailIfNecessary("password", name, email, req);
 			} else {
 				model.addAttribute("path", "signin.vm");
@@ -156,7 +159,7 @@ public class SigninController {
 		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
-		sb.append("ENDPOINT = \"").append(utils.getParaClient().getEndpoint()).append("\"; ");
+		sb.append("ENDPOINT = \"").append(pc.getEndpoint()).append("\"; ");
 		sb.append("CSRF_COOKIE = \"").append(CSRF_COOKIE).append("\"; ");
 		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
 		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
@@ -170,7 +173,7 @@ public class SigninController {
 
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
-			User u = utils.getParaClient().signIn(provider, accessToken, false);
+			User u = pc.signIn(provider, accessToken, false);
 			if (u != null) {
 				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 			} else {
@@ -188,12 +191,12 @@ public class SigninController {
 
 	private boolean activateWithEmailToken(User u, String token) {
 		if (u != null && token != null) {
-			Sysprop s = utils.getParaClient().read(u.getIdentifier());
+			Sysprop s = pc.read(u.getIdentifier());
 			if (s != null && token.equals(s.getProperty(Config._EMAIL_TOKEN))) {
 				s.addProperty(Config._EMAIL_TOKEN, "");
-				utils.getParaClient().update(s);
+				pc.update(s);
 				u.setActive(true);
-				utils.getParaClient().update(u);
+				pc.update(u);
 				return true;
 			}
 		}
@@ -202,7 +205,7 @@ public class SigninController {
 
 	private void verifyEmailIfNecessary(String provider, String name, String email, HttpServletRequest req) {
 		if ("password".equals(provider)) {
-			Sysprop ident = utils.getParaClient().read(email);
+			Sysprop ident = pc.read(email);
 			if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
 				User u = new User(ident.getCreatorid());
 				u.setActive(false);
