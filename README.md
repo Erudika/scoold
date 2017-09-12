@@ -51,6 +51,11 @@ This isn't necessary only if you enable LDAP or password authentication.
 3. Run `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
 
+If you run Para locally, use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
+```sh
+$ para-cli ping && para-cli new-app "scoold" --name "Scoold"
+```
+
 **Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
 The settings shown below are all meant to part of the Scoold config file.
@@ -70,7 +75,7 @@ para.port = 8080
 # change this to "production" later
 para.env = "development"
 # the URL where Scoold is hosted, e.g. https://scoold.yourhost.com
-para.host_url = "https://live.scoold.com"
+para.host_url = "https://your-scoold-domain.com"
 # the URL of Para - could also be "http://localhost:8080"
 para.endpoint = "https://paraio.com"
 # access key for your Para app
@@ -130,7 +135,7 @@ The email template is located in `src/main/resources/emails/notify.html`.
 
 ## Social login
 
-For authenticating with Facebook or Google, you only need your Gogle client id 
+For authenticating with Facebook or Google, you only need your Gogle client id
 (e.g. `123-abcd.apps.googleusercontent.com`), or Facebook app id (only digits).
 For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
@@ -184,6 +189,19 @@ para.security.ldap.active_directory_domain = ""
 - **Images** are in located in `src/main/resources/static/images/`
 
 Also, please refer to the documentation for Spring Boot and Spring MVC.
+
+### Building Scoold
+
+To compile it you'll need JDK 8+ and Maven. Once you have it, just clone and build:
+
+```sh
+$ git clone https://github.com/erudika/scoold.git && cd scoold
+$ mvn install
+```
+To run a local instance of Scoold for development, use:
+```sh
+$ mvn -Dconfig.file=./application.conf spring-boot:run
+```
 
 ## Contributing
 
