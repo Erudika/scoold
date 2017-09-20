@@ -66,7 +66,8 @@ public class CsrfFilter implements Filter {
 				request.getSession().setAttribute(timekey, System.currentTimeMillis());
 				if (!time.equals(timeInSession)) {
 					logger.warn("Time token mismatch. {}, {}", request.getRemoteAddr(), request.getRequestURL());
-					response.sendError(403);
+					// response.sendError(403, "Time token mismatch.");
+					response.sendRedirect(request.getRequestURI());
 					return;
 				}
 			}
@@ -80,7 +81,7 @@ public class CsrfFilter implements Filter {
 
 			if (csrfToken == null || StringUtils.isBlank(csrfInCookie) || !csrfToken.equals(csrfInCookie)) {
 				logger.warn("CSRF token mismatch. {}, {}", request.getRemoteAddr(), request.getRequestURL());
-				response.sendError(403);
+				response.sendError(403, "CSRF token mismatch.");
 				return;
 			}
 		}
