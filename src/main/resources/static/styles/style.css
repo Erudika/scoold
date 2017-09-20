@@ -194,7 +194,12 @@ code {
 	border-left: 2px solid #039be5;
 	padding-left: 10px;
 }
-
+.user-card {
+	height: 127px;
+}
+.user-card img {
+	max-height: 127px;
+}
 /**** FEEL FREE TO MODIFY THESE PROPETIES ****/
 a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
 .btn, .btn-large, .navbtn-hover {background-color: #ec407a;}

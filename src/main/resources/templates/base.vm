@@ -84,7 +84,7 @@
 									<li>
 										<a class="dropdown-button scoold-user-dropdown" href="#!" data-constrainwidth="false"
 											 data-alignment="right" data-beloworigin="true" data-activates="user-dropdown">
-											<img src="#profilepic($authUser)" height="50" alt="Avatar">
+											<img src="#profilepic($authUser)" width="50" class="responsive-img" alt="Avatar">
 											<i class="fa fa-caret-down right"></i></a>
 									</li>
 								#else
@@ -109,7 +109,7 @@
 								</li>
 								#if ($authenticated)
 									<li>
-										<img src="#profilepic($authUser)" height="50" alt="Avatar" class="left mll mrl">
+										<img src="#profilepic($authUser)" width="50"  alt="Avatar" class="responsive-img left mll mrl">
 										<a href="$profilelink" class="black-text mvl pll">$!authUser.name</a>
 									</li>
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
