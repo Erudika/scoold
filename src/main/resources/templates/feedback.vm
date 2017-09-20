@@ -29,7 +29,9 @@
 					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
 					<input type="hidden" name="tags" class="ac-hidden" value="">
 				</div>
-				#getmessagebox("red white-text" $error.get("tags"))
+				<div class="pll mll">
+					#getmessagebox("red white-text" $error.get("tags"))
+				</div>
 
 				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
@@ -81,7 +83,7 @@
 				</div>
 				#else
 					<div class="mtl ptl center">
-						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn"
+						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn-large"
 									 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
 					</div>
 				#end

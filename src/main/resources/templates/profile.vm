@@ -142,6 +142,10 @@
 						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</h5>
 				#end
 
+				#if(!$showUser.user && $isMod)
+					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-warning"></i> &nbsp; $!lang.get("profile.deleted")</h5>
+				#end
+
 				#set($badges = $showUser.badgesMap)
 				#if (!$badges.isEmpty())
 					<span class="largeText grey-text text-darken-1" title=" $!lang.get('badges.title')"><i class="fa fa-star"></i>&nbsp;</span>

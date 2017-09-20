@@ -65,7 +65,7 @@
 					</div>
 				#else
 					<div class="mtl ptl center">
-							<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn"
+							<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn-large"
 								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
 					</div>
 				#end

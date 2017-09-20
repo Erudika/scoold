@@ -92,7 +92,7 @@ public class ProfileController {
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
-		model.addAttribute("gravatarPicture", utils.getGravatar(showUser.getUser().getEmail()));
+		model.addAttribute("gravatarPicture", utils.getGravatar(showUser));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);

@@ -1,12 +1,3 @@
-package com.erudika.scoold.controllers;
-
-import com.erudika.scoold.utils.ScooldUtils;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /*
  * Copyright 2013-2017 Erudika. https://erudika.com
@@ -25,6 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  * For issues and patches go to: https://github.com/erudika
  */
+package com.erudika.scoold.controllers;
+
+import com.erudika.scoold.utils.ScooldUtils;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *

@@ -32,7 +32,9 @@
 					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
 					<input type="hidden" name="tags" class="ac-hidden" value="">
 				</div>
-				#getmessagebox("red white-text" $error.get("tags"))
+				<div class="pll mll">
+					#getmessagebox("red white-text" $error.get("tags"))
+				</div>
 
 				<a href="#" class="next-div-toggle mll pll click2hide">
 					<i class="fa fa-map-marker"></i> $!lang.get("posts.location")

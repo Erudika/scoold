@@ -326,6 +326,14 @@ public final class ScooldUtils {
 		return "https://www.gravatar.com/avatar/" + Utils.md5(email) + "?size=400&d=retro";
 	}
 
+	public String getGravatar(Profile profile) {
+		if (profile == null || profile.getUser() == null) {
+			return "https://www.gravatar.com/avatar?d=retro&size=400";
+		} else {
+			return getGravatar(profile.getUser().getEmail());
+		}
+	}
+
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
 			HttpSession session = req.getSession(false);

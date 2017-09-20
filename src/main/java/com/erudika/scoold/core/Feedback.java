@@ -17,8 +17,6 @@
  */
 package com.erudika.scoold.core;
 
-import java.io.Serializable;
-
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
