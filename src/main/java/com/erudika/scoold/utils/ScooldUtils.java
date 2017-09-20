@@ -291,7 +291,7 @@ public final class ScooldUtils {
 					values = req.getParameterValues(cleanParam);
 					String firstValue = (values != null && values.length > 0) ? values[0] : null;
 					String separator = param.substring(param.length() - 1);
-					if (firstValue != null) {
+					if (!StringUtils.isBlank(firstValue)) {
 						data.put(cleanParam, Arrays.asList(firstValue.split(separator)));
 					}
 				} else {
