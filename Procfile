@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT  -jar target/*.jar
+web: java -Dserver.port=$PORT -XX:+UseCompressedOops -Xmx256m -Xss512k -jar target/*.jar
