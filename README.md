@@ -88,8 +88,6 @@ para.password_auth_enabled = false
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object
 para.admin_ident = "admin@domain.com"
-# system email address
-para.support_email = "support@scoold.com"
 # GA code
 para.google_analytics_id = "UA-123456-7"
 # enables syntax highlighting in posts
@@ -124,6 +122,9 @@ Scoold uses the JavaMail API to send emails. If you want Scoold to send notifica
 following SMTP settings to your config file:
 
 ```ini
+# system email address
+para.support_email = "support@scoold.com"
+
 para.mail.host = "smtp.example.com"
 para.mail.port = 587
 para.mail.username = "user@example.com"

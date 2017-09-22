@@ -34,8 +34,8 @@
 			"value": "Scoold"
 		},
 		"para_host_url": {
-			"description": "the URL where Scoold is hosted, e.g. https://scoold.yourhost.com",
-			"value": "/"
+			"description": "The public URL of Scoold (affects CSP header), e.g. https://scoold.yourhost.com ",
+			"value": "https://scoold.herokuapp.com"
 		},
 		"para_core_package_name": {
 			"description": "Core package name.",
@@ -52,6 +52,31 @@
 		"para_meta_description": {
 			"description": "Description meta tag value.",
 			"value": "Scoold is an open source Q&A platform written in Java."
+		},
+		"para_support_email": {
+			"description": "System email address.",
+			"required": false,
+			"value": "support@scoold.com"
+		},
+		"para_mail_host": {
+			"description": "SMTP hostname",
+			"required": false,
+			"value": ""
+		},
+		"para_mail_username": {
+			"description": "SMTP username",
+			"required": false,
+			"value": ""
+		},
+		"para_mail_password": {
+			"description": "SMTP password",
+			"required": false,
+			"value": ""
+		},
+		"para_mail_port": {
+			"description": "SMTP server port",
+			"required": false,
+			"value": "587"
 		},
 		"para_gmaps_api_key": {
 			"description": "Google Maps API key for showing a map for geolocation filtering of posts.",
@@ -169,7 +194,7 @@
 			"value": ""
 		},
 		"para_csp_header_enabled": {
-			"description": "Enable or disable the Content-Security-Policy header.",
+			"description": "Enable or disable the Content-Security-Policy header. Enable this in production for better security.",
 			"required": false,
 			"value": "true"
 		},
