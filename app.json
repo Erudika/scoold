@@ -12,9 +12,6 @@
 	"website": "https://scoold.com/",
 	"repository": "https://github.com/Erudika/scoold",
 	"logo": "https://static.scoold.com/logosq.svg",
-	"scripts": {
-		"postdeploy": "java -Dserver.port=$PORT -jar target/*.jar"
-	},
 	"env": {
 		"para_access_key": {
 			"description": "Your Para access key.",
@@ -36,6 +33,10 @@
 			"description": "The name of the app.",
 			"value": "Scoold"
 		},
+		"para_host_url": {
+			"description": "the URL where Scoold is hosted, e.g. https://scoold.yourhost.com",
+			"value": "/"
+		},
 		"para_core_package_name": {
 			"description": "Core package name.",
 			"value": "com.erudika.scoold.core"
@@ -54,6 +55,7 @@
 		},
 		"para_gmaps_api_key": {
 			"description": "Google Maps API key for showing a map for geolocation filtering of posts.",
+			"required": false,
 			"value": ""
 		},
 		"para_admin_ident": {
