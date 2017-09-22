@@ -30,6 +30,7 @@ import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -323,7 +324,35 @@ public abstract class Post extends Sysprop {
 		if (isReply()) {
 			return Collections.emptyList();
 		}
-		return client().getChildren(this, Utils.type(Reply.class), pager);
+
+		List<Reply> answers = client().getChildren(this, Utils.type(Reply.class), pager);
+		// we try to find the accepted answer inside the answers list, in not there, read it from db
+		if (pager.getPage() < 2 && !StringUtils.isBlank(getAnswerid())) {
+			Reply acceptedAnswer = null;
+			for (Iterator<Reply> iterator = answers.iterator(); iterator.hasNext();) {
+				Reply answer = iterator.next();
+				if (getAnswerid().equals(answer.getId())) {
+					acceptedAnswer = answer;
+					iterator.remove();
+					break;
+				}
+			}
+			if (acceptedAnswer == null) {
+				acceptedAnswer = client().read(getAnswerid());
+			}
+			if (acceptedAnswer != null) {
+				ArrayList<Reply> sortedAnswers = new ArrayList<Reply>(answers.size() + 1);
+				if (pager.isDesc()) {
+					sortedAnswers.add(acceptedAnswer);
+					sortedAnswers.addAll(answers);
+				} else {
+					sortedAnswers.addAll(answers);
+					sortedAnswers.add(acceptedAnswer);
+				}
+				return sortedAnswers;
+			}
+		}
+		return answers;
 	}
 
 	@JsonIgnore
