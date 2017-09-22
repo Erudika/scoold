@@ -48,14 +48,14 @@
 
 							<input type="hidden" name="answer" value="true">
 
-							#if(!$scooldUtils.isMine($showPost, $authUser))
-								#if($showPost.followers && $showPost.followers.containsKey($authUser.user.id))
-									<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked">
-								#else
-									<input type="checkbox" class="filled-in" id="follow-thread-check">
-								#end
-								<label for="follow-thread-check"><strong class="mediumText">$!lang.get('posts.emailme')</strong></label>
+							#if($showPost.followers && $showPost.followers.containsKey($authUser.user.id))
+								<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked">
+							#elseif(($authUser.replyEmailsEnabled && $scooldUtils.isMine($showPost, $authUser)))
+								<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked" disabled>
+							#else
+								<input type="checkbox" class="filled-in" id="follow-thread-check">
 							#end
+							<label for="follow-thread-check"><strong class="mediumText">$!lang.get('posts.emailme')</strong></label>
 
 							<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 							<button class="btn mtl waves-effect waves-light" type="submit">
