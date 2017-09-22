@@ -281,7 +281,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col m10 l11">
+		<div class="col s12 m10 l11">
 			<div class="qstatsbox hide-on-large-only">
 				<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 				<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
