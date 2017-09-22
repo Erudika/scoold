@@ -33,6 +33,7 @@ import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -101,20 +102,24 @@ public class ProfileController {
     }
 
 	@PostMapping(path = "/{id}", params = {"makemod"})
-    public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req) {
+    public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {
 			Profile showUser = utils.getParaClient().read(Profile.id(id));
 			if (showUser != null) {
 				boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
-				boolean isShowUserMod = User.Groups.MODS.toString().equals(showUser.getGroups());
-				if (makemod && utils.isAdmin(authUser) && !isShowUserAdmin) {
-					showUser.setGroups(isShowUserMod ? USERS.toString() : MODS.toString());
+				if (utils.isAdmin(authUser) && !isShowUserAdmin) {
+					showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
 					showUser.update();
 				}
 			}
 		}
-        return "redirect:" + profilelink + "/" + id;
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + profilelink + "/" + id;
+		}
     }
 
 	@PostMapping("/{id}")

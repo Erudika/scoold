@@ -405,7 +405,9 @@ $(function () {
 		var dis = $(this);
 		$.post(dis.attr("href"));
 		dis.siblings(".make-mod-btn.hide").removeClass("hide");
+		$(".moderator-icon").toggleClass("hide");
 		dis.addClass("hide");
+		return false;
 	});
 
 	/****************************************************

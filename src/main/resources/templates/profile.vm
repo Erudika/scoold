@@ -65,10 +65,9 @@
 							<i class="fa fa-asterisk fa-2x orange-text mhs tooltipped"
 								 data-delay="0" data-tooltip="$!lang.get('admin')"></i>
 						#end
-						#if ($showUser.groups == "mods")
-							<i class="fa fa-dot-circle-o fa-2x orange-text mhs tooltipped"
-								 data-delay="0" data-tooltip="$!lang.get('mod')"></i>
-						#end
+						#if ($showUser.groups == "mods")#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
+						<i class="fa fa-dot-circle-o fa-2x orange-text mhs tooltipped moderator-icon ${hideModIcon}"
+							 data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 					</div>
 				</div>
 			</div>
