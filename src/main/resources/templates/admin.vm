@@ -28,7 +28,7 @@
 			<tr>
 				<td><code>$conf.key</code>:</td>
 				<td><code class="green-text text-darken-2">
-						#if($conf.key.contains("secret"))
+						#if(($conf.key.contains("secret") || $conf.key.contains("password")) && $conf.value && !$conf.value.isEmpty())
 							***************************
 						#else
 							$!conf.value
