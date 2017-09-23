@@ -84,6 +84,8 @@ para.access_key = "app:scoold"
 para.secret_key = "*****************"
 # enable or disable email&password authentication
 para.password_auth_enabled = false
+# if false, commenting is allowed after 100+ reputation
+para.new_users_can_comment = true
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object

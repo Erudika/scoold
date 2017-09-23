@@ -268,7 +268,9 @@ public final class ScooldUtils {
 	}
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {
-		return isAuthenticated(req) && (authUser.hasBadge(ENTHUSIAST) || isMod(authUser));
+		return isAuthenticated(req) && (authUser.hasBadge(ENTHUSIAST) ||
+				Config.getConfigBoolean("new_users_can_comment", true) || 
+				isMod(authUser));
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {
