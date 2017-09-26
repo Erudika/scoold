@@ -2,7 +2,7 @@
 	<h1>$!lang.get("terms.title")</h1>
 	<hr>
 	<p>
-		The following terms and conditions govern all use of the Scoold.com website and all content, services and products available at or through the website (taken together, the Website). The Website is owned and operated by <a href="https://erudika.com" target="_blank">Erudika, LTD.</a> (&quot;Erudika&quot;). The Website is offered subject to your acceptance without modification of all of the terms and conditions contained herein and all other operating rules, policies (including, without limitation, the <a href="$privacylink">Privacy Policy</a>) and procedures that may be published from time to time on this Site by Erudika (collectively, the &quot;Agreement&quot;).
+		The following terms and conditions govern all use of the Scoold.com website and all content, services and products available at or through the website (taken together, the Website). The Website is owned and operated by <a href="https://erudika.com">Erudika, LTD.</a> (&quot;Erudika&quot;). The Website is offered subject to your acceptance without modification of all of the terms and conditions contained herein and all other operating rules, policies (including, without limitation, the <a href="$privacylink">Privacy Policy</a>) and procedures that may be published from time to time on this Site by Erudika (collectively, the &quot;Agreement&quot;).
 	</p>
 	<p>
 		Please read this Agreement carefully before accessing or using the Website. By accessing or using any part of the web site, you agree to become bound by the terms and conditions of this agreement. If you do not agree to all the terms and conditions of this agreement, then you may not access the Website or use any services. If these terms and conditions are considered an offer by Erudika, acceptance is expressly limited to these terms. The Website is available only to individuals who are at least 13 years old.
@@ -49,7 +49,7 @@
 		</li>
 	</ol>
 	<p>
-		If you post any Content to this Website, it will be made available under the terms of the <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-Sharealike</a> license.
+		If you post any Content to this Website, it will be made available under the terms of the <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-Sharealike</a> license.
 	</p>
 	<p>
 		If you delete Content, Erudika will use reasonable efforts to remove it from the Website, but you acknowledge that caching or references to the Content may not be made immediately unavailable. Without limiting any of those representations or warranties, Erudika has the right (though not the obligation) to, in Erudika's sole discretion (i) refuse or remove any content that, in Erudika's reasonable opinion, violates any Erudika policy or is in any way harmful or objectionable, or (ii) terminate or deny access to and use of the Website to any individual or entity for any reason, in Erudika's sole discretion.
@@ -132,6 +132,6 @@
 		This Agreement constitutes the entire agreement between Erudika and you concerning the subject matter hereof, and they may only be modified by a written amendment signed by an authorized executive of Erudika, or by the posting by Erudika of a revised version. If any part of this Agreement is held invalid or unenforceable, that part will be construed to reflect the parties' original intent, and the remaining portions will remain in full force and effect. A waiver by either party of any term or condition of this Agreement or any breach thereof, in any one instance, will not waive such term or condition or any subsequent breach thereof. You may assign your rights under this Agreement to any party that consents to, and agrees to be bound by, its terms and conditions; Erudika may assign its rights under this Agreement without condition. This Agreement will be binding upon and will inure to the benefit of the parties, their successors and permitted assigns.
 	</p>
 
-	<i class="lightgray">Originally published by Automattic, Inc. as the WordPress.com Terms of Service and made available by them under the <a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">Creative Commons Sharealike</a> License. This modified version is also made available under the terms of the same license. If you have any questions regarding this document, please send them to <a href="mailto:contact@scoold.com">contact@scoold.com</a>.</i>
+	<i class="lightgray">Originally published by Automattic, Inc. as the WordPress.com Terms of Service and made available by them under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Sharealike</a> License. This modified version is also made available under the terms of the same license. If you have any questions regarding this document, please send them to <a href="mailto:contact@scoold.com">contact@scoold.com</a>.</i>
 
 </div>

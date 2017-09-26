@@ -168,7 +168,7 @@
 						<div class="col l6 s12">
 							<h5 class="white-text">
 								#if($showBranding)
-									Powered by <a href="https://paraio.com" target="_blank">
+									Powered by <a href="https://paraio.com">
 										<img src="/images/paradark.svg" width="100" alt="Para logo" class="para-logo-footer"></a>
 								#end
 							</h5>
@@ -183,7 +183,7 @@
 							<div class="pvl white-text">
 								#if($showBranding)
 									Made with <i class="fa fa-coffee"></i> by
-									<a href="https://erudika.com" target="_blank">Erudika</a>
+									<a href="https://erudika.com"><b>Erudika</b></a>
 								#end
 							</div>
 							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey right capitalize">
@@ -195,7 +195,7 @@
 				<div class="footer-copyright">
 					<div class="container">
 						#set($_liclink = $utils.formatMessage("$!lang.get('license')",
-						'<a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
+						'<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
 						<i class="fa fa-creative-commons"></i> $_liclink
 					</div>
 				</div>
