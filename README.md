@@ -12,6 +12,8 @@ Scoold can run on Heroku or any other PaaS. It's lightweight (~4000 LOC) - the b
 [Para](https://github.com/Erudika/para). Scoold does not require a database, and the controller logic is really simple
 because all the heavy lifting is delegated to Para. This makes the code easy to read and can be learned quickly by junior developers.
 
+**This project is fully funded and supported by [Erudika](https://erudika.com) - an independent, bootstrapped company.**
+
 ### Features
 
 - Full featured Q&A platform
