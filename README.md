@@ -120,6 +120,14 @@ style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com stati
 img-src 'self' https: data:; report-uri /reports/cspv
 ```
 
+**Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
+
+### Serving static files from a CDN
+
+Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
+`para.cdn_url` to enable serving those files from a CDN. The value of the CDN URL will override `para.host_url` and
+must not end in "/".
+
 ### SMTP configuration
 
 Scoold uses the JavaMail API to send emails. If you want Scoold to send notification emails you should add the

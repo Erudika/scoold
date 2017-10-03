@@ -35,7 +35,7 @@
 		},
 		"para_host_url": {
 			"description": "The public URL of Scoold (affects CSP header), e.g. https://scoold.yourhost.com ",
-			"value": "https://scoold.herokuapp.com"
+			"value": ""
 		},
 		"para_core_package_name": {
 			"description": "Core package name.",
