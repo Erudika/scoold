@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.utils;
 
-import com.eaio.uuid.UUID;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
@@ -141,7 +140,7 @@ public final class ScooldUtils {
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
 				Sysprop s = pc.read(user.getIdentifier());
 				if (s != null) {
-					String token = Utils.base64encURL(new UUID().toString().getBytes());
+					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 					s.addProperty(Config._EMAIL_TOKEN, token);
 					pc.update(s);
 					token = HOST_URL + signinlink + "/register?id=" + user.getId() + "&token=" + token;
@@ -269,7 +268,7 @@ public final class ScooldUtils {
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {
 		return isAuthenticated(req) && (authUser.hasBadge(ENTHUSIAST) ||
-				Config.getConfigBoolean("new_users_can_comment", true) || 
+				Config.getConfigBoolean("new_users_can_comment", true) ||
 				isMod(authUser));
 	}
 
