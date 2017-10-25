@@ -185,7 +185,7 @@
 							</div>
 						</div>
 						<div class="col m8">
-							<img src="https://static.scoold.com/scoold-grab-site.png" width="900" height="" alt="Scoold screenshot"/>
+							<img src="https://static.scoold.com/scoold-grab-site.png" width="900" height="" class="responsive-img" alt="Scoold screenshot"/>
 						</div>
 					</div>
 				</div>
@@ -286,15 +286,17 @@
 
 			<section id="instructions">
 				<div class="container pvl center-align">
-					<h3><span class="white phl">Getting started</span></h3>
-					<div class="pvl">
+					<div class="white">
+						<h3><span class="phl">Getting started</span></h3>
+					</div>
+					<div class="white pvl">
 						<ul>
-							<li class="mvm"><span class="white pam mediumText"><b>1.</b> Create a new app on <a href="https://paraio.com">ParaIO.com</a> and save the access keys <sup>1</sup></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>2.</b> Create <tt>application.conf</tt> and configure Scoold to connect to Para <sup>2</sup></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>3.</b> Run Scoold with <tt>java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar</tt></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>4.</b> Open <tt>http://localhost:8000</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>1.</b> Create a new app on <a href="https://paraio.com">ParaIO.com</a> and save the access keys <sup>1</sup></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>2.</b> Create <tt>application.conf</tt> and configure Scoold to connect to Para <sup>2</sup></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>3.</b> Run Scoold with <tt>java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>4.</b> Open <tt>http://localhost:8000</tt></span></li>
 						</ul>
-						<p class="white pam">
+						<p class="pam">
 							<sup>1</sup> Alternatively, you can <a href="https://paraio.org/docs/#001-intro">start a local instance of Para</a> <br>
 							<sup>2</sup> When deploying to Heroku, config variables are set through the web interface and must not contain dots ".", e.g.
 							<tt>para.endpoint</tt> becomes <tt>para_endpoint</tt>. For other deployments
@@ -302,14 +304,16 @@
 							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md">README.md</a></tt> for more information.</b>
 						</p>
 					</div>
-					<h3><span class="white phl">Customizing the UI</span></h3>
-					<div class="pvl white">
+					<div class="white">
+						<h3><span class="phl">Customizing the UI</span></h3>
+					</div>
+					<div class="white pvl">
 						<p class="mediumText"><b>1.</b> First, clone the project with <code>git clone https://github.com/Erudika/scoold.git</code></p>
 						<ul>
-							<li class="mvm"><span class="white pam mediumText"><b>HTML</b> templates are in <tt>src/main/resources/templates/</tt></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>CSS</b> stylesheets can be found in <tt>src/main/resources/static/styles/</tt></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>JavaScript</b> files can be found in <tt>src/main/resources/static/scripts/</tt></span></li>
-							<li class="mvm"><span class="white pam mediumText"><b>Images</b> are in located in <tt>src/main/resources/static/images/</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>HTML</b> templates are in <tt>src/main/resources/templates/</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>CSS</b> stylesheets can be found in <tt>src/main/resources/static/styles/</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>JavaScript</b> files can be found in <tt>src/main/resources/static/scripts/</tt></span></li>
+							<li class="mvm"><span class="pam mediumText"><b>Images</b> are in located in <tt>src/main/resources/static/images/</tt></span></li>
 						</ul>
 						<p class="mediumText pvm"><b>2.</b> To see you changes, run Scoold locally with <code>mvn spring-boot:run</code></p>
 						<p class="mediumText"><b>3.</b> When you are done, run <code>mvn clean install</code> and your new JAR file will be in <code>target/scoold.jar</code></p>
