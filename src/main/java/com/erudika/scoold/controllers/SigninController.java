@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
@@ -25,7 +24,6 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.CSRF_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
@@ -39,6 +37,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 
 @Controller
 public class SigninController {
@@ -47,18 +46,18 @@ public class SigninController {
 	private final ParaClient pc;
 
 	@Inject
-    public SigninController(ScooldUtils utils) {
+	public SigninController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-    }
+	}
 
 	@GetMapping("/signin")
-    public String get(@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
+	public String get(@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			return "redirect:" + HOMEPAGE;
 		}
-		if (!HOMEPAGE.equals(returnto) && !signinlink.equals(returnto)) {
+		if (!HOMEPAGE.equals(returnto) && !SIGNINLINK.equals(returnto)) {
 			HttpUtils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
@@ -74,33 +73,33 @@ public class SigninController {
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
 		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
 		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", false));
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping(path = "/signin", params = {"access_token", "provider"})
-    public String signinGet(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
+	public String signinGet(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
 			HttpServletRequest req, HttpServletResponse res) {
 		return getAuth(provider, accessToken, req, res);
 	}
 
 	@PostMapping(path = "/signin", params = {"access_token", "provider"})
-    public String signinPost(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
+	public String signinPost(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
 			HttpServletRequest req, HttpServletResponse res) {
 		return getAuth(provider, accessToken, req, res);
 	}
 
 	@GetMapping("/signin/success")
-    public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
+	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
 			HttpUtils.setStateParam(Config.AUTH_COOKIE, jwt, req, res, true);
 		} else {
-			return "redirect:" + signinlink + "?code=3&error=true";
+			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
 		return "redirect:" + getBackToUrl(req);
 	}
 
 	@GetMapping(path = "/signin/register")
-    public String register(@RequestParam(name = "verify", required = false, defaultValue = "false") Boolean verify,
+	public String register(@RequestParam(name = "verify", required = false, defaultValue = "false") Boolean verify,
 			@RequestParam(name = "id", required = false) String id,
 			@RequestParam(name = "token", required = false) String token,
 			HttpServletRequest req, Model model) {
@@ -117,14 +116,14 @@ public class SigninController {
 			if (verified) {
 				model.addAttribute("verified", verified);
 			} else {
-				return "redirect:" + signinlink;
+				return "redirect:" + SIGNINLINK;
 			}
 		}
 		return "base";
 	}
 
 	@PostMapping("/signin/register")
-    public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
+	public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
 			HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
 			if (pc.read(email) == null) {
@@ -141,21 +140,21 @@ public class SigninController {
 				return "base";
 			}
 		}
-        return "redirect:" + signinlink + "/register?verify=true";
-    }
+		return "redirect:" + SIGNINLINK + "/register?verify=true";
+	}
 
 	@PostMapping("/signout")
-    public String post(HttpServletRequest req, HttpServletResponse res) {
+	public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			utils.clearSession(req, res);
-			return "redirect:" + signinlink + "?code=5&success=true";
+			return "redirect:" + SIGNINLINK + "?code=5&success=true";
 		}
-        return "redirect:" + HOMEPAGE;
-    }
+		return "redirect:" + HOMEPAGE;
+	}
 
 	@ResponseBody
 	@GetMapping("/scripts/globals.js")
-    public String globals(HttpServletRequest req, HttpServletResponse res) {
+	public String globals(HttpServletRequest req, HttpServletResponse res) {
 		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
@@ -178,7 +177,7 @@ public class SigninController {
 				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 			} else {
 				verifyEmailIfNecessary(provider, "Anonymous", accessToken.split(":")[0], req);
-				return "redirect:" + signinlink + "?code=3&error=true";
+				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 		}
 		return "redirect:" + getBackToUrl(req);

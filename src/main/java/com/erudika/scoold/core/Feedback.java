@@ -36,8 +36,10 @@ public class Feedback extends Post {
 		return true;
 	}
 
-	public static enum FeedbackType{
-		BUG, QUESTION, SUGGESTION;
+	public enum FeedbackType {
+		BUG,
+		QUESTION,
+		SUGGESTION;
 
 		public String toString() {
 			return super.toString().toLowerCase();

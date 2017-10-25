@@ -51,7 +51,7 @@ public class CsrfFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		final HttpServletRequest request = (HttpServletRequest) req;
-        final HttpServletResponse response = (HttpServletResponse) res;
+		final HttpServletResponse response = (HttpServletResponse) res;
 		boolean isCSPReportRequest = request.getRequestURI().startsWith("/reports/cspv");
 
 		if ("POST".equals(request.getMethod()) && !isCSPReportRequest) {

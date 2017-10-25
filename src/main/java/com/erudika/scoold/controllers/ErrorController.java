@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorController {
 
-    private final ScooldUtils utils;
+	private final ScooldUtils utils;
 
 	@Inject
 	public ErrorController(ScooldUtils utils) {
@@ -41,12 +41,12 @@ public class ErrorController {
 	}
 
 	@RequestMapping("/error/{code}")
-    public String get(@PathVariable String code, HttpServletRequest req, Model model) {
+	public String get(@PathVariable String code, HttpServletRequest req, Model model) {
 		model.addAttribute("path", "error.vm");
 		model.addAttribute("title", utils.getLang(req).get("error.title"));
-        model.addAttribute("status", req.getAttribute("javax.servlet.error.status_code"));
-        model.addAttribute("reason", req.getAttribute("javax.servlet.error.message"));
-        model.addAttribute("code", code);
-        return "base";
-    }
+		model.addAttribute("status", req.getAttribute("javax.servlet.error.status_code"));
+		model.addAttribute("reason", req.getAttribute("javax.servlet.error.message"));
+		model.addAttribute("code", code);
+		return "base";
+	}
 }

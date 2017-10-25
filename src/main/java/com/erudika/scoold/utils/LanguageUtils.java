@@ -393,7 +393,9 @@ public class LanguageUtils {
 				logger.info("Could not read language file " + file + ": ", e);
 			} finally {
 				try {
-					if (ins != null) ins.close();
+					if (ins != null) {
+						ins.close();
+					}
 				} catch (IOException ex) {
 					logger.error(null, ex);
 				}
@@ -425,7 +427,9 @@ public class LanguageUtils {
 				logger.error("Could not write language to file: ", ex);
 			} finally {
 				try {
-					if (fos != null) fos.close();
+					if (fos != null) {
+						fos.close();
+					}
 				} catch (IOException ex) {
 					logger.error(null, ex);
 				}

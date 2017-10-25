@@ -48,7 +48,7 @@ public class TagsController {
 	}
 
 	@GetMapping
-    public String get(@RequestParam(required = false, defaultValue = "count") String sortby,
+	public String get(@RequestParam(required = false, defaultValue = "count") String sortby,
 			HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
@@ -59,8 +59,8 @@ public class TagsController {
 		model.addAttribute("tagsSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("tagslist", tagslist);
-        return "base";
-    }
+		return "base";
+	}
 
 	@ResponseBody
 	@GetMapping(path = "/{keyword}", produces = MediaType.APPLICATION_JSON)

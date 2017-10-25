@@ -97,28 +97,28 @@ public class ScooldServer {
 	public static final int PROFESSOR_IFHAS = Config.getConfigInt("professor_ifhas", 5000);
 	public static final int GEEK_IFHAS = Config.getConfigInt("geek_ifhas", 9000);
 
-	public static final String peoplelink = HOMEPAGE + "people";
-	public static final String profilelink = HOMEPAGE + "profile";
-	public static final String searchlink = HOMEPAGE + "search";
-	public static final String signinlink = HOMEPAGE + "signin";
-	public static final String signoutlink = HOMEPAGE + "signout";
-	public static final String aboutlink = HOMEPAGE + "about";
-	public static final String privacylink = HOMEPAGE + "privacy";
-	public static final String termslink = HOMEPAGE + "terms";
-	public static final String tagslink = HOMEPAGE + "tags";
-	public static final String settingslink = HOMEPAGE + "settings";
-	public static final String translatelink = HOMEPAGE + "translate";
-	public static final String reportslink = HOMEPAGE + "reports";
-	public static final String adminlink = HOMEPAGE + "admin";
-	public static final String votedownlink = HOMEPAGE + "votedown";
-	public static final String voteuplink = HOMEPAGE + "voteup";
-	public static final String questionlink = HOMEPAGE + "question";
-	public static final String questionslink = HOMEPAGE + "questions";
-	public static final String commentlink = HOMEPAGE + "comment";
-	public static final String postlink = HOMEPAGE + "post";
-	public static final String revisionslink = HOMEPAGE + "revisions";
-	public static final String feedbacklink = HOMEPAGE + "feedback";
-	public static final String languageslink = HOMEPAGE + "languages";
+	public static final String PEOPLELINK = HOMEPAGE + "people";
+	public static final String PROFILELINK = HOMEPAGE + "profile";
+	public static final String SEARCHLINK = HOMEPAGE + "search";
+	public static final String SIGNINLINK = HOMEPAGE + "signin";
+	public static final String SIGNOUTLINK = HOMEPAGE + "signout";
+	public static final String ABOUTLINK = HOMEPAGE + "about";
+	public static final String PRIVACYLINK = HOMEPAGE + "privacy";
+	public static final String TERMSLINK = HOMEPAGE + "terms";
+	public static final String TAGSLINK = HOMEPAGE + "tags";
+	public static final String SETTINGSLINK = HOMEPAGE + "settings";
+	public static final String TRANSLATELINK = HOMEPAGE + "translate";
+	public static final String REPORTSLINK = HOMEPAGE + "reports";
+	public static final String ADMINLINK = HOMEPAGE + "admin";
+	public static final String VOTEDOWNLINK = HOMEPAGE + "votedown";
+	public static final String VOTEUPLINK = HOMEPAGE + "voteup";
+	public static final String QUESTIONLINK = HOMEPAGE + "question";
+	public static final String QUESTIONSLINK = HOMEPAGE + "questions";
+	public static final String COMMENTLINK = HOMEPAGE + "comment";
+	public static final String POSTLINK = HOMEPAGE + "post";
+	public static final String REVISIONSLINK = HOMEPAGE + "revisions";
+	public static final String FEEDBACKLINK = HOMEPAGE + "feedback";
+	public static final String LANGUAGESLINK = HOMEPAGE + "languages";
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
@@ -154,7 +154,7 @@ public class ScooldServer {
 		// JavaMail configuration properties
 		System.setProperty("spring.mail.host", Config.getConfigParam("mail.host", ""));
 		System.setProperty("spring.mail.port", String.valueOf(Config.getConfigInt("mail.port", 587)));
-		System.setProperty("spring.mail.username", Config.getConfigParam("mail.username" ,""));
+		System.setProperty("spring.mail.username", Config.getConfigParam("mail.username", ""));
 		System.setProperty("spring.mail.password", Config.getConfigParam("mail.password", ""));
 		System.setProperty("spring.mail.properties.mail.smtp.starttls.enable",
 				Boolean.toString(Config.getConfigBoolean("mail.tls", true)));

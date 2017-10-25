@@ -37,7 +37,7 @@ public class Report extends Sysprop {
 	@Stored private String solution;
 	@Stored private Boolean closed;
 
-	public static enum ReportType{
+	public enum ReportType {
 		SPAM, OFFENSIVE, DUPLICATE, INCORRECT, OTHER;
 
 		public String toString() {
@@ -118,7 +118,9 @@ public class Report extends Sysprop {
 	}
 
 	public void setSubType(ReportType subType) {
-		if (subType != null) this.subType = subType.name();
+		if (subType != null) {
+			this.subType = subType.name();
+		}
 	}
 
 	public void delete() {

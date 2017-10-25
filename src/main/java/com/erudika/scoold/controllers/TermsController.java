@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/terms")
 public class TermsController {
 
-    private final ScooldUtils utils;
+	private final ScooldUtils utils;
 
 	@Inject
 	public TermsController(ScooldUtils utils) {
@@ -41,9 +41,9 @@ public class TermsController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "terms.vm");
 		model.addAttribute("title", utils.getLang(req).get("terms.title"));
-        return "base";
-    }
+		return "base";
+	}
 }

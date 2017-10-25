@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.Sysprop;
@@ -83,9 +82,13 @@ public class Comment extends Sysprop {
 	}
 
 	public String create() {
-		if (StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) return null;
+		if (StringUtils.isBlank(comment) || StringUtils.isBlank(getParentid())) {
+			return null;
+		}
 		int count = client().getCount(getType(), Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
-		if (count > MAX_COMMENTS_PER_ID) return null;
+		if (count > MAX_COMMENTS_PER_ID) {
+			return null;
+		}
 		Comment c = client().create(this);
 		if (c != null) {
 			setId(c.getId());
@@ -107,8 +110,8 @@ public class Comment extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equals(getComment(), ((Comment) obj).getComment()) &&
-				Objects.equals(getCreatorid(), ((Comment) obj).getCreatorid());
+		return Objects.equals(getComment(), ((Comment) obj).getComment())
+				&& Objects.equals(getCreatorid(), ((Comment) obj).getCreatorid());
 	}
 
 	public int hashCode() {

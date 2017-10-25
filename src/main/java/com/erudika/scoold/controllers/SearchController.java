@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
@@ -72,7 +71,7 @@ public class SearchController {
 	}
 
 	@GetMapping({"/search/{type}/{query}", "/search"})
-    public String get(@PathVariable(required = false) String type, @PathVariable(required = false) String query,
+	public String get(@PathVariable(required = false) String type, @PathVariable(required = false) String query,
 			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
 		List<Profile> userlist = new ArrayList<Profile>();
 		List<Post> questionlist = new ArrayList<Post>();
@@ -112,11 +111,11 @@ public class SearchController {
 		model.addAttribute("answerlist", answerlist);
 		model.addAttribute("feedbacklist", feedbacklist);
 
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping(path = "/feed.xml", produces = MediaType.APPLICATION_ATOM_XML)
-    public void feed(HttpServletRequest req, Writer writer) {
+	public void feed(HttpServletRequest req, Writer writer) {
 		try {
 			new SyndFeedOutput().output(getFeed(), writer);
 		} catch (Exception ex) {
@@ -126,15 +125,15 @@ public class SearchController {
 
 	private SyndFeed getFeed() throws IOException, FeedException {
 		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
-        List<SyndEntry> entries = new ArrayList<SyndEntry>();
+		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		String baseurl = Config.getConfigParam("base_url", "https://scoold.com");
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("atom_1.0");
 		feed.setTitle("Scoold - Recent questions");
-        feed.setLink(baseurl);
-        feed.setDescription("A summary of the most recent questions asked on Scoold.");
+		feed.setLink(baseurl);
+		feed.setDescription("A summary of the most recent questions asked on Scoold.");
 
 		for (Post post : questions) {
 			SyndEntry entry;
@@ -147,7 +146,7 @@ public class SearchController {
 			entry.setPublishedDate(new Date(post.getTimestamp()));
 			entry.setAuthor(baseurl.concat("profile/").concat(post.getCreatorid()));
 			entry.setUri(baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).
-					replaceAll("\\p{Z}+","-").toLowerCase()));
+					replaceAll("\\p{Z}+", "-").toLowerCase()));
 
 			description = new SyndContentImpl();
 			description.setType("text/html");
@@ -157,6 +156,6 @@ public class SearchController {
 			entries.add(entry);
 		}
 		feed.setEntries(entries);
-        return feed;
-    }
+		return feed;
+	}
 }

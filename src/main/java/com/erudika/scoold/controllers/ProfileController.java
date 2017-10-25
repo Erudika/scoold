@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.User;
@@ -24,8 +23,6 @@ import static com.erudika.para.core.User.Groups.USERS;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.profilelink;
-import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
@@ -42,6 +39,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.PROFILELINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 
 /**
  *
@@ -59,9 +58,9 @@ public class ProfileController {
 	}
 
 	@GetMapping({"", "/{id}/**"})
-    public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
+	public String get(@PathVariable(required = false) String id, HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req) && StringUtils.isBlank(id)) {
-			return "redirect:" + signinlink + "?returnto=" + profilelink;
+			return "redirect:" + SIGNINLINK + "?returnto=" + PROFILELINK;
 		}
 		Profile authUser = utils.getAuthUser(req);
 		Profile showUser;
@@ -77,7 +76,7 @@ public class ProfileController {
 		}
 
 		if (showUser == null || !ParaObjectUtils.typesMatch(showUser)) {
-			return "redirect:" + profilelink;
+			return "redirect:" + PROFILELINK;
 		}
 		Pager itemcount1 = utils.getPager("page1", req);
 		Pager itemcount2 = utils.getPager("page2", req);
@@ -98,11 +97,11 @@ public class ProfileController {
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);
 		model.addAttribute("answerslist", answerslist);
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping(path = "/{id}", params = {"makemod"})
-    public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req, HttpServletResponse res) {
+	public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {
 			Profile showUser = utils.getParaClient().read(Profile.id(id));
@@ -118,12 +117,12 @@ public class ProfileController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + profilelink + "/" + id;
+			return "redirect:" + PROFILELINK + "/" + id;
 		}
-    }
+	}
 
 	@PostMapping("/{id}")
-    public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
+	public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String website,
 			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
@@ -158,8 +157,8 @@ public class ProfileController {
 				showUser.update();
 			}
 		}
-		return "redirect:" + profilelink;
-    }
+		return "redirect:" + PROFILELINK;
+	}
 
 	private boolean isMyid(Profile authUser, String id) {
 		return authUser != null && authUser.getId().equals(id);
@@ -173,10 +172,10 @@ public class ProfileController {
 		if (showUser == null) {
 			return "";
 		}
-		return showUser.getVotes() + " points, " +
-				showUser.getBadgesMap().size() + " badges, " +
-				questions + " questions, " +
-				answers + " answers " +
-				Utils.abbreviate(showUser.getAboutme(), 150);
+		return showUser.getVotes() + " points, "
+				+ showUser.getBadgesMap().size() + " badges, "
+				+ questions + " questions, "
+				+ answers + " answers "
+				+ Utils.abbreviate(showUser.getAboutme(), 150);
 	}
 }

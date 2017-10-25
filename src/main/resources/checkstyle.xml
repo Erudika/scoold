@@ -26,14 +26,14 @@
 		</module>
 
 		<!--Checks for Javadoc comments.-->
-		<module name="JavadocType"/>
+<!--		<module name="JavadocType"/>
 		<module name="JavadocStyle"/>
 		<module name="JavadocMethod">
 			<property name="scope" value="public"/>
 		</module>
 		<module name="JavadocVariable">
 			<property name="scope" value="public"/>
-		</module>
+		</module>-->
 
 		<!--Checks for Naming Conventions.-->
 		<module name="ConstantName">
@@ -51,7 +51,7 @@
 		<module name="TypeName"/>
 
 		<!--Checks for imports-->
-		<module name="AvoidStarImport"/>
+		<!--<module name="AvoidStarImport"/>-->
 		<module name="IllegalImport"/>
 		<module name="RedundantImport"/>
 		<module name="UnusedImports"/>

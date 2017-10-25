@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.core;
 
 import com.erudika.para.core.Tag;
@@ -45,6 +44,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 public abstract class Post extends Sysprop {
+
 	private static final long serialVersionUID = 1L;
 
 	@Stored @NotBlank @Size(min = 2, max = 20000)
@@ -119,13 +119,13 @@ public abstract class Post extends Sysprop {
 		this.deletereportid = deletereportid;
 	}
 
-    public String getLocation() {
-        return location;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
 	public List<String> getTags() {
 		return tags;
@@ -210,7 +210,9 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String getTagsString() {
-		if (getTags() == null || getTags().isEmpty()) return "";
+		if (getTags() == null || getTags().isEmpty()) {
+			return "";
+		}
 		Collections.sort(getTags());
 		return StringUtils.join(getTags(), ",");
 	}
@@ -262,7 +264,9 @@ public abstract class Post extends Sysprop {
 	}
 
 	private void createTags() {
-		if (getTags() == null || getTags().isEmpty()) return;
+		if (getTags() == null || getTags().isEmpty()) {
+			return;
+		}
 		ArrayList<Tag> tagz = new ArrayList<Tag>();
 		for (int i = 0; i < getTags().size(); i++) {
 			String ntag = getTags().get(i);
@@ -384,7 +388,7 @@ public abstract class Post extends Sysprop {
 		} else if (p.isFeedback()) {
 			return plural ? "/feedback" : "/feedback" + pid;
 		} else if (p.isReply()) {
-			return "/question" + (noid ?  "" : "/" + p.getParentid());
+			return "/question" + (noid ? "" : "/" + p.getParentid());
 		}
 		return "";
 	}
@@ -425,9 +429,9 @@ public abstract class Post extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equals(getTitle(), ((Post) obj).getTitle()) &&
-				Objects.equals(getBody(), ((Post) obj).getBody()) &&
-				Objects.equals(getTags(), ((Post) obj).getTags());
+		return Objects.equals(getTitle(), ((Post) obj).getTitle())
+				&& Objects.equals(getBody(), ((Post) obj).getBody())
+				&& Objects.equals(getTags(), ((Post) obj).getTags());
 	}
 
 	public int hashCode() {

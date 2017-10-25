@@ -22,8 +22,6 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
-import static com.erudika.scoold.ScooldServer.feedbacklink;
-import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -43,6 +41,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import static com.erudika.scoold.ScooldServer.FEEDBACKLINK;
 
 /**
  *
@@ -80,7 +80,7 @@ public class FeedbackController {
 			HttpServletRequest req, Model model) {
 		Feedback showPost = pc.read(id);
 		if (showPost == null) {
-			return "redirect:" + feedbacklink;
+			return "redirect:" + FEEDBACKLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);
 		model.addAttribute("path", "feedback.vm");
@@ -100,12 +100,12 @@ public class FeedbackController {
 	@GetMapping("/write")
 	public String write(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + signinlink + "?returnto=" + feedbacklink + "/write";
+			return "redirect:" + SIGNINLINK + "?returnto=" + FEEDBACKLINK + "/write";
 		}
 		model.addAttribute("write", true);
 		model.addAttribute("path", "feedback.vm");
-		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - " +
-				utils.getLang(req).get("feedback.write"));
+		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - "
+				+ utils.getLang(req).get("feedback.write"));
 		return "base";
 	}
 
@@ -122,7 +122,7 @@ public class FeedbackController {
 	}
 
 	@PostMapping
-    public String createAjax(HttpServletRequest req, Model model) {
+	public String createAjax(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "feedback.vm");
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -132,13 +132,13 @@ public class FeedbackController {
 				post.setCreatorid(authUser.getId());
 				post.create();
 				authUser.setLastseen(System.currentTimeMillis());
-				return "redirect:" + feedbacklink;
+				return "redirect:" + FEEDBACKLINK;
 			} else {
 				model.addAttribute("error", error);
 				return "base";
 			}
 		}
-		return "redirect:" + feedbacklink;
+		return "redirect:" + FEEDBACKLINK;
 	}
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
@@ -173,18 +173,18 @@ public class FeedbackController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + feedbacklink + "/" + id;
+			return "redirect:" + FEEDBACKLINK + "/" + id;
 		}
 	}
 
 	@PostMapping("/{id}/delete")
-    public String deleteAjax(@PathVariable String id, HttpServletRequest req) {
+	public String deleteAjax(@PathVariable String id, HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Feedback showPost = pc.read(id);
 			if (showPost != null) {
 				showPost.delete();
 			}
 		}
-		return "redirect:" + feedbacklink;
+		return "redirect:" + FEEDBACKLINK;
 	}
 }

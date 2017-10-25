@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
@@ -69,7 +68,7 @@ public class CommentController {
 	}
 
 	@GetMapping("/{id}")
-    public String get(@PathVariable String id, HttpServletRequest req, Model model) {
+	public String get(@PathVariable String id, HttpServletRequest req, Model model) {
 		Comment showComment = pc.read(id);
 		if (showComment == null || !ParaObjectUtils.typesMatch(showComment)) {
 			return "redirect:" + HOMEPAGE;
@@ -77,11 +76,11 @@ public class CommentController {
 		model.addAttribute("path", "comment.vm");
 		model.addAttribute("title", utils.getLang(req).get("comment.title"));
 		model.addAttribute("showComment", showComment);
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping(params = {Config._PARENTID, "getcomments"})
-    public String getAjax(@RequestParam String parentid, @RequestParam Boolean getcomments,
+	public String getAjax(@RequestParam String parentid, @RequestParam Boolean getcomments,
 			@RequestParam(required = false, defaultValue = "1") Integer page, HttpServletRequest req, Model model) {
 		Post parent = pc.read(parentid);
 		if (parent != null) {
@@ -95,7 +94,7 @@ public class CommentController {
 	}
 
 	@PostMapping("/{id}/delete")
-    public void deleteAjax(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public void deleteAjax(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Comment comment = pc.read(id);
 			Profile authUser = utils.getAuthUser(req);
@@ -112,7 +111,7 @@ public class CommentController {
 	}
 
 	@PostMapping
-    public String createAjax(@RequestParam String comment, @RequestParam String parentid,
+	public String createAjax(@RequestParam String comment, @RequestParam String parentid,
 			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.canComment(authUser, req) && !StringUtils.isBlank(comment) && !StringUtils.isBlank(parentid)) {

@@ -41,9 +41,9 @@ public class NotFoundController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "notfound.vm");
 		model.addAttribute("title", utils.getLang(req).get("notfound.title"));
-        return "base";
-    }
+		return "base";
+	}
 }

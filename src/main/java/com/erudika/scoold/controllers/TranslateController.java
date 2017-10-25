@@ -20,8 +20,6 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Translation;
 import com.erudika.para.utils.Pager;
-import static com.erudika.scoold.ScooldServer.languageslink;
-import static com.erudika.scoold.ScooldServer.translatelink;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.POLYGLOT;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -42,6 +40,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.TRANSLATELINK;
+import static com.erudika.scoold.ScooldServer.LANGUAGESLINK;
 
 /**
  *
@@ -68,18 +68,18 @@ public class TranslateController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
-		return "redirect:" + languageslink;
+	public String get(HttpServletRequest req, Model model) {
+		return "redirect:" + LANGUAGESLINK;
 	}
 
 	@GetMapping({"/{locale}", "/{locale}/{index}"})
-    public String translate(@PathVariable String locale, @PathVariable(required = false) String index,
+	public String translate(@PathVariable String locale, @PathVariable(required = false) String index,
 			HttpServletRequest req, Model model) {
 
 		Locale showLocale = utils.getLangutils().getProperLocale(locale);
 		if (showLocale == null || "en".equals(showLocale.getLanguage())) {
 			// can't translate default language
-			return "redirect:" + languageslink;
+			return "redirect:" + LANGUAGESLINK;
 		}
 
 		int showIndex = -1;
@@ -103,11 +103,11 @@ public class TranslateController {
 		model.addAttribute("showLocaleProgress", showLocaleProgress);
 		model.addAttribute("translationslist", translationslist);
 		model.addAttribute("itemcount", itemcount);
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping("/{locale}/{index}")
-    public String post(@PathVariable String locale, @PathVariable String index, @RequestParam String value,
+	public String post(@PathVariable String locale, @PathVariable String index, @RequestParam String value,
 			HttpServletRequest req, Model model) {
 		Locale showLocale = utils.getLangutils().getProperLocale(locale);
 		if (utils.isAuthenticated(req) && showLocale != null && !"en".equals(showLocale.getLanguage())) {
@@ -124,16 +124,16 @@ public class TranslateController {
 				model.addAttribute("newtranslation", trans);
 			}
 			if (!utils.isAjaxRequest(req)) {
-				return "redirect:" + translatelink + "/" + showLocale.getLanguage() + "/" +
-						getNextIndex(getIndex(index, langkeys), approved, langkeys);
+				return "redirect:" + TRANSLATELINK + "/" + showLocale.getLanguage() + "/"
+						+ getNextIndex(getIndex(index, langkeys), approved, langkeys);
 			}
 		}
 
 		return "base";
-    }
+	}
 
 	@PostMapping("/approve/{id}")
-    public String approve(@PathVariable String id, HttpServletRequest req, Model model) {
+	public String approve(@PathVariable String id, HttpServletRequest req, Model model) {
 		Translation trans = (Translation) pc.read(id);
 		if (trans != null && utils.isAuthenticated(req)) {
 			if (trans.getApproved()) {
@@ -153,7 +153,7 @@ public class TranslateController {
 	}
 
 	@PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id, HttpServletRequest req, Model model) {
+	public String delete(@PathVariable String id, HttpServletRequest req, Model model) {
 		if (id != null && utils.isAuthenticated(req)) {
 			Translation trans = (Translation) pc.read(id);
 			Profile authUser = utils.getAuthUser(req);
@@ -170,13 +170,17 @@ public class TranslateController {
 
 	private int getNextIndex(int fromIndex, Set<String> approved, List<String> langkeys) {
 		int start = fromIndex;
-		if (start < 0) start = 0;
-		if (start >= approved.size()) start = approved.size() - 1;
+		if (start < 0) {
+			start = 0;
+		}
+		if (start >= approved.size()) {
+			start = approved.size() - 1;
+		}
 		int nexti = (start + 1) >= langkeys.size() ? 0 : (start + 1);
 
 		// if there are untranslated strings go directly there
 		if (approved.size() != langkeys.size()) {
-			while(approved.contains(langkeys.get(nexti))) {
+			while (approved.contains(langkeys.get(nexti))) {
 				nexti = (nexti + 1) >= langkeys.size() ? 0 : (nexti + 1);
 			}
 		}

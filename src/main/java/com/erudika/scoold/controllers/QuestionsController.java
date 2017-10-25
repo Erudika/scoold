@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
@@ -23,8 +22,6 @@ import com.erudika.para.core.Address;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.questionslink;
-import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
@@ -45,6 +42,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 
 /**
  *
@@ -63,16 +62,16 @@ public class QuestionsController {
 	}
 
 	@GetMapping({"/", "/questions"})
-    public String get(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
+	public String get(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		getQuestions(sortby, null, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping("/questions/tag/{tag}")
-    public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
+	public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tag}, itemcount);
 		utils.fetchProfiles(questionslist);
@@ -82,11 +81,11 @@ public class QuestionsController {
 		model.addAttribute("tag", tag);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("questionslist", questionslist);
-        return "base";
+		return "base";
 	}
 
 	@GetMapping("/questions/similar/{like}")
-    public void getSimilarAjax(@PathVariable String like, HttpServletRequest req, HttpServletResponse res) throws IOException {
+	public void getSimilarAjax(@PathVariable String like, HttpServletRequest req, HttpServletResponse res) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		Question q = new Question();
 		q.setTitle(like);
@@ -105,30 +104,30 @@ public class QuestionsController {
 	}
 
 	@GetMapping("/questions/{filter}")
-    public String getSorted(@PathVariable(required = false) String filter,
+	public String getSorted(@PathVariable(required = false) String filter,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		getQuestions(sortby, filter, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping("/questions/ask")
-    public String ask(HttpServletRequest req, Model model) {
+	public String ask(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + signinlink + "?returnto=" + questionslink + "/ask";
+			return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
 		}
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("askSelected", "navbtn-hover");
 		model.addAttribute("includeGMapsScripts", true);
-		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " +
-				utils.getLang(req).get("posts.ask"));
-        return "base";
+		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - "
+				+ utils.getLang(req).get("posts.ask"));
+		return "base";
 	}
 
 	@PostMapping("/questions/ask")
-    public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
+	public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -157,8 +156,8 @@ public class QuestionsController {
 			}
 			return "redirect:" + q.getPostLink(false, false);
 		}
-		return "redirect:" + signinlink + "?returnto=" + questionslink + "/ask";
-    }
+		return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
+	}
 
 	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);

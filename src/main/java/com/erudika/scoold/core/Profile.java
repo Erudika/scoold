@@ -36,13 +36,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
 public class Profile extends Sysprop {
+
 	private static final long serialVersionUID = 1L;
 
-    @Stored private Long lastseen;
+	@Stored private Long lastseen;
 	@Stored private String location;
 	@Stored private String latlng;
-    @Stored private String status;
-    @Stored private String aboutme;
+	@Stored private String status;
+	@Stored private String aboutme;
 	@Stored private String badges;
 	@Stored private String groups;
 	@Stored private Long upvotes;
@@ -58,8 +59,8 @@ public class Profile extends Sysprop {
 	private transient Integer newreports;
 	private transient User user;
 
-	public static enum Badge {
-		VETERAN(10),		//regular visitor		//TODO: IMPLEMENT!
+	public enum Badge {
+		VETERAN(10),		//regular visitor		//NOT IMPLEMENTED
 
 		NICEPROFILE(10),	//100% profile completed
 		TESTER(0),			//for testers only
@@ -86,7 +87,7 @@ public class Profile extends Sysprop {
 
 		private final int reward;
 
-		Badge (int reward) {
+		Badge(int reward) {
 			this.reward = reward;
 		}
 
@@ -99,27 +100,27 @@ public class Profile extends Sysprop {
 		}
 	}
 
-    public Profile () {
+	public Profile() {
 		this(null, null);
 	}
 
-	public Profile (String id) {
+	public Profile(String id) {
 		this(id, null);
 	}
 
-    public Profile (String userid, String name) {
+	public Profile(String userid, String name) {
 		setId(id(userid));
 		setName(name);
 		this.status = "";
-        this.aboutme = "";
-        this.location = "";
+		this.aboutme = "";
+		this.location = "";
 		this.badges = "";
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
-    }
+	}
 
 	public static final String id(String userid) {
 		if (StringUtils.endsWith(userid, Config.SEPARATOR + "profile")) {
@@ -136,8 +137,8 @@ public class Profile extends Sysprop {
 	@JsonIgnore
 	public User getUser() {
 		if (user == null) {
-			user = client().read(getCreatorid() == null ?
-					StringUtils.removeEnd(getId(), Config.SEPARATOR + "profile") : getCreatorid());
+			user = client().read(getCreatorid() == null
+					? StringUtils.removeEnd(getId(), Config.SEPARATOR + "profile") : getCreatorid());
 		}
 		return user;
 	}
@@ -205,13 +206,13 @@ public class Profile extends Sysprop {
 		this.favtags = favtags;
 	}
 
-	public Long getLastseen () {
-        return lastseen;
-    }
+	public Long getLastseen() {
+		return lastseen;
+	}
 
-    public void setLastseen (Long val) {
-        this.lastseen = val;
-    }
+	public void setLastseen(Long val) {
+		this.lastseen = val;
+	}
 
 	public String getWebsite() {
 		return website;
@@ -253,39 +254,43 @@ public class Profile extends Sysprop {
 		this.badges = badges;
 	}
 
-    public String getLocation() {
-        return location;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public String getAboutme() {
-        return this.aboutme;
-    }
+	public String getAboutme() {
+		return this.aboutme;
+	}
 
-    public void setAboutme(String aboutme) {
-        this.aboutme = aboutme;
-    }
+	public void setAboutme(String aboutme) {
+		this.aboutme = aboutme;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Question> getAllQuestions(Pager pager) {
-		if (getId() == null) return new ArrayList<Question>();
+		if (getId() == null) {
+			return new ArrayList<Question>();
+		}
 		return (List<Question>) getPostsForUser(Utils.type(Question.class), pager);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Reply> getAllAnswers(Pager pager) {
-		if (getId() == null) return new ArrayList<Reply>();
+		if (getId() == null) {
+			return new ArrayList<Reply>();
+		}
 		return (List<Reply>) getPostsForUser(Utils.type(Reply.class), pager);
 	}
 
@@ -295,7 +300,9 @@ public class Profile extends Sysprop {
 	}
 
 	public String getFavtagsString() {
-		if (getFavtags().isEmpty()) return "";
+		if (getFavtags().isEmpty()) {
+			return "";
+		}
 		return StringUtils.join(getFavtags(), ", ");
 	}
 
@@ -304,31 +311,47 @@ public class Profile extends Sysprop {
 	}
 
 	public long getTotalVotes() {
-		if (upvotes == null) upvotes = 0L;
-		if (downvotes == null) downvotes = 0L;
+		if (upvotes == null) {
+			upvotes = 0L;
+		}
+		if (downvotes == null) {
+			downvotes = 0L;
+		}
 
 		return upvotes + downvotes;
 	}
 
 	public void addRep(int rep) {
-		if (getVotes() == null) setVotes(0);
+		if (getVotes() == null) {
+			setVotes(0);
+		}
 		setVotes(getVotes() + rep);
 	}
 
 	public void removeRep(int rep) {
-		if (getVotes() == null) setVotes(0);
+		if (getVotes() == null) {
+			setVotes(0);
+		}
 		setVotes(getVotes() - rep);
-		if (getVotes() < 0) setVotes(0);
+		if (getVotes() < 0) {
+			setVotes(0);
+		}
 	}
 
 	public void incrementUpvotes() {
-		if (this.upvotes == null) this.upvotes = 1L;
-		else	this.upvotes = this.upvotes + 1L;
+		if (this.upvotes == null) {
+			this.upvotes = 1L;
+		} else {
+			this.upvotes = this.upvotes + 1L;
+		}
 	}
 
 	public void incrementDownvotes() {
-		if (this.downvotes == null) this.downvotes = 1L;
-		else	this.downvotes = this.downvotes + 1L;
+		if (this.downvotes == null) {
+			this.downvotes = 1L;
+		} else {
+			this.downvotes = this.downvotes + 1L;
+		}
 	}
 
 	public boolean hasBadge(Badge b) {
@@ -337,7 +360,9 @@ public class Profile extends Sysprop {
 
 	public void addBadge(Badge b) {
 		String badge = b.toString();
-		if (StringUtils.isBlank(badges)) badges = ",";
+		if (StringUtils.isBlank(badges)) {
+			badges = ",";
+		}
 		badges = badges.concat(badge).concat(",");
 		addRep(b.getReward());
 	}
@@ -351,7 +376,9 @@ public class Profile extends Sysprop {
 
 	public void removeBadge(Badge b) {
 		String badge = b.toString();
-		if (StringUtils.isBlank(badges)) return;
+		if (StringUtils.isBlank(badges)) {
+			return;
+		}
 		badge = ",".concat(badge).concat(",");
 
 		if (badges.contains(badge)) {
@@ -365,7 +392,9 @@ public class Profile extends Sysprop {
 
 	public HashMap<String, Integer> getBadgesMap() {
 		HashMap<String, Integer> badgeMap = new HashMap<String, Integer>(0);
-		if (StringUtils.isBlank(badges)) return badgeMap;
+		if (StringUtils.isBlank(badges)) {
+			return badgeMap;
+		}
 
 		for (String badge : badges.split(",")) {
 			Integer val = badgeMap.get(badge);
@@ -378,35 +407,35 @@ public class Profile extends Sysprop {
 	}
 
 	public boolean isComplete() {
-		return (!StringUtils.isBlank(location) &&
-				!StringUtils.isBlank(aboutme) &&
-				!StringUtils.isBlank(website));
+		return (!StringUtils.isBlank(location)
+				&& !StringUtils.isBlank(aboutme)
+				&& !StringUtils.isBlank(website));
 	}
 
 	public String create() {
 		setLastseen(System.currentTimeMillis());
 		client().create(this);
 		return getId();
-    }
+	}
 
-    public void update() {
+	public void update() {
 		setLastseen(System.currentTimeMillis());
 		client().update(this);
-    }
+	}
 
-    public void delete() {
+	public void delete() {
 		client().delete(this);
 		client().delete(getUser());
-    }
+	}
 
-    public String getLastname() {
+	public String getLastname() {
 		String[] s = getName().split("\\s");
-        return s[s.length - 1];
-    }
+		return s[s.length - 1];
+	}
 
-    public String getFirstname() {
-        return getName().split("\\s")[0];
-    }
+	public String getFirstname() {
+		return getName().split("\\s")[0];
+	}
 
 	public int countNewReports() {
 		if (newreports == null) {
@@ -420,13 +449,12 @@ public class Profile extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equals(getName(), ((Profile) obj).getName()) &&
-				Objects.equals(getLocation(), ((Profile) obj).getLocation()) &&
-				Objects.equals(getId(), ((Profile) obj).getId());
+		return Objects.equals(getName(), ((Profile) obj).getName())
+				&& Objects.equals(getLocation(), ((Profile) obj).getLocation())
+				&& Objects.equals(getId(), ((Profile) obj).getId());
 	}
 
 	public int hashCode() {
 		return Objects.hashCode(getName()) + Objects.hashCode(getId());
 	}
 }
-

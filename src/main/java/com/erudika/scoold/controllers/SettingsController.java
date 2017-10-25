@@ -23,8 +23,6 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
-import static com.erudika.scoold.ScooldServer.settingslink;
-import static com.erudika.scoold.ScooldServer.signinlink;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.LinkedHashSet;
@@ -40,6 +38,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
 
 /**
  *
@@ -57,18 +57,18 @@ public class SettingsController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
 			return "redirect:" + HOMEPAGE;
 		}
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
 		model.addAttribute("includeGMapsScripts", true);
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping
-    public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
+	public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
 			HttpServletRequest req) {
@@ -91,19 +91,19 @@ public class SettingsController {
 			authUser.update();
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
-				return "redirect:" + settingslink + "?passChanged=true";
+				return "redirect:" + SETTINGSLINK + "?passChanged=true";
 			}
 		}
-		return "redirect:" + settingslink;
+		return "redirect:" + SETTINGSLINK;
 	}
 
 	@PostMapping("/goodbye")
-    public String deleteAccount(HttpServletRequest req, HttpServletResponse res) {
+	public String deleteAccount(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			utils.getAuthUser(req).delete();
 			utils.clearSession(req, res);
 		}
-		return "redirect:" + signinlink + "?code=4&success=true";
+		return "redirect:" + SIGNINLINK + "?code=4&success=true";
 	}
 
 	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {

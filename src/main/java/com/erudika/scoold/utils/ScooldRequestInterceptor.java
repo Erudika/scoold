@@ -115,34 +115,35 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("TEACHER_IFHAS", TEACHER_IFHAS);
 		modelAndView.addObject("PROFESSOR_IFHAS", PROFESSOR_IFHAS);
 		modelAndView.addObject("GEEK_IFHAS", GEEK_IFHAS);
-		// Paths
+		// Cookies
 		modelAndView.addObject("localeCookieName", LOCALE_COOKIE);
 		modelAndView.addObject("csrfCookieName", CSRF_COOKIE);
-		modelAndView.addObject("peoplelink", peoplelink);
-		modelAndView.addObject("profilelink", profilelink);
+		// Paths
+		modelAndView.addObject("peoplelink", PEOPLELINK);
+		modelAndView.addObject("profilelink", PROFILELINK);
 		modelAndView.addObject("imageslink", IMAGESLINK);
 		modelAndView.addObject("scriptslink", SCRIPTSLINK);
 		modelAndView.addObject("styleslink", STYLESLINK);
-		modelAndView.addObject("searchlink", searchlink);
-		modelAndView.addObject("signinlink", signinlink);
-		modelAndView.addObject("signoutlink", signoutlink);
-		modelAndView.addObject("aboutlink", aboutlink);
-		modelAndView.addObject("privacylink", privacylink);
-		modelAndView.addObject("termslink", termslink);
-		modelAndView.addObject("tagslink", tagslink);
-		modelAndView.addObject("settingslink", settingslink);
-		modelAndView.addObject("translatelink", translatelink);
-		modelAndView.addObject("reportslink", reportslink);
-		modelAndView.addObject("adminlink", adminlink);
-		modelAndView.addObject("votedownlink", votedownlink);
-		modelAndView.addObject("voteuplink", voteuplink);
-		modelAndView.addObject("questionlink", questionlink);
-		modelAndView.addObject("questionslink", questionslink);
-		modelAndView.addObject("commentlink", commentlink);
-		modelAndView.addObject("postlink", postlink);
-		modelAndView.addObject("revisionslink", revisionslink);
-		modelAndView.addObject("feedbacklink", feedbacklink);
-		modelAndView.addObject("languageslink", languageslink);
+		modelAndView.addObject("searchlink", SEARCHLINK);
+		modelAndView.addObject("signinlink", SIGNINLINK);
+		modelAndView.addObject("signoutlink", SIGNOUTLINK);
+		modelAndView.addObject("aboutlink", ABOUTLINK);
+		modelAndView.addObject("privacylink", PRIVACYLINK);
+		modelAndView.addObject("termslink", TERMSLINK);
+		modelAndView.addObject("tagslink", TAGSLINK);
+		modelAndView.addObject("settingslink", SETTINGSLINK);
+		modelAndView.addObject("translatelink", TRANSLATELINK);
+		modelAndView.addObject("reportslink", REPORTSLINK);
+		modelAndView.addObject("adminlink", ADMINLINK);
+		modelAndView.addObject("votedownlink", VOTEDOWNLINK);
+		modelAndView.addObject("voteuplink", VOTEUPLINK);
+		modelAndView.addObject("questionlink", QUESTIONLINK);
+		modelAndView.addObject("questionslink", QUESTIONSLINK);
+		modelAndView.addObject("commentlink", COMMENTLINK);
+		modelAndView.addObject("postlink", POSTLINK);
+		modelAndView.addObject("revisionslink", REVISIONSLINK);
+		modelAndView.addObject("feedbacklink", FEEDBACKLINK);
+		modelAndView.addObject("languageslink", LANGUAGESLINK);
 		// Visual customization
 		modelAndView.addObject("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));

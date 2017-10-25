@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.utils.Config;
@@ -49,7 +48,7 @@ public class PeopleController {
 	}
 
 	@GetMapping
-    public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
@@ -59,8 +58,8 @@ public class PeopleController {
 		model.addAttribute("peopleSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping("/{sortby}")
 	public String sorted(@PathVariable String sortby, HttpServletRequest req, Model model) {

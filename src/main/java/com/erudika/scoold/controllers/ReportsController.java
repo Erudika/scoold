@@ -23,7 +23,6 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.reportslink;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
@@ -41,6 +40,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.REPORTSLINK;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
@@ -59,7 +60,7 @@ public class ReportsController {
 	}
 
 	@GetMapping
-    public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
 		if (!utils.isMod(utils.getAuthUser(req))) {
 			return "redirect:" + HOMEPAGE;
@@ -72,11 +73,11 @@ public class ReportsController {
 		model.addAttribute("reportsSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("reportslist", reportslist);
-        return "base";
-    }
+		return "base";
+	}
 
 	@GetMapping("/form")
-    public String getReportForm(@RequestParam String parentid, @RequestParam String type,
+	public String getReportForm(@RequestParam String parentid, @RequestParam String type,
 			@RequestParam(required = false) String link, Model model) {
 		model.addAttribute("getreportform", true);
 		model.addAttribute("parentid", parentid);
@@ -86,7 +87,7 @@ public class ReportsController {
 	}
 
 	@PostMapping
-    public void create(HttpServletRequest req, HttpServletResponse res) {
+	public void create(HttpServletRequest req, HttpServletResponse res) {
 		Report rep = utils.populate(req, new Report(), "link", "description", "parentid", "subType", "authorName");
 		Map<String, String> error = utils.validate(rep);
 		if (error.isEmpty()) {
@@ -104,11 +105,11 @@ public class ReportsController {
 		} else {
 			res.setStatus(400);
 		}
-    }
+	}
 
 	@PostMapping("/cspv")
 	@SuppressWarnings("unchecked")
-    public String createCSPViolationReport(HttpServletRequest req) throws IOException {
+	public String createCSPViolationReport(HttpServletRequest req) throws IOException {
 		if (Config.getConfigBoolean("csp_reports_enabled", false)) {
 			Report rep = new Report();
 			rep.setDescription("CSP Violation Report");
@@ -122,10 +123,10 @@ public class ReportsController {
 			rep.create();
 		}
 		return "redirect:/";
-    }
+	}
 
 	@PostMapping("/{id}/close")
-    public String close(@PathVariable String id, @RequestParam(required = false, defaultValue = "") String solution,
+	public String close(@PathVariable String id, @RequestParam(required = false, defaultValue = "") String solution,
 			HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -137,13 +138,13 @@ public class ReportsController {
 			}
 		}
 		if (!utils.isAjaxRequest(req)) {
-			return "redirect:" + reportslink;
+			return "redirect:" + REPORTSLINK;
 		}
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping("/{id}/delete")
-    public String delete(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public String delete(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			Report rep = pc.read(id);
@@ -152,8 +153,8 @@ public class ReportsController {
 			}
 		}
 		if (!utils.isAjaxRequest(req)) {
-			return "redirect:" + reportslink;
+			return "redirect:" + REPORTSLINK;
 		}
-        return "base";
-    }
+		return "base";
+	}
 }

@@ -18,7 +18,6 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.utils.Pager;
-import static com.erudika.scoold.ScooldServer.questionslink;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -30,7 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 
 /**
  *
@@ -48,10 +47,10 @@ public class RevisionsController {
 	}
 
 	@GetMapping("/{postid}")
-    public String get(@PathVariable String postid, HttpServletRequest req, Model model) {
+	public String get(@PathVariable String postid, HttpServletRequest req, Model model) {
 		Post showPost = utils.getParaClient().read(postid);
 		if (showPost == null) {
-			return "redirect:" + questionslink;
+			return "redirect:" + QUESTIONSLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Revision> revisionslist = showPost.getRevisions(itemcount);
@@ -64,6 +63,6 @@ public class RevisionsController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("revisionslist", revisionslist);
 		model.addAttribute("lastOnPage", nextPage.isEmpty() ? null : nextPage.get(0));
-        return "base";
-    }
+		return "base";
+	}
 }

@@ -41,9 +41,9 @@ public class PrivacyController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "privacy.vm");
 		model.addAttribute("title", utils.getLang(req).get("privacy.title"));
-        return "base";
-    }
+		return "base";
+	}
 }

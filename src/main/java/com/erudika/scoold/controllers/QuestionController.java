@@ -29,7 +29,6 @@ import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
 import static com.erudika.scoold.ScooldServer.getServerURL;
-import static com.erudika.scoold.ScooldServer.questionslink;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -59,6 +58,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 
 /**
  *
@@ -82,11 +82,11 @@ public class QuestionController {
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}"})
-    public String get(@PathVariable String id, @PathVariable(required = false) String title,
+	public String get(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);
 		if (showPost == null || !ParaObjectUtils.typesMatch(showPost)) {
-			return "redirect:" + questionslink;
+			return "redirect:" + QUESTIONSLINK;
 		}
 
 		Pager itemcount = utils.getPager("page", req);
@@ -109,11 +109,11 @@ public class QuestionController {
 		model.addAttribute("maxCommentLength", Comment.MAX_COMMENT_LENGTH);
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
 				Comment.MAX_COMMENT_LENGTH));
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping("/{id}/edit")
-    public String edit(@PathVariable String id, @RequestParam(required = false) String title,
+	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
 			HttpServletRequest req) {
 
@@ -146,11 +146,11 @@ public class QuestionController {
 			showPost.update();
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
-    }
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
-    public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
+	public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) Boolean emailme, HttpServletRequest req,
 			HttpServletResponse res, Model model) throws IOException {
 		Post showPost = pc.read(id);
@@ -161,7 +161,7 @@ public class QuestionController {
 			} else {
 				showPost.removeFollower(authUser.getUser());
 			}
-			pc.update(showPost);// update without adding revisions
+			pc.update(showPost); // update without adding revisions
 		} else if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
@@ -191,12 +191,12 @@ public class QuestionController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + questionslink + "/" + id;
+			return "redirect:" + QUESTIONSLINK + "/" + id;
 		}
-    }
+	}
 
 	@PostMapping("/{id}/approve/{answerid}")
-    public String approve(@PathVariable String id, @PathVariable String answerid, HttpServletRequest req) {
+	public String approve(@PathVariable String id, @PathVariable String answerid, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
@@ -232,11 +232,11 @@ public class QuestionController {
 				}
 			}
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
-    }
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
 
 	@PostMapping("/{id}/close")
-    public String close(@PathVariable String id, HttpServletRequest req) {
+	public String close(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
@@ -250,11 +250,11 @@ public class QuestionController {
 			}
 			showPost.update();
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
-    }
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
 
 	@PostMapping("/{id}/restore/{revisionid}")
-    public String restore(@PathVariable String id, @PathVariable String revisionid, HttpServletRequest req) {
+	public String restore(@PathVariable String id, @PathVariable String revisionid, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
@@ -264,11 +264,11 @@ public class QuestionController {
 			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
 			showPost.restoreRevisionAndUpdate(revisionid);
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
-    }
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
 
 	@PostMapping("/{id}/delete")
-    public String delete(@PathVariable String id, HttpServletRequest req) {
+	public String delete(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
@@ -277,7 +277,7 @@ public class QuestionController {
 		if (!showPost.isReply()) {
 			if ((utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
 				showPost.delete();
-				return "redirect:" + questionslink + "?success=true&code=16";
+				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
 		} else if (showPost.isReply()) {
 			if (utils.isMine(showPost, authUser) || utils.isMod(authUser)) {
@@ -287,8 +287,8 @@ public class QuestionController {
 				showPost.delete();
 			}
 		}
-        return "redirect:" + showPost.getPostLink(false, false);
-    }
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
 
 	private void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
 		//do not count views from author

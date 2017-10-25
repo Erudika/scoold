@@ -21,7 +21,6 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.adminlink;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.typesafe.config.ConfigValue;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.erudika.scoold.ScooldServer.ADMINLINK;
 
 /**
  *
@@ -58,7 +58,7 @@ public class AdminController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
 			return "redirect:" + HOMEPAGE;
 		}
@@ -72,11 +72,11 @@ public class AdminController {
 		model.addAttribute("title", utils.getLang(req).get("admin.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping
-    public String forceDelete(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
+	public String forceDelete(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		if (confirmdelete && utils.isAdmin(authUser)) {
 			ParaObject sobject = pc.read(id);
@@ -86,6 +86,6 @@ public class AdminController {
 						sobject.getClass().getName(), sobject.getId());
 			}
 		}
-		return "redirect:" + adminlink;
+		return "redirect:" + ADMINLINK;
 	}
 }

@@ -15,7 +15,6 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-
 package com.erudika.scoold.controllers;
 
 import com.erudika.scoold.utils.ScooldUtils;
@@ -42,9 +41,9 @@ public class AboutController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "about.vm");
 		model.addAttribute("title", utils.getLang(req).get("about.title"));
-        return "base";
-    }
+		return "base";
+	}
 }

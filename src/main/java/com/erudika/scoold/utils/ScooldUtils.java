@@ -143,7 +143,7 @@ public final class ScooldUtils {
 					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 					s.addProperty(Config._EMAIL_TOKEN, token);
 					pc.update(s);
-					token = HOST_URL + signinlink + "/register?id=" + user.getId() + "&token=" + token;
+					token = HOST_URL + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
 					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>";
 					body3 += "Best, <br>The Scoold team";
 				}
@@ -418,7 +418,9 @@ public final class ScooldUtils {
 				if (in != null) {
 					in.close();
 				}
-			} catch (IOException ex) {}
+			} catch (IOException ex) {
+				logger.error(null, ex);
+			}
 		}
 		return template;
 	}

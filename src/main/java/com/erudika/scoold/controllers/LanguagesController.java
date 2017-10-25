@@ -18,7 +18,6 @@
 package com.erudika.scoold.controllers;
 
 import static com.erudika.scoold.ScooldServer.LOCALE_COOKIE;
-import static com.erudika.scoold.ScooldServer.languageslink;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Locale;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import static com.erudika.scoold.ScooldServer.LANGUAGESLINK;
 
 /**
  *
@@ -49,21 +49,21 @@ public class LanguagesController {
 	}
 
 	@GetMapping
-    public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "languages.vm");
 		model.addAttribute("title", utils.getLang(req).get("translate.select"));
 		model.addAttribute("allLocales", new TreeMap<String, Locale>(utils.getLangutils().getAllLocales()));
 		model.addAttribute("langProgressMap", utils.getLangutils().getTranslationProgressMap());
-        return "base";
-    }
+		return "base";
+	}
 
 	@PostMapping("/{langkey}")
-    public String post(@PathVariable String langkey, HttpServletRequest req, HttpServletResponse res) {
+	public String post(@PathVariable String langkey, HttpServletRequest req, HttpServletResponse res) {
 		Locale locale = utils.getCurrentLocale(langkey, req);
 		if (locale != null) {
 			int maxAge = 60 * 60 * 24 * 365;  //1 year
 			HttpUtils.setRawCookie(LOCALE_COOKIE, locale.getLanguage(), req, res, false, maxAge);
 		}
-		return "redirect:" + languageslink;
+		return "redirect:" + LANGUAGESLINK;
 	}
 }

@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Votable;
 import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
 import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;
@@ -91,8 +92,7 @@ public class VoteController {
 		Profile author = null;
 		Profile authUser = utils.getAuthUser(req);
 		boolean result = false;
-		boolean updateAuthUser = false;
-		boolean updateVoter = false;
+		boolean update = false;
 		if (votable == null || authUser == null) {
 			return false;
 		}
@@ -101,53 +101,26 @@ public class VoteController {
 			author = pc.read(votable.getCreatorid());
 			Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
 
-			if (isUpvote && (result = pc.voteUp(votable, authUser.getId()))) {
+			if (isUpvote && pc.voteUp(votable, authUser.getId())) {
 				votes++;
 				authUser.incrementUpvotes();
-				updateAuthUser = true;
-				int reward;
-
-				if (votable instanceof Post) {
-					Post p = (Post) votable;
-					if (p.isReply()) {
-						utils.addBadge(author, GOODANSWER, votes >= GOODANSWER_IFHAS, false);
-						reward = ANSWER_VOTEUP_REWARD_AUTHOR;
-					} else if (p.isQuestion()) {
-						utils.addBadge(author, GOODQUESTION, votes >= GOODQUESTION_IFHAS, false);
-						reward = QUESTION_VOTEUP_REWARD_AUTHOR;
-					} else {
-						reward = VOTEUP_REWARD_AUTHOR;
-					}
-				} else {
-					reward = VOTEUP_REWARD_AUTHOR;
-				}
+				update = true;
+				result = true;
+				int reward = addReward(votable, author, votes);
 
 				if (author != null && reward > 0) {
 					author.addRep(reward);
-					updateVoter = true;
 				}
-			} else if (!isUpvote && (result = pc.voteDown(votable, authUser.getId()))) {
+			} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
 				votes--;
 				authUser.incrementDownvotes();
-				updateAuthUser = true;
+				update = true;
+				result = true;
 
-				if (votable instanceof Comment && votes <= -5) {
-					//treat comment as offensive or spam - hide
-					((Comment) votable).setHidden(true);
-				} else if (votable instanceof Post && votes <= -5) {
-					Post p = (Post) votable;
-					//mark post for closing
-					Report rep = new Report();
-					rep.setParentid(id);
-					rep.setLink(p.getPostLink(false, false));
-					rep.setDescription(utils.getLang(req).get("posts.forclosing"));
-					rep.setSubType(Report.ReportType.OTHER);
-					rep.setAuthorName("System");
-					rep.create();
-				}
+				hideCommentAndReport(votable, votes, id, req);
+
 				if (author != null) {
 					author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
-					updateVoter = true;
 					//small penalty to voter
 					authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
 				}
@@ -159,15 +132,45 @@ public class VoteController {
 		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
 		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
 
-		if (updateVoter) {
-			pc.update(author);
-		}
-		if (updateAuthUser) {
-			pc.update(authUser);
-		}
-		if (updateAuthUser && updateVoter) {
+		if (update) {
 			pc.updateAll(Arrays.asList(author, authUser));
 		}
 		return result;
+	}
+
+	private int addReward(Votable votable, Profile author, int votes) {
+		int reward;
+		if (votable instanceof Post) {
+			Post p = (Post) votable;
+			if (p.isReply()) {
+				utils.addBadge(author, GOODANSWER, votes >= GOODANSWER_IFHAS, false);
+				reward = ANSWER_VOTEUP_REWARD_AUTHOR;
+			} else if (p.isQuestion()) {
+				utils.addBadge(author, GOODQUESTION, votes >= GOODQUESTION_IFHAS, false);
+				reward = QUESTION_VOTEUP_REWARD_AUTHOR;
+			} else {
+				reward = VOTEUP_REWARD_AUTHOR;
+			}
+		} else {
+			reward = VOTEUP_REWARD_AUTHOR;
+		}
+		return reward;
+	}
+
+	private void hideCommentAndReport(Votable votable, int votes, String id, HttpServletRequest req) {
+		if (votable instanceof Comment && votes <= -5) {
+			//treat comment as offensive or spam - hide
+			((Comment) votable).setHidden(true);
+		} else if (votable instanceof Post && votes <= -5) {
+			Post p = (Post) votable;
+			//mark post for closing
+			Report rep = new Report();
+			rep.setParentid(id);
+			rep.setLink(p.getPostLink(false, false));
+			rep.setDescription(utils.getLang(req).get("posts.forclosing"));
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setAuthorName("System");
+			rep.create();
+		}
 	}
 }
