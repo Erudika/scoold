@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import jersey.repackaged.com.google.common.base.Objects;
+import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
@@ -420,13 +420,13 @@ public class Profile extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(getName(), ((Profile) obj).getName()) &&
-				Objects.equal(getLocation(), ((Profile) obj).getLocation()) &&
-				Objects.equal(getId(), ((Profile) obj).getId());
+		return Objects.equals(getName(), ((Profile) obj).getName()) &&
+				Objects.equals(getLocation(), ((Profile) obj).getLocation()) &&
+				Objects.equals(getId(), ((Profile) obj).getId());
 	}
 
 	public int hashCode() {
-		return Objects.hashCode(getName(), getId());
+		return Objects.hashCode(getName()) + Objects.hashCode(getId());
 	}
 }
 

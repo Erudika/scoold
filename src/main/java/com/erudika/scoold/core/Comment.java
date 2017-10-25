@@ -24,8 +24,8 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
+import java.util.Objects;
 import javax.validation.constraints.Size;
-import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -107,12 +107,12 @@ public class Comment extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(getComment(), ((Comment) obj).getComment()) &&
-				Objects.equal(getCreatorid(), ((Comment) obj).getCreatorid());
+		return Objects.equals(getComment(), ((Comment) obj).getComment()) &&
+				Objects.equals(getCreatorid(), ((Comment) obj).getCreatorid());
 	}
 
 	public int hashCode() {
-		return Objects.hashCode(getComment(), getCreatorid());
+		return Objects.hashCode(getComment()) + Objects.hashCode(getCreatorid());
 	}
 
 }

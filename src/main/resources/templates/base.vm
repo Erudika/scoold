@@ -225,7 +225,7 @@
 			<script src="$!scriptslink/signin.js"></script>
 		#end
 		#if ($includeGAjs)
-			<script src="$!scriptslink/analytics.js"></script>
+			<script src="$!scriptslink/a7s.js"></script>
 		#end
 	</body>
 </html>

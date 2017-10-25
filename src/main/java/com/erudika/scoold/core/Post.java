@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.validation.constraints.Size;
-import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -425,13 +425,13 @@ public abstract class Post extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(getTitle(), ((Post) obj).getTitle()) &&
-				Objects.equal(getBody(), ((Post) obj).getBody()) &&
-				Objects.equal(getTags(), ((Post) obj).getTags());
+		return Objects.equals(getTitle(), ((Post) obj).getTitle()) &&
+				Objects.equals(getBody(), ((Post) obj).getBody()) &&
+				Objects.equals(getTags(), ((Post) obj).getTags());
 	}
 
 	public int hashCode() {
-		return Objects.hashCode(getTitle(), getBody(), getTags());
+		return Objects.hashCode(getTitle()) + Objects.hashCode(getBody()) + Objects.hashCode(getTags());
 	}
 
 	public abstract boolean canHaveChildren();

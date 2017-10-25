@@ -23,7 +23,7 @@ import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jersey.repackaged.com.google.common.base.Objects;
+import java.util.Objects;
 
 /**
  *
@@ -133,13 +133,12 @@ public class Revision extends Sysprop {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(getBody(), ((Revision) obj).getBody()) &&
-				Objects.equal(getDescription(), ((Revision) obj).getDescription());
+		return Objects.equals(getBody(), ((Revision) obj).getBody()) &&
+				Objects.equals(getDescription(), ((Revision) obj).getDescription());
 	}
 
 	public int hashCode() {
-		return Objects.hashCode(getBody(), getDescription(), getTimestamp());
+		return Objects.hashCode(getBody()) + Objects.hashCode(getDescription()) + Objects.hashCode(getTimestamp());
 	}
-
 
 }

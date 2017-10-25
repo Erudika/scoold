@@ -21,7 +21,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.scoold.utils.ScooldUtils;
-import jersey.repackaged.com.google.common.base.Objects;
+import java.util.Objects;
 
 /**
  *
@@ -139,17 +139,18 @@ public class Report extends Sysprop {
 		return null;
 	}
 
-	public int hashCode() {
-		return Objects.hashCode(getSubType(), getDescription(), getCreatorid(), getParentid());
-	}
-
 	public boolean equals(Object obj) {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equal(getSubType(), ((Report) obj).getSubType()) &&
-				Objects.equal(getDescription(), ((Report) obj).getDescription()) &&
-				Objects.equal(getCreatorid(), ((Report) obj).getCreatorid());
+		return Objects.equals(getSubType(), ((Report) obj).getSubType()) &&
+				Objects.equals(getDescription(), ((Report) obj).getDescription()) &&
+				Objects.equals(getCreatorid(), ((Report) obj).getCreatorid());
+	}
+
+	public int hashCode() {
+		return Objects.hashCode(getSubType()) + Objects.hashCode(getDescription()) +
+				Objects.hashCode(getCreatorid()) + Objects.hashCode(getParentid());
 	}
 
 }
