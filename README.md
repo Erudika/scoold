@@ -194,6 +194,21 @@ para.security.ldap.password_attribute = "userPassword"
 para.security.ldap.active_directory_domain = ""
 ```
 
+## Creating admins
+
+Here's the gist of how to manually create an administrator account:
+```java
+// create the user first
+pc.signIn("password", "test@gmail.com:test7:test123");
+// read identifier first to get the user id
+ParaObject identifier = pc.read("test@gmail.com");
+User user = pc.read(identifier.getCreatorid());
+user.setActive(true);
+user.setGroups("admins"); // use 'users' to revert back
+User updated = pc.create(user); // overwrite the user above
+```
+To overwrite an existing user skip the first line of code `pc.signIn()`.
+
 ## Customizing the UI
 
 - **HTML** templates are in `src/main/resources/templates/`
