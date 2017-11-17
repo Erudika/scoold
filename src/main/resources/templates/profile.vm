@@ -2,7 +2,7 @@
 	<div class="col m4">
 		<div class="card">
 			<div class="card-image">
-				<img src="#profilepic($showUser)" alt="Profile picture" class="profile-pic">
+				<img src="#profilepic($showUser)" class="profile-pic">
 				<span class="card-title">
 					#if($showUser.user.identifier.startsWith("fb"))
 						<i class="fa fa-facebook fa-2x"></i>
