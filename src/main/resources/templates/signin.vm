@@ -99,7 +99,7 @@
 						#if($fbLoginEnabled)
 						<div class="mvl pvs">
 							<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
-								<i class="fa fa-facebook left"></i> $!lang.get("signin.facebook")
+								<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
 							</a>
 						</div>
 						#end
