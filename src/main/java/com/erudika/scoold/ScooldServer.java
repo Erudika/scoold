@@ -69,7 +69,6 @@ public class ScooldServer {
 	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "scripts";
 	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "styles";
 
-	public static final int MAX_CONTACTS_PER_USER = Config.getConfigInt("max_contacts_per_user", 2000);
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 	public static final int MAX_TEXT_LENGTH = Config.getConfigInt("max_text_length", 20000);
 	public static final int MAX_TAGS_PER_POST = Config.getConfigInt("max_tags_per_post", 5);

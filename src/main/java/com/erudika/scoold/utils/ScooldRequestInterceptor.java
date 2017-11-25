@@ -91,7 +91,6 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", request.getRequestURI());
 		// Configurable constants
-		modelAndView.addObject("MAX_CONTACTS_PER_USER", MAX_CONTACTS_PER_USER);
 		modelAndView.addObject("MAX_TEXT_LENGTH", MAX_TEXT_LENGTH);
 		modelAndView.addObject("MAX_TAGS_PER_POST", MAX_TAGS_PER_POST);
 		modelAndView.addObject("MAX_REPLIES_PER_POST", MAX_REPLIES_PER_POST);
