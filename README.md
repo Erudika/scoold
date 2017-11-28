@@ -39,6 +39,8 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 
 ### Quick Start
 
+**Note: The Para backend server is deployed separately and is required for Scoold to run.**
+
 0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or any other identity provider that you wish to use.
 This isn't necessary only if you enable LDAP or password authentication.
@@ -48,14 +50,15 @@ This isn't necessary only if you enable LDAP or password authentication.
 
 **OR**
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys OR [run it locally](https://paraio.org/docs/#001-intro)
-2. Create `application.conf` and configure Scoold to connect to Para
-3. Run `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys OR [run Para locally on port 8080](https://paraio.org/docs/#001-intro)
+2. Create a *separate* `application.conf` for Scoold and configure it to connect to Para on port 8080
+3. Start Scoold on port 8000: `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
 
 If you run Para locally, use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
 ```sh
-$ para-cli ping && para-cli new-app "scoold" --name "Scoold"
+$ para-cli ping --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "{secret key for root app}"
+$ para-cli new-app "scoold" --name "Scoold" --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "{secret key for root app}"
 ```
 
 **Important: Do not use the same `application.conf` file for both Para and Scoold!**
@@ -73,7 +76,7 @@ This is an example of what your **`application.conf`** should look like:
 ```ini
 para.app_name = "Scoold"
 # the port for Scoold
-para.port = 8080
+para.port = 8000
 # change this to "production" later
 para.env = "development"
 # the URL where Scoold is hosted, e.g. https://scoold.yourhost.com
