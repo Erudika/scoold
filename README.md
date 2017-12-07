@@ -57,8 +57,10 @@ This isn't necessary only if you enable LDAP or password authentication.
 
 If you run Para locally, use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
 ```sh
-$ para-cli ping --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "{secret key for root app}"
-$ para-cli new-app "scoold" --name "Scoold" --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "{secret key for root app}"
+# run setup and enter the keys for the root app and endpoint 'http://localhost:8080'
+$ para-cli setup
+$ para-cli ping
+$ para-cli new-app "scoold" --name "Scoold"
 ```
 
 **Important: Do not use the same `application.conf` file for both Para and Scoold!**
