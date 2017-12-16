@@ -13,7 +13,7 @@
 			</span>
 			<div id="post-title" class="largeText">$!{showPost.title}</div>
 			<hr>
-
+			#ajaxloading(true)
 			<div class="mbl pbl">
 				#postbox($showPost $showPost)
 			</div>

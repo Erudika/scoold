@@ -133,8 +133,11 @@ $(function () {
      ****************************************************/
 
 	function clearLoading() {
-		$(".loading").removeClass("loading");
-		$("img.ajaxwait").hide();
+		$(".ajaxwait").hide();
+	}
+
+	function startLoading() {
+		$(".ajaxwait").removeClass("hide");
 	}
 
 	function clearForm(form) {
@@ -699,7 +702,7 @@ $(function () {
 				answerBody.value("");
 				localStorage.removeItem("answer-form-body");
 			}, function (xhr, status, error) {
-				location.reload();
+				window.location.reload(true);
 			});
 		} catch (exception) {}
 	}
@@ -722,13 +725,17 @@ $(function () {
 	$(document).on("click", ".delete-post",  function() {
 		var dis = $(this);
 		var postBox = dis.closest(".postbox");
+		startLoading();
 		return areYouSure(function () {
 			$.post(dis.attr("href"), function () {
+				clearLoading();
 				if (!postBox.hasClass("replybox")) {
-					window.location.reload(true);
+					window.location = "/questions?success=true&code=16&deleted=" + postBox.attr("id");
 				}
 			});
-			postBox.fadeOut("fast", function() {postBox.remove();});
+			if (postBox.hasClass("replybox")) {
+				postBox.fadeOut("fast", function() {postBox.remove();});
+			}
 		}, rusuremsg, false);
 	});
 

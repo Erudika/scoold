@@ -242,12 +242,17 @@
 #macro(questionbox $showpost )
 #set($actionlink = "#getpostlink($showpost false true)")
 #set($actionlink2 = "#getpostlink($showpost true true)")
+#if($showpost.id == $request.getParameter("deleted"))
+	#set($deleted = "hide")
+#else
+	#set($deleted = "")
+#end
 #if($authenticated && $showpost.followers && $showpost.followers.containsKey($authUser.user.id))
 	#set($followedPostClass = "following-post")
 #else
 	#set($followedPostClass = "")
 #end
-<div class="card-panel ${followedPostClass}">
+<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted}">
 	<div class="row mbn">
 		#set($votes = $showpost.votes)
 		#set($viewcount = $showpost.viewcount)
@@ -358,7 +363,7 @@
 ####################################
 #macro(postbox $showpost $parentpost)
 #set($actionlink = "#getpostlink($showpost false true)")
-<div class="postbox $!{showpost.type}box">
+<div id="$!showpost.id" class="postbox $!{showpost.type}box">
 	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="postbody pvs">
