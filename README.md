@@ -221,11 +221,17 @@ To overwrite an existing user skip the first line of code `pc.signIn()`.
 
 ## Customizing the UI
 
+Clone this repository and edit the following:
+
 - **HTML** templates are in `src/main/resources/templates/`
 - **CSS** stylesheets can be found in `src/main/resources/static/styles/`
 - **JavaScript** files can be found in `src/main/resources/static/scripts`
 - **Images** are in located in `src/main/resources/static/images/`
 
+To deploy, setup Heroku as a remote to your modified Scoold repo and push your changes with:
+```
+$ git push heroku master
+```
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
 ### Building Scoold
