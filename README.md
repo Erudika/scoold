@@ -29,9 +29,9 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
 - LDAP authentication support
-- Syntax highlighting for code in posts
-- Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
+- Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
+- Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
 
 ### Live Demo

@@ -750,6 +750,9 @@ $(function () {
 		});
 	}
 
+	// small fix for custom checkbox rendering of GFM task lists
+	$(".task-list-item>input[type=checkbox]").addClass("filled-in").after("<label style='height:15px'></label>");
+
 	/****************************************************
      *                   REVISIONS
      ****************************************************/
