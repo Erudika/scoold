@@ -188,8 +188,12 @@ public class ScooldServer {
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
 
-		boolean connectedToPara = pc.getTimestamp() > 0;
-		if (!connectedToPara) {
+		try {
+			boolean connectedToPara = pc.getTimestamp() > 0;
+			if (!connectedToPara) {
+				throw new Exception();
+			}
+		} catch (Exception e) {
 			logger.error("No connection to Para backend - make sure that your keys are valid.");
 			return pc;
 		}
