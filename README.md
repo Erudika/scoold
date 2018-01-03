@@ -29,6 +29,8 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
 - LDAP authentication support
+- Syntax highlighting for code in posts
+- Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
 - SEO friendly
 
@@ -234,7 +236,13 @@ $ git push heroku master
 ```
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
-### Building Scoold
+## Translating Scoold
+
+You can translate Scoold to your language at https://live.scoold.com/languages
+Also you can take the [language file](https://github.com/Erudika/scoold/blob/master/src/main/resources/lang_en.properties)
+and translate it, then change the file suffix from "_en" to your locale, and finally, open a pull request here.
+
+## Building Scoold
 
 To compile it you'll need JDK 8+ and Maven. Once you have it, just clone and build:
 
