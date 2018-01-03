@@ -725,8 +725,8 @@ $(function () {
 	$(document).on("click", ".delete-post",  function() {
 		var dis = $(this);
 		var postBox = dis.closest(".postbox");
-		startLoading();
 		return areYouSure(function () {
+			startLoading();
 			$.post(dis.attr("href"), function () {
 				clearLoading();
 				if (!postBox.hasClass("replybox")) {
