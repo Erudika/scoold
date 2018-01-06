@@ -24,7 +24,6 @@ import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.typesafe.config.ConfigValue;
-import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -62,7 +62,7 @@ public class AdminController {
 		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
 			return "redirect:" + HOMEPAGE;
 		}
-		Map<String, Object> configMap = new HashMap<String, Object>();
+		Map<String, Object> configMap = new LinkedHashMap<String, Object>();
 		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
 			ConfigValue value = entry.getValue();
 			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");

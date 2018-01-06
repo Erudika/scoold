@@ -18,7 +18,7 @@
 		</form>
 	</div>
 #else
-	<h2>Administration</h2>
+	<h2>$!lang.get('administration.title')</h2>
 	<hr>
 	<h4>Production mode: <tt class="green-text text-darken-2">$!IN_PRODUCTION</tt></h4>
 	<h4>Para version: <tt class="green-text text-darken-2">$!version</tt></h4>
