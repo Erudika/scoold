@@ -21,13 +21,13 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Full-text search
 - Distributed object cache
 - Location-based search and "near me" filtering of posts
-- I18n and branding customization
-- Spring Boot project (single JAR)
+- I18n with RTL language support
 - Reputation and voting system with badges
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
+- Spring Boot project (single JAR)
 - LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
