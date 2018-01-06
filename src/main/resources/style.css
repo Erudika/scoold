@@ -200,16 +200,6 @@ code {
 .user-card img {
 	max-height: 127px;
 }
-@media (max-width: 900px) {
-	.sTextCenter {
-		text-align: center;
-		color: red !important;
-	}
-	.sTextCenter.r {
-		text-align: center;
-	}
-}
-
 /**** FEEL FREE TO MODIFY THESE PROPETIES ****/
 a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
 .btn, .btn-large, .navbtn-hover {background-color: #ec407a;}

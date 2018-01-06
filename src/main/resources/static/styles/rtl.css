@@ -1,0 +1,97 @@
+
+.input-field input[type=search]+label {
+	right: 1rem;
+}
+
+nav .input-field label {
+	right: 0;
+	left: auto;
+}
+.input-field input[type=search]+label {
+	left: auto;
+}
+
+.input-field input[type=search] {
+	padding-left: 0rem;
+	padding-right: 4rem;
+	color: #444;
+}
+
+i.toggle-drawer {
+	cursor: pointer;
+	position: absolute;
+	left: 0;
+}
+
+ul:not(.browser-default) {
+	padding-right: 0;
+	list-style-type: none;
+}
+i.left {
+    float: right;
+    margin-left: 15px;
+    margin-right: 0;
+}
+i.right {
+    float: left;
+    margin-right: 15px;
+    margin-left: 0;
+}
+td, th {
+	text-align: right;
+}
+
+.userbox .col:first-child, .page-footer .col:first-child, .questionbox .col:first-child,
+.questionpage .col:first-child, .profilepage .col:first-child, .compactanswerbox .col:first-child {
+	float: right;
+}
+
+.profilepage .col:last-child {
+	padding-right: 150px;
+}
+
+.CodeMirror-scroll {
+	margin-left: -30px;
+	margin-right: 0;
+}
+
+.input-field .prefix ~ input, .input-field .prefix ~ textarea, .input-field .prefix ~ label,
+.input-field .prefix ~ .validate ~ label, .input-field .prefix ~ .autocomplete-content {
+	margin-right: 3rem;
+	margin-left: 0;
+}
+.input-field label {
+	left: auto;
+	right: 0;
+}
+
+.dropdown-content li {
+	text-align: right;
+}
+
+#tags-dropdown {
+	left: auto;
+	right: 0;
+}
+
+.r{ text-align: left;}
+.l{ text-align: right;}
+.right{ float: left !important; }
+.left{ float: right !important; }
+
+.prn{padding-left:0}
+.prs{padding-left:5px}
+.prm{padding-left:10px}
+.prl{padding-left:20px}
+.pln{padding-right:0}
+.pls{padding-right:5px}
+.plm{padding-right:10px}
+.pll{padding-right:20px}
+.mrn{margin-left:0}
+.mrs{margin-left:5px}
+.mrm{margin-left:10px}
+.mrl{margin-left:20px}
+.mln{margin-right:0}
+.mls{margin-right:5px}
+.mlm{margin-right:10px}
+.mll{margin-right:20px}

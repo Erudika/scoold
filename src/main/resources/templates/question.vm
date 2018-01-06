@@ -1,5 +1,5 @@
 <div class="ptl">
-	<div class="row">
+	<div class="row questionpage">
 		<div class="col m12 l9">
 			<span class="grey-text">
 			#if ($showPost.answercount > 0)

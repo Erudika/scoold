@@ -205,6 +205,10 @@ public final class ScooldUtils {
 		return lang;
 	}
 
+	public boolean isLanguageRTL(String langCode) {
+		return StringUtils.equalsAnyIgnoreCase(langCode, "ar", "he", "dv", "iw", "fa", "ps", "sd", "ug", "ur", "yi");
+	}
+
 	public void fetchProfiles(List<? extends ParaObject> objects) {
 		if (objects == null || objects.isEmpty()) {
 			return;

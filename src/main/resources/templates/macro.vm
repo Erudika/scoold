@@ -253,7 +253,7 @@
 	#set($followedPostClass = "")
 #end
 <div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted}">
-	<div class="row mbn">
+	<div class="row mbn questionbox">
 		#set($votes = $showpost.votes)
 		#set($viewcount = $showpost.viewcount)
 		#set($answercount = $showpost.answercount)
@@ -328,7 +328,7 @@
 #macro(compactanswerspage $answers)
 	#foreach($answer in $answers)
 		<div class="card-panel">
-			<div class="row mbn">
+			<div class="row mbn compactanswerbox">
 				<div class="col s10 m11 l9 columns">
 					<span class="lightborder phm mrm">$!answer.votes</span>
 					<span>
