@@ -55,6 +55,14 @@ td, th {
 	margin-right: 0;
 }
 
+.editor-preview {
+	left: auto;
+	right: 0;
+}
+.editor-preview p {
+	text-align: right;
+}
+
 .input-field .prefix ~ input, .input-field .prefix ~ textarea, .input-field .prefix ~ label,
 .input-field .prefix ~ .validate ~ label, .input-field .prefix ~ .autocomplete-content {
 	margin-right: 3rem;
@@ -72,6 +80,13 @@ td, th {
 #tags-dropdown {
 	left: auto;
 	right: 0;
+}
+
+.scoold-user-dropdown i {
+	margin: -7px 5px 0 0;
+}
+.scoold-user-dropdown {
+	padding: 7px 7px 7px 2px;
 }
 
 .r{ text-align: left;}
