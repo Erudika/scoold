@@ -611,7 +611,7 @@ $(function () {
 		});
 		if (RTL_ENABLED) {
 			mde.codemirror.options.direction = "rtl";
-			mde.codemirror.options.rtlMoveVisually = false;
+			//mde.codemirror.options.rtlMoveVisually = false;
 		}
 		return mde;
 	}
