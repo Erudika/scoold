@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import java.util.Locale;
 
 @Controller
 public class SigninController {
@@ -167,6 +168,9 @@ public class SigninController {
 		sb.append("LINKEDIN_APP_ID = \"").append(Config.LINKEDIN_APP_ID).append("\"; ");
 		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
 		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
+
+		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req), req);
+		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");
 		return sb.toString();
 	}
 

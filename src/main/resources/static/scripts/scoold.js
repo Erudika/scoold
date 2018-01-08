@@ -3,7 +3,7 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs: false */
+/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs, RTL_ENABLED: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -603,12 +603,17 @@ $(function () {
 	}
 
 	function initPostEditor(elem) {
-		return new SimpleMDE({
+		var mde = new SimpleMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
-			showIcons: ["code", "table"],
+			showIcons: ["code", "table", "strikethrough"],
 			spellChecker: false
 		});
+		if (RTL_ENABLED) {
+			mde.codemirror.options.direction = "rtl";
+			mde.codemirror.options.rtlMoveVisually = false;
+		}
+		return mde;
 	}
 
 	$(document).on("event:show", ".editbox", function () {

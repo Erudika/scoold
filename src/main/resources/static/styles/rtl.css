@@ -55,6 +55,15 @@ td, th {
 	margin-right: 0;
 }
 
+.CodeMirror {
+	direction: rtl;
+}
+
+.CodeMirror-sizer {
+	border-right: none;
+	border-left: 30px solid transparent;
+}
+
 .editor-preview {
 	left: auto;
 	right: 0;
