@@ -1,4 +1,4 @@
-/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID */
+/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID, CONTEXT_PATH */
 /************************
  * Facebook integration *
  ************************/
@@ -14,9 +14,9 @@ if (FB_APP_ID && FB_APP_ID.trim() !== "") {
 	$('#fb-login-btn').on('click', function () {
 		FB.login(function(response) {
 			if (response.authResponse) {
-				window.location = "/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
+				window.location = CONTEXT_PATH + "/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
 			} else {
-				window.location = "/signin?code=3&error=true";
+				window.location = CONTEXT_PATH + "/signin?code=3&error=true";
 			}
 		}, {scope: 'public_profile,email'});
 		return false;
@@ -44,9 +44,9 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "") {
 				});
 
 				auth2.attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
-					window.location = "/signin?provider=google&access_token=" + googleUser.getAuthResponse(true).access_token;
+					window.location = CONTEXT_PATH + "/signin?provider=google&access_token=" + googleUser.getAuthResponse(true).access_token;
 				}, function(error) {
-					window.location = "/signin?code=3&error=true";
+					window.location = CONTEXT_PATH + "/signin?code=3&error=true";
 				});
 			});
 		}

@@ -22,6 +22,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.CSRF_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.utils.HttpUtils;
@@ -160,6 +161,7 @@ public class SigninController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
 		sb.append("ENDPOINT = \"").append(pc.getEndpoint()).append("\"; ");
+		sb.append("CONTEXT_PATH = \"").append(CONTEXT_PATH).append("\"; ");
 		sb.append("CSRF_COOKIE = \"").append(CSRF_COOKIE).append("\"; ");
 		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
 		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");

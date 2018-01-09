@@ -631,7 +631,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #end
 #####################################
-#macro(getpostlink $p $plural $noid)$p.getPostLink($plural, $noid)#end
+#macro(getpostlink $p $plural $noid)$!{request.contextPath}$p.getPostLink($plural, $noid)#end
 #####################################
 #macro(ajaxloading $hide)
 #if ($hide) #set($hidden = "hide") #else #set($hidden = "") #end

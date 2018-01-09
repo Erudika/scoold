@@ -8,7 +8,7 @@
 		#if ($request.getHeader("Referer"))
 			#set($ref = $request.getHeader("Referer"))
 		#else
-			#set($ref = $HOMEPAGE)
+			#set($ref = $!request.contextPath)
 		#end
 
 		<form method="post" action="$!{confirmlink}">

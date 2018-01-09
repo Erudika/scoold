@@ -56,12 +56,14 @@ public class ScooldServer {
 	static {
 		// tells ParaClient where to look for classes that implement ParaObject
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
+		System.setProperty("server.context-path", Config.getConfigParam("context_path", System.getProperty("server.context-path", "")));
 	}
 
 	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
 	public static final String CSRF_COOKIE = Config.getRootAppIdentifier() + "-csrf";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
+	public static final String CONTEXT_PATH = StringUtils.stripEnd(System.getProperty("server.context-path", ""), "/");
 	public static final String HOST_URL = Config.getConfigParam("host_url", HOMEPAGE);
 	public static final String CDN_URL = Config.getConfigParam("cdn_url", Config.IN_PRODUCTION ? HOST_URL : HOMEPAGE);
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
@@ -223,8 +225,8 @@ public class ScooldServer {
 			settings.put("security.ldap.compare_passwords", Config.getConfigParam("security.ldap.compare_passwords", ""));
 		}
 		// URLs for success and failure
-		settings.put("signin_success", getServerURL() + "/signin/success?jwt=?");
-		settings.put("signin_failure", getServerURL() + "/signin?code=3&error=true");
+		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
+		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 		try {
 			pc.setAppSettings(settings);
 		} catch (Exception e) {

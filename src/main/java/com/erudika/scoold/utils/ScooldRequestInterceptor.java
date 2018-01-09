@@ -89,7 +89,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("includeHighlightJS", Config.getConfigBoolean("code_highlighting_enabled", true));
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
-		modelAndView.addObject("returnto", request.getRequestURI());
+		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONTEXT_PATH));
 		// Configurable constants
 		modelAndView.addObject("MAX_TEXT_LENGTH", MAX_TEXT_LENGTH);
 		modelAndView.addObject("MAX_TAGS_PER_POST", MAX_TAGS_PER_POST);
@@ -118,37 +118,37 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("localeCookieName", LOCALE_COOKIE);
 		modelAndView.addObject("csrfCookieName", CSRF_COOKIE);
 		// Paths
-		modelAndView.addObject("peoplelink", PEOPLELINK);
-		modelAndView.addObject("profilelink", PROFILELINK);
-		modelAndView.addObject("imageslink", IMAGESLINK);
-		modelAndView.addObject("scriptslink", SCRIPTSLINK);
-		modelAndView.addObject("styleslink", STYLESLINK);
-		modelAndView.addObject("searchlink", SEARCHLINK);
-		modelAndView.addObject("signinlink", SIGNINLINK);
-		modelAndView.addObject("signoutlink", SIGNOUTLINK);
-		modelAndView.addObject("aboutlink", ABOUTLINK);
-		modelAndView.addObject("privacylink", PRIVACYLINK);
-		modelAndView.addObject("termslink", TERMSLINK);
-		modelAndView.addObject("tagslink", TAGSLINK);
-		modelAndView.addObject("settingslink", SETTINGSLINK);
-		modelAndView.addObject("translatelink", TRANSLATELINK);
-		modelAndView.addObject("reportslink", REPORTSLINK);
-		modelAndView.addObject("adminlink", ADMINLINK);
-		modelAndView.addObject("votedownlink", VOTEDOWNLINK);
-		modelAndView.addObject("voteuplink", VOTEUPLINK);
-		modelAndView.addObject("questionlink", QUESTIONLINK);
-		modelAndView.addObject("questionslink", QUESTIONSLINK);
-		modelAndView.addObject("commentlink", COMMENTLINK);
-		modelAndView.addObject("postlink", POSTLINK);
-		modelAndView.addObject("revisionslink", REVISIONSLINK);
-		modelAndView.addObject("feedbacklink", FEEDBACKLINK);
-		modelAndView.addObject("languageslink", LANGUAGESLINK);
+		modelAndView.addObject("peoplelink", CONTEXT_PATH + PEOPLELINK);
+		modelAndView.addObject("profilelink", CONTEXT_PATH + PROFILELINK);
+		modelAndView.addObject("imageslink", CONTEXT_PATH + IMAGESLINK);
+		modelAndView.addObject("scriptslink", CONTEXT_PATH + SCRIPTSLINK);
+		modelAndView.addObject("styleslink", CONTEXT_PATH + STYLESLINK);
+		modelAndView.addObject("searchlink", CONTEXT_PATH + SEARCHLINK);
+		modelAndView.addObject("signinlink", CONTEXT_PATH + SIGNINLINK);
+		modelAndView.addObject("signoutlink", CONTEXT_PATH + SIGNOUTLINK);
+		modelAndView.addObject("aboutlink", CONTEXT_PATH + ABOUTLINK);
+		modelAndView.addObject("privacylink", CONTEXT_PATH + PRIVACYLINK);
+		modelAndView.addObject("termslink", CONTEXT_PATH + TERMSLINK);
+		modelAndView.addObject("tagslink", CONTEXT_PATH + TAGSLINK);
+		modelAndView.addObject("settingslink", CONTEXT_PATH + SETTINGSLINK);
+		modelAndView.addObject("translatelink", CONTEXT_PATH + TRANSLATELINK);
+		modelAndView.addObject("reportslink", CONTEXT_PATH + REPORTSLINK);
+		modelAndView.addObject("adminlink", CONTEXT_PATH + ADMINLINK);
+		modelAndView.addObject("votedownlink", CONTEXT_PATH + VOTEDOWNLINK);
+		modelAndView.addObject("voteuplink", CONTEXT_PATH + VOTEUPLINK);
+		modelAndView.addObject("questionlink", CONTEXT_PATH + QUESTIONLINK);
+		modelAndView.addObject("questionslink", CONTEXT_PATH + QUESTIONSLINK);
+		modelAndView.addObject("commentlink", CONTEXT_PATH + COMMENTLINK);
+		modelAndView.addObject("postlink", CONTEXT_PATH + POSTLINK);
+		modelAndView.addObject("revisionslink", CONTEXT_PATH + REVISIONSLINK);
+		modelAndView.addObject("feedbacklink", CONTEXT_PATH + FEEDBACKLINK);
+		modelAndView.addObject("languageslink", CONTEXT_PATH + LANGUAGESLINK);
 		// Visual customization
 		modelAndView.addObject("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));
-		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", IMAGESLINK + "/logo.svg"));
+		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", CONTEXT_PATH + IMAGESLINK + "/logo.svg"));
 		modelAndView.addObject("logoWidth", Config.getConfigInt("logo_width", 90));
-		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
+		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", CONTEXT_PATH + STYLESLINK + "/style.css"));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("infoStripMsg", authUser == null ? Config.getConfigParam("welcome_message", "") : "");
@@ -185,7 +185,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 			modelAndView.addObject("description", Config.getConfigParam("meta_description", ""));
 		}
 		if (!modelAndView.getModel().containsKey("ogimage")) {
-			modelAndView.addObject("ogimage", IMAGESLINK + "/logowhite.png");
+			modelAndView.addObject("ogimage", CONTEXT_PATH + IMAGESLINK + "/logowhite.png");
 		}
 	}
 }

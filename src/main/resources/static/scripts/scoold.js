@@ -3,7 +3,7 @@
  * author: Alexander Bogdanovski
  * (CC) BY-SA
  */
-/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs, RTL_ENABLED: false */
+/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs, RTL_ENABLED, CONTEXT_PATH: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -348,7 +348,7 @@ $(function () {
 
 	$(".signout").click(function () {
 		$.post($(this).attr("href"), function (data) {
-			window.location = "/signin?code=5&success=true";
+			window.location = CONTEXT_PATH + "/signin?code=5&success=true";
 		});
 		return false;
 	});
@@ -435,7 +435,7 @@ $(function () {
 		},
 		getData: function (value, callback) {
 			var val = value.toLowerCase();
-			$.get("/tags/" + val, function (data) {
+			$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
 				var tags = data.map(function (t) {
 					return {id: t.tag, text: t.tag};
 				});
@@ -663,7 +663,7 @@ $(function () {
 				}
 				if (title.val() && title.val().trim().length > 0) {
 					titleTimeout = setTimeout(function () {
-						$.get("/questions/similar/" + title.val(), function (data) {
+						$.get(CONTEXT_PATH + "/questions/similar/" + title.val(), function (data) {
 							if (data && data.trim().length > 0) {
 								similarContainer.html(data).prepend(similarTitle);
 							} else {
@@ -735,7 +735,7 @@ $(function () {
 			$.post(dis.attr("href"), function () {
 				clearLoading();
 				if (!postBox.hasClass("replybox")) {
-					window.location = "/questions?success=true&code=16&deleted=" + postBox.attr("id");
+					window.location = CONTEXT_PATH + "/questions?success=true&code=16&deleted=" + postBox.attr("id");
 				}
 			});
 			if (postBox.hasClass("replybox")) {
