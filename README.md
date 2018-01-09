@@ -129,6 +129,11 @@ img-src 'self' https: data:; report-uri /reports/cspv
 
 **Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
 
+### Deploying Scoold under a specific context path
+
+To deploy Scoold at a different path instead of the root path, set `para.context_path = "/newpath`. The default value
+for this setting is blank, meaning Scoold will be deployed at the root directory.
+
 ### Serving static files from a CDN
 
 Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
@@ -223,7 +228,16 @@ To overwrite an existing user skip the first line of code `pc.signIn()`.
 
 ## Customizing the UI
 
-Clone this repository and edit the following:
+There are a number of settings that let you customize the appearance of the website without changing the code.
+```
+para.fixed_nav = false
+para.show_branding = true
+para.logo_url = "/logo.svg"
+para.logo_width = 90
+para.stylesheet_url = "/style.css"
+```
+
+Alternatively, clone this repository and edit the following:
 
 - **HTML** templates are in `src/main/resources/templates/`
 - **CSS** stylesheets can be found in `src/main/resources/static/styles/`
