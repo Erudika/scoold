@@ -206,7 +206,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public boolean isClosed() {
-		return this.closerid != null;
+		return !StringUtils.isBlank(this.closerid);
 	}
 
 	public String getTagsString() {

@@ -244,7 +244,7 @@ public class QuestionController {
 		}
 		if (utils.isMod(authUser)) {
 			if (showPost.isClosed()) {
-				showPost.setCloserid(null);
+				showPost.setCloserid("");
 			} else {
 				showPost.setCloserid(authUser.getId());
 			}
