@@ -18,8 +18,8 @@
 		<meta name="twitter:title" content="$!APPNAME | $!title">
 		<meta name="twitter:description" content="$!description">
 		<meta name="twitter:image" content="$!ogimage">
-		<link href="/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
-		<link href="/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
+		<link href="$!request.contextPath/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
+		<link href="$!request.contextPath/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
 		<link href="$!imageslink/logowhite.png" rel="image_src">
 		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
 		<link href="$!imageslink/favicon.ico" rel="shortcut icon">

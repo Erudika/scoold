@@ -64,12 +64,11 @@ public class ScooldServer {
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
 	public static final String CONTEXT_PATH = StringUtils.stripEnd(System.getProperty("server.context-path", ""), "/");
-	public static final String HOST_URL = Config.getConfigParam("host_url", HOMEPAGE);
-	public static final String CDN_URL = Config.getConfigParam("cdn_url", Config.IN_PRODUCTION ? HOST_URL : HOMEPAGE);
+	public static final String CDN_URL = StringUtils.stripEnd(Config.getConfigParam("cdn_url", CONTEXT_PATH), "/");
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
-	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "images";
-	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "scripts";
-	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL + "/" : HOMEPAGE) + "styles";
+	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/images";
+	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/scripts";
+	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/styles";
 
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 	public static final int MAX_TEXT_LENGTH = Config.getConfigInt("max_text_length", 20000);

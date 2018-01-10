@@ -118,11 +118,11 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("localeCookieName", LOCALE_COOKIE);
 		modelAndView.addObject("csrfCookieName", CSRF_COOKIE);
 		// Paths
+		modelAndView.addObject("imageslink", IMAGESLINK); // do not add context path prefix!
+		modelAndView.addObject("scriptslink", SCRIPTSLINK); // do not add context path prefix!
+		modelAndView.addObject("styleslink", STYLESLINK); // do not add context path prefix!
 		modelAndView.addObject("peoplelink", CONTEXT_PATH + PEOPLELINK);
 		modelAndView.addObject("profilelink", CONTEXT_PATH + PROFILELINK);
-		modelAndView.addObject("imageslink", CONTEXT_PATH + IMAGESLINK);
-		modelAndView.addObject("scriptslink", CONTEXT_PATH + SCRIPTSLINK);
-		modelAndView.addObject("styleslink", CONTEXT_PATH + STYLESLINK);
 		modelAndView.addObject("searchlink", CONTEXT_PATH + SEARCHLINK);
 		modelAndView.addObject("signinlink", CONTEXT_PATH + SIGNINLINK);
 		modelAndView.addObject("signoutlink", CONTEXT_PATH + SIGNOUTLINK);
@@ -146,9 +146,9 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		// Visual customization
 		modelAndView.addObject("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));
-		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", CONTEXT_PATH + IMAGESLINK + "/logo.svg"));
+		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", IMAGESLINK + "/logo.svg"));
 		modelAndView.addObject("logoWidth", Config.getConfigInt("logo_width", 90));
-		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", CONTEXT_PATH + STYLESLINK + "/style.css"));
+		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("infoStripMsg", authUser == null ? Config.getConfigParam("welcome_message", "") : "");
@@ -185,7 +185,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 			modelAndView.addObject("description", Config.getConfigParam("meta_description", ""));
 		}
 		if (!modelAndView.getModel().containsKey("ogimage")) {
-			modelAndView.addObject("ogimage", CONTEXT_PATH + IMAGESLINK + "/logowhite.png");
+			modelAndView.addObject("ogimage", IMAGESLINK + "/logowhite.png");
 		}
 	}
 }
