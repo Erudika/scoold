@@ -59,7 +59,7 @@ if (GITHUB_APP_ID && GITHUB_APP_ID.trim() !== "") {
 	$('#gh-login-btn').on('click', function () {
 		window.location = "https://github.com/login/oauth/authorize?" +
 				"response_type=code&client_id=" + GITHUB_APP_ID +
-				"&scope=user:email&state=" + (new Date().getTime()) +
+				"&scope=user%3Aemail&state=" + (new Date().getTime()) +
 				"&redirect_uri=" + ENDPOINT + "/github_auth?appid=" + APPID;
 		return false;
 	});

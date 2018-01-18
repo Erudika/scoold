@@ -81,7 +81,7 @@
 							#end
 
 							<div class="brand-logo">
-								<a href="$!request.contextPath">
+								<a href="$!request.contextPath/">
 									<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo">
 								</a>
 							</div>
