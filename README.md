@@ -280,7 +280,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Macedonian** | [lang_mk.properties](src/main/resources/lang_mk.properties) | 0%
 **Serbian** | [lang_sr.properties](src/main/resources/lang_sr.properties) | 0%
 **Swedish** | [lang_sv.properties](src/main/resources/lang_sv.properties) | 0%
-**Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :white_check_mark:
+**Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :white_check_mark: Thanks @showaid!
 **Indonesian** | [lang_in.properties](src/main/resources/lang_in.properties) | 0%
 **Malay** | [lang_ms.properties](src/main/resources/lang_ms.properties) | 0%
 **Maltese** | [lang_mt.properties](src/main/resources/lang_mt.properties) | 0%
@@ -293,7 +293,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | 0%
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
 **Czech** | [lang_cs.properties](src/main/resources/lang_cs.properties) | 0%
-**Arabic** | [lang_ar.properties](src/main/resources/lang_ar.properties) | :white_check_mark:
+**Arabic** | [lang_ar.properties](src/main/resources/lang_ar.properties) | :white_check_mark: (Google Translate)
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
 **Thai** | [lang_th.properties](src/main/resources/lang_th.properties) | 0%
 **Japanese** | [lang_ja.properties](src/main/resources/lang_ja.properties) | 0%
@@ -302,7 +302,6 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Romanian** | [lang_ro.properties](src/main/resources/lang_ro.properties) | 0%
 **Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | 0%
 **Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | 0%
-
 
 
 ## Building Scoold
