@@ -252,9 +252,58 @@ Also, please refer to the documentation for Spring Boot and Spring MVC.
 
 ## Translating Scoold
 
-You can translate Scoold to your language at https://live.scoold.com/languages
-Also you can take the [language file](https://github.com/Erudika/scoold/blob/master/src/main/resources/lang_en.properties)
-and translate it, then change the file suffix from "_en" to your locale, and finally, open a pull request here.
+You can translate Scoold to your language by copying the [English language file](https://github.com/Erudika/scoold/blob/master/src/main/resources/lang_en.properties)
+and translating it. When you're done, change the file name from "lang_en.properties" to "lang_xx.properties"
+where "xx" is the language code for your locale. Finally, open a pull request here.
+
+| Language | File | Progress 
+--- | --- | ---
+**Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | 0%
+**German** | [lang_de.properties](src/main/resources/lang_de.properties) | 0%
+**Norwegian** | [lang_no.properties](src/main/resources/lang_no.properties) | 0%
+**Finnish** | [lang_fi.properties](src/main/resources/lang_fi.properties) | 0%
+**Belarusian** | [lang_be.properties](src/main/resources/lang_be.properties) | 0%
+**Russian** | [lang_ru.properties](src/main/resources/lang_ru.properties) | 0%
+**Portuguese** | [lang_pt.properties](src/main/resources/lang_pt.properties) | 0%
+**Bulgarian** | [lang_bg.properties](src/main/resources/lang_bg.properties) | :white_check_mark:
+**Lithuanian** | [lang_lt.properties](src/main/resources/lang_lt.properties) | 0%
+**Croatian** | [lang_hr.properties](src/main/resources/lang_hr.properties) | 0%
+**Latvian** | [lang_lv.properties](src/main/resources/lang_lv.properties) | 0%
+**French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | 0%
+**Hungarian** | [lang_hu.properties](src/main/resources/lang_hu.properties) | 0%
+**Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
+**Slovak** | [lang_sk.properties](src/main/resources/lang_sk.properties) | 0%
+**Slovenian** | [lang_sl.properties](src/main/resources/lang_sl.properties) | 0%
+**Irish** | [lang_ga.properties](src/main/resources/lang_ga.properties) | 0%
+**Catalan** | [lang_ca.properties](src/main/resources/lang_ca.properties) | 0%
+**Albanian** | [lang_sq.properties](src/main/resources/lang_sq.properties) | 0%
+**Macedonian** | [lang_mk.properties](src/main/resources/lang_mk.properties) | 0%
+**Serbian** | [lang_sr.properties](src/main/resources/lang_sr.properties) | 0%
+**Swedish** | [lang_sv.properties](src/main/resources/lang_sv.properties) | 0%
+**Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :white_check_mark:
+**Indonesian** | [lang_in.properties](src/main/resources/lang_in.properties) | 0%
+**Malay** | [lang_ms.properties](src/main/resources/lang_ms.properties) | 0%
+**Maltese** | [lang_mt.properties](src/main/resources/lang_mt.properties) | 0%
+**Greek** | [lang_el.properties](src/main/resources/lang_el.properties) | 0%
+**English** | [lang_en.properties](src/main/resources/lang_en.properties) | :white_check_mark:
+**Icelandic** | [lang_is.properties](src/main/resources/lang_is.properties) | 0%
+**Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | 0%
+**Spanish** | [lang_es.properties](src/main/resources/lang_es.properties) | 0%
+**Chinese** | [lang_zh.properties](src/main/resources/lang_zh.properties) | 0%
+**Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | 0%
+**Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
+**Czech** | [lang_cs.properties](src/main/resources/lang_cs.properties) | 0%
+**Arabic** | [lang_ar.properties](src/main/resources/lang_ar.properties) | :white_check_mark:
+**Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
+**Thai** | [lang_th.properties](src/main/resources/lang_th.properties) | 0%
+**Japanese** | [lang_ja.properties](src/main/resources/lang_ja.properties) | 0%
+**Polish** | [lang_pl.properties](src/main/resources/lang_pl.properties) | 0%
+**Danish** | [lang_da.properties](src/main/resources/lang_da.properties) | 0%
+**Romanian** | [lang_ro.properties](src/main/resources/lang_ro.properties) | 0%
+**Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | 0%
+**Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | 0%
+
+
 
 ## Building Scoold
 
