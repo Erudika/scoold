@@ -19,7 +19,9 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -36,7 +38,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -72,7 +76,38 @@ public class AdminController {
 		model.addAttribute("title", utils.getLang(req).get("admin.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
+		model.addAttribute("endpoint", pc.getEndpoint());
+		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
+		model.addAttribute("spaces", pc.findQuery("scooldspace", "*"));
 		return "base";
+	}
+
+	@PostMapping("/add-space")
+	public String addSpace(@RequestParam String space, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
+			String spaceId = Utils.noSpaces(Utils.stripAndTrim(space, " "), "-");
+			if (spaceId.equals("default") || pc.read("scooldspace:" + spaceId) != null) {
+				model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
+			} else {
+				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
+				s.setType("scooldspace");
+				s.setName(space);
+				pc.create(s);
+			}
+		} else {
+			model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("requiredfield")));
+		}
+		return "redirect:" + ADMINLINK;
+	}
+
+	@PostMapping("/remove-space")
+	public String removeSpace(@RequestParam String spaceId, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (StringUtils.isBlank(spaceId) && utils.isAdmin(authUser)) {
+			pc.delete(new Sysprop(spaceId));
+		}
+		return "redirect:" + ADMINLINK;
 	}
 
 	@PostMapping

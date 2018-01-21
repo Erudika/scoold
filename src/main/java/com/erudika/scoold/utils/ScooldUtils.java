@@ -276,6 +276,11 @@ public final class ScooldUtils {
 				isMod(authUser));
 	}
 
+	public boolean canAccessSpace(Profile authUser, String targetSpace, HttpServletRequest req) {
+		return isAuthenticated(req) && targetSpace != null &&
+				(authUser.getSpaces().contains(targetSpace) || targetSpace.equals("default"));
+	}
+
 	public boolean isMine(Post showPost, Profile authUser) {
 		// author can edit, mods can edit & ppl with rep > 100 can edit
 		return showPost != null && authUser != null ? authUser.getId().equals(showPost.getCreatorid()) : false;
