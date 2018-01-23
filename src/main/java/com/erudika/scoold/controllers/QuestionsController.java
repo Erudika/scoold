@@ -175,8 +175,13 @@ public class QuestionsController {
 
 	@PostMapping({"/questions/space/{space}", "/questions/space"})
 	public String setSpace(@PathVariable(required = false) String space, HttpServletRequest req, HttpServletResponse res) {
-		if (utils.isAuthenticated(req)) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser != null) {
 			if (StringUtils.isBlank(space) || pc.read(utils.getSpaceId(space)) == null) {
+				if (utils.canAccessSpace(authUser, space)) {
+					authUser.getSpaces().remove(space);
+					authUser.update();
+				}
 				space = "";
 			}
 			setRawCookie(SPACE_COOKIE, space, req, res, false, 365 * 24 * 60 * 60);

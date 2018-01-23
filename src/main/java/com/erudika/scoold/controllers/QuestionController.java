@@ -144,7 +144,7 @@ public class QuestionController {
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
 			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
 		}
-		if (!StringUtils.isBlank(space) && showPost.isQuestion() && utils.canAccessSpace(authUser, space)) {
+		if (showPost.isQuestion() && utils.canAccessSpace(authUser, space)) {
 			showPost.setSpace(space);
 			changeSpaceForAllAnswers(showPost, space);
 		}

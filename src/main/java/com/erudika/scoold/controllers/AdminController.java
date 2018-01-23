@@ -80,6 +80,7 @@ public class AdminController {
 		model.addAttribute("endpoint", pc.getEndpoint());
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*"));
+		model.addAttribute("isDefaultSpacePublic", Config.getConfigBoolean("is_default_space_public", true));
 		return "base";
 	}
 
@@ -90,8 +91,7 @@ public class AdminController {
 			String spaceId = Utils.noSpaces(Utils.stripAndTrim(space, " "), "-");
 			if ("default".equalsIgnoreCase(space) || pc.getCount("scooldspace") >= MAX_SPACES ||
 					pc.read("scooldspace:" + spaceId) != null) {
-				model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
-				return "base";
+				return "redirect:" + ADMINLINK + "?code=7&error=true";
 			} else {
 				space = space.replaceAll(":", "");
 				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
@@ -108,10 +108,12 @@ public class AdminController {
 	}
 
 	@PostMapping("/remove-space")
-	public String removeSpace(@RequestParam String spaceId, HttpServletRequest req) {
+	public String removeSpace(@RequestParam String space, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
-		if (!StringUtils.isBlank(spaceId) && utils.isAdmin(authUser)) {
-			pc.delete(new Sysprop(spaceId));
+		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
+			pc.delete(new Sysprop(utils.getSpaceId(space)));
+			authUser.getSpaces().remove(space);
+			authUser.update();
 		}
 		return "redirect:" + ADMINLINK;
 	}

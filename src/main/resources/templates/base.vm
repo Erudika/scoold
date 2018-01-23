@@ -79,7 +79,7 @@
 							#end
 
 							#if($authenticated)
-								#if($authUser.hasSpaces())
+								#if(($authUser.hasSpaces() || $isMod))
 									<ul id="spaces-dropdown" class="dropdown-content">
 										#if($scooldUtils.canAccessSpace($authUser, ""))
 											#if($!currentSpace.isEmpty())
@@ -134,7 +134,7 @@
 								#end
 
 								#if ($authenticated)
-									#if($authUser.hasSpaces() && $!langDirection == "LTR")
+									#if(($authUser.hasSpaces() || $isMod) && $!langDirection == "LTR")
 										#navbarspaces()
 									#end
 									<li>
@@ -143,7 +143,7 @@
 											<img src="#profilepic($authUser)" width="50" class="responsive-img" alt="Avatar">
 											<i class="fa fa-caret-down right"></i></a>
 									</li>
-									#if($authUser.hasSpaces() && $!langDirection == "RTL")
+									#if(($authUser.hasSpaces() || $isMod) && $!langDirection == "RTL")
 										#navbarspaces()
 									#end
 								#else
@@ -204,6 +204,30 @@
 											</a>
 										</li>
 									#end
+
+									#if(($authUser.hasSpaces() || $isMod))
+										#if($scooldUtils.canAccessSpace($authUser, ""))
+											#if($!currentSpace.isEmpty())
+													#set($spaceSelectedClass = "navbtn-hover white-text")
+											#end
+
+											<li class="divider"></li>
+											<li><a href="$questionslink/space" title="Default Space"
+														 class="post-refresh ${spaceSelectedClass}">Default space</a></li>
+										#end
+										#foreach($space in $authUser.spaces)
+											<li class="divider"></li>
+											#if($!currentSpace == $space)
+												#set($spaceSelectedClass = "navbtn-hover white-text")
+											#else
+												#set($spaceSelectedClass = "")
+											#end
+											#set($spaceName = $scooldUtils.getSpaceName($space))
+											<li><a href="$questionslink/space/$!space" title="$!{spaceName}"
+														 class="post-refresh $!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
+										#end
+									#end
+
 									<li class="divider"></li>
 									<li>
 										<li><a href="$signoutlink" title="Sign out" class="mts signout">$!lang.get('signout')</a></li>

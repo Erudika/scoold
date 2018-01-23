@@ -33,7 +33,6 @@
 				<i class="fa fa-square pvm prefix grey-text"></i>
 				<label for="name_text">$!lang.get('name')</label>
 				<input type="text" id="name_text" name="space" class="validate" length="255" minlength="2" required>
-				#getmessagebox("red white-text" $error.get("name"))
 			</div>
 			<button class="btn mtl waves-effect waves-light" type="submit">
 				<i class="fa fa-plus left"></i>$!lang.get('add')
@@ -41,27 +40,31 @@
 		</form>
 	</div>
 
-	#if($spaces && !$spaces.isEmpty())
-		<div class="row">
-		#foreach($space in $spaces)
+	<div class="row">
+		<div class="col s12 m6 l3">
+			<div class="card-panel spacebox dashedborder z-depth-0 center-align grey-text">
+				<p class="pvs mvn">
+					#if($isDefaultSpacePublic)
+						<i class="fa fa-unlock green-text" title="Public"></i>
+					#else
+						<i class="fa fa-lock red-text" title="Private"></i>
+					#end
+					Default Space
+				</p>
+			</div>
+		</div>
+		#if($spaces)
+			#foreach($space in $spaces)
 			<div class="col s12 m6 l3">
 				<div class="card-panel spacebox">
-					<a href="$adminlink/remove-space?spaceId=$!space.id" class="red-text right tooltipped post-refresh"
+					<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped post-refresh"
 						 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
 					 <p class="largeText">$space.name</p>
 				</div>
 			</div>
+			#end
 		#end
-		</div>
-	#else
-	<div class="row">
-		<div class="col s12 m6 l3">
-			<div class="card-panel spacebox dashedborder z-depth-0 center-align grey-text">
-				<p class="pvs">Default Space</p>
-			</div>
-		</div>
 	</div>
-	#end
 
 
 	<hr>
