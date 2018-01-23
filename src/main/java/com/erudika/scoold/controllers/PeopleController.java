@@ -17,18 +17,27 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Entity;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -52,13 +61,49 @@ public class PeopleController {
 			HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
-		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), "*", itemcount);
+		String qf = utils.getSpaceFilteredQuery(req);
+		// [space query filter] + original query string
+		String qs = qf.isEmpty() || qf.equals("*") ? "*" : qf.replaceAll("properties\\.space:", "properties.spaces:");
+		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
 		model.addAttribute("peopleSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
+		if (req.getParameter("bulkedit") != null) {
+			List<ParaObject> spaces = utils.getParaClient().findQuery("scooldspace", "*");
+			model.addAttribute("spaces", spaces);
+//			Map<String, String> spacesMap = new HashMap<String, String>(spaces.size());
+//			for (ParaObject space : spaces) {
+//				spacesMap.put(space.getId(), space.getName());
+//			}
+//			model.addAttribute("spacesMap", spacesMap);
+		}
 		return "base";
+	}
+
+	@PostMapping("/bulk-edit")
+	public String bulkEdit(@RequestParam String[] selectedUsers, @RequestParam(required = false) String[] selectedSpaces,
+			HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		boolean isAdmin = utils.isAdmin(authUser);
+		if (isAdmin) {
+			ArrayList<Map<String, Object>> toUpdate = new ArrayList<>();
+			for (String selectedUser : selectedUsers) {
+				if (!StringUtils.isBlank(selectedUser)) {
+					Map<String, Object> profile = new HashMap<>();
+					profile.put(Config._ID, selectedUser);
+					if (selectedSpaces == null) {
+						selectedSpaces = new String[]{};
+					}
+					profile.put("spaces", Arrays.asList(selectedSpaces));
+					toUpdate.add(profile);
+				}
+			}
+			// partial batch update
+			utils.getParaClient().invokePatch("_batch", Entity.json(toUpdate));
+		}
+		return "redirect:" + PEOPLELINK + (isAdmin ? "?bulkedit" : "");
 	}
 
 	@GetMapping("/{sortby}")

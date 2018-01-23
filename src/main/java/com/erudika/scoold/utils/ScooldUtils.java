@@ -33,6 +33,7 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
 import com.erudika.scoold.core.Revision;
+import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -276,9 +277,46 @@ public final class ScooldUtils {
 				isMod(authUser));
 	}
 
-	public boolean canAccessSpace(Profile authUser, String targetSpace, HttpServletRequest req) {
-		return isAuthenticated(req) && targetSpace != null &&
-				(authUser.getSpaces().contains(targetSpace) || targetSpace.equals("default"));
+	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
+		boolean isDefaultSpacePublic = Config.getConfigBoolean("is_default_space_public", true);
+		if (authUser == null || targetSpaceId == null) {
+			return isDefaultSpacePublic;
+		}
+		if (StringUtils.isBlank(targetSpaceId) && (isMod(authUser) || !authUser.hasSpaces() || isDefaultSpacePublic)) {
+			return true;
+		}
+		boolean canAccess = false;
+		for (String space : authUser.getSpaces()) {
+			canAccess = space.equalsIgnoreCase(targetSpaceId); // "scooldspace:spaceID:spaceNAME"
+			if (canAccess) {
+				break;
+			}
+		}
+		return canAccess;
+	}
+
+	public String getValidSpaceId(Profile authUser, String space) {
+		if (authUser == null) {
+			return "";
+		}
+		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().get(0) : "";
+		return canAccessSpace(authUser, space) ? space : defaultSpace;
+	}
+
+	public String getSpaceName(String space) {
+		return StringUtils.replaceAll(space, "^scooldspace:[^:]+:", "");
+	}
+
+	public String getSpaceId(String space) {
+		String s = StringUtils.contains(space, ":") ? StringUtils.substring(space, 0, space.lastIndexOf(":")) : "";
+		return "scooldspace".equals(s) ? space : s;
+	}
+
+	public String getSpaceFilteredQuery(HttpServletRequest req) {
+		Profile authUser = getAuthUser(req);
+		String currentSpace = getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
+		return currentSpace.isEmpty() ? (canAccessSpace(authUser, currentSpace) ? "*" : "") : spaceFilter;
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {

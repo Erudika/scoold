@@ -140,6 +140,15 @@
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-clock-o"></i> &nbsp;
 						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</h5>
 				#end
+				#if ($showUser.hasSpaces())
+					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-large"></i> &nbsp;
+						#if(!$showUser.hasSpaces())default#end
+						#foreach($space in $showUser.spaces)
+							#set($spaceString = $scooldUtils.getSpaceName($space))
+							${spaceString}#if($velocityCount < $showUser.spaces.size()),#end
+						#end
+					</h5>
+				#end
 
 				#if(!$showUser.user && $isMod)
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-warning"></i> &nbsp; $!lang.get("profile.deleted")</h5>

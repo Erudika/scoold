@@ -23,6 +23,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Location-based search and "near me" filtering of posts
 - I18n with RTL language support
 - Reputation and voting system with badges
+- Spaces - groups of isolated questions and users
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
@@ -107,6 +108,8 @@ para.code_highlighting_enabled = true
 para.fb_app_id = "123456789"
 # Google - create your own Google app first!
 para.google_client_id = "123-abcd.apps.googleusercontent.com"
+# If true, the default space will be accessible by everyone
+para.is_default_space_public = true
 ```
 
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
@@ -188,6 +191,13 @@ para.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
+## Spaces
+
+Spaces are a way to organize users and question into isolated groups. There's a default space, which is publicly
+accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.
+Access to a space is given by an administrator. You can bulk edit users' spaces and also move a question to a different
+space.
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
@@ -256,7 +266,7 @@ You can translate Scoold to your language by copying the [English language file]
 and translating it. When you're done, change the file name from "lang_en.properties" to "lang_xx.properties"
 where "xx" is the language code for your locale. Finally, open a pull request here.
 
-| Language | File | Progress 
+| Language | File | Progress
 --- | --- | ---
 **Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | 0%
 **German** | [lang_de.properties](src/main/resources/lang_de.properties) | 0%

@@ -79,20 +79,24 @@ public class SearchController {
 		List<Post> feedbacklist = new ArrayList<Post>();
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.isBlank(q) ? query : q;
+		String qf = utils.getSpaceFilteredQuery(req);
+		// [space query filter] + original query string
+		String qs = qf.isEmpty() ? "" : "*".equals(qf) && "*".equals(queryString) ? "*" : qf + " AND " + queryString;
+		String qsUsers = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		if ("questions".equals(type)) {
-			questionlist = pc.findQuery(Utils.type(Question.class), queryString, itemcount);
+			questionlist = pc.findQuery(Utils.type(Question.class), qs, itemcount);
 		} else if ("answers".equals(type)) {
-			answerlist = pc.findQuery(Utils.type(Reply.class), queryString, itemcount);
+			answerlist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type)) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
-			userlist = pc.findQuery(Utils.type(Profile.class), queryString, itemcount);
+			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers, itemcount);
 		} else {
-			questionlist = pc.findQuery(Utils.type(Question.class), queryString);
-			answerlist = pc.findQuery(Utils.type(Reply.class), queryString);
+			questionlist = pc.findQuery(Utils.type(Question.class), qs);
+			answerlist = pc.findQuery(Utils.type(Reply.class), qs);
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
-			userlist = pc.findQuery(Utils.type(Profile.class), queryString);
+			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
 		list.addAll(questionlist);

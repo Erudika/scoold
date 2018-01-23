@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.core;
 
-import com.erudika.para.annotations.Locked;
 import com.erudika.para.core.Tag;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -66,7 +64,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String deletereportid;
 	@Stored private String location;
 	@Stored private List<String> commentIds;
-	@Stored @Locked private List<String> spaces;
+	@Stored private String space;
 	@Stored private Map<String, String> followers;
 
 	private transient Profile author;
@@ -316,16 +314,12 @@ public abstract class Post extends Sysprop {
 		return commentIds;
 	}
 
-	public List<String> getSpaces() {
-		if (spaces == null) {
-			spaces = new LinkedList<String>();
-			spaces.add("default");
-		}
-		return spaces;
+	public String getSpace() {
+		return space;
 	}
 
-	public void setSpaces(List<String> spaces) {
-		this.spaces = spaces;
+	public void setSpace(String space) {
+		this.space = space;
 	}
 
 	public void setCommentIds(List<String> commentIds) {
@@ -446,6 +440,7 @@ public abstract class Post extends Sysprop {
 		}
 		return Objects.equals(getTitle(), ((Post) obj).getTitle())
 				&& Objects.equals(getBody(), ((Post) obj).getBody())
+				&& Objects.equals(getSpace(), ((Post) obj).getSpace())
 				&& Objects.equals(getTags(), ((Post) obj).getTags());
 	}
 

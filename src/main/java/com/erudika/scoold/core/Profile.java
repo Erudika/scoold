@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.core;
 
-import com.erudika.para.annotations.Locked;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
@@ -53,7 +52,7 @@ public class Profile extends Sysprop {
 	@Stored @URL private String picture;
 	@Stored @URL private String website;
 	@Stored private List<String> favtags;
-	@Stored @Locked private List<String> spaces;
+	@Stored private List<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
 
@@ -211,7 +210,6 @@ public class Profile extends Sysprop {
 	public List<String> getSpaces() {
 		if (spaces == null) {
 			spaces = new LinkedList<String>();
-			spaces.add("default");
 		}
 		return spaces;
 	}
@@ -322,6 +320,10 @@ public class Profile extends Sysprop {
 
 	public boolean hasFavtags() {
 		return !getFavtags().isEmpty();
+	}
+
+	public boolean hasSpaces() {
+		return !getSpaces().isEmpty();
 	}
 
 	public long getTotalVotes() {

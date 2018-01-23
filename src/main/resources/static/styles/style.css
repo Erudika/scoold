@@ -30,6 +30,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .r{ text-align: right;}
 .l{ text-align: left;}
 .lightborder{ border: 1px solid #CCCCCC; border-radius: 2px;}
+.dashedborder{ border: 4px dashed #CCCCCC; border-radius: 3px;}
 .capitalize{ text-transform: capitalize; }
 .pages{ clear: both; }
 .diff-ins{ background-color: #E6FFE6;}

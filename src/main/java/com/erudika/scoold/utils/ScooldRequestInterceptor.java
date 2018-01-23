@@ -161,6 +161,8 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("authUser", authUser);
 		modelAndView.addObject("badgelist", utils.checkForBadges(authUser, request));
 		modelAndView.addObject("request", request);
+		// Spaces
+		modelAndView.addObject("currentSpace", utils.getValidSpaceId(authUser, HttpUtils.getCookieValue(request, SPACE_COOKIE)));
 		// Language
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request), request);
 		modelAndView.addObject("currentLocale", currentLocale);

@@ -84,8 +84,14 @@ public class QuestionController {
 	@GetMapping({"/{id}", "/{id}/{title}"})
 	public String get(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
+
+
 		Post showPost = pc.read(id);
 		if (showPost == null || !ParaObjectUtils.typesMatch(showPost)) {
+			return "redirect:" + QUESTIONSLINK;
+		}
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isMod(authUser) && !utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + QUESTIONSLINK;
 		}
 
@@ -115,7 +121,7 @@ public class QuestionController {
 	@PostMapping("/{id}/edit")
 	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
-			HttpServletRequest req) {
+			@RequestParam(required = false) String space, HttpServletRequest req) {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
@@ -137,6 +143,10 @@ public class QuestionController {
 		}
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
 			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
+		}
+		if (!StringUtils.isBlank(space) && showPost.isQuestion() && utils.canAccessSpace(authUser, space)) {
+			showPost.setSpace(space);
+			changeSpaceForAllAnswers(showPost, space);
 		}
 
 		//note: update only happens if something has changed
@@ -386,5 +396,24 @@ public class QuestionController {
 		post.setCommentIds(ids);
 		post.setComments(commentz);
 		return post;
+	}
+
+	private void changeSpaceForAllAnswers(Post showPost, String space) {
+		Pager pager = new Pager(1, "_docid", false, 25);
+		List<Reply> answerslist;
+		try {
+			do {
+				answerslist = pc.getChildren(showPost, Utils.type(Reply.class), pager);
+				for (Reply reply : answerslist) {
+					reply.setSpace(space);
+				}
+				if (!answerslist.isEmpty()) {
+					pc.updateAll(answerslist);
+					Thread.sleep(500);
+				}
+			} while (!answerslist.isEmpty());
+		} catch (InterruptedException ex) {
+			logger.error(null, ex);
+		}
 	}
 }

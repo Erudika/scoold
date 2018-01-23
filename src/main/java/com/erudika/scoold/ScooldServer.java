@@ -61,6 +61,7 @@ public class ScooldServer {
 
 	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
 	public static final String CSRF_COOKIE = Config.getRootAppIdentifier() + "-csrf";
+	public static final String SPACE_COOKIE = Config.getRootAppIdentifier() + "-space";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
 	public static final String CONTEXT_PATH = StringUtils.stripEnd(System.getProperty("server.context-path", ""), "/");

@@ -44,6 +44,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
+import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
+import static com.erudika.scoold.utils.HttpUtils.setRawCookie;
 
 /**
  *
@@ -73,7 +76,16 @@ public class QuestionsController {
 	@GetMapping("/questions/tag/{tag}")
 	public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
-		List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tag}, itemcount);
+		List<Question> questionslist = Collections.emptyList();
+		String type = Utils.type(Question.class);
+		String qf = utils.getSpaceFilteredQuery(req);
+		if (!qf.isEmpty()) {
+			if (qf.equals("*")) {
+				questionslist = pc.findTagged(type, new String[]{tag}, itemcount);
+			} else {
+				questionslist = pc.findQuery(type, qf + " AND " + Config._TAGS + ":" + tag, itemcount);
+			}
+		}
 		utils.fetchProfiles(questionslist);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("posts.tagged") + " - " + tag);
@@ -131,8 +143,10 @@ public class QuestionsController {
 			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
+			String currentSpace = utils.getSpaceId(utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE)));
 			Question q = utils.populate(req, new Question(), "title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
+			q.setSpace(currentSpace);
 			Map<String, String> error = utils.validate(q);
 			if (error.isEmpty()) {
 				q.setLocation(location);
@@ -159,11 +173,27 @@ public class QuestionsController {
 		return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
 	}
 
+	@PostMapping({"/questions/space/{space}", "/questions/space"})
+	public String setSpace(@PathVariable(required = false) String space, HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			if (StringUtils.isBlank(space) || pc.read(utils.getSpaceId(space)) == null) {
+				space = "";
+			}
+			setRawCookie(SPACE_COOKIE, space, req, res, false, 365 * 24 * 60 * 60);
+		}
+		res.setStatus(200);
+		return "base";
+	}
+
 	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
-		String query = "*";
+		Profile authUser = utils.getAuthUser(req);
+		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		boolean spaceFiltered = !currentSpace.isEmpty();
+		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
+		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
 
 		if ("activity".equals(sortby)) {
 			itemcount.setSortby("updated");
@@ -172,20 +202,22 @@ public class QuestionsController {
 		} else if ("unanswered".equals(sortby)) {
 			itemcount.setSortby("timestamp");
 			itemcount.setDesc(false);
-			query = "properties.answercount:0";
+			query = spaceFiltered ? spaceFilter + " AND properties.answercount:0" : "properties.answercount:0";
 		}
 
-		if (!StringUtils.isBlank(filter) && utils.isAuthenticated(req)) {
-			Profile authUser = utils.getAuthUser(req);
-
+		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
-				questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
-			} else if ("favtags".equals(filter)) {
+				if (spaceFiltered) {
+					questionslist = pc.findQuery(type, getSpaceFilteredFavtagsQuery(currentSpace, authUser), itemcount);
+				} else {
+					questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
+				}
+			} else if ("local".equals(filter)) {
 				String[] ll = authUser.getLatlng() == null ? new String[0] : authUser.getLatlng().split(",");
 				if (ll.length == 2) {
 					double lat = NumberUtils.toDouble(ll[0]);
 					double lng = NumberUtils.toDouble(ll[1]);
-					questionslist = pc.findNearby(type, "*", 25, lat, lng, itemcount);
+					questionslist = pc.findNearby(type, query, 25, lat, lng, itemcount);
 				}
 			}
 			model.addAttribute("localFilterOn", "local".equals(filter));
@@ -199,5 +231,21 @@ public class QuestionsController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("questionslist", questionslist);
 		return questionslist;
+	}
+
+	private String getSpaceFilteredFavtagsQuery(String currentSpace, Profile authUser) {
+		if (utils.canAccessSpace(authUser, currentSpace)) {
+			StringBuilder sb = new StringBuilder("properties.space:");
+			sb.append(currentSpace).append(" AND (");
+			for (int i = 0; i < authUser.getFavtags().size(); i++) {
+				sb.append(Config._TAGS).append(":").append(authUser.getFavtags().get(i));
+				if (i < authUser.getFavtags().size() - 1) {
+					sb.append(" OR ");
+				}
+			}
+			sb.append(")");
+			return sb.toString();
+		}
+		return "";
 	}
 }

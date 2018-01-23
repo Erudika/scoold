@@ -21,9 +21,9 @@
 	<h2>$!lang.get('administration.title')</h2>
 	<hr>
 
-<!--	<h2><i class="fa fa-th-large grey-text"></i>
+	<h2><i class="fa fa-th-large grey-text"></i>
 		Spaces
-		<a href="#" class="btn waves-effect waves-light mbs phm next-div-toggle"><i class="fa fa-plus"></i></a>
+		<a href="#" class="btn waves-effect waves-light mbs phm next-div-toggle" title="Add space"><i class="fa fa-plus"></i></a>
 	</h2>
 
 	<div class="hide mbl">
@@ -41,19 +41,30 @@
 		</form>
 	</div>
 
+	#if($spaces && !$spaces.isEmpty())
+		<div class="row">
+		#foreach($space in $spaces)
+			<div class="col s12 m6 l3">
+				<div class="card-panel spacebox">
+					<a href="$adminlink/remove-space?spaceId=$!space.id" class="red-text right tooltipped post-refresh"
+						 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
+					 <p class="largeText">$space.name</p>
+				</div>
+			</div>
+		#end
+		</div>
+	#else
 	<div class="row">
-	#foreach($space in $spaces)
 		<div class="col s12 m6 l3">
-			<div class="card-panel spacebox">
-				<a href="$adminlink/remove-space?spaceId=$!space.id" class="red-text right tooltipped"
-					 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
-				<h4>$space.name</h4>
+			<div class="card-panel spacebox dashedborder z-depth-0 center-align grey-text">
+				<p class="pvs">Default Space</p>
 			</div>
 		</div>
+	</div>
 	#end
-	</div>-->
 
 
+	<hr>
 	<div class="ptl">
 		<ul class="collapsible" data-collapsible="expandable">
 			<li>

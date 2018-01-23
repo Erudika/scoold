@@ -5,11 +5,35 @@
 		<div class="mvm">
 			<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
 			<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
+			#if($isAdmin)
+				#if($request.getParameter("bulkedit"))
+					<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
+				#else
+					<a href="$peoplelink?bulkedit" class="chip">Bulk Edit Spaces</a>
+				#end
+			#end
 		</div>
 	</div>
 	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>
+
+	#if($isAdmin && $request.getParameter("bulkedit"))
+	<form method="post" action="$peoplelink/bulk-edit?bulkedit">
+		#sectoken(false "BULK_EDIT")
+		<p><strong>Edit space membership of selected users:</strong></p>
+		#foreach($space in $spaces)
+			<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
+			<label for="$!space.id"><strong class="mediumText">$!space.name</strong></label> &nbsp;
+		#end
+		<br>
+		<button class="btn waves-effect waves-light mtl" type="submit"><b>$!lang.get('save')</b></button>
+	#end
 	<hr>
+
 	<div class="row">
 		#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
 	</div>
+
+	#if($isAdmin && $request.getParameter("bulkedit"))
+	</form>
+	#end
 </div>

@@ -1,4 +1,7 @@
 <div class="ptl">
+	#if($currentSpace && !$currentSpace.isEmpty())
+		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
+	#end
 	<h2>
 		#if ($showParam)
 			#if ($showParam == "questions")
@@ -13,7 +16,7 @@
 		#else
 			$!lang.get("search.title")
 		#end
-		<span class="grey-text text-darken-1 smallText">$searchQuery</span>
+		<span class="grey-text text-darken-1 smallText">$!searchQuery</span>
 	</h2>
 	<hr>
 

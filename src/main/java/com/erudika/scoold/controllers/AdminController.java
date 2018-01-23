@@ -51,6 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+	private static final int MAX_SPACES = 10;
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -87,13 +88,18 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
 			String spaceId = Utils.noSpaces(Utils.stripAndTrim(space, " "), "-");
-			if (spaceId.equals("default") || pc.read("scooldspace:" + spaceId) != null) {
+			if ("default".equalsIgnoreCase(space) || pc.getCount("scooldspace") >= MAX_SPACES ||
+					pc.read("scooldspace:" + spaceId) != null) {
 				model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
+				return "base";
 			} else {
+				space = space.replaceAll(":", "");
 				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
 				s.setType("scooldspace");
 				s.setName(space);
 				pc.create(s);
+				authUser.getSpaces().add(s.getId() + ":" + space);
+				authUser.update();
 			}
 		} else {
 			model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("requiredfield")));
@@ -104,7 +110,7 @@ public class AdminController {
 	@PostMapping("/remove-space")
 	public String removeSpace(@RequestParam String spaceId, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
-		if (StringUtils.isBlank(spaceId) && utils.isAdmin(authUser)) {
+		if (!StringUtils.isBlank(spaceId) && utils.isAdmin(authUser)) {
 			pc.delete(new Sysprop(spaceId));
 		}
 		return "redirect:" + ADMINLINK;
