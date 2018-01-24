@@ -316,7 +316,7 @@ public final class ScooldUtils {
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
-		return StringUtils.isBlank(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") : 
+		return StringUtils.isBlank(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
 				"properties.space:\"" + currentSpace + "\"";
 	}
 
