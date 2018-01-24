@@ -196,7 +196,7 @@ public class QuestionsController {
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
-		boolean spaceFiltered = !currentSpace.isEmpty();
+		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
 		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
 		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
 

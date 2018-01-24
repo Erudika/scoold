@@ -300,7 +300,8 @@ public final class ScooldUtils {
 			return "";
 		}
 		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().get(0) : "";
-		return canAccessSpace(authUser, space) ? space : defaultSpace;
+		String s = canAccessSpace(authUser, space) ? space : defaultSpace;
+		return s == null ? "" : s;
 	}
 
 	public String getSpaceName(String space) {
@@ -315,8 +316,8 @@ public final class ScooldUtils {
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
-		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
-		return currentSpace.isEmpty() ? (canAccessSpace(authUser, currentSpace) ? "*" : "") : spaceFilter;
+		return StringUtils.isBlank(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") : 
+				"properties.space:\"" + currentSpace + "\"";
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {
