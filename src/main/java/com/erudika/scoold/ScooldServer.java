@@ -279,7 +279,7 @@ public class ScooldServer {
 			public void registerErrorPages(ErrorPageRegistry epr) {
 				epr.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/not-found"));
 				epr.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/error/403"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.UNAUTHORIZED, "/error/403"));
+				epr.addErrorPages(new ErrorPage(HttpStatus.UNAUTHORIZED, "/error/401"));
 				epr.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/error/500"));
 				epr.addErrorPages(new ErrorPage(HttpStatus.SERVICE_UNAVAILABLE, "/error/503"));
 				epr.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/error/400"));

@@ -127,7 +127,8 @@ public class SigninController {
 	@PostMapping("/signin/register")
 	public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
 			HttpServletRequest req, Model model) {
-		if (!utils.isAuthenticated(req)) {
+		boolean approvedDomain = utils.isEmailDomainApproved(email);
+		if (!utils.isAuthenticated(req) && approvedDomain) {
 			if (pc.read(email) == null) {
 				pc.signIn("password", email + ":" + name + ":" + passw, false);
 				verifyEmailIfNecessary("password", name, email, req);
@@ -142,7 +143,7 @@ public class SigninController {
 				return "base";
 			}
 		}
-		return "redirect:" + SIGNINLINK + "/register?verify=true";
+		return "redirect:" + SIGNINLINK + (approvedDomain ? "/register?verify=true" : "?code=3&error=true");
 	}
 
 	@PostMapping("/signout")
@@ -179,10 +180,15 @@ public class SigninController {
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
 			User u = pc.signIn(provider, accessToken, false);
-			if (u != null) {
+			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
+				// the user password in this case is a Bearer token (JWT)
 				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
 			} else {
-				verifyEmailIfNecessary(provider, "Anonymous", accessToken.split(":")[0], req);
+				String[] tokenParts = accessToken.split(":");
+				String email = tokenParts.length > 0 ? tokenParts[0] : "";
+				if (utils.isEmailDomainApproved(email)) {
+					verifyEmailIfNecessary(provider, "Anonymous", email, req);
+				}
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 		}

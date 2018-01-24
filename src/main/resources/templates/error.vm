@@ -7,6 +7,8 @@
 		<h1>$!lang.get("forbidden")</h1>
 		#elseif ($code == "400")
 		<h1>$!lang.get("badrequest")</h1>
+		#elseif ($code == "401")
+		<h1>$!lang.get("msgcode.3")</h1>
 		#elseif ($code == "500")
 		<h1>$!lang.get("servererror")</h1>
 		#elseif ($code == "503")

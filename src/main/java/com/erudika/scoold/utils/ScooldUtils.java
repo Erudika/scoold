@@ -49,6 +49,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -69,6 +70,7 @@ public final class ScooldUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldUtils.class);
 	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
+	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -97,11 +99,23 @@ public final class ScooldUtils {
 		ScooldUtils.instance = instance;
 	}
 
-	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) {
+	static {
+		String approved = Config.getConfigParam("approved_domains_for_signups", "");
+		String[] domains = approved.split("\\s*,\\s*");
+		if (!StringUtils.isBlank(approved) && domains != null && domains.length > 0) {
+			for (String domain : domains) {
+				if (!StringUtils.isBlank(domain)) {
+					APPROVED_DOMAINS.add(domain);
+				}
+			}
+		}
+	}
+
+	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
 		if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null) {
 			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
-			if (u != null) {
+			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = pc.read(Profile.id(u.getId()));
 				if (authUser == null) {
 					authUser = new Profile(u.getId(), u.getName());
@@ -122,6 +136,10 @@ public final class ScooldUtils {
 					authUser.setPicture(u.getPicture());
 					authUser.update();
 				}
+			} else {
+				clearSession(req, res);
+				logger.warn("Attempted signin from an unknown domain: {}", u != null ? u.getEmail() : "unknown");
+				res.setStatus(401);
 			}
 		}
 		initCSRFToken(req, res);
@@ -156,6 +174,16 @@ public final class ScooldUtils {
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject,
 					Utils.compileMustache(model, loadEmailTemplate("notify")));
 		}
+	}
+
+	public boolean isEmailDomainApproved(String email) {
+		if (StringUtils.isBlank(email)) {
+			return false;
+		}
+		if (!APPROVED_DOMAINS.isEmpty()) {
+			return APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@"));
+		}
+		return true;
 	}
 
 	public void initCSRFToken(HttpServletRequest req, HttpServletResponse res) {

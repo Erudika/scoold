@@ -198,6 +198,23 @@ accessible by default. Each user can belong to one or more spaces, but a questio
 Access to a space is given by an administrator. You can bulk edit users' spaces and also move a question to a different
 space.
 
+By default there's a public "default" space where all questions go. When you create a new space and assign users to it
+they will still see all the other questions when they switch to the "default" space. To make the default space private
+set `para.is_default_space_public = false`.
+
+## Domain-restricted user registrations
+
+You can restrict signups only to users from a particular domain, say `acme-corp.com`. To do so, set the following
+configuration property:
+```
+para.approved_domains_for_signups = "acme-corp.com"
+```
+Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
+`bob@gmail.com` will be denied access. The setting can also contain comma-separated list of domains:
+```
+para.approved_domains_for_signups = "acme-corp.com,gmail.com"
+```
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
