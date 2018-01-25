@@ -47,10 +47,10 @@
 				</h4>
 				<div class="row">
 					<div class="col m3">
-						<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')" required>
+						<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')">
 					</div>
 					<div class="col m3">
-						<input type="password" name="newpassword" value="" minlength="6" placeholder="$!lang.get('newpassword')" required>
+						<input type="password" name="newpassword" value="" minlength="6" placeholder="$!lang.get('newpassword')">
 					</div>
 				</div>
 			#end
