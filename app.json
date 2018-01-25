@@ -83,8 +83,8 @@
 			"required": false,
 			"value": ""
 		},
-		"para_admin_ident": {
-			"description": "Administrator identifier - used to recognize user as admin (can be an email or a social id).",
+		"para_admins": {
+			"description": "Administrator identifiers - comma-separated list admin identifiers, used to recognize user as admin (can be an email or a social id).",
 			"required": false,
 			"value": ""
 		},

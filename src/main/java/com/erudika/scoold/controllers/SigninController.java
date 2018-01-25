@@ -40,6 +40,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 public class SigninController {
@@ -157,7 +160,7 @@ public class SigninController {
 
 	@ResponseBody
 	@GetMapping("/scripts/globals.js")
-	public String globals(HttpServletRequest req, HttpServletResponse res) {
+	public ResponseEntity<String> globals(HttpServletRequest req, HttpServletResponse res) {
 		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
@@ -174,7 +177,9 @@ public class SigninController {
 
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req), req);
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");
-		return sb.toString();
+		String result = sb.toString();
+		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
+				.eTag(Utils.md5(result)).body(result);
 	}
 
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {

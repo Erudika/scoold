@@ -99,7 +99,7 @@ para.new_users_can_comment = true
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object
-para.admin_ident = "admin@domain.com"
+para.admins = "admin@domain.com"
 # GA code
 para.google_analytics_id = "UA-123456-7"
 # enables syntax highlighting in posts
@@ -235,23 +235,15 @@ para.security.ldap.active_directory_domain = ""
 
 ## Creating admins
 
-You can configure with `para.admin_ident = admin@example.com` and then register with that same email.
-You'll be given admin status after you verify your email. Alternatively, you can programmatically create an
-administrator account like this:
-
-```java
-ParaClient pc = new ParaClient("app:my-scoold-app", "secret");
-// create the user first
-pc.signIn("password", "test@gmail.com:test7:test123");
-// read identifier first to get the user id
-ParaObject identifier = pc.read("test@gmail.com");
-User user = pc.read(identifier.getCreatorid());
-user.setActive(true); // optional, manual user activation
-user.setGroups("admins"); // use 'users' to revert back
-User updated = pc.create(user); // overwrite the user above
+You can configure Scoold with one or more admin users in your `application.conf` file:
 ```
-Copy the code above and execute it as a simple Java program.
-To overwrite an existing user skip the first line of code `pc.signIn()`.
+para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
+```
+The setting accepts comma-separated values of either an email address or a user identifier
+(the id from your social identity provider). This works both for new and existing Scoold users.
+If you remove users, who are already admins, from the list of admins `para.admins`
+they will be *demoted* to regular users. Similarly, existing regular users will be
+*promoted* to admins if the appear in the list above.
 
 ## Customizing the UI
 

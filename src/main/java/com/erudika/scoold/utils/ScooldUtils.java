@@ -71,6 +71,7 @@ public final class ScooldUtils {
 	private static final Logger logger = LoggerFactory.getLogger(ScooldUtils.class);
 	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
+	private static final Set<String> ADMINS = new HashSet<>();
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -109,6 +110,15 @@ public final class ScooldUtils {
 				}
 			}
 		}
+		String adminz = Config.getConfigParam("admins", "");
+		String[] admins = adminz.split("\\s*,\\s*");
+		if (!StringUtils.isBlank(adminz) && admins != null && admins.length > 0) {
+			for (String admin : admins) {
+				if (!StringUtils.isBlank(admin)) {
+					ADMINS.add(admin);
+				}
+			}
+		}
 	}
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -123,17 +133,32 @@ public final class ScooldUtils {
 					authUser.setAppid(u.getAppid());
 					authUser.setCreatorid(u.getId());
 					authUser.setTimestamp(u.getTimestamp());
-					authUser.setGroups(u.getIdentifier().equals(Config.ADMIN_IDENT)
+					authUser.setGroups(isRecognizedAsAdmin(u)
 							? User.Groups.ADMINS.toString() : u.getGroups());
 					authUser.create();
 					if (!u.getIdentityProvider().equals("generic")) {
 						sendWelcomeEmail(u, false, req);
 					}
+					logger.info("Created new user '{}' with id={}, groups={}.",
+							u.getName(), authUser.getId(), authUser.getGroups());
+				}
+				boolean update = false;
+				if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
+					logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
+					authUser.setGroups(User.Groups.ADMINS.toString());
+					update = true;
+				} else if (isAdmin(authUser) && !isRecognizedAsAdmin(u)) {
+					logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
+					authUser.setGroups(User.Groups.USERS.toString());
+					update = true;
 				}
 				authUser.setUser(u);
 				if (!StringUtils.equals(u.getPicture(), authUser.getPicture()) &&
 						!StringUtils.contains(authUser.getPicture(), "gravatar.com")) {
 					authUser.setPicture(u.getPicture());
+					update = true;
+				}
+				if (update) {
 					authUser.update();
 				}
 			} else {
@@ -280,9 +305,6 @@ public final class ScooldUtils {
 		return similarquestions;
 	}
 
-	/**
-	 * **** MISC ******
-	 */
 	public boolean param(HttpServletRequest req, String param) {
 		return req.getParameter(param) != null;
 	}
@@ -297,6 +319,10 @@ public final class ScooldUtils {
 
 	public boolean isMod(Profile authUser) {
 		return authUser != null && (isAdmin(authUser) || User.Groups.MODS.toString().equals(authUser.getGroups()));
+	}
+
+	public boolean isRecognizedAsAdmin(User u) {
+		return u.isAdmin() || ADMINS.contains(u.getIdentifier()) || ADMINS.contains(u.getEmail());
 	}
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {

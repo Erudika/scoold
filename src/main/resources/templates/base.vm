@@ -64,7 +64,7 @@
 
 							#macro(navbarspaces)
 								<li>
-										<a class="dropdown-button scoold-spaces-dropdown" href="#!" data-constrainwidth="false"
+										<a class="dropdown-button scoold-spaces-dropdown" title="Spaces" href="#!" data-constrainwidth="false"
 											 data-alignment="$dropdownAlignment" data-beloworigin="true" data-activates="spaces-dropdown">
 											<i class="fa fa-th-large"></i>
 											<i class="fa fa-caret-down right"></i>

@@ -21,7 +21,7 @@
 	<h2>$!lang.get('administration.title')</h2>
 	<hr>
 
-	<h2><i class="fa fa-th-large grey-text"></i>
+	<h2>
 		Spaces
 		<a href="#" class="btn waves-effect waves-light mbs phm next-div-toggle" title="Add space"><i class="fa fa-plus"></i></a>
 	</h2>
