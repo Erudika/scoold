@@ -635,7 +635,7 @@ $(function () {
 			if (!body.value()) body.value(localStorage.getItem("ask-form-body") || "");
 			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags") || "");
 			displayTags(tagsInput);
-			setInterval(function () {
+			var saveDraftInterval1 = setInterval(function () {
 				var saved = false;
 				if (localStorage.getItem("ask-form-title") !== title.val()) {
 					localStorage.setItem("ask-form-title", title.val());
@@ -677,6 +677,7 @@ $(function () {
 			});
 
 			askForm.on("submit", function () {
+				clearInterval(saveDraftInterval1);
 				localStorage.removeItem("ask-form-title");
 				localStorage.removeItem("ask-form-body");
 				localStorage.removeItem("ask-form-tags");
@@ -689,7 +690,7 @@ $(function () {
 		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
 		try {
 			if (!answerBody.value()) answerBody.value(localStorage.getItem("answer-form-body") || "");
-			setInterval(function () {
+			var saveDraftInterval2 = setInterval(function () {
 				if (localStorage.getItem("answer-form-body") !== answerBody.value()) {
 					localStorage.setItem("answer-form-body", answerBody.value());
 					answerForm.find(".save-icon").show().delay(2000).fadeOut();
@@ -697,6 +698,7 @@ $(function () {
 			}, 3000);
 
 			submitFormBind("#answer-question-form", function (data, status, xhr, form) {
+				clearInterval(saveDraftInterval1);
 				var allPosts = answerForm.closest(".row").find(".postbox");
 				if (allPosts.length > 1) {
 					allPosts.last().after(data);
@@ -707,6 +709,8 @@ $(function () {
 				answerBody.value("");
 				localStorage.removeItem("answer-form-body");
 			}, function (xhr, status, error) {
+				clearInterval(saveDraftInterval1);
+				localStorage.removeItem("answer-form-body");
 				window.location.reload(true);
 			});
 		} catch (exception) {}
