@@ -12,7 +12,6 @@ body {
 .postbody ul {padding-left: 40px;}
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #ececec;}
-.userbox img {max-width: inherit;}
 .following-post {border-right: 5px solid #8bc34a;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
@@ -209,6 +208,13 @@ code {
 	.sTextCenter.r {
 		text-align: center;
 	}
+}
+.userbox img {max-width: inherit;}
+@media (max-width: 1280px) {
+	.userbox img {max-width: 40px;}
+	.userbox {width: 180px;}
+	.userbox-body {font-size: smaller;}
+	.userbox-body .chip {height: 18px;line-height: 18px;border-radius: 4px;padding: 0 4px;}
 }
 
 /**** FEEL FREE TO MODIFY THESE PROPETIES ****/

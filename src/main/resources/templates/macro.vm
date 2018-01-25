@@ -101,7 +101,7 @@
 ####################################
 #macro(smallpersonbox $showu)
 <div class="row mbn userbox user-$!{showu.id}">
-	<div class="col s4 m4 l3">
+	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
 				<img src="#profilepic($!showu)" width="50" class="responsive-img">
@@ -110,7 +110,7 @@
 			<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="50" class="responsive-img" alt="Profile picture">
 		#end
 	</div>
-	<div class="col s8 m8 l9">
+	<div class="col s8 m7 l9">
 		<div class="right">
 			#if($showu && $showu.id)
 				#set($contextboxid = $utils.generateSecurityToken(10, true))
@@ -121,7 +121,7 @@
 				</ul>
 			#end
 		</div>
-		<div>
+		<div class="userbox-body">
 			#if ($showu)
 				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="smallText">$showu.name</a>
 			#else
@@ -306,7 +306,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col s12 m10 l11">
+		<div class="col s12 l11">
 			<div class="qstatsbox hide-on-large-only">
 				<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 				<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
