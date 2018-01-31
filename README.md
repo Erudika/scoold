@@ -193,9 +193,9 @@ This is required for authentication requests to be redirected back to the origin
 
 ## Spaces
 
-Spaces are a way to organize users and question into isolated groups. There's a default space, which is publicly
+Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
 accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.
-Access to a space is given by an administrator. You can bulk edit users' spaces and also move a question to a different
+Permission to access a space is given by an administrator. You can bulk edit users' spaces and also move a question to a different
 space.
 
 By default there's a public "default" space where all questions go. When you create a new space and assign users to it
