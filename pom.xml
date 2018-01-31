@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.28.3</version>
+			<version>1.28.4</version>
 		</dependency>
 		<dependency>
 			<groupId>rome</groupId>
