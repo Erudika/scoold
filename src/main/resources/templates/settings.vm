@@ -39,7 +39,7 @@
 				<input type="hidden" name="tags" class="ac-hidden" value="$!authUser.favtagsString">
 			</div>
 
-			#if($authUser.user.identityProvider == "generic")
+			#if($authUser.user.identityProvider == "generic" && !$isLDAPUser)
 				<h4>$!lang.get('password')
 					#if($request.getParameter("passChanged"))
 						<small class="green-text"><i class="fa fa-check"></i></small>

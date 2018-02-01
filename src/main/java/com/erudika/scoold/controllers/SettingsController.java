@@ -64,6 +64,7 @@ public class SettingsController {
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
 		model.addAttribute("includeGMapsScripts", true);
+		model.addAttribute("isLDAPUser", isLDAPUser(utils.getAuthUser(req).getUser()));
 		return "base";
 	}
 
@@ -107,7 +108,7 @@ public class SettingsController {
 	}
 
 	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {
-		if (u != null && !StringUtils.isBlank(pass) && !StringUtils.isBlank(newpass)) {
+		if (u != null && !StringUtils.isBlank(pass) && !StringUtils.isBlank(newpass) && !isLDAPUser(u)) {
 			Sysprop s = utils.getParaClient().read(u.getEmail());
 			if (s != null && Utils.bcryptMatches(pass, (String) s.getProperty(Config._PASSWORD))) {
 				String hashed = Utils.bcrypt(newpass);
@@ -118,5 +119,9 @@ public class SettingsController {
 			}
 		}
 		return false;
+	}
+
+	private boolean isLDAPUser(User u) {
+		return u != null && StringUtils.startsWith(u.getIdentifier(), Config.LDAP_PREFIX);
 	}
 }
