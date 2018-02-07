@@ -340,7 +340,7 @@ public class LanguageUtils {
 		}
 
 		// allow 3 identical words per language (i.e. Email, etc)
-		if (approved >= defsize - 3) {
+		if (approved >= defsize - 5) {
 			approved = defsize;
 		}
 
