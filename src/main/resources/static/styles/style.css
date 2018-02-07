@@ -108,6 +108,11 @@ header {
 main {
 	min-height: 600px;
 }
+table {
+	width: 100%;
+	word-wrap: break-word;
+	table-layout: fixed;
+}
 .scoold-logo {
 	padding: 10px 0;
 }

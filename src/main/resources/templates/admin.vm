@@ -82,7 +82,7 @@
 			<li>
 				<div class="collapsible-header"><i class="fa fa-wrench"></i>$!lang.get('admin.configuration')</div>
 				<div class="collapsible-body">
-					<table class="striped" style="width: 100%; word-wrap:break-word; table-layout: fixed;">
+					<table class="striped">
 						#foreach($conf in $configMap.entrySet())
 							<tr>
 								<td><code>$conf.key</code>:</td>
