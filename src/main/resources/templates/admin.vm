@@ -21,10 +21,10 @@
 	<h2>$!lang.get('administration.title')</h2>
 	<hr>
 
-	<h2>
-		Spaces
+	<h4>
+		$!lang.get('spaces.title')
 		<a href="#" class="btn waves-effect waves-light mbs phm next-div-toggle" title="Add space"><i class="fa fa-plus"></i></a>
-	</h2>
+	</h4>
 
 	<div class="hide mbl">
 		<form method="post" id="create-space-form" action="$adminlink/add-space">
@@ -71,7 +71,7 @@
 	<div class="ptl">
 		<ul class="collapsible" data-collapsible="expandable">
 			<li>
-				<div class="collapsible-header"><i class="fa fa-info-circle"></i>Environment</div>
+				<div class="collapsible-header"><i class="fa fa-info-circle"></i>$!lang.get('admin.environment')</div>
 				<div class="collapsible-body">
 					<h4>Production mode: <tt class="green-text text-darken-2">$!IN_PRODUCTION</tt></h4>
 					<h4>Para app: <tt class="green-text text-darken-2">$!paraapp</tt></h4>
@@ -80,9 +80,9 @@
 				</div>
 			</li>
 			<li>
-				<div class="collapsible-header"><i class="fa fa-wrench"></i>Configuration</div>
+				<div class="collapsible-header"><i class="fa fa-wrench"></i>$!lang.get('admin.configuration')</div>
 				<div class="collapsible-body">
-					<table class="striped">
+					<table class="striped" style="width: 100%; word-wrap:break-word; table-layout: fixed;">
 						#foreach($conf in $configMap.entrySet())
 							<tr>
 								<td><code>$conf.key</code>:</td>
@@ -99,7 +99,7 @@
 				</div>
 			</li>
 			<li>
-				<div class="collapsible-header"><i class="fa fa-cog"></i>System information</div>
+				<div class="collapsible-header"><i class="fa fa-cog"></i>$!lang.get('admin.system')</div>
 				<div class="collapsible-body">
 					<table class="striped">
 							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "java.vm.specification.vendor", "user.timezone", "os.arch", "file.encoding"])
