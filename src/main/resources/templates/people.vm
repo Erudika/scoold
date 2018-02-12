@@ -16,10 +16,22 @@
 	</div>
 	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>
 
+
 	#if($isAdmin && $request.getParameter("bulkedit"))
-	<form method="post" action="$peoplelink/bulk-edit?bulkedit">
+	<form method="get">
+		<div class="row valign-wrapper">
+			<div class="col m7">
+				<strong>Edit space membership of selected users:</strong>
+			</div>
+			<div class="col m5 r">
+				<input type="text" name="q" value="$request.getParameter('q')" placeholder="$!lang.get('search.title')">
+				<input type="hidden" name="bulkedit" value="true">
+			</div>
+		</div>
+	</form>
+
+	<form method="post" action="$peoplelink/bulk-edit?${request.queryString}">
 		#sectoken(false "BULK_EDIT")
-		<p><strong>Edit space membership of selected users:</strong></p>
 		#foreach($space in $spaces)
 			<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
 			<label for="$!space.id"><strong class="mediumText">$!space.name</strong></label> &nbsp;

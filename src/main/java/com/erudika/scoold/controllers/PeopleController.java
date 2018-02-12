@@ -58,12 +58,15 @@ public class PeopleController {
 
 	@GetMapping
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
-			HttpServletRequest req, Model model) {
+			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
-		String qf = utils.getSpaceFilteredQuery(req);
 		// [space query filter] + original query string
-		String qs = qf.isEmpty() || qf.equals("*") ? "*" : qf.replaceAll("properties\\.space:", "properties.spaces:");
+		String qf = utils.getSpaceFilteredQuery(req);
+		String filtered = utils.sanitizeQueryString(q);
+		String qs = qf.isEmpty() ? "" : "*".equals(qf) ? filtered : qf + (filtered.isEmpty() ? "" : " AND " + filtered);
+		qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
+
 		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
@@ -73,11 +76,6 @@ public class PeopleController {
 		if (req.getParameter("bulkedit") != null) {
 			List<ParaObject> spaces = utils.getParaClient().findQuery("scooldspace", "*");
 			model.addAttribute("spaces", spaces);
-//			Map<String, String> spacesMap = new HashMap<String, String>(spaces.size());
-//			for (ParaObject space : spaces) {
-//				spacesMap.put(space.getId(), space.getName());
-//			}
-//			model.addAttribute("spacesMap", spacesMap);
 		}
 		return "base";
 	}
@@ -103,11 +101,12 @@ public class PeopleController {
 			// partial batch update
 			utils.getParaClient().invokePatch("_batch", Entity.json(toUpdate));
 		}
-		return "redirect:" + PEOPLELINK + (isAdmin ? "?bulkedit" : "");
+		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
 	}
 
 	@GetMapping("/{sortby}")
-	public String sorted(@PathVariable String sortby, HttpServletRequest req, Model model) {
-		return get(sortby, req, model);
+	public String sorted(@PathVariable String sortby, @RequestParam(required = false) String q,
+			HttpServletRequest req, Model model) {
+		return get(sortby, q, req, model);
 	}
 }

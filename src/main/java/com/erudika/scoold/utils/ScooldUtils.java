@@ -442,6 +442,14 @@ public final class ScooldUtils {
 				"properties.space:\"" + currentSpace + "\"";
 	}
 
+	public String sanitizeQueryString(String query) {
+		String q = StringUtils.trimToEmpty(query).replaceAll("\\*", "").trim();
+		q = StringUtils.removeEndIgnoreCase(q, "AND");
+		q = StringUtils.removeEndIgnoreCase(q, "OR");
+		q = StringUtils.removeEndIgnoreCase(q, "NOT");
+		return q.trim();
+	}
+
 	public boolean isMine(Post showPost, Profile authUser) {
 		// author can edit, mods can edit & ppl with rep > 100 can edit
 		return showPost != null && authUser != null ? authUser.getId().equals(showPost.getCreatorid()) : false;
