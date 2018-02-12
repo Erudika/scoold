@@ -28,6 +28,7 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
+import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
@@ -288,6 +289,73 @@ public final class ScooldUtils {
 				((Post) obj).setAuthor(authors.get(authorids.get(obj.getId())));
 			} else if (obj instanceof Revision) {
 				((Revision) obj).setAuthor(authors.get(authorids.get(obj.getId())));
+			}
+		}
+	}
+
+	//get the comments for each answer and the question
+	public void getComments(List<Post> allPosts) {
+		Map<String, List<Comment>> allComments = new HashMap<String, List<Comment>>();
+		List<String> allCommentIds = new ArrayList<String>();
+		List<Post> forUpdate = new ArrayList<Post>(allPosts.size());
+		// get the comment ids of the first 5 comments for each post
+		for (Post post : allPosts) {
+			// not set => read comments if any and embed ids in post object
+			if (post.getCommentIds() == null) {
+				forUpdate.add(reloadFirstPageOfComments(post));
+				allComments.put(post.getId(), post.getComments());
+			} else {
+				// ids are set => add them to list for bulk read
+				allCommentIds.addAll(post.getCommentIds());
+			}
+		}
+		if (!allCommentIds.isEmpty()) {
+			// read all comments for all posts on page in bulk
+			for (ParaObject comment : pc.readAll(allCommentIds)) {
+				List<Comment> postComments = allComments.get(comment.getParentid());
+				if (postComments == null) {
+					allComments.put(comment.getParentid(), new ArrayList<Comment>());
+				}
+				allComments.get(comment.getParentid()).add((Comment) comment);
+			}
+		}
+		// embed comments in each post for use within the view
+		for (Post post : allPosts) {
+			List<Comment> cl = allComments.get(post.getId());
+			int clSize = (cl == null) ? 0 : cl.size();
+			if (post.getCommentIds().size() != clSize) {
+				forUpdate.add(reloadFirstPageOfComments(post));
+				clSize = post.getComments().size();
+			} else {
+				post.setComments(cl);
+			}
+			post.getItemcount().setCount(clSize + 1); // hack to show the "more" button
+		}
+		if (!forUpdate.isEmpty()) {
+			pc.updateAll(allPosts);
+		}
+	}
+
+	public Post reloadFirstPageOfComments(Post post) {
+		List<Comment> commentz = pc.getChildren(post, Utils.type(Comment.class), post.getItemcount());
+		ArrayList<String> ids = new ArrayList<String>(commentz.size());
+		for (Comment comment : commentz) {
+			ids.add(comment.getId());
+		}
+		post.setCommentIds(ids);
+		post.setComments(commentz);
+		return post;
+	}
+
+	public void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
+		//do not count views from author
+		if (showPost != null && !isMine(showPost, getAuthUser(req))) {
+			String postviews = HttpUtils.getStateParam("postviews", req);
+			if (!StringUtils.contains(postviews, showPost.getId())) {
+				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
+				showPost.setViewcount(views + 1); //increment count
+				HttpUtils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
+				pc.update(showPost);
 			}
 		}
 	}

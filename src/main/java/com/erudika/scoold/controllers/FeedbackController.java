@@ -18,23 +18,18 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.ParaObject;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
 
-import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Reply;
-import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +37,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,8 +54,6 @@ import static com.erudika.scoold.ScooldServer.FEEDBACKLINK;
 @Controller
 @RequestMapping("/feedback")
 public class FeedbackController {
-
-	public static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -101,8 +91,8 @@ public class FeedbackController {
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
 		utils.fetchProfiles(allPosts);
-		getComments(allPosts);
-		updateViewCount(showPost, req, res);
+		utils.getComments(allPosts);
+		utils.updateViewCount(showPost, req, res);
 
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - " + showPost.getTitle());
@@ -207,73 +197,5 @@ public class FeedbackController {
 			}
 		}
 		return "redirect:" + FEEDBACKLINK;
-	}
-
-	private void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
-		//do not count views from author
-		if (showPost != null && !utils.isMine(showPost, utils.getAuthUser(req))) {
-			String postviews = HttpUtils.getStateParam("postviews", req);
-			if (!StringUtils.contains(postviews, showPost.getId())) {
-				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
-				showPost.setViewcount(views + 1); //increment count
-				HttpUtils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
-				pc.update(showPost);
-			}
-		}
-	}
-
-	//get the comments for each answer and the question
-	private void getComments(List<Post> allPosts) {
-		Map<String, List<Comment>> allComments = new HashMap<String, List<Comment>>();
-		List<String> allCommentIds = new ArrayList<String>();
-		List<Post> forUpdate = new ArrayList<Post>(allPosts.size());
-		// get the comment ids of the first 5 comments for each post
-		for (Post post : allPosts) {
-			// not set => read comments if any and embed ids in post object
-			if (post.getCommentIds() == null) {
-				forUpdate.add(reloadFirstPageOfComments(post));
-				allComments.put(post.getId(), post.getComments());
-			} else {
-				// ids are set => add them to list for bulk read
-				allCommentIds.addAll(post.getCommentIds());
-			}
-		}
-		if (!allCommentIds.isEmpty()) {
-			// read all comments for all posts on page in bulk
-			for (ParaObject comment : pc.readAll(allCommentIds)) {
-				List<Comment> postComments = allComments.get(comment.getParentid());
-				if (postComments == null) {
-					allComments.put(comment.getParentid(), new ArrayList<Comment>());
-				}
-				allComments.get(comment.getParentid()).add((Comment) comment);
-			}
-		}
-		// embed comments in each post for use within the view
-		for (Post post : allPosts) {
-			List<Comment> cl = allComments.get(post.getId());
-			int clSize = (cl == null) ? 0 : cl.size();
-			if (post.getCommentIds().size() != clSize) {
-				logger.info("OPAA neshto stava.. {} {}", post.getCommentIds().size(), clSize);
-				forUpdate.add(reloadFirstPageOfComments(post));
-				clSize = post.getComments().size();
-			} else {
-				post.setComments(cl);
-			}
-			post.getItemcount().setCount(clSize + 1); // hack to show the "more" button
-		}
-		if (!forUpdate.isEmpty()) {
-			pc.updateAll(allPosts);
-		}
-	}
-
-	private Post reloadFirstPageOfComments(Post post) {
-		List<Comment> commentz = pc.getChildren(post, Utils.type(Comment.class), post.getItemcount());
-		ArrayList<String> ids = new ArrayList<String>(commentz.size());
-		for (Comment comment : commentz) {
-			ids.add(comment.getId());
-		}
-		post.setCommentIds(ids);
-		post.setComments(commentz);
-		return post;
 	}
 }
