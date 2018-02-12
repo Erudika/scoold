@@ -81,7 +81,7 @@ public class SearchController {
 		String queryString = StringUtils.isBlank(q) ? query : q;
 		String qf = utils.getSpaceFilteredQuery(req);
 		// [space query filter] + original query string
-		String qs = qf.isEmpty() ? "" : "*".equals(qf) && "*".equals(queryString) ? "*" : qf + " AND " + queryString;
+		String qs = qf.isEmpty() ? "" : "*".equals(qf) ? queryString : qf + " AND " + queryString;
 		String qsUsers = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		if ("questions".equals(type)) {
