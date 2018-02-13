@@ -168,7 +168,7 @@
 								<li>
 									<nav class="light-blue z-depth-0">
 										<div class="nav-wrapper">
-											<form action="$searchlink/all">
+											<form action="$searchlink">
 												<div class="input-field">
 													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
 													<label class="label-icon" for="search"><i class="fa fa-search fa-2x"></i></label>
@@ -204,6 +204,8 @@
 											</a>
 										</li>
 									#end
+
+									#set($spaceSelectedClass = "")
 
 									#if(($authUser.hasSpaces() || $isMod))
 										#if($scooldUtils.canAccessSpace($authUser, ""))

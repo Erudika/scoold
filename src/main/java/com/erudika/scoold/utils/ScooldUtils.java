@@ -442,12 +442,29 @@ public final class ScooldUtils {
 				"properties.space:\"" + currentSpace + "\"";
 	}
 
-	public String sanitizeQueryString(String query) {
-		String q = StringUtils.trimToEmpty(query).replaceAll("\\*", "").trim();
-		q = StringUtils.removeEndIgnoreCase(q, "AND");
-		q = StringUtils.removeEndIgnoreCase(q, "OR");
-		q = StringUtils.removeEndIgnoreCase(q, "NOT");
-		return q.trim();
+	public String sanitizeQueryString(String query, HttpServletRequest req) {
+		String qf = getSpaceFilteredQuery(req);
+		String defaultQuery = "*";
+		String q = StringUtils.trimToEmpty(query);
+		if (qf.isEmpty() || qf.length() > 1) {
+			q = q.replaceAll("[\\*\\?]", "").trim();
+			q = StringUtils.removeAll(q, "AND");
+			q = StringUtils.removeAll(q, "OR");
+			q = StringUtils.removeAll(q, "NOT");
+			q = q.trim();
+			defaultQuery = "";
+		}
+		if (qf.isEmpty()) {
+			return defaultQuery;
+		} else if ("*".equals(qf)) {
+			return q;
+		} else {
+			if (q.isEmpty()) {
+				return qf;
+			} else {
+				return qf + " AND " + q;
+			}
+		}
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {

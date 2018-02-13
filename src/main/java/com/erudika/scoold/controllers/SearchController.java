@@ -80,9 +80,7 @@ public class SearchController {
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.isBlank(q) ? query : q;
 		// [space query filter] + original query string
-		String qf = utils.getSpaceFilteredQuery(req);
-		String filtered = utils.sanitizeQueryString(queryString);
-		String qs = qf.isEmpty() ? "" : "*".equals(qf) ? filtered : qf + (filtered.isEmpty() ? "" : " AND " + filtered);
+		String qs = utils.sanitizeQueryString(queryString, req);
 		String qsUsers = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		if ("questions".equals(type)) {

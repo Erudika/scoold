@@ -58,13 +58,11 @@ public class PeopleController {
 
 	@GetMapping
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
-			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
+			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		// [space query filter] + original query string
-		String qf = utils.getSpaceFilteredQuery(req);
-		String filtered = utils.sanitizeQueryString(q);
-		String qs = qf.isEmpty() ? "" : "*".equals(qf) ? filtered : qf + (filtered.isEmpty() ? "" : " AND " + filtered);
+		String qs = utils.sanitizeQueryString(q, req);
 		qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), qs, itemcount);

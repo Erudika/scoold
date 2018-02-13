@@ -24,13 +24,13 @@
 				<strong>Edit space membership of selected users:</strong>
 			</div>
 			<div class="col m5 r">
-				<input type="text" name="q" value="$request.getParameter('q')" placeholder="$!lang.get('search.title')">
+				<input type="text" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
 				<input type="hidden" name="bulkedit" value="true">
 			</div>
 		</div>
 	</form>
 
-	<form method="post" action="$peoplelink/bulk-edit?${request.queryString}">
+	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
 		#sectoken(false "BULK_EDIT")
 		#foreach($space in $spaces)
 			<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
