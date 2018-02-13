@@ -37,9 +37,9 @@
 			"description": "The public URL of Scoold (affects CSP header), e.g. https://scoold.yourhost.com ",
 			"value": ""
 		},
-		"para_core_package_name": {
-			"description": "Core package name.",
-			"value": "com.erudika.scoold.core"
+		"para_is_default_space_public": {
+			"description": "Controls the visibility of questions, answers and users in the default space. Public by default.",
+			"value": "true"
 		},
 		"para_app_secret_key": {
 			"description": "A secret string for this particular app (any random string)",
