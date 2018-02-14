@@ -29,9 +29,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
@@ -56,6 +58,7 @@ public class Profile extends Sysprop {
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
 
+	private transient Set<String> spaceSet;
 	private transient String newbadges;
 	private transient Integer newreports;
 	private transient User user;
@@ -420,6 +423,16 @@ public class Profile extends Sysprop {
 
 		badgeMap.remove("");
 		return badgeMap;
+	}
+
+	public Set<String> getSpacesSet() {
+		if (spaceSet == null || spaceSet.isEmpty()) {
+			spaceSet = new HashSet<>(spaces);
+			for (String space : getSpaces()) {
+				spaceSet.add(ScooldUtils.getInstance().getSpaceId(space));
+			}
+		}
+		return spaceSet;
 	}
 
 	public boolean isComplete() {

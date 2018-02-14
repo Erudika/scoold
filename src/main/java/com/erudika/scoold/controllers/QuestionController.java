@@ -57,6 +57,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
+import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 /**
  *
@@ -142,9 +144,14 @@ public class QuestionController {
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
 			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
 		}
-		if (showPost.isQuestion() && utils.canAccessSpace(authUser, space)) {
-			showPost.setSpace(space);
-			changeSpaceForAllAnswers(showPost, space);
+		if (showPost.isQuestion()) {
+			if (!utils.isMod(authUser)) {
+				space = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+			}
+			if (utils.canAccessSpace(authUser, space)) {
+				showPost.setSpace(space);
+				changeSpaceForAllAnswers(showPost, space);
+			}
 		}
 
 		//note: update only happens if something has changed

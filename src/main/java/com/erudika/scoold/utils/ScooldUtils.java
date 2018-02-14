@@ -407,14 +407,7 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(targetSpaceId) && (isMod(authUser) || !authUser.hasSpaces() || isDefaultSpacePublic)) {
 			return true;
 		}
-		boolean canAccess = false;
-		for (String space : authUser.getSpaces()) {
-			canAccess = space.equalsIgnoreCase(targetSpaceId); // "scooldspace:spaceID:spaceNAME"
-			if (canAccess) {
-				break;
-			}
-		}
-		return canAccess;
+		return authUser.getSpacesSet().contains(getSpaceId(targetSpaceId));
 	}
 
 	public String getValidSpaceId(Profile authUser, String space) {

@@ -143,7 +143,7 @@ public class QuestionsController {
 			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
-			String currentSpace = utils.getSpaceId(utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE)));
+			String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
 			Question q = utils.populate(req, new Question(), "title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);

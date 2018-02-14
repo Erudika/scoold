@@ -101,7 +101,9 @@
 					<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
 				#end
 				#if($showPost.space && !$showPost.space.isEmpty())
-					<div class="mediumText pvs"><i class="fa fa-th-large grey-text"></i>&nbsp; $!scooldUtils.getSpaceName($!showPost.space)</div>
+					<div class="mediumText pvs"><i class="fa fa-th-large grey-text"></i>&nbsp;
+						$scooldUtils.getSpaceName($!showPost.space)
+					</div>
 				#end
 				#if ($showPost.tags && !$showPost.tags.isEmpty())
 					<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
