@@ -278,7 +278,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 | Language | File | Progress
 --- | --- | ---
 **Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | 0%
-**German** | [lang_de.properties](src/main/resources/lang_de.properties) | :white_check_mark: Thanks @LostKatana!
+**German** | [lang_de.properties](src/main/resources/lang_de.properties) | :white_check_mark: Thanks Patrick Gäckle!
 **Norwegian** | [lang_no.properties](src/main/resources/lang_no.properties) | 0%
 **Finnish** | [lang_fi.properties](src/main/resources/lang_fi.properties) | 0%
 **Belarusian** | [lang_be.properties](src/main/resources/lang_be.properties) | 0%
@@ -299,7 +299,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Macedonian** | [lang_mk.properties](src/main/resources/lang_mk.properties) | 0%
 **Serbian** | [lang_sr.properties](src/main/resources/lang_sr.properties) | 0%
 **Swedish** | [lang_sv.properties](src/main/resources/lang_sv.properties) | 0%
-**Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :white_check_mark: Thanks @showaid!
+**Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :white_check_mark: Thanks HyunWoo Jo!
 **Indonesian** | [lang_in.properties](src/main/resources/lang_in.properties) | 0%
 **Malay** | [lang_ms.properties](src/main/resources/lang_ms.properties) | 0%
 **Maltese** | [lang_mt.properties](src/main/resources/lang_mt.properties) | 0%
