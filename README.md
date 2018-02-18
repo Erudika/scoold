@@ -277,7 +277,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 
 | Language | File | Progress
 --- | --- | ---
-**Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | 0%
+**Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | :white_check_mark: Thanks Rakesh Gopathi!
 **German** | [lang_de.properties](src/main/resources/lang_de.properties) | :white_check_mark: Thanks Patrick Gäckle!
 **Norwegian** | [lang_no.properties](src/main/resources/lang_no.properties) | 0%
 **Finnish** | [lang_fi.properties](src/main/resources/lang_fi.properties) | 0%
