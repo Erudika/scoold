@@ -46,14 +46,15 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 
 0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or any other identity provider that you wish to use.
-This isn't necessary only if you enable LDAP or password authentication.
+This isn't necessary only if you enable LDAP or password authentication. Save the obtained API keys in `application.conf`,
+as shown below.
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys
+1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf`
 2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
 **OR**
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys OR [run Para locally on port 8080](https://paraio.org/docs/#001-intro)
+1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf` OR [run Para locally on port 8080](https://paraio.org/docs/#001-intro)
 2. Create a *separate* `application.conf` for Scoold and configure it to connect to Para on port 8080
 3. Start Scoold on port 8000: `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
 4. Open `http://localhost:8000` in your browser
