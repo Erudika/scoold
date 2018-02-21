@@ -85,7 +85,7 @@ para.app_name = "Scoold"
 para.port = 8000
 # change this to "production" later
 para.env = "development"
-# the URL where Scoold is hosted, e.g. https://scoold.yourhost.com
+# the URL where Scoold is hosted, or http://localhost:8000
 para.host_url = "https://your-scoold-domain.com"
 # the URL of Para - could also be "http://localhost:8080"
 para.endpoint = "https://paraio.com"
