@@ -320,7 +320,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Polish** | [lang_pl.properties](src/main/resources/lang_pl.properties) | 0%
 **Danish** | [lang_da.properties](src/main/resources/lang_da.properties) | 0%
 **Romanian** | [lang_ro.properties](src/main/resources/lang_ro.properties) | 0%
-**Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | 0%
+**Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | :white_check_mark: Thanks Aysad Kozanoglu!
 **Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | 0%
 
 
