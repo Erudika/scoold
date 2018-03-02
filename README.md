@@ -308,7 +308,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **English** | [lang_en.properties](src/main/resources/lang_en.properties) | :white_check_mark:
 **Icelandic** | [lang_is.properties](src/main/resources/lang_is.properties) | 0%
 **Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | 0%
-**Spanish** | [lang_es.properties](src/main/resources/lang_es.properties) | 0%
+**Spanish** | [lang_es.properties](src/main/resources/lang_es.properties) | :white_check_mark: Thanks Trisha Jariwala!
 **Chinese** | [lang_zh.properties](src/main/resources/lang_zh.properties) | 0%
 **Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | 0%
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
