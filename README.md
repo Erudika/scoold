@@ -240,11 +240,11 @@ You can configure Scoold with one or more admin users in your `application.conf`
 ```
 para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
 ```
-The setting accepts comma-separated values of either an email address or a user identifier
+Here you can enter comma-separated values of either an email address or a user identifier
 (the id from your social identity provider). This works both for new and existing Scoold users.
-If you remove users, who are already admins, from the list of admins `para.admins`
+If you remove users who are already admins from the list of admins `para.admins`,
 they will be *demoted* to regular users. Similarly, existing regular users will be
-*promoted* to admins if the appear in the list above.
+*promoted* to admins if they appear in the list above.
 
 ## Customizing the UI
 
