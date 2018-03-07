@@ -404,10 +404,18 @@ public final class ScooldUtils {
 		if (authUser == null || targetSpaceId == null) {
 			return isDefaultSpacePublic;
 		}
-		if (StringUtils.isBlank(targetSpaceId) && (isMod(authUser) || !authUser.hasSpaces() || isDefaultSpacePublic)) {
-			return true;
+		if (StringUtils.isBlank(targetSpaceId)) {
+			// can user access the default space (blank)
+			return isDefaultSpacePublic || isMod(authUser) || !authUser.hasSpaces();
 		}
-		return authUser.getSpacesSet().contains(getSpaceId(targetSpaceId));
+		boolean isMemberOfSpace = false;
+		for (String space : authUser.getSpaces()) {
+			if (StringUtils.startsWithIgnoreCase(space, getSpaceId(targetSpaceId) + ":")) {
+				isMemberOfSpace = true;
+				break;
+			}
+		}
+		return isMemberOfSpace;
 	}
 
 	public String getValidSpaceId(Profile authUser, String space) {
