@@ -122,11 +122,11 @@ public class AdminController {
 	public String forceDelete(@RequestParam Boolean confirmdelete, @RequestParam String id, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		if (confirmdelete && utils.isAdmin(authUser)) {
-			ParaObject sobject = pc.read(id);
-			if (sobject != null) {
-				sobject.delete();
+			ParaObject object = pc.read(id);
+			if (object != null) {
+				pc.delete(object);
 				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
-						sobject.getClass().getName(), sobject.getId());
+						object.getClass().getName(), object.getId());
 			}
 		}
 		return "redirect:" + ADMINLINK;
