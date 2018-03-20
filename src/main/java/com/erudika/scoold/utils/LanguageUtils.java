@@ -106,21 +106,21 @@ public class LanguageUtils {
 		Map<String, String> lang = readLanguageFromFile(langCode);
 		if (lang == null || lang.isEmpty()) {
 			// or try to load from DB
+			lang = new TreeMap<String, String>(getDefaultLanguage());
 			Sysprop s = pc.read(keyPrefix.concat(langCode));
 			if (s != null && !s.getProperties().isEmpty()) {
 				Map<String, Object> loaded = s.getProperties();
-				lang = new TreeMap<String, String>();
-				for (Map.Entry<String, Object> entry : loaded.entrySet()) {
-					lang.put(entry.getKey(), String.valueOf(entry.getValue()));
+				for (Map.Entry<String, String> entry : lang.entrySet()) {
+					if (loaded.containsKey(entry.getKey())) {
+						lang.put(entry.getKey(), String.valueOf(loaded.get(entry.getKey())));
+					} else {
+						lang.put(entry.getKey(), entry.getValue());
+					}
 				}
+				LANG_CACHE.put(langCode, lang);
 			}
 		}
-		if (lang == null || lang.isEmpty()) {
-			return getDefaultLanguage();
-		} else {
-			LANG_CACHE.put(langCode, lang);
-			return Collections.unmodifiableMap(lang);
-		}
+		return Collections.unmodifiableMap(lang);
 	}
 
 	/**
@@ -286,14 +286,22 @@ public class LanguageUtils {
 			return false;
 		}
 		Sysprop s = pc.read(keyPrefix.concat(langCode));
-
-		if (s != null && !value.equals(s.getProperty(key))) {
-			s.addProperty(key, value);
-			pc.update(s);
-			updateTranslationProgressMap(langCode, PLUS);
-			return true;
+		boolean create = false;
+		if (s == null) {
+			create = true;
+			s = new Sysprop(keyPrefix.concat(langCode));
 		}
-		return false;
+		s.addProperty(key, value);
+		if (create) {
+			pc.create(s);
+		} else {
+			pc.update(s);
+		}
+		if (LANG_CACHE.containsKey(langCode)) {
+			LANG_CACHE.get(langCode).put(key, value);
+		}
+		updateTranslationProgressMap(langCode, PLUS);
+		return true;
 	}
 
 	/**
@@ -307,11 +315,13 @@ public class LanguageUtils {
 			return false;
 		}
 		Sysprop s = pc.read(keyPrefix.concat(langCode));
-		String defStr = getDefaultLanguage().get(key);
-
-		if (s != null && !defStr.equals(s.getProperty(key))) {
-			s.addProperty(key, defStr);
+		if (s != null) {
+			String value = getDefaultLanguage().get(key);
+			s.addProperty(key, value);
 			pc.update(s);
+			if (LANG_CACHE.containsKey(langCode)) {
+				LANG_CACHE.get(langCode).put(key, value);
+			}
 			updateTranslationProgressMap(langCode, MINUS);
 			return true;
 		}

@@ -536,24 +536,6 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(document).on("click", "#add-translation-btn",  function() {
-		var that = $(this);
-		var form = that.closest("form");
-		var isValid = true;
-		var textbox = $("textarea[name='value']", form);
-		var father = that.closest("div.newtranslationform");
-		if ($.trim(textbox.val()) !== "" && isValid) {
-			father.hide();
-			submitForm(form, "POST", function(data, status, xhr, form) {
-				if ($.trim(data) !== "") {
-					$("#translations").prepend(data);
-				}
-				clearForm(form);
-			});
-		}
-		return false;
-	});
-
 	$("form.new-translation-form").find("textarea").focus();
 
 	/****************************************************

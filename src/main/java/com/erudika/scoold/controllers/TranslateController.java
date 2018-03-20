@@ -138,7 +138,7 @@ public class TranslateController {
 		if (trans != null && utils.isAuthenticated(req)) {
 			if (trans.getApproved()) {
 				trans.setApproved(false);
-				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getId());
+				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getThekey());
 			} else {
 				trans.setApproved(true);
 				utils.getLangutils().approveTranslation(trans.getLocale(), trans.getThekey(), trans.getValue());
@@ -158,7 +158,7 @@ public class TranslateController {
 			Translation trans = (Translation) pc.read(id);
 			Profile authUser = utils.getAuthUser(req);
 			if (authUser.getId().equals(trans.getCreatorid()) || utils.isAdmin(authUser)) {
-				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getId());
+				utils.getLangutils().disapproveTranslation(trans.getLocale(), trans.getThekey());
 				pc.delete(trans);
 			}
 			if (!utils.isAjaxRequest(req)) {

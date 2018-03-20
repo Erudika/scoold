@@ -44,8 +44,8 @@
 							<textarea class="materialize-textarea center-align" rows="2" cols="3" name="value" tabindex="1" required></textarea>
 						</div>
 						<div class="center mtm">
-							<button id="add-translation-btn" type="button" class="btn waves-effect waves-light">$!lang.get('add')</button> &nbsp;
-							<button id="addcont-translation-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('add') &amp; $!lang.get('continue')</button>
+							<button id="addcont-translation-btn" type="submit" class="btn waves-effect waves-light">
+								$!lang.get('add') &amp; $!lang.get('continue')</button>
 						</div>
 					</form>
 				</div>

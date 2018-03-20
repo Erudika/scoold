@@ -21,13 +21,11 @@
 					#end
 				</div>
 				<div class="center-align">
-					<span class="chip" title="$!{progress}%">
-						#if ($progress > 90)
-							<i class="fa fa-check-circle green-text"></i>
-						#else
-							$!{progress}%
-						#end
-					</span>
+					#if ($progress > 90)
+						<span class="chip green white-text" title="$!{progress}%">$!{progress}%</span>
+					#else
+						<span class="chip" title="$!{progress}%">$!{progress}%</span>
+					#end
 					#if ($progress < 100)
 					<a href="$translatelink/$!showLangKey" title="$!{lang.get('translate.translate')}" class="chip">$!lang.get("translate.translate")</a>
 					#end
