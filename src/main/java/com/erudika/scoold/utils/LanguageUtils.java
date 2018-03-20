@@ -62,7 +62,7 @@ public class LanguageUtils {
 		for (Locale loc : LocaleUtils.availableLocaleList()) {
 			String locstr = loc.getLanguage();
 			if (!StringUtils.isBlank(locstr)) {
-				ALL_LOCALES.put(locstr, loc);
+				ALL_LOCALES.putIfAbsent(locstr, Locale.forLanguageTag(locstr));
 			}
 		}
 	}
