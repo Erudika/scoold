@@ -66,7 +66,7 @@ public class ProfileController {
 		Profile showUser;
 		boolean isMyProfile;
 
-		if (StringUtils.isBlank(id)) {
+		if (StringUtils.isBlank(id) || isMyid(authUser, Profile.id(id))) {
 			//requested userid !exists or = my userid => show my profile
 			showUser = authUser;
 			isMyProfile = true;
@@ -126,34 +126,45 @@ public class ProfileController {
 			@RequestParam(required = false) String location, @RequestParam(required = false) String website,
 			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
-		String showId = StringUtils.isBlank(id) ? authUser.getId() : id;
+		String showId = StringUtils.isBlank(id) ? authUser.getId() : Profile.id(id);
 		if (canEditProfile(authUser, showId)) {
-			Profile showUser = utils.getParaClient().read(Profile.id(id));
-			boolean update = false;
+			Profile showUser;
+			if (isMyid(authUser, id)) {
+				showUser = authUser;
+			} else {
+				showUser = utils.getParaClient().read(Profile.id(id));
+			}
+
+			boolean updateProfile = false;
 
 			if (!StringUtils.isBlank(name)) {
 				showUser.setName(name);
-				update = true;
+				updateProfile = true;
 			}
 			if (!StringUtils.isBlank(location)) {
 				showUser.setLocation(location);
-				update = true;
+				updateProfile = true;
 			}
 			if (!StringUtils.isBlank(website)) {
 				showUser.setWebsite(website);
-				update = true;
+				updateProfile = true;
 			}
 			if (!StringUtils.isBlank(aboutme)) {
 				showUser.setAboutme(aboutme);
-				update = true;
+				updateProfile = true;
 			}
-			if (!StringUtils.isBlank(picture)) {
+			if (!StringUtils.isBlank(picture) && Utils.isValidURL(picture)) {
 				showUser.setPicture(picture);
-				update = true;
+				User u = showUser.getUser();
+				if (!u.getPicture().equals(picture)) {
+					u.setPicture(picture);
+					utils.getParaClient().update(u);
+					updateProfile = true;
+				}
 			}
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
-			if (update || utils.addBadgeOnce(authUser, Badge.NICEPROFILE, isComplete)) {
+			if (updateProfile || utils.addBadgeOnce(authUser, Badge.NICEPROFILE, isComplete)) {
 				showUser.update();
 			}
 		}

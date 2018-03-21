@@ -563,9 +563,10 @@ public final class ScooldUtils {
 			user.setNewbadges(newb);
 			if (update) {
 				user.update();
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public List<String> checkForBadges(Profile authUser, HttpServletRequest req) {

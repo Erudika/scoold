@@ -391,10 +391,13 @@ $(function () {
 		currentPic.val(newPicValue);
 	});
 
-	$("#picture_url").on('focusout', function () {
+	$("#picture_url").on('focusout paste', function () {
 		var dis = $(this);
-		$("img.profile-pic:first").attr("src", dis.val());
-		$.post(dis.closest("form").attr("action"), {picture: dis.val()});
+		setTimeout(function () {
+			console.log(dis.val());
+			$("img.profile-pic:first").attr("src", dis.val());
+			$.post(dis.closest("form").attr("action"), {picture: dis.val()});
+		}, 200);
 	});
 
 	$("img.profile-pic, #edit-picture-link").on("mouseenter touchstart", function () {
