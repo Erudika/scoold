@@ -117,8 +117,8 @@ public class LanguageUtils {
 						lang.put(entry.getKey(), entry.getValue());
 					}
 				}
-				LANG_CACHE.put(langCode, lang);
 			}
+			LANG_CACHE.put(langCode, lang);
 		}
 		return Collections.unmodifiableMap(lang);
 	}
