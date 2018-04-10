@@ -237,7 +237,7 @@ para.security.ldap.active_directory_domain = ""
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 
-## Creating admins
+## Admins
 
 You can configure Scoold with one or more admin users in your `application.conf` file:
 ```
@@ -248,6 +248,75 @@ Here you can enter comma-separated values of either an email address or a user i
 If you remove users who are already admins from the list of admins `para.admins`,
 they will be *demoted* to regular users. Similarly, existing regular users will be
 *promoted* to admins if they appear in the list above.
+
+## Self-hosting Para and Scoold through SSL
+
+The recommended way for enabling HTTPS with your own SSL certificate in a self-hosted environment is to run a
+reverse-proxy server like NGINX in front of Scoold. As an alternative you can use Apache or Lighttpd.
+
+1. Start Para on port `:8080`
+2. Start Scoold on port `:8000`
+3. Start NGINX with the configuration below
+
+<details><summary><b>Example configuration for NGINX</b></summary>
+
+    server_tokens off;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options nosniff;
+
+    server {
+      listen 80 default_server;
+      listen [::]:80 default_server;
+      server_name www.domain.com domain.com;
+
+      # Redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+      return 301 https://$host$request_uri;
+    }
+
+    server {
+      listen 443 ssl http2;
+      listen [::]:443 ssl http2;
+      server_name www.domain.com domain.com;
+
+      # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+      ssl_certificate /path/to/signed_cert_plus_intermediates;
+      ssl_certificate_key /path/to/private_key;
+      ssl_session_timeout 1d;
+      ssl_session_cache shared:SSL:50m;
+      ssl_session_tickets off;
+
+      # modern configuration. tweak to your needs.
+      ssl_protocols TLSv1.2;
+      ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
+      ssl_prefer_server_ciphers on;
+
+      # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)
+      add_header Strict-Transport-Security max-age=15768000;
+
+      # OCSP Stapling - fetch OCSP records from URL in ssl_certificate and cache them
+      ssl_stapling on;
+      ssl_stapling_verify on;
+
+      # Verify chain of trust of OCSP response using Root CA and Intermediate certs
+      ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;
+
+      # Cloudflare DNS
+      resolver 1.1.1.1;
+
+      # Required for LE certificate enrollment using certbot
+      location '/.well-known/acme-challenge' {
+        default_type "text/plain";
+        root /var/www/html;
+      }
+
+      location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+      }
+    }
+</details>
 
 ## Customizing the UI
 
