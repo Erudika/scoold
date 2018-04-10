@@ -234,6 +234,9 @@ para.security.ldap.password_attribute = "userPassword"
 para.security.ldap.active_directory_domain = ""
 ```
 
+For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
+this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
+
 ## Creating admins
 
 You can configure Scoold with one or more admin users in your `application.conf` file:
