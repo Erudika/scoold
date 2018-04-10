@@ -1,4 +1,4 @@
-![Scoold Q&A](assets/header.png)
+![Scoold Q&A](https://raw.githubusercontent.com/Erudika/scoold/master/assets/header.png)
 
 ## Stack Overflow in a JAR
 
@@ -358,7 +358,7 @@ mvn validate
 For more information see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
 
 
-![Square Face](assets/logosq.png)
+![Square Face](https://raw.githubusercontent.com/Erudika/scoold/master/assets/logosq.png)
 
 ## License
 [Apache 2.0](LICENSE)
