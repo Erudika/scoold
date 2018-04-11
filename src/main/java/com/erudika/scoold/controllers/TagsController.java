@@ -53,7 +53,7 @@ public class TagsController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		itemcount.setDesc(!"tag".equals(sortby));
-		List<Tag> tagslist = utils.getParaClient().findTags("*", itemcount);
+		List<Tag> tagslist = utils.getParaClient().findTags("", itemcount);
 		model.addAttribute("path", "tags.vm");
 		model.addAttribute("title", utils.getLang(req).get("tags.title"));
 		model.addAttribute("tagsSelected", "navbtn-hover");
