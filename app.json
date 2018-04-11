@@ -11,7 +11,7 @@
 	],
 	"website": "https://scoold.com/",
 	"repository": "https://github.com/Erudika/scoold",
-	"logo": "https://static.scoold.com/logosq.svg",
+	"logo": "https://static.scoold.com/logosq.png",
 	"env": {
 		"para_access_key": {
 			"description": "Your Para access key.",
