@@ -7,7 +7,7 @@
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
 <div class="newcommentform mvm ${hide}">
 	<form method="post" action="$commentlink" class="new-comment-form">
-		#sectoken(false "ADD_COMMENT_$!parentid")
+		##sectoken(false "ADD_COMMENT_$!parentid") ## BREAKS AJAX - NOT USED
 		<div class="row">
 			<div class="col s10">
 				<div class="input-field">
