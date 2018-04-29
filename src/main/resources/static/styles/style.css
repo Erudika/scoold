@@ -10,6 +10,8 @@ body {
 }
 .postbody ul li {list-style-type: disc;}
 .postbody ul {padding-left: 40px;}
+.postbox, .questionbox {word-wrap: break-word;}
+.postbox img {max-width: 100%;}
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #ececec;}
 .following-post {border-right: 5px solid #8bc34a;}
