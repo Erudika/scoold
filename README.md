@@ -164,7 +164,7 @@ The email template is located in `src/main/resources/emails/notify.html`.
 
 ## Social login
 
-For authenticating with Facebook or Google, you only need your Gogle client id
+For authenticating with Facebook or Google, you only need your Google client id
 (e.g. `123-abcd.apps.googleusercontent.com`), or Facebook app id (only digits).
 For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
