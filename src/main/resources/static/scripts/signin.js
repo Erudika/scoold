@@ -7,7 +7,7 @@ if (FB_APP_ID && FB_APP_ID.trim() !== "") {
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=" + FB_APP_ID;
+		js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0&appId=" + FB_APP_ID;
 		fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
 
