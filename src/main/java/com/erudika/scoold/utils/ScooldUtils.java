@@ -621,8 +621,39 @@ public final class ScooldUtils {
 		return template;
 	}
 
+	public void setSecurityHeaders(HttpServletRequest request, HttpServletResponse response) {
+		// CSP Header
+		if (Config.getConfigBoolean("csp_header_enabled", true)) {
+			response.addHeader("Content-Security-Policy",
+					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy()));
+		}
+		// HSTS Header
+		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
+			response.addHeader("Strict-Transport-Security", "strict-transport-security: max-age=31536000; includeSubDomains");
+		}
+		// Frame Options Header
+		if (Config.getConfigBoolean("framing_header_enabled", true)) {
+			response.addHeader("X-Frame-Options", "x-frame-options: SAMEORIGIN");
+		}
+		// XSS Header
+		if (Config.getConfigBoolean("xss_header_enabled", true)) {
+			response.addHeader("X-XSS-Protection", "X-XSS-Protection: 1; mode=block");
+		}
+		// Content Type Header
+		if (Config.getConfigBoolean("contenttype_header_enabled", true)) {
+			response.addHeader("X-Content-Type-Options", "X-Content-Type-Options: nosniff");
+		}
+		// Referrer Header
+		if (Config.getConfigBoolean("referrer_header_enabled", true)) {
+			response.addHeader("Referrer-Policy", "strict-origin");
+		}
+	}
+
 	public String getDefaultContentSecurityPolicy() {
-		return "default-src 'self'; base-uri 'self'; "
+		return "upgrade-insecure-requests; "
+				+ "default-src 'self'; "
+				+ "base-uri 'self'; "
+				+ "form-action 'self'; "
 				+ "connect-src 'self' scoold.com www.google-analytics.com; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
 				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "

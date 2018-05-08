@@ -174,31 +174,8 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 				utils.param(request, "page1") || utils.param(request, "page2"))) {
 			modelAndView.setViewName("pagination"); // switch to page fragment view
 		}
-		// CSP Header
-		if (Config.getConfigBoolean("csp_header_enabled", true)) {
-			response.addHeader("Content-Security-Policy",
-					Config.getConfigParam("csp_header", utils.getDefaultContentSecurityPolicy()));
-		}
-		// HSTS Header
-		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
-			response.addHeader("Strict-Transport-Security", "strict-transport-security: max-age=31536000; includeSubDomains");
-		}
-		// Frame Options Header
-		if (Config.getConfigBoolean("framing_header_enabled", true)) {
-			response.addHeader("X-Frame-Options", "x-frame-options: SAMEORIGIN");
-		}
-		// XSS Header
-		if (Config.getConfigBoolean("xss_header_enabled", true)) {
-			response.addHeader("X-XSS-Protection", "X-XSS-Protection: 1; mode=block");
-		}
-		// Content Type Header
-		if (Config.getConfigBoolean("contenttype_header_enabled", true)) {
-			response.addHeader("X-Content-Type-Options", "X-Content-Type-Options: nosniff");
-		}
-		// Referrer Header
-		if (Config.getConfigBoolean("referrer_header_enabled", true)) {
-			response.addHeader("Referrer-Policy", "strict-origin");
-		}
+		// CSP, HSTS, etc, headers. See https://securityheaders.com
+		utils.setSecurityHeaders(request, response);
 
 		// default metadata for social meta tags
 		if (!modelAndView.getModel().containsKey("title")) {
