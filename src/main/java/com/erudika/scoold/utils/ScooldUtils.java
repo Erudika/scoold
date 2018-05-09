@@ -629,19 +629,19 @@ public final class ScooldUtils {
 		}
 		// HSTS Header
 		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
-			response.addHeader("Strict-Transport-Security", "strict-transport-security: max-age=31536000; includeSubDomains");
+			response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
 		}
 		// Frame Options Header
 		if (Config.getConfigBoolean("framing_header_enabled", true)) {
-			response.addHeader("X-Frame-Options", "x-frame-options: SAMEORIGIN");
+			response.addHeader("X-Frame-Options", "SAMEORIGIN");
 		}
 		// XSS Header
 		if (Config.getConfigBoolean("xss_header_enabled", true)) {
-			response.addHeader("X-XSS-Protection", "X-XSS-Protection: 1; mode=block");
+			response.addHeader("X-XSS-Protection", "1; mode=block");
 		}
 		// Content Type Header
 		if (Config.getConfigBoolean("contenttype_header_enabled", true)) {
-			response.addHeader("X-Content-Type-Options", "X-Content-Type-Options: nosniff");
+			response.addHeader("X-Content-Type-Options", "nosniff");
 		}
 		// Referrer Header
 		if (Config.getConfigBoolean("referrer_header_enabled", true)) {
@@ -660,6 +660,7 @@ public final class ScooldUtils {
 				+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net "
 					+ "cdnjs.cloudflare.com www.google-analytics.com code.jquery.com static.scoold.com; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
-				+ "img-src 'self' https: data:; report-uri /reports/cspv";
+				+ "img-src 'self' https: data:; "
+				+ "report-uri /reports/cspv";
 	}
 }
