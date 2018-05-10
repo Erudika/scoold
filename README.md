@@ -361,7 +361,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Lithuanian** | [lang_lt.properties](src/main/resources/lang_lt.properties) | 0%
 **Croatian** | [lang_hr.properties](src/main/resources/lang_hr.properties) | 0%
 **Latvian** | [lang_lv.properties](src/main/resources/lang_lv.properties) | 0%
-**French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | 0%
+**French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | :heavy_check_mark: Thanks Charles Maheu!
 **Hungarian** | [lang_hu.properties](src/main/resources/lang_hu.properties) | 0%
 **Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
 **Slovak** | [lang_sk.properties](src/main/resources/lang_sk.properties) | 0%
