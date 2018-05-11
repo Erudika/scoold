@@ -625,7 +625,7 @@ public final class ScooldUtils {
 		// CSP Header
 		if (Config.getConfigBoolean("csp_header_enabled", true)) {
 			response.addHeader("Content-Security-Policy",
-					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy()));
+					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy(request.isSecure())));
 		}
 		// HSTS Header
 		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
@@ -649,8 +649,8 @@ public final class ScooldUtils {
 		}
 	}
 
-	public String getDefaultContentSecurityPolicy() {
-		return "upgrade-insecure-requests; "
+	public String getDefaultContentSecurityPolicy(boolean isSecure) {
+		return (isSecure ? "upgrade-insecure-requests; " : "")
 				+ "default-src 'self'; "
 				+ "base-uri 'self'; "
 				+ "form-action 'self'; "
