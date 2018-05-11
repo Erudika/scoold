@@ -21,7 +21,7 @@
 					#end
 				</div>
 				<div class="center-align">
-					#if ($progress > 90)
+					#if ($progress >= 90)
 						<span class="chip green white-text" title="$!{progress}%">$!{progress}%</span>
 					#else
 						<span class="chip" title="$!{progress}%">$!{progress}%</span>

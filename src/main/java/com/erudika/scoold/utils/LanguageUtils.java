@@ -70,6 +70,8 @@ public class LanguageUtils {
 	private static final Map<String, Map<String, String>> LANG_CACHE =
 			new ConcurrentHashMap<String, Map<String, String>>(ALL_LOCALES.size());
 
+	private static Sysprop langProgressCache = new Sysprop();
+
 	private String deflangCode;
 	private final String keyPrefix = "language".concat(Config.SEPARATOR);
 	private final String progressKey = keyPrefix.concat("progress");
@@ -245,7 +247,15 @@ public class LanguageUtils {
 	 * @return a map indicating translation progress
 	 */
 	public Map<String, Integer> getTranslationProgressMap() {
-		Sysprop progress = pc.read(progressKey);
+		Sysprop progress;
+		if (langProgressCache.getProperties().isEmpty()) {
+			progress = pc.read(progressKey);
+			if (progress != null) {
+				langProgressCache = progress;
+			}
+		} else {
+			progress = langProgressCache;
+		}
 		Map<String, Integer> progressMap = new HashMap<String, Integer>(ALL_LOCALES.size());
 		boolean isMissing = progress == null;
 		if (isMissing) {
@@ -261,7 +271,7 @@ public class LanguageUtils {
 			}
 		}
 		if (isMissing) {
-			pc.create(progress);
+			langProgressCache = pc.create(progress);
 		}
 		return progressMap;
 	}
@@ -359,12 +369,13 @@ public class LanguageUtils {
 		} else {
 			progress.put(langCode, (int) ((approved / defsize) * 100));
 		}
+		Sysprop updatedProgress = new Sysprop(progressKey);
+		for (Map.Entry<String, Integer> entry : progress.entrySet()) {
+			updatedProgress.addProperty(entry.getKey(), entry.getValue());
+		}
+		langProgressCache = updatedProgress;
 		if (percent < 100 && !percent.equals(progress.get(langCode))) {
-			Sysprop s = new Sysprop(progressKey);
-			for (Map.Entry<String, Integer> entry : progress.entrySet()) {
-				s.addProperty(entry.getKey(), entry.getValue());
-			}
-			pc.create(s);
+			pc.create(updatedProgress);
 		}
 	}
 
