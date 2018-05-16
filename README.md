@@ -381,7 +381,8 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Icelandic** | [lang_is.properties](src/main/resources/lang_is.properties) | 0%
 **Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | 0%
 **Spanish** | [lang_es.properties](src/main/resources/lang_es.properties) | :heavy_check_mark: Thanks Trisha Jariwala!
-**Chinese** | [lang_zh.properties](src/main/resources/lang_zh.properties) | 0%
+**Traditional Chinese** | [lang_zh_tw.properties](src/main/resources/lang_zh_tw.properties) | 100%
+**Simplified Chinese** | [lang_zh_cn.properties](src/main/resources/lang_zh_cn.properties) | 100%
 **Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | 0%
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
 **Czech** | [lang_cs.properties](src/main/resources/lang_cs.properties) | 0%
