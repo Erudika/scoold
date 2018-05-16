@@ -8,7 +8,7 @@
 			#set($showLangName = $!entry.value.getDisplayName($!entry.value))
 			#set($progress = $!langProgressMap.get($!entry.key))
 
-			#if ($showLangKey.equals($currentLocale.language)) #set($selclass = "green white-text") #else #set($selclass = "") #end
+			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green white-text") #else #set($selclass = "") #end
 			<div class="card-panel $!{selclass}">
 				<div class="mediumText mbs center-align">
 					#if ($selclass == "")
