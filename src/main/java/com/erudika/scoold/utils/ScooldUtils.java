@@ -236,7 +236,7 @@ public final class ScooldUtils {
 
 	public String getLanguageCode(HttpServletRequest req) {
 		String cookieLoc = HttpUtils.getCookieValue(req, LOCALE_COOKIE);
-		Locale requestLocale = langutils.getProperLocale(req.getLocale().getLanguage());
+		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
 		return (cookieLoc != null) ? cookieLoc : requestLocale.getLanguage();
 	}
 
@@ -253,7 +253,7 @@ public final class ScooldUtils {
 	}
 
 	public Map<String, String> getLang(Locale currentLocale) {
-		Map<String, String> lang = langutils.readLanguage(currentLocale.getLanguage());
+		Map<String, String> lang = langutils.readLanguage(currentLocale.toString());
 		if (lang == null || lang.isEmpty()) {
 			lang = langutils.getDefaultLanguage();
 		}

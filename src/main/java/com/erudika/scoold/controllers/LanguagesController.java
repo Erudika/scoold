@@ -62,7 +62,7 @@ public class LanguagesController {
 		Locale locale = utils.getCurrentLocale(langkey, req);
 		if (locale != null) {
 			int maxAge = 60 * 60 * 24 * 365;  //1 year
-			HttpUtils.setRawCookie(LOCALE_COOKIE, locale.getLanguage(), req, res, false, maxAge);
+			HttpUtils.setRawCookie(LOCALE_COOKIE, locale.toString(), req, res, false, maxAge);
 		}
 		return "redirect:" + LANGUAGESLINK;
 	}
