@@ -145,7 +145,7 @@ public class ScooldServer {
 	 * @return the port of this Scoold server
 	 */
 	public static int getServerPort() {
-		return NumberUtils.toInt(System.getProperty("server.port"), Config.getConfigInt("port", 8080));
+		return NumberUtils.toInt(System.getProperty("server.port"), Config.getConfigInt("port", 8000));
 	}
 
 	private static void initConfig() {
