@@ -116,6 +116,36 @@ para.is_default_space_public = true
 **Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
 These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
 
+### Docker
+
+Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.
+First, create an `application.conf` file in a directory and run this command:
+
+```
+$ docker run -ti -p 8080:8080 --rm -v $(pwd)/application.conf:/para/application.conf \
+  -e JAVA_OPTS="-Dconfig.file=/para/application.conf" erudikaltd/scoold
+```
+
+**Environment variables**
+
+`JAVA_OPTS` - Java system properties, e.g. `-Dpara.port=8000`
+`BOOT_SLEEP` - Startup delay, in seconds
+
+**Docker Compose**
+
+You can start the whole stack, Para + Scoold, with a single command using `docker-compose`.
+First, create a new directory and copy `docker-compose.yml` to it from this repository. Create these 4 files:
+
+1. `para.env` - containing environment variables for Para, like `JAVA_OPTS`
+2. `scoold.env` - containing environment variables for Scoold, like `JAVA_OPTS`
+3. `para-application.conf` - containing the Para configuration
+4. `scoold-application.conf` - containing the Scoold configuration
+
+Then you can start both Scoold and Para with Docker Compose like so:
+```
+$ docker-compose up
+```
+
 ### Content-Security-Policy header
 
 This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
