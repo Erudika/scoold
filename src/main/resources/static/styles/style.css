@@ -26,7 +26,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .hugeText{ line-height: 1.0em;font-size: 2.4em; margin: 5px 0;}
 .largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0;}
 .mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0;}
-.smallText {line-height: 1em;font-size: 0.8em;}
+.smallText {line-height: 1.4em;font-size: 0.8em;}
 .center { text-align: center; }
 .r{ text-align: right;}
 .l{ text-align: left;}
