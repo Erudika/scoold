@@ -36,21 +36,24 @@ import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -117,13 +120,20 @@ public class SearchController {
 		return "base";
 	}
 
-	@GetMapping(path = "/feed.xml", produces = MediaType.APPLICATION_ATOM_XML)
-	public void feed(HttpServletRequest req, Writer writer) {
+	@ResponseBody
+	@GetMapping("/feed.xml")
+	public ResponseEntity<String> feed(HttpServletRequest req) {
+		String feed = "";
 		try {
-			new SyndFeedOutput().output(getFeed(), writer);
+			feed = new SyndFeedOutput().outputString(getFeed());
 		} catch (Exception ex) {
 			logger.error("Could not generate feed", ex);
 		}
+		return ResponseEntity.ok().
+				contentType(MediaType.APPLICATION_ATOM_XML).
+				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+				eTag(Utils.md5(feed)).
+				body(feed);
 	}
 
 	private SyndFeed getFeed() throws IOException, FeedException {
