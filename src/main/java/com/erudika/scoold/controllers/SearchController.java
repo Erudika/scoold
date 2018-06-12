@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -121,8 +122,28 @@ public class SearchController {
 	}
 
 	@ResponseBody
+	@GetMapping("/opensearch.xml")
+	public ResponseEntity<String> openSearch() {
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+				+ "<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\" "
+				+ "  xmlns:moz=\"http://www.mozilla.org/2006/browser/search/\">\n"
+				+ "  <ShortName>" + Config.APP_NAME + "</ShortName>\n"
+				+ "  <Description>Search for questions and answers</Description>\n"
+				+ "  <InputEncoding>UTF-8</InputEncoding>\n"
+				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">http://scoold.com/favicon.ico</Image>\n"
+				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + ScooldServer.getServerURL()
+				+ "/search?q={searchTerms}\"></Url>\n"
+				+ "</OpenSearchDescription>";
+		return ResponseEntity.ok().
+				contentType(MediaType.APPLICATION_XML).
+				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+				eTag(Utils.md5(xml)).
+				body(xml);
+	}
+
+	@ResponseBody
 	@GetMapping("/feed.xml")
-	public ResponseEntity<String> feed(HttpServletRequest req) {
+	public ResponseEntity<String> feed() {
 		String feed = "";
 		try {
 			feed = new SyndFeedOutput().outputString(getFeed());
