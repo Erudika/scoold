@@ -142,7 +142,7 @@ public class QuestionController {
 			showPost.setBody(body);
 		}
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
-			showPost.setTags(Arrays.asList(StringUtils.split(tags, ",")));
+			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 		}
 		if (showPost.isQuestion()) {
 			if (!utils.isMod(authUser)) {
@@ -153,7 +153,6 @@ public class QuestionController {
 				changeSpaceForAllAnswers(showPost, space);
 			}
 		}
-
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
 			showPost.setLasteditby(authUser.getId());

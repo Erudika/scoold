@@ -29,11 +29,14 @@ import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
@@ -236,7 +239,6 @@ public abstract class Post extends Sysprop {
 		if (canHaveRevisions()) {
 			setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		}
-		createTags();
 		client().update(this);
 	}
 
@@ -262,6 +264,7 @@ public abstract class Post extends Sysprop {
 		}
 		client().deleteAll(ids);
 		client().delete(this);
+		updateTags(getTags(), null);
 	}
 
 	private void createTags() {
@@ -269,11 +272,12 @@ public abstract class Post extends Sysprop {
 			return;
 		}
 		ArrayList<Tag> tagz = new ArrayList<Tag>();
+		Pager tagged = new Pager(0);
 		for (int i = 0; i < getTags().size(); i++) {
 			String ntag = getTags().get(i);
 			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
 			if (!StringUtils.isBlank(t.getTag())) {
-				Pager tagged = new Pager(1);
+				tagged.setCount(0);
 				client().findTagged(getType(), new String[]{t.getTag()}, tagged);
 				t.setCount((int) tagged.getCount() + 1);
 				getTags().set(i, t.getTag());
@@ -281,6 +285,65 @@ public abstract class Post extends Sysprop {
 			}
 		}
 		client().createAll(tagz);
+	}
+
+	public void updateTags(List<String> oldTags, List<String> newTags) {
+		if (oldTags == null || oldTags.isEmpty()) {
+			return;
+		}
+		List<String> toDelete = new LinkedList<>();
+		List<Tag> toCreate = new LinkedList<>();
+		Map<String, Tag> idTags = new LinkedHashMap<>();
+		Set<String> removedTags = new HashSet<>();
+		Set<String> addedTags = new HashSet<>();
+		Set<String> oldTagsSet = new HashSet<>();
+		Set<String> newTagsSet = new HashSet<>();
+		Pager tagged = new Pager(0);
+		oldTagsSet.addAll(oldTags);
+
+		if (newTags != null) {
+			for (String newTag : newTags) {
+				if (!StringUtils.isBlank(newTag)) {
+					String tag = StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(newTag, " "), "-"), 35);
+					newTagsSet.add(tag);
+					if (!oldTagsSet.contains(tag)) {
+						Tag t = new Tag(tag);
+						t.setCount(1);
+						addedTags.add(tag);
+						idTags.put(t.getId(), t);
+					}
+				}
+			}
+		}
+		for (String oldTag : oldTags) {
+			if (!newTagsSet.contains(oldTag)) {
+				Tag t = new Tag(oldTag);
+				t.setCount(0);
+				removedTags.add(oldTag);
+				idTags.put(t.getId(), t);
+			}
+		}
+		for (String tag : idTags.keySet()) {
+			tagged.setCount(0);
+			client().findTagged(getType(), new String[]{tag}, tagged);
+			Tag t = new Tag(tag);
+			if (addedTags.contains(t.getTag())) {
+				t.setCount((int) tagged.getCount() + 1);
+			} else if (removedTags.contains(t.getTag())) {
+				t.setCount((int) tagged.getCount() - 1);
+			}
+			idTags.put(t.getId(), t);
+		}
+		for (Tag tag : idTags.values()) {
+			if (tag.getCount() <= 0) {
+				toDelete.add(tag.getId());
+			} else {
+				toCreate.add(tag);
+			}
+		}
+		client().deleteAll(toDelete);
+		client().createAll(toCreate);
+		setTags(new ArrayList<>(newTagsSet));
 	}
 
 	@JsonIgnore
