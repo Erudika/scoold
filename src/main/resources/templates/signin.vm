@@ -35,6 +35,46 @@
 		</div>
 	</div>
 </div>
+#elseif($iforgot)
+<div class="ptl">
+	<div class="row ptl">
+		<div class="col s12 m12 l6 offset-l3 center">
+			<div class="card-panel grey lighten-4">
+				<h2 class="grey-text text-darken-2 pbl">$!lang.get("iforgot.title")</h2>
+				<div class="card-panel white">
+					#if($verify)
+					<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
+					<p>$!lang.get('signin.verify.text')</p>
+					#elseif($verified)
+					<h1><i class="fa fa-check-circle fa-2x green-text"></i></h1>
+					<p>$!lang.get('done')</p>
+					<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
+					#else
+					<form method="post" action="$signinlink/iforgot">
+						#sectoken(false "FORGOTTEN_PASS")
+						<div class="mvm">
+							#getmessagebox("red white-text" $error.get("email"))
+							<input type="hidden" name="token" value="$!token">
+							<input id="email" type="email" name="email" value="$!email" placeholder="Email" required>
+						</div>
+						#if($token)
+							<div class="mvm">
+								<input id="newpassword" type="password" name="newpassword" value=""
+											 minlength="6" placeholder="$!lang.get('newpassword')" required>
+							</div>
+						#end
+						#if($token)
+							<button type="submit" class="btn">$!lang.get('change')</button>
+						#else
+							<button type="submit" class="btn">$!lang.get('send')</button>
+						#end
+					</form>
+					#end
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 #else
 <div class="ptl">
 	<div class="row ptl">
@@ -73,7 +113,8 @@
 								<button type="submit" class="btn">$!lang.get('signin.title')</button>
 							</form>
 							<br>
-							<small><a href="$signinlink/register">$!lang.get('signup.title')</a></small>
+							<a href="$signinlink/register">$!lang.get('signup.title')</a> &nbsp;&bull;&nbsp;
+							<a href="$signinlink/iforgot">$!lang.get('iforgot.title')</a>
 						</div>
 						#end
 

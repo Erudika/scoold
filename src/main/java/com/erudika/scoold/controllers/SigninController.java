@@ -149,6 +149,54 @@ public class SigninController {
 		return "redirect:" + SIGNINLINK + (approvedDomain ? "/register?verify=true" : "?code=3&error=true");
 	}
 
+	@GetMapping(path = "/signin/iforgot")
+	public String iforgot(@RequestParam(name = "verify", required = false, defaultValue = "false") Boolean verify,
+			@RequestParam(name = "email", required = false) String email,
+			@RequestParam(name = "token", required = false) String token,
+			HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req)) {
+			return "redirect:" + HOMEPAGE;
+		}
+		model.addAttribute("path", "signin.vm");
+		model.addAttribute("title", utils.getLang(req).get("iforgot.title"));
+		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("iforgot", true);
+		model.addAttribute("verify", verify);
+		if (email != null && token != null) {
+			model.addAttribute("email", email);
+			model.addAttribute("token", token);
+		}
+		return "base";
+	}
+
+	@PostMapping("/signin/iforgot")
+	public String changePass(@RequestParam String email,
+			@RequestParam(required = false) String newpassword,
+			@RequestParam(required = false) String token,
+			HttpServletRequest req, Model model) {
+		boolean approvedDomain = utils.isEmailDomainApproved(email);
+		if (!utils.isAuthenticated(req) && approvedDomain) {
+			if (StringUtils.isBlank(token)) {
+				generatePasswordResetToken(email, req);
+				return "redirect:" + SIGNINLINK + "/iforgot?verify=true";
+			} else {
+				boolean error = !resetPassword(email, newpassword, token);
+				model.addAttribute("path", "signin.vm");
+				model.addAttribute("title", utils.getLang(req).get("iforgot.title"));
+				model.addAttribute("signinSelected", "navbtn-hover");
+				model.addAttribute("iforgot", true);
+				model.addAttribute("email", email);
+				model.addAttribute("token", "");
+				model.addAttribute("verified", !error);
+				if (error) {
+					model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.7")));
+				}
+				return "base";
+			}
+		}
+		return "redirect:" + SIGNINLINK + "/iforgot";
+	}
+
 	@PostMapping("/signout")
 	public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
@@ -240,5 +288,52 @@ public class SigninController {
 				utils.sendWelcomeEmail(u, true, req);
 			}
 		}
+	}
+
+	private String generatePasswordResetToken(String email, HttpServletRequest req) {
+		if (StringUtils.isBlank(email)) {
+			return "";
+		}
+		Sysprop s = pc.read(email);
+		if (s != null) {
+			String token = Utils.generateSecurityToken(42, true);
+			s.addProperty(Config._RESET_TOKEN, token);
+			if (pc.update(s) != null) {
+				utils.sendPasswordResetEmail(email, token, req);
+			}
+			return token;
+		}
+		return "";
+	}
+
+	private boolean resetPassword(String email, String newpass, String token) {
+		if (StringUtils.isBlank(newpass) || StringUtils.isBlank(token) || newpass.length() < Config.MIN_PASS_LENGTH) {
+			return false;
+		}
+		Sysprop s = pc.read(email);
+		if (isValidResetToken(s, Config._RESET_TOKEN, token)) {
+			s.addProperty(Config._RESET_TOKEN, ""); // avoid removeProperty method because it won't be seen by server
+			String hashed = Utils.bcrypt(newpass);
+			s.addProperty(Config._PASSWORD, hashed);
+			//setPassword(hashed);
+			pc.update(s);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isValidResetToken(Sysprop s, String key, String token) {
+		if (StringUtils.isBlank(token)) {
+			return false;
+		}
+		if (s != null && s.hasProperty(key)) {
+			String storedToken = (String) s.getProperty(key);
+			// tokens expire afer a reasonably short period ~ 30 mins
+			long timeout = (long) Config.PASSRESET_TIMEOUT_SEC * 1000L;
+			if (StringUtils.equals(storedToken, token) && (s.getUpdated() + timeout) > Utils.timestamp()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

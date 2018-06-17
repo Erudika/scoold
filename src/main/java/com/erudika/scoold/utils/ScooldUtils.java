@@ -190,7 +190,7 @@ public final class ScooldUtils {
 					pc.update(s);
 					token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
 					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>";
-					body3 += "Best, <br>The Scoold team";
+					body3 += "Best, <br>The Scoold team<br><br>";
 				}
 			}
 
@@ -199,6 +199,23 @@ public final class ScooldUtils {
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject,
 					Utils.compileMustache(model, loadEmailTemplate("notify")));
+		}
+	}
+
+	public void sendPasswordResetEmail(String email, String token, HttpServletRequest req) {
+		if (email != null && token != null) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
+			String url = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
+			String subject = lang.get("iforgot.title");
+			String body1 = "Open the link below to change your password:<br><br>";
+			String body2 = Utils.formatMessage("<b><a href=\"{0}\">RESET PASSWORD</a></b><br><br>", url);
+			String body3 = "Best, <br>The Scoold team<br><br>";
+
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", lang.get("hello"));
+			model.put("body", body1 + body2 + body3);
+			emailer.sendEmail(Arrays.asList(email), subject, Utils.compileMustache(model, loadEmailTemplate("notify")));
 		}
 	}
 
