@@ -615,26 +615,20 @@ public final class ScooldUtils {
 		}
 		String template = "";
 		InputStream in = getClass().getClassLoader().getResourceAsStream("emails/" + name + ".html");
-		try {
-			if (in != null) {
-				Scanner scanner = new Scanner(in);
-				Scanner s = scanner.useDelimiter("\\A");
+		if (in != null) {
+			try (Scanner s = new Scanner(in).useDelimiter("\\A")) {
 				template = s.hasNext() ? s.next() : "";
-				s.close();
-				scanner.close();
 				if (!StringUtils.isBlank(template)) {
 					EMAIL_TEMPLATES.put(name, template);
 				}
-			}
-		} catch (Exception ex) {
-			logger.info("Couldn't load email template '{0}'. - {1}", name, ex.getMessage());
-		} finally {
-			try {
-				if (in != null) {
+			} catch (Exception ex) {
+				logger.info("Couldn't load email template '{0}'. - {1}", name, ex.getMessage());
+			} finally {
+				try {
 					in.close();
+				} catch (IOException ex) {
+					logger.error(null, ex);
 				}
-			} catch (IOException ex) {
-				logger.error(null, ex);
 			}
 		}
 		return template;
