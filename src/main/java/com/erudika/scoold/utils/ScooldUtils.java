@@ -617,9 +617,11 @@ public final class ScooldUtils {
 		InputStream in = getClass().getClassLoader().getResourceAsStream("emails/" + name + ".html");
 		try {
 			if (in != null) {
-				Scanner s = new Scanner(in).useDelimiter("\\A");
+				Scanner scanner = new Scanner(in);
+				Scanner s = scanner.useDelimiter("\\A");
 				template = s.hasNext() ? s.next() : "";
 				s.close();
+				scanner.close();
 				if (!StringUtils.isBlank(template)) {
 					EMAIL_TEMPLATES.put(name, template);
 				}
