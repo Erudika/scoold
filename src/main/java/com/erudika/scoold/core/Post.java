@@ -298,7 +298,7 @@ public abstract class Post extends Sysprop {
 		Set<String> addedTags = new HashSet<>();
 		Set<String> oldTagsSet = new HashSet<>();
 		Set<String> newTagsSet = new HashSet<>();
-		Pager tagged = new Pager(0);
+		Pager tagged = new Pager(1);
 		oldTagsSet.addAll(oldTags);
 
 		if (newTags != null) {
@@ -325,8 +325,8 @@ public abstract class Post extends Sysprop {
 		}
 		for (String tag : idTags.keySet()) {
 			tagged.setCount(0);
-			client().findTagged(getType(), new String[]{tag}, tagged);
 			Tag t = new Tag(tag);
+			client().findTagged(getType(), new String[]{t.getTag()}, tagged);
 			if (addedTags.contains(t.getTag())) {
 				t.setCount((int) tagged.getCount() + 1);
 			} else if (removedTags.contains(t.getTag())) {
