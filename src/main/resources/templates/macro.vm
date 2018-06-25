@@ -82,7 +82,11 @@
 #if($pager && $pager.count > 0)
 	#if ($pager && $pager.page > 1000) #set($next = 1) #else #set($next = $pager.page + 1) #end
 	#if(!$_rpath || $_rpath.isEmpty())
-		#set($_rpath = $returnto)
+		#if($request.queryString)
+			#set($_rpath = "$!{request.requestURI}?$!{request.queryString}")
+		#else
+			#set($_rpath = "$!{request.requestURI}")
+		#end
 	#end
 	<div class="page-content">#evaluate($macroCode)</div>
 	#if ($pager.count && $pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
