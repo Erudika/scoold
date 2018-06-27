@@ -536,7 +536,8 @@ public final class ScooldUtils {
 	}
 
 	public String getGravatar(String email) {
-		return "https://www.gravatar.com/avatar/" + Utils.md5(email) + "?size=400&d=retro";
+		if(email == null) return "https://www.gravatar.com/avatar?d=retro&size=400";
+		return "https://www.gravatar.com/avatar/" + Utils.md5(email.toLowerCase()) + "?size=400&d=retro";
 	}
 
 	public String getGravatar(Profile profile) {
