@@ -26,4 +26,10 @@ src/main/webapp/click/
 data/
 old/
 
+# IntelliJ project files
+*.iml
+*.iws
+*.ipr
+.idea/
+
 *.log
