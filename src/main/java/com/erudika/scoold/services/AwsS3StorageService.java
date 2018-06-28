@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.StringUtils;
+import com.erudika.para.utils.Config;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,12 @@ import java.util.UUID;
 public class AwsS3StorageService implements StorageService {
 	public static final Logger logger = LoggerFactory.getLogger(AwsS3StorageService.class);
 
-	private String endpoint = "";
-	private String awsId = "";
-	private String awsKey = "";
+	private String endpoint = Config.getConfigParam("storage.s3.endpoint", "");
+	private String awsId = Config.getConfigParam("storage.s3.id", "");
+	private String awsKey = Config.getConfigParam("storage.s3.key", "");
+	private String bucketName = Config.getConfigParam("storage.s3.bucket_name", "");
 
 	public String store(MultipartFile file) {
-		String bucketName = "ask-img-bucket";
-
 		String name = putObject(bucketName, file);
 		String url = generateUrl(bucketName, name);
 

@@ -315,6 +315,9 @@ public class QuestionController {
 	@PostMapping(value = "/{id}/upload", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public UploadResponse upload(@PathVariable String id, @RequestParam("file") MultipartFile file) {
+		if (Config.getConfigParam("storage.s3.endpoint", "") == "") {
+			throw new RuntimeException("Missing storage config");
+		}
 		String downloadUrl = storageService.store(file);
 		return new UploadResponse(downloadUrl);
 	}
