@@ -33,6 +33,8 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.core.UploadResponse;
+import com.erudika.scoold.services.StorageService;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +59,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
@@ -73,12 +79,14 @@ public class QuestionController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 	private final Emailer emailer;
+	private final StorageService storageService;
 
 	@Inject
-	public QuestionController(ScooldUtils utils, Emailer emailer) {
+	public QuestionController(ScooldUtils utils, Emailer emailer, StorageService storageService) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
 		this.emailer = emailer;
+		this.storageService = storageService;
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}"})
@@ -302,6 +310,13 @@ public class QuestionController {
 			}
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
+	}
+
+	@PostMapping(value = "/{id}/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public UploadResponse upload(@PathVariable String id, @RequestParam("file") MultipartFile file) {
+		String downloadUrl = storageService.store(file);
+		return new UploadResponse(downloadUrl);
 	}
 
 	private void sendReplyNotifications(Post parentPost, Post reply) {

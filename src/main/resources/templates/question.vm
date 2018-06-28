@@ -40,7 +40,7 @@
 				#if(!$showPost.isClosed())
 					#if ($authenticated)
 						<div class="pvl mbm">
-							<form method="post" id="answer-question-form">
+							<form method="post" id="answer-question-form" data-post-id="$showPost.id">
 								#sectoken(false "CREATE_REPLY")
 								<a id="write-post"></a>
 								<h4 class="grey-text">

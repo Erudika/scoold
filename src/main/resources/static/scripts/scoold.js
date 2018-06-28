@@ -598,6 +598,37 @@ $(function () {
 			mde.codemirror.options.direction = "rtl";
 			//mde.codemirror.options.rtlMoveVisually = false;
 		}
+
+		var form = $(elem).closest("form");
+		var csrf = form.find("[name=_csrf]").val();
+		var postId = form.data("post-id");
+
+		inlineAttachment.editors.codemirror4.attach(mde.codemirror, {
+		    uploadUrl: "/question/" + postId + "/upload",
+		    jsonFieldName: "downloadUrl",
+		    extraParams: {
+		        _csrf: csrf
+		    },
+            onFileUploadResponse: function(xhr) {
+                debugger
+                var result = JSON.parse(xhr.responseText),
+                filename = result[this.settings.jsonFieldName];
+
+                if (result && filename) {
+                    var newValue;
+                    if (typeof this.settings.urlText === 'function') {
+                        newValue = this.settings.urlText.call(this, filename, result);
+                    } else {
+                        newValue = this.settings.urlText.replace(this.filenameTag, filename);
+                    }
+                    var text = this.editor.getValue().replace(this.lastValue, newValue);
+                    this.editor.setValue(text);
+                    this.settings.onFileUploaded.call(this, filename);
+                }
+                return false;
+            }
+        });
+
 		return mde;
 	}
 

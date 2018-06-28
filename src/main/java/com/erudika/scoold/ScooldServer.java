@@ -20,6 +20,8 @@ package com.erudika.scoold;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
+import com.erudika.scoold.services.AwsS3StorageService;
+import com.erudika.scoold.services.StorageService;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
@@ -238,6 +240,11 @@ public class ScooldServer {
 	@Bean
 	public Emailer scooldEmailerBean(JavaMailSender mailSender) {
 		return new ScooldEmailer(mailSender);
+	}
+
+	@Bean
+	public StorageService s3StorageServiceBean() {
+		return new AwsS3StorageService();
 	}
 
 	/**
