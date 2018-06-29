@@ -610,7 +610,6 @@ $(function () {
 		        _csrf: csrf
 		    },
             onFileUploadResponse: function(xhr) {
-                debugger
                 var result = JSON.parse(xhr.responseText),
                 filename = result[this.settings.jsonFieldName];
 
