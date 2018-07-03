@@ -312,9 +312,9 @@ public class QuestionController {
 		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
-	@PostMapping(value = "/{id}/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/upload", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public UploadResponse upload(@PathVariable String id, @RequestParam("file") MultipartFile file) {
+	public UploadResponse upload(@RequestParam("file") MultipartFile file) {
 		if (Config.getConfigParam("storage.s3.endpoint", "") == "") {
 			throw new RuntimeException("Missing storage config");
 		}

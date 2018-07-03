@@ -601,10 +601,9 @@ $(function () {
 
 		var form = $(elem).closest("form");
 		var csrf = form.find("[name=_csrf]").val();
-		var postId = form.data("post-id");
 
 		inlineAttachment.editors.codemirror4.attach(mde.codemirror, {
-		    uploadUrl: "/question/" + postId + "/upload",
+		    uploadUrl: "/question/upload",
 		    jsonFieldName: "downloadUrl",
 		    extraParams: {
 		        _csrf: csrf
