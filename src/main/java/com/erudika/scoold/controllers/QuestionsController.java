@@ -207,7 +207,7 @@ public class QuestionsController {
 		} else if ("unanswered".equals(sortby)) {
 			itemcount.setSortby("timestamp");
 			itemcount.setDesc(false);
-			query = spaceFiltered ? spaceFilter + " AND properties.answercount:0" : "properties.answercount:0";
+			query = spaceFiltered ? spaceFilter + " AND properties.answercount:0" : (utils.canAccessSpace(authUser, currentSpace) ? "properties.answercount:0" : "");
 		}
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
