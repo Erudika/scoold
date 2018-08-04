@@ -23,28 +23,34 @@ import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
+import com.erudika.scoold.velocity.VelocityConfigurer;
+import com.erudika.scoold.velocity.VelocityViewResolver;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.inject.Named;
 import javax.servlet.DispatcherType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
-import org.springframework.boot.web.servlet.ErrorPage;
-import org.springframework.boot.web.servlet.ErrorPageRegistrar;
-import org.springframework.boot.web.servlet.ErrorPageRegistry;
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.ErrorPageRegistrar;
+import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  *
@@ -125,10 +131,10 @@ public class ScooldServer {
 
 	public static void main(String[] args) {
 		((ch.qos.logback.classic.Logger) logger).setLevel(ch.qos.logback.classic.Level.TRACE);
-		SpringApplication app = new SpringApplication(new Object[]{ScooldServer.class});
+		SpringApplication app = new SpringApplication(ScooldServer.class);
 		initConfig();
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
-		app.setWebEnvironment(true);
+		app.setWebApplicationType(WebApplicationType.SERVLET);
 		app.run(args);
 	}
 
@@ -149,9 +155,6 @@ public class ScooldServer {
 	}
 
 	private static void initConfig() {
-		System.setProperty("spring.velocity.cache", Boolean.toString(Config.IN_PRODUCTION));
-		System.setProperty("spring.velocity.prefer-file-system-access", Boolean.toString(!Config.IN_PRODUCTION));
-		System.setProperty("spring.velocity.properties.velocimacro.library.autoreload", Boolean.toString(!Config.IN_PRODUCTION));
 		// JavaMail configuration properties
 		System.setProperty("spring.mail.host", Config.getConfigParam("mail.host", ""));
 		System.setProperty("spring.mail.port", String.valueOf(Config.getConfigInt("mail.port", 587)));
@@ -164,23 +167,17 @@ public class ScooldServer {
 	}
 
 	@Bean
-	public WebMvcConfigurerAdapter baseConfigurerBean(@Named final ScooldRequestInterceptor sri) {
-		return new WebMvcConfigurerAdapter() {
-			@Override
+	public WebMvcConfigurer baseConfigurerBean(@Named final ScooldRequestInterceptor sri) {
+		return new WebMvcConfigurer() {
 			public void addInterceptors(InterceptorRegistry registry) {
-				super.addInterceptors(registry);
 				registry.addInterceptor(sri);
 			}
 
-//			@Override
-//			public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//				registry.addResourceHandler("/images/**").addResourceLocations("/static/images/")
-//					.setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic());
-//				registry.addResourceHandler("/styles/**").addResourceLocations("/static/styles/")
-//					.setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic());
-//				registry.addResourceHandler("/scripts/**").addResourceLocations("/static/scripts/")
-//					.setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic());
-//			}
+			public void configureViewResolvers(ViewResolverRegistry registry) {
+				VelocityViewResolver viewr = new VelocityViewResolver();
+				viewr.setSuffix(".vm");
+				registry.viewResolver(viewr);
+			}
 		};
 	}
 
@@ -244,21 +241,41 @@ public class ScooldServer {
 	 * @return Jetty config bean
 	 */
 	@Bean
-	public EmbeddedServletContainerFactory jettyConfigBean() {
-		JettyEmbeddedServletContainerFactory jef = new JettyEmbeddedServletContainerFactory();
+	public ServletWebServerFactory jettyConfigBean() {
+		JettyServletWebServerFactory jef = new JettyServletWebServerFactory();
 		jef.setPort(getServerPort());
 		logger.info("Listening on port {}...", jef.getPort());
 		return jef;
 	}
 
 	/**
+	 * @return Velocity config bean
+	 */
+	@Bean
+	public VelocityConfigurer velocityConfigBean() {
+		Properties velocityProperties = new Properties();
+		velocityProperties.put(RuntimeConstants.VM_LIBRARY, "macro.vm");
+		velocityProperties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, Config.IN_PRODUCTION);
+		velocityProperties.put(RuntimeConstants.VM_LIBRARY_AUTORELOAD, !Config.IN_PRODUCTION);
+		velocityProperties.put(RuntimeConstants.VM_PERM_ALLOW_INLINE_REPLACE_GLOBAL, true);
+		velocityProperties.put(RuntimeConstants.EVENTHANDLER_REFERENCEINSERTION,
+				"org.apache.velocity.app.event.implement.EscapeHtmlReference");
+		velocityProperties.put("eventhandler.escape.html.match", "/^((?!_).)+$/");
+
+		VelocityConfigurer vc = new VelocityConfigurer();
+		vc.setVelocityProperties(velocityProperties);
+		vc.setResourceLoaderPath("classpath:templates/");
+		return vc;
+	}
+
+	/**
 	 * @return CSRF protection filter bean
 	 */
 	@Bean
-	public FilterRegistrationBean csrfFilterRegistrationBean() {
+	public FilterRegistrationBean<CsrfFilter> csrfFilterRegistrationBean() {
 		String path = "/*";
 		logger.debug("Initializing CSRF filter [{}]...", path);
-		FilterRegistrationBean frb = new FilterRegistrationBean(new CsrfFilter());
+		FilterRegistrationBean<CsrfFilter> frb = new FilterRegistrationBean<>(new CsrfFilter());
 		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
 		frb.setName("csrfFilter");
 		frb.setAsyncSupported(true);
