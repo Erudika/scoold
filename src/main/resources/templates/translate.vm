@@ -65,7 +65,7 @@
 							<i class="fa fa-check-circle green-text mediumText mrs" title="Translated and approved" ></i>
 						#end
 						#set($transthis = $!deflang.get($!langKey) )
-						<a href="$translatelink/$showLocale/$velocityCount" title="$!{transthis}">$!utils.abbreviate($!transthis, 35)</a>
+						<a href="$translatelink/$showLocale/$foreach.count" title="$!{transthis}">$!utils.abbreviate($!transthis, 35)</a>
 					</span>
 				#end
 			</div>

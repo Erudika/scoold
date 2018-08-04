@@ -220,7 +220,7 @@
 							#if(!$showFriend.hasSpaces())default#end
 							#foreach($space in $showFriend.spaces)
 								#set($spaceString = $scooldUtils.getSpaceName($space))
-								${spaceString}#if($velocityCount < $showFriend.spaces.size()),#end
+								${spaceString}#if($foreach.count < $showFriend.spaces.size()),#end
 							#end
 						</div>
 					#end

@@ -145,7 +145,7 @@
 						#if(!$showUser.hasSpaces())default#end
 						#foreach($space in $showUser.spaces)
 							#set($spaceString = $scooldUtils.getSpaceName($space))
-							${spaceString}#if($velocityCount < $showUser.spaces.size()),#end
+							${spaceString}#if($foreach.count < $showUser.spaces.size()),#end
 						#end
 					</h5>
 				#end

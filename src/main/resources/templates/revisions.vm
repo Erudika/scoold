@@ -73,8 +73,8 @@
 			#revisionbox($lastrev $lastrev $showpost)
 		#else
 			#foreach($revision in $revisions)
-				#if ($velocityCount < $revisions.size())
-					#set($prevrev = $revisions.get($velocityCount))
+				#if ($foreach.count < $revisions.size())
+					#set($prevrev = $revisions.get($foreach.count))
 				#else
 					#set($prevrev = $lastOnPage)
 				#end
