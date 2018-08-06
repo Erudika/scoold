@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.29.2</version>
+			<version>1.30.0</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -189,6 +189,12 @@
 					<threadCount>10</threadCount>
 					<forkCount>2C</forkCount>-->
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.4.1.1168</version>
 			</plugin>
 		</plugins>
 	</build>

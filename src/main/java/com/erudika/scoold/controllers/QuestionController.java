@@ -350,6 +350,7 @@ public class QuestionController {
 			} while (!answerslist.isEmpty());
 		} catch (InterruptedException ex) {
 			logger.error(null, ex);
+			Thread.currentThread().interrupt();
 		}
 	}
 }

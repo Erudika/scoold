@@ -339,14 +339,14 @@ public final class ScooldUtils {
 		// embed comments in each post for use within the view
 		for (Post post : allPosts) {
 			List<Comment> cl = allComments.get(post.getId());
-			int clSize = (cl == null) ? 0 : cl.size();
+			long clSize = (cl == null) ? 0 : cl.size();
 			if (post.getCommentIds().size() != clSize) {
 				forUpdate.add(reloadFirstPageOfComments(post));
 				clSize = post.getComments().size();
 			} else {
 				post.setComments(cl);
 			}
-			post.getItemcount().setCount(clSize + 1); // hack to show the "more" button
+			post.getItemcount().setCount(clSize + 1L); // hack to show the "more" button
 		}
 		if (!forUpdate.isEmpty()) {
 			pc.updateAll(allPosts);
