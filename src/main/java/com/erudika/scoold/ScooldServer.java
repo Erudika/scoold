@@ -265,6 +265,7 @@ public class ScooldServer {
 		VelocityConfigurer vc = new VelocityConfigurer();
 		vc.setVelocityProperties(velocityProperties);
 		vc.setResourceLoaderPath("classpath:templates/");
+		vc.setPreferFileSystemAccess(false); // use SpringResourceLoader
 		return vc;
 	}
 
