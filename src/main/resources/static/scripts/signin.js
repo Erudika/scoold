@@ -69,10 +69,10 @@ if (GITHUB_APP_ID && GITHUB_APP_ID.trim() !== "") {
  ************************/
 if (LINKEDIN_APP_ID && LINKEDIN_APP_ID.trim() !== "") {
 	$('#in-login-btn').on('click', function () {
-		window.location = "https://www.linkedin.com/uas/oauth2/authorization?" +
+		window.location = "https://www.linkedin.com/oauth/v2/authorization?" +
 				"response_type=code&client_id=" + LINKEDIN_APP_ID +
-				"&scope=r_basicprofile%20r_emailaddress&state=" + (new Date().getTime()) +
-				"&redirect_uri=" + ENDPOINT + "/linkedin_auth?appid=" + APPID;
+				"&scope=r_basicprofile%20r_emailaddress&state=" + APPID +
+				"&redirect_uri=" + encodeURIComponent(ENDPOINT + "/linkedin_auth");
 		return false;
 	});
 }
@@ -93,7 +93,7 @@ if (MICROSOFT_APP_ID && MICROSOFT_APP_ID.trim() !== "") {
 		window.location = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
                 "response_type=code&client_id=" + MICROSOFT_APP_ID +
                 "&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read&state=" + APPID +
-                "&redirect_uri=" + ENDPOINT + "/microsoft_auth";
+                "&redirect_uri=" + encodeURIComponent(ENDPOINT + "/microsoft_auth");
 		return false;
 	});
 }
