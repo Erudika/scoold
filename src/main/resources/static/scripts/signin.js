@@ -44,7 +44,8 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "") {
 				});
 
 				auth2.attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
-					window.location = CONTEXT_PATH + "/signin?provider=google&access_token=" + googleUser.getAuthResponse(true).access_token;
+					window.location = CONTEXT_PATH + "/signin?provider=google&access_token=" +
+							googleUser.getAuthResponse(true).access_token;
 				}, function(error) {
 					window.location = CONTEXT_PATH + "/signin?code=3&error=true";
 				});
@@ -81,7 +82,7 @@ if (LINKEDIN_APP_ID && LINKEDIN_APP_ID.trim() !== "") {
  ***********************/
 if (TWITTER_APP_ID && TWITTER_APP_ID.trim() !== "") {
 	$('#tw-login-btn').on('click', function () {
-		window.location = ENDPOINT + "/twitter_auth?appid=" + APPID;
+		window.location = ENDPOINT + "/twitter_auth?state=" + APPID;
 		return false;
 	});
 }
