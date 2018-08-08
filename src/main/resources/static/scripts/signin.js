@@ -59,8 +59,8 @@ if (GITHUB_APP_ID && GITHUB_APP_ID.trim() !== "") {
 	$('#gh-login-btn').on('click', function () {
 		window.location = "https://github.com/login/oauth/authorize?" +
 				"response_type=code&client_id=" + GITHUB_APP_ID +
-				"&scope=user%3Aemail&state=" + (new Date().getTime()) +
-				"&redirect_uri=" + ENDPOINT + "/github_auth?appid=" + APPID;
+				"&scope=user%3Aemail&state=" + APPID +
+				"&redirect_uri=" + ENDPOINT + "/github_auth";
 		return false;
 	});
 }
@@ -71,7 +71,7 @@ if (LINKEDIN_APP_ID && LINKEDIN_APP_ID.trim() !== "") {
 	$('#in-login-btn').on('click', function () {
 		window.location = "https://www.linkedin.com/uas/oauth2/authorization?" +
 				"response_type=code&client_id=" + LINKEDIN_APP_ID +
-				"&scope=r_emailaddress&state=" + (new Date().getTime()) +
+				"&scope=r_basicprofile%20r_emailaddress&state=" + (new Date().getTime()) +
 				"&redirect_uri=" + ENDPOINT + "/linkedin_auth?appid=" + APPID;
 		return false;
 	});
