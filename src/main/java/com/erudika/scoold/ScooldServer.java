@@ -200,6 +200,10 @@ public class ScooldServer {
 		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
 		// update the Scoold App settings through the Para App settings API.
 		Map<String, Object> settings = new HashMap<String, Object>();
+		settings.put("gp_app_id", Config.GPLUS_APP_ID);
+		settings.put("gp_secret", Config.GPLUS_SECRET);
+		settings.put("fb_app_id", Config.FB_APP_ID);
+		settings.put("fb_secret", Config.FB_SECRET);
 		settings.put("gh_app_id", Config.GITHUB_APP_ID);
 		settings.put("gh_secret", Config.GITHUB_SECRET);
 		settings.put("in_app_id", Config.LINKEDIN_APP_ID);
