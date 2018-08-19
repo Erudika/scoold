@@ -324,7 +324,7 @@
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 					</div>
 					<div class="mbs">
-						#set($showBody = $utils.stripHtml($utils.markdownToHtml($!showpost.body)) )
+						#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )
 						<div>$!utils.abbreviate($showBody, 160)</div>
 					</div>
 				</div>

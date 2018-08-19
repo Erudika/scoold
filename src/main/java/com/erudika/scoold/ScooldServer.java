@@ -264,12 +264,12 @@ public class ScooldServer {
 		velocityProperties.put(RuntimeConstants.VM_PERM_ALLOW_INLINE_REPLACE_GLOBAL, true);
 		velocityProperties.put(RuntimeConstants.EVENTHANDLER_REFERENCEINSERTION,
 				"org.apache.velocity.app.event.implement.EscapeHtmlReference");
-		velocityProperties.put("eventhandler.escape.html.match", "/^((?!_).)+$/");
+		velocityProperties.put("eventhandler.escape.html.match", "^((?!_).)+$");
 
 		VelocityConfigurer vc = new VelocityConfigurer();
 		vc.setVelocityProperties(velocityProperties);
 		vc.setResourceLoaderPath("classpath:templates/");
-		vc.setPreferFileSystemAccess(false); // use SpringResourceLoader
+		vc.setPreferFileSystemAccess(!Config.IN_PRODUCTION); // use SpringResourceLoader only in production
 		return vc;
 	}
 
