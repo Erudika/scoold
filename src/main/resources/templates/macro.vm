@@ -108,7 +108,7 @@
 	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-				<img src="#profilepic($!showu)" width="50" class="responsive-img">
+				<img src="#profilepic($!showu)" width="50" class="profile-pic responsive-img">
 			</a>
 		#else
 			<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="50" class="responsive-img" alt="Profile picture">
@@ -153,7 +153,7 @@
 <div>
 	#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-			<img src="#profilepic($!showu)" width="32" class="responsive-img">
+			<img src="#profilepic($!showu)" width="32" class="profile-pic responsive-img">
 		</a>
 	#else
 		<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="32" class="responsive-img" alt="Profile picture">
@@ -189,7 +189,7 @@
 		<div class="card">
 			<div class="row valign-wrapper user-card">
 				<div class="col s4" title="$!showFriend.name">
-					<img src="#profilepic($showFriend)" class="responsive-img pts pls">
+					<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
 				</div>
 				<div class="col s8">
 					#if(!($isAdmin && $request.getParameter("bulkedit")))
