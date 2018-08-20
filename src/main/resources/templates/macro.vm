@@ -189,7 +189,9 @@
 		<div class="card">
 			<div class="row valign-wrapper user-card">
 				<div class="col s4" title="$!showFriend.name">
-					<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
+					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
+						<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
+					</a>
 				</div>
 				<div class="col s8">
 					#if(!($isAdmin && $request.getParameter("bulkedit")))
