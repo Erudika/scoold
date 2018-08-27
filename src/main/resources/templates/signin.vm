@@ -4,9 +4,9 @@
 <div class="ptl">
 	<div class="row ptl">
 		<div class="col s12 m12 l6 offset-l3 center">
-			<div class="card-panel grey lighten-4">
+			<div class="card-panel">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signup.title")</h2>
-				<div class="card-panel white">
+				<div class="phl">
 					#if($verify)
 						<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
 						<p>$!lang.get('signin.verify.text')</p>
@@ -17,15 +17,18 @@
 					#else
 						<form method="post">
 							#sectoken(false "REGISTER_USER")
-							<div class="mvm">
-								<input id="name" type="text" name="name" value="$!name" placeholder="Name" required>
+							<div class="input-field mvm">
+								<label>$!lang.get('name')</label>
+								<input id="name" type="text" name="name" value="$!name" required>
 							</div>
-							<div class="mvm">
-								<input id="email" type="email" name="email" value="$!bademail" placeholder="Email" required>
+							<div class="input-field mvm">
+								<label>$!lang.get('signup.form.email')</label>
+								<input id="email" type="email" name="email" value="$!bademail" required>
 								#getmessagebox("red white-text" $error.get("email"))
 							</div>
-							<div class="mvm">
-								<input id="passw" type="password" name="passw" value="" minlength="6" placeholder="$!lang.get('password')" required>
+							<div class=" input-field mvm">
+								<label>$!lang.get('password')</label>
+								<input id="passw" type="password" name="passw" value="" minlength="6" required>
 							</div>
 							<button type="submit" class="btn">$!lang.get('signup.title')</button>
 						</form>
@@ -39,9 +42,9 @@
 <div class="ptl">
 	<div class="row ptl">
 		<div class="col s12 m12 l6 offset-l3 center">
-			<div class="card-panel grey lighten-4">
+			<div class="card-panel lighten-4">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("iforgot.title")</h2>
-				<div class="card-panel white">
+				<div class="pal">
 					#if($verify)
 					<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
 					<p>$!lang.get('signin.verify.text')</p>
@@ -78,16 +81,16 @@
 #else
 <div class="ptl">
 	<div class="row ptl">
-		<div class="col s12 m8 offset-m2 center">
-			<div class="card-panel grey lighten-4">
+		<div class="col s12 m12 l10 offset-l1 center">
+			<div class="card-panel lighten-4">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signin.title")</h2>
 
 				#if($ldapLoginEnabled || $passwordLoginEnabled)
-					#set($leftColSize = "col l6 s12" )
-					#set($rightColSize = "col l6 s12" )
+					#set($leftColSize = "col l5 m6 s12" )
+					#set($rightColSize = "col l7 m6 s12" )
 				#else
 					#set($leftColSize = "hide" )
-					#set($rightColSize = "col l12 s12" )
+					#set($rightColSize = "col l8 offset-l2 m10 offset-m1 s12" )
 				#end
 
 				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && $inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled)
@@ -98,19 +101,25 @@
 				<div class="row">
 					<div class="${leftColSize}">
 						#if($passwordLoginEnabled)
-						<h4>$!lang.get('signin.password')</h4>
-						<div class="card-panel white">
+						#if($rightColSize != "hide")
+							<h4>$!lang.get('signin.password')</h4>
+						#end
+						<div class="pal">
 							<form method="post" id="password-login-form">
 								#sectoken(false "SIGNIN_PASS")
-								<div class="mvm">
-									<input id="email" type="email" value="" placeholder="Email" required>
+								<div class="input-field mvm">
+									<label>$!lang.get('signup.form.email')</label>
+									<input id="email" type="email" value="" required>
 								</div>
-								<div class="mvm">
-									<input id="passw" type="password" value="" minlength="6" placeholder="$!lang.get('password')" required>
+								<div class="input-field mvm">
+									<label>$!lang.get('password')</label>
+									<input id="passw" type="password" value="" minlength="6" required>
 								</div>
 								<input type="hidden" name="provider" value="password">
 								<input type="hidden" name="access_token" value="">
-								<button type="submit" class="btn">$!lang.get('signin.title')</button>
+								<div class="mtl">
+									<button type="submit" class="btn">$!lang.get('signin.title')</button>
+								</div>
 							</form>
 							<br>
 							<a href="$signinlink/register">$!lang.get('signup.title')</a> &nbsp;&bull;&nbsp;
@@ -120,74 +129,84 @@
 
 						#if($ldapLoginEnabled)
 						<h4>LDAP</h4>
-						<div class="card-panel white">
+						<div class="pal">
 							<form method="post" id="ldap-login-form">
 								#sectoken(false "SIGNIN_LDAP")
-								<div class="mvm">
-									<input id="username" type="text" value="" placeholder="Username" required>
+								<div class="input-field mvm">
+									<label>Username</label>
+									<input id="username" type="text" value="" required>
 								</div>
-								<div class="mvm">
-									<input id="password" type="password" value="" placeholder="$!lang.get('password')" required>
+								<div class="input-field mvm">
+									<label>$!lang.get('password')</label>
+									<input id="password" type="password" value="" required>
 								</div>
 								<input type="hidden" name="provider" value="ldap">
 								<input type="hidden" name="access_token" value="">
-								<button type="submit" class="btn">$!lang.get('signin.title')</button>
+								<div class="mtl">
+									<button type="submit" class="btn">$!lang.get('signin.title')</button>
+								</div>
 							</form>
 						</div>
 						#end
 					</div>
 					<div class="${rightColSize}">
-						#if($fbLoginEnabled)
-						<div class="mvl pvs">
-							<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
-								<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
-							</a>
+
+						<div class="row">
+							<div class="col s12 m12 l8 offset-l2 center">
+								#if($fbLoginEnabled)
+								<div class="mvl pvs">
+									<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
+										<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
+									</a>
+								</div>
+								#end
+
+								#if($gpLoginEnabled)
+								<div class="mvl pvs">
+										<a id="gp-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
+											<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
+											$!lang.get("signin.google")
+										</a>
+									</div>
+								#end
+
+								#if($ghLoginEnabled)
+									<div class="mvl pvs">
+										<a id="gh-login-btn" href="#" class="btn-large grey darken-3 white-text truncate">
+											<i class="fa fa-github left"></i> $!lang.get("signin.github")
+										</a>
+									</div>
+								#end
+
+								#if($inLoginEnabled)
+									<div class="mvl pvs">
+										<a id="in-login-btn" href="#" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
+											<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
+										</a>
+									</div>
+								#end
+
+								#if($twLoginEnabled)
+									<div class="mvl pvs">
+										<a id="tw-login-btn" href="#" class="btn-large light-blue white-text lighten-1 truncate">
+											<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
+										</a>
+									</div>
+								#end
+
+								#if($msLoginEnabled)
+									<div class="mvl pvs">
+										<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
+											<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
+										</a>
+									</div>
+								#end
+							</div>
 						</div>
-						#end
 
-						#if($gpLoginEnabled)
-							<div class="mvl pvs">
-								<a id="gp-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
-									<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
-									$!lang.get("signin.google")
-								</a>
-							</div>
-						#end
-
-						#if($ghLoginEnabled)
-							<div class="mvl pvs">
-								<a id="gh-login-btn" href="#" class="btn-large grey darken-3 white-text truncate">
-									<i class="fa fa-github left"></i> $!lang.get("signin.github")
-								</a>
-							</div>
-						#end
-
-						#if($inLoginEnabled)
-							<div class="mvl pvs">
-								<a id="in-login-btn" href="#" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
-									<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
-								</a>
-							</div>
-						#end
-
-						#if($twLoginEnabled)
-							<div class="mvl pvs">
-								<a id="tw-login-btn" href="#" class="btn-large light-blue white-text lighten-1 truncate">
-									<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
-								</a>
-							</div>
-						#end
-
-						#if($msLoginEnabled)
-							<div class="mvl pvs">
-								<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
-									<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
-								</a>
-							</div>
-						#end
 					</div>
 				</div>
-
+				<small class="grey-text">$!lang.get('signup.form.termsofuse')</small>
 			</div>
 		</div>
 	</div>
