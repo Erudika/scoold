@@ -93,7 +93,7 @@
 					#set($rightColSize = "col l8 offset-l2 m10 offset-m1 s12" )
 				#end
 
-				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && $inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled)
+				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && $inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled && !$oa2LoginEnabled)
 					#set($leftColSize = "col l6 offset-l3 s12" )
 					#set($rightColSize = "hide" )
 				#end
@@ -198,6 +198,14 @@
 									<div class="mvl pvs">
 										<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
 											<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
+										</a>
+									</div>
+								#end
+
+								#if($oa2LoginEnabled)
+									<div class="mvl pvs">
+										<a id="oa2-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
+											<i class="fa fa-sign-in left"></i> $!oa2LoginProvider
 										</a>
 									</div>
 								#end

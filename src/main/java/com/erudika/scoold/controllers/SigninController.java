@@ -76,8 +76,10 @@ public class SigninController {
 		model.addAttribute("inLoginEnabled", !Config.LINKEDIN_APP_ID.isEmpty());
 		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
+		model.addAttribute("oa2LoginEnabled", !Config.getConfigParam("oa2_app_id", "").isEmpty());
 		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
 		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", false));
+		model.addAttribute("oa2LoginProvider", Config.getConfigParam("security.oauth.provider", "Continue with OAuth 2.0"));
 		return "base";
 	}
 
@@ -222,6 +224,9 @@ public class SigninController {
 		sb.append("LINKEDIN_APP_ID = \"").append(Config.LINKEDIN_APP_ID).append("\"; ");
 		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
 		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
+		sb.append("OAUTH2_ENDPOINT = \"").append(Config.getConfigParam("security.oauth.authz_url", "")).append("\"; ");
+		sb.append("OAUTH2_APP_ID = \"").append(Config.getConfigParam("oa2_app_id", "")).append("\"; ");
+		sb.append("OAUTH2_SCOPE = \"").append(Config.getConfigParam("security.oauth.scope", "")).append("\"; ");
 
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req), req);
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");

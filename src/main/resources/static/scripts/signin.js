@@ -1,4 +1,4 @@
-/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID, CONTEXT_PATH */
+/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID, CONTEXT_PATH, OAUTH2_APP_ID, OAUTH2_SCOPE, OAUTH2_ENDPOINT */
 /************************
  * Facebook integration *
  ************************/
@@ -95,6 +95,18 @@ if (MICROSOFT_APP_ID && MICROSOFT_APP_ID.trim() !== "") {
                 "response_type=code&client_id=" + MICROSOFT_APP_ID +
                 "&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read&state=" + APPID +
                 "&redirect_uri=" + ENDPOINT + "/microsoft_auth";
+		return false;
+	});
+}
+/*************************
+ * OAuth 2.0 integration *
+ *************************/
+if (OAUTH2_APP_ID && OAUTH2_APP_ID.trim() !== "") {
+	$('#oa2-login-btn').on('click', function () {
+		window.location = OAUTH2_ENDPOINT + "?" +
+                "response_type=code&client_id=" + OAUTH2_APP_ID +
+                "&scope=" + OAUTH2_SCOPE + "&state=" + APPID +
+                "&redirect_uri=" + ENDPOINT + "/oauth2_auth";
 		return false;
 	});
 }
