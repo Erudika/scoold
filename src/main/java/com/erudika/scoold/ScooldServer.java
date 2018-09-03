@@ -217,13 +217,13 @@ public class ScooldServer {
 		settings.put("oa2_secret", Config.getConfigParam("oa2_secret", ""));
 		settings.put("security.oauth.token_url", Config.getConfigParam("security.oauth.token_url", ""));
 		settings.put("security.oauth.profile_url", Config.getConfigParam("security.oauth.profile_url", ""));
-		settings.put("security.oauth.scope", Config.getConfigParam("security.oauth.scope", ""));
+		settings.put("security.oauth.scope", Config.getConfigParam("security.oauth.scope", "openid email profile"));
 		settings.put("security.oauth.accept_header", Config.getConfigParam("security.oauth.accept_header", ""));
-		settings.put("security.oauth.parameters.id", Config.getConfigParam("security.oauth.parameters.id", ""));
-		settings.put("security.oauth.parameters.name", Config.getConfigParam("security.oauth.parameters.name", ""));
-		settings.put("security.oauth.parameters.email", Config.getConfigParam("security.oauth.parameters.email", ""));
-		settings.put("security.oauth.parameters.picture", Config.getConfigParam("security.oauth.parameters.picture", ""));
-		settings.put("security.oauth.domain", Config.getConfigParam("security.oauth.domain", ""));
+		settings.put("security.oauth.parameters.id", Config.getConfigParam("security.oauth.parameters.id", null));
+		settings.put("security.oauth.parameters.name", Config.getConfigParam("security.oauth.parameters.name", null));
+		settings.put("security.oauth.parameters.email", Config.getConfigParam("security.oauth.parameters.email", null));
+		settings.put("security.oauth.parameters.picture", Config.getConfigParam("security.oauth.parameters.picture", null));
+		settings.put("security.oauth.domain", Config.getConfigParam("security.oauth.domain", null));
 		// LDAP settings
 		settings.put("security.ldap.server_url", Config.getConfigParam("security.ldap.server_url", ""));
 		settings.put("security.ldap.base_dn", Config.getConfigParam("security.ldap.base_dn", ""));

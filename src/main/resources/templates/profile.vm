@@ -16,6 +16,8 @@
 						<i class="fa fa-twitter fa-2x"></i>
 					#elseif($showUser.user.identifier.startsWith("ms"))
 						<i class="fa fa-windows fa-2x"></i>
+					#elseif($showUser.user.identifier.startsWith("oa2"))
+						<i class="fa fa-openid fa-2x"></i>
 					#end
 				</span>
 			</div>

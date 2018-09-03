@@ -222,6 +222,26 @@ para.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
+## OAuth 2.0 login
+
+You can authenticate users against your own OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
+Here are all the options which you can set in the Scoold configuration file:
+```
+# minimal setup
+para.security.oauth.authz_url = "https://your-idp.com/login"
+para.security.oauth.token_url = "https://your-idp.com/token"
+para.security.oauth.profile_url = "https://your-idp.com/userinfo"
+
+# extra options
+para.security.oauth.provider = "My Auth Service"
+para.security.oauth.scope = "openid email profile"
+para.security.oauth.accept_header = ""
+para.security.oauth.parameters.id = "sub"
+para.security.oauth.parameters.picture = "picture"
+para.security.oauth.parameters.email = "email"
+para.security.oauth.parameters.name = "name"
+```
+
 ## Spaces
 
 Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly

@@ -204,8 +204,8 @@
 
 								#if($oa2LoginEnabled)
 									<div class="mvl pvs">
-										<a id="oa2-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
-											<i class="fa fa-sign-in left"></i> $!oa2LoginProvider
+										<a id="oa2-login-btn" href="#" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-openid left"></i> $!oa2LoginProvider
 										</a>
 									</div>
 								#end

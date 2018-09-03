@@ -79,7 +79,8 @@ public class SigninController {
 		model.addAttribute("oa2LoginEnabled", !Config.getConfigParam("oa2_app_id", "").isEmpty());
 		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
 		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", false));
-		model.addAttribute("oa2LoginProvider", Config.getConfigParam("security.oauth.provider", "Continue with OAuth 2.0"));
+		model.addAttribute("oa2LoginProvider", Config.getConfigParam("security.oauth.provider",
+				"Continue with OpenID Connect"));
 		return "base";
 	}
 
