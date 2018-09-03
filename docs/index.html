@@ -14,7 +14,7 @@
 		<link href="https://static.scoold.com/logosq.png" rel="image_src">
 		<link href="https://static.scoold.com/logosq.png" rel="apple-touch-icon">
 		<link href="https://static.scoold.com/favicon.ico" rel="shortcut icon">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 		<meta name="description" content="Scoold is an open source Questions &amp; Answers platform written in Java.">
 		<meta name="keywords" content="scoold, knowledge sharing, collaboration, wiki, forum, Q&amp;A, questions and answers, stackoverflow clone">
@@ -57,6 +57,15 @@
 				background-color: white;
 			}
 			#features, #contact {background-color: white;}
+			.pro-label {
+				font-size: 0.9em;
+				color: #777;
+				padding: 0px 8px;
+				margin: 0 5px;
+				border: 1px solid #777;
+				font-weight: 300;
+				border-radius: 3px;
+			}
 
 			.pan{padding:0}
 			.pas{padding:5px}
@@ -140,6 +149,7 @@
 							<ul class="right hide-on-med-and-down">
 								<li><a href="https://github.com/Erudika/scoold/releases/download/1.30.4/scoold-1.30.4.jar" title="Download">Download</a></li>
 								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="https://mailchi.mp/119ba7010b41/scoold-pro" title="Buy Pro">Buy</a></li>
 								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
 							</ul>
 							<ul class="side-nav" id="mobile-drawer">
@@ -158,6 +168,7 @@
 								</li>
 								<li><a href="https://github.com/Erudika/scoold/releases/download/1.30.4/scoold-1.30.4.jar" title="Download">Download</a></li>
 								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="https://mailchi.mp/119ba7010b41/scoold-pro" title="Buy Pro">Buy</a></li>
 								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
 							</ul>
 						</div>
@@ -168,23 +179,42 @@
 			<section id="header">
 				<div class="container ptl">
 					<div class="row mbn">
-						<div class="col m4 center-align">
-							<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
-								Scoold is an open source Q&A platform written in Java.
-							</h4>
-							<h5 class="white pam" style="line-height: 1.5em;">
-								Scoold is lightweight &mdash; the backend is completely separated and handled by
-								<a href="https://paraio.com">Para</a>. It can be deployed on Heroku or your own infrastructure.
-							</h5>
-							<div class="mtl ptl">
-								<a href="https://github.com/Erudika/scoold/releases/download/1.30.4/scoold-1.30.4.jar"
-									 class="btn-large light-blue"><b>Download</b></a>
+						<div class="col m12 l4 center-align">
+							<div class="row">
+								<div class="col m12">
+									<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
+										Scoold is an open source Q&A platform written in Java.
+									</h4>
+									<h5 class="white pam" style="line-height: 1.5em;">
+										Scoold is lightweight &mdash; the backend is completely separated and handled by
+										<a href="https://paraio.com">Para</a>. It can be deployed on Heroku or your own infrastructure.
+									</h5>
+								</div>
 							</div>
-							<div>
-								<small>v1.30.4, Requires Java 8+</small>
+
+							<div class="row mbl">
+								<div class="col s12 m6 l6">
+									<div class="mtl">
+										<a href="https://github.com/Erudika/scoold/releases/download/1.30.4/scoold-1.30.4.jar"
+											 class="btn-large light-blue"><b>Download</b></a>
+									</div>
+									<div>
+										<small>v1.30.4, Requires Java 8+</small>
+									</div>
+								</div>
+								<div class="col s12 m6 l6">
+									<div class="mtl">
+										<a href="https://mailchi.mp/119ba7010b41/scoold-pro"
+											 class="btn-large light-blue"><b>Buy PRO</b></a>
+									</div>
+									<div>
+										<small><b>299 EUR</b>, one-time fee</small>
+									</div>
+								</div>
 							</div>
+
 						</div>
-						<div class="col m8">
+						<div class="col m12 l8">
 							<img src="https://static.scoold.com/scoold-grab-site.png" width="900" height="" class="responsive-img" alt="Scoold screenshot"/>
 						</div>
 					</div>
@@ -298,6 +328,68 @@
 							tables, task lists and strikethrough. Oh, and you can use emojis too!</p>
 					</div>
 				</div>
+				<!--PRO Features-->
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Sticky / Favorite posts <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>Questions marked as "sticky" will always appear on top, before all the others. You can also mark your
+							favorite questions with <span class="red-text">&hearts;</span> and they'll be saved to your profile.</p>
+					</div>
+					<div class="col m4">
+						<h5>SAML support <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>Enterprise users can login with SAML (Single Sign-On). This makes it super easy for organizations to
+							integrate Scoold into their existing infrastructure.</p>
+					</div>
+					<div class="col m4">
+						<h5>Anonymous posts <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>This can either be enabled or disabled. When enabled, anybody will be able to ask a question or submit
+							an answer. This lowers the barrier for new users and increases engagement.</p>
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Unlimited spaces <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>Spaces are normally limited to 10, but in PRO this limit goes away. You can assign a space to each
+							team or department in your organization.</p>
+					</div>
+					<div class="col m4">
+						<h5>Multiple admins <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>You are no longer limited to a single admin user. Administrators can also promote anyone to
+							become an admin or a moderator.</p>
+					</div>
+					<div class="col m4">
+						<h5>Multiple identity domains <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>You can specify all your company domains in the configuration and restrict new registrations to
+							users with emails only from those whitelisted domains.</p>
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m4">
+						<h5>Advanced highlighting <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>The syntax hightlighting of code snippets is enhanced and supports additional languages
+							like LaTeX, Velocity, WebAssembly, JSX/TSX and PL/SQL. </p>
+					</div>
+					<div class="col m4">
+						<h5>Image uploads <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>People can upload screenshots and embed them in their posts. Uploaded image files can have maximum
+							size of 2 MB.</p>
+					</div>
+					<div class="col m4">
+						<h5>Security notifications <span class="pro-label">Pro</span></h5>
+						<hr style="width: 50%">
+						<p>Administrators and moderators will receive an email when a new report comes in. Admin users can also
+							receive an email report each time the Content Security Policy (CSP) gets violated.</p>
+					</div>
+				</div>
+
 				<div class="container pvl center-align">
 					<a href="https://live.scoold.com" class="btn-large light-blue"><b>Live Demo!</b></a>
 					<p>Takes a minute to load as it's running on Heroku's free dynos.</p>

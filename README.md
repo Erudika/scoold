@@ -35,6 +35,21 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
 
+### Pro Features
+
+- Sticky / Favorite posts
+- SAML support
+- Anonymous posts
+- Unlimited spaces
+- Multiple admins
+- Multiple identity domains
+- Advanced highlighting
+- Image uploads
+- Security notifications
+
+[Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro) is still in development.
+It will soon be available for 299 EUR, one-time fee.
+
 ### Live Demo
 
 *Scoold is deployed on a free dyno and it might take a minute to wake up.*
@@ -226,7 +241,7 @@ This is required for authentication requests to be redirected back to the origin
 
 You can authenticate users against your own OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
 Here are all the options which you can set in the Scoold configuration file:
-```
+```ini
 # minimal setup
 para.oa2_app_id = ""
 para.oa2_secret = ""

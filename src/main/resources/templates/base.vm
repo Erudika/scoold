@@ -23,12 +23,12 @@
 		<link href="$!imageslink/logowhite.png" rel="image_src">
 		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
 		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
 		<link href="$!styleslink/simplemde.min.css" rel="stylesheet">
 		#if ($includeHighlightJS)
-			<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css" rel="stylesheet">
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
 		#end
 		#if($!langDirection == "RTL")
 			<link href="$!styleslink/rtl.css" rel="stylesheet">
