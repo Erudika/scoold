@@ -48,7 +48,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Security notifications
 
 [Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro) is still in development.
-It will soon be available for 299 EUR, one-time fee.
+It will soon be available for **299 EUR, one-time fee**.
 
 ### Live Demo
 
@@ -259,30 +259,6 @@ para.security.oauth.parameters.email = "email"
 para.security.oauth.parameters.name = "name"
 ```
 
-## Spaces
-
-Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
-accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.
-Permission to access a space is given by an administrator. You can bulk edit users' spaces and also move a question to a different
-space.
-
-By default there's a public "default" space where all questions go. When you create a new space and assign users to it
-they will still see all the other questions when they switch to the "default" space. To make the default space private
-set `para.is_default_space_public = false`.
-
-## Domain-restricted user registrations
-
-You can restrict signups only to users from a particular domain, say `acme-corp.com`. To do so, set the following
-configuration property:
-```
-para.approved_domains_for_signups = "acme-corp.com"
-```
-Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
-`bob@gmail.com` will be denied access. The setting can also contain comma-separated list of domains:
-```
-para.approved_domains_for_signups = "acme-corp.com,gmail.com"
-```
-
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
@@ -304,17 +280,46 @@ para.security.ldap.active_directory_domain = ""
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 
+## Spaces
+
+Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
+accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.
+Permission to access a space is given by an administrator. You can bulk edit users' spaces and also move a question to a
+different space.
+
+By default there's a public "default" space where all questions go. When you create a new space and assign users to it
+they will still see all the other questions when they switch to the "default" space. To make the default space private
+set `para.is_default_space_public = false`.
+
+## Domain-restricted user registrations
+
+You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
+following configuration property:
+```
+para.approved_domains_for_signups = "acme-corp.com"
+```
+Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
+`bob@gmail.com` will be denied access.
+
+**PRO** In Scoold PRO, this setting can also contain a comma-separated list of identity domains:
+```
+para.approved_domains_for_signups = "acme-corp.com,gmail.com"
+```
+
 ## Admins
 
-You can configure Scoold with one or more admin users in your `application.conf` file:
+You can specify the user with administrative privileges in your `application.conf` file:
+```
+para.admins = "joe@example.com"
+```
+**PRO** In Scoold PRO, you can have multiple admin users by specifying a comma-separated list of user identifiers.
+This works both for new and existing users.
 ```
 para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
 ```
-Here you can enter comma-separated values of either an email address or a user identifier
-(the id from your social identity provider). This works both for new and existing Scoold users.
-If you remove users who are already admins from the list of admins `para.admins`,
-they will be *demoted* to regular users. Similarly, existing regular users will be
-*promoted* to admins if they appear in the list above.
+
+If you remove users who are already admins from the list of admins `para.admins`, they will be *demoted* to regular
+users. Similarly, existing regular users will be *promoted* to admins if they appear in the list above.
 
 ## Self-hosting Para and Scoold through SSL
 
