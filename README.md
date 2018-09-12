@@ -291,6 +291,8 @@ By default there's a public "default" space where all questions go. When you cre
 they will still see all the other questions when they switch to the "default" space. To make the default space private
 set `para.is_default_space_public = false`.
 
+**PRO** In Scoold PRO you can create as many space as you need. The open source version is limited to 10 spaces.
+
 ## Domain-restricted user registrations
 
 You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
@@ -301,7 +303,7 @@ para.approved_domains_for_signups = "acme-corp.com"
 Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
 `bob@gmail.com` will be denied access.
 
-**PRO** In Scoold PRO, this setting can also contain a comma-separated list of identity domains:
+**PRO** In Scoold PRO this setting can also contain a comma-separated list of identity domains:
 ```
 para.approved_domains_for_signups = "acme-corp.com,gmail.com"
 ```
@@ -312,7 +314,7 @@ You can specify the user with administrative privileges in your `application.con
 ```
 para.admins = "joe@example.com"
 ```
-**PRO** In Scoold PRO, you can have multiple admin users by specifying a comma-separated list of user identifiers.
+**PRO** In Scoold PRO you can have multiple admin users by specifying a comma-separated list of user identifiers.
 This works both for new and existing users.
 ```
 para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
