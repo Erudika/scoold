@@ -261,7 +261,7 @@ para.security.oauth.parameters.name = "name"
 
 ## LDAP configuration
 
-LDAP authentication is initiated with a request like this `GET /signin?provider=ldap&access_token=username:password`.
+LDAP authentication is initiated with a request like this `POST /signin?provider=ldap&access_token=username:password`.
 There are several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
 
 ```ini
