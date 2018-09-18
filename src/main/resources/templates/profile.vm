@@ -5,19 +5,21 @@
 				<img src="#profilepic($showUser)" class="profile-pic">
 				<span class="card-title">
 					#if($showUser.user.identifier.startsWith("fb"))
-						<i class="fa fa-facebook fa-2x"></i>
+						<i class="fa fa-facebook fa-2x" title="Facebook"></i>
 					#elseif($showUser.user.identifier.startsWith("gp"))
-						<i class="fa fa-google fa-2x"></i>
+						<i class="fa fa-google fa-2x" title="Google"></i>
 					#elseif($showUser.user.identifier.startsWith("gh"))
-						<i class="fa fa-github fa-2x"></i>
+						<i class="fa fa-github fa-2x" title="GitHub"></i>
 					#elseif($showUser.user.identifier.startsWith("in"))
-						<i class="fa fa-linkedin fa-2x"></i>
+						<i class="fa fa-linkedin fa-2x" title="LinkedIn"></i>
 					#elseif($showUser.user.identifier.startsWith("tw"))
-						<i class="fa fa-twitter fa-2x"></i>
+						<i class="fa fa-twitter fa-2x" title="Twitter"></i>
 					#elseif($showUser.user.identifier.startsWith("ms"))
-						<i class="fa fa-windows fa-2x"></i>
+						<i class="fa fa-windows fa-2x" title="Microsoft"></i>
 					#elseif($showUser.user.identifier.startsWith("oa2"))
-						<i class="fa fa-openid fa-2x"></i>
+						<i class="fa fa-openid fa-2x" title="OAuth 2.0"></i>
+					#elseif($showUser.user.identifier.startsWith("ldap"))
+						<i class="fa fa-id-card-o fa-2x" title="LDAP"></i>
 					#end
 				</span>
 			</div>
