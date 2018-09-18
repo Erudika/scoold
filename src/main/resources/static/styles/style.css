@@ -41,6 +41,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 h1, h2, h3, h4, h5, h6{font-weight: 300;}
 
 #fb-login-btn, #gp-login-btn, #gh-login-btn, #in-login-btn, #tw-login-btn, #ms-login-btn, #oa2-login-btn { width: 100%; }
+#gp-login-btn {padding-left: 13px;}
 
 .pan{padding:0}
 .pas{padding:5px}
