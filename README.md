@@ -43,7 +43,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Unlimited spaces
 - Multiple admins
 - Multiple identity domains
-- Advanced highlighting
+- Advanced syntax highlighting
 - Image uploads
 - Security notifications
 
@@ -484,6 +484,12 @@ To run a local instance of Scoold for development, use:
 ```sh
 $ mvn -Dconfig.file=./application.conf spring-boot:run
 ```
+
+## Support
+
+You can get support here by submitting an issue. Also you can head over to the Gitter chat room for help.
+Issues related to **Scoold Pro** must be reported to [Erudika/scoold-pro](https://github.com/Erudika/scoold-pro/issues).
+[Paid/priority support is also available](https://erudika.com/#support).
 
 ## Contributing
 
