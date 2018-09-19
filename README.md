@@ -280,6 +280,76 @@ para.security.ldap.active_directory_domain = ""
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 
+## SAML configuration **PRO**
+
+First, you have to setup Para as a SAML service provider using the config below. Then you can exchange SAML metadata with
+your SAML identity provider (IDP). The SP metadata endpoint is `/saml_metadata/{appid}`. For example, if your Para
+endpoint is `paraio.com` and your `appid` is `scoold`, then the metadata is available at
+`https://paraio.com/saml_metadata/scoold`.
+
+SAML authentication is initiated by sending users to the Para SAML authentication endpoint `/saml_auth/{appid}`.
+For example, if your Para endpoint is `paraio.com` and your `appid` is `scoold`, then the user should be sent to
+`https://paraio.com/saml_auth/scoold`. Para (the service provider) will handle the request and redirect to the SAML IDP.
+Finally, upon successful authentication, the user is redirected back to `https://paraio.com/saml_auth/scoold` which is
+also the assertion consumer service (ACS).
+
+**Note:** The X509 certificate and private key must be encoded as Base64 in the configuration file. Additionally,
+the private key must be in the **PKCS#8 format** (`---BEGIN PRIVATE KEY---`). To convert from PKCS#1 to PKCS#8, use this:
+```
+openssl pkcs8 -topk8 -inform pem -nocrypt -in sp.rsa_key -outform pem -out sp.pem
+```
+
+There are lots of configuration options but Para needs only a few of those in order to successfully
+authenticate with your SAML IDP (listed in the first rows below).
+
+```ini
+# minimal setup
+# IDP metadata URL, e.g. https://idphost/idp/shibboleth
+para.security.saml.idp.metadata_url = ""
+
+# SP endpoint, e.g. https://paraio.com/saml_auth/scoold
+para.security.saml.sp.entityid = ""
+
+# SP public key as Base64(x509 certificate)
+para.security.saml.sp.x509cert = ""
+
+# SP private key as Base64(PKCS#8 key)
+para.security.saml.sp.privatekey = ""
+
+# attribute mappings (usually required)
+# e.g. urn:oid:0.9.2342.19200300.100.1.1
+para.security.saml.attributes.id = ""
+# e.g. urn:oid:0.9.2342.19200300.100.1.3
+para.security.saml.attributes.email = ""
+# e.g. urn:oid:2.5.4.3
+para.security.saml.attributes.name = ""
+
+
+# extra options (optional)
+# this is usually the same as the "EntityId"
+para.security.saml.sp.assertion_consumer_service.url = ""
+para.security.saml.sp.nameidformat = ""
+
+# IDP metadata is usually automatically fetched
+para.security.saml.idp.entityid = ""
+para.security.saml.idp.single_sign_on_service.url = ""
+para.security.saml.idp.x509cert = ""
+
+para.security.saml.security.authnrequest_signed = false
+para.security.saml.security.want_messages_signed = false
+para.security.saml.security.want_assertions_signed = false
+para.security.saml.security.want_assertions_encrypted = false
+para.security.saml.security.want_nameid_encrypted = false
+para.security.saml.security.sign_metadata = false
+para.security.saml.security.want_xml_validation = true
+para.security.saml.security.signature_algorithm = ""
+
+para.security.saml.attributes.firstname = ""
+para.security.saml.attributes.picture = ""
+para.security.saml.attributes.lastname = ""
+para.security.saml.domain = "paraio.com"
+```
+
 ## Spaces
 
 Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
