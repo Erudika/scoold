@@ -103,8 +103,15 @@ public final class ScooldUtils {
 
 	static {
 		// multiple domains/admins are now allowed only in Scoold PRO
-		APPROVED_DOMAINS.add(Config.getConfigParam("approved_domains_for_signups", ""));
-		ADMINS.add(Config.getConfigParam("admins", ""));
+		String approvedDomains = Config.getConfigParam("approved_domains_for_signups", "");
+		if (!StringUtils.isBlank(approvedDomains)) {
+			APPROVED_DOMAINS.add(approvedDomains);
+		}
+		// multiple admins are now allowed only in Scoold PRO
+		String admins = Config.getConfigParam("admins", "");
+		if (!StringUtils.isBlank(admins)) {
+			ADMINS.add(admins);
+		}
 	}
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
