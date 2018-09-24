@@ -600,9 +600,12 @@
 		<div class="votebox ${sizeClass}">
 			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated || ($authenticated && $votable.creatorid == $authUser.id))
-				<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
-				<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
-				<span class="votecount">$!_vvotes</span>
+				<a href="${signinlink}?returnto=$!{returnto}">
+					<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
+				</a>
+				<a href="${signinlink}?returnto=$!{returnto}">
+					<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+				</a>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
 					<i class="fa fa-chevron-up upvote mrs" title="Vote up"></i>
@@ -610,8 +613,8 @@
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
 					<i class="fa fa-chevron-down downvote mrs" title="Vote down"></i>
 				</a>
-				<span class="votecount">$!_vvotes</span>
 			#end
+			<span class="votecount">$!_vvotes</span>
 		</div>
 	#end
 #end
