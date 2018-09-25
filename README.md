@@ -156,6 +156,16 @@ First, create a new directory and copy `docker-compose.yml` to it from this repo
 3. `para-application.conf` - containing the Para configuration
 4. `scoold-application.conf` - containing the Scoold configuration
 
+An example `para.env` file:
+```sh
+JAVA_OPTS=-Dconfig.file=/para/application.conf
+```
+An `scoold.env` file:
+```sh
+JAVA_OPTS=-Dconfig.file=/scoold/application.conf
+BOOT_SLEEP=6
+```
+
 Then you can start both Scoold and Para with Docker Compose like so:
 ```
 $ docker-compose up
