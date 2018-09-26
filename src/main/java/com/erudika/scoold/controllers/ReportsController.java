@@ -109,7 +109,7 @@ public class ReportsController {
 
 	@PostMapping("/cspv")
 	@SuppressWarnings("unchecked")
-	public String createCSPViolationReport(HttpServletRequest req) throws IOException {
+	public void createCSPViolationReport(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		if (Config.getConfigBoolean("csp_reports_enabled", false)) {
 			Report rep = new Report();
 			rep.setDescription("CSP Violation Report");
@@ -121,8 +121,10 @@ public class ReportsController {
 				rep.setProperties((Map<String, Object>) (body.containsKey("csp-report") ? body.get("csp-report") : body));
 			}
 			rep.create();
+			res.setStatus(200);
+		} else {
+			res.setStatus(403);
 		}
-		return "redirect:/";
 	}
 
 	@PostMapping("/{id}/close")

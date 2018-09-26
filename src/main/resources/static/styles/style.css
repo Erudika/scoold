@@ -140,6 +140,14 @@ table {
 	height: 63px;
 	padding: 7px 2px 7px 7px;
 }
+#search-box {
+	border: none;
+	box-shadow: none;
+	background-color: white;
+	display: inline-block;
+	font-size: 1.2rem;
+	color: #444;
+}
 #edit-picture-link {
 	position: absolute;
 	top: 1px;

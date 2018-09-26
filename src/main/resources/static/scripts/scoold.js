@@ -618,7 +618,11 @@ $(function () {
 		if (el.length) {
 			initPostEditor(el.get(0));
 		}
+		$("#title_text").on("keyup", function () {
+			$('#post-title').text($(this).val());
+		});
 	});
+
 
 	// save draft in localstorage
 	var askForm = $("form#ask-question-form, form#write-feedback-form");
