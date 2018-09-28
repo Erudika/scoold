@@ -13,7 +13,7 @@ body {
 .postbox, .questionbox {word-wrap: break-word;}
 .postbox img {max-width: 100%;}
 .postbox img {max-width: 100%;}
-.viewbox pre {background-color: #ececec;}
+.viewbox pre {background-color: #f8f8f8;}
 .following-post {border-right: 5px solid #8bc34a;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
@@ -198,9 +198,14 @@ table {
 	min-height: 200px;
 }
 code {
-	background: #ececec;
+	background: #f8f8f8;
 	padding: 2px;
 	border-radius: 2px;
+}
+pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
+	font-size: 0.95em;
+	tab-size: 2;
+	-moz-tab-size: 2;
 }
 .selected-post {
 	border-left: 2px solid #039be5;
@@ -215,7 +220,6 @@ code {
 @media (max-width: 900px) {
 	.sTextCenter {
 		text-align: center;
-		color: red !important;
 	}
 	.sTextCenter.r {
 		text-align: center;
