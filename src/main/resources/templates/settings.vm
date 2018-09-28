@@ -56,7 +56,7 @@
 			#end
 
 			<h4>$!lang.get('settings.notifications')</h4>
-			<p class="mvl grey-text text-darken-2">$!lang.get('signup.form.email'): <tt>$!authUser.user.email</tt></p>
+			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>
 			<div class="mbm">
 				<div class="switch">
 					<label>

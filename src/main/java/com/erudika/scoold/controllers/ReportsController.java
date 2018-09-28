@@ -119,6 +119,11 @@ public class ReportsController {
 			Map<String, Object> body = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
 			if (body != null && !body.isEmpty()) {
 				rep.setProperties((Map<String, Object>) (body.containsKey("csp-report") ? body.get("csp-report") : body));
+				if (rep.getProperties().containsKey("document-uri")) {
+					rep.setLink((String) rep.getProperties().get("document-uri"));
+				} else if (rep.getProperties().containsKey("source-file")) {
+					rep.setLink((String) rep.getProperties().get("source-file"));
+				}
 			}
 			rep.create();
 			res.setStatus(200);
