@@ -290,8 +290,9 @@ para.security.ldap.active_directory_domain = ""
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 
-## SAML configuration **PRO**
+## SAML configuration
 
+**PRO**
 First, you have to setup Para as a SAML service provider using the config below. Then you can exchange SAML metadata with
 your SAML identity provider (IDP). The SP metadata endpoint is `/saml_metadata/{appid}`. For example, if your Para
 endpoint is `paraio.com` and your `appid` is `scoold`, then the metadata is available at
@@ -402,6 +403,44 @@ para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
 
 If you remove users who are already admins from the list of admins `para.admins`, they will be *demoted* to regular
 users. Similarly, existing regular users will be *promoted* to admins if they appear in the list above.
+
+## Anonymous posts
+
+**PRO**
+This feature is enabled with `para.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
+replies, without having a Scoold account. Posting to the "Feedback" section will also be open without requiring users
+to sign in. This feature is disabled by default.
+
+## Disabling the "Feedback" section
+
+**PRO**
+In Scoold PRO you can disable the "Feedback" functionality of the site by setting `para.feedback_enabled = false`.
+This will remove the link to `/feedback` and disable the feature entirely.
+
+## LaTeX/MathML support and advanced highlighting
+
+**PRO**
+You can enable this feature by setting `para.mathjax_enabled = true`. Then you can use MathML expressions by surrounding
+them with `$$` signs, e.g. `$$ \frac {1}{2} $$` By default, MathJax is disabled.
+
+The Prism syntax highlighter is included and it supports many different languages. You need to specify the language for
+each code block if you want the highlighting to be more accurate (see [all supported languages](https://prismjs.com/#languages-list)).
+For example:
+
+    ```csharp
+    var dict = new Dictionary<string>();
+    ```
+
+## Image uploads
+
+**PRO**
+Image uploads are handled by Imgur. In the future, more upload services could be supported such as S3. To initiate a new
+image upload, open up the Markdown editor and drag'n'drop the image you want to upload. A link will automatically appear
+when the upload is finished. For this feature to work correctly you have to specify your Imgur API client id:
+
+```
+para.imgur_client_id = "x23e8t0askdj"
+```
 
 ## Self-hosting Para and Scoold through SSL
 
