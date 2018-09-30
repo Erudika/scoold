@@ -34,15 +34,15 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="$!styleslink/simplemde.min.css" rel="stylesheet">
 		#if ($includeHighlightJS)
-			<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-		#end
-		#if($!langDirection == "RTL")
-			<link href="$!styleslink/rtl.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
 		#end
 		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
+		#if($!langDirection == "RTL")
+		<link href="$!styleslink/rtl.css" rel="stylesheet">
+		#end
 		<script src="$!scriptslink/globals.js"></script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
 	</head>
 	<body>
