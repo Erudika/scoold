@@ -18,19 +18,13 @@
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
-				<div class="autocomplete">
-					<i class="fa fa-tag fa-2x ptl grey-text"></i>
-					<div class="ac-tags"></div>
-					<div class="ac-input input-field">
-						<label for="tags_text">$!lang.get('tags.title')</label>
-						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
-									 data-beloworigin="true" autocomplete="off">
+				<div class="input-field">
+					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+					<input type="hidden" name="tags" value="">
+					<div class="pll mll">
+						#getmessagebox("red white-text" $error.get("tags"))
 					</div>
-					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-					<input type="hidden" name="tags" class="ac-hidden" value="">
-				</div>
-				<div class="pll mll">
-					#getmessagebox("red white-text" $error.get("tags"))
 				</div>
 
 				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
@@ -128,9 +122,11 @@
 		#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
-			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-			<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
+			<div class="mvm">
+				<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
+				<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+				<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
+			</div>
 		</div>
 		#if ($tag)
 			<h2>$!lang.get("feedback.tagged") '$!{tag}'</h2>

@@ -27,16 +27,10 @@
 			<p>$!lang.get("settings.tagfilter.text")</p>
 			#sectoken(false)
 
-			<div class="autocomplete">
-				<i class="fa fa-tag fa-2x ptl grey-text"></i>
-				<div class="ac-tags"></div>
-				<div class="ac-input input-field">
-					<label for="tags_text">$!lang.get('tags.title')</label>
-					<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
-								 data-beloworigin="true" autocomplete="off">
-				</div>
-				<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-				<input type="hidden" name="tags" class="ac-hidden" value="$!authUser.favtagsString">
+			<div class="input-field">
+				<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+				<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+				<input type="hidden" name="tags" value="$!authUser.favtagsString">
 			</div>
 
 			#if($authUser.user.identityProvider == "generic")

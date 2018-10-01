@@ -2,8 +2,10 @@
 	#set($sortarr = {'popular': "", 'tag': ""} )
 	#setsortbyselection($sortarr 'popular')
 	<div class="right mtl ptl">
-		<a href="$tagslink" title="Most used tags" class="chip $sortarr.popular">$!lang.get("posts.mostpopular")</a>
-		<a href="$tagslink?sortby=tag" title="Tags by name" class="chip $sortarr.tag">$!lang.get("name")</a>
+		<div class="mvm">
+			<a href="$tagslink" title="Most used tags" class="chip $sortarr.popular">$!lang.get("posts.mostpopular")</a>
+			<a href="$tagslink?sortby=tag" title="Tags by name" class="chip $sortarr.tag">$!lang.get("name")</a>
+		</div>
 	</div>
 	<h2>$!lang.get("tags.title") #showcount($itemcount.count)</h2>
 	<hr>

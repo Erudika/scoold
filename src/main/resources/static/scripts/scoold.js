@@ -11,9 +11,24 @@ $(function () {
 	var rusuremsg = "Are you sure about that?"; // john cena :)
 
 	// Materialize CSS init
-	$(".button-collapse").sideNav();
-	$('select').material_select();
-	$('textarea').characterCounter();
+
+	function initMaterialize() {
+		$(".sidenav").sidenav();
+		$('select').formSelect();
+		$('textarea').characterCounter();
+		$('input.autocomplete').autocomplete();
+		$('.collapsible').collapsible();
+		$('.tooltipped').tooltip();
+		$('.modal').modal();
+		$('.chips').chips();
+		$('.dropdown-trigger').dropdown({
+			constrainWidth: false,
+			coverTrigger: false,
+			alignment: RTL_ENABLED ? 'left' : 'right'
+		});
+	}
+
+	initMaterialize();
 
 	/**************************
 	 *    Google Maps API
@@ -431,49 +446,77 @@ $(function () {
 	/****************************************************
      *                    AUTOCOMPLETE
      ****************************************************/
-	var tagsAutocomplete = $('input.tagbox').materialize_autocomplete({
-		multiple: {
-			enable: true,
-			maxSize: 5
-		},
-		appender: {
-			el: '.ac-tags',
-			tagTemplate: '<div class="chip" data-id="<%= item.id %>" data-text="<%= item.text %>">\n\
-							<%= item.text %><i class="fa fa-close close"></i></div>'
-		},
-		dropdown: {
-			el: '#tags-dropdown'
-		},
-		hidden: {
-			enabled: true,
-			el: '.ac-hidden'
-		},
-		getData: function (value, callback) {
-			var val = value.toLowerCase();
-			$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
-				var tags = data.map(function (t) {
-					return {id: t.tag, text: t.tag};
-				});
-				tags.push({id: val, text: val});
-				callback(value, tags);
-			});
-		}
+
+	var autocomplete = $('.chips-autocomplete');
+	var autocompleteValue = $('input[name=tags]').val() || "";
+	var autocompleteCache = {};
+	var autocompleteDelayTimer;
+	var autocompleteInitData = autocompleteValue.split(",").filter(function (t) {
+		return t && t.trim().length > 0;
+	}).map(function (t) {
+		return {tag: t};
 	});
 
-	function displayTags(tags) {
-		if (tags && tags.val() && tags.val().length > 1) {
-			var tagsVal = tags.val().split(",");
-			for (var i = 0; i < tagsVal.length; i++) {
-				if (tagsVal[i].length > 0) {
-					tagsAutocomplete.append({id: tagsVal[i], text: tagsVal[i]});
-				}
+	autocomplete.chips({
+		limit: 5,
+		placeholder: autocomplete.attr('title') || "Tags",
+		data: autocompleteInitData || [],
+		autocompleteOptions: {
+			data: {},
+			minLength: 2
+		},
+		onChipAdd: function (c) {
+			$(c).find('i.close').text("");
+			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
+				return c.tag;
+			}).join(','));
+		},
+		onChipDelete: function () {
+			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
+				return c.tag;
+			}).join(','));
+		}
+	}).find('i.close').text("");
+
+	if (autocomplete.length) {
+		var autocompleteChipsInstance = M.Chips.getInstance(autocomplete.get(0));
+		function autocompleteFetchData(value, callback) {
+			var val = value.toLowerCase();
+			if (val && val.trim().length > 0) {
+				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
+					var tags = {};
+					if (data && typeof data === 'object') {
+						data.map(function (t) {
+							tags[t.tag] = null;
+						});
+						callback(value, tags);
+					}
+				});
 			}
 		}
-	}
+		function autocompleteFetchCallback(value, list) {
+			if (!autocompleteCache.hasOwnProperty(value)) {
+				autocompleteCache[value] = list;
+			}
+			if (autocompleteChipsInstance && autocompleteChipsInstance.hasAutocomplete) {
+				autocompleteChipsInstance.autocomplete.updateData(list);
+				autocompleteChipsInstance.autocomplete.open();
+			}
+		}
 
-	var tagsInput = $("input[name=tags].ac-hidden");
-	if (tagsInput.length) {
-		displayTags(tagsInput);
+		autocomplete.on('input', function () {
+			var value = $(this).find('input:first').val().toUpperCase();
+
+			if (autocompleteCache.hasOwnProperty(value) && autocompleteCache[value]) {
+				autocompleteFetchCallback(value, autocompleteCache[value]);
+			} else {
+				clearTimeout(autocompleteDelayTimer);
+				autocompleteDelayTimer = setTimeout(function () {
+					autocompleteFetchData(value, autocompleteFetchCallback);
+				}, 400);
+			}
+			return true;
+		});
 	}
 
 	/****************************************************
@@ -481,7 +524,7 @@ $(function () {
      ****************************************************/
 
 	 $('#main-modal').modal({
-		ready: function (modal, trigger) {
+		onOpenStart: function (modal, trigger) {
 			var div = $(modal);
 			var trigr = $(trigger);
 			if (typeof trigr.data("loadedForm") === "undefined") {
@@ -489,18 +532,18 @@ $(function () {
 					clearLoading();
 					div.html(data);
 					trigr.data("loadedForm", data);
-					div.find('select').material_select();
+					div.find('select').formSelect();
+					$('textarea').characterCounter();
 				});
 			} else {
 				div.html(trigr.data("loadedForm"));
-				div.find('select').material_select();
+				div.find('select').formSelect();
 			}
 			div.on("click", ".modal-close", function() {
 				$("#main-modal").modal("close");
 				return false;
 			});
-		},
-		complete: function () {}
+		}
 	});
 
 
@@ -580,10 +623,10 @@ $(function () {
 					if (parsedData.length === 1) {
 						that.hide();
 					} else {
-						contentDiv.append(trimmed).find(".dropdown-button").dropdown();
+						contentDiv.append(trimmed).find(".dropdown-trigger").dropdown();
 					}
 					$(document).trigger("event:page");
-					$('.tooltipped').tooltip(); // fix for tooltips after ajax load
+					initMaterialize(); // fix for tooltips after ajax load
 				}
 			}
 		});
@@ -635,7 +678,7 @@ $(function () {
 			if (!title.val()) title.val(localStorage.getItem("ask-form-title") || "");
 			if (!body.value()) body.value(localStorage.getItem("ask-form-body") || "");
 			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags") || "");
-			displayTags(tagsInput);
+
 			var saveDraftInterval1 = setInterval(function () {
 				var saved = false;
 				if (localStorage.getItem("ask-form-title") !== title.val()) {

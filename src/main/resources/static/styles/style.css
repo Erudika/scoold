@@ -7,6 +7,7 @@ body {
 	letter-spacing: 0;
 	/*font-size: 13pt;*/
 	font-size: 16px;
+	font-family: "Roboto", sans-serif;
 }
 .postbody ul li {list-style-type: disc;}
 .postbody ul {padding-left: 40px;}
@@ -112,8 +113,11 @@ table {
 	word-wrap: break-word;
 	table-layout: fixed;
 }
+label {
+	color: inherit;
+}
 .scoold-logo {
-	padding: 10px 0;
+	padding: 12px 0;
 }
 .para-logo-footer {
 	margin-bottom: -6px;
@@ -140,6 +144,9 @@ table {
 	height: 63px;
 	padding: 7px 2px 7px 7px;
 }
+.dropdown-content {
+	opacity: 1;
+}
 #search-box {
 	border: none;
 	box-shadow: none;
@@ -147,6 +154,11 @@ table {
 	display: inline-block;
 	font-size: 1.2rem;
 	color: #444;
+	height: 99%;
+}
+#search-box:focus {
+	border: none;
+	box-shadow: none;
 }
 #edit-picture-link {
 	position: absolute;
@@ -156,40 +168,32 @@ table {
 	background-color: white;
 	display: none;
 }
+#main-modal {
+	min-height: 400px;
+	width: 35%;
+}
 .autocomplete {
 	display: -ms-flexbox;
 	display: flex;
 }
-.autocomplete .ac-tags {
-	padding-top: 10px;
-	padding-right: 15px
+.chips-autocomplete .chip {
+	margin-right: 15px;
 }
 .chip {
 	background-color: #f1f1f1;
 }
-.autocomplete .ac-tags .chip {
-	-ms-flex: auto;
-	flex: auto;
-	margin-top: 15px;
-	margin-left: 15px;
+.chip:focus {
+	background-color: #666;
 }
-.autocomplete .ac-tags .chip:last-child {
-	margin-right: 10px;
+.material-icons {
+	display: inline-block;
+	font: normal normal normal 14px/1 FontAwesome;
+	font-size: inherit;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
-.autocomplete .ac-dropdown .ac-hover {
-	background: #eee;
-}
-.autocomplete .ac-input {
-	-ms-flex: 1;
-	flex: 1;
-	min-width: 150px;
-	padding-top: 0.6rem;
-}
-.autocomplete .ac-input input {
-	height: 2.4rem;
-}
-.ac-input ul {
-	padding: 0;
+i.close:before {
+	content: "\f00d";
 }
 .upvote, .downvote {color: #888888;}
 .upvote:hover {color: #4CAF50;}
@@ -237,7 +241,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
 .btn, .btn-large, .navbtn-hover {background-color: #ec407a;}
 .btn:focus, .btn-large:focus, .btn-floating:focus {background-color: #ec407a; opacity: 0.7;}
-.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: #444444;}
+.btn:hover, .btn-large:hover,span.badge.new,.sidenav span.badge.new, .collapsible span.badge.new {background-color: #444444;}
 body, footer.page-footer {background-color: #444444;}
 footer.page-footer {margin-top: 20px;}
 main {background-color: white;}

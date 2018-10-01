@@ -30,8 +30,9 @@
 		<link href="$!imageslink/logowhite.png" rel="image_src">
 		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
 		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet">
 		<link href="$!styleslink/simplemde.min.css" rel="stylesheet">
 		#if ($includeHighlightJS)
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -51,7 +52,7 @@
 				<div class="${navbarFixedClass}">
 					<nav class="light-blue">
 						<div class="nav-wrapper container">
-							<a href="#" data-activates="mobile-drawer" class="button-collapse"><i class="fa fa-bars fa-2x"></i></a>
+							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x"></i></a>
 
 							#macro(navbarlinks)
 								<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
@@ -71,18 +72,11 @@
 
 							#macro(navbarspaces)
 								<li>
-										<a class="dropdown-button scoold-spaces-dropdown" title="Spaces" href="#!" data-constrainwidth="false"
-											 data-alignment="$dropdownAlignment" data-beloworigin="true" data-activates="spaces-dropdown">
+										<a class="dropdown-trigger scoold-spaces-dropdown" title="Spaces" href="#!" data-target="spaces-dropdown">
 											<i class="fa fa-th-large"></i>
 											<i class="fa fa-caret-down right"></i>
 										</a>
 								</li>
-							#end
-
-							#if($!langDirection == "LTR")
-								#set($dropdownAlignment = "right")
-							#else
-								#set($dropdownAlignment = "left")
 							#end
 
 							#if($authenticated)
@@ -145,8 +139,7 @@
 										#navbarspaces()
 									#end
 									<li>
-										<a class="dropdown-button scoold-user-dropdown" href="#!" data-constrainwidth="false"
-											 data-alignment="$dropdownAlignment" data-beloworigin="true" data-activates="user-dropdown">
+										<a class="dropdown-trigger scoold-user-dropdown" href="#!" data-target="user-dropdown">
 											<img src="#profilepic($authUser)" width="50" class="profile-pic responsive-img" alt="Avatar">
 											<i class="fa fa-caret-down right"></i></a>
 									</li>
@@ -171,7 +164,7 @@
 								#end
 							</ul>
 
-							<ul class="side-nav" id="mobile-drawer">
+							<ul class="sidenav" id="mobile-drawer">
 								<li>
 									<nav class="light-blue z-depth-0">
 										<div class="nav-wrapper">
@@ -273,6 +266,11 @@
 				#parse($path)
 			</main>
 
+			#if($!langDirection == "RTL")
+				#set($footerAlignClass = "left-align" )
+			#else
+				#set($footerAlignClass = "right-align" )
+			#end
 			<footer class="page-footer">
 				<div class="container">
 					<div class="row mbn">
@@ -290,7 +288,7 @@
 								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
 							</div>
 						</div>
-						<div class="col l6 s12 r sTextCenter">
+						<div class="col l6 s12 sTextCenter ${footerAlignClass}">
 							<div class="pvl white-text">
 								#if($showBranding)
 									Made with <i class="fa fa-coffee"></i> by
@@ -305,9 +303,13 @@
 				</div>
 				<div class="footer-copyright">
 					<div class="container">
-						#set($_liclink = $utils.formatMessage("$!lang.get('license')",
-						'<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
-						<i class="fa fa-creative-commons"></i> $_liclink
+						<div class="row mbn">
+							<div class="col s12 sTextCenter">
+								#set($_liclink = $utils.formatMessage("$!lang.get('license')",
+								'<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
+								<i class="fa fa-creative-commons"></i> $_liclink
+							</div>
+						</div>
 					</div>
 				</div>
 			</footer>
@@ -324,11 +326,10 @@
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 		#if ($includeHighlightJS)
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 		#end
-		<script src="$!scriptslink/jquery.materialize-autocomplete.min.js"></script>
 		<script src="$!scriptslink/simplemde.min.js"></script>
 		<script src="$!scriptslink/scoold.js"></script>
 		#if ($request.getServletPath() == "/signin")

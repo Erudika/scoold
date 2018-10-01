@@ -14,8 +14,9 @@
 		<link href="https://static.scoold.com/logosq.png" rel="image_src">
 		<link href="https://static.scoold.com/logosq.png" rel="apple-touch-icon">
 		<link href="https://static.scoold.com/favicon.ico" rel="shortcut icon">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,500" rel="stylesheet">
 		<meta name="description" content="Scoold is an open source Questions &amp; Answers platform written in Java.">
 		<meta name="keywords" content="scoold, knowledge sharing, collaboration, wiki, forum, Q&amp;A, questions and answers, stackoverflow clone">
 		<!-- Google Plus -->
@@ -43,7 +44,7 @@
 			h1, h2, h3, h4, h5, h6 {color: #444444; font-weight: 200;}
 			.btn, .btn-large {background-color: #303030;}
 			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: transparent; opacity: 0.7;}
-			.btn:hover, .btn-large:hover,span.badge.new,.side-nav span.badge.new, .collapsible span.badge.new {background-color: #039be5;}
+			.btn:hover, .btn-large:hover,span.badge.new,.sidenav span.badge.new, .collapsible span.badge.new {background-color: #039be5;}
 			body, footer.page-footer {background-color: #444444;}
 			main {background-color: white;}
 			nav ul a {color: #303030;}
@@ -153,7 +154,7 @@
 				<div class="none">
 					<nav class="white z-depth-0">
 						<div class="nav-wrapper container">
-							<a href="#" data-activates="mobile-drawer" class="button-collapse"><i class="fa fa-bars fa-2x"></i></a>
+							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x light-blue-text"></i></a>
 							<div class="brand-logo">
 								<a href="/">
 									<img src="https://static.scoold.com/logo.svg" class="scoold-logo ptm" width="100" alt="scoold logo">
@@ -165,20 +166,8 @@
 								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
 								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
 							</ul>
-							<ul class="side-nav" id="mobile-drawer">
-								<li>
-									<nav class="light-blue z-depth-0">
-										<div class="nav-wrapper">
-											<form action="/search">
-												<div class="input-field">
-													<input type="search" name="q" placeholder="Search" required>
-													<label for="search"><i class="fa fa-search fa-2x"></i></label>
-													<i class="material-icons fa fa-close"></i>
-												</div>
-											</form>
-										</div>
-									</nav>
-								</li>
+							<ul class="sidenav" id="mobile-drawer">
+								<li>&nbsp;</li>
 								<li><a href="https://github.com/Erudika/scoold/releases/download/1.30.5/scoold-1.30.5.jar" title="Download">Download</a></li>
 								<li><a href="https://mailchi.mp/119ba7010b41/scoold-pro" title="Buy Pro">Buy</a></li>
 								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
@@ -496,20 +485,27 @@
 				</div>
 				<div class="footer-copyright">
 					<div class="container">
-						<i class="fa fa-creative-commons"></i> Excluding logos, this site is licensed under a
-						<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a> license.
+						<div class="row">
+							<div class="col s12">
+								<i class="fa fa-creative-commons"></i> Excluding logos, this site is licensed under a
+								<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a> license.
+							</div>
+						</div>
 					</div>
 				</div>
 			</footer>
 		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-648525-8"></script>
 		<script>
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		  ga('create', 'UA-648525-8', 'auto');
-		  ga('set', 'anonymizeIp', true);
-		  ga('send', 'pageview');
+		</script>
+
+		<script>
+			M.AutoInit();
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-648525-8', { 'anonymize_ip': true });
 		</script>
   </body>
 </html>

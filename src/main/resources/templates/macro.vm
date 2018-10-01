@@ -118,8 +118,7 @@
 		<div class="right">
 			#if($showu && $showu.id)
 				#set($contextboxid = $utils.generateSecurityToken(10, true))
-				<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
-					 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+				<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
 				<ul id="${contextboxid}" class="dropdown-content">
 					<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
 				</ul>
@@ -197,8 +196,7 @@
 					#if(!($isAdmin && $request.getParameter("bulkedit")))
 					<div class="right mrm">
 						#set($contextboxid = $utils.generateSecurityToken(10, true))
-						<a class="dropdown-button grey-text" href="#" data-constrainWidth="false" data-alignment="right"
-							 data-activates="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
 						<ul id="${contextboxid}" class="dropdown-content">
 							<li>#getreportlink($showFriend "$profilelink/$!showFriend.id" "")</li>
 						</ul>
@@ -207,9 +205,11 @@
 					<div class="mediumText">
 						#if($isAdmin && $request.getParameter("bulkedit"))
 							<span class="grey-text l">
-								<input type="checkbox" name="selectedUsers" value="$!showFriend.id" class="filled-in" id="$!showFriend.id">
 								<label for="$!showFriend.id">
-									<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+									<input type="checkbox" name="selectedUsers" value="$!showFriend.id" class="filled-in" id="$!showFriend.id">
+									<span>
+										<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+									</span>
 								</label>
 							</span>
 						#else
@@ -494,18 +494,12 @@
 			</div>
 
 			#if(!$showpost.isReply())
-				<div class="autocomplete">
-					<i class="fa fa-tag fa-2x ptl grey-text"></i>
-					<div class="ac-tags"></div>
-					<div class="ac-input input-field">
-						<label for="tags_text">$!lang.get('tags.title')</label>
-						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
-									 data-beloworigin="true" autocomplete="off">
-					</div>
-					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-					<input type="hidden" name="tags" class="ac-hidden" value="$!showpost.tagsString">
+				<div class="input-field">
+					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+					<input type="hidden" name="tags" value="$!showpost.tagsString">
+					#getmessagebox("red white-text" $error.get("tags"))
 				</div>
-				#getmessagebox("red white-text" $error.get("tags"))
 
 				#if($authUser.hasSpaces() || $isMod)
 					<div class="input-field">
@@ -532,7 +526,7 @@
 				<button class="btn waves-effect waves-light" type="submit">
 					<i class="fa fa-save left"></i> $!lang.get('save')
 				</button> &nbsp;
-				<input type="button" value="$!lang.get('close')" class="btn waves-effect waves-light canceledit">
+				<button class="btn waves-effect waves-light canceledit">$!lang.get('close')</button>
 			</div>
 		</form>
 	</div>
@@ -649,8 +643,9 @@ $utils.formatDate($date, $format, $currentLocale)
 #####################################
 #macro(reportform $type $parentid $link)
 <form method="post" class="create-report-form pal" action="$reportslink">
-		#sectoken(false)
-		<h3>$!lang.get("reportproblem")</h3>
+	#sectoken(false)
+	<h3>$!lang.get("reportproblem")</h3>
+	<div class="ptl mvl">
 		<label class="blocklabel">$!lang.get("reports.category")</label>
 		<select name="subType">
 			#foreach($type in $reportTypes)
@@ -669,10 +664,12 @@ $utils.formatDate($date, $format, $currentLocale)
 		#if ($link && !$link.isEmpty())
 		<input type="hidden" name="link" value="$!link">
 		#end
-		<div class="center mtl">
-			<button id="sendreport-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('send')</button>
-			<a href="#main-modal" class="btn-flat waves-effect waves-light modal-action modal-close">$!lang.get('close')</a>
-		</div>
+	</div>
+	<br>
+	<div class="center mtl ptl">
+		<button id="sendreport-btn" type="submit" class="btn waves-effect waves-light">$!lang.get('send')</button>
+		<a href="#main-modal" class="btn-flat waves-effect waves-light modal-action modal-close">$!lang.get('close')</a>
+	</div>
 </form>
 #end
 #####################################

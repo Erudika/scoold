@@ -24,19 +24,13 @@
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
-				<div class="autocomplete">
-					<i class="fa fa-tag fa-2x ptl grey-text"></i>
-					<div class="ac-tags"></div>
-					<div class="ac-input input-field">
-						<label for="tags_text">$!lang.get('tags.title')</label>
-						<input type="text" id="tags_text" class="tagbox" data-activates="tags-dropdown"
-									 data-beloworigin="true" autocomplete="off">
+				<div class="input-field">
+					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+					<input type="hidden" name="tags" value="">
+					<div class="pll mll">
+						#getmessagebox("red white-text" $error.get("tags"))
 					</div>
-					<ul id="tags-dropdown" class="dropdown-content ac-dropdown"></ul>
-					<input type="hidden" name="tags" class="ac-hidden" value="">
-				</div>
-				<div class="pll mll">
-					#getmessagebox("red white-text" $error.get("tags"))
 				</div>
 
 				<a href="#" class="next-div-toggle mll pll click2hide">
@@ -45,7 +39,6 @@
 				</a>
 				<div class="input-field hide">
 					<i class="fa fa-map-marker ptm prefix grey-text"></i>
-					<label for="location_text">$!{lang.get("profile.about.location")}</label>
 					<input id="location_text" name="location" class="locationbox validate" type="text" value="">
 					<input type="hidden" name="latlng" value="">
 					<input type="hidden" name="address" value="">
@@ -61,22 +54,24 @@
 		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
-			<a href="${questionslink}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-			<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
-			<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
+			<div class="mvm">
+				<a href="${questionslink}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
+				<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+				<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
+				<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
 
-			#if ($authenticated)
-				#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
-				#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
-				<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
-					<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
-				</a>
-				#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
-				<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
-					<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
-				</a>
-			#end
+				#if ($authenticated)
+					#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
+					#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
+					<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
+						<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
+					</a>
+					#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
+					<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
+						<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
+					</a>
+				#end
+			</div>
 		</div>
 
 		<h2>

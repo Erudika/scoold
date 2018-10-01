@@ -57,7 +57,7 @@
 			#foreach($space in $spaces)
 			<div class="col s12 m6 l3">
 				<div class="card-panel spacebox">
-					<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped post-refresh"
+					<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped post-refresh ptm"
 						 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
 					 <p class="largeText">$space.name</p>
 				</div>

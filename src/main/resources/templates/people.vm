@@ -1,5 +1,5 @@
 <div class="ptl">
-	<div class="right ptl mtl">
+	<div class="right mtl ptl">
 		#set($sortarr = {'votes': "", 'newest': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="mvm">
@@ -9,7 +9,7 @@
 				#if($request.getParameter("bulkedit"))
 					<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
 				#else
-					<a href="$peoplelink?bulkedit" class="chip">Bulk Edit Spaces</a>
+					<a href="$peoplelink?bulkedit=true" class="chip">Bulk Edit Spaces</a>
 				#end
 			#end
 		</div>
@@ -19,25 +19,28 @@
 
 	#if($isAdmin && $request.getParameter("bulkedit"))
 	<form method="get">
-		<div class="row valign-wrapper">
-			<div class="col m7">
-				<strong>Edit space membership of selected users:</strong>
-			</div>
-			<div class="col m5 r">
-				<input type="text" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
-				<input type="hidden" name="bulkedit" value="true">
-			</div>
+		<div class="input-field">
+			<i class="fa fa-search fa-2x prefix grey-text"></i>
+			<input type="search" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
+			<input type="hidden" name="bulkedit" value="true">
 		</div>
 	</form>
 
 	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
-		#sectoken(false "BULK_EDIT")
-		#foreach($space in $spaces)
-			<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
-			<label for="$!space.id"><strong class="mediumText">$!space.name</strong></label> &nbsp;
-		#end
-		<br>
-		<button class="btn waves-effect waves-light mtl" type="submit"><b>$!lang.get('save')</b></button>
+		<div class="pvl center">
+			<strong>Edit space membership of selected users:</strong>
+		</div>
+		<div class="center">
+			#sectoken(false "BULK_EDIT")
+			#foreach($space in $spaces)
+				<label for="$!space.id">
+					<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
+					<span><strong class="mediumText">$!space.name</strong></span>
+				</label> &nbsp;
+			#end
+			<br>
+			<button class="btn waves-effect waves-light mvl" type="submit"><b>$!lang.get('save')</b></button>
+		</div>
 	#end
 	<hr>
 
