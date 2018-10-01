@@ -92,7 +92,7 @@
 				<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip make-mod-btn $!{hidemakemod}">
 					<i class="fa fa-chevron-up"></i> Make mod
 				</a>
-				<a href="${adminlink}?delete=user&id=$showUser.creatorid" title="Delete user account" class="red chip white-text">
+				<a href="${adminlink}?delete=profile&id=$showUser.id" title="Delete user account" class="red chip white-text">
 					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")
 				</a>
 			#end
