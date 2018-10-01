@@ -2,6 +2,10 @@
 	<div class="row questionpage">
 		<div class="col m12 l9">
 			<span class="grey-text">
+			#if($showPost.location && !$showPost.location.isEmpty())
+				<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showPost.location"></i>
+			#end
+
 			#if($currentSpace && !$currentSpace.isEmpty())
 				<strong class="grey-text">$scooldUtils.getSpaceName($!currentSpace) / </strong>
 			#end
