@@ -85,7 +85,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("FB_APP_ID", Config.FB_APP_ID);
 		modelAndView.addObject("GMAPS_API_KEY", Config.getConfigParam("gmaps_api_key", ""));
 		modelAndView.addObject("GOOGLE_CLIENT_ID", Config.getConfigParam("google_client_id", ""));
-		modelAndView.addObject("includeGAjs", !StringUtils.isBlank(Config.getConfigParam("google_analytics_id", "")));
+		modelAndView.addObject("GOOGLE_ANALYTICS_ID", Config.getConfigParam("google_analytics_id", ""));
 		modelAndView.addObject("includeHighlightJS", Config.getConfigBoolean("code_highlighting_enabled", true));
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());

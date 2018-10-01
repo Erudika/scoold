@@ -335,7 +335,8 @@
 		#if ($request.getServletPath() == "/signin")
 		<script src="$!scriptslink/signin.js"></script>
 		#end
-		#if ($includeGAjs)
+		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty())
+		<script src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
 		<script src="$!scriptslink/a7s.js"></script>
 		#end
 	</body>
