@@ -155,6 +155,7 @@ public class ScooldServer {
 	}
 
 	private static void initConfig() {
+		System.setProperty("server.servlet.session.timeout", String.valueOf(Config.SESSION_TIMEOUT_SEC));
 		// JavaMail configuration properties
 		System.setProperty("spring.mail.host", Config.getConfigParam("mail.host", ""));
 		System.setProperty("spring.mail.port", String.valueOf(Config.getConfigInt("mail.port", 587)));
