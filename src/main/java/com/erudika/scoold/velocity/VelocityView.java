@@ -301,7 +301,7 @@ public class VelocityView extends AbstractTemplateView {
 				String attributeName = entry.getKey();
 				Class<?> toolClass = entry.getValue();
 				try {
-					Object tool = toolClass.newInstance();
+					Object tool = toolClass.getDeclaredConstructor().newInstance();
 					initTool(tool, velocityContext);
 					velocityContext.put(attributeName, tool);
 				} catch (Exception ex) {
