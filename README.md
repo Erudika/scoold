@@ -47,8 +47,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Image uploads
 - Security notifications
 
-[Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro) is still in development.
-It will soon be available for **299 EUR, one-time fee**.
+## Buy [Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro)
 
 ### Live Demo
 
