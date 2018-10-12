@@ -47,7 +47,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Image uploads
 - Security notifications
 
-## Buy [Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro)
+## [Buy Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro)
 
 ### Live Demo
 
@@ -186,6 +186,17 @@ img-src 'self' https: data:; report-uri /reports/cspv
 ```
 
 **Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
+
+### Deploying Scoold to a servlet container
+
+The instructions for Tomcat in particular are:
+
+1. Generate a WAR package with `mvn -Pwar package`
+2. Rename the WAR package to `ROOT.war` if you want it deployed to the root context or leave it as is
+3. Put the WAR package in `Tomcat/webapps/` & start Tomcat
+4. Put `application.conf` in `Tomcat/webapps/scoold-folder/WEB-INF/classes/` & restart Tomcat
+
+Scoold is compatible with Tomcat 9+.
 
 ### Deploying Scoold under a specific context path
 
