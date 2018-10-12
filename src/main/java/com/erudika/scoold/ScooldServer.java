@@ -39,12 +39,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -57,12 +57,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @SpringBootApplication
-public class ScooldServer {
+public class ScooldServer extends SpringBootServletInitializer {
 
 	static {
 		// tells ParaClient where to look for classes that implement ParaObject
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
-		System.setProperty("server.context-path", Config.getConfigParam("context_path", System.getProperty("server.context-path", "")));
+		System.setProperty("server.port", String.valueOf(getServerPort()));
+		System.setProperty("server.servlet.context-path", getServerContextPath());
 	}
 
 	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
@@ -70,7 +71,7 @@ public class ScooldServer {
 	public static final String SPACE_COOKIE = Config.getRootAppIdentifier() + "-space";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
-	public static final String CONTEXT_PATH = StringUtils.stripEnd(System.getProperty("server.context-path", ""), "/");
+	public static final String CONTEXT_PATH = StringUtils.stripEnd(getServerContextPath(), "/");
 	public static final String CDN_URL = StringUtils.stripEnd(Config.getConfigParam("cdn_url", CONTEXT_PATH), "/");
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
 	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/images";
@@ -138,6 +139,14 @@ public class ScooldServer {
 		app.run(args);
 	}
 
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder app) {
+		initConfig();
+		app.profiles(Config.ENVIRONMENT);
+		app.web(WebApplicationType.SERVLET);
+		return app.sources(ScooldServer.class);
+	}
+
 	/**
 	 * @return the host URL of this Scoold server
 	 */
@@ -152,6 +161,13 @@ public class ScooldServer {
 	 */
 	public static int getServerPort() {
 		return NumberUtils.toInt(System.getProperty("server.port"), Config.getConfigInt("port", 8000));
+	}
+
+	/**
+	 * @return the context path of this Scoold server
+	 */
+	public static String getServerContextPath() {
+		return System.getProperty("server.servlet.context-path", Config.getConfigParam("context_path", ""));
 	}
 
 	private static void initConfig() {
@@ -184,6 +200,7 @@ public class ScooldServer {
 
 	@Bean
 	public ParaClient paraClientBean() {
+		logger.info("Listening on port {}...", getServerPort());
 		String accessKey = Config.getConfigParam("access_key", "x");
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
@@ -252,17 +269,6 @@ public class ScooldServer {
 	@Bean
 	public Emailer scooldEmailerBean(JavaMailSender mailSender) {
 		return new ScooldEmailer(mailSender);
-	}
-
-	/**
-	 * @return Jetty config bean
-	 */
-	@Bean
-	public ServletWebServerFactory jettyConfigBean() {
-		JettyServletWebServerFactory jef = new JettyServletWebServerFactory();
-		jef.setPort(getServerPort());
-		logger.info("Listening on port {}...", jef.getPort());
-		return jef;
 	}
 
 	/**

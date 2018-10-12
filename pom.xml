@@ -5,6 +5,7 @@
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
 	<version>1.31.0</version>
+	<packaging>${packaging.type}</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -66,19 +67,9 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-tomcat</artifactId>
 				</exclusion>
-			 <exclusion>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-validator</artifactId>
-			 </exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jetty</artifactId>
-			<exclusions>
 				<exclusion>
-					<groupId>org.eclipse.jetty.websocket</groupId>
-					<artifactId>*</artifactId>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-validator</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -199,24 +190,42 @@
 		</plugins>
 	</build>
 
-<!--	<profiles>
+	<profiles>
 		<profile>
-			<id>dev</id>
+			<id>jar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<packaging.type>jar</packaging.type>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-jetty</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
 		</profile>
-
 		<profile>
-			<id>prod</id>
-			<activation>
-				<property>
-					<name>para.env</name>
-					<value>production</value>
-				</property>
-			</activation>
+			<id>war</id>
+			<properties>
+				<packaging.type>war</packaging.type>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
 		</profile>
-	</profiles>-->
+	</profiles>
 
 </project>
 
