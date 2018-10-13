@@ -47,7 +47,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Image uploads
 - Security notifications
 
-## [Buy Scoold Pro](https://mailchi.mp/119ba7010b41/scoold-pro)
+## [Buy Scoold Pro](https://paraio.com/scoold-pro)
 
 ### Live Demo
 
