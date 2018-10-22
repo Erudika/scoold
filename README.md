@@ -81,13 +81,15 @@ $ para-cli ping
 $ para-cli new-app "scoold" --name "Scoold"
 ```
 
-**Important: Do not use the same `application.conf` file for both Para and Scoold!**
+> **Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
 The settings shown below are all meant to part of the Scoold config file.
 
 [Read the Para docs for more information.](https://paraio.org/docs)
 
 ### Configuration
+
+> **Important:** Create a separate app for Scoold, instead of using `app:para`.
 
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
