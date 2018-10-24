@@ -44,9 +44,17 @@
 	#end
 	<hr>
 
-	<div class="row">
-		#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
-	</div>
+	#if(!$userlist || $userlist.isEmpty())
+		<div class="card-panel hugeText center-align grey-text">
+			<div class="em5v">
+				$!{lang.get("search.notfound")}
+			</div>
+		</div>
+	#else
+		<div class="row">
+			#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
+		</div>
+	#end
 
 	#if($isAdmin && $request.getParameter("bulkedit"))
 	</form>

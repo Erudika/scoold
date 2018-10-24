@@ -19,7 +19,11 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Tag;
 import com.erudika.para.utils.Pager;
+import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
+import com.erudika.scoold.core.Profile;
+import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +57,14 @@ public class TagsController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		itemcount.setDesc(!"tag".equals(sortby));
-		List<Tag> tagslist = utils.getParaClient().findTags("", itemcount);
+
+		Profile authUser = utils.getAuthUser(req);
+		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		List<Tag> tagslist = Collections.emptyList();
+		if (utils.canAccessSpace(authUser, currentSpace)) {
+			tagslist = utils.getParaClient().findTags("", itemcount);
+		}
+
 		model.addAttribute("path", "tags.vm");
 		model.addAttribute("title", utils.getLang(req).get("tags.title"));
 		model.addAttribute("tagsSelected", "navbtn-hover");
