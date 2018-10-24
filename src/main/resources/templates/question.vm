@@ -2,7 +2,7 @@
 	<div class="row questionpage">
 		<div class="col m12 l9">
 			<span class="grey-text">
-			#if($showPost.location && !$showPost.location.isEmpty())
+			#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 				<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showPost.location"></i>
 			#end
 
@@ -103,7 +103,7 @@
 						<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.updated "")
 					</div>
 				#end
-				#if($showPost.location && !$showPost.location.isEmpty())
+				#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 					<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
 				#end
 				#if($showPost.space && !$showPost.space.isEmpty())

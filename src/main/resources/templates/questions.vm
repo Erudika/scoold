@@ -33,16 +33,18 @@
 					</div>
 				</div>
 
-				<a href="#" class="next-div-toggle mll pll click2hide">
-					<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
-					<span class="grey-text text-darken-1">($!lang.get("posts.locationtxt"))</span>
-				</a>
-				<div class="input-field hide">
-					<i class="fa fa-map-marker ptm prefix grey-text"></i>
-					<input id="location_text" name="location" class="locationbox validate" type="text" value="">
-					<input type="hidden" name="latlng" value="">
-					<input type="hidden" name="address" value="">
-				</div>
+				#if($scooldUtils.isNearMeFeatureEnabled())
+					<a href="#" class="next-div-toggle mll pll click2hide">
+						<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
+						<span class="grey-text text-darken-1">($!lang.get("posts.locationtxt"))</span>
+					</a>
+					<div class="input-field hide">
+						<i class="fa fa-map-marker ptm prefix grey-text"></i>
+						<input id="location_text" name="location" class="locationbox validate" type="text" value="">
+						<input type="hidden" name="latlng" value="">
+						<input type="hidden" name="address" value="">
+					</div>
+				#end
 
 				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
@@ -62,10 +64,14 @@
 
 				#if ($authenticated)
 					#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
-					#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
-					<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
-						<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
-					</a>
+
+					#if($scooldUtils.isNearMeFeatureEnabled())
+						#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
+						<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
+							<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
+						</a>
+					#end
+
 					#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
 					<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
 						<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")

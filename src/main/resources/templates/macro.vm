@@ -323,7 +323,7 @@
 			<div class="row mbn">
 				<div class="col s10 m11 l9">
 					<div class="mbm mediumText">
-						#if($showpost.location && !$showpost.location.isEmpty())
+						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 							<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
 						#end
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>

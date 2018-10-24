@@ -239,6 +239,10 @@ public final class ScooldUtils {
 		return getAuthUser(req) != null;
 	}
 
+	public boolean isNearMeFeatureEnabled() {
+		return Config.getConfigBoolean("nearme_feature_enabled", true);
+	}
+
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
 		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
 	}

@@ -63,7 +63,7 @@ public class SettingsController {
 		}
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
-		model.addAttribute("includeGMapsScripts", true);
+		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		return "base";
 	}
 
