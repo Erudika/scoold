@@ -632,11 +632,12 @@
 $utils.formatDate($date, $format, $currentLocale)
 #elseif ($date)
 #set($delta = $utils.timestamp() - $date)
+#set($Integer = 0)
 #set($approxtime = $utils.humanTime.approximately($delta))
 #if (!$approxtime || $approxtime.isEmpty() || $approxtime.endsWith("ms")) #set($approxtime = "2s") #end
 #set($lastindx = $approxtime.length() - 1 )
 #set($suffix = $approxtime.substring($lastindx))
-#set($approx = $approxtime.substring(0, $lastindx))
+#set($approx = $Integer.parseInt($approxtime.substring(0, $lastindx)))
 #set($sufstr = "humantime.$suffix" )
 <span title="$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
 	$!utils.formatMessage($!lang.get($!sufstr), $!approx)
