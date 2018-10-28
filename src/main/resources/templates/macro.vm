@@ -598,20 +598,20 @@
 			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
+					<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+					<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
-				<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
-				<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+				<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
+				<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 			#else
-				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
-					<i class="fa fa-chevron-up upvote mrs" title="Vote up"></i>
+				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
+					<i class="fa fa-chevron-up upvote mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
-				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
-					<i class="fa fa-chevron-down downvote mrs" title="Vote down"></i>
+				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="$!lang.get('votedown.tooltip')">
+					<i class="fa fa-chevron-down downvote mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#end
 			<span class="votecount">$!_vvotes</span>
