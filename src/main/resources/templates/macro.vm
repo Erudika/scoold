@@ -598,20 +598,20 @@
 			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
+					<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+					<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
-				<i class="fa fa-chevron-up upvote grey-text mrs" title="Vote up"></i>
-				<i class="fa fa-chevron-down downvote grey-text mrs" title="Vote down"></i>
+				<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
+				<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 			#else
-				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="Vote up">
-					<i class="fa fa-chevron-up upvote mrs" title="Vote up"></i>
+				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
+					<i class="fa fa-chevron-up upvote mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
-				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="Vote down">
-					<i class="fa fa-chevron-down downvote mrs" title="Vote down"></i>
+				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="$!lang.get('votedown.tooltip')">
+					<i class="fa fa-chevron-down downvote mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#end
 			<span class="votecount">$!_vvotes</span>
@@ -632,11 +632,12 @@
 $utils.formatDate($date, $format, $currentLocale)
 #elseif ($date)
 #set($delta = $utils.timestamp() - $date)
+#set($Integer = 0)
 #set($approxtime = $utils.humanTime.approximately($delta))
 #if (!$approxtime || $approxtime.isEmpty() || $approxtime.endsWith("ms")) #set($approxtime = "2s") #end
 #set($lastindx = $approxtime.length() - 1 )
 #set($suffix = $approxtime.substring($lastindx))
-#set($approx = $approxtime.substring(0, $lastindx))
+#set($approx = $Integer.parseInt($approxtime.substring(0, $lastindx)))
 #set($sufstr = "humantime.$suffix" )
 <span title="$utils.formatDate($date, 'dd MMMM yyyy, HH:mm', $currentLocale)">
 	$!utils.formatMessage($!lang.get($!sufstr), $!approx)
