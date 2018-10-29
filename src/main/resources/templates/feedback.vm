@@ -145,7 +145,7 @@
 			#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
 		#end
 
-		<div class="center-align">
+		<div class="center-align mvl">
 			<a href="$feedbacklink/write" class="btn btn-large waves-effect waves-light"><b>$!{lang.get('feedback.write')}</b></a>
 		</div>
 	#end

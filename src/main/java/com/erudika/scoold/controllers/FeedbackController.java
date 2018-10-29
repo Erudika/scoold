@@ -146,6 +146,7 @@ public class FeedbackController {
 				return "redirect:" + FEEDBACKLINK;
 			} else {
 				model.addAttribute("error", error);
+				model.addAttribute("write", true);
 				return "base";
 			}
 		}
