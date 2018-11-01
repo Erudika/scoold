@@ -59,9 +59,13 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 **Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
 0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
-[Google](https://console.developers.google.com) or any other identity provider that you wish to use.
-This isn't necessary only if you enable LDAP or password authentication. Save the obtained API keys in `application.conf`,
-as shown below.
+[Google](https://console.developers.google.com) and **every other identity provider** that you wish to use.
+This isn't necessary only if you enable LDAP, SAML or password authentication.
+Save the obtained API keys in `application.conf`, as shown below.
+
+**Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
+`https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
+appropriate authentication endpoint. For example, for GitHub, the redirect URL could be: `https://paraio.com/github_auth`.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf`
 2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
@@ -272,13 +276,15 @@ para.security.oauth.token_url = "https://your-idp.com/token"
 para.security.oauth.profile_url = "https://your-idp.com/userinfo"
 
 # extra options
-para.security.oauth.provider = "My Auth Service"
 para.security.oauth.scope = "openid email profile"
 para.security.oauth.accept_header = ""
 para.security.oauth.parameters.id = "sub"
 para.security.oauth.parameters.picture = "picture"
 para.security.oauth.parameters.email = "email"
 para.security.oauth.parameters.name = "name"
+
+# Sets the string on the login button
+para.security.oauth.provider = "Continue with OpenID Connect"
 ```
 
 ## LDAP configuration
@@ -297,6 +303,9 @@ para.security.ldap.user_dn_pattern = "uid={0},ou=people"
 para.security.ldap.password_attribute = "userPassword"
 # set this only if you are connecting to Active Directory
 para.security.ldap.active_directory_domain = ""
+
+# Sets the string on the login button (PRO)
+para.security.ldap.provider = "Continue with LDAP"
 ```
 
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
@@ -371,6 +380,9 @@ para.security.saml.attributes.firstname = ""
 para.security.saml.attributes.picture = ""
 para.security.saml.attributes.lastname = ""
 para.security.saml.domain = "paraio.com"
+
+# Sets the string on the login button
+para.security.saml.provider = "Continue with SAML"
 ```
 
 ## Spaces
