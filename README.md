@@ -23,7 +23,7 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 - Location-based search and "near me" filtering of posts
 - I18n with RTL language support
 - Reputation and voting system with badges
-- Spaces - groups of isolated questions and users
+- Spaces (Teams) - groups of isolated questions and users
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
@@ -385,7 +385,7 @@ para.security.saml.domain = "paraio.com"
 para.security.saml.provider = "Continue with SAML"
 ```
 
-## Spaces
+## Spaces (Teams)
 
 Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
 accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.
