@@ -34,7 +34,8 @@
 			"value": "Scoold"
 		},
 		"para_host_url": {
-			"description": "The public URL of Scoold (affects CSP header), e.g. https://scoold.yourhost.com ",
+			"description": "The public URL of Scoold (affects CSP header), which will be the main entry point of your site, e.g. https://scoold.herokuapp.com ",
+			"required": false,
 			"value": ""
 		},
 		"para_is_default_space_public": {
@@ -89,9 +90,8 @@
 			"value": ""
 		},
 		"para_password_auth_enabled": {
-			"description": "Enable or disable password authentication",
-			"required": false,
-			"value": "false"
+			"description": "Enable or disable basic authentication with an email and password.",
+			"value": "true"
 		},
 		"para_fb_app_id": {
 			"description": "Facebook APP ID (for login with Facebook)",
