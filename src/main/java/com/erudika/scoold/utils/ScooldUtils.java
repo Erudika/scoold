@@ -243,6 +243,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("nearme_feature_enabled", true);
 	}
 
+	public boolean isDefaultSpacePublic() {
+		return Config.getConfigBoolean("is_default_space_public", true);
+	}
+
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
 		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
 	}
@@ -412,13 +416,12 @@ public final class ScooldUtils {
 	}
 
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
-		boolean isDefaultSpacePublic = Config.getConfigBoolean("is_default_space_public", true);
-		if (authUser == null || targetSpaceId == null) {
-			return isDefaultSpacePublic;
+		if (authUser == null) {
+			return isDefaultSpacePublic();
 		}
 		if (StringUtils.isBlank(targetSpaceId)) {
 			// can user access the default space (blank)
-			return isDefaultSpacePublic || isMod(authUser) || !authUser.hasSpaces();
+			return isDefaultSpacePublic() || isMod(authUser) || !authUser.hasSpaces();
 		}
 		boolean isMemberOfSpace = false;
 		for (String space : authUser.getSpaces()) {

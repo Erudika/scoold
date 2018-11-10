@@ -80,7 +80,7 @@ public class AdminController {
 		model.addAttribute("endpoint", pc.getEndpoint());
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*"));
-		model.addAttribute("isDefaultSpacePublic", Config.getConfigBoolean("is_default_space_public", true));
+		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
 		return "base";
 	}
 
