@@ -578,7 +578,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Chinese (Simplified)** | [lang_zh_cn.properties](src/main/resources/lang_zh_cn.properties) | :heavy_check_mark: Thanks Kyon Cheng!
 **Croatian** | [lang_hr.properties](src/main/resources/lang_hr.properties) | 0%
 **Czech** | [lang_cs.properties](src/main/resources/lang_cs.properties) | 0%
-**Danish** | [lang_da.properties](src/main/resources/lang_da.properties) | 0%
+**Danish** | [lang_da.properties](src/main/resources/lang_da.properties) | :heavy_check_mark: Thanks @viking1972!
 **Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | :heavy_check_mark: Thanks Jan Halsema!
 **English** | [lang_en.properties](src/main/resources/lang_en.properties) | :heavy_check_mark:
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
@@ -593,7 +593,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Indonesian** | [lang_in.properties](src/main/resources/lang_in.properties) | 0%
 **Irish** | [lang_ga.properties](src/main/resources/lang_ga.properties) | 0%
 **Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | 0%
-**Japanese** | [lang_ja.properties](src/main/resources/lang_ja.properties) | 0%
+**Japanese** | [lang_ja.properties](src/main/resources/lang_ja.properties) | :heavy_check_mark: Thanks Mozy Okubo!
 **Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :heavy_check_mark: Thanks HyunWoo Jo!
 **Lithuanian** | [lang_lt.properties](src/main/resources/lang_lt.properties) | 0%
 **Latvian** | [lang_lv.properties](src/main/resources/lang_lv.properties) | 0%
