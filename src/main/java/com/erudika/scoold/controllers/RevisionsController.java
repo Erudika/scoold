@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import com.erudika.scoold.core.Profile;
 
 /**
  *
@@ -50,6 +51,10 @@ public class RevisionsController {
 	public String get(@PathVariable String postid, HttpServletRequest req, Model model) {
 		Post showPost = utils.getParaClient().read(postid);
 		if (showPost == null) {
+			return "redirect:" + QUESTIONSLINK;
+		}
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + QUESTIONSLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);

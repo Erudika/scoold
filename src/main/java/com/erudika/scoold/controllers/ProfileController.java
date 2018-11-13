@@ -23,6 +23,7 @@ import static com.erudika.para.core.User.Groups.USERS;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
@@ -78,6 +79,14 @@ public class ProfileController {
 		if (showUser == null || !ParaObjectUtils.typesMatch(showUser)) {
 			return "redirect:" + PROFILELINK;
 		}
+
+		boolean protekted = !utils.isDefaultSpacePublic() && !utils.isAuthenticated(req);
+		boolean sameSpace = (showUser.getSpaces().isEmpty() && utils.canAccessSpace(authUser, "")) ||
+				(authUser != null && showUser.getSpaces().stream().anyMatch(s -> utils.canAccessSpace(authUser, s)));
+		if (protekted || !sameSpace) {
+			return "redirect:" + PEOPLELINK;
+		}
+
 		Pager itemcount1 = utils.getPager("page1", req);
 		Pager itemcount2 = utils.getPager("page2", req);
 		List<? extends Post> questionslist = showUser.getAllQuestions(itemcount1);

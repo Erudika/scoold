@@ -66,6 +66,9 @@ public class QuestionsController {
 
 	@GetMapping({"/", "/questions"})
 	public String get(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK;
+		}
 		getQuestions(sortby, null, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
@@ -98,17 +101,20 @@ public class QuestionsController {
 
 	@GetMapping("/questions/similar/{like}")
 	public void getSimilarAjax(@PathVariable String like, HttpServletRequest req, HttpServletResponse res) throws IOException {
+		Profile authUser = utils.getAuthUser(req);
 		StringBuilder sb = new StringBuilder();
 		Question q = new Question();
 		q.setTitle(like);
 		q.setBody("");
 		q.setTags(Arrays.asList(""));
 		for (Post similarPost : utils.getSimilarPosts(q, new Pager(Config.getConfigInt("max_similar_posts", 7)))) {
-			boolean hasAnswer = !StringUtils.isBlank(similarPost.getAnswerid());
-			sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");
-			sb.append(similarPost.getVotes());
-			sb.append("</span> <a href=\"").append(similarPost.getPostLink(false, false)).append("\">");
-			sb.append(similarPost.getTitle()).append("</a><br>");
+			if (utils.isMod(authUser) || utils.canAccessSpace(authUser, similarPost.getSpace())) {
+				boolean hasAnswer = !StringUtils.isBlank(similarPost.getAnswerid());
+				sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");
+				sb.append(similarPost.getVotes());
+				sb.append("</span> <a href=\"").append(similarPost.getPostLink(false, false)).append("\">");
+				sb.append(similarPost.getTitle()).append("</a><br>");
+			}
 		}
 		res.setCharacterEncoding("UTF-8");
 		res.getWriter().print(sb.toString());

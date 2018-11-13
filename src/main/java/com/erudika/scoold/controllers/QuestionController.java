@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
@@ -85,14 +86,14 @@ public class QuestionController {
 	public String get(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
 
-
 		Post showPost = pc.read(id);
 		if (showPost == null || !ParaObjectUtils.typesMatch(showPost)) {
 			return "redirect:" + QUESTIONSLINK;
 		}
 		Profile authUser = utils.getAuthUser(req);
-		if (!utils.isMod(authUser) && !utils.canAccessSpace(authUser, showPost.getSpace())) {
-			return "redirect:" + QUESTIONSLINK;
+		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
+			return "redirect:" + (utils.isDefaultSpacePublic() ?
+					QUESTIONSLINK : SIGNINLINK + "?returnto=" + showPost.getPostLink(false, false));
 		}
 
 		Pager itemcount = utils.getPager("page", req);

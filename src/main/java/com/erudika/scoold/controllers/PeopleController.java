@@ -22,6 +22,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class PeopleController {
 	@GetMapping
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req, Model model) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
+		}
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		// [space query filter] + original query string
