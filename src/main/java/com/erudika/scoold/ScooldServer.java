@@ -204,6 +204,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		String accessKey = Config.getConfigParam("access_key", "x");
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
+		pc.setChunkSize(Config.getConfigInt("batch_request_size", 0)); // unlimited batch size
 
 		try {
 			boolean connectedToPara = pc.getTimestamp() > 0;
