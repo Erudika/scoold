@@ -169,8 +169,8 @@ public final class ScooldUtils {
 		if (user != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
-			String subject = lang.get("signin.welcome");
-			String body1 = lang.get("signin.welcome.body1") + "<br><br>";
+			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
+			String body1 = Utils.formatMessage(lang.get("signin.welcome.body1"), Config.APP_NAME)  + "<br><br>";
 			String body2 = lang.get("signin.welcome.body2") + "<br><br>";
 			String body3 = "Best, <br>The Scoold team";
 
@@ -252,7 +252,7 @@ public final class ScooldUtils {
 	}
 
 	public String getLanguageCode(HttpServletRequest req) {
-		String cookieLoc = HttpUtils.getCookieValue(req, LOCALE_COOKIE);
+		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
 		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
 		return (cookieLoc != null) ? cookieLoc : requestLocale.getLanguage();
 	}
