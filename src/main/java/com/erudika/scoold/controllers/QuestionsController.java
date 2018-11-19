@@ -190,7 +190,7 @@ public class QuestionsController {
 				}
 				space = "";
 			}
-			setRawCookie(SPACE_COOKIE, space, req, res, false, 365 * 24 * 60 * 60);
+			setRawCookie(SPACE_COOKIE, space, req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 		}
 		res.setStatus(200);
 		return "base";
