@@ -253,6 +253,8 @@ public abstract class Post extends Sysprop {
 
 		if (canHaveChildren()) {
 			for (ParaObject reply : client().getChildren(this, Utils.type(Reply.class))) {
+				// delete answer
+				children.add(reply);
 				// delete Comments
 				children.addAll(client().getChildren(reply, Utils.type(Comment.class)));
 				// delete Revisions
