@@ -18,6 +18,7 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.utils.Config;
+import java.util.Collection;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,6 +114,13 @@ public final class HttpUtils {
 		cookie.setPath("/");
 		cookie.setSecure(req.isSecure());
 		res.addCookie(cookie);
+		// temporary solution util SameSite is supported by the JDK
+		Collection<String> cookieHeaders = res.getHeaders("Set-Cookie");
+		for (String header : cookieHeaders) {
+			if (!StringUtils.containsIgnoreCase(header, "SameSite")) {
+				res.setHeader("Set-Cookie", header + "; SameSite=strict");
+			}
+		}
 	}
 
 	/**
