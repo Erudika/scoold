@@ -22,28 +22,34 @@
 	<hr>
 
 	<h4>
-		$!lang.get('spaces.title')
-		<a href="#" class="btn waves-effect waves-light mbs phm next-div-toggle" title="Add space"><i class="fa fa-plus"></i></a>
+		$!lang.get('spaces.title') #showcount($itemcount.count)
 	</h4>
 
-	<div class="hide mbl">
+	<div class="mbl">
 		<form method="post" id="create-space-form" action="$adminlink/add-space">
-			#sectoken(false "CREATE_SPACE")
-			<div class="input-field">
-				<i class="fa fa-th-large pvm prefix grey-text"></i>
-				<label for="name_text">$!lang.get('name')</label>
-				<input type="text" id="name_text" name="space" class="validate" length="255" minlength="2" required>
+			##sectoken(false "CREATE_SPACE") ## BREAKS AJAX - NOT USED
+			<div class="row">
+				<div class="col s12 m6">
+					<div class="input-field">
+						<i class="fa fa-th-large pvm prefix grey-text"></i>
+						<label for="name_text">$!lang.get('name')</label>
+						<input type="text" id="name_text" name="space" class="validate" length="255" minlength="2" required>
+						<span class="helper-text" data-error="Space is invalid or already exists!"></span>
+					</div>
+				</div>
+				<div class="col s12 m6">
+					<button class="btn mtl waves-effect waves-light" type="submit">
+						<i class="fa fa-plus left"></i>$!lang.get('add')
+					</button>
+				</div>
 			</div>
-			<button class="btn mtl waves-effect waves-light" type="submit">
-				<i class="fa fa-plus left"></i>$!lang.get('add')
-			</button>
 		</form>
 	</div>
 
-	<div class="row">
-		<div class="col s12 m6 l3">
-			<div class="card-panel spacebox dashedborder z-depth-0 center-align grey-text">
-				<p class="pvs mvn">
+	<div class="row spaces-wrapper">
+		<div class="col s12 m6 l3 spacebox">
+			<div class="card-panel center-align grey-text">
+				<p class="mediumText">
 					#if($isDefaultSpacePublic)
 						<i class="fa fa-unlock green-text" title="Public"></i>
 					#else
@@ -53,17 +59,7 @@
 				</p>
 			</div>
 		</div>
-		#if($spaces)
-			#foreach($space in $spaces)
-			<div class="col s12 m6 l3">
-				<div class="card-panel spacebox">
-					<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped post-refresh ptm"
-						 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
-					 <p class="largeText">$space.name</p>
-				</div>
-			</div>
-			#end
-		#end
+		#paginate("\#spacespage(\$spaces)" $itemcount "" "page" )
 	</div>
 
 

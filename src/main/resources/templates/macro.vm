@@ -61,6 +61,22 @@
 		#commentbox($comment)
 	#end
 #end
+####################################
+#macro(spacebox $space )
+<div class="col s12 m6 l3 spacebox">
+	<div class="card-panel center-align">
+		<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped pts delete-space"
+			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
+		<p class="mediumText">$space.name</p>
+	</div>
+</div>
+#end
+####################################
+#macro(spacespage $spaces )
+	#foreach($space in $spaces)
+		#spacebox($space)
+	#end
+#end
 ################# QUESTIONS MACROS #####################
 #macro(tagsbox $tags $link)
 	#foreach($showtag in $tags)

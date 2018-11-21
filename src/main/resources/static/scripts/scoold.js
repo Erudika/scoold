@@ -369,6 +369,27 @@ $(function () {
 	});
 
 	/****************************************************
+     *                    ADMIN
+     ****************************************************/
+
+    submitFormBind("form#create-space-form", function (data, status, xhr, form) {
+		clearForm(form);
+		$('.spaces-wrapper div:eq(0)').after(data);
+		$('#name_text').removeClass("invalid");
+	}, function () {
+		$('#name_text').addClass("invalid");
+	});
+
+	$(document).on("click", "a.delete-space", function () {
+		var elem = $(this);
+		return areYouSure(function () {
+			elem.closest(".spacebox").fadeOut("fast", function () { elem.remove(); });
+			$.post(elem.attr("href"));
+		}, rusuremsg, false);
+		return false;
+	});
+
+	/****************************************************
      *                    REPORTS
      ****************************************************/
 

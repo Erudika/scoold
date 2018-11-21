@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -73,25 +75,34 @@ public class AdminController {
 			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");
 		}
 		configMap.putAll(System.getenv());
+
+		Pager itemcount = utils.getPager("page", req);
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("admin.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
 		model.addAttribute("endpoint", pc.getEndpoint());
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
-		model.addAttribute("spaces", pc.findQuery("scooldspace", "*"));
+		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
+		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
 		return "base";
 	}
 
 	@PostMapping("/add-space")
-	public String addSpace(@RequestParam String space, HttpServletRequest req, Model model) {
+	public String addSpace(@RequestParam String space, HttpServletRequest req, HttpServletResponse res, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
+			space = Utils.abbreviate(space, 255);
 			String spaceId = Utils.noSpaces(Utils.stripAndTrim(space, " "), "-");
 			if ("default".equalsIgnoreCase(space) || pc.getCount("scooldspace") >= MAX_SPACES ||
 					pc.read("scooldspace:" + spaceId) != null) {
-				return "redirect:" + ADMINLINK + "?code=7&error=true";
+				if (utils.isAjaxRequest(req)) {
+					res.setStatus(400);
+					return "space";
+				} else {
+					return "redirect:" + ADMINLINK + "?code=7&error=true";
+				}
 			} else {
 				space = space.replaceAll(":", "");
 				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
@@ -100,22 +111,33 @@ public class AdminController {
 				pc.create(s);
 				authUser.getSpaces().add(s.getId() + ":" + space);
 				authUser.update();
+				model.addAttribute("space", s);
 			}
 		} else {
 			model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("requiredfield")));
 		}
-		return "redirect:" + ADMINLINK;
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "space";
+		} else {
+			return "redirect:" + ADMINLINK;
+		}
 	}
 
 	@PostMapping("/remove-space")
-	public String removeSpace(@RequestParam String space, HttpServletRequest req) {
+	public String removeSpace(@RequestParam String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
 			pc.delete(new Sysprop(utils.getSpaceId(space)));
 			authUser.getSpaces().remove(space);
 			authUser.update();
 		}
-		return "redirect:" + ADMINLINK;
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "space";
+		} else {
+			return "redirect:" + ADMINLINK;
+		}
 	}
 
 	@PostMapping

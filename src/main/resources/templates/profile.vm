@@ -181,8 +181,8 @@
 
 					<div class="input-field">
 						<i class="fa fa-map-marker prefix"></i>
-						<label for="location_text">$!{lang.get("profile.about.location")}</label>
-						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}">
+						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"
+									 placeholder="$!{lang.get('profile.about.location')}">
 					</div>
 
 					<div class="input-field">
