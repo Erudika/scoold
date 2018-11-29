@@ -62,6 +62,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	static {
 		// tells ParaClient where to look for classes that implement ParaObject
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
+		System.setProperty("para.auth_cookie", Config.getRootAppIdentifier().concat("-auth"));
 		System.setProperty("server.port", String.valueOf(getServerPort()));
 		System.setProperty("server.servlet.context-path", getServerContextPath());
 	}
