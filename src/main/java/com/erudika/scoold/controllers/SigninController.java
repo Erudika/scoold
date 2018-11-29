@@ -40,7 +40,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import javax.ws.rs.core.HttpHeaders;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 
@@ -99,7 +102,7 @@ public class SigninController {
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
-			HttpUtils.setStateParam(Config.AUTH_COOKIE, jwt, req, res, true);
+			setAuthCookie(jwt, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
@@ -245,7 +248,7 @@ public class SigninController {
 			User u = pc.signIn(provider, accessToken, false);
 			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
 				// the user password in this case is a Bearer token (JWT)
-				HttpUtils.setStateParam(Config.AUTH_COOKIE, u.getPassword(), req, res, true);
+				setAuthCookie(u.getPassword(), req, res);
 			} else {
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
@@ -341,5 +344,20 @@ public class SigninController {
 			}
 		}
 		return false;
+	}
+
+	private void setAuthCookie(String jwt, HttpServletRequest req, HttpServletResponse res) {
+		int maxAge = Config.SESSION_TIMEOUT_SEC;
+		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
+				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.AUTH_COOKIE).append("=").append(jwt).append(";");
+		sb.append("Path=/;");
+		sb.append("Expires=").append(expires).append(";");
+		sb.append("Max-Age=").append(maxAge).append(";");
+		sb.append("HttpOnly;");
+		sb.append("SameSite=Strict");
+		res.addHeader(HttpHeaders.SET_COOKIE, sb.toString());
 	}
 }
