@@ -23,7 +23,7 @@
 							</div>
 							<div class="input-field mvm">
 								<label>$!lang.get('signup.form.email')</label>
-								<input id="email" type="email" name="email" value="$!bademail" required>
+								<input id="email" type="email" name="email" value="$!bademail" pattern="$!{emailPattern}" required>
 								#getmessagebox("red white-text" $error.get("email"))
 							</div>
 							<div class=" input-field mvm">

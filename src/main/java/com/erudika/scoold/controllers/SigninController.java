@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
@@ -120,6 +121,7 @@ public class SigninController {
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signup.title"));
 		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("emailPattern", Email.EMAIL_PATTERN);
 		model.addAttribute("register", true);
 		model.addAttribute("verify", verify);
 		if (id != null && token != null) {
