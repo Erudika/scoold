@@ -72,7 +72,7 @@ if (LINKEDIN_APP_ID && LINKEDIN_APP_ID.trim() !== "") {
 	$('#in-login-btn').on('click', function () {
 		window.location = "https://www.linkedin.com/oauth/v2/authorization?" +
 				"response_type=code&client_id=" + LINKEDIN_APP_ID +
-				"&scope=r_basicprofile%20r_emailaddress&state=" + APPID +
+				"&scope=r_liteprofile%20r_emailaddress&state=" + APPID +
 				"&redirect_uri=" + ENDPOINT + "/linkedin_auth";
 		return false;
 	});
