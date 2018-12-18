@@ -133,17 +133,17 @@ para.google_client_id = "123-abcd.apps.googleusercontent.com"
 para.is_default_space_public = true
 ```
 
-**Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint` becomes `para_endpoint`.
-These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
+**Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint`
+becomes `para_endpoint`. These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
 
 ### Docker
 
 Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.
-First, create an `application.conf` file in a directory and run this command:
+First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
 
 ```
-$ docker run -ti -p 8080:8080 --rm -v $(pwd)/application.conf:/para/application.conf \
-  -e JAVA_OPTS="-Dconfig.file=/para/application.conf" erudikaltd/scoold
+$ docker run -ti -p 8080:8080 --rm -v $(pwd)/application.conf:/scoold/application.conf \
+  -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold
 ```
 
 **Environment variables**
