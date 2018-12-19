@@ -103,11 +103,6 @@ public class FeedbackController {
 		return "base";
 	}
 
-	@GetMapping("/{sortby}")
-	public String sorted(@PathVariable String sortby, HttpServletRequest req, Model model) {
-		return get(sortby, req, model);
-	}
-
 	@GetMapping("/write")
 	public String write(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {

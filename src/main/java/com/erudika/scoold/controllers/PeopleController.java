@@ -37,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,11 +103,5 @@ public class PeopleController {
 			utils.getParaClient().invokePatch("_batch", Entity.json(toUpdate));
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
-	}
-
-	@GetMapping("/{sortby}")
-	public String sorted(@PathVariable String sortby, @RequestParam(required = false) String q,
-			HttpServletRequest req, Model model) {
-		return get(sortby, q, req, model);
 	}
 }
