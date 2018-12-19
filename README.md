@@ -142,7 +142,7 @@ Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub
 First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
 
 ```
-$ docker run -ti -p 8080:8080 --rm -v $(pwd)/application.conf:/scoold/application.conf \
+$ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold/application.conf \
   -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold
 ```
 
