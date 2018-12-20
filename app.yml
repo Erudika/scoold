@@ -13,4 +13,4 @@ config:
     - wget
     - openjdk-11-jre
   runcmd:
-    - "wget https://github.com/Erudika/scoold/releases/download/1.31.1/scoold-1.31.1.jar && java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold-*.jar"
+    - "cd /home/scoold/ && wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh"

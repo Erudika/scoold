@@ -69,8 +69,11 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Click one of the quick deploy buttons:
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
-[![Install on DigitalOcean](http://installer.71m.us/button.svg)](http://installer.71m.us/install?url=https://github.com/Erudika/scoold)
+<a href="http://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
+	<img src="http://installer.71m.us/button.svg" height="32" alt="btn">
+</a>
 
 **OR**
 
