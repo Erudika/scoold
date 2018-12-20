@@ -5,12 +5,12 @@
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Scoold** is a Q&A platform written in Java. The project was created back in 2008, released in 2012 as social network for
-schools inspired by StackOverflow, and as of 2017 it has been refactored, repackaged and open-sourced.
-The primary goal of this project is educational but it can also work great as a Q&A/support section for your website.
+schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
-Scoold can run on Heroku or any other PaaS. It's lightweight (~4000 LOC) - the backend is handled by a separate service called
-[Para](https://github.com/Erudika/para). Scoold does not require a database, and the controller logic is really simple
-because all the heavy lifting is delegated to Para. This makes the code easy to read and can be learned quickly by junior developers.
+Scoold can run anywhere -- Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~4000 LOC),
+the backend is handled by a separate service called [Para](https://github.com/Erudika/para). Scoold does not require a
+database, and the controller logic is really simple because all the heavy lifting is delegated to Para.
+This makes the code easy to read and can be learned quickly by junior developers.
 
 **This project is fully funded and supported by [Erudika](https://erudika.com) - an independent, bootstrapped company.**
 
@@ -51,19 +51,17 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 
 ### Live Demo
 
-*Scoold is deployed on a free dyno and it might take a minute to wake up.*
+*The demo is deployed on a free dyno and it might take a minute to wake up.*
 ### [Live demo on Heroku](https://live.scoold.com)
 
-### Quick Start
-
-**Note: The Para backend server is deployed separately and is required for Scoold to run.**
+### Quick Start (option 1 - managed Para backend, easier)
 
 0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
 This isn't necessary if you're planning to login with LDAP, SAML or with a email and password.
 Save the obtained API keys in `application.conf`, as shown below.
 
-**Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
+> **Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
 `https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
 appropriate authentication endpoint. For example, for GitHub, the redirect URL could be: `https://paraio.com/github_auth`.
 
@@ -75,7 +73,9 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 	<img src="http://installer.71m.us/button.svg" height="32" alt="btn">
 </a>
 
-**OR**
+### Quick Start (option 2 - self-hosted Para backend, harder)
+
+**Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf` OR [run Para locally on port 8080](https://paraio.org/docs/#001-intro)
 2. Create a *separate* `application.conf` for Scoold and configure it to connect to Para on port 8080
@@ -92,7 +92,7 @@ $ para-cli new-app "scoold" --name "Scoold"
 
 > **Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
-The settings shown below are all meant to part of the Scoold config file.
+The settings shown below are all meant to be part of the Scoold config file.
 
 [Read the Para docs for more information.](https://paraio.org/docs)
 
@@ -138,9 +138,6 @@ para.google_client_id = "123-abcd.apps.googleusercontent.com"
 para.is_default_space_public = true
 ```
 
-**Note**: On Heroku, the config variables above **must** be set without dots ".", for example `para.endpoint`
-becomes `para_endpoint`. These are set through the Heroku admin panel, under "Settings", "Reveal Config Vars".
-
 ### Docker
 
 Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.
@@ -181,22 +178,43 @@ Then you can start both Scoold and Para with Docker Compose like so:
 $ docker-compose up
 ```
 
-### Content-Security-Policy header
+### Deploying Scoold to Heroku
 
-This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
-The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
-```ini
-default-src 'self';
-base-uri 'self';
-connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com;
-frame-src 'self' accounts.google.com staticxx.facebook.com;
-font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com;
-script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com www.googletagmanager.com code.jquery.com static.scoold.com;
-style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com;
-img-src 'self' https: data:; report-uri /reports/cspv
-```
+**One-click deployment**
 
-**Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+
+**Manual deployment**
+
+1. First, clone this repository and create a new Heroku app
+2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
+3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown above.
+4. Open the app in your browser at `https://{appname}.herokuapp.com`.
+
+**Note**: On Heroku, all configuration variables (config vars) **must** be set without dots ".", for example `para.endpoint`
+becomes `para_endpoint`.
+
+It's also helpful to install the Heroku CLI tool.
+
+### Deploying Scoold to DigitalOcean
+
+<a href="http://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
+	<img src="http://installer.71m.us/button.svg" height="32" alt="btn">
+</a>
+
+1. Click the button above and wait for the DO installer to finish.
+2. Send the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/scoold`
+3. Restart Scoold with `ssh root@123.234.12.34 "systemctl restart scoold.service"`
+4. Go to `http://123.234.12.34` (use the correct IP address)
+5. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet
+
+### Deploying Scoold to AWS
+
+*TODO*
+
+### Deploying Scoold to Azure
+
+*TODO*
 
 ### Deploying Scoold to a servlet container
 
@@ -213,6 +231,23 @@ Scoold is compatible with Tomcat 9+.
 
 To deploy Scoold at a different path instead of the root path, set `para.context_path = "/newpath`. The default value
 for this setting is blank, meaning Scoold will be deployed at the root directory.
+
+### Content-Security-Policy header
+
+This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
+The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
+```ini
+default-src 'self';
+base-uri 'self';
+connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com;
+frame-src 'self' accounts.google.com staticxx.facebook.com;
+font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com;
+script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com www.googletagmanager.com code.jquery.com static.scoold.com;
+style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com;
+img-src 'self' https: data:; report-uri /reports/cspv
+```
+
+**Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
 
 ### Serving static files from a CDN
 
@@ -560,10 +595,6 @@ Alternatively, clone this repository and edit the following:
 - **JavaScript** files can be found in `src/main/resources/static/scripts`
 - **Images** are in located in `src/main/resources/static/images/`
 
-To deploy, setup Heroku as a remote to your modified Scoold repo and push your changes with:
-```
-$ git push heroku master
-```
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
 ## Translating Scoold
