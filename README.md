@@ -58,17 +58,19 @@ because all the heavy lifting is delegated to Para. This makes the code easy to 
 
 **Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
-0. You first *need* to create a developer app with [Facebook](https://developers.facebook.com),
-[Google](https://console.developers.google.com) and **every other identity provider** that you wish to use.
-This isn't necessary only if you enable LDAP, SAML or password authentication.
+0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
+[Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
+This isn't necessary if you're planning to login with LDAP, SAML or with a email and password.
 Save the obtained API keys in `application.conf`, as shown below.
 
 **Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
 `https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
 appropriate authentication endpoint. For example, for GitHub, the redirect URL could be: `https://paraio.com/github_auth`.
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf`
-2. Click here => [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
+2. Click one of the quick deploy buttons:
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
+[![Install on DigitalOcean](http://installer.71m.us/button.svg)](http://installer.71m.us/install?url=https://github.com/Erudika/scoold)
 
 **OR**
 

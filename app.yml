@@ -1,0 +1,16 @@
+# DigitalOcean installer.71m.us
+
+name: Scoold
+image: ubuntu-18-10-x64
+min_size: 1gb
+config:
+  #cloud-config
+  users:
+    - name: scoold
+      groups: sudo
+      shell: /bin/bash
+  packages:
+    - wget
+    - openjdk-11-jre
+  runcmd:
+    - "wget https://github.com/Erudika/scoold/releases/download/1.31.1/scoold-1.31.1.jar && java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold-*.jar"
