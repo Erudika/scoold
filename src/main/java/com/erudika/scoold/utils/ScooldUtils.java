@@ -55,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -443,7 +444,7 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceName(String space) {
-		return StringUtils.replaceAll(space, "^scooldspace:[^:]+:", "");
+		return RegExUtils.replaceAll(space, "^scooldspace:[^:]+:", "");
 	}
 
 	public String getSpaceId(String space) {
@@ -464,9 +465,9 @@ public final class ScooldUtils {
 		String q = StringUtils.trimToEmpty(query);
 		if (qf.isEmpty() || qf.length() > 1) {
 			q = q.replaceAll("[\\*\\?]", "").trim();
-			q = StringUtils.removeAll(q, "AND");
-			q = StringUtils.removeAll(q, "OR");
-			q = StringUtils.removeAll(q, "NOT");
+			q = RegExUtils.removeAll(q, "AND");
+			q = RegExUtils.removeAll(q, "OR");
+			q = RegExUtils.removeAll(q, "NOT");
 			q = q.trim();
 			defaultQuery = "";
 		}
