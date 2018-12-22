@@ -23,6 +23,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
+import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
 import java.util.EnumSet;
@@ -214,6 +215,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 			}
 		} catch (Exception e) {
 			logger.error("No connection to Para backend - make sure that your keys are valid.");
+			ScooldUtils.setConnectionError(true);
 			return pc;
 		}
 
@@ -264,7 +266,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 			pc.setAppSettings(settings);
 		} catch (Exception e) {
 			logger.error("No connection to Para backend.");
+			ScooldUtils.setConnectionError(true);
 		}
+		ScooldUtils.setConnectionError(false);
 		return pc;
 	}
 

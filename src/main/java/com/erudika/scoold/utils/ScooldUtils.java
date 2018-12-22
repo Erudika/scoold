@@ -74,6 +74,7 @@ public final class ScooldUtils {
 	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
+	private static boolean connectionError = false;
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -246,6 +247,14 @@ public final class ScooldUtils {
 
 	public boolean isDefaultSpacePublic() {
 		return Config.getConfigBoolean("is_default_space_public", true);
+	}
+
+	public static boolean connectionError() {
+		return connectionError;
+	}
+
+	public static void setConnectionError(boolean value) {
+		connectionError = value;
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
