@@ -210,24 +210,25 @@ It's also helpful to install the Heroku CLI tool.
 
 ### Deploying Scoold to AWS
 
-<a href="https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Tomcat&tierName=WebServer&instanceType=t1.micro" title="Deploy to AWS">
+<a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
 	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
 </a>
+
+**Lightsail** (recommended)
+
+1. Click the button above
+2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS"
+3. Click "+ Add launch script" and copy/paste the contents of [installer.sh](https://github.com/Erudika/scoold/blob/master/installer.sh)
+4. Download the default SSH key pair or upload your own
+5. Choose the 512MB instance or larger (1GB recommended)
+6. Wait for the instance and open the IP address in your browser
 
 **Elatic Beanstalk**
 
 1. Clone this repo and change directory to it
 2. Generate a WAR package with `mvn -Pwar package`
-3. Click the button above
-4. Upload the WAR package `target/scoold-x.y.z.war` to Beanstalk and hit "Create"
-
-**Lightsail**
-
-1. [Create a new instance](https://lightsail.aws.amazon.com/ls/webapp/create/instance) in the region of your choice
-2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS"
-3. Click "+ Add launch script" and copy/paste the contents of [installer.sh](https://github.com/Erudika/scoold/blob/master/installer.sh)
-4. Download the default SSH key pair or upload your own
-5. Wait for the instance and open the IP address in your browser
+3. [Create a new Beanstalk web app](https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Tomcat&tierName=WebServer&instanceType=t1.micro)
+4. Upload the WAR package `target/scoold-x.y.z.war` to Beanstalk, modify any additional options and hit "Create"
 
 ### Deploying Scoold to Azure
 
