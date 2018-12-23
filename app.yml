@@ -4,13 +4,12 @@ name: Scoold
 image: ubuntu-18-10-x64
 min_size: 1gb
 config:
-  #cloud-config
   users:
-    - name: scoold
+    - name: ubuntu
       groups: sudo
       shell: /bin/bash
   packages:
     - wget
     - openjdk-11-jre
   runcmd:
-    - "cd /home/scoold/ && wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh"
+    - "cd /home/ubuntu/ && wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh"

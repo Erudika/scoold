@@ -210,7 +210,7 @@ It's also helpful to install the Heroku CLI tool.
 
 ### Deploying Scoold to AWS
 
-<a href="https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Java&tierName=WebServer" title="Deploy to AWS">
+<a href="https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Tomcat&tierName=WebServer&instanceType=t1.micro" title="Deploy to AWS">
 	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
 </a>
 
@@ -219,7 +219,7 @@ It's also helpful to install the Heroku CLI tool.
 1. Clone this repo and change directory to it
 2. Generate a WAR package with `mvn -Pwar package`
 3. Click the button above
-4. Upload the WAR package to Beanstalk
+4. Upload the WAR package `target/scoold-x.y.z.war` to Beanstalk and hit "Create"
 
 **Lightsail**
 

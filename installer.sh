@@ -1,12 +1,16 @@
 #!/bin/bash
 set -e -x
 
-# Ubuntu/DigitalOcean installer script
+# Lightsail/DigitalOcean installer script for Ubuntu
 VERSION="1.31.1"
 PORT="8000"
+WORKDIR="/home/ubuntu"
 sfile="/etc/systemd/system/scoold.service"
+apt-get update && apt-get install -y wget openjdk-11-jre &&
 wget https://github.com/Erudika/scoold/releases/download/${VERSION}/scoold-${VERSION}.jar && \
-chown scoold scoold-*.jar && chmod +x scoold-*.jar
+mv scoold-${VERSION}.jar $WORKDIR && \
+chown ubuntu:ubuntu ${WORKDIR}/scoold-${VERSION}.jar && \
+chmod +x ${WORKDIR}/scoold-${VERSION}.jar
 
 touch $sfile
 cat << EOF > $sfile
@@ -14,10 +18,10 @@ cat << EOF > $sfile
 Description=Scoold
 After=syslog.target
 [Service]
-WorkingDirectory=/home/scoold
+WorkingDirectory=${WORKDIR}
 SyslogIdentifier=Scoold
-ExecStart=/bin/bash -c "java -jar -Dserver.port=${PORT} -Dconfig.file=/home/scoold/application.conf scoold-*.jar"
-User=scoold
+ExecStart=/bin/bash -c "java -jar -Dserver.port=${PORT} -Dconfig.file=${WORKDIR}/application.conf scoold-*.jar"
+User=ubuntu
 [Install]
 WantedBy=multi-user.target
 EOF
