@@ -199,7 +199,7 @@ It's also helpful to install the Heroku CLI tool.
 ### Deploying Scoold to DigitalOcean
 
 <a href="http://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
-	<img src="http://installer.71m.us/button.svg" height="32" alt="btn">
+	<img src="http://installer.71m.us/button.svg" height="32" alt="deploy to digitalocean button">
 </a>
 
 1. Click the button above and wait for the DO installer to finish.
@@ -210,11 +210,37 @@ It's also helpful to install the Heroku CLI tool.
 
 ### Deploying Scoold to AWS
 
-*TODO*
+<a href="https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Java&tierName=WebServer" title="Deploy to AWS">
+	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
+</a>
+
+**Elatic Beanstalk**
+
+1. Clone this repo and change directory to it
+2. Generate a WAR package with `mvn -Pwar package`
+3. Click the button above
+4. Upload the WAR package to Beanstalk
+
+**Lightsail**
+
+1. [Create a new instance](https://lightsail.aws.amazon.com/ls/webapp/create/instance) in the region of your choice
+2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS"
+3. Click "+ Add launch script" and copy/paste the contents of [installer.sh](https://github.com/Erudika/scoold/blob/master/installer.sh)
+4. Download the default SSH key pair or upload your own
+5. Wait for the instance and open the IP address in your browser
 
 ### Deploying Scoold to Azure
 
 *TODO*
+
+### Deploying Scoold to Google App Engine
+
+1. Clone this repo and change directory to it
+2. Create a project in the Google Cloud Platform Console
+3. Install the Google Cloud SDK
+4. Delete `Dockerfile` and `app.yml`
+4. Edit `app.gae.yaml` to suit your needs
+6. Deploy it with `gcloud preview app deploy app.gae.yaml`
 
 ### Deploying Scoold to a servlet container
 
