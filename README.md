@@ -7,7 +7,7 @@
 **Scoold** is a Q&A platform written in Java. The project was created back in 2008, released in 2012 as social network for
 schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
-Scoold can run anywhere -- Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~4000 LOC),
+Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~4000 LOC),
 the backend is handled by a separate service called [Para](https://github.com/Erudika/para). Scoold does not require a
 database, and the controller logic is really simple because all the heavy lifting is delegated to Para.
 This makes the code easy to read and can be learned quickly by junior developers.
@@ -68,9 +68,14 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Click one of the quick deploy buttons:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
-<a href="http://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
-	<img src="http://installer.71m.us/button.svg" height="32" alt="btn">
+<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
+	<img src="https://www.herokucdn.com/deploy/button.svg" alt="btn">
+</a>
+<a href="https://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
+	<img src="https://installer.71m.us/button.svg" height="32" alt="btn">
+</a>
+<a href="https://deploy.azure.com/?repository=https://github.com/Erudika/scoold" title="Install on Azure">
+	<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="btn">
 </a>
 
 ### Quick Start (option 2 - self-hosted Para backend, harder)
@@ -198,8 +203,8 @@ It's also helpful to install the Heroku CLI tool.
 
 ### Deploying Scoold to DigitalOcean
 
-<a href="http://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
-	<img src="http://installer.71m.us/button.svg" height="32" alt="deploy to digitalocean button">
+<a href="https://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
+	<img src="https://installer.71m.us/button.svg" height="32" alt="deploy to digitalocean button">
 </a>
 
 1. Click the button above and wait for the DO installer to finish.
@@ -232,7 +237,11 @@ It's also helpful to install the Heroku CLI tool.
 
 ### Deploying Scoold to Azure
 
-*TODO*
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/Erudika/scoold)
+
+1. Click the button above
+2. Fill in the required parameters
+3. Launch the container
 
 ### Deploying Scoold to Google App Engine
 
