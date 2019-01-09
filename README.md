@@ -56,6 +56,8 @@ This makes the code easy to read and can be learned quickly by junior developers
 
 ### Quick Start (option 1 - managed Para backend, easier)
 
+[JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project.
+
 0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
 This isn't necessary if you're planning to login with LDAP, SAML or with a email and password.
