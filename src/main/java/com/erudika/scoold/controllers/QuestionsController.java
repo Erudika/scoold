@@ -203,19 +203,7 @@ public class QuestionsController {
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
 		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
-		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
-		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
-
-		if ("activity".equals(sortby)) {
-			itemcount.setSortby("updated");
-		} else if ("votes".equals(sortby)) {
-			itemcount.setSortby("votes");
-		} else if ("unanswered".equals(sortby)) {
-			itemcount.setSortby("timestamp");
-			itemcount.setDesc(false);
-			query = spaceFiltered ? spaceFilter + " AND properties.answercount:0" :
-					(utils.canAccessSpace(authUser, currentSpace) ? "properties.answercount:0" : "");
-		}
+		String query = getQuestionsQuery(authUser, sortby, currentSpace, itemcount);
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
@@ -259,5 +247,27 @@ public class QuestionsController {
 			return sb.toString();
 		}
 		return "";
+	}
+
+	private String getQuestionsQuery(Profile authUser, String sortby, String currentSpace, Pager itemcount) {
+		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
+		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
+		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
+		if ("activity".equals(sortby)) {
+			itemcount.setSortby("updated");
+		} else if ("votes".equals(sortby)) {
+			itemcount.setSortby("votes");
+		} else if ("unanswered".equals(sortby)) {
+			itemcount.setSortby("timestamp");
+			itemcount.setDesc(false);
+			String q = "properties.answercount:0";
+			query = spaceFiltered ? spaceFilter + " AND " + q : (utils.canAccessSpace(authUser, currentSpace) ? q : "");
+		} else if ("unapproved".equals(sortby)) {
+			itemcount.setSortby("timestamp");
+			itemcount.setDesc(false);
+			String q = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]";
+			query = spaceFiltered ? spaceFilter + " AND " + q : (utils.canAccessSpace(authUser, currentSpace) ? q : "");
+		}
+		return query;
 	}
 }

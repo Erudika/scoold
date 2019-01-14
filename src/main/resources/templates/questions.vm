@@ -53,7 +53,7 @@
 			</form>
 		</div>
 	#else
-		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'filter': ""} )
+		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'unapproved': "", 'filter': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<div class="right mtl ptl">
 			<div class="mvm">
@@ -61,6 +61,7 @@
 				<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
 				<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
 				<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
+				<a href="${questionslink}$!{filter}?sortby=unapproved" class="chip $sortarr.unapproved">$!lang.get("posts.unapproved")</a>
 
 				#if ($authenticated)
 					#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
