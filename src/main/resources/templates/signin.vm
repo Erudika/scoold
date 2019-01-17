@@ -93,7 +93,7 @@
 					#set($rightColSize = "col l8 offset-l2 m10 offset-m1 s12" )
 				#end
 
-				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && $inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled && !$oa2LoginEnabled)
+				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && !$inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled && !$oa2LoginEnabled)
 					#set($leftColSize = "col l6 offset-l3 s12" )
 					#set($rightColSize = "hide" )
 				#end
