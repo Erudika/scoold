@@ -5,9 +5,11 @@ set -e -x
 VERSION="1.31.2"
 PORT="8000"
 WORKDIR="/home/ubuntu"
+JARURL="https://github.com/Erudika/scoold/releases/download/${VERSION}/scoold-${VERSION}.jar"
 sfile="/etc/systemd/system/scoold.service"
+
 apt-get update && apt-get install -y wget openjdk-11-jre &&
-wget https://github.com/Erudika/scoold/releases/download/${VERSION}/scoold-${VERSION}.jar && \
+wget -O scoold-${VERSION}.jar ${JARURL} && \
 mv scoold-${VERSION}.jar $WORKDIR && \
 chown ubuntu:ubuntu ${WORKDIR}/scoold-${VERSION}.jar && \
 chmod +x ${WORKDIR}/scoold-${VERSION}.jar
