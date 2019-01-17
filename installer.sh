@@ -2,7 +2,7 @@
 set -e -x
 
 # Lightsail/DigitalOcean installer script for Ubuntu
-VERSION="1.31.1"
+VERSION="1.31.2"
 PORT="8000"
 WORKDIR="/home/ubuntu"
 sfile="/etc/systemd/system/scoold.service"
