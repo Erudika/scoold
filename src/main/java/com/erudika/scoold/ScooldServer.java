@@ -66,6 +66,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("para.auth_cookie", Config.getRootAppIdentifier().concat("-auth"));
 		System.setProperty("server.port", String.valueOf(getServerPort()));
 		System.setProperty("server.servlet.context-path", getServerContextPath());
+		System.setProperty("server.use-forward-headers", String.valueOf(Config.IN_PRODUCTION));
 	}
 
 	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";

@@ -386,7 +386,6 @@ $(function () {
 			elem.closest(".spacebox").fadeOut("fast", function () { elem.remove(); });
 			$.post(elem.attr("href"));
 		}, rusuremsg, false);
-		return false;
 	});
 
 	/****************************************************
