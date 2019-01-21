@@ -185,6 +185,17 @@ Then you can start both Scoold and Para with Docker Compose like so:
 $ docker-compose up
 ```
 
+### Kubernetes
+
+There's a Helm chart inside the `helm/` folder. First edit `helm/scoold/values.yaml` and then you can deploy Scoold to 
+Kubernetes with a single command:
+
+```
+cd helm; helm install ./scoold
+```
+
+For more info, read the README at `helm/README.md`.
+
 ### Deploying Scoold to Heroku
 
 **One-click deployment**

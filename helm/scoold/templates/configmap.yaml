@@ -1,0 +1,17 @@
+{{- if .Values.applicationConf }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "scoold.name" . }}-config
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: {{ include "scoold.name" . }}
+data:
+{{- range $key, $val := .Values.applicationConf }}
+  application.conf: |
+{{ $key | indent 4 -}}: {{ $val }}
+{{- end -}}
+{{- end -}}
