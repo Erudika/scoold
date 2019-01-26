@@ -126,7 +126,7 @@ para.access_key = "app:scoold"
 # secret key for your Para app
 para.secret_key = "*****************"
 # enable or disable email&password authentication
-para.password_auth_enabled = false
+para.password_auth_enabled = true
 # if false, commenting is allowed after 100+ reputation
 para.new_users_can_comment = true
 # needed for geolocation filtering of posts
@@ -187,7 +187,7 @@ $ docker-compose up
 
 ### Kubernetes
 
-There's a Helm chart inside the `helm/` folder. First edit `helm/scoold/values.yaml` and then you can deploy Scoold to 
+There's a Helm chart inside the `helm/` folder. First edit `helm/scoold/values.yaml` and then you can deploy Scoold to
 Kubernetes with a single command:
 
 ```
