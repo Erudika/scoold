@@ -65,7 +65,7 @@ public class ScooldEmailer implements Emailer {
 					mailSender.send(preparator);
 					logger.debug("Email sent to {}, {}", emails, subject);
 				} catch (MailException ex) {
-					logger.error("Failed to send email. {}", ex.getMessage());
+					logger.error("Failed to send email to [{}] with body [{}]. {}", emails, body, ex.getMessage());
 				}
 			}
 		});
