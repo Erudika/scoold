@@ -720,6 +720,10 @@ You can get support here by submitting an issue. Also you can head over to the G
 Issues related to **Scoold Pro** must be reported to [Erudika/scoold-pro](https://github.com/Erudika/scoold-pro/issues).
 [Paid/priority support is also available](https://erudika.com/#support).
 
+## Blog
+
+### [Read more about Scoold on our blog](https://erudika.com/blog/tags/scoold/)
+
 ## Contributing
 
 1. Fork this repository and clone the fork to your machine
