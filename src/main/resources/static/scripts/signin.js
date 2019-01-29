@@ -38,12 +38,10 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "") {
 	function gpLogin() {
 		if ($('#gp-login-btn').length) {
 			gapi.load('auth2', function(){
-				auth2 = gapi.auth2.init({
+				gapi.auth2.init({
 					client_id: GOOGLE_CLIENT_ID,
-					scope: 'https://www.googleapis.com/auth/plus.me'
-				});
-
-				auth2.attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
+					scope: 'openid email'
+				}).attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
 					window.location = CONTEXT_PATH + "/signin?provider=google&access_token=" +
 							googleUser.getAuthResponse(true).access_token;
 				}, function(error) {
