@@ -232,7 +232,7 @@ It's also helpful to install the Heroku CLI tool.
 	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
 </a>
 
-**Lightsail** (recommended)
+**Lightsail**
 
 1. Click the button above
 2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS"
@@ -240,6 +240,12 @@ It's also helpful to install the Heroku CLI tool.
 4. Download the default SSH key pair or upload your own
 5. Choose the 512MB instance or larger (1GB recommended)
 6. Wait for the instance and open the IP address in your browser
+
+**Elastic Container Service**
+
+1. Find [Scoold on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07M97M63H)
+2. Click "Subscribe" and "Continue to Configuration/Launch"
+3. Follow the usage instructions and pull the container image from the given ECR registry URL
 
 **Elatic Beanstalk**
 
