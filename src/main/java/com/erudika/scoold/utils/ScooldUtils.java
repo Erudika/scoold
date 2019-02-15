@@ -118,7 +118,8 @@ public final class ScooldUtils {
 
 	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
-		if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null) {
+		if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null &&
+				!StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg")) {
 			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = pc.read(Profile.id(u.getId()));
