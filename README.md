@@ -643,6 +643,11 @@ para.logo_width = 90
 para.stylesheet_url = "/style.css"
 ```
 
+You can set a short welcome message for unauthenticated users which will be displayed on the top of the page:
+```
+para.welcome_message = "Hello and welcome to Scoold!"
+```
+
 Alternatively, clone this repository and edit the following:
 
 - **HTML** templates are in `src/main/resources/templates/`
