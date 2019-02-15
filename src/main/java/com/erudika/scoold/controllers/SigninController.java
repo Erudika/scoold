@@ -359,7 +359,7 @@ public class SigninController {
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge).append(";");
 		sb.append("HttpOnly;");
-		sb.append("SameSite=Strict");
+		sb.append("SameSite=Lax");
 		res.addHeader(HttpHeaders.SET_COOKIE, sb.toString());
 	}
 }
