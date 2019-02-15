@@ -122,22 +122,7 @@ public final class ScooldUtils {
 				!StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg")) {
 			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
-				authUser = pc.read(Profile.id(u.getId()));
-				if (authUser == null) {
-					authUser = new Profile(u.getId(), u.getName());
-					authUser.setPicture(u.getPicture());
-					authUser.setAppid(u.getAppid());
-					authUser.setCreatorid(u.getId());
-					authUser.setTimestamp(u.getTimestamp());
-					authUser.setGroups(isRecognizedAsAdmin(u)
-							? User.Groups.ADMINS.toString() : u.getGroups());
-					authUser.create();
-					if (!u.getIdentityProvider().equals("generic")) {
-						sendWelcomeEmail(u, false, req);
-					}
-					logger.info("Created new user '{}' with id={}, groups={}.",
-							u.getName(), authUser.getId(), authUser.getGroups());
-				}
+				authUser = getOrCreateProfile(u, req);
 				boolean update = false;
 				if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
 					logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
@@ -164,6 +149,26 @@ public final class ScooldUtils {
 			}
 		}
 		initCSRFToken(req, res);
+		return authUser;
+	}
+
+	private Profile getOrCreateProfile(User u, HttpServletRequest req) {
+		Profile authUser = pc.read(Profile.id(u.getId()));
+		if (authUser == null) {
+			authUser = new Profile(u.getId(), u.getName());
+			authUser.setPicture(u.getPicture());
+			authUser.setAppid(u.getAppid());
+			authUser.setCreatorid(u.getId());
+			authUser.setTimestamp(u.getTimestamp());
+			authUser.setGroups(isRecognizedAsAdmin(u)
+					? User.Groups.ADMINS.toString() : u.getGroups());
+			authUser.create();
+			if (!u.getIdentityProvider().equals("generic")) {
+				sendWelcomeEmail(u, false, req);
+			}
+			logger.info("Created new user '{}' with id={}, groups={}.",
+					u.getName(), authUser.getId(), authUser.getGroups());
+		}
 		return authUser;
 	}
 
