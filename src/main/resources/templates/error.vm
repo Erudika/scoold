@@ -17,6 +17,10 @@
 		<h2>$!lang.get("error.title")</h2>
 		#end
 		$!status $!reason
+
+		#if($code == "500" && $reason.contains("ConnectException"))
+			<h5 class="red-text">No connection to Para backend.</h5>
+		#end
 		<br>
 	</div>
 </div>

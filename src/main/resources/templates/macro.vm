@@ -736,12 +736,6 @@ $utils.formatDate($date, $format, $currentLocale)
 		#set($hideInfoStrip = "")
 	#end
 
-	#if($scooldUtils.connectionError())
-		#set($infoStripMsg = "No connection to Para backend! Is the configuration file loaded and valid?" )
-		#set($infoStripClass = "red white-text")
-		#set($hideInfoStrip = "")
-	#end
-
 	<noscript>
 		<div class="infostrip errorBox pvm center">
 			<i class="fa fa-warning"></i> $!{lang.get("nojavascript")}

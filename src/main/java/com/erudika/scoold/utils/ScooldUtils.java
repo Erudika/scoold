@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
+import com.erudika.para.Para;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
@@ -47,6 +48,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -74,7 +76,6 @@ public final class ScooldUtils {
 	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
-	private static boolean connectionError = false;
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -113,6 +114,36 @@ public final class ScooldUtils {
 		String admins = Config.getConfigParam("admins", "");
 		if (!StringUtils.isBlank(admins)) {
 			ADMINS.add(admins);
+		}
+	}
+
+	public static void tryConnectToPara(Callable<Boolean> callable) {
+		retryConnection(callable, 0);
+	}
+
+	private static void retryConnection(Callable<Boolean> callable, int retryCount) {
+		try {
+			if (!callable.call()) {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			int maxRetries = Config.getConfigInt("connection_retries_max", 10);
+			int retryInterval = Config.getConfigInt("connection_retry_interval_sec", 10);
+			int count = ++retryCount;
+			logger.error("No connection to Para backend. Retrying connection in {}s (attempt {} of {})...",
+					retryInterval, count, maxRetries);
+			if (maxRetries < 0 || retryCount < maxRetries) {
+				Para.asyncExecute(new Runnable() {
+					public void run() {
+						try {
+							Thread.sleep(retryInterval * 1000);
+						} catch (InterruptedException ex) {
+							logger.error(null, ex);
+						}
+						retryConnection(callable, count);
+					}
+				});
+			}
 		}
 	}
 
@@ -253,14 +284,6 @@ public final class ScooldUtils {
 
 	public boolean isDefaultSpacePublic() {
 		return Config.getConfigBoolean("is_default_space_public", true);
-	}
-
-	public static boolean connectionError() {
-		return connectionError;
-	}
-
-	public static void setConnectionError(boolean value) {
-		connectionError = value;
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {

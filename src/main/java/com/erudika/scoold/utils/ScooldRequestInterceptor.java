@@ -23,6 +23,7 @@ import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Report.ReportType;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
+import java.net.ConnectException;
 import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,7 +57,16 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		if (utils == null) {
 			throw new IllegalStateException("ScooldUtils not initialized properly.");
 		}
-		request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
+		try {
+			request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
+		} catch (Exception e) {
+			if (e.getCause() instanceof ConnectException) {
+				response.setStatus(500);
+				logger.error("No connection to Para backend.", e.getMessage());
+			} else {
+				logger.error("Auth check failed:", e);
+			}
+		}
 		return true;
 	}
 

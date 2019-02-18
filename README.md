@@ -145,6 +145,15 @@ para.google_client_id = "123-abcd.apps.googleusercontent.com"
 para.is_default_space_public = true
 ```
 
+On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
+fail and the settings will not be persisted. If you set the maximum number of retries to `-1` there will be an infinite
+number of attempts to connect to Para. These parameters are controlled by:
+
+```
+para.connection_retries_max = 10
+para.connection_retry_interval_sec = 10
+```
+
 ### Docker
 
 Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.

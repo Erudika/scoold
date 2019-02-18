@@ -209,17 +209,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
 		pc.setChunkSize(Config.getConfigInt("batch_request_size", 0)); // unlimited batch size
 
-		try {
-			boolean connectedToPara = pc.getTimestamp() > 0;
-			if (!connectedToPara) {
-				throw new Exception();
-			}
-		} catch (Exception e) {
-			logger.error("No connection to Para backend - make sure that your keys are valid.");
-			ScooldUtils.setConnectionError(true);
-			return pc;
-		}
-
 		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
 		// update the Scoold App settings through the Para App settings API.
 		Map<String, Object> settings = new HashMap<String, Object>();
@@ -263,13 +252,11 @@ public class ScooldServer extends SpringBootServletInitializer {
 		// URLs for success and failure
 		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
-		try {
+
+		ScooldUtils.tryConnectToPara(() -> {
 			pc.setAppSettings(settings);
-		} catch (Exception e) {
-			logger.error("No connection to Para backend.");
-			ScooldUtils.setConnectionError(true);
-		}
-		ScooldUtils.setConnectionError(false);
+			return true;
+		});
 		return pc;
 	}
 
