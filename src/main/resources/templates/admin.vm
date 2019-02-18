@@ -69,6 +69,7 @@
 			<li>
 				<div class="collapsible-header"><i class="fa fa-info-circle"></i>$!lang.get('admin.environment')</div>
 				<div class="collapsible-body">
+					<h4>Scoold version: <tt class="green-text text-darken-2">$!scooldVersion</tt></h4>
 					<h4>Production mode: <tt class="green-text text-darken-2">$!IN_PRODUCTION</tt></h4>
 					<h4>Para app: <tt class="green-text text-darken-2">$!paraapp</tt></h4>
 					<h4>Para version: <tt class="green-text text-darken-2">$!version</tt></h4>

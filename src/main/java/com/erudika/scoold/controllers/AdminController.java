@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+	private final String scooldVersion = getClass().getPackage().getImplementationVersion();
 	private static final int MAX_SPACES = 10;
 
 	private final ScooldUtils utils;
@@ -86,6 +88,7 @@ public class AdminController {
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
+		model.addAttribute("scooldVersion", Optional.ofNullable(scooldVersion).orElse("unknown"));
 		return "base";
 	}
 
