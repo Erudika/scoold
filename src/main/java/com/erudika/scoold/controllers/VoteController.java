@@ -21,6 +21,7 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Votable;
+import com.erudika.para.core.Vote;
 import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
 import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;
@@ -42,6 +43,7 @@ import static com.erudika.scoold.core.Profile.Badge.VOTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -98,35 +100,48 @@ public class VoteController {
 		}
 
 		try {
-			author = pc.read(votable.getCreatorid());
+			List<ParaObject> voteObjects = pc.readAll(Arrays.asList(votable.getCreatorid(),
+					new Vote(authUser.getId(), id, Votable.VoteValue.UP).getId(),
+					new Vote(authUser.getId(), id, Votable.VoteValue.DOWN).getId()));
+
+			author = (Profile) voteObjects.stream().filter((p) -> p instanceof Profile).findFirst().orElse(null);
 			Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
 
+			boolean upvoteExists = voteObjects.stream().anyMatch((v) -> v instanceof Vote && ((Vote) v).isUpvote());
+			boolean downvoteExists = voteObjects.stream().anyMatch((v) -> v instanceof Vote && ((Vote) v).isDownvote());
+			boolean isVoteCorrection = (isUpvote && downvoteExists) || (!isUpvote && upvoteExists);
 			if (isUpvote && pc.voteUp(votable, authUser.getId())) {
 				votes++;
-				authUser.incrementUpvotes();
-				update = true;
 				result = true;
-				int reward = addReward(votable, author, votes);
 
-				if (author != null && reward > 0) {
-					author.addRep(reward);
+				if (author != null) {
+					if (!isVoteCorrection) {
+						author.addRep(addReward(votable, author, votes));
+						authUser.incrementUpvotes();
+						update = true;
+					}
 				}
 			} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
 				votes--;
-				authUser.incrementDownvotes();
-				update = true;
 				result = true;
 
 				hideCommentAndReport(votable, votes, id, req);
 
 				if (author != null) {
+					if (isVoteCorrection) {
+						author.removeRep(addReward(votable, author, votes));
+					} else {
+						authUser.incrementDownvotes();
+					}
 					author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
 					//small penalty to voter
 					authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
+					update = true;
 				}
 			}
 		} catch (Exception ex) {
 			logger.error(null, ex);
+			result = false;
 		}
 		utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= SUPPORTER_IFHAS);
 		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);

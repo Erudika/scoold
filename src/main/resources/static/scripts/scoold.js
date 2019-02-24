@@ -305,19 +305,24 @@ $(function () {
 	});
 
 	$(document).on("click", "a.votelink",  function() {
-		var up = $(this).hasClass("upvote");
-		var votes = $(this).closest("div.votebox").find(".votecount");
+		var dis = $(this);
+		var up = dis.hasClass("upvote");
+		var votes = dis.closest("div.votebox").find(".votecount");
 		var newvotes = parseInt(votes.text(), 10) || 0;
-		$.get(this.href, function(data) {
-			if (data === true ) {
-				if (up) {
-					newvotes++;
-				} else {
-					newvotes--;
+		if (!dis.data("disabled")) {
+			dis.data("disabled", true);
+			$.get(this.href, function(data) {
+				if (data === true) {
+					if (up) {
+						newvotes++;
+					} else {
+						newvotes--;
+					}
 				}
-			}
-			votes.text(newvotes).removeClass("hide");
-		}, "json");
+				votes.text(newvotes).removeClass("hide");
+				dis.removeData("disabled");
+			}, "json");
+		}
 		return false;
 	});
 
