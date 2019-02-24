@@ -46,7 +46,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -87,10 +86,7 @@ public class VoteController {
 	}
 
 	boolean processVoteRequest(boolean isUpvote, String type, String id, HttpServletRequest req) {
-		if (StringUtils.isBlank(id) || StringUtils.isBlank(type)) {
-			return false;
-		}
-		ParaObject votable = pc.read(id);
+		ParaObject votable = pc.read(type, id);
 		Profile author = null;
 		Profile authUser = utils.getAuthUser(req);
 		boolean result = false;
@@ -106,38 +102,19 @@ public class VoteController {
 
 			author = (Profile) voteObjects.stream().filter((p) -> p instanceof Profile).findFirst().orElse(null);
 			Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
-
 			boolean upvoteExists = voteObjects.stream().anyMatch((v) -> v instanceof Vote && ((Vote) v).isUpvote());
 			boolean downvoteExists = voteObjects.stream().anyMatch((v) -> v instanceof Vote && ((Vote) v).isDownvote());
 			boolean isVoteCorrection = (isUpvote && downvoteExists) || (!isUpvote && upvoteExists);
+
 			if (isUpvote && pc.voteUp(votable, authUser.getId())) {
 				votes++;
 				result = true;
-
-				if (author != null) {
-					if (!isVoteCorrection) {
-						author.addRep(addReward(votable, author, votes));
-						authUser.incrementUpvotes();
-						update = true;
-					}
-				}
+				update = updateReputationOnUpvote(votable, votes, authUser, author, isVoteCorrection);
 			} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
 				votes--;
 				result = true;
-
 				hideCommentAndReport(votable, votes, id, req);
-
-				if (author != null) {
-					if (isVoteCorrection) {
-						author.removeRep(addReward(votable, author, votes));
-					} else {
-						authUser.incrementDownvotes();
-					}
-					author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
-					//small penalty to voter
-					authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
-					update = true;
-				}
+				update = updateReputationOnDownvote(votable, votes, authUser, author, isVoteCorrection);
 			}
 		} catch (Exception ex) {
 			logger.error(null, ex);
@@ -151,6 +128,34 @@ public class VoteController {
 			pc.updateAll(Arrays.asList(author, authUser));
 		}
 		return result;
+	}
+
+	private boolean updateReputationOnUpvote(ParaObject votable, Integer votes,
+			Profile authUser, Profile author, boolean isVoteCorrection) {
+		if (author != null) {
+			if (!isVoteCorrection) {
+				author.addRep(addReward(votable, author, votes));
+				authUser.incrementUpvotes();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean updateReputationOnDownvote(ParaObject votable, Integer votes,
+			Profile authUser, Profile author, boolean isVoteCorrection) {
+		if (author != null) {
+			if (isVoteCorrection) {
+				author.removeRep(addReward(votable, author, votes));
+			} else {
+				authUser.incrementDownvotes();
+			}
+			author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
+			//small penalty to voter
+			authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
+			return true;
+		}
+		return false;
 	}
 
 	private int addReward(Votable votable, Profile author, int votes) {
