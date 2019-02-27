@@ -30,9 +30,9 @@ $(function () {
 
 	initMaterialize();
 
-	/**************************
-	 *    Google Maps API
-	 **************************/
+	/***************************************************************************
+	 * Google Maps API
+	 **************************************************************************/
 
 	if (locationbox.length && !mapCanvas.length) {
 		var searchLocation = new google.maps.places.SearchBox(locationbox.get(0));
@@ -91,7 +91,7 @@ $(function () {
 		}
 
 		google.maps.event.addListener(map, 'click', function(event) {
-//			map.setCenter(event.latLng);
+// map.setCenter(event.latLng);
 			marker.setPosition(event.latLng);
 			marker.setMap(map);
 			latlngbox.val(event.latLng.lat() + "," + event.latLng.lng());
@@ -143,9 +143,9 @@ $(function () {
 		initMap();
 	}
 
-	/****************************************************
-     *					MISC FUNCTIONS
-     ****************************************************/
+	/***************************************************************************
+	 * MISC FUNCTIONS
+	 **************************************************************************/
 
 	function clearLoading() {
 		$(".ajaxwait").hide();
@@ -236,9 +236,9 @@ $(function () {
 		return "";
 	}
 
-	/****************************************************
-     *					GLOBAL BINDINGS
-     ****************************************************/
+	/***************************************************************************
+	 * GLOBAL BINDINGS
+	 **************************************************************************/
 
 	$.ajaxSetup({
 		beforeSend: function(xhr, settings) {
@@ -373,9 +373,9 @@ $(function () {
 		return false;
 	});
 
-	/****************************************************
-     *                    ADMIN
-     ****************************************************/
+	/***************************************************************************
+	 * ADMIN
+	 **************************************************************************/
 
     submitFormBind("form#create-space-form", function (data, status, xhr, form) {
 		clearForm(form);
@@ -393,9 +393,9 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	/****************************************************
-     *                    REPORTS
-     ****************************************************/
+	/***************************************************************************
+	 * REPORTS
+	 **************************************************************************/
 
 	$(document).on("click", "a.delete-report", function() {
 		var dis = $(this);
@@ -415,9 +415,9 @@ $(function () {
 		parent.find(".report-close-btn").click().hide();
 	});
 
-	/****************************************************
-     *                    PROFILE
-     ****************************************************/
+	/***************************************************************************
+	 * PROFILE
+	 **************************************************************************/
 
 	$("#use-gravatar-switch").change(function () {
 		var dis = $(this);
@@ -469,9 +469,9 @@ $(function () {
 		return false;
 	});
 
-	/****************************************************
-     *                    AUTOCOMPLETE
-     ****************************************************/
+	/***************************************************************************
+	 * AUTOCOMPLETE
+	 **************************************************************************/
 
 	var autocomplete = $('.chips-autocomplete');
 	var autocompleteValue = $('input[name=tags]').val() || "";
@@ -546,9 +546,9 @@ $(function () {
 		});
 	}
 
-	/****************************************************
-     *                    MODAL DIALOGS
-     ****************************************************/
+	/***************************************************************************
+	 * MODAL DIALOGS
+	 **************************************************************************/
 
 	 $('#main-modal').modal({
 		onOpenStart: function (modal, trigger) {
@@ -574,9 +574,9 @@ $(function () {
 	});
 
 
-	/****************************************************
-     *                    COMMENTS
-     ****************************************************/
+	/***************************************************************************
+	 * COMMENTS
+	 **************************************************************************/
 
 	var commentInput = $("input[name='comment']", "form.new-comment-form");
 	commentInput.characterCounter();
@@ -607,9 +607,9 @@ $(function () {
 		return false;
 	});
 
-	/****************************************************
-     *                    TRANSLATIONS
-     ****************************************************/
+	/***************************************************************************
+	 * TRANSLATIONS
+	 **************************************************************************/
 
 	$(document).on("click", "a.delete-translation",  function() {
 		var that = $(this);
@@ -623,9 +623,9 @@ $(function () {
 
 	$("form.new-translation-form").find("textarea").focus();
 
-	/****************************************************
-     *                  PAGINATION
-     ****************************************************/
+	/***************************************************************************
+	 * PAGINATION
+	 **************************************************************************/
 
 	$(document).on("click", "a.more-link",  function() {
 		var that = $(this),
@@ -661,24 +661,109 @@ $(function () {
 		return false;
 	});
 
-	/****************************************************
-     *                     QUESTIONS
-     ****************************************************/
+	/***************************************************************************
+	 * QUESTIONS
+	 **************************************************************************/
 
 	if (window.location.hash !== "" && window.location.hash.match(/^#post-.*/)) {
 		$(window.location.hash).addClass("selected-post");
 	}
-
+	
 	function initPostEditor(elem) {
 		var mde = new SimpleMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
-			showIcons: ["code", "table", "strikethrough"],
-			spellChecker: false
+			// showIcons: ["code", "table", "strikethrough"],
+			spellChecker: false,
+			toolbar: [
+				'bold', 'italic', "strikethrough", 'heading', '|',
+				'code', 'quote', 'unordered-list', 'ordered-list', '|',
+				'link',
+				{
+					name: 'fileattach',
+					className: 'fa fa-paperclip'
+				},
+				{
+					name: 'image',
+					className: 'md-upload-img fa fa-picture-o',
+					action: function(ed) {
+						var editor = ed;
+						var fileInput = document.querySelector('input[type=file]');
+						if (fileInput) {
+							fileInput.click();
+							return;
+						}
+				
+						fileInput = document.createElement('input');
+						fileInput.setAttribute('type', 'file');
+				        // fileInput.setAttribute('multiple', true);
+				        fileInput.setAttribute('accept', 'image/*');
+				        fileInput.onchange = (evt) => {
+				        	var files = fileInput.files;
+			        		if (files != null && files[0] != null) {
+			        			// console.log('size (kb): ' + files[0].size /
+								// 1024);
+			        			var reader = new FileReader();
+				                reader.onload = (e) => {
+				                	var imgUri = e.target.result;
+				                	var fileSize = files[0].size;
+				                	// if (fileSize > 1024 * 99) { //99kb
+				                		var img = new Image();
+				                		img.onload = function() {
+				                			var canvas = document.createElement('canvas');
+				                			var ctx = canvas.getContext('2d');
+					                		ctx.drawImage(img, 0, 0);
+					                		
+					                	    var MAX_WIDTH = 1000;
+					                	    var MAX_HEIGHT = 700;
+					                	    var width = this.width;
+					                	    var height = this.height;
+					                	    
+					                	    if (width > height) {
+					                	        if (width > MAX_WIDTH) {
+					                	            height *= MAX_WIDTH / width;
+					                	            width = MAX_WIDTH;
+					                	        }
+					                	    } else {
+					                	        if (height > MAX_HEIGHT) {
+					                	            width *= MAX_HEIGHT / height;
+					                	            height = MAX_HEIGHT;
+					                	        }
+					                	    }
+					                	    
+					                	    canvas.width = width;
+					                	    canvas.height = height;
+					                	    var ctx = canvas.getContext('2d');
+					                	    ctx.drawImage(this, 0, 0, width, height);
+					                	    
+					                	    var cm = editor.codemirror;
+					                	    var options = editor.options;
+					                	    var pos = cm.getCursor();
+						                	cm.setSelection(pos, pos);
+						                	cm.replaceSelection(options.insertTexts.image.join('').replace('#url#', canvas.toDataURL("image/png")));
+						                	fileInput.value = "";
+
+						        			// console.log('url length: ' +
+											// e.target.result.length);
+			                			}
+				                		
+				                		img.src = imgUri;
+				                	// }
+				                }
+				                reader.readAsDataURL(files[0]);
+			        		}
+				        }
+				        fileInput.click();
+					}
+				}, 'table', '|',
+				'preview', 'side-by-side', 'fullscreen', '|',
+				'guide'
+			]
 		});
+		
 		if (RTL_ENABLED) {
 			mde.codemirror.options.direction = "rtl";
-			//mde.codemirror.options.rtlMoveVisually = false;
+			// mde.codemirror.options.rtlMoveVisually = false;
 		}
 		return mde;
 	}
@@ -835,9 +920,9 @@ $(function () {
 	// small fix for custom checkbox rendering of GFM task lists
 	$(".task-list-item>input[type=checkbox]").addClass("filled-in").after("<label style='height:15px'></label>");
 
-	/****************************************************
-     *                   REVISIONS
-     ****************************************************/
+	/***************************************************************************
+	 * REVISIONS
+	 **************************************************************************/
 
 	var dmp = new diff_match_patch();
 
@@ -861,7 +946,7 @@ $(function () {
 			return text;
 		}
 
-		//main loop over diff fragments
+		// main loop over diff fragments
 		var x;
 		for (x = 0; x < diffs.length; x++) {
 			html[x] = diffMarkup(diffs[x][1], diffs[x][0]);
