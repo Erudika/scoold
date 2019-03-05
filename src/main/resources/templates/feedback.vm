@@ -86,7 +86,8 @@
 			<div class="col m12 l3">
 				<div class="card-panel">
 					<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
-					<div class="mediumText pvs"><b>$!showPost.answercount</b> $!lang.get('answers.title')</div>
+					<div class="mediumText pvs"><b>$!showPost.answercount</b>
+						#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</div>
 					<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
 						<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
 					</div>

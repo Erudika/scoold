@@ -135,7 +135,10 @@
 						<span class="black-text">$!{showUser.location}</span></h4>
 				#end
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-list grey-text text-darken-1"></i> &nbsp;
-						$itemcount1.count $!{lang.get("questions.title")}, $itemcount2.count $!{lang.get("answers.title")}</h5>
+						$itemcount1.count
+						#if($itemcount1.count == 1)$!lang.get('posts.question')#else$!lang.get('questions.title')#end,
+						$itemcount2.count
+						#if($itemcount2.count == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</h5>
 				#if ($showUser.timestamp)
 					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-birthday-cake"></i> &nbsp;
 						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</h5>
