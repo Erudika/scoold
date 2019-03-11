@@ -670,6 +670,60 @@ $(function () {
 	}
 	
 	function initPostEditor(elem) {
+		var attachFile = function(ed) {
+			var editor = ed;
+			var fileInput = document.querySelector('input[type=file]');
+			if (fileInput) {
+				fileInput.click();
+				return;
+			}
+			fileInput = document.createElement('input');
+			fileInput.setAttribute('type', 'file');
+			fileInput.setAttribute('accept', 'image/*,.pdf,.txt');
+			fileInput.onchange = (evt) => {
+				var files = fileInput.files;
+        		if (files === null || files[0] === null) {
+        			return;
+        		}
+        		
+        		var formData = new FormData();
+        		formData.append('file', files[0]);
+        		
+        		$.ajax({
+        		    method: "POST",
+        		    url: 'http://localhost:3000/upload',
+        		    data: formData,
+        		    dataType: 'json',
+        	        processData: false,
+        	        contentType: false,
+        	        cache: false,
+        		    crossDomain : true
+        		})
+        		    .done(function( data ) {
+        		        var cm = editor.codemirror;
+                	    var options = editor.options;
+                	    var pos = cm.getCursor();
+	                	cm.setSelection(pos, pos);
+	                	
+	                	if (['bmp', 'jpg', 'jpge', 'gif', 'png'].indexOf(data.extention.toLowerCase()) > -1) {
+	                		cm.replaceSelection(options.insertTexts.image.join('').replace('#url#', data.path));
+	                	}
+	                	else {
+	                		var links = options.insertTexts.link;
+	                		links.splice(1, 0, data.name + data.extention);
+	                		cm.replaceSelection(links.join('').replace('#url#', data.path));
+	                	}
+
+	                	fileInput.value = "";
+        		    })
+        		    .fail( function(xhr, textStatus, errorThrown) {
+        		    	console.log(textStatus);
+        		    });
+			}
+			
+			fileInput.click();
+		};
+		
 		var mde = new SimpleMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
@@ -681,81 +735,11 @@ $(function () {
 				'link',
 				{
 					name: 'fileattach',
-					className: 'fa fa-paperclip'
+					title: 'add file link',
+					className: 'fa fa-paperclip',
+					action: attachFile
 				},
-				{
-					name: 'image',
-					className: 'md-upload-img fa fa-picture-o',
-					action: function(ed) {
-						var editor = ed;
-						var fileInput = document.querySelector('input[type=file]');
-						if (fileInput) {
-							fileInput.click();
-							return;
-						}
-				
-						fileInput = document.createElement('input');
-						fileInput.setAttribute('type', 'file');
-				        // fileInput.setAttribute('multiple', true);
-				        fileInput.setAttribute('accept', 'image/*');
-				        fileInput.onchange = (evt) => {
-				        	var files = fileInput.files;
-			        		if (files != null && files[0] != null) {
-			        			// console.log('size (kb): ' + files[0].size /
-								// 1024);
-			        			var reader = new FileReader();
-				                reader.onload = (e) => {
-				                	var imgUri = e.target.result;
-				                	var fileSize = files[0].size;
-				                	// if (fileSize > 1024 * 99) { //99kb
-				                		var img = new Image();
-				                		img.onload = function() {
-				                			var canvas = document.createElement('canvas');
-				                			var ctx = canvas.getContext('2d');
-					                		ctx.drawImage(img, 0, 0);
-					                		
-					                	    var MAX_WIDTH = 1000;
-					                	    var MAX_HEIGHT = 700;
-					                	    var width = this.width;
-					                	    var height = this.height;
-					                	    
-					                	    if (width > height) {
-					                	        if (width > MAX_WIDTH) {
-					                	            height *= MAX_WIDTH / width;
-					                	            width = MAX_WIDTH;
-					                	        }
-					                	    } else {
-					                	        if (height > MAX_HEIGHT) {
-					                	            width *= MAX_HEIGHT / height;
-					                	            height = MAX_HEIGHT;
-					                	        }
-					                	    }
-					                	    
-					                	    canvas.width = width;
-					                	    canvas.height = height;
-					                	    var ctx = canvas.getContext('2d');
-					                	    ctx.drawImage(this, 0, 0, width, height);
-					                	    
-					                	    var cm = editor.codemirror;
-					                	    var options = editor.options;
-					                	    var pos = cm.getCursor();
-						                	cm.setSelection(pos, pos);
-						                	cm.replaceSelection(options.insertTexts.image.join('').replace('#url#', canvas.toDataURL("image/png")));
-						                	fileInput.value = "";
-
-						        			// console.log('url length: ' +
-											// e.target.result.length);
-			                			}
-				                		
-				                		img.src = imgUri;
-				                	// }
-				                }
-				                reader.readAsDataURL(files[0]);
-			        		}
-				        }
-				        fileInput.click();
-					}
-				}, 'table', '|',
+				'table', '|',
 				'preview', 'side-by-side', 'fullscreen', '|',
 				'guide'
 			]
