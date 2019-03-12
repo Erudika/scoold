@@ -425,6 +425,7 @@ $(function () {
 		var newPic = $("#picture_url").next("input[type=hidden]");
 		var newPicValue = newPic.val();
 		$("img.profile-pic:first").attr("src", newPicValue);
+		$(".profilepage img.profile-pic").attr("src", newPicValue);
 		$.post(dis.closest("form").attr("action"), {picture: newPicValue});
 		// swap
 		newPic.val(currentPic.val());

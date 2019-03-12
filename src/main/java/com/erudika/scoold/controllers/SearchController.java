@@ -165,9 +165,9 @@ public class SearchController {
 
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("atom_1.0");
-		feed.setTitle("Scoold - Recent questions");
+		feed.setTitle(Config.APP_NAME + " - Recent questions");
 		feed.setLink(baseurl);
-		feed.setDescription("A summary of the most recent questions asked on Scoold.");
+		feed.setDescription("A summary of the most recent questions on " + Config.APP_NAME);
 
 		for (Post post : questions) {
 			SyndEntry entry;

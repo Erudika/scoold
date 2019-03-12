@@ -21,6 +21,7 @@ import com.erudika.para.core.User;
 import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
@@ -101,6 +102,7 @@ public class ProfileController {
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
+		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
 		model.addAttribute("gravatarPicture", utils.getGravatar(showUser));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
@@ -162,14 +164,8 @@ public class ProfileController {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
 			}
-			if (!StringUtils.isBlank(picture) && Utils.isValidURL(picture)) {
-				showUser.setPicture(picture);
-				User u = showUser.getUser();
-				if (!u.getPicture().equals(picture)) {
-					u.setPicture(picture);
-					utils.getParaClient().update(u);
-					updateProfile = true;
-				}
+			if (Config.getConfigBoolean("avatar_edits_enabled", true)) {
+				updateProfile = updatePicture(showUser, picture);
 			}
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
@@ -178,6 +174,19 @@ public class ProfileController {
 			}
 		}
 		return "redirect:" + PROFILELINK;
+	}
+
+	private boolean updatePicture(Profile showUser, String picture) {
+		if (!StringUtils.isBlank(picture) && (Utils.isValidURL(picture) || picture.startsWith("data:"))) {
+			showUser.setPicture(picture);
+			User u = showUser.getUser();
+			if (!u.getPicture().equals(picture) && !picture.contains("gravatar.com")) {
+				u.setPicture(picture);
+				utils.getParaClient().update(u);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private boolean isMyid(Profile authUser, String id) {

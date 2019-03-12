@@ -24,7 +24,7 @@
 				</span>
 			</div>
 			<div class="card-content center-align">
-				#if ($canEdit)
+				#if ($canEdit && $canEditAvatar)
 				<a id="edit-picture-link" href="#" class="editlink"><i class="fa fa-image"></i> $!lang.get('profile.changepic')</a>
 				<div class="pal editbox hide">
 					<a href="#" class="canceledit right"><i class="fa fa-close"></i></a>
@@ -34,7 +34,7 @@
 							<label for="picture_url">URL</label>
 							<input id="picture_url" type="url" name="picture" value="$!showUser.picture">
 							#if($showUser.picture.contains("gravatar.com"))
-								#set($secondaryPicture = $!$showUser.user.picture)
+								#set($secondaryPicture = $!showUser.user.picture)
 							#else
 								#set($secondaryPicture = $!gravatarPicture)
 							#end
