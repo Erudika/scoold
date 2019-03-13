@@ -279,6 +279,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		velocityProperties.put(RuntimeConstants.EVENTHANDLER_REFERENCEINSERTION,
 				"org.apache.velocity.app.event.implement.EscapeHtmlReference");
 		velocityProperties.put("eventhandler.escape.html.match", "^((?!_).)+$");
+		//velocityProperties.put("tools.application.esc", "org.apache.velocity.tools.generic.EscapeTool");
 
 		VelocityConfigurer vc = new VelocityConfigurer();
 		vc.setVelocityProperties(velocityProperties);

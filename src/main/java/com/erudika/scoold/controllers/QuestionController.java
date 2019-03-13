@@ -311,7 +311,7 @@ public class QuestionController {
 			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = replyAuthor.getName();
-			String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
+			String body = Utils.abbreviate(reply.getBody(), 500);
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));

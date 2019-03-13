@@ -769,7 +769,7 @@ public final class ScooldUtils {
 				+ "form-action 'self'; "
 				+ "connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com localhost:3000; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
-				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "
+				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com localhost:8000; "
 				+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net "
 					+ "cdnjs.cloudflare.com www.google-analytics.com www.googletagmanager.com code.jquery.com static.scoold.com; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "

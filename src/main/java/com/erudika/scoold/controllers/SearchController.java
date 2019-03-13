@@ -184,7 +184,7 @@ public class SearchController {
 
 			description = new SyndContentImpl();
 			description.setType("text/html");
-			description.setValue(Utils.markdownToHtml(post.getBody()));
+			description.setValue(post.getBody());
 
 			entry.setDescription(description);
 			entries.add(entry);

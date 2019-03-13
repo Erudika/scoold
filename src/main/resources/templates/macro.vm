@@ -345,7 +345,7 @@
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 					</div>
 					<div class="mbs">
-						#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )
+						#set($showBody = $utils.stripHtml($!showpost.body) )
 						<div>$!utils.abbreviate($showBody, 160)</div>
 					</div>
 				</div>
@@ -415,7 +415,7 @@
 	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="postbody pvs">
-			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body))
+			#set($_bodyHtml = $!showpost.body)
 			$!{_bodyHtml}
 		</div>
 
@@ -777,4 +777,3 @@ $utils.formatDate($date, $format, $currentLocale)
 	#end
 #end
 ################# END MACROS ###################################################
-

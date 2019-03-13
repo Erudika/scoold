@@ -668,94 +668,18 @@ $(function () {
 	if (window.location.hash !== "" && window.location.hash.match(/^#post-.*/)) {
 		$(window.location.hash).addClass("selected-post");
 	}
-	
-	function initPostEditor(elem) {
-		var attachFile = function(ed) {
-			var editor = ed;
-			var fileInput = document.querySelector('input[type=file]');
-			if (fileInput) {
-				fileInput.click();
-				return;
-			}
-			fileInput = document.createElement('input');
-			fileInput.setAttribute('type', 'file');
-			fileInput.setAttribute('accept', 'image/*,.pdf,.txt');
-			fileInput.onchange = (evt) => {
-				var files = fileInput.files;
-        		if (files === null || files[0] === null) {
-        			return;
-        		}
-        		
-        		var formData = new FormData();
-        		formData.append('file', files[0]);
-        		
-        		$.ajax({
-        		    method: "POST",
-        		    url: 'http://localhost:3000/upload',
-        		    data: formData,
-        		    dataType: 'json',
-        	        processData: false,
-        	        contentType: false,
-        	        cache: false,
-        		    crossDomain : true
-        		})
-        		    .done(function( data ) {
-        		        var cm = editor.codemirror;
-                	    var options = editor.options;
-                	    var pos = cm.getCursor();
-	                	cm.setSelection(pos, pos);
-	                	
-	                	if (['bmp', 'jpg', 'jpge', 'gif', 'png'].indexOf(data.extention.toLowerCase()) > -1) {
-	                		cm.replaceSelection(options.insertTexts.image.join('').replace('#url#', data.path));
-	                	}
-	                	else {
-	                		var links = options.insertTexts.link;
-	                		links.splice(1, 0, data.name + data.extention);
-	                		cm.replaceSelection(links.join('').replace('#url#', data.path));
-	                	}
 
-	                	fileInput.value = "";
-        		    })
-        		    .fail( function(xhr, textStatus, errorThrown) {
-        		    	console.log(textStatus);
-        		    });
-			}
-			
-			fileInput.click();
-		};
-		
-		var mde = new SimpleMDE({
-			element: elem,
-			autoDownloadFontAwesome: false,
-			// showIcons: ["code", "table", "strikethrough"],
-			spellChecker: false,
-			toolbar: [
-				'bold', 'italic', "strikethrough", 'heading', '|',
-				'code', 'quote', 'unordered-list', 'ordered-list', '|',
-				'link',
-				{
-					name: 'fileattach',
-					title: 'add file link',
-					className: 'fa fa-paperclip',
-					action: attachFile
-				},
-				'table', '|',
-				'preview', 'side-by-side', 'fullscreen', '|',
-				'guide'
-			]
+	function initPostEditor($elem) {
+		$elem.summernote({
+			lang: 'ko-KR' // default: 'en-US'
+			, height: 300
 		});
-		
-		if (RTL_ENABLED) {
-			mde.codemirror.options.direction = "rtl";
-			// mde.codemirror.options.rtlMoveVisually = false;
-		}
-		return mde;
 	}
 
 	$(document).on("event:show", ".editbox", function () {
-		var el = $(this).find("textarea.edit-post:visible");
-		if (el.length) {
-			initPostEditor(el.get(0));
+		var $el = $(this).find("textarea.edit-post:visible");
+		if ($el.length) {
+			initPostEditor($el);
 		}
 		$("#title_text").on("keyup", function () {
 			$('#post-title').text($(this).val());
@@ -768,11 +692,13 @@ $(function () {
 	if (askForm.length) {
 		var title = askForm.find("input[name=title]");
 		var tags = askForm.find("input[name=tags]");
-		var body = initPostEditor(askForm.find("textarea[name=body]").get(0));
+		var $editor = askForm.find("textarea[name=body]");
+		initPostEditor($editor);
+		var body = $('<textarea />').val($editor.summernote('code')).val();
 
 		try {
 			if (!title.val()) title.val(localStorage.getItem("ask-form-title") || "");
-			if (!body.value()) body.value(localStorage.getItem("ask-form-body") || "");
+			if ($editor.summernote('isEmpty')) $editor.summernote('code', localStorage.getItem("ask-form-body") || "");
 			if (!tags.val()) tags.val(localStorage.getItem("ask-form-tags") || "");
 
 			var saveDraftInterval1 = setInterval(function () {
@@ -781,8 +707,8 @@ $(function () {
 					localStorage.setItem("ask-form-title", title.val());
 					saved = true;
 				}
-				if (localStorage.getItem("ask-form-body") !== body.value()) {
-					localStorage.setItem("ask-form-body", body.value());
+				if (localStorage.getItem("ask-form-body") !== body) {
+					localStorage.setItem("ask-form-body", body);
 					saved = true;
 				}
 				if (localStorage.getItem("ask-form-tags") !== tags.val()) {
@@ -829,12 +755,14 @@ $(function () {
 
 	var answerForm = $("form#answer-question-form");
 	if (answerForm.length) {
-		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
+		var $answer = answerForm.find("textarea[name=body]");
+		initPostEditor($answer);
+		var answerBody = $('<textarea />').val($answer.summernote('code')).val();
 		try {
-			if (!answerBody.value()) answerBody.value(localStorage.getItem("answer-form-body") || "");
+			if ($answer.summernote('isEmpty')) $answer.summernote('code', localStorage.getItem("answer-form-body") || "");
 			var saveDraftInterval2 = setInterval(function () {
-				if (localStorage.getItem("answer-form-body") !== answerBody.value()) {
-					localStorage.setItem("answer-form-body", answerBody.value());
+				if (localStorage.getItem("answer-form-body") !== answerBody) {
+					localStorage.setItem("answer-form-body", answerBody);
 					answerForm.find(".save-icon").show().delay(2000).fadeOut();
 				}
 			}, 3000);
@@ -848,7 +776,7 @@ $(function () {
 					$(".answers-head").removeClass("hide").after(data);
 				}
 				answerForm.hide();
-				answerBody.value("");
+				$answer.summernote('reset');
 				localStorage.removeItem("answer-form-body");
 			}, function (xhr, status, error) {
 				clearInterval(saveDraftInterval1);
@@ -857,6 +785,7 @@ $(function () {
 			});
 		} catch (exception) {}
 	}
+	
 
 	$(document).on("click", "a.approve-answer, a.approve-translation", function() {
 		var on = "green-text";
