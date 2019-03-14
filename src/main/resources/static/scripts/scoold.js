@@ -670,9 +670,80 @@ $(function () {
 	}
 
 	function initPostEditor($elem) {
+		var UploadButton = function (context) {
+		  var ui = $.summernote.ui;
+
+		  // create button
+		  var button = ui.button({
+		    contents: '<i class="fa fa-upload"/>',
+		    tooltip: 'File Attachment',
+		    container: 'body',
+		    click: function () {
+				var fileInput = document.createElement('input');
+				//fileInput.id = 'uploadFile';
+				fileInput.setAttribute('type', 'file');
+				fileInput.setAttribute('accept', 'image/*,.pdf,.txt');
+				fileInput.onchange = function (evt) {
+					var files = fileInput.files;
+	        		if (files === null || files[0] === null) {
+	        			return;
+	        		}
+	        		
+	        		var formData = new FormData();
+	        		formData.append('file', files[0]);
+	        		
+	        		$.ajax({
+	        		    method: "POST",
+	        		    url: 'http://localhost:3000/upload',
+	        		    data: formData,
+	        		    dataType: 'json',
+	        	        processData: false,
+	        	        contentType: false,
+	        	        cache: false,
+	        		    crossDomain : true
+	        		})
+	        			.done(function(data) {
+	        				var insertText;
+	        				var extention = data.extention.toLowerCase().replace(/\./g,'');
+	        				if (['bmp', 'jpg', 'jpge', 'gif', 'png'].indexOf(extention) > -1) {
+	        					insertText = '<img src="#url" title="#filename">';
+		                	}
+		                	else {
+		                		insertText = '<a href="#url" title="#filename" target="_blank">#url</a>';
+		                	}
+
+	        				$elem.summernote('pasteHTML',
+	                				insertText.replace(/#url/g, data.path).replace(/#filename/g, data.name + data.extention));
+		                	fileInput.value = "";
+	        			});
+				}
+			  	fileInput.click();
+			}
+		  });
+
+		  return button.render();   // return button as jquery object
+		}
+	
+		
 		$elem.summernote({
 			lang: 'ko-KR' // default: 'en-US'
 			, height: 300
+			, toolbar: [
+				['style', ['style']],
+			    ['font', ['bold', 'italic', 'underline', 'clear']],
+			    ['fontname', ['fontname']],
+			    ['fontsize', ['fontsize']],
+			    ['color', ['color']],
+			    ['para', ['ul', 'ol', 'paragraph']],
+			    ['height', ['height']],
+			    ['table', ['table']],
+			    ['insert', ['link', 'upload', 'hr']],
+			    ['view', ['fullscreen', 'codeview']],
+			    ['help', ['help']]
+			]
+			, buttons: {
+				upload: UploadButton
+			}
 		});
 	}
 
