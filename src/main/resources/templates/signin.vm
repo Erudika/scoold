@@ -26,10 +26,17 @@
 								<input id="email" type="email" name="email" value="$!bademail" pattern="$!{emailPattern}" required>
 								#getmessagebox("red white-text" $error.get("email"))
 							</div>
-							<div class=" input-field mvm">
+							<div class="input-field mvm">
 								<label>$!lang.get('password')</label>
 								<input id="passw" type="password" name="passw" value="" minlength="6" required>
 							</div>
+
+							<div class="input-field mvm leaveblank">
+								<label>Leave blank</label>
+								<input type="text" name="leaveblank" value="">
+								<input type="hidden" name="timestamp" value="$utils.timestamp()">
+							</div>
+
 							<button type="submit" class="btn">$!lang.get('signup.title')</button>
 						</form>
 					#end

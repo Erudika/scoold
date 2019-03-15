@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.HttpHeaders;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -140,7 +141,7 @@ public class SigninController {
 			HttpServletRequest req, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (!utils.isAuthenticated(req) && approvedDomain) {
-			if (!isEmailRegistered(email)) {
+			if (!isEmailRegistered(email) && isSubmittedByHuman(req)) {
 				pc.signIn("password", email + ":" + name + ":" + passw, false);
 				verifyEmailIfNecessary("password", name, email, req);
 			} else {
@@ -150,6 +151,7 @@ public class SigninController {
 				model.addAttribute("register", true);
 				model.addAttribute("name", name);
 				model.addAttribute("bademail", email);
+				model.addAttribute("emailPattern", Email.EMAIL_PATTERN);
 				model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.1")));
 				return "base";
 			}
@@ -299,6 +301,11 @@ public class SigninController {
 				utils.sendWelcomeEmail(u, true, req);
 			}
 		}
+	}
+
+	private boolean isSubmittedByHuman(HttpServletRequest req) {
+		long time = NumberUtils.toLong(req.getParameter("timestamp"), 0L);
+		return StringUtils.isBlank(req.getParameter("leaveblank")) && (System.currentTimeMillis() - time >= 7000);
 	}
 
 	private String generatePasswordResetToken(String email, HttpServletRequest req) {
