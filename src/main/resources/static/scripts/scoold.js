@@ -511,12 +511,13 @@ $(function () {
 			if (val && val.trim().length > 0) {
 				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
 					var tags = {};
-					if (data && typeof data === 'object') {
-						data.map(function (t) {
-							tags[t.tag] = null;
-						});
-						callback(value, tags);
+					if (data.length === 0) {
+						data.push({tag: val});
 					}
+					data.map(function (t) {
+						tags[t.tag] = null;
+					});
+					callback(val, tags);
 				});
 			}
 		}
