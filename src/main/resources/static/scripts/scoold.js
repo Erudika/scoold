@@ -724,7 +724,7 @@ $(function () {
 	
 		
 		$elem.summernote({
-			lang: 'ko-KR' // default: 'en-US'
+			lang: $('#hidLocaleCode').val() // default: 'en-US'
 			, height: 300
 			, toolbar: [
 				['style', ['style']],
