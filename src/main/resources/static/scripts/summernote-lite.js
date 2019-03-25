@@ -682,11 +682,17 @@
           '<input class="note-link-url note-input" type="text" value="http://" />' +
           '</div>' +
           (!opt.disableLinkTarget
-              ? '<div class="checkbox">' +
-                  '<label>' + '<input type="checkbox" checked> ' + opt.lang.link.openInNewWindow + '</label>' +
-                  '</div>' : '');
+              ? 
+//            		  '<div class="checkbox">' +
+//                  '<label>' + '<input type="checkbox" checked> ' + opt.lang.link.openInNewWindow + '</label>' +
+//                  '</div>'
+            		  '<label>'
+            		  + '<input type="checkbox" class="filled-in" checked> '
+            		  + '<span>' + opt.lang.link.openInNewWindow + '</span>'
+            		  + '</label>'
+                  : '');
       var footer = [
-          '<button href="#" type="button" class="note-btn note-btn-primary note-link-btn disabled" disabled>',
+          '<button href="#" type="button" class="btn waves-effect waves-light note-link-btn disabled" disabled>',
           opt.lang.link.insert,
           '</button>'
       ].join('');
@@ -712,12 +718,22 @@
   });
   var checkbox = renderer.create('<div class="checkbox"></div>', function ($node, options) {
       $node.html([
-          '<label' + (options.id ? ' for="' + options.id + '"' : '') + '>',
-          ' <input role="checkbox" type="checkbox"' + (options.id ? ' id="' + options.id + '"' : ''),
-          (options.checked ? ' checked' : ''),
-          ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>',
-          (options.text ? options.text : ''),
-          '</label>'
+//          '<label' + (options.id ? ' for="' + options.id + '"' : '') + '>',
+//          ' <input role="checkbox" type="checkbox"' + (options.id ? ' id="' + options.id + '"' : ''),
+//          (options.checked ? ' checked' : ''),
+//          ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>',
+//          (options.text ? options.text : ''),
+//          '</label>'
+    	  '<label' + (options.id ? ' for="' + options.id + '"' : '') + '>',
+    	  ' <input role="checkbox" type="checkbox" class="filled-in" ' + (options.id ? ' id="' + options.id + '"' : ''),
+    	  (options.checked ? ' checked' : ''),
+    	  ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>',
+    	  '<span>',
+    	  '<strong class="mediumText">',
+    	  (options.text ? options.text : ''),
+    	  '</strong>',
+    	  '</span>',
+    	  '</label>'
       ].join(''));
   });
   var icon = function (iconClassName, tagName) {
@@ -6689,7 +6705,7 @@
                   }).render()).html()
                   : ''
           ].join('');
-          var buttonClass = 'btn btn-primary note-btn note-btn-primary note-link-btn';
+          var buttonClass = 'btn waves-effect waves-light note-link-btn';
           var footer = "<input type=\"button\" href=\"#\" class=\"" + buttonClass + "\" value=\"" + this.lang.link.insert + "\" disabled>";
           this.$dialog = this.ui.dialog({
               className: 'link-dialog',

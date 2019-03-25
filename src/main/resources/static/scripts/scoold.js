@@ -673,14 +673,12 @@ $(function () {
 		var UploadButton = function (context) {
 		  var ui = $.summernote.ui;
 
-		  // create button
 		  var button = ui.button({
 		    contents: '<i class="fa fa-upload"/>',
 		    tooltip: 'File Attachment',
 		    container: 'body',
 		    click: function () {
 				var fileInput = document.createElement('input');
-				//fileInput.id = 'uploadFile';
 				fileInput.setAttribute('type', 'file');
 				fileInput.setAttribute('accept', 'image/*,.pdf,.txt');
 				fileInput.onchange = function (evt) {

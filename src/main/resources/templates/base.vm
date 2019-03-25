@@ -34,6 +34,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet">
 		<link href="$!styleslink/summernote-lite.css" rel="stylesheet">
+		<link href="$!styleslink/summernote-lite-ext.css" rel="stylesheet">
 		#if ($includeHighlightJS)
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
 		#end
@@ -331,6 +332,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 		#end
 		<script src="$!scriptslink/summernote-lite.js"></script>
+		<script src="$!scriptslink/lang/summernote-ko-KR.js"></script>
 		<script src="$!scriptslink/scoold.js"></script>
 		#if ($request.getServletPath() == "/signin")
 		<script src="$!scriptslink/signin.js"></script>
