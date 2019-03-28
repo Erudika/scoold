@@ -680,6 +680,7 @@ $(function () {
 		    click: function () {
 				var fileInput = document.createElement('input');
 				fileInput.setAttribute('type', 'file');
+				fileInput.setAttribute('multiple', '');
 				fileInput.setAttribute('accept', 'image/*,.pdf,.txt');
 				fileInput.onchange = function (evt) {
 					var files = fileInput.files;
@@ -688,7 +689,9 @@ $(function () {
 	        		}
 	        		
 	        		var formData = new FormData();
-	        		formData.append('file', files[0]);
+	        		$.each(files, function(index, f) {
+		        		formData.append('file', f);
+	        		});
 	        		
 	        		$.ajax({
 	        		    method: "POST",
@@ -701,17 +704,20 @@ $(function () {
 	        		    crossDomain : true
 	        		})
 	        			.done(function(data) {
-	        				var insertText;
-	        				var extention = data.extention.toLowerCase().replace(/\./g,'');
-	        				if (['bmp', 'jpg', 'jpge', 'gif', 'png'].indexOf(extention) > -1) {
-	        					insertText = '<img src="#url" title="#filename">';
-		                	}
-		                	else {
-		                		insertText = '<a href="#url" title="#filename" target="_blank">#url</a>';
-		                	}
+	        				$.each(data, function(index, f) {
+	        					var insertText;
+		        				var extention = f.extention.toLowerCase().replace(/\./g,'');
+		        				if (['bmp', 'jpg', 'jpge', 'gif', 'png'].indexOf(extention) > -1) {
+		        					insertText = '<img src="#url" title="#filename">';
+			                	}
+			                	else {
+			                		insertText = '<a href="#url" title="#filename" target="_blank">#url</a>';
+			                	}
 
-	        				$elem.summernote('pasteHTML',
-	                				insertText.replace(/#url/g, data.path).replace(/#filename/g, data.name + data.extention));
+		        				$elem.summernote('pasteHTML',
+		                				insertText.replace(/#url/g, f.path).replace(/#filename/g, f.name + f.extention));
+	        				});
+
 		                	fileInput.value = "";
 	        			});
 				}
