@@ -63,6 +63,7 @@ public class SettingsController {
 		}
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
+		model.addAttribute("newpostEmailsEnabled", utils.isSubscribedToNewPosts(req));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		return "base";
 	}
@@ -71,7 +72,7 @@ public class SettingsController {
 	public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
-			HttpServletRequest req) {
+			@RequestParam(required = false) String newpostEmailsOn, HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			if (!StringUtils.isBlank(tags)) {
@@ -89,6 +90,14 @@ public class SettingsController {
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.update();
+
+			if (utils.isAdmin(authUser)) {
+				if (Boolean.valueOf(newpostEmailsOn)) {
+					utils.subscribeToNewPosts(authUser.getUser());
+				} else {
+					utils.unsubscribeFromNewPosts(authUser.getUser());
+				}
+			}
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
 				return "redirect:" + SETTINGSLINK + "?passChanged=true";

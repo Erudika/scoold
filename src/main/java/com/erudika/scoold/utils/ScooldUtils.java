@@ -260,6 +260,65 @@ public final class ScooldUtils {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Object isSubscribedToNewPosts(HttpServletRequest req) {
+		Profile authUser = getAuthUser(req);
+		if (authUser != null) {
+			User u = authUser.getUser();
+			if (u != null) {
+				Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
+				return emails != null && emails.containsKey(u.getEmail());
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void subscribeToNewPosts(User u) {
+		if (u != null) {
+			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
+			if (emails == null) {
+				emails = new HashMap<>();
+			}
+			emails.put(u.getEmail(), u.getId());
+			pc.addAppSetting("new_post_subscribers", emails);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void unsubscribeFromNewPosts(User u) {
+		if (u != null) {
+			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
+			if (emails != null && emails.remove(u.getEmail()) != null) {
+				pc.addAppSetting("new_post_subscribers", emails);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sendNewPostNotifications(Post question) {
+		// send email notification to author of post except when the reply is by the same person
+		if (question != null) {
+			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
+			Map<String, Object> model = new HashMap<String, Object>();
+			String name = postAuthor.getName();
+			String body = Utils.markdownToHtml(Utils.abbreviate(question.getBody(), 500));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String postURL = getServerURL() + question.getPostLink(false, false);
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", Utils.formatMessage("New question from {0} {1}:", picture, name));
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div class='panel'>{2}</div>",
+					postURL, question.getTitle(), body));
+
+			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
+			if (emails != null) {
+				emailer.sendEmail(new ArrayList<String>(emails.keySet()),
+						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 100) + "...'",
+						Utils.compileMustache(model, loadEmailTemplate("notify")));
+			}
+		}
+	}
+
 	public void initCSRFToken(HttpServletRequest req, HttpServletResponse res) {
 		String csrfInSession = (String) req.getSession(true).getAttribute(TOKEN_PREFIX + "CSRF");
 		//String csrfInCookie = Utils.getStateParam(CSRF_COOKIE, req);

@@ -156,7 +156,9 @@ public class QuestionsController {
 			Map<String, String> error = utils.validate(q);
 			if (error.isEmpty()) {
 				q.setLocation(location);
+				q.setAuthor(authUser);
 				String qid = q.create();
+				utils.sendNewPostNotifications(q);
 				if (!StringUtils.isBlank(latlng)) {
 					Address addr = new Address();
 					addr.setAddress(address);

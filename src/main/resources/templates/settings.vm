@@ -51,8 +51,25 @@
 				</div>
 			#end
 
-			<h4>$!lang.get('settings.notifications')</h4>
+			<h4 class="ptl">$!lang.get('settings.notifications')</h4>
 			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>
+			#if($scooldUtils.isAdmin($authUser))
+			<div class="mbm">
+				<div class="switch">
+					<label>
+						$!lang.get('off')
+						#if($newpostEmailsEnabled)
+						<input type="checkbox" name="newpostEmailsOn" checked="checked" value="true">
+						#else
+						<input type="checkbox" name="newpostEmailsOn" value="true">
+						#end
+						<span class="lever"></span>
+						$!lang.get('on')
+					</label>
+					<span class="mll mediumText">$!lang.get('settings.newpostemails')</span>
+				</div>
+			</div>
+			#end
 			<div class="mbm">
 				<div class="switch">
 					<label>
