@@ -57,7 +57,7 @@ public class ScooldEmailer implements Emailer {
 						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 						msg.setTo(emails.toArray(new String[0]));
 						msg.setSubject(subject);
-						msg.setFrom(Config.SUPPORT_EMAIL);
+						msg.setFrom(Config.SUPPORT_EMAIL, Config.APP_NAME);
 						msg.setText(body, true); // body is assumed to be HTML
 					}
 				};
