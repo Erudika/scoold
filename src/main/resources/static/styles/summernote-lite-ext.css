@@ -17,6 +17,10 @@ kbd {
     text-shadow: none !important;
 }
 
+.note-popover .popover-content,.panel-heading.note-toolbar {
+    padding-left: 8px;
+}
+
 .note-modal-footer, .note-modal-footer:before, .note-modal-footer:after,
 .btn, .btn:before, .btn:after {
 	-webkit-box-sizing: content-box !important;
