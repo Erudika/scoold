@@ -192,12 +192,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 			public void addInterceptors(InterceptorRegistry registry) {
 				registry.addInterceptor(sri);
 			}
-
-			public void configureViewResolvers(ViewResolverRegistry registry) {
-				VelocityViewResolver viewr = new VelocityViewResolver();
-				viewr.setSuffix(".vm");
-				registry.viewResolver(viewr);
-			}
 		};
 	}
 
@@ -322,5 +316,14 @@ public class ScooldServer extends SpringBootServletInitializer {
 				epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
 			}
 		};
+	}
+	
+	@Bean
+	public ViewResolver viewResolver() {
+		VelocityViewResolver viewr = new VelocityViewResolver();
+		viewr.setRedirectHttp10Compatible(false);
+		viewr.setSuffix(".vm");
+		viewr.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return viewr;
 	}
 }
