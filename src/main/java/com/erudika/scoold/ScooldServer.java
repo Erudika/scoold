@@ -47,10 +47,11 @@ import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -280,6 +281,15 @@ public class ScooldServer extends SpringBootServletInitializer {
 		return vc;
 	}
 
+	@Bean
+	public ViewResolver viewResolver() {
+		VelocityViewResolver viewr = new VelocityViewResolver();
+		viewr.setRedirectHttp10Compatible(false);
+		viewr.setSuffix(".vm");
+		viewr.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return viewr;
+	}
+
 	/**
 	 * @return CSRF protection filter bean
 	 */
@@ -316,14 +326,5 @@ public class ScooldServer extends SpringBootServletInitializer {
 				epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
 			}
 		};
-	}
-	
-	@Bean
-	public ViewResolver viewResolver() {
-		VelocityViewResolver viewr = new VelocityViewResolver();
-		viewr.setRedirectHttp10Compatible(false);
-		viewr.setSuffix(".vm");
-		viewr.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return viewr;
 	}
 }

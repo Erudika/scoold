@@ -306,7 +306,7 @@ public final class ScooldUtils {
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("New question from {0} {1}:", picture, name));
+			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div class='panel'>{2}</div>",
 					postURL, question.getTitle(), body));
 
