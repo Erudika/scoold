@@ -43,13 +43,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
@@ -76,6 +79,7 @@ public final class ScooldUtils {
 	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
+	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -250,6 +254,45 @@ public final class ScooldUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public void subscribeToNotifications(String email, String channelId) {
+		if (!StringUtils.isBlank(email) && !StringUtils.isBlank(channelId)) {
+			Sysprop s = pc.read(channelId);
+			if (s == null || !s.hasProperty("emails")) {
+				s = new Sysprop(channelId);
+				s.addProperty("emails", new LinkedList<>());
+			}
+			Set<String> emails = new HashSet<>((List<String>) s.getProperty("emails"));
+			if (emails.add(email)) {
+				s.addProperty("emails", emails);
+				pc.create(s);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void unsubscribeFromNotifications(String email, String channelId) {
+		if (!StringUtils.isBlank(email) && !StringUtils.isBlank(channelId)) {
+			Sysprop s = pc.read(channelId);
+			if (s == null || !s.hasProperty("emails")) {
+				s = new Sysprop(channelId);
+				s.addProperty("emails", new LinkedList<>());
+			}
+			Set<String> emails = new HashSet<>((List<String>) s.getProperty("emails"));
+			if (emails.remove(email)) {
+				s.addProperty("emails", emails);
+				pc.create(s);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public Set<String> getNotificationSubscribers(String channelId) {
+		return ((List<String>) Optional.ofNullable(((Sysprop) pc.read(channelId))).
+				orElse(new Sysprop()).getProperties().getOrDefault("emails", Collections.emptyList())).
+				stream().collect(Collectors.toSet());
+	}
+
 	public boolean isEmailDomainApproved(String email) {
 		if (StringUtils.isBlank(email)) {
 			return false;
@@ -260,44 +303,31 @@ public final class ScooldUtils {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object isSubscribedToNewPosts(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		if (authUser != null) {
 			User u = authUser.getUser();
 			if (u != null) {
-				Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
-				return emails != null && emails.containsKey(u.getEmail());
+				return getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers").contains(u.getEmail());
 			}
 		}
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void subscribeToNewPosts(User u) {
 		if (u != null) {
-			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
-			if (emails == null) {
-				emails = new HashMap<>();
-			}
-			emails.put(u.getEmail(), u.getId());
-			pc.addAppSetting("new_post_subscribers", emails);
+			subscribeToNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void unsubscribeFromNewPosts(User u) {
 		if (u != null) {
-			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
-			if (emails != null && emails.remove(u.getEmail()) != null) {
-				pc.addAppSetting("new_post_subscribers", emails);
-			}
+			unsubscribeFromNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void sendNewPostNotifications(Post question) {
-		// send email notification to author of post except when the reply is by the same person
 		if (question != null) {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
