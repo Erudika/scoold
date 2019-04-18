@@ -340,9 +340,9 @@ public final class ScooldUtils {
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div class='panel'>{2}</div>",
 					postURL, question.getTitle(), body));
 
-			Map<String, String> emails = (Map<String, String>) pc.appSettings("new_post_subscribers").get("value");
+			Set<String> emails = getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 			if (emails != null) {
-				emailer.sendEmail(new ArrayList<String>(emails.keySet()),
+				emailer.sendEmail(new ArrayList<String>(emails),
 						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 100) + "...'",
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
