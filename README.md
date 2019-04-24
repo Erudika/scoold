@@ -105,7 +105,7 @@ The settings shown below are all meant to be part of the Scoold config file.
 
 ### Configuration
 
-> **Important:** Create a separate app for Scoold, instead of using `app:para`.
+> **Important:** Create a separate app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
 
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
@@ -311,13 +311,12 @@ style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com stati
 img-src 'self' https: data:; report-uri /reports/cspv
 ```
 
-**Note:** If you get CSP violation errors, check you `para.host_url` configuration, or edit the value of `para.csp_header`.
+**Note:** If you get CSP violation errors, check your `para.host_url` configuration, or edit the value of `para.csp_header`.
 
 ### Serving static files from a CDN
 
 Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
-`para.cdn_url` to enable serving those files from a CDN. The value of the CDN URL will override `para.host_url` and
-must not end in "/".
+`para.cdn_url` to enable serving those files from a CDN. The value of the CDN URL *must not* end in "/".
 
 ### SMTP configuration
 
