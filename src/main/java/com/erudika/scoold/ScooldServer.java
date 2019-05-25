@@ -237,9 +237,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("security.ldap.bind_dn", Config.getConfigParam("security.ldap.bind_dn", ""));
 		settings.put("security.ldap.bind_pass", Config.getConfigParam("security.ldap.bind_pass", ""));
 		settings.put("security.ldap.user_search_base", Config.getConfigParam("security.ldap.user_search_base", ""));
-		settings.put("security.ldap.user_search_filter", Config.getConfigParam("security.ldap.user_search_filter", ""));
-		settings.put("security.ldap.user_dn_pattern", Config.getConfigParam("security.ldap.user_dn_pattern", ""));
-		settings.put("security.ldap.password_attribute", Config.getConfigParam("security.ldap.password_attribute", ""));
+		settings.put("security.ldap.user_search_filter", Config.getConfigParam("security.ldap.user_search_filter", "(cn={0})"));
+		settings.put("security.ldap.user_dn_pattern", Config.getConfigParam("security.ldap.user_dn_pattern", "uid={0}"));
+		settings.put("security.ldap.password_attribute", Config.getConfigParam("security.ldap.password_attribute", "userPassword"));
 		settings.put("security.ldap.active_directory_domain", Config.getConfigParam("security.ldap.active_directory_domain", ""));
 		if (!Config.getConfigParam("security.ldap.compare_passwords", "").isEmpty()) {
 			settings.put("security.ldap.compare_passwords", Config.getConfigParam("security.ldap.compare_passwords", ""));
