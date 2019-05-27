@@ -49,7 +49,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
-### Live Demo
+## Live Demo
 
 *The demo is deployed on a free dyno and it might take a minute to wake up.*
 ### [Live demo on Heroku](https://live.scoold.com)
@@ -103,7 +103,7 @@ The settings shown below are all meant to be part of the Scoold config file.
 
 [Read the Para docs for more information.](https://paraio.org/docs)
 
-### Configuration
+## Configuration
 
 > **Important:** Create a separate app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
 
@@ -125,7 +125,7 @@ para.endpoint = "https://paraio.com"
 para.access_key = "app:scoold"
 # secret key for your Para app
 para.secret_key = "*****************"
-# enable or disable email&password authentication
+# enable or disable email and password authentication
 para.password_auth_enabled = true
 # if false, commenting is allowed after 100+ reputation
 para.new_users_can_comment = true
@@ -154,7 +154,7 @@ para.connection_retries_max = 10
 para.connection_retry_interval_sec = 10
 ```
 
-### Docker
+## Docker
 
 Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.
 First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
@@ -194,7 +194,7 @@ Then you can start both Scoold and Para with Docker Compose like so:
 $ docker-compose up
 ```
 
-### Kubernetes
+## Kubernetes
 
 There's a Helm chart inside the `helm/` folder. First edit `helm/scoold/values.yaml` and then you can deploy Scoold to
 Kubernetes with a single command:
@@ -205,7 +205,7 @@ cd helm; helm install ./scoold
 
 For more info, read the README at `helm/README.md`.
 
-### Deploying Scoold to Heroku
+## Deploying Scoold to Heroku
 
 **One-click deployment**
 
@@ -223,7 +223,7 @@ becomes `para_endpoint`.
 
 It's also helpful to install the Heroku CLI tool.
 
-### Deploying Scoold to DigitalOcean
+## Deploying Scoold to DigitalOcean
 
 <a href="https://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
 	<img src="https://installer.71m.us/button.svg" height="32" alt="deploy to digitalocean button">
@@ -235,7 +235,7 @@ It's also helpful to install the Heroku CLI tool.
 4. Go to `http://123.234.12.34` (use the correct IP address)
 5. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet
 
-### Deploying Scoold to AWS
+## Deploying Scoold to AWS
 
 <a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
 	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
@@ -263,7 +263,7 @@ It's also helpful to install the Heroku CLI tool.
 3. [Create a new Beanstalk web app](https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Tomcat&tierName=WebServer&instanceType=t1.micro)
 4. Upload the WAR package `target/scoold-x.y.z.war` to Beanstalk, modify any additional options and hit "Create"
 
-### Deploying Scoold to Azure
+## Deploying Scoold to Azure
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/Erudika/scoold)
 
@@ -271,7 +271,7 @@ It's also helpful to install the Heroku CLI tool.
 2. Fill in the required parameters
 3. Launch the container
 
-### Deploying Scoold to Google App Engine
+## Deploying Scoold to Google App Engine
 
 1. Clone this repo and change directory to it
 2. Create a project in the Google Cloud Platform Console
@@ -280,7 +280,7 @@ It's also helpful to install the Heroku CLI tool.
 4. Edit `app.gae.yaml` to suit your needs
 6. Deploy it with `gcloud preview app deploy app.gae.yaml`
 
-### Deploying Scoold to a servlet container
+## Deploying Scoold to a servlet container
 
 The instructions for Tomcat in particular are:
 
@@ -291,12 +291,12 @@ The instructions for Tomcat in particular are:
 
 Scoold is compatible with Tomcat 9+.
 
-### Deploying Scoold under a specific context path
+## Deploying Scoold under a specific context path
 
 To deploy Scoold at a different path instead of the root path, set `para.context_path = "/newpath`. The default value
 for this setting is blank, meaning Scoold will be deployed at the root directory.
 
-### Content-Security-Policy header
+## Content-Security-Policy header
 
 This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
 The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
@@ -313,12 +313,12 @@ img-src 'self' https: data:; report-uri /reports/cspv
 
 **Note:** If you get CSP violation errors, check your `para.host_url` configuration, or edit the value of `para.csp_header`.
 
-### Serving static files from a CDN
+## Serving static files from a CDN
 
 Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
 `para.cdn_url` to enable serving those files from a CDN. The value of the CDN URL *must not* end in "/".
 
-### SMTP configuration
+## SMTP configuration
 
 Scoold uses the JavaMail API to send emails. If you want Scoold to send notification emails you should add the
 following SMTP settings to your config file:
@@ -335,6 +335,12 @@ para.mail.tls = true
 para.mail.ssl = false
 ```
 The email template is located in `src/main/resources/emails/notify.html`.
+
+## Email verification
+
+You can enable or disable the email verification step by setting `para.security.allow_unverified_emails = true`.
+This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
+for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
 
 ## Social login
 
@@ -402,7 +408,7 @@ para.security.ldap.bind_dn = ""
 para.security.ldap.bind_pass = ""
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
-para.security.ldap.user_dn_pattern = "uid={0},ou=people"
+para.security.ldap.user_dn_pattern = "uid={0}"
 para.security.ldap.password_attribute = "userPassword"
 # set this only if you are connecting to Active Directory
 para.security.ldap.active_directory_domain = ""
@@ -413,6 +419,9 @@ para.security.ldap.provider = "Continue with LDAP"
 
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
+For regular LDAP, only `{0}` is a valid placeholder and it gets replaced with the person's username.
+
+Please, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap) to learn more about the settings above.
 
 ## SAML configuration
 
@@ -488,7 +497,7 @@ para.security.saml.domain = "paraio.com"
 para.security.saml.provider = "Continue with SAML"
 ```
 
-## Spaces (Teams)
+## Spaces (a.k.a. Teams)
 
 Spaces are a way to organize users and questions into isolated groups. There's a default space, which is publicly
 accessible by default. Each user can belong to one or more spaces, but a question can only belong to a single space.

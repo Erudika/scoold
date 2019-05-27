@@ -244,6 +244,10 @@ public class ScooldServer extends SpringBootServletInitializer {
 		if (!Config.getConfigParam("security.ldap.compare_passwords", "").isEmpty()) {
 			settings.put("security.ldap.compare_passwords", Config.getConfigParam("security.ldap.compare_passwords", ""));
 		}
+
+		// email verification
+		settings.put("security.allow_unverified_emails", Config.getConfigBoolean("security.allow_unverified_emails", false));
+
 		// URLs for success and failure
 		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
