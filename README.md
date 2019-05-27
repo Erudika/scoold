@@ -699,7 +699,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | :heavy_check_mark: Thanks Charles Maheu!
 **German** | [lang_de.properties](src/main/resources/lang_de.properties) | :heavy_check_mark: Thanks Patrick Gäckle!
 **Greek** | [lang_el.properties](src/main/resources/lang_el.properties) | 0%
-**Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | 0%
+**Hebrew** | [lang_iw.properties](src/main/resources/lang_iw.properties) | :heavy_check_mark: Thanks David A.
 **Hindi** | [lang_hi.properties](src/main/resources/lang_hi.properties) | :heavy_check_mark: Thanks Rakesh Gopathi!
 **Hungarian** | [lang_hu.properties](src/main/resources/lang_hu.properties) | 0%
 **Icelandic** | [lang_is.properties](src/main/resources/lang_is.properties) | 0%
