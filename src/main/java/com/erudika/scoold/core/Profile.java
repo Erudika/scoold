@@ -39,6 +39,7 @@ public class Profile extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
 
+	@Stored private String originalName;
 	@Stored private Long lastseen;
 	@Stored private String location;
 	@Stored private String latlng;
@@ -288,6 +289,14 @@ public class Profile extends Sysprop {
 
 	public void setAboutme(String aboutme) {
 		this.aboutme = aboutme;
+	}
+
+	public String getOriginalName() {
+		return originalName;
+	}
+
+	public void setOriginalName(String originalName) {
+		this.originalName = originalName;
 	}
 
 	@SuppressWarnings("unchecked")

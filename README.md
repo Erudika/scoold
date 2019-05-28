@@ -143,6 +143,10 @@ para.fb_app_id = "123456789"
 para.google_client_id = "123-abcd.apps.googleusercontent.com"
 # If true, the default space will be accessible by everyone
 para.is_default_space_public = true
+# If true, users can change their profile pictures
+para.avatar_edits_enabled = true
+# If true, users can change their names
+para.name_edits_enabled = true
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will

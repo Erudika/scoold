@@ -169,12 +169,7 @@ public final class ScooldUtils {
 					update = true;
 				}
 				authUser.setUser(u);
-				if (!StringUtils.equals(u.getPicture(), authUser.getPicture()) &&
-						!StringUtils.contains(authUser.getPicture(), "gravatar.com")) {
-					authUser.setPicture(u.getPicture());
-					update = true;
-				}
-				if (update) {
+				if (update || updateProfilePictureAndName(authUser, u)) {
 					authUser.update();
 				}
 			} else {
@@ -191,6 +186,7 @@ public final class ScooldUtils {
 		Profile authUser = pc.read(Profile.id(u.getId()));
 		if (authUser == null) {
 			authUser = new Profile(u.getId(), u.getName());
+			authUser.setOriginalName(u.getName());
 			authUser.setPicture(u.getPicture());
 			authUser.setAppid(u.getAppid());
 			authUser.setCreatorid(u.getId());
@@ -205,6 +201,24 @@ public final class ScooldUtils {
 					u.getName(), authUser.getId(), authUser.getGroups());
 		}
 		return authUser;
+	}
+
+	private boolean updateProfilePictureAndName(Profile authUser, User u) {
+		boolean update = false;
+		if (!StringUtils.equals(u.getPicture(), authUser.getPicture())
+				&& !StringUtils.contains(authUser.getPicture(), "gravatar.com")
+				&& !Config.getConfigBoolean("avatar_edits_enabled", true)) {
+			authUser.setPicture(u.getPicture());
+			update = true;
+		}
+		if (!StringUtils.equals(u.getName(), authUser.getName())) {
+			if (!Config.getConfigBoolean("name_edits_enabled", true)) {
+				authUser.setName(u.getName());
+			}
+			authUser.setOriginalName(u.getName());
+			update = true;
+		}
+		return update;
 	}
 
 	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {

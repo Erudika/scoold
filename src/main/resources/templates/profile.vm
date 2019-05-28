@@ -58,6 +58,9 @@
 				#end
 				<div class="viewbox">
 					<span class="largeText">$!{showUser.name}</span>
+					#if ($isAdmin && $showUser.originalName)
+						<div class="tooltipped" data-tooltip="Original name">$!{showUser.originalName}</div>
+					#end
 					<div>
 						<span class="chip largeText phl tooltipped" data-tooltip="$!lang.get('reputation')">$!showUser.votes</span> &nbsp;&nbsp;
 						#if($badgesCount > 0)
@@ -176,11 +179,13 @@
 			<div id="about-edit" class="editbox lightgraybg pal ${hideedit1}">
 				<form method="post" id="about-edit-form" action="$profilelink/$!authUser.creatorid">
 					#sectoken(false)
-					<div class="input-field">
-						<i class="fa fa-user-circle prefix"></i>
-						<label for="name_text">$!{lang.get("profile.name")}</label>
-						<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}">
-					</div>
+					#if($nameEditsAllowed)
+						<div class="input-field">
+							<i class="fa fa-user-circle prefix"></i>
+							<label for="name_text">$!{lang.get("profile.name")}</label>
+							<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}">
+						</div>
+					#end
 
 					<div class="input-field">
 						<i class="fa fa-map-marker prefix"></i>

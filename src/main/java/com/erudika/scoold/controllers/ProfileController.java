@@ -108,6 +108,7 @@ public class ProfileController {
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);
 		model.addAttribute("answerslist", answerslist);
+		model.addAttribute("nameEditsAllowed", Config.getConfigBoolean("name_edits_enabled", true));
 		return "base";
 	}
 
@@ -148,10 +149,6 @@ public class ProfileController {
 
 			boolean updateProfile = false;
 
-			if (!StringUtils.isBlank(name)) {
-				showUser.setName(name);
-				updateProfile = true;
-			}
 			if (!StringUtils.isBlank(location)) {
 				showUser.setLocation(location);
 				updateProfile = true;
@@ -164,8 +161,9 @@ public class ProfileController {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
 			}
-			if (Config.getConfigBoolean("avatar_edits_enabled", true)) {
-				updateProfile = updatePicture(showUser, picture);
+			if (Config.getConfigBoolean("avatar_edits_enabled", true) ||
+					Config.getConfigBoolean("name_edits_enabled", true)) {
+				updateProfile = updateUserPictureAndName(showUser, picture, name);
 			}
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
@@ -176,17 +174,34 @@ public class ProfileController {
 		return "redirect:" + PROFILELINK;
 	}
 
-	private boolean updatePicture(Profile showUser, String picture) {
-		if (!StringUtils.isBlank(picture) && (Utils.isValidURL(picture) || picture.startsWith("data:"))) {
+	private boolean updateUserPictureAndName(Profile showUser, String picture, String name) {
+		boolean updateProfile = false;
+		boolean updateUser = false;
+		User u = showUser.getUser();
+		if (Config.getConfigBoolean("avatar_edits_enabled", true) &&
+				!StringUtils.isBlank(picture) && (Utils.isValidURL(picture) || picture.startsWith("data:"))) {
 			showUser.setPicture(picture);
-			User u = showUser.getUser();
 			if (!u.getPicture().equals(picture) && !picture.contains("gravatar.com")) {
 				u.setPicture(picture);
-				utils.getParaClient().update(u);
+				updateUser = true;
 			}
-			return true;
+			updateProfile = true;
 		}
-		return false;
+		if (Config.getConfigBoolean("name_edits_enabled", true) && !StringUtils.isBlank(name)) {
+			showUser.setName(name);
+			if (StringUtils.isBlank(showUser.getOriginalName())) {
+				showUser.setOriginalName(name);
+			}
+			if (!u.getName().equals(name)) {
+				u.setName(name);
+				updateUser = true;
+			}
+			updateProfile = true;
+		}
+		if (updateUser) {
+			utils.getParaClient().update(u);
+		}
+		return updateProfile;
 	}
 
 	private boolean isMyid(Profile authUser, String id) {
