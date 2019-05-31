@@ -231,6 +231,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("security.oauth.parameters.email", Config.getConfigParam("security.oauth.parameters.email", null));
 		settings.put("security.oauth.parameters.picture", Config.getConfigParam("security.oauth.parameters.picture", null));
 		settings.put("security.oauth.domain", Config.getConfigParam("security.oauth.domain", null));
+		settings.put("security.oauth.token_delegation_enabled", Config.getConfigBoolean("security.oauth.token_delegation_enabled", false));
 		// LDAP settings
 		settings.put("security.ldap.server_url", Config.getConfigParam("security.ldap.server_url", ""));
 		settings.put("security.ldap.base_dn", Config.getConfigParam("security.ldap.base_dn", ""));

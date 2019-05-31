@@ -398,6 +398,9 @@ para.security.oauth.parameters.name = "name"
 
 # Sets the string on the login button
 para.security.oauth.provider = "Continue with OpenID Connect"
+
+# Enable/disable access token delegation
+para.security.oauth.token_delegation_enabled = false
 ```
 
 ## LDAP configuration
@@ -408,8 +411,6 @@ There are several configuration options which Para needs in order to connect to 
 ```ini
 para.security.ldap.server_url = "ldap://localhost:8389/"
 para.security.ldap.base_dn = "dc=springframework,dc=org"
-para.security.ldap.bind_dn = ""
-para.security.ldap.bind_pass = ""
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
 para.security.ldap.user_dn_pattern = "uid={0}"
