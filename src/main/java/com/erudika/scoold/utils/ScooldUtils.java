@@ -36,6 +36,7 @@ import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
 import com.erudika.scoold.core.Revision;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
+import com.typesafe.config.ConfigObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -778,11 +779,12 @@ public final class ScooldUtils {
 		return template;
 	}
 
-	public void setSecurityHeaders(HttpServletRequest request, HttpServletResponse response) {
+	public void setSecurityHeaders(String nonce, HttpServletRequest request, HttpServletResponse response) {
 		// CSP Header
 		if (Config.getConfigBoolean("csp_header_enabled", true)) {
 			response.addHeader("Content-Security-Policy",
-					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy(request.isSecure())));
+					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy(request.isSecure())).
+							replaceFirst("\\{\\{nonce\\}\\}", nonce));
 		}
 		// HSTS Header
 		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
@@ -806,18 +808,34 @@ public final class ScooldUtils {
 		}
 	}
 
+	public Map<String, Object> getExternalScripts() {
+		if (Config.getConfig().hasPath("external_scripts")) {
+			ConfigObject extScripts = Config.getConfig().getObject("external_scripts");
+			if (extScripts != null && !extScripts.isEmpty()) {
+				return extScripts.unwrapped();
+			}
+		}
+		return Collections.emptyMap();
+	}
+
+	public String getCSPNonce() {
+		return Utils.generateSecurityToken(16);
+	}
+
 	public String getDefaultContentSecurityPolicy(boolean isSecure) {
 		return (isSecure ? "upgrade-insecure-requests; " : "")
 				+ "default-src 'self'; "
 				+ "base-uri 'self'; "
 				+ "form-action 'self'; "
-				+ "connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com; "
-				+ "frame-src 'self' accounts.google.com staticxx.facebook.com; "
-				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com; "
-				+ "script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net "
-					+ "cdnjs.cloudflare.com www.google-analytics.com www.googletagmanager.com code.jquery.com static.scoold.com; "
-				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com; "
+				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
+				+ " scoold.com www.google-analytics.com www.googletagmanager.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
+				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
+				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
+				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com "
+				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " + Config.getConfigParam("csp_style_sources", "") + "; "
 				+ "img-src 'self' https: data:; "
-				+ "report-uri /reports/cspv";
+				+ "object-src 'none'; "
+				+ "report-uri /reports/cspv; "
+				+ "script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';";
 	}
 }

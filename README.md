@@ -310,12 +310,39 @@ base-uri 'self';
 connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com;
 frame-src 'self' accounts.google.com staticxx.facebook.com;
 font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com;
-script-src 'self' 'unsafe-eval' apis.google.com maps.googleapis.com connect.facebook.net cdnjs.cloudflare.com www.google-analytics.com www.googletagmanager.com code.jquery.com static.scoold.com;
 style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com;
-img-src 'self' https: data:; report-uri /reports/cspv
+img-src 'self' https: data:;
+object-src 'none;
+report-uri /reports/cspv;
+script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';
 ```
 
-**Note:** If you get CSP violation errors, check your `para.host_url` configuration, or edit the value of `para.csp_header`.
+The placeholder `{{nonce}}` will get replaced by the CSP nonce value used for whitelisting scripts.
+
+**Note:** If you get CSP violation errors, check your `para.host_url` and `para.cdn_url` configuration,
+or edit the value of `para.csp_header`.
+
+Additionally, there are 4 options to extend the values of `connect-src`, `frame-src`, `font-src` and `style-src`
+respectively:
+```
+para.csp_connect_sources = "connect-domain1.com connect-domain2.com"
+para.csp_frame_sources = "frame-domain1.com frame-domain2.com"
+para.csp_font_sources = "font-domain1.com font-domain2.com"
+para.csp_style_sources = "style-domain1.com style-domain2.com"
+```
+
+## External scripts and JS snippets
+
+You can append external scripts and JS snippets to the end of the page by setting the `para.external_scripts` property.
+```
+# URL
+para.external_scripts.myscript1 = "https://mydomain.com/script.js"
+# Base64 encoded JavaScript snippet
+para.external_scripts.myscript2 = "J2Y2M3VlcH .... enZ2OScpOw=="
+```
+
+**Important:** Watch out for console errors in the browser after you add external scripts. In such cases you might have to
+modify the `frame-src` or `connect-src` portions of the CSP header (see the 4 options above).
 
 ## Serving static files from a CDN
 

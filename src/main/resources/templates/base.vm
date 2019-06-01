@@ -41,9 +41,9 @@
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css" rel="stylesheet">
 		#end
-		<script src="$!scriptslink/globals.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/globals.js"></script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
+		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
 	</head>
 	<body>
@@ -324,20 +324,37 @@
 			</div>
 		</div>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 		#if ($includeHighlightJS)
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 		#end
-		<script src="$!scriptslink/simplemde.min.js"></script>
-		<script src="$!scriptslink/scoold.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/simplemde.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 		#if ($request.getServletPath() == "/signin")
-		<script src="$!scriptslink/signin.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>
 		#end
 		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty())
-		<script src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
-		<script src="$!scriptslink/a7s.js"></script>
+		<script nonce="$cspNonce" src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
+		<script nonce="$cspNonce">
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', GOOGLE_ANALYTICS_ID, { 'anonymize_ip': true });
+		</script>
+		#end
+		#foreach($externalScript in $externalScripts.entrySet())
+			<!-- External Script: $externalScript.key Begin -->
+			#if($externalScript.value.startsWith("http"))
+				<script nonce="$cspNonce" src="$externalScript.value"></script>
+			#else
+				#set($_extScript = $utils.base64dec($!externalScript.value) )
+				<script nonce="$cspNonce">
+					$!_extScript
+				</script>
+			#end
+			<!-- External Script: $externalScript.key End -->
 		#end
 	</body>
 </html>

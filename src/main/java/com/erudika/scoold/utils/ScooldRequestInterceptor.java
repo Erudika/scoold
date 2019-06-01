@@ -185,9 +185,13 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 				utils.param(request, "page1") || utils.param(request, "page2"))) {
 			modelAndView.setViewName("pagination"); // switch to page fragment view
 		}
+		// External scripts
+		modelAndView.addObject("externalScripts", utils.getExternalScripts());
+		// CSP nonce
+		String cspNonce = utils.getCSPNonce();
+		modelAndView.addObject("cspNonce", cspNonce);
 		// CSP, HSTS, etc, headers. See https://securityheaders.com
-		utils.setSecurityHeaders(request, response);
-
+		utils.setSecurityHeaders(cspNonce, request, response);
 		// default metadata for social meta tags
 		if (!modelAndView.getModel().containsKey("title")) {
 			modelAndView.addObject("title", Config.APP_NAME);
