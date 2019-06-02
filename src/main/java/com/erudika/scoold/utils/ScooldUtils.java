@@ -177,8 +177,9 @@ public final class ScooldUtils {
 				clearSession(req, res);
 				if (u != null) {
 					logger.warn("Attempted signin from an unknown domain: {}", u.getEmail());
+				} else {
+					logger.info("Invalid JWT found in cookie {}.", Config.AUTH_COOKIE);
 				}
-				res.setStatus(401);
 			}
 		}
 		initCSRFToken(req, res);
