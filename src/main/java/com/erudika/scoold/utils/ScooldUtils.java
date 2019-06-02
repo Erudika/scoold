@@ -175,7 +175,9 @@ public final class ScooldUtils {
 				}
 			} else {
 				clearSession(req, res);
-				logger.warn("Attempted signin from an unknown domain: {}", u != null ? u.getEmail() : "unknown");
+				if (u != null) {
+					logger.warn("Attempted signin from an unknown domain: {}", u.getEmail());
+				}
 				res.setStatus(401);
 			}
 		}
