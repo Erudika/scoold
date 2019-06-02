@@ -149,15 +149,15 @@ public class ProfileController {
 
 			boolean updateProfile = false;
 
-			if (!StringUtils.isBlank(location)) {
+			if (!StringUtils.equals(showUser.getLocation(), location)) {
 				showUser.setLocation(location);
 				updateProfile = true;
 			}
-			if (!StringUtils.isBlank(website)) {
+			if (!StringUtils.equals(showUser.getWebsite(), website)) {
 				showUser.setWebsite(website);
 				updateProfile = true;
 			}
-			if (!StringUtils.isBlank(aboutme)) {
+			if (!StringUtils.equals(showUser.getAboutme(), aboutme)) {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
 			}

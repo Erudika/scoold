@@ -79,8 +79,8 @@
 				</div>
 			</div>
 			#if($showUser.website && !$showUser.website.isEmpty())
-				<div class="card-action center-align truncate">
-					<a href="$!showUser.website" class="blue-text">$!showUser.website</a>
+				<div class="card-action card-website center-align truncate">
+					<a href="$!showUser.website" class="blue-text">$!showUser.website.substring($!showUser.website.indexOf("/") + 2)</a>
 				</div>
 			#end
 		</div>

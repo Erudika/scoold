@@ -116,6 +116,7 @@ public class Profile extends Sysprop {
 		this.status = "";
 		this.aboutme = "";
 		this.location = "";
+		this.website = "";
 		this.badges = "";
 		this.upvotes = 0L;
 		this.downvotes = 0L;

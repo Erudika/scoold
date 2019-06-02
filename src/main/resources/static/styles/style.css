@@ -234,6 +234,10 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .user-card img {
 	max-height: 127px;
 }
+.card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
+	margin-right: 0;
+	text-transform: lowercase;
+}
 @media (max-width: 900px) {
 	.sTextCenter {
 		text-align: center;
