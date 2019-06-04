@@ -46,6 +46,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Advanced syntax highlighting
 - Image uploads
 - Security notifications
+- Account suspensions/permabans
 
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
