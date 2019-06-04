@@ -834,7 +834,7 @@ public final class ScooldUtils {
 				+ " scoold.com www.google-analytics.com www.googletagmanager.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
-				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com "
+				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com unpkg.com "
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " + Config.getConfigParam("csp_style_sources", "") + "; "
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "

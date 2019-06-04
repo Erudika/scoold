@@ -33,7 +33,7 @@
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet">
-		<link href="$!styleslink/simplemde.min.css" rel="stylesheet">
+		<link href="https://unpkg.com/easymde/dist/easymde.min.css" rel="stylesheet">
 		#if ($includeHighlightJS)
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
 		#end
@@ -330,7 +330,7 @@
 		#if ($includeHighlightJS)
 		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 		#end
-		<script nonce="$cspNonce" src="$!scriptslink/simplemde.min.js"></script>
+		<script nonce="$cspNonce" src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 		#if ($request.getServletPath() == "/signin")
 		<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>

@@ -670,7 +670,7 @@ $(function () {
 	}
 
 	function initPostEditor(elem) {
-		var mde = new SimpleMDE({
+		var mde = new EasyMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
 			showIcons: ["code", "table", "strikethrough"],
