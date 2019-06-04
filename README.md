@@ -331,6 +331,9 @@ para.csp_font_sources = "font-domain1.com font-domain2.com"
 para.csp_style_sources = "style-domain1.com style-domain2.com"
 ```
 
+You can also enable or disable CSP violation reports (visible only to admins) by setting `para.csp_reports_enabled = true`.
+Keep in mind that if your website has a lot of traffic, this will result in hundreds of new reports being created each hour.
+
 ## External scripts and JS snippets
 
 You can append external scripts and JS snippets to the end of the page by setting the `para.external_scripts` property.
