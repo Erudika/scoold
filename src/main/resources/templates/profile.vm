@@ -96,7 +96,7 @@
 					<i class="fa fa-chevron-up"></i> Make mod
 				</a>
 				<a href="${adminlink}?delete=profile&id=$showUser.id" title="Delete user account" class="red chip white-text">
-					<i class="fa fa-close red lighten-1"></i> $!lang.get("delete")
+					<i class="fa fa-close"></i> $!lang.get("delete")
 				</a>
 			#end
 		</div>

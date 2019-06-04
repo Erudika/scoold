@@ -236,7 +236,7 @@ public class SigninController {
 		sb.append("OAUTH2_APP_ID = \"").append(Config.getConfigParam("oa2_app_id", "")).append("\"; ");
 		sb.append("OAUTH2_SCOPE = \"").append(Config.getConfigParam("security.oauth.scope", "")).append("\"; ");
 
-		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req), req);
+		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req));
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");
 		String result = sb.toString();
 		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))

@@ -175,7 +175,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		// Spaces
 		modelAndView.addObject("currentSpace", utils.getValidSpaceId(authUser, getCookieValue(request, SPACE_COOKIE)));
 		// Language
-		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request), request);
+		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request));
 		modelAndView.addObject("currentLocale", currentLocale);
 		modelAndView.addObject("lang", utils.getLang(currentLocale));
 		modelAndView.addObject("langDirection", utils.isLanguageRTL(currentLocale.getLanguage()) ? "RTL" : "LTR");

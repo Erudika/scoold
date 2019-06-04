@@ -118,8 +118,7 @@ public class ProfileController {
 		if (!isMyid(authUser, Profile.id(id))) {
 			Profile showUser = utils.getParaClient().read(Profile.id(id));
 			if (showUser != null) {
-				boolean isShowUserAdmin = User.Groups.ADMINS.toString().equals(showUser.getGroups());
-				if (utils.isAdmin(authUser) && !isShowUserAdmin) {
+				if (utils.isAdmin(authUser) && !utils.isAdmin(showUser)) {
 					showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
 					showUser.update();
 				}

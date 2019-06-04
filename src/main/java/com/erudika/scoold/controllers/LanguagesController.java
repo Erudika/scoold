@@ -59,7 +59,7 @@ public class LanguagesController {
 
 	@PostMapping("/{langkey}")
 	public String post(@PathVariable String langkey, HttpServletRequest req, HttpServletResponse res) {
-		Locale locale = utils.getCurrentLocale(langkey, req);
+		Locale locale = utils.getCurrentLocale(langkey);
 		if (locale != null) {
 			int maxAge = 60 * 60 * 24 * 365;  //1 year
 			HttpUtils.setRawCookie(LOCALE_COOKIE, locale.toString(), req, res, false, maxAge);

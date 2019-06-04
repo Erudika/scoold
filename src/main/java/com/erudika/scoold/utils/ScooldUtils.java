@@ -403,7 +403,7 @@ public final class ScooldUtils {
 		return (cookieLoc != null) ? cookieLoc : requestLocale.getLanguage();
 	}
 
-	public Locale getCurrentLocale(String langname, HttpServletRequest req) {
+	public Locale getCurrentLocale(String langname) {
 		Locale currentLocale = langutils.getProperLocale(langname);
 		if (currentLocale == null) {
 			currentLocale = langutils.getProperLocale("en");
@@ -412,7 +412,7 @@ public final class ScooldUtils {
 	}
 
 	public Map<String, String> getLang(HttpServletRequest req) {
-		return getLang(getCurrentLocale(getLanguageCode(req), req));
+		return getLang(getCurrentLocale(getLanguageCode(req)));
 	}
 
 	public Map<String, String> getLang(Locale currentLocale) {
