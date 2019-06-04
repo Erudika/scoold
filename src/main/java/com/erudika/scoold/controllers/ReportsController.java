@@ -124,6 +124,7 @@ public class ReportsController {
 				} else if (rep.getProperties().containsKey("source-file")) {
 					rep.setLink((String) rep.getProperties().get("source-file"));
 				}
+				body.remove("original-policy");
 				body.put("userAgent", req.getHeader("User-Agent") + "");
 				body.put("userHost", req.getRemoteHost() + "");
 			}
