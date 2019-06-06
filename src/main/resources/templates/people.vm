@@ -1,24 +1,25 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if($currentSpace && !$currentSpace.isEmpty())
 		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
 	#end
-	<div class="right mtl ptl">
+
+	<h4 class="hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
+
+	<div class="chips-container">
 		#set($sortarr = {'votes': "", 'newest': ""} )
 		#setsortbyselection($sortarr 'newest')
-		<div class="mvm">
-			<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
-			#if($isAdmin)
-				#if($request.getParameter("bulkedit"))
-					<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
-				#else
-					<a href="$peoplelink?bulkedit=true" class="chip">Bulk Edit Spaces</a>
-				#end
+		<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
+		<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
+		#if($isAdmin)
+			#if($request.getParameter("bulkedit"))
+				<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
+			#else
+				<a href="$peoplelink?bulkedit=true" class="chip">Bulk Edit Spaces</a>
 			#end
-		</div>
+		#end
 	</div>
-	<h2>$!lang.get("people.title") #showcount($itemcount.count)</h2>
 
+	<h2 class="hide-on-med-and-down">$!lang.get("people.title") #showcount($itemcount.count)</h2>
 
 	#if($isAdmin && $request.getParameter("bulkedit"))
 	<form method="get">

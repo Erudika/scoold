@@ -1,13 +1,14 @@
-<div class="ptl">
-	#set($sortarr = {'popular': "", 'tag': ""} )
-	#setsortbyselection($sortarr 'popular')
-	<div class="right mtl ptl">
-		<div class="mvm">
-			<a href="$tagslink" title="Most used tags" class="chip $sortarr.popular">$!lang.get("posts.mostpopular")</a>
-			<a href="$tagslink?sortby=tag" title="Tags by name" class="chip $sortarr.tag">$!lang.get("name")</a>
-		</div>
+<div class="page-wrapper">
+	<h4 class="hide-on-large-only">$!lang.get("tags.title") #showcount($itemcount.count)</h4>
+
+	<div class="chips-container">
+		#set($sortarr = {'popular': "", 'tag': ""} )
+		#setsortbyselection($sortarr 'popular')
+		<a href="$tagslink" title="Most used tags" class="chip $sortarr.popular">$!lang.get("posts.mostpopular")</a>
+		<a href="$tagslink?sortby=tag" title="Tags by name" class="chip $sortarr.tag">$!lang.get("name")</a>
 	</div>
-	<h2>$!lang.get("tags.title") #showcount($itemcount.count)</h2>
+
+	<h2 class="hide-on-med-and-down">$!lang.get("tags.title") #showcount($itemcount.count)</h2>
 	<hr>
 	#if($tagslist.isEmpty())
 		<div class="card-panel hugeText center-align grey-text">

@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	<div class="row questionpage">
 		<div class="col m12 l9">
 			<span class="grey-text">
@@ -91,7 +91,7 @@
 			#end
 		</div>
 
-		<div class="col m12 l3">
+		<div class="col m12 l3 s12">
 			<div class="card-panel">
 				<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
 				<div class="mediumText pvs"><b>$!showPost.answercount</b>

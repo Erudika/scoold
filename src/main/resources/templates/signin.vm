@@ -1,7 +1,7 @@
 <div id="fb-root"></div>
 
 #if($register)
-<div class="ptl">
+<div class="page-wrapper">
 	<div class="row ptl">
 		<div class="col s12 m12 l6 offset-l3 center">
 			<div class="card-panel">
@@ -46,7 +46,7 @@
 	</div>
 </div>
 #elseif($iforgot)
-<div class="ptl">
+<div class="page-wrapper">
 	<div class="row ptl">
 		<div class="col s12 m12 l6 offset-l3 center">
 			<div class="card-panel lighten-4">
@@ -86,7 +86,7 @@
 	</div>
 </div>
 #else
-<div class="ptl">
+<div class="page-wrapper">
 	<div class="row ptl">
 		<div class="col s12 m12 l10 offset-l1 center">
 			<div class="card-panel lighten-4">

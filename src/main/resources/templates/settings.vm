@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if ($request.getParameter("delete"))
 		<br>
 		<br>

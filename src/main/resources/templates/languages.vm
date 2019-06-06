@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	<h2>$!lang.get("translate.select")</h2>
 	<hr>
 	<div class="row">

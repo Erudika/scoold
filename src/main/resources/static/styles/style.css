@@ -199,6 +199,10 @@ kbd {
 .chip:focus {
 	background-color: #666;
 }
+.chips-container {
+	padding-top: 18px;
+	float: right;
+}
 .material-icons {
 	display: inline-block;
 	font: normal normal normal 14px/1 FontAwesome;
@@ -239,6 +243,15 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	margin-right: 0;
 	text-transform: lowercase;
 }
+.editlink {
+	display: inline-flex;
+}
+.aboutme {
+	padding-left: 70px;
+}
+.post-actions a {
+	display: inline-block;
+}
 @media (max-width: 900px) {
 	.sTextCenter {
 		text-align: center;
@@ -246,7 +259,58 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	.sTextCenter.r {
 		text-align: center;
 	}
+	.mediumText {
+		font-size: 1.1em;
+	}
+	.hugeText {
+		font-size: 2em;
+	}
+	.card-panel {
+		padding: 10px;
+		margin: 5px 0;
+	}
+	.container {
+		width: 96%;
+	}
+	.ptl {
+		padding-top: 10px;
+	}
+	mtl {
+		margin-top: 10px;
+	}
+	body {
+		font-size: 14px;
+	}
+	h1 {
+		font-size: 3.2rem;
+		margin: 1.68rem 0;
+	}
+	h2 {
+		font-size: 2.56rem;
+    margin: 1.3733333333rem 0 0.424rem 0;
+	}
+	#main-modal {
+		width: 100%;
+	}
+	.aboutme {
+		padding-left: 0px;
+	}
+	.user-card {
+		height: 90px;
+		margin-bottom: 10px;
+	}
+	.user-card img {
+		max-height: 90px;
+	}
 }
+
+@media (max-width: 990px) {
+	.chips-container {
+		padding: 0;
+		float: none;
+	}
+}
+
 .userbox img {max-width: inherit;}
 @media (max-width: 1280px) {
 	.userbox img {max-width: 40px;}

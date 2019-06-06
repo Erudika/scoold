@@ -93,6 +93,21 @@ td, th {
 	padding: 7px 7px 7px 2px;
 }
 
+.row .col.offset-s6 {
+	margin-right: 50%;
+	margin-left: 0;
+}
+
+.chips-container {
+	float: left;
+}
+
+@media (max-width: 990px) {
+	.chips-container {
+		float: none;
+	}
+}
+
 .r{ text-align: left;}
 .l{ text-align: right;}
 .right{ float: left !important; }

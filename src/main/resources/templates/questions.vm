@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if($currentSpace && !$currentSpace.isEmpty())
 		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
 	#end
@@ -53,41 +53,43 @@
 			</form>
 		</div>
 	#else
-		#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'unapproved': "", 'filter': ""} )
-		#setsortbyselection($sortarr 'newest')
-		<div class="right mtl ptl">
-			<div class="mvm">
-				<a href="${questionslink}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
-				<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-				<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
-				<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
-				<a href="${questionslink}$!{filter}?sortby=unapproved" class="chip $sortarr.unapproved">$!lang.get("posts.unapproved")</a>
-
-				#if ($authenticated)
-					#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
-
-					#if($scooldUtils.isNearMeFeatureEnabled())
-						#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
-						<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
-							<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
-						</a>
-					#end
-
-					#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
-					<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
-						<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
-					</a>
-				#end
-			</div>
-		</div>
-
-		<h2>
+		#macro(questionsTitle)
 			#if ($tag)
 				<small>$!lang.get("posts.tagged") <span class="grey-text text-darken-2">$!tag</span></small>
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end
-		</h2>
+		#end
+
+		<h4 class="hide-on-large-only">#questionsTitle()</h4>
+
+		<div class="chips-container">
+			#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'unanswered': "", 'unapproved': "", 'filter': ""} )
+			#setsortbyselection($sortarr 'newest')
+			<a href="${questionslink}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
+			<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+			<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
+			<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
+			<a href="${questionslink}$!{filter}?sortby=unapproved" class="chip $sortarr.unapproved">$!lang.get("posts.unapproved")</a>
+
+			#if ($authenticated)
+				#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
+
+				#if($scooldUtils.isNearMeFeatureEnabled())
+					#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
+					<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
+						<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
+					</a>
+				#end
+
+				#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
+				<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
+					<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
+				</a>
+			#end
+		</div>
+
+		<h2 class="hide-on-med-and-down">#questionsTitle()</h2>
 		<hr>
 
 		#if (!$questionslist || $questionslist.isEmpty())

@@ -1,5 +1,5 @@
 <div class="row ptl profilepage">
-	<div class="col m4">
+	<div class="col m4 s12">
 		<div class="card">
 			<div class="card-image">
 				<img src="#profilepic($showUser)" class="profile-pic">
@@ -103,22 +103,18 @@
 		#end
 	</div>
 
-	<div class="col m1"></div>
-	<div class="col m7">
-		<div>
-			<div class="row">
-				<div class="col m8">
+	<div class="col m8 s12">
+		<div class="aboutme">
+			<div class="row valign-wrapper">
+				<div class="col s8">
 					<h2>$!{lang.get("profile.about.title")}</h2>
 				</div>
-				<div class="col m4 r">&nbsp;
-					<div class="pvl">
-						&nbsp;
+				<div class="col s4 r">
 						#if ($canEdit)
 							<a href="$profilelink/$authUser.creatorid/edit" class="editlink btn">
-								<i class="fa fa-pencil"></i> $!{lang.get("edit")}
+								<i class="fa fa-pencil"></i><span class="plm">$!{lang.get("edit")}</span>
 							</a>
 						#end
-					</div>
 				</div>
 			</div>
 			#if ($request.requestURI.endsWith("/edit") && $authenticated)

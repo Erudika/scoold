@@ -12,18 +12,8 @@
 	#set($canrestore = $scooldUtils.canEdit($showpost, $authUser))
 	<div class="card-panel">
 		<div class="row">
-			<div class="col m3">
-				#smallpersonbox($showrev.author)
-			</div>
-			<div class="col m4 center">
-				<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
-				<div class="grey-text largeText">#if ($showrev.original) $!lang.get("original") #end </div>
-			</div>
-			<div class="col m5 r">
-				<div class="lightgray mediumText">
-
-				</div>
-				<div class="mts">
+			<div class="col m3 s6">
+				<div class="mbl">
 					#if ($showpost.revisionid == $showrev.id)
 					<i class="fa fa-check-circle green-text fa-3x tooltipped" data-tooltip="$!lang.get('revisions.current')"></i>
 					#elseif ($canrestore)
@@ -35,6 +25,13 @@
 					</form>
 					#end
 				</div>
+			</div>
+			<div class="col m6 s6 center-align">
+				<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
+				<div class="grey-text largeText">#if ($showrev.original) $!lang.get("original") #end </div>
+			</div>
+			<div class="col m3 s12">
+				#smallpersonbox($showrev.author)
 			</div>
 		</div>
 		<div>
@@ -61,7 +58,6 @@
 			#end
 		</div>
 	</div>
-	<br>
 #end
 
 #macro(revisionspage $revisions $showpost)

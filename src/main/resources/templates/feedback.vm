@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if ($write)
 		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a></h2>
 		<hr>
@@ -83,7 +83,7 @@
 				#end
 			</div>
 
-			<div class="col m12 l3">
+			<div class="col m12 l3 s12">
 				<div class="card-panel">
 					<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
 					<div class="mediumText pvs"><b>$!showPost.answercount</b>
@@ -120,20 +120,25 @@
 			</div>
 		</div>
 	#else
-		#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
-		#setsortbyselection($sortarr 'newest')
-		<div class="right mtl ptl">
-			<div class="mvm">
-				<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-				<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-				<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
-			</div>
-		</div>
-		#if ($tag)
-			<h2>$!lang.get("feedback.tagged") '$!{tag}'</h2>
-		#else
-			<h2>$!lang.get("feedback.title") #showcount($itemcount.count)</h2>
+		#macro(feedbackTitle)
+			#if ($tag)
+				$!lang.get("feedback.tagged") '$!{tag}'
+			#else
+				$!lang.get("feedback.title") #showcount($itemcount.count)
+			#end
 		#end
+
+		<h4 class="hide-on-large-only">#feedbackTitle()</h4>
+
+		<div class="chips-container">
+			#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
+			#setsortbyselection($sortarr 'newest')
+			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
+			<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+			<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
+		</div>
+
+		<h2 class="hide-on-med-and-down">#feedbackTitle()</h2>
 		<hr>
 
 		#if($feedbacklist.isEmpty())

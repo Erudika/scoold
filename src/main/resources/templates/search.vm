@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if($currentSpace && !$currentSpace.isEmpty())
 		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
 	#end

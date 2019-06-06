@@ -71,7 +71,7 @@
 #if($getreportform)
 	#reportform($type $parentid $link)
 #else
-	<div class="ptl">
+	<div class="page-wrapper">
 		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
 		<hr>
 		<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>

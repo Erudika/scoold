@@ -1,4 +1,4 @@
-<div class="ptl">
+<div class="page-wrapper">
 	#if ($showLocale)
 		<h2>
 			<a href="$translatelink"><i class="fa fa-globe"></i></a>
