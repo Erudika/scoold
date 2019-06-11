@@ -43,6 +43,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.PROFILELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.Reply;
+import java.util.ArrayList;
 
 /**
  *
@@ -90,8 +93,8 @@ public class ProfileController {
 
 		Pager itemcount1 = utils.getPager("page1", req);
 		Pager itemcount2 = utils.getPager("page2", req);
-		List<? extends Post> questionslist = showUser.getAllQuestions(itemcount1);
-		List<? extends Post> answerslist = showUser.getAllAnswers(itemcount2);
+		List<? extends Post> questionslist = getQuestions(authUser, showUser, isMyProfile, itemcount1);
+		List<? extends Post> answerslist = getAnswers(authUser, showUser, isMyProfile, itemcount2);
 
 		model.addAttribute("path", "profile.vm");
 		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
@@ -220,5 +223,31 @@ public class ProfileController {
 				+ questions + " questions, "
 				+ answers + " answers "
 				+ Utils.abbreviate(showUser.getAboutme(), 150);
+	}
+
+	private List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
+			List<Question> qlist = new ArrayList<>();
+			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
+			qlist.addAll(showUser.getAllQuestions(itemcount));
+			qlist.addAll(showUser.getAllUnapprovedQuestions(p));
+			itemcount.setCount(itemcount.getCount() + p.getCount());
+			return qlist;
+		} else {
+			return showUser.getAllQuestions(itemcount);
+		}
+	}
+
+	private List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
+			List<Reply> alist = new ArrayList<>();
+			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
+			alist.addAll(showUser.getAllAnswers(itemcount));
+			alist.addAll(showUser.getAllUnapprovedAnswers(p));
+			itemcount.setCount(itemcount.getCount() + p.getCount());
+			return alist;
+		} else {
+			return showUser.getAllAnswers(itemcount);
+		}
 	}
 }

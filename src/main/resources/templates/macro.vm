@@ -297,7 +297,12 @@
 #else
 	#set($followedPostClass = "")
 #end
-<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted}">
+#if($showpost.type == "unapprovedquestion")
+	#set($unapprovedClass = "unapproved-post")
+#else
+	#set($unapprovedClass = "")
+#end
+<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted} $!{unapprovedClass}">
 	<div class="row mbn questionbox">
 		#set($votes = $showpost.votes)
 		#set($viewcount = $showpost.viewcount)
@@ -342,6 +347,9 @@
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 							<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
 						#end
+						#if($showpost.type == "unapprovedquestion")
+							<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+						#end
 						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 					</div>
 					<div class="mbs">
@@ -375,11 +383,15 @@
 ####################################
 #macro(compactanswerspage $answers)
 	#foreach($answer in $answers)
-		<div class="card-panel">
+		#if($answer.type == "unapprovedreply") #set($unapprovedClass = "unapproved-post") #else #set($unapprovedClass = "") #end
+		<div class="card-panel $!{unapprovedClass}">
 			<div class="row mbn compactanswerbox">
 				<div class="col s10 m11 l9 columns">
 					<span class="lightborder phm mrm">$!answer.votes</span>
 					<span>
+						#if($answer.type == "unapprovedreply")
+							<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+						#end
 						<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">$!answer.title</a>
 					</span>
 					#if(!$request.requestURI.startsWith("/profile"))
@@ -436,6 +448,9 @@
 			<div class="col s6 m3 l4">
 				<div class="ptl center-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
+					#if($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion")
+						<small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small>
+					#end
 					#if ($showpost.lasteditby)
 					<a href="$revisionslink/$!showpost.id" title="Revision history">
 						$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
@@ -454,6 +469,10 @@
 			<div class="col s12">
 				<div class="lightborder pam post-actions">
 					<a href="#post-$!showpost.id" title="Permalink" class="right permalink"><i class="fa fa-bookmark"></i></a>
+
+					#if ($scooldUtils.isMod($authUser) && ($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion"))
+						<a href="$!actionlink/$showpost.id/approve" title="Approve" class="post-refresh green-text prm"><i class="fa fa-check"></i> $!lang.get("posts.approve")</a>
+					#end
 
 					#if ($scooldUtils.canEdit($showpost, $authUser))
 						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>

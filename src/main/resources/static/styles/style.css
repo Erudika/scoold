@@ -12,6 +12,7 @@ body {
 .postbody ul li {list-style-type: disc;}
 .postbody ul {padding-left: 40px;}
 .postbox, .questionbox {word-wrap: break-word;}
+.unapproved-post { opacity: 0.7; border: 2px dashed #CCC; }
 .postbox img {max-width: 100%;}
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #f8f8f8;}

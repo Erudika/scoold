@@ -316,6 +316,22 @@ public class Profile extends Sysprop {
 		return (List<Reply>) getPostsForUser(Utils.type(Reply.class), pager);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Question> getAllUnapprovedQuestions(Pager pager) {
+		if (getId() == null) {
+			return new ArrayList<Question>();
+		}
+		return (List<Question>) getPostsForUser(Utils.type(UnapprovedQuestion.class), pager);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Reply> getAllUnapprovedAnswers(Pager pager) {
+		if (getId() == null) {
+			return new ArrayList<Reply>();
+		}
+		return (List<Reply>) getPostsForUser(Utils.type(UnapprovedReply.class), pager);
+	}
+
 	private List<? extends Post> getPostsForUser(String type, Pager pager) {
 		pager.setSortby("votes");
 		return client().findTerms(type, Collections.singletonMap(Config._CREATORID, getId()), true, pager);

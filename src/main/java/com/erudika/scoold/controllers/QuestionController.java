@@ -18,16 +18,13 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.email.Emailer;
-import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
-import static com.erudika.scoold.ScooldServer.getServerURL;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -38,7 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +55,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 /**
@@ -96,9 +95,13 @@ public class QuestionController {
 					QUESTIONSLINK : SIGNINLINK + "?returnto=" + showPost.getPostLink(false, false));
 		}
 
+		if (showPost instanceof UnapprovedQuestion && !(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+			return "redirect:" + QUESTIONSLINK;
+		}
+
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby("newest".equals(sortby) ? "timestamp" : "votes");
-		List<Reply> answerslist = showPost.getAnswers(itemcount);
+		List<Reply> answerslist = getAllAnswers(authUser, showPost, itemcount);
 		LinkedList<Post> allPosts = new LinkedList<Post>();
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
@@ -179,7 +182,8 @@ public class QuestionController {
 			pc.update(showPost); // update without adding revisions
 		} else if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
-			Reply answer = utils.populate(req, new Reply(), "body");
+			boolean needsApproval = utils.postNeedsApproval(authUser);
+			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
 			if (!error.containsKey("body")) {
 				answer.setTitle(showPost.getTitle());
@@ -198,7 +202,7 @@ public class QuestionController {
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
-				sendReplyNotifications(showPost, answer);
+				utils.sendReplyNotifications(showPost, answer);
 				return "reply";
 			}
 		}
@@ -208,6 +212,22 @@ public class QuestionController {
 		} else {
 			return "redirect:" + QUESTIONSLINK + "/" + id;
 		}
+	}
+
+	@PostMapping("/{id}/approve")
+	public String modApprove(@PathVariable String id, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isMod(authUser)) {
+			if (showPost instanceof UnapprovedQuestion) {
+				showPost.setType(Utils.type(Question.class));
+				pc.create(showPost);
+			} else if (showPost instanceof UnapprovedReply) {
+				showPost.setType(Utils.type(Reply.class));
+				pc.create(showPost);
+			}
+		}
+		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
 	@PostMapping("/{id}/approve/{answerid}")
@@ -305,36 +325,6 @@ public class QuestionController {
 		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
-	private void sendReplyNotifications(Post parentPost, Post reply) {
-		// send email notification to author of post except when the reply is by the same person
-		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
-			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
-			Map<String, Object> model = new HashMap<String, Object>();
-			String name = replyAuthor.getName();
-			String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
-			String postURL = getServerURL() + parentPost.getPostLink(false, false);
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
-
-			Profile authorProfile = pc.read(parentPost.getCreatorid());
-			if (authorProfile != null) {
-				User author = authorProfile.getUser();
-				if (author != null) {
-					if (authorProfile.getReplyEmailsEnabled()) {
-						parentPost.addFollower(author);
-					}
-				}
-			}
-			if (parentPost.hasFollowers()) {
-				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
-						Utils.compileMustache(model, utils.loadEmailTemplate("notify")));
-			}
-		}
-	}
-
 	private void changeSpaceForAllAnswers(Post showPost, String space) {
 		Pager pager = new Pager(1, "_docid", false, 25);
 		List<Reply> answerslist;
@@ -353,5 +343,16 @@ public class QuestionController {
 			logger.error(null, ex);
 			Thread.currentThread().interrupt();
 		}
+	}
+
+	private List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {
+		List<Reply> answers = new ArrayList<>();
+		Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
+		if (utils.postsNeedApproval() && (utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+			answers.addAll(showPost.getUnapprovedAnswers(p));
+		}
+		answers.addAll(showPost.getAnswers(itemcount));
+		itemcount.setCount(itemcount.getCount() + p.getCount());
+		return answers;
 	}
 }

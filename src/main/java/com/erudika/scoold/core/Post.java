@@ -399,11 +399,20 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public List<Reply> getAnswers(Pager pager) {
+		return getAnswers(Reply.class, pager);
+	}
+
+	@JsonIgnore
+	public List<Reply> getUnapprovedAnswers(Pager pager) {
+		return getAnswers(UnapprovedReply.class, pager);
+	}
+
+	private List<Reply> getAnswers(Class<? extends Reply> type, Pager pager) {
 		if (isReply()) {
 			return Collections.emptyList();
 		}
 
-		List<Reply> answers = client().getChildren(this, Utils.type(Reply.class), pager);
+		List<Reply> answers = client().getChildren(this, Utils.type(type), pager);
 		// we try to find the accepted answer inside the answers list, in not there, read it from db
 		if (pager.getPage() < 2 && !StringUtils.isBlank(getAnswerid())) {
 			Reply acceptedAnswer = null;

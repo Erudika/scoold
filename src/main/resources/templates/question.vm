@@ -96,6 +96,9 @@
 				<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
 				<div class="mediumText pvs"><b>$!showPost.answercount</b>
 					#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</div>
+				#if($showPost.type == "unapprovedquestion")
+					<div class="mediumText pvs orange-text"><i class="fa fa-exclamation-circle"></i>&nbsp; $!lang.get('posts.unapproved')</div>
+				#end
 				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
 					<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
 				</div>

@@ -45,8 +45,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
+import com.erudika.scoold.core.UnapprovedQuestion;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import static com.erudika.scoold.utils.HttpUtils.setRawCookie;
+import java.util.LinkedList;
 
 /**
  *
@@ -150,7 +152,9 @@ public class QuestionsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
-			Question q = utils.populate(req, new Question(), "title", "body", "tags|,", "location");
+			boolean needsApproval = utils.postNeedsApproval(authUser);
+			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
+					"title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);
 			Map<String, String> error = utils.validate(q);
@@ -227,6 +231,15 @@ public class QuestionsController {
 			model.addAttribute("filter", "/" + Utils.stripAndTrim(filter));
 		} else {
 			questionslist = pc.findQuery(type, query, itemcount);
+		}
+
+		if (utils.postsNeedApproval() && utils.isMod(authUser)) {
+			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
+			List<UnapprovedQuestion> uquestionslist = pc.findQuery(Utils.type(UnapprovedQuestion.class), query, p);
+			List<Question> qlist = new LinkedList<>(uquestionslist);
+			itemcount.setCount(itemcount.getCount() + p.getCount());
+			qlist.addAll(questionslist);
+			questionslist = qlist;
 		}
 
 		utils.fetchProfiles(questionslist);

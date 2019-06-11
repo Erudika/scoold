@@ -34,7 +34,10 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
+import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import com.typesafe.config.ConfigObject;
 import java.io.IOException;
@@ -358,10 +361,59 @@ public final class ScooldUtils {
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div class='panel'>{2}</div>",
 					postURL, question.getTitle(), body));
 
+			if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
+				Report rep = new Report();
+				rep.setDescription("New question awaiting approval");
+				rep.setSubType(Report.ReportType.OTHER);
+				rep.setLink(question.getPostLink(false, false));
+				rep.setAuthorName(question.getAuthor().getName());
+				rep.create();
+			}
+
 			Set<String> emails = getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 			if (emails != null) {
 				emailer.sendEmail(new ArrayList<String>(emails),
 						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 100) + "...'",
+						Utils.compileMustache(model, loadEmailTemplate("notify")));
+			}
+		}
+	}
+
+	public void sendReplyNotifications(Post parentPost, Post reply) {
+		// send email notification to author of post except when the reply is by the same person
+		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
+			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
+			Map<String, Object> model = new HashMap<String, Object>();
+			String name = replyAuthor.getName();
+			String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
+			String postURL = getServerURL() + parentPost.getPostLink(false, false);
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
+			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
+
+			Profile authorProfile = pc.read(parentPost.getCreatorid());
+			if (authorProfile != null) {
+				User author = authorProfile.getUser();
+				if (author != null) {
+					if (authorProfile.getReplyEmailsEnabled()) {
+						parentPost.addFollower(author);
+					}
+				}
+			}
+
+			if (postsNeedApproval() && reply instanceof UnapprovedReply) {
+				Report rep = new Report();
+				rep.setDescription("New reply awaiting approval");
+				rep.setSubType(Report.ReportType.OTHER);
+				rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
+				rep.setAuthorName(reply.getAuthor().getName());
+				rep.create();
+			}
+
+			if (parentPost.hasFollowers()) {
+				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
+						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}
@@ -556,9 +608,19 @@ public final class ScooldUtils {
 	}
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {
-		return isAuthenticated(req) && (authUser.hasBadge(ENTHUSIAST) ||
+		return isAuthenticated(req) && ((authUser.hasBadge(ENTHUSIAST) ||
 				Config.getConfigBoolean("new_users_can_comment", true) ||
-				isMod(authUser));
+				isMod(authUser)));
+	}
+
+	public boolean postsNeedApproval() {
+		return Config.getConfigBoolean("posts_need_approval", false);
+	}
+
+	public boolean postNeedsApproval(Profile authUser) {
+		return postsNeedApproval() &&
+				authUser.getVotes() < Config.getConfigInt("posts_rep_threashhold", ENTHUSIAST_IFHAS) &&
+				!isMod(authUser);
 	}
 
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
