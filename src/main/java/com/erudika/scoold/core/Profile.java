@@ -26,6 +26,11 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +61,10 @@ public class Profile extends Sysprop {
 	@Stored private List<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
+	@Stored private Integer yearlyVotes;
+	@Stored private Integer quarterlyVotes;
+	@Stored private Integer monthlyVotes;
+	@Stored private Integer weeklyVotes;
 
 	private transient String newbadges;
 	private transient Integer newreports;
@@ -121,6 +130,10 @@ public class Profile extends Sysprop {
 		this.upvotes = 0L;
 		this.downvotes = 0L;
 		this.comments = 0L;
+		this.yearlyVotes = 0;
+		this.quarterlyVotes = 0;
+		this.monthlyVotes = 0;
+		this.weeklyVotes = 0;
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
 	}
@@ -144,6 +157,38 @@ public class Profile extends Sysprop {
 					? StringUtils.removeEnd(getId(), Config.SEPARATOR + "profile") : getCreatorid());
 		}
 		return user;
+	}
+
+	public Integer getYearlyVotes() {
+		return yearlyVotes;
+	}
+
+	public void setYearlyVotes(Integer yearlyVotes) {
+		this.yearlyVotes = yearlyVotes;
+	}
+
+	public Integer getQuarterlyVotes() {
+		return quarterlyVotes;
+	}
+
+	public void setQuarterlyVotes(Integer quarterlyVotes) {
+		this.quarterlyVotes = quarterlyVotes;
+	}
+
+	public Integer getMonthlyVotes() {
+		return monthlyVotes;
+	}
+
+	public void setMonthlyVotes(Integer monthlyVotes) {
+		this.monthlyVotes = monthlyVotes;
+	}
+
+	public Integer getWeeklyVotes() {
+		return weeklyVotes;
+	}
+
+	public void setWeeklyVotes(Integer weeklyVotes) {
+		this.weeklyVotes = weeklyVotes;
 	}
 
 	public Boolean getReplyEmailsEnabled() {
@@ -368,6 +413,7 @@ public class Profile extends Sysprop {
 			setVotes(0);
 		}
 		setVotes(getVotes() + rep);
+		updateVoteGains(rep);
 	}
 
 	public void removeRep(int rep) {
@@ -375,6 +421,7 @@ public class Profile extends Sysprop {
 			setVotes(0);
 		}
 		setVotes(getVotes() - rep);
+		updateVoteGains(-rep);
 		if (getVotes() < 0) {
 			setVotes(0);
 		}
@@ -393,6 +440,31 @@ public class Profile extends Sysprop {
 			this.downvotes = 1L;
 		} else {
 			this.downvotes = this.downvotes + 1L;
+		}
+	}
+
+	private void updateVoteGains(int rep) {
+		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(getUpdated()), ZoneId.systemDefault());
+		LocalDate now = LocalDate.now();
+		if (now.getYear() != lastUpdate.getYear()) {
+			yearlyVotes = rep;
+		} else {
+			yearlyVotes += rep;
+		}
+		if (now.get(IsoFields.QUARTER_OF_YEAR) != lastUpdate.get(IsoFields.QUARTER_OF_YEAR)) {
+			quarterlyVotes = rep;
+		} else {
+			quarterlyVotes += rep;
+		}
+		if (now.getMonthValue() != lastUpdate.getMonthValue()) {
+			monthlyVotes = rep;
+		} else {
+			monthlyVotes += rep;
+		}
+		if (now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) != lastUpdate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)) {
+			weeklyVotes = rep;
+		} else {
+			weeklyVotes += rep;
 		}
 	}
 

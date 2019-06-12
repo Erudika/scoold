@@ -6,10 +6,14 @@
 	<h4 class="hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
 
 	<div class="chips-container">
-		#set($sortarr = {'votes': "", 'newest': ""} )
+		#set($sortarr = {'votes': "", 'newest': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.montlyVotes': "", 'properties.weeklyVotes': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
 		<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
+		<a href="$peoplelink?sortby=properties.yearlyVotes" class="chip $sortarr['properties.yearlyVotes']">$!lang.get('year')</a>
+		<a href="$peoplelink?sortby=properties.quarterlyVotes" class="chip $sortarr['properties.quarterlyVotes']">$!lang.get('quarter')</a>
+		<a href="$peoplelink?sortby=properties.montlyVotes" class="chip $sortarr['properties.montlyVotes']">$!lang.get('month')</a>
+		<a href="$peoplelink?sortby=properties.weeklyVotes" class="chip $sortarr['properties.weeklyVotes']">$!lang.get('week')</a>
 		#if($isAdmin)
 			#if($request.getParameter("bulkedit"))
 				<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
