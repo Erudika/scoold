@@ -112,7 +112,7 @@
 				<div class="col s4 r">
 						#if ($canEdit)
 							<a href="$profilelink/$authUser.creatorid/edit" class="editlink btn">
-								<i class="fa fa-pencil"></i><span class="plm">$!{lang.get("edit")}</span>
+								<i class="fa fa-pencil"></i><span class="plm hide-on-small-only">$!{lang.get("edit")}</span>
 							</a>
 						#end
 				</div>

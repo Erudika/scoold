@@ -46,8 +46,9 @@ td, th {
 	float: right;
 }
 
-.profilepage .col:last-child {
-	padding-right: 150px;
+.aboutme {
+	padding-right: 70px;
+	padding-left: 0;
 }
 
 .CodeMirror-scroll {
@@ -102,9 +103,26 @@ td, th {
 	float: left;
 }
 
+.prefix ~ .chips {
+	margin-left: 0;
+	margin-right: 3rem;
+}
+
+.input-field .prefix {
+	right: 0;
+}
+
+.input-field input[type=search]+.label-icon {
+	left:  auto;
+	right: 1rem;
+}
+
 @media (max-width: 990px) {
 	.chips-container {
 		float: none;
+	}
+	.aboutme {
+		padding-right: 0;
 	}
 }
 
@@ -114,18 +132,18 @@ td, th {
 .left{ float: right !important; }
 
 .prn{padding-left:0}
-.prs{padding-left:5px}
-.prm{padding-left:10px}
-.prl{padding-left:20px}
+.prs{padding-left:5px;padding-right:0}
+.prm{padding-left:10px;padding-right:0}
+.prl{padding-left:20px;padding-right:0}
 .pln{padding-right:0}
-.pls{padding-right:5px}
-.plm{padding-right:10px}
-.pll{padding-right:20px}
+.pls{padding-right:5px;padding-left:0}
+.plm{padding-right:10px;padding-left:0}
+.pll{padding-right:20px;padding-left:0}
 .mrn{margin-left:0}
-.mrs{margin-left:5px}
-.mrm{margin-left:10px}
-.mrl{margin-left:20px}
+.mrs{margin-left:5px;margin-right:0}
+.mrm{margin-left:10px;margin-right:0}
+.mrl{margin-left:20px;margin-right:0}
 .mln{margin-right:0}
-.mls{margin-right:5px}
-.mlm{margin-right:10px}
-.mll{margin-right:20px}
+.mls{margin-right:5px;margin-left:0}
+.mlm{margin-right:10px;margin-left:0}
+.mll{margin-right:20px;margin-left:0}

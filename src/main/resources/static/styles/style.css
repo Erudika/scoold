@@ -290,6 +290,21 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 		font-size: 2.56rem;
     margin: 1.3733333333rem 0 0.424rem 0;
 	}
+	h3 {
+		font-size: 1.92rem;
+		margin: 0.9466666667rem 0 0.168rem 0;
+	}
+	h4 {
+		font-size: 1.28rem;
+		margin: 0.52rem 0 .312rem 0;
+	}
+	h5 {
+		font-size: 1.0rem;
+		margin: 0.0933333333rem 0 .156rem 0;
+	}
+	.viewbox {
+		word-break: break-all;
+	}
 	#main-modal {
 		width: 100%;
 	}

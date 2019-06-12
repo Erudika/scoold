@@ -182,7 +182,7 @@
 								</li>
 								#if ($authenticated)
 									<li>
-										<img src="#profilepic($authUser)" width="50"  alt="Avatar" class="profile-pic responsive-img left mll mrl">
+										<img src="#profilepic($authUser)" width="50"  alt="Avatar" class="profile-pic responsive-img left mhl">
 										<a href="$profilelink" class="black-text mvl pll">$!authUser.name</a>
 									</li>
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
