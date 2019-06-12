@@ -9,7 +9,7 @@ replicaCount: 1
 image:
   registry: docker.io
   repository: erudikaltd/scoold
-  tag: "1.31.4"
+  tag: "1.32.0"
   pullPolicy: IfNotPresent
 
 service:
