@@ -111,7 +111,7 @@ The settings shown below are all meant to be part of the Scoold config file.
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
 
-This is an example of what your **`application.conf`** should look like:
+Copy the example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
 para.app_name = "Scoold"
 # the port for Scoold
@@ -130,6 +130,10 @@ para.secret_key = "*****************"
 para.password_auth_enabled = true
 # if false, commenting is allowed after 100+ reputation
 para.new_users_can_comment = true
+# if true, posts by new users require approval from moderator
+para.posts_need_approval = false
+# reputation needed for posts to be auto-approved
+para.posts_rep_threashhold = 100
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object
