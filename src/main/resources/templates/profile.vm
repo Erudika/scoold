@@ -28,7 +28,7 @@
 				<a id="edit-picture-link" href="#" class="editlink"><i class="fa fa-image"></i> $!lang.get('profile.changepic')</a>
 				<div class="pal editbox hide">
 					<a href="#" class="canceledit right"><i class="fa fa-close"></i></a>
-					<form action="$profilelink/$!authUser.creatorid" method="post">
+					<form action="$profilelink/$!showUser.creatorid" method="post">
 						#sectoken(false)
 						<div class="input-field">
 							<label for="picture_url">URL</label>
@@ -111,7 +111,7 @@
 				</div>
 				<div class="col s4 r">
 						#if ($canEdit)
-							<a href="$profilelink/$authUser.creatorid/edit" class="editlink btn">
+							<a href="$profilelink/$showUser.creatorid/edit" class="editlink btn">
 								<i class="fa fa-pencil"></i><span class="plm hide-on-small-only">$!{lang.get("edit")}</span>
 							</a>
 						#end
@@ -173,7 +173,7 @@
 
 			#if ($canEdit)
 			<div id="about-edit" class="editbox lightgraybg pal ${hideedit1}">
-				<form method="post" id="about-edit-form" action="$profilelink/$!authUser.creatorid">
+				<form method="post" id="about-edit-form" action="$profilelink/$!showUser.creatorid">
 					#sectoken(false)
 					#if($nameEditsAllowed)
 						<div class="input-field">
@@ -203,7 +203,7 @@
 					<div class="center mtl">
 						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
 						<button type="button" class="btn waves-effect waves-light canceledit ${hideview1}">$!{lang.get('close')}</button>
-						<a href="$profilelink/$authUser.creatorid" class="btn waves-effect waves-light ${hideedit1}">$!{lang.get('close')}</a>
+						<a href="$profilelink/$showUser.creatorid" class="btn waves-effect waves-light ${hideedit1}">$!{lang.get('close')}</a>
 					</div>
 				</form>
 			</div>

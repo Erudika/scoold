@@ -140,17 +140,12 @@ public class ProfileController {
 			@RequestParam(required = false) String location, @RequestParam(required = false) String website,
 			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
-		String showId = StringUtils.isBlank(id) ? authUser.getId() : Profile.id(id);
-		if (canEditProfile(authUser, showId)) {
-			Profile showUser;
-			if (isMyid(authUser, id)) {
-				showUser = authUser;
-			} else {
+		if (canEditProfile(authUser, id)) {
+			Profile showUser = authUser;
+			boolean updateProfile = false;
+			if (!isMyid(authUser, id)) {
 				showUser = utils.getParaClient().read(Profile.id(id));
 			}
-
-			boolean updateProfile = false;
-
 			if (!StringUtils.equals(showUser.getLocation(), location)) {
 				showUser.setLocation(location);
 				updateProfile = true;
@@ -169,11 +164,11 @@ public class ProfileController {
 			}
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
-			if (updateProfile || utils.addBadgeOnce(authUser, Badge.NICEPROFILE, isComplete)) {
+			if (updateProfile || utils.addBadgeOnce(showUser, Badge.NICEPROFILE, isComplete)) {
 				showUser.update();
 			}
 		}
-		return "redirect:" + PROFILELINK;
+		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
 	}
 
 	private boolean updateUserPictureAndName(Profile showUser, String picture, String name) {
@@ -207,11 +202,11 @@ public class ProfileController {
 	}
 
 	private boolean isMyid(Profile authUser, String id) {
-		return authUser != null && authUser.getId().equals(id);
+		return authUser != null && (StringUtils.isBlank(id) || authUser.getId().equals(Profile.id(id)));
 	}
 
 	private boolean canEditProfile(Profile authUser, String id) {
-		return isMyid(authUser, Profile.id(id)) || utils.isAdmin(authUser);
+		return isMyid(authUser, id) || utils.isAdmin(authUser);
 	}
 
 	private Object getUserDescription(Profile showUser, Long questions, Long answers) {
