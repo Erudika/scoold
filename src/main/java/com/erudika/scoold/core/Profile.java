@@ -542,15 +542,6 @@ public class Profile extends Sysprop {
 		client().delete(getUser());
 	}
 
-	public String getLastname() {
-		String[] s = getName().split("\\s");
-		return s[s.length - 1];
-	}
-
-	public String getFirstname() {
-		return getName().split("\\s")[0];
-	}
-
 	public int countNewReports() {
 		if (newreports == null) {
 			newreports = client().getCount(Utils.type(Report.class),
