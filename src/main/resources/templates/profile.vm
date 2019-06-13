@@ -212,16 +212,35 @@
 	</div>
 </div>
 
-#if (!$questionslist.isEmpty())
-<h2>$!{lang.get("questions.title")} #showcount($itemcount1.count)</h2>
-<div class="mvm">
-		#paginate("\#questionspage(\$questionslist)" $itemcount1 "" "page1")
+#if(!$questionslist.isEmpty() || !$answerslist.isEmpty())
+<div class="row">
+	<div class="col s12">
+		<ul class="tabs">
+			#if (!$questionslist.isEmpty())
+			<li class="tab col s6"><a href="#questions">$!{lang.get("questions.title")} <span class="phs">$!itemcount1.count</span></a></li>
+			#end
+			#if (!$answerslist.isEmpty())
+			<li class="tab col s6"><a href="#answers">$!{lang.get("answers.title")} <span class="phs">$!itemcount2.count</span></a></li>
+			#end
+		</ul>
+	</div>
+
+	#if (!$questionslist.isEmpty())
+	<div id="questions" class="col s12">
+		<div class="mvm">
+				#paginate("\#questionspage(\$questionslist)" $itemcount1 "" "page1")
+		</div>
+	</div>
+	#end
+	#if (!$answerslist.isEmpty())
+	<div id="answers" class="col s12">
+		<div class="mvm">
+			#paginate("\#compactanswerspage(\$answerslist)" $itemcount2 "" "page2")
+		</div>
+	</div>
+	#end
 </div>
 #end
 
-#if (!$answerslist.isEmpty())
-<h2>$!{lang.get("answers.title")} #showcount($itemcount2.count)</h2>
-<div class="mvm">
-	#paginate("\#compactanswerspage(\$answerslist)" $itemcount2 "" "page2")
-</div>
-#end
+
+

@@ -253,6 +253,15 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .post-actions a {
 	display: inline-block;
 }
+.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a {
+	color: #039be5;
+}
+.tabs .indicator {
+	background-color: #039be5;
+}
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+	background-color: #FAFAFA;
+}
 @media (max-width: 900px) {
 	.sTextCenter {
 		text-align: center;

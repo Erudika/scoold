@@ -21,6 +21,7 @@ $(function () {
 		$('.tooltipped').tooltip();
 		$('.modal').modal();
 		$('.chips').chips();
+		$('.tabs').tabs();
 		$('.dropdown-trigger').dropdown({
 			constrainWidth: false,
 			coverTrigger: false,
