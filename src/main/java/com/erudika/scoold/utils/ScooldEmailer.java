@@ -19,6 +19,7 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,7 +56,11 @@ public class ScooldEmailer implements Emailer {
 				MimeMessagePreparator preparator = new MimeMessagePreparator() {
 					public void prepare(MimeMessage mimeMessage) throws Exception {
 						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-						msg.setTo(emails.toArray(new String[0]));
+						Iterator<String> emailz = emails.iterator();
+						msg.setTo(emailz.next());
+						while (emailz.hasNext()) {
+							msg.addBcc(emailz.next());
+						}
 						msg.setSubject(subject);
 						msg.setFrom(Config.SUPPORT_EMAIL, Config.APP_NAME);
 						msg.setText(body, true); // body is assumed to be HTML
