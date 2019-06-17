@@ -74,8 +74,8 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 <a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
 	<img src="https://www.herokucdn.com/deploy/button.svg" alt="btn">
 </a>
-<a href="https://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
-	<img src="https://installer.71m.us/button.svg" height="32" alt="btn">
+<a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
+	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
 </a>
 <a href="https://deploy.azure.com/?repository=https://github.com/Erudika/scoold" title="Install on Azure">
 	<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="btn">
@@ -255,12 +255,9 @@ It's also helpful to install the Heroku CLI tool.
 
 ## Deploying Scoold to DigitalOcean
 
-<a href="https://installer.71m.us/install?url=https://github.com/Erudika/scoold" title="Install on DigitalOcean">
-	<img src="https://installer.71m.us/button.svg" height="32" alt="deploy to digitalocean button">
-</a>
-
-1. Click the button above and wait for the DO installer to finish.
-2. Send the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/scoold`
+1. Create a droplet and install Java and `wget`
+2. Execute `wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh`
+2. Send the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/ubuntu`
 3. Restart Scoold with `ssh root@123.234.12.34 "systemctl restart scoold.service"`
 4. Go to `http://123.234.12.34` (use the correct IP address)
 5. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet
