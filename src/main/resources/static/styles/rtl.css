@@ -125,6 +125,11 @@ td, th {
 		padding-right: 0;
 	}
 }
+@media (max-width: 600px) {
+	.votecount {
+		padding: 4px 0 0 5px;
+	}
+}
 
 .r{ text-align: left;}
 .l{ text-align: right;}

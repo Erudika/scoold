@@ -361,7 +361,22 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 		font-size: 1.6em;
 	}
 	.votecount {
-		padding: 4px 0 0 5px;
+		padding: 4px 8px 0 4px;
+	}
+	.commentbox {
+		min-height: 20px;
+		padding: 0;
+	}
+	.commentbox .votebox {
+		display: flex;
+		font-size: 1em;
+		width: 48px;
+	}
+	.commentbox .votebox .votecount {
+		flex-grow: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 	}
 	.approve-answer-btn {
 		padding: 0 10px;
