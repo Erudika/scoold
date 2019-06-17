@@ -262,6 +262,20 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .tabs .tab a:focus, .tabs .tab a:focus.active {
 	background-color: #FAFAFA;
 }
+
+.userbox img {max-width: inherit;}
+@media (max-width: 1280px) {
+	.userbox img {max-width: 40px;}
+	.userbox {width: 180px;}
+	.userbox-body {font-size: smaller;}
+	.userbox-body .chip {height: 18px;line-height: 18px;border-radius: 4px;padding: 0 4px;}
+}
+@media (max-width: 990px) {
+	.chips-container {
+		padding: 0;
+		float: none;
+	}
+}
 @media (max-width: 900px) {
 	.sTextCenter {
 		text-align: center;
@@ -327,21 +341,31 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	.user-card img {
 		max-height: 90px;
 	}
-}
-
-@media (max-width: 990px) {
-	.chips-container {
-		padding: 0;
-		float: none;
+	.userbox {
+		width: auto;
+	}
+	.page-content .questionbox {
+		cursor: pointer;
+	}
+	.answers-head {
+		height: 30px;
+	}
+	.fa-3x {
+		font-size: 2em;
 	}
 }
-
-.userbox img {max-width: inherit;}
-@media (max-width: 1280px) {
-	.userbox img {max-width: 40px;}
-	.userbox {width: 180px;}
-	.userbox-body {font-size: smaller;}
-	.userbox-body .chip {height: 18px;line-height: 18px;border-radius: 4px;padding: 0 4px;}
+@media (max-width: 600px) {
+	.votebox {
+		width: 50px;
+		text-align: center;
+		font-size: 1.6em;
+	}
+	.votecount {
+		padding: 4px 0 0 5px;
+	}
+	.approve-answer-btn {
+		padding: 0 10px;
+	}
 }
 
 /**** FEEL FREE TO MODIFY THESE PROPETIES ****/

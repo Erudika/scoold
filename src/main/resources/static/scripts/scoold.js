@@ -308,7 +308,7 @@ $(function () {
 	$(document).on("click", "a.votelink",  function() {
 		var dis = $(this);
 		var up = dis.hasClass("upvote");
-		var votes = dis.closest("div.votebox").find(".votecount");
+		var votes = dis.closest("div.votebox").find(".votecount").filter(':visible');
 		var newvotes = parseInt(votes.text(), 10) || 0;
 		if (!dis.data("disabled")) {
 			dis.data("disabled", true);
@@ -669,6 +669,12 @@ $(function () {
 	if (window.location.hash !== "" && window.location.hash.match(/^#post-.*/)) {
 		$(window.location.hash).addClass("selected-post");
 	}
+
+	$(document).on('click', '.page-content .questionbox',  function () {
+		if (window.matchMedia("only screen and (max-width: 900px)").matches) {
+			$(this).find("a:first").get(0).click();
+		}
+	});
 
 	function initPostEditor(elem) {
 		var mde = new EasyMDE({

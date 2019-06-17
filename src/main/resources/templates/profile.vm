@@ -1,5 +1,5 @@
 <div class="row ptl profilepage">
-	<div class="col m4 s12">
+	<div class="col s12 m6 l4">
 		<div class="card">
 			<div class="card-image">
 				<img src="#profilepic($showUser)" class="profile-pic">
@@ -103,7 +103,7 @@
 		#end
 	</div>
 
-	<div class="col m8 s12">
+	<div class="col s12 m6 l8">
 		<div class="aboutme">
 			<div class="row valign-wrapper">
 				<div class="col s8">

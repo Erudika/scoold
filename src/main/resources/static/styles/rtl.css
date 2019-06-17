@@ -11,7 +11,7 @@ nav .input-field label {
 	left: auto;
 }
 
-.input-field input[type=search] {
+.input-field input[type=search], .nav-wrapper .input-field input[type=search] {
 	padding-left: 0rem;
 	padding-right: 4rem;
 	color: #444;

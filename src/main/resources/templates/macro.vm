@@ -432,8 +432,8 @@
 		</div>
 
 		<div class="row">
-			<div class="col s6 m4 l4">
-				<div class="left mtm mrl">
+			<div class="col s4 m4 l4">
+				<div class="left mtm mrl approve-answer-btn">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
 					#if ($approvedAnswer)	#set($onclass = "green-text text-lighten-1") #else #set($onclass = "") #end
 					#if ($authenticated && $showpost.isReply() && $parentpost.creatorid.equals($authUser.id))
@@ -445,7 +445,7 @@
 				</div>
 				#votebox($showpost "hugeText mtm")
 			</div>
-			<div class="col s6 m3 l4">
+			<div class="col s8 m3 l4">
 				<div class="ptl center-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion")
@@ -458,7 +458,7 @@
 					#end
 				</div>
 			</div>
-			<div class="col s6 m5 l4 offset-s6">
+			<div class="col s8 m5 l4">
 				<div class="pam">
 					#smallpersonbox($showpost.author)
 				</div>
@@ -635,21 +635,24 @@
 				<a href="${signinlink}?returnto=$!{returnto}">
 					<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
+				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
 				<a href="${signinlink}?returnto=$!{returnto}">
 					<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
 				<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
+				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
 				<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
 					<i class="fa fa-chevron-up upvote mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
+				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="$!lang.get('votedown.tooltip')">
 					<i class="fa fa-chevron-down downvote mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#end
-			<span class="votecount">$!_vvotes</span>
+			<span class="votecount hide-on-small-only tooltipped" data-tooltip="$votable.votes">$!_vvotes</span>
 		</div>
 	#end
 #end
