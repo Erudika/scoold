@@ -578,7 +578,7 @@ public final class ScooldUtils {
 	public List<Post> getSimilarPosts(Post showPost, Pager pager) {
 		List<Post> similarquestions = Collections.emptyList();
 		if (!showPost.isReply()) {
-			String likeTxt = Utils.abbreviate(Utils.stripAndTrim((showPost.getTitle() + " " + showPost.getBody())), 2000);
+			String likeTxt = Utils.abbreviate(Utils.stripAndTrim((showPost.getTitle() + " " + showPost.getBody())), 1000);
 			if (!StringUtils.isBlank(likeTxt)) {
 				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
 						new String[]{"properties.title", "properties.body", "properties.tags"}, likeTxt, pager);
