@@ -87,8 +87,8 @@
 													#set($spaceSelectedClass = "navbtn-hover white-text")
 											#end
 
-											<li><a href="$questionslink/space" title="Default Space"
-														 class="post-refresh ${spaceSelectedClass}">Default space</a></li>
+											<li><a href="$questionslink/space?returnto=$!returnto" title="Default Space"
+														 class="${spaceSelectedClass}">Default space</a></li>
 											<li class="divider"></li>
 										#end
 										#foreach($space in $authUser.spaces)
@@ -98,8 +98,8 @@
 												#set($spaceSelectedClass = "")
 											#end
 											#set($spaceName = $scooldUtils.getSpaceName($space))
-											<li><a href="$questionslink/space/$!space" title="$!{spaceName}"
-														 class="post-refresh $!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
+											<li><a href="$questionslink/space/$!scooldUtils.getSpaceId($!space)?returnto=$!returnto" title="$!{spaceName}"
+														 class="$!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
 											<li class="divider"></li>
 										#end
 									</ul>
@@ -214,8 +214,8 @@
 											#end
 
 											<li class="divider"></li>
-											<li><a href="$questionslink/space" title="Default Space"
-														 class="post-refresh ${spaceSelectedClass}">Default space</a></li>
+											<li><a href="$questionslink/space?returnto=$!returnto" title="Default Space"
+														 class="${spaceSelectedClass}">Default space</a></li>
 										#end
 										#foreach($space in $authUser.spaces)
 											<li class="divider"></li>
@@ -225,8 +225,8 @@
 												#set($spaceSelectedClass = "")
 											#end
 											#set($spaceName = $scooldUtils.getSpaceName($space))
-											<li><a href="$questionslink/space/$!space" title="$!{spaceName}"
-														 class="post-refresh $!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
+											<li><a href="$questionslink/space/$!scooldUtils.getSpaceId($!space)?returnto=$!returnto" title="$!{spaceName}"
+														 class="$!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
 										#end
 									#end
 

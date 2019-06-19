@@ -185,11 +185,11 @@ public class QuestionsController {
 		return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
 	}
 
-	@PostMapping({"/questions/space/{space}", "/questions/space"})
+	@GetMapping({"/questions/space/{space}", "/questions/space"})
 	public String setSpace(@PathVariable(required = false) String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (authUser != null) {
-			if (StringUtils.isBlank(space) || pc.read(utils.getSpaceId(space)) == null) {
+			if (!StringUtils.isBlank(space) && pc.read(utils.getSpaceId(space)) == null) {
 				if (utils.canAccessSpace(authUser, space)) {
 					authUser.getSpaces().remove(space);
 					authUser.update();
@@ -198,8 +198,8 @@ public class QuestionsController {
 			space = StringUtils.trimToEmpty(space);
 			setRawCookie(SPACE_COOKIE, space, req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 		}
-		res.setStatus(200);
-		return "base";
+		String backTo = req.getParameter("returnto");
+		return "redirect:" + (StringUtils.isBlank(backTo) ? QUESTIONSLINK : backTo);
 	}
 
 	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
