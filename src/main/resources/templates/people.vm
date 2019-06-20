@@ -38,15 +38,19 @@
 		<div class="pvl center">
 			<strong>Edit space membership of selected users:</strong>
 		</div>
-		<div class="center">
+		<div class="row">
 			#sectoken(false "BULK_EDIT")
 			#foreach($space in $spaces)
+			<div class="col s6 m4 l3">
 				<label for="$!space.id">
 					<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
 					<span><strong class="mediumText">$!space.name</strong></span>
 				</label> &nbsp;
+			</div>
 			#end
 			<br>
+		</div>
+		<div class="center">
 			<button class="btn waves-effect waves-light mvl" type="submit"><b>$!lang.get('save')</b></button>
 		</div>
 	#end

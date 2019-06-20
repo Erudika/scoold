@@ -67,7 +67,9 @@
 	<div class="card-panel center-align">
 		<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped pts delete-space"
 			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
-		<p class="mediumText">$space.name</p>
+		<p class="mediumText">
+			<a href="$questionslink/space/$!space.id" title="$!{spaceName}">$space.name</a>
+		</p>
 	</div>
 </div>
 #end
@@ -202,14 +204,14 @@
 	#foreach($showFriend in $people)
 	<div class="col s12 m6 l4">
 		<div class="card">
-			<div class="row valign-wrapper user-card">
-				<div class="col s4" title="$!showFriend.name">
+			<div class="row user-card">
+				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
 						<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
 					</a>
 				</div>
-				<div class="col s8">
-					#if(!($isAdmin && $request.getParameter("bulkedit")))
+				<div class="col s9 m8">
+					#if(!$isAdmin)
 					<div class="right mrm">
 						#set($contextboxid = $utils.generateSecurityToken(10, true))
 						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
@@ -218,7 +220,7 @@
 						</ul>
 					</div>
 					#end
-					<div class="mediumText">
+					<div class="mediumText pts">
 						#if($isAdmin && $request.getParameter("bulkedit"))
 							<span class="grey-text l">
 								<label for="$!showFriend.id">
@@ -252,11 +254,9 @@
 					#if ($showFriend.groups == "mods")
 					<i class="fa fa-dot-circle-o orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 					#end
-					#if(!($isAdmin && $request.getParameter("bulkedit")))
-						<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
-							<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
-						</div>
-					#end
+					<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
+						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
+					</div>
 				</div>
 			</div>
 		</div>

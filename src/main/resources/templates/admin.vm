@@ -55,7 +55,7 @@
 					#else
 						<i class="fa fa-lock red-text" title="Private"></i>
 					#end
-					Default Space
+					<a href="$questionslink/space" title="$!{spaceName}">Default Space</a>
 				</p>
 			</div>
 		</div>

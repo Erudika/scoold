@@ -235,10 +235,10 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	padding-left: 10px;
 }
 .user-card {
-	height: 127px;
+	min-height: 127px;
 }
 .user-card img {
-	max-height: 127px;
+	max-height: 120px;
 }
 .card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
 	margin-right: 0;
@@ -335,7 +335,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 		padding-left: 0px;
 	}
 	.user-card {
-		height: 90px;
+		min-height: 90px;
 		margin-bottom: 10px;
 	}
 	.user-card img {
