@@ -6,8 +6,8 @@
 				<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showPost.location"></i>
 			#end
 
-			#if($currentSpace && !$currentSpace.isEmpty())
-				<strong class="grey-text">$scooldUtils.getSpaceName($!currentSpace) / </strong>
+			#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
+				<strong class="grey-text">$scooldUtils.getSpaceName($!showPost.space) / </strong>
 			#end
 			#if ($showPost.answercount > 0)
 				#if ($showPost.answerid && !$showPost.answerid.isEmpty())
@@ -110,7 +110,7 @@
 				#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 					<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
 				#end
-				#if($showPost.space && !$showPost.space.isEmpty())
+				#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
 					<div class="mediumText pvs"><i class="fa fa-th-large grey-text"></i>&nbsp;
 						$scooldUtils.getSpaceName($!showPost.space)
 					</div>

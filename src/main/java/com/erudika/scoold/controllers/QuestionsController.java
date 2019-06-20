@@ -217,12 +217,11 @@ public class QuestionsController {
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
-		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
 		String query = getQuestionsQuery(authUser, sortby, currentSpace, itemcount);
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
-				if (spaceFiltered) {
+				if (isSpaceFilteredRequest(authUser, currentSpace)) {
 					questionslist = pc.findQuery(type, getSpaceFilteredFavtagsQuery(currentSpace, authUser), itemcount);
 				} else {
 					questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
@@ -274,7 +273,7 @@ public class QuestionsController {
 	}
 
 	private String getQuestionsQuery(Profile authUser, String sortby, String currentSpace, Pager itemcount) {
-		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
+		boolean spaceFiltered = isSpaceFilteredRequest(authUser, currentSpace);
 		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
 		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
 		if ("activity".equals(sortby)) {
@@ -293,5 +292,9 @@ public class QuestionsController {
 			query = spaceFiltered ? spaceFilter + " AND " + q : (utils.canAccessSpace(authUser, currentSpace) ? q : "");
 		}
 		return query;
+	}
+
+	private boolean isSpaceFilteredRequest(Profile authUser, String space) {
+		return !(utils.isDefaultSpace(space) && utils.isMod(authUser)) && utils.canAccessSpace(authUser, space);
 	}
 }

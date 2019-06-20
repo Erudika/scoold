@@ -31,6 +31,7 @@ import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
+import static com.erudika.scoold.core.Post.DEFAULT_SPACE;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
@@ -628,11 +629,18 @@ public final class ScooldUtils {
 				!isMod(authUser);
 	}
 
+	public boolean isDefaultSpace(String space) {
+		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
+	}
+
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
 		if (authUser == null) {
 			return isDefaultSpacePublic();
 		}
-		if (StringUtils.isBlank(targetSpaceId)) {
+		if (isMod(authUser)) {
+			return true;
+		}
+		if (isDefaultSpace(targetSpaceId)) {
 			// can user access the default space (blank)
 			return isDefaultSpacePublic() || isMod(authUser) || !authUser.hasSpaces();
 		}
@@ -657,11 +665,11 @@ public final class ScooldUtils {
 
 	public String getValidSpaceId(Profile authUser, String space) {
 		if (authUser == null) {
-			return "";
+			return DEFAULT_SPACE;
 		}
-		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().get(0) : "";
+		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().get(0) : DEFAULT_SPACE;
 		String s = canAccessSpace(authUser, space) ? space : defaultSpace;
-		return s == null ? "" : s;
+		return StringUtils.isBlank(s) ? DEFAULT_SPACE : s;
 	}
 
 	public String getSpaceName(String space) {
@@ -669,14 +677,18 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceId(String space) {
-		String s = StringUtils.contains(space, ":") ? StringUtils.substring(space, 0, space.lastIndexOf(":")) : "";
+		if (StringUtils.isBlank(space)) {
+			return DEFAULT_SPACE;
+		}
+		String s = StringUtils.contains(space, ":") ?
+				StringUtils.substring(space, 0, space.lastIndexOf(":")) : "scooldspace:" + space;
 		return "scooldspace".equals(s) ? space : s;
 	}
 
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getSpaceIdFromCookie(authUser, req);
-		return StringUtils.isBlank(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
+		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
 				"properties.space:\"" + currentSpace + "\"";
 	}
 

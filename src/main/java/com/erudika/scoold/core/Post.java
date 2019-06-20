@@ -50,6 +50,8 @@ public abstract class Post extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String DEFAULT_SPACE = "scooldspace:default";
+
 	@Stored @NotBlank @Size(min = 2, max = 20000)
 	private String body;
 	@Stored @NotBlank @Size(min = 6, max = 255)
@@ -380,6 +382,9 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String getSpace() {
+		if (StringUtils.isBlank(space)) {
+			space = DEFAULT_SPACE;
+		}
 		return space;
 	}
 

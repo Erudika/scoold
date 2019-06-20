@@ -98,9 +98,10 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
 			space = Utils.abbreviate(space, 255);
-			String spaceId = Utils.noSpaces(Utils.stripAndTrim(space, " "), "-");
-			if ("default".equalsIgnoreCase(space) || pc.getCount("scooldspace") >= MAX_SPACES ||
-					pc.read("scooldspace:" + spaceId) != null) {
+			space = space.replaceAll(":", "");
+			String spaceId = utils.getSpaceId(Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
+			if (utils.isDefaultSpace(spaceId) || pc.getCount("scooldspace") >= MAX_SPACES ||
+					pc.read(spaceId) != null) {
 				if (utils.isAjaxRequest(req)) {
 					res.setStatus(400);
 					return "space";
@@ -108,8 +109,7 @@ public class AdminController {
 					return "redirect:" + ADMINLINK + "?code=7&error=true";
 				}
 			} else {
-				space = space.replaceAll(":", "");
-				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
+				Sysprop s = new Sysprop(spaceId);
 				s.setType("scooldspace");
 				s.setName(space);
 				if (pc.create(s) != null) {

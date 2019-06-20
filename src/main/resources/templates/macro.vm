@@ -545,8 +545,8 @@
 						<div class="mll pll">
 							<select name="space" class="browser-default pll">
 								#set($selectedPostSpace = $!scooldUtils.getSpaceName($!showpost.space))
-								<option value="$!showpost.space" disabled selected>#if($selectedPostSpace.isEmpty())Default space#else $!selectedPostSpace #end</option>
-								#if($scooldUtils.canAccessSpace($authUser, ""))
+								<option value="$!showpost.space" disabled selected>#if($scooldUtils.isDefaultSpace($selectedPostSpace))Default space#else $!selectedPostSpace #end</option>
+								#if($scooldUtils.canAccessSpace($authUser, "default"))
 									<option value="">Default space</option>
 								#end
 								#foreach($space in $authUser.spaces)
