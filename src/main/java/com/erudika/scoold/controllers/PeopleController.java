@@ -75,7 +75,7 @@ public class PeopleController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
 		if (req.getParameter("bulkedit") != null) {
-			List<ParaObject> spaces = utils.getParaClient().findQuery("scooldspace", "*");
+			List<ParaObject> spaces = utils.getParaClient().findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
 			model.addAttribute("spaces", spaces);
 		}
 		return "base";

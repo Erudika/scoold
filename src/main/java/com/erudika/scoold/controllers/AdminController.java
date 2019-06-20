@@ -55,7 +55,7 @@ public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 	private final String scooldVersion = getClass().getPackage().getImplementationVersion();
-	private static final int MAX_SPACES = 10;
+	private static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -79,6 +79,7 @@ public class AdminController {
 		configMap.putAll(System.getenv());
 
 		Pager itemcount = utils.getPager("page", req);
+		itemcount.setLimit(40);
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("admin.title"));
 		model.addAttribute("configMap", configMap);
