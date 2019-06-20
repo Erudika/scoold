@@ -578,8 +578,13 @@ public final class ScooldUtils {
 	public List<Post> getSimilarPosts(Post showPost, Pager pager) {
 		List<Post> similarquestions = Collections.emptyList();
 		if (!showPost.isReply()) {
-			String likeTxt = Utils.abbreviate(Utils.stripAndTrim((showPost.getTitle() + " " + showPost.getBody())), 1000);
-			if (!StringUtils.isBlank(likeTxt)) {
+			String likeTxt = Utils.stripAndTrim((showPost.getTitle() + " " + showPost.getBody()));
+			if (likeTxt.length() > 1000) {
+				// read object on the server to prevent "URI too long" errors
+				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
+						new String[]{"properties.title", "properties.body", "properties.tags"},
+						"id:" + showPost.getId(), pager);
+			} else if (!StringUtils.isBlank(likeTxt)) {
 				similarquestions = pc.findSimilar(showPost.getType(), showPost.getId(),
 						new String[]{"properties.title", "properties.body", "properties.tags"}, likeTxt, pager);
 			}
