@@ -19,7 +19,6 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
@@ -54,11 +53,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
-import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 /**
  *
@@ -72,13 +69,11 @@ public class QuestionController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
-	private final Emailer emailer;
 
 	@Inject
-	public QuestionController(ScooldUtils utils, Emailer emailer) {
+	public QuestionController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		this.emailer = emailer;
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}"})
@@ -91,7 +86,7 @@ public class QuestionController {
 		}
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
-			return "redirect:" + (utils.isDefaultSpacePublic() ?
+			return "redirect:" + (utils.isDefaultSpacePublic() || utils.isAuthenticated(req) ?
 					QUESTIONSLINK : SIGNINLINK + "?returnto=" + showPost.getPostLink(false, false));
 		}
 
@@ -150,7 +145,7 @@ public class QuestionController {
 		}
 		if (showPost.isQuestion()) {
 			if (!utils.isMod(authUser)) {
-				space = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+				space = utils.getSpaceIdFromCookie(authUser, req);
 			}
 			if (utils.canAccessSpace(authUser, space)) {
 				showPost.setSpace(space);

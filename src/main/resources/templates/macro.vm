@@ -68,7 +68,7 @@
 		<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped pts delete-space"
 			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
 		<p class="mediumText">
-			<a href="$questionslink/space/$!space.id" title="$!{spaceName}">$space.name</a>
+			<a href="$questionslink/space/$!space.id" title="$!{spaceName}">$!space.name</a>
 		</p>
 	</div>
 </div>
@@ -519,7 +519,7 @@
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
-					<input type="text" id="title_text" name="title" class="validate" length="255" minlength="6"
+					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="6"
 								 value="$!showpost.title" required>
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>

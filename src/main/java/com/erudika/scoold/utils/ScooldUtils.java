@@ -646,6 +646,15 @@ public final class ScooldUtils {
 		return isMemberOfSpace;
 	}
 
+	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {
+		return getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
+	}
+
+	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
+		HttpUtils.setRawCookie(SPACE_COOKIE, Utils.base64encURL(space.getBytes()),
+				req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+	}
+
 	public String getValidSpaceId(Profile authUser, String space) {
 		if (authUser == null) {
 			return "";
@@ -666,7 +675,7 @@ public final class ScooldUtils {
 
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
-		String currentSpace = getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		String currentSpace = getSpaceIdFromCookie(authUser, req);
 		return StringUtils.isBlank(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
 				"properties.space:\"" + currentSpace + "\"";
 	}

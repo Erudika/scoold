@@ -20,10 +20,8 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.core.Tag;
 import com.erudika.para.utils.Pager;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
 import static com.erudika.scoold.ScooldServer.TAGSLINK;
 import com.erudika.scoold.core.Profile;
-import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +59,7 @@ public class TagsController {
 		itemcount.setDesc(!"tag".equals(sortby));
 
 		Profile authUser = utils.getAuthUser(req);
-		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
 		List<Tag> tagslist = Collections.emptyList();
 		if (utils.canAccessSpace(authUser, currentSpace)) {
 			tagslist = utils.getParaClient().findTags("", itemcount);

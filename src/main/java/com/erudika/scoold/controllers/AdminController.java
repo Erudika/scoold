@@ -112,16 +112,19 @@ public class AdminController {
 				Sysprop s = new Sysprop("scooldspace:" + Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
 				s.setType("scooldspace");
 				s.setName(space);
-				pc.create(s);
-				authUser.getSpaces().add(s.getId() + ":" + space);
-				authUser.update();
-				model.addAttribute("space", s);
+				if (pc.create(s) != null) {
+					authUser.getSpaces().add(s.getId() + ":" + space);
+					authUser.update();
+					model.addAttribute("space", s);
+				} else {
+					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
+				}
 			}
 		} else {
 			model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("requiredfield")));
 		}
 		if (utils.isAjaxRequest(req)) {
-			res.setStatus(200);
+			res.setStatus(model.containsAttribute("error") ? 400 : 200);
 			return "space";
 		} else {
 			return "redirect:" + ADMINLINK;

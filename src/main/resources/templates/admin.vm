@@ -33,7 +33,7 @@
 					<div class="input-field">
 						<i class="fa fa-th-large pvm prefix grey-text"></i>
 						<label for="name_text">$!lang.get('name')</label>
-						<input type="text" id="name_text" name="space" class="validate" length="255" minlength="2" required>
+						<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
 						<span class="helper-text" data-error="Space is invalid or already exists!"></span>
 					</div>
 				</div>

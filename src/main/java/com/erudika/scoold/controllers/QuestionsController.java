@@ -19,6 +19,7 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -44,10 +45,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
-import static com.erudika.scoold.ScooldServer.SPACE_COOKIE;
 import com.erudika.scoold.core.UnapprovedQuestion;
-import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
-import static com.erudika.scoold.utils.HttpUtils.setRawCookie;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -151,7 +150,7 @@ public class QuestionsController {
 			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
-			String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+			String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
@@ -189,14 +188,24 @@ public class QuestionsController {
 	public String setSpace(@PathVariable(required = false) String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (authUser != null) {
-			if (!StringUtils.isBlank(space) && pc.read(utils.getSpaceId(space)) == null) {
+			Sysprop spaceObj = pc.read(utils.getSpaceId(space));
+			if (!StringUtils.isBlank(space) && spaceObj == null) {
 				if (utils.canAccessSpace(authUser, space)) {
-					authUser.getSpaces().remove(space);
+					Iterator<String> it = authUser.getSpaces().iterator();
+					while (it.hasNext()) {
+						if (it.next().startsWith(utils.getSpaceId(space) + Config.SEPARATOR)) {
+							it.remove();
+						}
+					}
 					authUser.update();
 				}
 			}
-			space = StringUtils.trimToEmpty(space);
-			setRawCookie(SPACE_COOKIE, space, req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+			if (spaceObj != null) {
+				space = spaceObj.getId().concat(Config.SEPARATOR).concat(spaceObj.getName());
+			} else {
+				space = "";
+			}
+			utils.storeSpaceIdInCookie(space, req, res);
 		}
 		String backTo = req.getParameter("returnto");
 		return "redirect:" + (StringUtils.isBlank(backTo) ? QUESTIONSLINK : backTo);
@@ -207,7 +216,7 @@ public class QuestionsController {
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
-		String currentSpace = utils.getValidSpaceId(authUser, getCookieValue(req, SPACE_COOKIE));
+		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
 		boolean spaceFiltered = !StringUtils.isBlank(currentSpace);
 		String query = getQuestionsQuery(authUser, sortby, currentSpace, itemcount);
 

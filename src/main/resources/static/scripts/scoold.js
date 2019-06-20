@@ -471,83 +471,6 @@ $(function () {
 	});
 
 	/****************************************************
-     *                    AUTOCOMPLETE
-     ****************************************************/
-
-	var autocomplete = $('.chips-autocomplete');
-	var autocompleteValue = $('input[name=tags]').val() || "";
-	var autocompleteCache = {};
-	var autocompleteDelayTimer;
-	var autocompleteInitData = autocompleteValue.split(",").filter(function (t) {
-		return t && t.trim().length > 0;
-	}).map(function (t) {
-		return {tag: t};
-	});
-
-	autocomplete.chips({
-		limit: 5,
-		placeholder: autocomplete.attr('title') || "Tags",
-		data: autocompleteInitData || [],
-		autocompleteOptions: {
-			data: {},
-			minLength: 2
-		},
-		onChipAdd: function (c) {
-			$(c).find('i.close').text("");
-			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
-				return c.tag;
-			}).join(','));
-		},
-		onChipDelete: function () {
-			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
-				return c.tag;
-			}).join(','));
-		}
-	}).find('i.close').text("");
-
-	if (autocomplete.length) {
-		var autocompleteChipsInstance = M.Chips.getInstance(autocomplete.get(0));
-		function autocompleteFetchData(value, callback) {
-			var val = value.toLowerCase();
-			if (val && val.trim().length > 0) {
-				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
-					var tags = {};
-					if (data.length === 0) {
-						data.push({tag: val});
-					}
-					data.map(function (t) {
-						tags[t.tag] = null;
-					});
-					callback(val, tags);
-				});
-			}
-		}
-		function autocompleteFetchCallback(value, list) {
-			if (!autocompleteCache.hasOwnProperty(value)) {
-				autocompleteCache[value] = list;
-			}
-			if (autocompleteChipsInstance && autocompleteChipsInstance.hasAutocomplete) {
-				autocompleteChipsInstance.autocomplete.updateData(list);
-				autocompleteChipsInstance.autocomplete.open();
-			}
-		}
-
-		autocomplete.on('input', function () {
-			var value = $(this).find('input:first').val().toUpperCase();
-
-			if (autocompleteCache.hasOwnProperty(value) && autocompleteCache[value]) {
-				autocompleteFetchCallback(value, autocompleteCache[value]);
-			} else {
-				clearTimeout(autocompleteDelayTimer);
-				autocompleteDelayTimer = setTimeout(function () {
-					autocompleteFetchData(value, autocompleteFetchCallback);
-				}, 400);
-			}
-			return true;
-		});
-	}
-
-	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/
 
@@ -907,4 +830,81 @@ $(function () {
 	$(document).on("event:page", function() {
 		diffInit(".newrev");
 	});
+
+	/****************************************************
+	 *                    AUTOCOMPLETE
+	 ****************************************************/
+
+	var autocomplete = $('.chips-autocomplete');
+	var autocompleteValue = $('input[name=tags]').val() || "";
+	var autocompleteCache = {};
+	var autocompleteDelayTimer;
+	var autocompleteInitData = autocompleteValue.split(",").filter(function (t) {
+		return t && t.trim().length > 0;
+	}).map(function (t) {
+		return {tag: t};
+	});
+
+	autocomplete.chips({
+		limit: 5,
+		placeholder: autocomplete.attr('title') || "Tags",
+		data: autocompleteInitData || [],
+		autocompleteOptions: {
+			data: {},
+			minLength: 2
+		},
+		onChipAdd: function (c) {
+			$(c).find('i.close').text("");
+			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
+				return c.tag;
+			}).join(','));
+		},
+		onChipDelete: function () {
+			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
+				return c.tag;
+			}).join(','));
+		}
+	}).find('i.close').text("");
+
+	if (autocomplete.length) {
+		var autocompleteChipsInstance = M.Chips.getInstance(autocomplete.get(0));
+		function autocompleteFetchData(value, callback) {
+			var val = value.toLowerCase();
+			if (val && val.trim().length > 0) {
+				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
+					var tags = {};
+					if (data.length === 0) {
+						data.push({tag: val});
+					}
+					data.map(function (t) {
+						tags[t.tag] = null;
+					});
+					callback(val, tags);
+				});
+			}
+		}
+		function autocompleteFetchCallback(value, list) {
+			if (!autocompleteCache.hasOwnProperty(value)) {
+				autocompleteCache[value] = list;
+			}
+			if (autocompleteChipsInstance && autocompleteChipsInstance.hasAutocomplete) {
+				autocompleteChipsInstance.autocomplete.updateData(list);
+				autocompleteChipsInstance.autocomplete.open();
+			}
+		}
+
+		autocomplete.on('input', function () {
+			var value = $(this).find('input:first').val().toUpperCase();
+
+			if (autocompleteCache.hasOwnProperty(value) && autocompleteCache[value]) {
+				autocompleteFetchCallback(value, autocompleteCache[value]);
+			} else {
+				clearTimeout(autocompleteDelayTimer);
+				autocompleteDelayTimer = setTimeout(function () {
+					autocompleteFetchData(value, autocompleteFetchCallback);
+				}, 400);
+			}
+			return true;
+		});
+	}
 });

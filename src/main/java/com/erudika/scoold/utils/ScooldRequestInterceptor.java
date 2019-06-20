@@ -22,7 +22,6 @@ import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Report.ReportType;
-import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import java.net.ConnectException;
 import java.util.Locale;
 import javax.inject.Inject;
@@ -173,7 +172,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("badgelist", utils.checkForBadges(authUser, request));
 		modelAndView.addObject("request", request);
 		// Spaces
-		modelAndView.addObject("currentSpace", utils.getValidSpaceId(authUser, getCookieValue(request, SPACE_COOKIE)));
+		modelAndView.addObject("currentSpace", utils.getSpaceIdFromCookie(authUser, request));
 		// Language
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(request));
 		modelAndView.addObject("currentLocale", currentLocale);
