@@ -393,6 +393,9 @@ para.mail.ssl = false
 ```
 The email template is located in `src/main/resources/emails/notify.html`.
 
+For **Gmail** you have to turn on "Less secure app access" in your Google account settings. There's no need to configure
+`mail.tls` or `mail.ssl`, just set the `mail.host` to `smtp.gmail.com` and your Gmail email and password.
+
 ## Email verification
 
 You can enable or disable the email verification step by setting `para.security.allow_unverified_emails = true`.
@@ -566,7 +569,14 @@ By default there's a public "default" space where all questions go. When you cre
 they will still see all the other questions when they switch to the "default" space. To make the default space private
 set `para.is_default_space_public = false`.
 
-**PRO** In Scoold PRO you can create as many space as you need. The open source version is limited to 10 spaces.
+**PRO** In Scoold PRO you can create as many space as you need. The open source version is limited to 10 spaces. Also
+in PRO you can automatically assign multiple spaces to new users, whereas in the OSS version you can only assign one.
+
+If you want to assign space(s) to new users automatically, add this to your configuration:
+```
+# put space ids here, the "scooldspace:" prefix is optional
+para.auto_assign_spaces = "my-space-one,my-other-space"
+```
 
 ## Domain-restricted user registrations
 
