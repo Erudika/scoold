@@ -201,12 +201,21 @@ public final class ScooldUtils {
 			authUser.setTimestamp(u.getTimestamp());
 			authUser.setGroups(isRecognizedAsAdmin(u)
 					? User.Groups.ADMINS.toString() : u.getGroups());
+			// auto-assign spaces to new users
+			String space = Config.getConfigParam("auto_assign_spaces", "");
+			if (!StringUtils.isBlank(space) && !isDefaultSpace(space)) {
+				Sysprop s = pc.read(getSpaceId(space));
+				if (s != null) {
+					authUser.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+				}
+			}
+
 			authUser.create();
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
 			}
-			logger.info("Created new user '{}' with id={}, groups={}.",
-					u.getName(), authUser.getId(), authUser.getGroups());
+			logger.info("Created new user '{}' with id={}, groups={}, spaces={}.",
+					u.getName(), authUser.getId(), authUser.getGroups(), authUser.getSpaces());
 		}
 		return authUser;
 	}
@@ -646,7 +655,7 @@ public final class ScooldUtils {
 		}
 		boolean isMemberOfSpace = false;
 		for (String space : authUser.getSpaces()) {
-			if (StringUtils.startsWithIgnoreCase(space, getSpaceId(targetSpaceId) + ":")) {
+			if (StringUtils.startsWithIgnoreCase(space, getSpaceId(targetSpaceId) + Config.SEPARATOR)) {
 				isMemberOfSpace = true;
 				break;
 			}
@@ -667,7 +676,7 @@ public final class ScooldUtils {
 		if (authUser == null) {
 			return DEFAULT_SPACE;
 		}
-		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().get(0) : DEFAULT_SPACE;
+		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().iterator().next() : DEFAULT_SPACE;
 		String s = canAccessSpace(authUser, space) ? space : defaultSpace;
 		return StringUtils.isBlank(s) ? DEFAULT_SPACE : s;
 	}
@@ -680,8 +689,8 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(space)) {
 			return DEFAULT_SPACE;
 		}
-		String s = StringUtils.contains(space, ":") ?
-				StringUtils.substring(space, 0, space.lastIndexOf(":")) : "scooldspace:" + space;
+		String s = StringUtils.contains(space, Config.SEPARATOR) ?
+				StringUtils.substring(space, 0, space.lastIndexOf(Config.SEPARATOR)) : "scooldspace:" + space;
 		return "scooldspace".equals(s) ? space : s;
 	}
 

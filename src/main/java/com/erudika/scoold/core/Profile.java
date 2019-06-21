@@ -34,9 +34,11 @@ import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
@@ -58,7 +60,7 @@ public class Profile extends Sysprop {
 	@Stored @URL private String picture;
 	@Stored @URL private String website;
 	@Stored private List<String> favtags;
-	@Stored private List<String> spaces;
+	@Stored private Set<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
 	@Stored private Integer yearlyVotes;
@@ -254,14 +256,14 @@ public class Profile extends Sysprop {
 		this.favtags = favtags;
 	}
 
-	public List<String> getSpaces() {
+	public Set<String> getSpaces() {
 		if (spaces == null) {
-			spaces = new LinkedList<String>();
+			spaces = new LinkedHashSet<String>();
 		}
 		return spaces;
 	}
 
-	public void setSpaces(List<String> spaces) {
+	public void setSpaces(Set<String> spaces) {
 		this.spaces = spaces;
 	}
 

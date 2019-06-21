@@ -113,7 +113,7 @@ public class AdminController {
 				s.setType("scooldspace");
 				s.setName(space);
 				if (pc.create(s) != null) {
-					authUser.getSpaces().add(s.getId() + ":" + space);
+					authUser.getSpaces().add(s.getId() + Config.SEPARATOR + space);
 					authUser.update();
 					model.addAttribute("space", s);
 				} else {
