@@ -22,7 +22,6 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -97,11 +96,9 @@ public class AdminController {
 	public String addSpace(@RequestParam String space, HttpServletRequest req, HttpServletResponse res, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
-			space = Utils.abbreviate(space, 255);
-			space = space.replaceAll(":", "");
-			String spaceId = utils.getSpaceId(Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
-			if (utils.isDefaultSpace(spaceId) || pc.getCount("scooldspace") >= MAX_SPACES ||
-					pc.read(spaceId) != null) {
+			Sysprop spaceObj = utils.buildSpaceObject(space);
+			if (utils.isDefaultSpace(spaceObj.getId()) || pc.getCount("scooldspace") >= MAX_SPACES ||
+					pc.read(spaceObj.getId()) != null) {
 				if (utils.isAjaxRequest(req)) {
 					res.setStatus(400);
 					return "space";
@@ -109,13 +106,10 @@ public class AdminController {
 					return "redirect:" + ADMINLINK + "?code=7&error=true";
 				}
 			} else {
-				Sysprop s = new Sysprop(spaceId);
-				s.setType("scooldspace");
-				s.setName(space);
-				if (pc.create(s) != null) {
-					authUser.getSpaces().add(s.getId() + Config.SEPARATOR + space);
+				if (pc.create(spaceObj) != null) {
+					authUser.getSpaces().add(spaceObj.getId() + Config.SEPARATOR + spaceObj.getName());
 					authUser.update();
-					model.addAttribute("space", s);
+					model.addAttribute("space", spaceObj);
 				} else {
 					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
 				}

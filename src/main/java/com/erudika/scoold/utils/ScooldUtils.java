@@ -184,6 +184,8 @@ public final class ScooldUtils {
 				} else {
 					logger.info("Invalid JWT found in cookie {}.", Config.AUTH_COOKIE);
 				}
+				res.sendRedirect(SIGNINLINK + "?code=3&error=true");
+				return null;
 			}
 		}
 		initCSRFToken(req, res);
@@ -699,6 +701,16 @@ public final class ScooldUtils {
 		String currentSpace = getSpaceIdFromCookie(authUser, req);
 		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
 				"properties.space:\"" + currentSpace + "\"";
+	}
+
+	public Sysprop buildSpaceObject(String space) {
+		space = Utils.abbreviate(space, 255);
+		space = space.replaceAll(Config.SEPARATOR, "");
+		String spaceId = getSpaceId(Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
+		Sysprop s = new Sysprop(spaceId);
+		s.setType("scooldspace");
+		s.setName(space);
+		return s;
 	}
 
 	public String sanitizeQueryString(String query, HttpServletRequest req) {
