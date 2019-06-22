@@ -459,6 +459,11 @@ para.security.oauth.provider = "Continue with OpenID Connect"
 para.security.oauth.token_delegation_enabled = false
 ```
 
+**Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
+is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
+revocates a delegated access token, then that user would automatically be logged out from Scoold and denied access
+immediately.
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `POST /signin?provider=ldap&access_token=username:password`.
@@ -577,6 +582,14 @@ If you want to assign space(s) to new users automatically, add this to your conf
 # put space ids here, the "scooldspace:" prefix is optional
 para.auto_assign_spaces = "my-space-one,my-other-space"
 ```
+
+Alternatively, Scoold Pro can have spaces delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
+You have to enable access token delegation with `para.security.oauth.token_delegation_enabled = true` and Scoold will
+try to obtain spaces from a custom attribute like `spaces`. Such custom attributes can be configured in the IDP and
+pushed to clients (Scoold) embedded in access tokens. If you want to change the name of the custom attribute supplied
+by your IDP, set `para.security.oauth.spaces_attribute_name`, which by default is equal to `spaces`. The value of that
+attribute should contain comma-separated list of spaces. If the spaces pushed from the IDP do not exist, Scoold will
+create them for you.
 
 ## Domain-restricted user registrations
 
