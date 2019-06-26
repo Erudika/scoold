@@ -1,0 +1,25 @@
+language: java
+sudo: false
+install: true
+jdk:
+  - oraclejdk8
+script:
+  - jdk_switcher use oraclejdk8
+  - mvn clean install sonar:sonar
+addons:
+  sonarcloud:
+    organization: "erudika"
+    token:
+      secure: "OEFdtVHbkYoZ4UilhjNoPWg805hmUHBbhvIfe1pnJVwmep0nlZNBYCWXGBWriFcH+VhNHFbgSs+JEddipapxux4k4V/1Nb9VnN7GuTU6HtuIQuU2C5KM+IPYVX8yMQf64bst8qdgXyKRd5iNFVqJ8ld2Fxu9Fbhup3msemDvw88W95XbEGSKECL9a3b85LiaQbjG7mdRRa+TkPh6h3t+xaAdJr6MjAZJxaFrTeZ9SU1NNi3YZWVvW+A1NH5/WJAgC/M5l4OvSI+4oXYEq5rqw8PfbT6tXJ5Qw+dwNvX7k+fxewjJlopngLqAOkW5zedrkmFKK5rfhqxjPtlH3XinAw7Soj5cxwkelWtGbI2xerRTnAjPc8ztrfap+la4OD207yQdSzuUnv6cxImJP6cp4Q3wSZLerjUUGvU4ztkeoYFzHmBj7yg7ZdQAuWBPLxzueWgua07N8UoZhXBPjxK1rtbgRf0EflIVy0hr+L+kRH+Tn5thl1QTSLpEkSOjSIBKZhcrH5SP3FnXkA6+fzQirXzbq1Ye8ndTvSkAWMSuqIl5Lu2Bnkoc0FrPbKwewYJE5cBdjnCM73vMgY6YNJk1G286c8DyYtsiTKZ9+OuQnxDDDuiKp7LSIhdDnZt4lgSpwlWA1z8RkjbdfbPS/pAdOwGPjW4wqp7oamUT2R5I4m4="
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
+notifications:
+  email: false
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/7b1d844879d5a5362187
+    on_success: change
+    on_failure: always
+    on_start: never
