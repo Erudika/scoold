@@ -24,6 +24,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - I18n with RTL language support
 - Reputation and voting system with badges
 - Spaces (Teams) - groups of isolated questions and users
+- Webhooks with signature signing
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
@@ -152,6 +153,8 @@ para.is_default_space_public = true
 para.avatar_edits_enabled = true
 # If true, users can change their names
 para.name_edits_enabled = true
+# Enable/disable webhooks support
+para.webhooks_enabled = true
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
@@ -590,6 +593,14 @@ pushed to clients (Scoold) embedded in access tokens. If you want to change the 
 by your IDP, set `para.security.oauth.spaces_attribute_name`, which by default is equal to `spaces`. The value of that
 attribute should contain comma-separated list of spaces. If the spaces pushed from the IDP do not exist, Scoold will
 create them for you.
+
+## Webhooks
+
+Webhooks are enabled by default in Scoold. To disable this functionality set `para.webhooks_enabled = false`. If you
+are self-hosting Para, you need to also enable webhooks there using the same configuration option.
+You can add/remove webhooks in the "Administration" page.
+
+For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
 ## Domain-restricted user registrations
 
