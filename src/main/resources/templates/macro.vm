@@ -79,6 +79,61 @@
 		#spacebox($space)
 	#end
 #end
+####################################
+#macro(webhookbox $webhook )
+<div class="col s12 webhookbox">
+	<div class="card-panel">
+		<a href="$adminlink/delete-webhook?id=$!webhook.id" class="red-text right tooltipped pts delete-webhook"
+			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
+		<div class="mediumText">
+			#if($webhook.active)#set($showActiveWebhook = "")#else #set($showActiveWebhook = "hide")#end
+			#if(!$webhook.active)#set($showInactiveWebhook = "")#else #set($showInactiveWebhook = "hide")#end
+			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showActiveWebhook}" data-tooltip="Deactivate"><i class="fa fa-circle green-text"></i></a>
+			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showInactiveWebhook}" data-tooltip="Activate"><i class="fa fa-circle red-text"></i></a>
+			<span class="">$!webhook.targetUrl</span>
+			#if($webhook.create)
+				<span class="chip"><tt>create</tt></span>
+			#end
+			#if($webhook.update)
+				<span class="chip"><tt>update</tt></span>
+			#end
+			#if($webhook.delete)
+				<span class="chip"><tt>delete</tt></span>
+			#end
+			#if($webhook.createAll)
+				<span class="chip"><tt>createAll</tt></span>
+			#end
+			#if($webhook.updateAll)
+				<span class="chip"><tt>updateAll</tt></span>
+			#end
+			#if($webhook.deleteAll)
+				<span class="chip"><tt>deleteAll</tt></span>
+			#end
+			#if($webhook.typeFilter)
+				<span class="chip"><tt><i class="fa fa-cube gray"></i> $!webhook.typeFilter</tt></span>
+			#end
+			#if(!$webhook.urlEncoded)
+				<span class="chip" title="application/json"><tt>{JSON}</tt></span>
+			#end
+			<span class="chip">
+				<a href="#" class="next-span-toggle click2hide"><i class="fa fa-key"></i></a>
+				<span class="hide"><i class="fa fa-key"></i> <tt>$!webhook.secret</tt></span>
+			</span>
+			#if($webhook.tooManyFailures)
+				<div class="red-text">
+					<i class="fa fa-exclamation-circle"></i> Webhook was disabled due to too many failed delivery attempts.
+				</div>
+			#end
+		</div>
+	</div>
+</div>
+#end
+####################################
+#macro(webhookspage $webhooks )
+	#foreach($webhook in $webhooks)
+		#webhookbox($webhook)
+	#end
+#end
 ################# QUESTIONS MACROS #####################
 #macro(tagsbox $tags $link)
 	#foreach($showtag in $tags)

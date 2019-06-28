@@ -20,8 +20,11 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Webhook;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.ADMINLINK;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -37,10 +40,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.ADMINLINK;
+import com.erudika.scoold.core.Question;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Optional;
+import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
@@ -78,6 +82,7 @@ public class AdminController {
 		configMap.putAll(System.getenv());
 
 		Pager itemcount = utils.getPager("page", req);
+		Pager itemcount1 = utils.getPager("page1", req);
 		itemcount.setLimit(40);
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("admin.title"));
@@ -86,7 +91,10 @@ public class AdminController {
 		model.addAttribute("endpoint", pc.getEndpoint());
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
+		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
+		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
 		model.addAttribute("scooldVersion", Optional.ofNullable(scooldVersion).orElse("unknown"));
 		return "base";
@@ -136,6 +144,67 @@ public class AdminController {
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
 			return "space";
+		} else {
+			return "redirect:" + ADMINLINK;
+		}
+	}
+
+	@PostMapping("/create-webhook")
+	public String createWebhook(@RequestParam String targetUrl, @RequestParam String type, @RequestParam Boolean json,
+			@RequestParam Set<String> events, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (Utils.isValidURL(targetUrl) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
+			Webhook webhook = new Webhook(targetUrl);
+			webhook.setCreate(events.contains("create"));
+			webhook.setUpdate(events.contains("update"));
+			webhook.setDelete(events.contains("delete"));
+			webhook.setCreateAll(events.contains("createAll"));
+			webhook.setUpdateAll(events.contains("updateAll"));
+			webhook.setDeleteAll(events.contains("deleteAll"));
+			if (utils.getCoreScooldTypes().contains(type)) {
+				webhook.setTypeFilter(type);
+			} else {
+				webhook.setTypeFilter(Utils.type(Question.class));
+			}
+			webhook.setUrlEncoded(!json);
+			webhook.resetSecret();
+			pc.create(webhook);
+		} else {
+			model.addAttribute("error", Collections.singletonMap("targetUrl", utils.getLang(req).get("requiredfield")));
+			return "base";
+		}
+		return "redirect:" + ADMINLINK;
+	}
+
+	@PostMapping("/toggle-webhook")
+	public String toggleWebhook(@RequestParam String id, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!StringUtils.isBlank(id) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
+			Webhook webhook = pc.read(id);
+			if (webhook != null) {
+				webhook.setActive(!webhook.getActive());
+				pc.update(webhook);
+			}
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + ADMINLINK;
+		}
+	}
+
+	@PostMapping("/delete-webhook")
+	public String deleteWebhook(@RequestParam String id, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!StringUtils.isBlank(id) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
+			Webhook webhook = new Webhook();
+			webhook.setId(id);
+			pc.delete(webhook);
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
 		} else {
 			return "redirect:" + ADMINLINK;
 		}

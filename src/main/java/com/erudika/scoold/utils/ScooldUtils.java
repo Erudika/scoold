@@ -30,11 +30,14 @@ import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
+import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import static com.erudika.scoold.core.Post.DEFAULT_SPACE;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
 import static com.erudika.scoold.core.Profile.Badge.TEACHER;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
@@ -85,6 +88,19 @@ public final class ScooldUtils {
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
+
+	private static Set<String> coreTypes;
+	static {
+		coreTypes = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
+				Utils.type(Feedback.class),
+				Utils.type(Profile.class),
+				Utils.type(Question.class),
+				Utils.type(Reply.class),
+				Utils.type(Report.class),
+				Utils.type(Revision.class),
+				Utils.type(UnapprovedQuestion.class),
+				Utils.type(UnapprovedReply.class)));
+	}
 
 	private ParaClient pc;
 	private LanguageUtils langutils;
@@ -455,6 +471,14 @@ public final class ScooldUtils {
 
 	public boolean isDefaultSpacePublic() {
 		return Config.getConfigBoolean("is_default_space_public", true);
+	}
+
+	public boolean isWebhooksEnabled() {
+		return Config.getConfigBoolean("webhooks_enabled", true);
+	}
+
+	public Set<String> getCoreScooldTypes() {
+		return Collections.unmodifiableSet(coreTypes);
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {

@@ -38,9 +38,7 @@
 					</div>
 				</div>
 				<div class="col s12 m6">
-					<button class="btn mtl waves-effect waves-light" type="submit">
-						<i class="fa fa-plus left"></i>$!lang.get('add')
-					</button>
+					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('add')</button>
 				</div>
 			</div>
 		</form>
@@ -62,6 +60,67 @@
 		#paginate("\#spacespage(\$spaces)" $itemcount "" "page" )
 	</div>
 
+	#if($scooldUtils.isWebhooksEnabled())
+	<h4>
+		Webhooks #showcount($itemcount1.count)
+	</h4>
+
+	<div class="mbl">
+		<form method="post" id="create-webhook-form" action="$adminlink/create-webhook">
+			#sectoken(false "CREATE_WEBHOOK")
+			<div class="row">
+				<div class="col s12 m4">
+					<div class="input-field">
+						<label for="targetUrl">Destination URL</label>
+						<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" required>
+						<span class="helper-text" data-error="Please enter a valid URL"></span>
+					</div>
+				</div>
+				<div class="col s12 m2">
+					<div class="input-field">
+						<select multiple name="events" required>
+							<option value="create" selected="selected">create</option>
+							<option value="update">update</option>
+							<option value="delete">delete</option>
+							<option value="createAll">createAll</option>
+							<option value="updateAll">updateAll</option>
+							<option value="deleteAll">deleteAll</option>
+						</select>
+					</div>
+				</div>
+				<div class="col s12 m2">
+					<div class="input-field">
+						<select name="type" required>
+							#foreach($type in $coreScooldTypes)
+								#if($type == "question")
+									<option value="$!type" selected="selected">$!type</option>
+								#else
+									<option value="$!type">$!type</option>
+								#end
+							#end
+						</select>
+					</div>
+				</div>
+				<div class="col s12 m2">
+					<div class="input-field">
+						<select name="json" required>
+							<option value="false" selected="selected">x-www-form-urlencoded</option>
+							<option value="true">json</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col s12 m2">
+					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('create')</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="row webhooks-wrapper">
+		#paginate("\#webhookspage(\$webhooks)" $itemcount1 "" "page1" )
+	</div>
+	#end
 
 	<hr>
 	<div class="ptl">

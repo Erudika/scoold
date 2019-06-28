@@ -279,7 +279,7 @@ $(function () {
 	});
 
 	$(document).on("click", "a.next-span-toggle",  function() {
-		$(this).nextAll("span:first").toggle();
+		$(this).nextAll("span:first").toggleClass("hide");
 		return false;
 	});
 
@@ -402,6 +402,21 @@ $(function () {
 		var elem = $(this);
 		return areYouSure(function () {
 			elem.closest(".spacebox").fadeOut("fast", function () { elem.remove(); });
+			$.post(elem.attr("href"));
+		}, rusuremsg, false);
+	});
+
+	$(document).on("click", "a.toggle-webhook", function () {
+		var elem = $(this);
+		elem.toggleClass("hide").siblings("a.toggle-webhook").toggleClass("hide");
+		$.post(elem.attr("href"));
+		return false;
+	});
+
+	$(document).on("click", "a.delete-webhook", function () {
+		var elem = $(this);
+		return areYouSure(function () {
+			elem.closest(".webhookbox").fadeOut("fast", function () { elem.remove(); });
 			$.post(elem.attr("href"));
 		}, rusuremsg, false);
 	});
