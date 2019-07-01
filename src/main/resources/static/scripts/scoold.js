@@ -872,6 +872,14 @@ $(function () {
 		return {tag: t};
 	});
 
+	$(document).on("focusout", autocomplete, function() {
+		var input = autocomplete.find("input").first();
+		if (input.length && input.val().trim().length) {
+			autocomplete.chips('addChip', {tag: input.val().trim()});
+			input.val("");
+		}
+	});
+
 	autocomplete.chips({
 		limit: 5,
 		placeholder: autocomplete.attr('title') || "Tags",
@@ -896,8 +904,8 @@ $(function () {
 	if (autocomplete.length) {
 		var autocompleteChipsInstance = M.Chips.getInstance(autocomplete.get(0));
 		function autocompleteFetchData(value, callback) {
-			var val = value.toLowerCase();
-			if (val && val.trim().length > 0) {
+			var val = value.toLowerCase().trim();
+			if (val && val.length > 0) {
 				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
 					var tags = {};
 					if (data.length === 0) {
