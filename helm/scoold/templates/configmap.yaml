@@ -10,8 +10,8 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     app: {{ include "scoold.name" . }}
 data:
-{{- range $key, $val := .Values.applicationConf }}
   application.conf: |
+{{- range $key, $val := .Values.applicationConf }}
 {{ $key | indent 4 -}}: {{ $val }}
 {{- end -}}
 {{- end -}}
