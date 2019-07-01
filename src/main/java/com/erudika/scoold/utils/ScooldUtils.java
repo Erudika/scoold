@@ -381,7 +381,7 @@ public final class ScooldUtils {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
-			String body = Utils.markdownToHtml(Utils.abbreviate(question.getBody(), 500));
+			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
@@ -401,7 +401,8 @@ public final class ScooldUtils {
 			Set<String> emails = getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 			if (emails != null) {
 				emailer.sendEmail(new ArrayList<String>(emails),
-						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 100) + "...'",
+						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) +
+								(question.getTitle().length() > 255 ? "...'" : "'"),
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}
@@ -413,7 +414,7 @@ public final class ScooldUtils {
 			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = replyAuthor.getName();
-			String body = Utils.markdownToHtml(Utils.abbreviate(reply.getBody(), 500));
+			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
@@ -441,7 +442,8 @@ public final class ScooldUtils {
 
 			if (parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 50) + "...'",
+						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) +
+								(reply.getTitle().length() > 255 ? "...'" : "'"),
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}
