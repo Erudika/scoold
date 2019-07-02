@@ -11,7 +11,5 @@ metadata:
     app: {{ include "scoold.name" . }}
 data:
   application.conf: |
-{{- range $key, $val := .Values.applicationConf }}
-{{ $key | indent 4 -}}: {{ $val }}
-{{- end -}}
+{{ .Values.applicationConf | indent 4 }}
 {{- end -}}
