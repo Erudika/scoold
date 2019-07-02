@@ -20,12 +20,12 @@ service:
 ######################
 # Scoold configuration
 ######################
-applicationConf:
-  para.env: production
-  #para.endpoint: "https://paraio.com"
-  #para.access_key: "app:scoold"
-  #para.secret_key: "secret"
-  #para.password_auth_enabled: true
+applicationConf: |
+  para.env = production
+  #para.endpoint = "https://paraio.com"
+  #para.access_key = "app:scoold"
+  #para.secret_key = "secret"
+  #para.password_auth_enabled = true
   ####################################
   # Add more config properties here...
   ####################################
