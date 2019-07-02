@@ -11,5 +11,5 @@ metadata:
     app: {{ include "scoold.name" . }}
 data:
   application.conf: |
-{{ toYaml .Values.applicationConf | indent 4 }}
+{{ .Values.applicationConf | indent 4 }}
 {{- end -}}
