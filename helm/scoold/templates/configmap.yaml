@@ -12,6 +12,6 @@ metadata:
 data:
 {{- range $key, $val := .Values.applicationConf }}
   application.conf: |
-{{ $key | indent 4 -}}: {{ $val }}
+{{ $key | indent 4 -}} = {{ $val }}
 {{- end -}}
 {{- end -}}
