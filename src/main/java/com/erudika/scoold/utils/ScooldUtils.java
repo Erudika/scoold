@@ -386,7 +386,7 @@ public final class ScooldUtils {
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
-			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div class='panel'>{2}</div>",
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div>",
 					postURL, question.getTitle(), body));
 
 			if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
@@ -419,7 +419,7 @@ public final class ScooldUtils {
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", picture, name, body));
+			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, name, body));
 
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {

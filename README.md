@@ -300,6 +300,11 @@ It's also helpful to install the Heroku CLI tool.
 1. Click the button above
 2. Fill in the required parameters
 3. Launch the container
+4. Go to your container and press "Connect" using `/bin/sh`
+5. In the terminal type in `vi application.conf`, hit `i` and paste in your configuration
+6. Hit `Esc` and type in `:wq` then restart your container
+Another option is to attach a [secret volume](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-volume-secret)
+to your container, containing the configuration. It should be mounted as `/scoold/application.conf`.
 
 ## Deploying Scoold to Google App Engine
 
