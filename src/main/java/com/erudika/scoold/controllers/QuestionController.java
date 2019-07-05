@@ -154,9 +154,7 @@ public class QuestionController {
 		}
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
-			showPost.setLasteditby(authUser.getId());
-			showPost.setLastedited(System.currentTimeMillis());
-			showPost.update();
+			updatePost(showPost, authUser);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
@@ -187,6 +185,7 @@ public class QuestionController {
 				answer.create();
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
+				showPost.setLastactivity(System.currentTimeMillis());
 				if (showPost.getAnswercount() >= MAX_REPLIES_PER_POST) {
 					showPost.setCloserid("0");
 				}
@@ -349,5 +348,22 @@ public class QuestionController {
 		answers.addAll(showPost.getAnswers(itemcount));
 		itemcount.setCount(itemcount.getCount() + p.getCount());
 		return answers;
+	}
+
+	private void updatePost(Post showPost, Profile authUser) {
+		showPost.setLasteditby(authUser.getId());
+		showPost.setLastedited(System.currentTimeMillis());
+		if (showPost.isQuestion()) {
+			showPost.setLastactivity(System.currentTimeMillis());
+			showPost.update();
+		} else if (showPost.isReply()) {
+			Post questionPost = pc.read(showPost.getParentid());
+			if (questionPost != null) {
+				questionPost.setLastactivity(System.currentTimeMillis());
+				pc.updateAll(Arrays.asList(showPost, questionPost));
+			} else {
+				showPost.update();
+			}
+		}
 	}
 }

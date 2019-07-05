@@ -64,6 +64,7 @@ public abstract class Post extends Sysprop {
 	@Stored private String revisionid;
 	@Stored private String closerid;
 	@Stored private Long answercount;
+	@Stored private Long lastactivity;
 	@Stored private Long lastedited;
 	@Stored private String lasteditby;
 	@Stored private String deletereportid;
@@ -84,6 +85,17 @@ public abstract class Post extends Sysprop {
 
 	private ParaClient client() {
 		return ScooldUtils.getInstance().getParaClient();
+	}
+
+	public Long getLastactivity() {
+		if (lastactivity == null || lastactivity <= 0) {
+			lastactivity = getUpdated();
+		}
+		return lastactivity;
+	}
+
+	public void setLastactivity(Long lastactivity) {
+		this.lastactivity = lastactivity;
 	}
 
 	public Long getLastedited() {
@@ -489,6 +501,7 @@ public abstract class Post extends Sysprop {
 			setBody(rev.getBody());
 			setTags(rev.getTags());
 			setRevisionid(rev.getId());
+			setLastactivity(System.currentTimeMillis());
 			//update post without creating a new revision
 			client().update(this);
 		}

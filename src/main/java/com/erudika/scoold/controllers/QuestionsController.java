@@ -277,7 +277,8 @@ public class QuestionsController {
 		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
 		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
 		if ("activity".equals(sortby)) {
-			itemcount.setSortby("updated");
+			itemcount.setSortby("properties.lastactivity");
+			itemcount.setDesc(true);
 		} else if ("votes".equals(sortby)) {
 			itemcount.setSortby("votes");
 		} else if ("unanswered".equals(sortby)) {
