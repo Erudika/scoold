@@ -1,0 +1,64 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: ecr-cred-helper
+  namespace: {{ .Values.namespace }}
+spec:
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          serviceAccountName: ecr-cred-helper
+          containers:
+          - command:
+            - /bin/sh
+            - -c
+            - |-
+              ACCOUNT=374874639893
+              REGION=eu-west-1
+              SECRET_NAME=${REGION}-ecr-registry
+              EMAIL=support@scoold.com
+              TOKEN=`aws ecr get-login --region ${REGION} --registry-ids ${ACCOUNT} | cut -d' ' -f6`
+              echo "ENV variables setup done."
+              kubectl delete secret --ignore-not-found $SECRET_NAME
+              kubectl create secret docker-registry $SECRET_NAME \
+              --docker-server=https://${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com \
+              --docker-username=AWS \
+              --docker-password="${TOKEN}" \
+              --docker-email="${EMAIL}"
+              echo "Secret created by name. $SECRET_NAME"
+              # kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"'$SECRET_NAME'"}]}'
+              echo "All done."
+            env:
+            - name: AWS_DEFAULT_REGION
+              value: eu-west-1
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: scoold
+                  key: aws_ecr_secret
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.ecrAccessKey }}
+            image: odaniait/aws-kubectl:latest
+            imagePullPolicy: IfNotPresent
+            name: ecr-cred-helper
+            resources: {}
+            securityContext:
+              capabilities: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          dnsPolicy: Default
+          hostNetwork: true
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+  schedule: 0 */6 * * *
+  successfulJobsHistoryLimit: 3
+  suspend: false

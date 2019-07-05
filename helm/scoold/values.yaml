@@ -40,6 +40,11 @@ javaOpts: "-Xmx512m -Xms512m -Dconfig.file=/scoold/config/application.conf"
 #####################
 extraEnvs: ""
 
+namespace: "prod"
+
+# Access key for AWS ECR - private registry for Scoold PRO
+ecrAccessKey: ""
+
 updateStrategy: RollingUpdate
 
 ingress:

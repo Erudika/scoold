@@ -8,6 +8,7 @@ sed -i -e "0,/$OLDVER/s/$OLDVER/$ver/" pom.xml
 sed -i -e "s/$OLDVER/$ver/g" docs/index.html
 sed -i -e "s/$OLDVER/$ver/g" installer.sh
 sed -i -e "s/$OLDVER/$ver/g" helm/scoold/values.yaml
+sed -i -e "s/$OLDVER/$ver/g" helm/scoold/Chart.yaml
 git add -A && git commit -m "Release v$ver."
 git tag "$ver"
 git push origin master
