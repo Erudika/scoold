@@ -50,9 +50,9 @@ public class SpringResourceLoader extends ResourceLoader {
 
 	public static final String NAME = "spring";
 
-	public static final String SPRING_RESOURCE_LOADER_CLASS = "spring.resource.loader.class";
+	public static final String SPRING_RESOURCE_LOADER_CLASS = "resource.loader.spring.class";
 
-	public static final String SPRING_RESOURCE_LOADER_CACHE = "spring.resource.loader.cache";
+	public static final String SPRING_RESOURCE_LOADER_CACHE = "resource.loader.spring.cache";
 
 	public static final String SPRING_RESOURCE_LOADER = "spring.resource.loader";
 
