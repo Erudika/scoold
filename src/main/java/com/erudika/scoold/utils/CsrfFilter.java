@@ -53,8 +53,9 @@ public class CsrfFilter implements Filter {
 		final HttpServletRequest request = (HttpServletRequest) req;
 		final HttpServletResponse response = (HttpServletResponse) res;
 		boolean isCSPReportRequest = request.getRequestURI().startsWith("/reports/cspv");
+		boolean isApiRequest = request.getRequestURI().startsWith("/api/") || request.getRequestURI().equals("/api");
 
-		if ("POST".equals(request.getMethod()) && !isCSPReportRequest) {
+		if ("POST".equals(request.getMethod()) && !isCSPReportRequest && !isApiRequest) {
 			String csrfToken = request.getParameter("_csrf");
 			String csrfInCookie = HttpUtils.getStateParam(CSRF_COOKIE, request);
 

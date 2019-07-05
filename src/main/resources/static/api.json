@@ -1,0 +1,188 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "description": "This is the API of [Scoold](https://scoold.com). You need to generate a [JWT super token](http://paraio.org/docs/#creating-super-tokens) from your Para secret key to access the API.",
+    "version": "1.0.0",
+    "title": "Scoold API",
+    "termsOfService": "https://live.scoold.com/terms",
+    "contact": {
+      "email": "support@scoold.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "questions"
+    },
+    {
+      "name": "answers"
+    },
+    {
+      "name": "profiles"
+    }
+  ],
+  "paths": {
+    "/api": {
+      "get": {
+        "summary": "Intro and health",
+        "responses": {
+          "200": {
+            "description": "A paged array of questions"
+          }
+        }
+      }
+    },
+    "/api/questions": {
+      "get": {
+        "summary": "List all questions",
+        "operationId": "getQuestions",
+        "tags": [
+          "questions"
+        ],
+        "security": [
+          {
+            "scoold_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "How many items to return at one time (default 30)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged array of questions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Questions"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{id}": {
+      "get": {
+        "summary": "Request a specific question",
+        "operationId": "getQuestion",
+        "tags": [
+          "questions"
+        ],
+        "security": [
+          {
+            "scoold_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the question to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expected response to a valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Question"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Question": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        }
+      },
+      "Questions": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Question"
+        }
+      },
+      "Error": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "scoold_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Scoold on GitHub",
+    "url": "https://github.com/Erudika/scoold"
+  }
+}

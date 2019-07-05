@@ -15,35 +15,80 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-package com.erudika.scoold.controllers;
+package com.erudika.scoold.api;
 
+import com.erudika.para.client.ParaClient;
+import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Pager;
+import com.erudika.para.utils.Utils;
+import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * WORK IN PROGRESS.
  * @author Alex Bogdanovski [alex@erudika.com]
  */
-@Controller
-@RequestMapping("/about")
-public class AboutController {
+@RestController
+@RequestMapping("/api")
+public class ApiController {
 
 	private final ScooldUtils utils;
+	private final ParaClient pc;
 
 	@Inject
-	public AboutController(ScooldUtils utils) {
+	public ApiController(ScooldUtils utils) {
 		this.utils = utils;
+		this.pc = utils.getParaClient();
 	}
 
 	@GetMapping
-	public String get(HttpServletRequest req, Model model) {
-		model.addAttribute("path", "about.vm");
-		model.addAttribute("title", utils.getLang(req).get("about.title"));
-		return "base";
+	public Map<String, Object> get(HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> intro = new HashMap<>();
+		intro.put("message", Config.APP_NAME + " API, see docs at " + ScooldServer.getServerURL() + "/api.html");
+		boolean healthy;
+		try {
+			healthy = pc != null && pc.getTimestamp() > 0;
+		} catch (Exception e) {
+			healthy = false;
+		}
+		intro.put("healthy", healthy);
+		if (!healthy) {
+			res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		}
+		return intro;
 	}
+
+
+	@RequestMapping(value = "/questions", method = RequestMethod.GET)
+	public List<Question> getQuestions(@RequestParam(defaultValue = "*") String q, HttpServletRequest req) {
+		Pager pager = utils.pagerFromParams(req);
+		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), q, pager);
+		if (utils.postsNeedApproval()) {
+			Pager p = new Pager(pager.getPage(), pager.getLimit());
+			List<UnapprovedQuestion> uquestionslist = pc.findQuery(Utils.type(UnapprovedQuestion.class), q, p);
+			List<Question> qlist = new LinkedList<>(uquestionslist);
+			pager.setCount(pager.getCount() + p.getCount());
+			qlist.addAll(questionslist);
+			questionslist = qlist;
+		}
+
+		utils.fetchProfiles(questionslist);
+		return questionslist;
+	}
+
 }

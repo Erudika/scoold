@@ -19,6 +19,7 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.Para;
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.App;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
@@ -68,11 +69,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
+import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 /**
@@ -172,25 +175,18 @@ public final class ScooldUtils {
 		}
 	}
 
-	public Profile checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public ParaObject checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
-		if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null &&
+		boolean isApiRequest = isApiRequest(req);
+		if (isApiRequest) {
+			return checkApiAuth(req);
+		} else if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null &&
 				!StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg")) {
 			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
-				boolean update = false;
-				if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
-					logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
-					authUser.setGroups(User.Groups.ADMINS.toString());
-					update = true;
-				} else if (isAdmin(authUser) && !isRecognizedAsAdmin(u)) {
-					logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
-					authUser.setGroups(User.Groups.USERS.toString());
-					update = true;
-				}
 				authUser.setUser(u);
-				if (update || updateProfilePictureAndName(authUser, u)) {
+				if (promoteOrDemoteUser(authUser, u) || updateProfilePictureAndName(authUser, u)) {
 					authUser.update();
 				}
 			} else {
@@ -204,8 +200,38 @@ public final class ScooldUtils {
 				return null;
 			}
 		}
-		initCSRFToken(req, res);
+		if (!isApiRequest) {
+			initCSRFToken(req, res);
+		}
 		return authUser;
+	}
+
+	private ParaObject checkApiAuth(HttpServletRequest req) {
+		if (req.getRequestURI().equals("/api")) {
+			return null;
+		}
+		String superToken = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
+		if (StringUtils.isBlank(superToken)) {
+			throw new WebApplicationException(401);
+		}
+		ParaObject app = pc.me(superToken);
+		if (app == null || !(app instanceof App)) {
+			throw new WebApplicationException(401);
+		}
+		return app;
+	}
+
+	private boolean promoteOrDemoteUser(Profile authUser, User u) {
+		if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
+			logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
+			authUser.setGroups(User.Groups.ADMINS.toString());
+			return true;
+		} else if (isAdmin(authUser) && !isRecognizedAsAdmin(u)) {
+			logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
+			authUser.setGroups(User.Groups.USERS.toString());
+			return true;
+		}
+		return false;
 	}
 
 	private Profile getOrCreateProfile(User u, HttpServletRequest req) {
@@ -487,6 +513,22 @@ public final class ScooldUtils {
 		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
 	}
 
+	public Pager pagerFromParams(HttpServletRequest req) {
+		Pager p = new Pager();
+		p.setPage(NumberUtils.toLong(req.getParameter("page"), 1));
+		p.setDesc(Boolean.parseBoolean(req.getParameter("desc")));
+		p.setLimit(NumberUtils.toInt(req.getParameter("limit"), Config.MAX_ITEMS_PER_PAGE));
+		String lastKey = req.getParameter("lastKey");
+		String sort = req.getParameter("sort");
+		if (!StringUtils.isBlank(lastKey)) {
+			p.setLastKey(lastKey);
+		}
+		if (!StringUtils.isBlank(sort)) {
+			p.setSortby(sort);
+		}
+		return p;
+	}
+
 	public String getLanguageCode(HttpServletRequest req) {
 		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
 		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
@@ -636,6 +678,10 @@ public final class ScooldUtils {
 
 	public boolean isAjaxRequest(HttpServletRequest req) {
 		return req.getHeader("X-Requested-With") != null || req.getParameter("X-Requested-With") != null;
+	}
+
+	public boolean isApiRequest(HttpServletRequest req) {
+		return req.getRequestURI().startsWith("/api/") || req.getRequestURI().equals("/api");
 	}
 
 	public boolean isAdmin(Profile authUser) {

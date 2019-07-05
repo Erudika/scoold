@@ -1,0 +1,31 @@
+html
+{
+  box-sizing: border-box;
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: scroll;
+}
+*,
+*:before,
+*:after
+{
+  box-sizing: inherit;
+}
+body
+{
+  margin:0;
+  background: #f9f6f1;
+}
+.main span.url, .topbar {
+  display: none;
+}
+.swagger-ui .auth-wrapper {
+  display: block;
+}
+.swagger-ui .scheme-container,.swagger-ui .global-server-container {
+  background: #f9f6f1;
+  box-shadow: none;
+  padding: 0;
+}
+.swagger-ui .topbar {
+  background-color: #b8cf00;
+}

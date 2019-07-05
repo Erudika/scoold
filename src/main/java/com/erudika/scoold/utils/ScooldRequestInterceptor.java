@@ -17,20 +17,24 @@
  */
 package com.erudika.scoold.utils;
 
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Report.ReportType;
 import java.net.ConnectException;
+import java.util.Collections;
 import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -56,14 +60,22 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		if (utils == null) {
 			throw new IllegalStateException("ScooldUtils not initialized properly.");
 		}
+		boolean isApiRequest = utils.isApiRequest(request);
 		try {
 			request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
 		} catch (Exception e) {
 			if (e.getCause() instanceof ConnectException) {
-				response.setStatus(500);
+				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 				logger.error("No connection to Para backend.", e.getMessage());
+			} else if (e instanceof WebApplicationException && isApiRequest) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else {
 				logger.error("Auth check failed:", e);
+			}
+			if (isApiRequest) {
+				ParaObjectUtils.getJsonWriter().writeValue(response.getWriter(),
+						Collections.singletonMap("error", "Unauthenticated request! " + e.getMessage()));
+				return false;
 			}
 		}
 		return true;
