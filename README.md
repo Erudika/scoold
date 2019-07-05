@@ -826,6 +826,20 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
 
 
+## Scoold API
+
+**The REST API is a work in progress.** The API can be accessed from `/api` and the Swagger documentation and console
+are located at `/api.html`.
+
+You can use the public endpoint `/api` to check the health of the server. A `GET /api` will return `200` if the server
+is healthy and connected to Para, otherwise status code `500` is returned. The response body is similar to this:
+```
+{
+  "healthy": true,
+  "message": "Scoold API, see docs at http://localhost:8000/api.html"
+}
+```
+
 ## Building Scoold
 
 To compile it you'll need JDK 8+ and Maven. Once you have it, just clone and build:
