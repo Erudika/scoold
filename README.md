@@ -31,7 +31,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Email notifications for post replies and comments
 - Spring Boot project (single JAR)
 - LDAP authentication support
-- Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Twitter) with Gravatar support
+- Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Twitter) with Gravatar support
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
@@ -414,7 +414,7 @@ for testing purposes or in certain situations where you want to programmatically
 
 For authenticating with Facebook or Google, you only need your Google client id
 (e.g. `123-abcd.apps.googleusercontent.com`), or Facebook app id (only digits).
-For all the other providers, GitHub, LinkedIn, Twitter and Microsoft, you need to set both the app id and secret key.
+For all the other providers, GitHub, LinkedIn, Twitter, Slack and Microsoft, you need to set both the app id and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
 ```ini
 # Facebook
@@ -433,6 +433,9 @@ para.tw_secret = ""
 # Microsoft
 para.ms_app_id = ""
 para.ms_secret = ""
+# Slack
+para.sl_app_id = ""
+para.sl_secret = ""
 ```
 You also need to set your host URL when running Scoold in production:
 ```ini
