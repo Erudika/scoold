@@ -124,8 +124,8 @@ public class LanguageUtils {
 					}
 				}
 			}
-			LANG_CACHE.put(langCode, lang);
 		}
+		LANG_CACHE.put(langCode, lang);
 		return Collections.unmodifiableMap(lang);
 	}
 
@@ -402,12 +402,16 @@ public class LanguageUtils {
 					if (!lang.isEmpty()) {
 						int progress = 0;
 						Map<String, String> langmap = new TreeMap<String, String>();
-						for (String propKey : lang.stringPropertyNames()) {
+						Set<String> keySet = langCode.equalsIgnoreCase(getDefaultLanguageCode()) ?
+								lang.stringPropertyNames() : getDefaultLanguage().keySet();
+						for (String propKey : keySet) {
 							String propVal = lang.getProperty(propKey);
 							if (!langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
 								String defaultVal = getDefaultLanguage().get(propKey);
 								if (!StringUtils.isBlank(propVal) && !StringUtils.equalsIgnoreCase(propVal, defaultVal)) {
 									progress++;
+								} else if (StringUtils.isBlank(propVal)) {
+									propVal = defaultVal;
 								}
 							}
 							langmap.put(propKey, propVal);
