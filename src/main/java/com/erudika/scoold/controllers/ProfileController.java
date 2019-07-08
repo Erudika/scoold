@@ -150,7 +150,8 @@ public class ProfileController {
 				showUser.setLocation(location);
 				updateProfile = true;
 			}
-			if (!StringUtils.equals(showUser.getWebsite(), website)) {
+			if (!StringUtils.equals(showUser.getWebsite(), website) &&
+					(StringUtils.isBlank(website) || Utils.isValidURL(website))) {
 				showUser.setWebsite(website);
 				updateProfile = true;
 			}
