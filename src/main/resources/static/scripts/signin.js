@@ -1,4 +1,4 @@
-/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID, CONTEXT_PATH, OAUTH2_APP_ID, OAUTH2_SCOPE, OAUTH2_ENDPOINT */
+/* global FB_APP_ID, gapi, FB, GOOGLE_CLIENT_ID, GITHUB_APP_ID, LINKEDIN_APP_ID, APPID, ENDPOINT, TWITTER_APP_ID, MICROSOFT_APP_ID, CONTEXT_PATH, OAUTH2_APP_ID, OAUTH2_SCOPE, OAUTH2_ENDPOINT, SLACK_APP_ID */
 /************************
  * Facebook integration *
  ************************/
@@ -93,6 +93,18 @@ if (MICROSOFT_APP_ID && MICROSOFT_APP_ID.trim() !== "") {
                 "response_type=code&client_id=" + MICROSOFT_APP_ID +
                 "&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read&state=" + APPID +
                 "&redirect_uri=" + ENDPOINT + "/microsoft_auth";
+		return false;
+	});
+}
+/*************************
+ * Slack integration *
+ *************************/
+if (SLACK_APP_ID && SLACK_APP_ID.trim() !== "") {
+	$('#sl-login-btn').on('click', function () {
+		window.location = "https://slack.com/oauth/authorize?" +
+                "response_type=code&client_id=" + SLACK_APP_ID +
+                "&scope=identity.basic%20identity.email%20identity.team%20identity.avatar&state=" + APPID +
+                "&redirect_uri=" + ENDPOINT + "/slack_auth";
 		return false;
 	});
 }
