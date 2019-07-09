@@ -272,10 +272,12 @@ public final class ScooldUtils {
 			authUser.setPicture(u.getPicture());
 			update = true;
 		}
-		if (!StringUtils.equals(u.getName(), authUser.getName())) {
-			if (!Config.getConfigBoolean("name_edits_enabled", true)) {
-				authUser.setName(u.getName());
-			}
+		if (!Config.getConfigBoolean("name_edits_enabled", true) &&
+				!StringUtils.equals(u.getName(), authUser.getName())) {
+			authUser.setName(u.getName());
+			update = true;
+		}
+		if (!StringUtils.equals(u.getName(), authUser.getOriginalName())) {
 			authUser.setOriginalName(u.getName());
 			update = true;
 		}
