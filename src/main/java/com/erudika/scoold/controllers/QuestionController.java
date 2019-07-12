@@ -144,10 +144,11 @@ public class QuestionController {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 		}
 		if (showPost.isQuestion()) {
-			if (!utils.isMod(authUser)) {
+			if (!utils.canAccessSpace(authUser, space)) {
 				space = utils.getSpaceIdFromCookie(authUser, req);
 			}
-			if (utils.canAccessSpace(authUser, space)) {
+			if (utils.canAccessSpace(authUser, space) && space != null &&
+					!utils.getSpaceId(space).equals(utils.getSpaceId(showPost.getSpace()))) {
 				showPost.setSpace(space);
 				changeSpaceForAllAnswers(showPost, space);
 			}
@@ -182,6 +183,7 @@ public class QuestionController {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());
+				answer.setSpace(showPost.getSpace());
 				answer.create();
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
@@ -359,6 +361,7 @@ public class QuestionController {
 		} else if (showPost.isReply()) {
 			Post questionPost = pc.read(showPost.getParentid());
 			if (questionPost != null) {
+				showPost.setSpace(questionPost.getSpace());
 				questionPost.setLastactivity(System.currentTimeMillis());
 				pc.updateAll(Arrays.asList(showPost, questionPost));
 			} else {
