@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -74,7 +74,7 @@ public class ApiController {
 	}
 
 
-	@RequestMapping(value = "/questions", method = RequestMethod.GET)
+	@GetMapping("/questions")
 	public List<Question> getQuestions(@RequestParam(defaultValue = "*") String q, HttpServletRequest req) {
 		Pager pager = utils.pagerFromParams(req);
 		List<Question> questionslist = pc.findQuery(Utils.type(Question.class), q, pager);
@@ -91,4 +91,8 @@ public class ApiController {
 		return questionslist;
 	}
 
+	@GetMapping("/question/{id}")
+	public Question getQuestion(@PathVariable String id, HttpServletRequest req) {
+		return pc.read(Utils.type(Question.class), id);
+	}
 }
