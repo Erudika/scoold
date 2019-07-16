@@ -1,0 +1,428 @@
+<!--                      __    __
+   ______________  ____  / /___/ /
+  / ___/ ___/ __ \/ __ \/ / __  /
+ (__  ) /__/ /_/ / /_/ / / /_/ /
+/____/\___/\____/\____/_/\__,_/ .com
+-->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Scoold | Slack Integration</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<link href="https://static.scoold.com/logosq.png" rel="image_src">
+		<link href="https://static.scoold.com/logosq.png" rel="apple-touch-icon">
+		<link href="https://static.scoold.com/favicon.ico" rel="shortcut icon">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,500" rel="stylesheet">
+		<meta name="description" content="Scoold is an open source Questions &amp; Answers platform written in Java.">
+		<meta name="keywords" content="scoold, knowledge sharing, collaboration, wiki, forum, Q&amp;A, questions and answers, stackoverflow clone">
+		<!-- Google Plus -->
+		<meta name="google-site-verification" content="EXw8lqPcluhsyAkk657Dqu99QxTKvuyb-pVDDjNOtso">
+		<meta itemprop="name" content="Scoold" itemtype="https://schema.org/Article">
+		<meta itemprop="description" content="Scoold is an open source Q&A platform written in Java.">
+		<meta itemprop="image" content="https://static.scoold.com/splash.png">
+		<!-- Twitter -->
+		<meta name="twitter:card" content="Scoold is an open source Q&A platform written in Java.">
+		<meta name="twitter:site" content="@getscoold">
+		<meta name="twitter:title" content="Scoold">
+		<meta name="twitter:description" content="Scoold is an open source Q&A platform written in Java.">
+		<meta name="twitter:creator" content="">
+		<meta name="twitter:image:src" content="https://static.scoold.com/splash.png">
+		<meta name="twitter:player" content="">
+		<!-- Open Graph General (Facebook & Pinterest) -->
+		<meta property="og:url" content="https://scoold.com">
+		<meta property="og:title" content="Scoold">
+		<meta property="og:description" content="Scoold is an open source Q&A platform written in Java.">
+		<meta property="og:site_name" content="Scoold Q&A">
+		<meta property="og:image" content="https://static.scoold.com/splash.png">
+		<meta property="fb:app_id" content="99517177417">
+
+		<style media="screen" type="text/css">
+			a, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
+			h1, h2, h3, h4, h5, h6 {color: #444444; font-weight: 200;}
+			.btn, .btn-large {background-color: #303030;}
+			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: transparent; opacity: 0.7;}
+			.btn:hover, .btn-large:hover,span.badge.new,.sidenav span.badge.new, .collapsible span.badge.new {background-color: #039be5;}
+			body, footer.page-footer {background-color: #444444;}
+			main {background-color: white;}
+			nav ul a {color: #303030;}
+
+			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 100;}
+			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 100;}
+			body { font-weight: 300; }
+			#header, #instructions {
+				min-height: 366px;
+				background-image: url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v6H0V0zm28 8h12v6H28V8zm14-8h12v6H42V0zm14 0h12v6H56V0zm0 8h12v6H56V8zM42 8h12v6H42V8zm0 16h12v6H42v-6zm14-8h12v6H56v-6zm14 0h12v6H70v-6zm0-16h12v6H70V0zM28 32h12v6H28v-6zM14 16h12v6H14v-6zM0 24h12v6H0v-6zm0 8h12v6H0v-6zm14 0h12v6H14v-6zm14 8h12v6H28v-6zm-14 0h12v6H14v-6zm28 0h12v6H42v-6zm14-8h12v6H56v-6zm0-8h12v6H56v-6zm14 8h12v6H70v-6zm0 8h12v6H70v-6zM14 24h12v6H14v-6zm14-8h12v6H28v-6zM14 8h12v6H14V8zM0 8h12v6H0V8z' fill='%230ea4f6' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+				background-color: white;
+			}
+			#features, #contact {background-color: white;}
+			#splash {
+				margin: 20px 110px;
+				box-shadow: 0px 11px 28px -19px;
+				border-radius: 10px;
+				padding: 80px 125px;
+				background-color: white;
+			}
+			.pro-label {
+				font-size: 0.9em;
+				color: #777;
+				padding: 0px 8px;
+				margin: 0 5px;
+				border: 1px solid #777;
+				font-weight: 300;
+				border-radius: 3px;
+			}
+			.slack-intro-img {
+				border: 1px solid #CCC;
+				padding: 21px;
+				border-radius: 40px;
+			}
+
+			.pan{padding:0}
+			.pas{padding:5px}
+			.pam{padding:10px}
+			.pal{padding:20px}
+			.ptn{padding-top:0}
+			.pts{padding-top:5px}
+			.ptm{padding-top:10px}
+			.ptl{padding-top:20px}
+			.prn{padding-right:0}
+			.prs{padding-right:5px}
+			.prm{padding-right:10px}
+			.prl{padding-right:20px}
+			.pbn{padding-bottom:0}
+			.pbs{padding-bottom:5px}
+			.pbm{padding-bottom:10px}
+			.pbl{padding-bottom:20px}
+			.pln{padding-left:0}
+			.pls{padding-left:5px}
+			.plm{padding-left:10px}
+			.pll{padding-left:20px}
+			.phn{padding-left:0;padding-right:0}
+			.phs{padding-left:5px;padding-right:5px}
+			.phm{padding-left:10px;padding-right:10px}
+			.phl{padding-left:20px;padding-right:20px}
+			.pvn{padding-top:0;padding-bottom:0}
+			.pvs{padding-top:5px;padding-bottom:5px}
+			.pvm{padding-top:10px;padding-bottom:10px}
+			.pvl{padding-top:20px;padding-bottom:20px}
+			.man{margin:0}
+			.mas{margin:5px}
+			.mam{margin:10px}
+			.mal{margin:20px}
+			.mtn{margin-top:0}
+			.mts{margin-top:5px}
+			.mtm{margin-top:10px}
+			.mtl{margin-top:20px}
+			.mrn{margin-right:0}
+			.mrs{margin-right:5px}
+			.mrm{margin-right:10px}
+			.mrl{margin-right:20px}
+			.mbn{margin-bottom:0}
+			.mbs{margin-bottom:5px}
+			.mbm{margin-bottom:10px}
+			.mbl{margin-bottom:20px}
+			.mln{margin-left:0}
+			.mls{margin-left:5px}
+			.mlm{margin-left:10px}
+			.mll{margin-left:20px}
+			.mhn{margin-left:0;margin-right:0}
+			.mhs{margin-left:5px;margin-right:5px}
+			.mhm{margin-left:10px;margin-right:10px}
+			.mhl{margin-left:20px;margin-right:20px}
+			.mvn{margin-top:0;margin-bottom:0}
+			.mvs{margin-top:5px;margin-bottom:5px}
+			.mvm{margin-top:10px;margin-bottom:10px}
+			.mvl{margin-top:20px;margin-bottom:20px}
+
+			header {
+				margin-bottom: 20px;
+				font-weight: 400;
+			}
+			main {
+				min-height: 600px;
+			}
+
+			@media only screen and (min-width: 993px) {
+				.container {
+				 width: 95%;
+				}
+			}
+
+		</style>
+	</head>
+  <body>
+		<div class="scoold-wrapper">
+			<header class="mbn">
+				<div class="none">
+					<nav class="white z-depth-0">
+						<div class="nav-wrapper container">
+							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x light-blue-text"></i></a>
+							<div class="brand-logo">
+								<a href="/">
+									<img src="https://static.scoold.com/logo.svg" class="scoold-logo ptm" width="100" alt="scoold logo">
+								</a>
+							</div>
+							<ul class="right hide-on-med-and-down">
+								<li><a href="https://github.com/Erudika/scoold/releases/" title="Download">Download</a></li>
+								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
+								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
+							</ul>
+							<ul class="sidenav" id="mobile-drawer">
+								<li>&nbsp;</li>
+								<li><a href="https://github.com/Erudika/scoold/releases/" title="Download">Download</a></li>
+								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
+								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</header>
+
+			<section id="header">
+				<div class="container ptl">
+					<div class="row mbn">
+						<div class="col m12 l4 center-align">
+							<div class="row">
+								<div class="col m12">
+									<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
+										Scoold<span class="pro-label">Pro</span> + Slack
+									</h4>
+									<h5 class="white pam" style="line-height: 1.5em;">
+										Seamlessly integrated for a better knowledge-sharing workflow.
+									</h5>
+
+									<div class="pvl">
+										<a href="#get-started" class="btn-large light-blue"><b>Get started</b></a>	
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="col m12 l8">
+							<img src="scoold_slack.png?v1" width="706" height="198" id="splash"
+									 class="responsive-img" alt="Scoold + Slack screenshot"/>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="features">
+				<div class="row pvm">&nbsp;</div>
+				<div class="row container center-align pvl">
+					<div class="col m5">
+						<h3>Create questions and answers instantly</h3>
+						<div class="mediumText">
+							<p>Asking a question on Slack is as easy as writing <code>/scoold ask How do I...?</code></p>
+							<p>To answer, simply type in <code>/scoold answer [question URL] Here's my answer...</code></p>
+							<p>You can also turn any chat message into a Scoold question or answer by using the special message actions.</p>	
+						</div>
+					</div>
+					<div class="col m7">
+						<img src="slack_intro1.png" alt="Slack intro 1" class="responsive-img slack-intro-img">
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m5">
+						<h3>Full editing capability</h3>
+						
+						<p class="mediumText">You can compose questions and aswers by opening the "Edit & Ask" dialog. There you can write longer pieces of
+						text, choose the exact title and tags you want your question to have.</p>
+					</div>
+					<div class="col m7">
+						<img src="slack_intro2.png" alt="Slack intro 2" class="responsive-img slack-intro-img">
+					</div>
+				</div>
+				<div class="row container center-align pvl">
+					<div class="col m5">
+						<h3>Search for questions, people or tags</h3>
+						
+						<p class="mediumText">You can perform advanced search queries from any Slack channel using the commands <br><code>/scoold search</code>, 
+							<code>/scoold search-people</code> and <code>/scoold search-tags</code>.</p>
+					</div>
+					<div class="col m7">
+						<img src="slack_intro3.png" alt="Slack intro 3" class="responsive-img slack-intro-img">
+					</div>
+				</div>
+
+				<div class="row container center-align pvl">
+					<div class="col m5">
+						<h3>Real-time notifications</h3>
+						
+						<p class="mediumText">Your linked channels will be instantly notified whenever a new question or answer is created on Scoold. 
+						Mentions of people in chat are sent to the channel even if the person is mentioned at a later revision of the post. To mention 
+						someone from Slack, simply link to their Scoold profile in your post.</p>
+					</div>
+					<div class="col m7">
+						<img src="slack_intro4.png" alt="Slack intro 4" class="responsive-img slack-intro-img">
+					</div>
+				</div>
+
+				<div class="row container center-align pvl">
+					<div class="col m5">
+						<h3>Approve questions and answers without leaving the channel</h3>
+						
+						<p class="mediumText">This is a handy feature for moderators who wish to keep an eye on new posts on Scoold. If new posts require explicit 
+						approval from mods, Scoold will notify the chat by presenting the option to "Approve" or "Delete" the newly created post.</p>
+					</div>
+					<div class="col m7">
+						<img src="slack_intro5.png" alt="Slack intro 5" class="responsive-img slack-intro-img">
+					</div>
+				</div>
+				
+				<div class="container pvl center-align">
+					<a href="https://paraio.com/scoold-pro" class="btn-large light-blue"><b>Buy Scoold Pro</b></a>
+					<p><b>€299</b> per host, one-time fee, basic support included</p>
+					<p>The integration with Slack is a premium feature, only available in Scoold Pro.</p>
+				</div>
+			</section>
+
+			<section id="instructions">
+				<div class="container pvl">
+					<div class="white center-align">
+						<h3 id="get-started"><span class="phl">Getting started</span></h3>
+					</div>
+					<div class="white pvl">
+						<ul>
+							<li class="mvm mediumText">
+								<p class="plm">You'll need a copy of Scoold Pro before continuing.</p>
+								<span class="pam">
+									<b>1.</b> Create a new <a href="https://api.slack.com/apps?new_app=1">Slack app</a> and copy the App ID, Signing Secret, Client ID and 
+									Client Secret to your <tt>application.conf</tt>: 	
+								</span>
+								
+									<code><pre>
+  para.sl_app_id = "{Client ID}"
+  para.sl_secret = "{Client Secret}"
+  para.slack.app_id = "{App ID}"
+  para.slack.signing_secret = "{Signing Secret}"
+									</pre></code>
+
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>2.</b> Add the <a href="https://static.scoold.com/logosq.png">Scoold logo</a> to your Slack app, write a short description and "Save changes".</span><br>
+								<img src="slack_step1.png" alt="Step 1" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>3.</b> Activate incoming webhooks for your Slack app and "Save changes"</span><br><br>
+								<img src="slack_step2.png" alt="Step 2" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>4.</b> Activate interactive components for your Slack app by entering the URL of your server and the path <code>/slack</code> </span><br><br>
+								<img src="slack_step3.png" alt="Step 3" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>5.</b> Create the following message actions and "Save changes"</span><br><br>
+								<img src="slack_step4.png" alt="Step 4" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>6.</b> Create the <code>/scoold</code> slack command pointing the "Request URL" to your Scoold instance, e.g. <code>https://myscoold.com/slack</code>.
+								"Escape channels, users, and links sent to your app" <b>must be checked</b></span><br><br>
+								<img src="slack_step5.png" alt="Step 5" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>7.</b> Whitelist your Para and Scoold integration endpoints. The first one is for enabling Slack authentication, the second one is for enabling Slack notifications on particular Slack channels, via the "Add to Slack button". </span><br><br>
+								<img src="slack_step6.png" alt="Step 6" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>8.</b> Visit the "Administration" page in Scoold and click the "Add to Slack" button. This will link a channel on Slack to Scoold and allow it to send notifications there. Repeat this step for up to 10 channels.</span><br><br>
+								<img src="slack_step7.png" alt="Step 7" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>9.</b> You're all set! Restart Scoold and it should be fully integrated with your Slack workspace.</span>
+							</li>
+						</ul>
+						<p class="pam">
+							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#slack-integration">README</a></tt> for more information.</b>
+						</p>
+					</div>
+										
+				</div>
+			</section>
+
+			<section id="contact">
+				<div class="container pvl center-align">
+					<h3>Get in touch</h3>
+					<div class="pvl">
+						<a href="https://twitter.com/getscoold"><i class="fa fa-twitter fa-4x mrl prl"></i></a>
+						<a href="https://github.com/Erudika/scoold"><i class="fa fa-github fa-4x"></i></a>
+					</div>
+				</div>
+			</section>
+
+			<footer class="page-footer">
+				<div class="container">
+					<div class="row mbn">
+						<div class="col l6 s12">
+							<h5 class="white-text">
+								Powered by <a href="https://paraio.com">
+									<img src="https://static.scoold.com/paradark.svg" width="100" style="margin-bottom: -6px;" alt="Para logo"></a>
+							</h5>
+						</div>
+						<div class="col l4 offset-l2 s12 right-align">
+							<div class="pvl white-text">
+								Made with <i class="fa fa-coffee"></i> by
+								<a href="https://erudika.com"><b>Erudika</b></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="container">
+						<div class="row">
+							<div class="col s12">
+								<i class="fa fa-creative-commons"></i> Excluding logos, this site is licensed under a
+								<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a> license.
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script src="https://www.googletagmanager.com/gtag/js?id=UA-648525-8" async></script>
+		<script>
+		</script>
+
+		<script>
+			M.AutoInit();
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-648525-8', { 'anonymize_ip': true });
+		</script>
+		<!-- Start of Async Drift Code -->
+		<script>
+			"use strict";
+
+			!function() {
+				var t = window.driftt = window.drift = window.driftt || [];
+				if (!t.init) {
+					if (t.invoked) return void (window.console && console.error && console.error("Drift snippet included twice."));
+					t.invoked = !0, t.methods = [ "identify", "config", "track", "reset", "debug", "show", "ping", "page", "hide", "off", "on" ],
+					t.factory = function(e) {
+						return function() {
+							var n = Array.prototype.slice.call(arguments);
+							return n.unshift(e), t.push(n), t;
+						};
+					}, t.methods.forEach(function(e) {
+						t[e] = t.factory(e);
+					}), t.load = function(t) {
+						var e = 3e5, n = Math.ceil(new Date() / e) * e, o = document.createElement("script");
+						o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
+						var i = document.getElementsByTagName("script")[0];
+						i.parentNode.insertBefore(o, i);
+					};
+				}
+			}();
+			drift.SNIPPET_VERSION = '0.3.1';
+			drift.load('f63uepwuzvv9');
+		</script>
+		<!-- End of Async Drift Code -->
+  </body>
+</html>

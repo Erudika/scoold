@@ -38,12 +38,13 @@ This makes the code easy to read and can be learned quickly by junior developers
 
 ### Pro Features
 
-- Sticky / Favorite posts
+- Slack integration
 - SAML support
 - Anonymous posts
 - Unlimited spaces
 - Multiple admins
 - Multiple identity domains
+- Sticky / Favorite posts
 - Advanced syntax highlighting
 - Image uploads
 - Security notifications
@@ -134,7 +135,7 @@ para.new_users_can_comment = true
 # if true, posts by new users require approval from moderator
 para.posts_need_approval = false
 # reputation needed for posts to be auto-approved
-para.posts_rep_threashhold = 100
+para.posts_rep_threshold = 100
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
 # the identifier of admin user - check Para user object
@@ -677,6 +678,85 @@ when the upload is finished. For this feature to work correctly you have to spec
 ```
 para.imgur_client_id = "x23e8t0askdj"
 ```
+
+## Slack integration
+
+Scoold **PRO** integrates with Slack on a number of levels. First, Scoold users can sign in with Slack. They can also
+use slash commands to search and post questions. Also Scoold can notify Slack users when they are mentioned on Scoold.
+Finally, Scoold allows you to map spaces to Slack workspaces or channels. By default, each Slack workspace (team) is
+mapped to a single Scoold space when people sign in with Slack.
+
+**Important:** Most of the Slack operations require a **valid Slack ID stored in Scoold** which enables the mapping of
+Slack users to Scoold accounts and vice versa. Slack IDs are set automatically when a Scoold user signs in with Slack.
+
+The integration endpoint for Slack is `/slack` - this is where Scoold will accept and process requests from Slack.
+To enable the Slack integration you need to register for a Slack app first and set `para.sl_app_id` and `para.sl_secret`.
+Follow the [detailed instructions here](https://scoold.com/slack.html).
+
+Here are the configuration properties for Slack:
+```
+para.slack.app_id = "SHORT_APPID"
+para.slack.map_workspaces_to_spaces = true
+para.slack.map_channels_to_spaces = false
+para.slack.post_to_space = "workspace|scooldspace:myspace|default"
+
+para.slack.notify_on_new_question = true
+para.slack.notify_on_new_answer = true
+```
+
+Setting `para.slack.map_channels_to_spaces` will ask for additional permissions, namely `channels:read` and `groups:read`.
+On sign in, Scoold will read all your channels and create spaces from them. The workspace space is always created if
+`para.slack.map_workspaces_to_spaces = true`, which is the default setting.
+
+When creating quesitons from Slack they are posted to the channel workspace by default, if
+`para.slack.map_channels_to_spaces` is enabled. For example, in this case, for a team "My Team" and channel "chan",
+your space will become "My Team #chan". This is controlled by `para.slack.post_to_space` which is blank by default.
+If you set it to `workspace`, then questions will be posted to the "My Team" space. Or you could set a specific Scoold
+space to post to with `para.slack.post_to_space = "scooldspace:myspace"`. If the value is `default` then all questions
+posted from Slack will go to the default space.
+
+You can also create answers to questions from Slack, either from the message action button or by typing in the
+`/scoold ask` command. This requires the URL of a specific question you wish to answer.
+
+### Slack notifications
+
+Scoold will notify the channels where you have it installed, whenever a new question or answer is created. To install
+the application on multiple channels go to the Administration page and click the "Add to Slack" button for each channel.
+You can receive notification on up to 10 channels simultaneously. Notification for new posts will go to the channel
+associated with the space in which the post was created. For example if `para.slack.map_workspaces_to_spaces` is `true`,
+and a question is created in space "Team1 #general", Scoold will search for webhook registrations matching that
+team/channel combination and send a notification there. Direct message webhooks will be used only if there's no
+space-matching channel found.
+
+### Approving new posts from Slack
+
+This works if you have enabled `para.posts_need_approval`. When a new question or answer is created by a user with less
+reputation than the threshold, a notification message will be sent to Slack, giving you the option to either approve or
+delete that post. The action can only be performed by moderators.
+
+### Slash commands
+
+Typing in `/scoold help` gives you a list of commands available:
+
+- `/scoold` - Interact with your Scoold server
+- `/scoold ask [text]` Ask a question directly, first sentence becomes the title. Example: `/scoold ask How does this work? @john I'm having troubles with...`
+- `/scoold answer [question URL] [answer]` Answer a question directly. Example: `/scoold answer https://host/question/123 This is my answer to your question, @john.`
+- `/scoold search [query]` Search for questions. Example: `/scoold search solution AND quick*`
+- `/scoold search-people [query]` Search for people. Example: `/scoold search-people John*`
+- `/scoold search-tags [query]` Search for tags. Example: `/scoold search-tags solution*`
+- `/scoold version` Get version information for Scoold and Para.
+- `/scoold whoami` Get information for your Scoold account.
+- `/scoold stats` Get general statistics.
+
+### Message actions
+
+Here are the interactive message actions which are currently implemented:
+- `create_question` - "Ask on Scoold", Creates a new question on Scoold directly from a chat message.
+- `create_question_dialog` - "Edit & ask on Scoold", Opens up a dialog to edit question before posting.
+- `create_answer_dialog` - "Answer on Scoold", Opens up a dialog to edit your answer before posting.
+
+These allow you to perform actions from any channel and best of all, these can turn any chat message into a question or
+answer.
 
 ## Self-hosting Para and Scoold through SSL
 
