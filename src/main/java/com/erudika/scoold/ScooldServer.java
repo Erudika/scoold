@@ -252,7 +252,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("security.allow_unverified_emails", Config.getConfigBoolean("security.allow_unverified_emails", false));
 
 		// URLs for success and failure
-		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=incookie");
+		// setting this to "true" is not recommended - use the more secure jwt-in-cookie method (Para v1.33+)
+		String jwtParam = Config.getConfigBoolean("jwt_in_url", false) ? "?" : "incookie";
+		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=" + jwtParam);
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 
 		ScooldUtils.tryConnectToPara(() -> {

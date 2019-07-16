@@ -105,10 +105,12 @@ public class SigninController {
 
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
-		String jwtFromCookie = HttpUtils.getCookieValue(req,
-				App.identifier(Config.getConfigParam("access_key", "")) + "-auth");
-		if (!StringUtils.isBlank(jwtFromCookie)) {
-			setAuthCookie(jwtFromCookie, req, res);
+		String token = HttpUtils.getCookieValue(req, App.identifier(Config.getConfigParam("access_key", "")) + "-auth");
+		if (Config.getConfigBoolean("jwt_in_url", false) && !"?".equals(jwt)) {
+			token = jwt; // this is the old way of passing the JWT from Para to Scoold - DO NOT USE!
+		}
+		if (!StringUtils.isBlank(token)) {
+			setAuthCookie(token, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
