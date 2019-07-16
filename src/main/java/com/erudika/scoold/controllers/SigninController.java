@@ -19,6 +19,7 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.annotations.Email;
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.App;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
@@ -104,8 +105,10 @@ public class SigninController {
 
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
-		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
-			setAuthCookie(jwt, req, res);
+		String jwtFromCookie = HttpUtils.getCookieValue(req,
+				App.identifier(Config.getConfigParam("access_key", "")) + "-auth");
+		if (!StringUtils.isBlank(jwtFromCookie)) {
+			setAuthCookie(jwtFromCookie, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
