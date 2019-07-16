@@ -872,11 +872,19 @@ $(function () {
 		return {tag: t};
 	});
 
-	$(document).on("focusout", autocomplete, function() {
-		var input = autocomplete.find("input").first();
-		if (input.length && input.val().trim().length) {
-			autocomplete.chips('addChip', {tag: input.val().trim()});
-			input.val("");
+	// https://stackoverflow.com/a/38317768/108758
+	autocomplete.on({
+		focusout: function() {
+			$(this).data('autocompleteBlurTimer', setTimeout(function () {
+				var input = autocomplete.find("input").first();
+				if (input.length && input.val().trim().length) {
+					autocomplete.chips('addChip', {tag: input.val().trim()});
+					input.val("");
+				}
+			}.bind(this), 0));
+		},
+		focusin: function () {
+			clearTimeout($(this).data('autocompleteBlurTimer'));
 		}
 	});
 
