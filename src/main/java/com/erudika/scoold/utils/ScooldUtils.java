@@ -710,7 +710,7 @@ public final class ScooldUtils {
 
 	public boolean postNeedsApproval(Profile authUser) {
 		return postsNeedApproval() &&
-				authUser.getVotes() < Config.getConfigInt("posts_rep_threashhold", ENTHUSIAST_IFHAS) &&
+				authUser.getVotes() < Config.getConfigInt("posts_rep_threshold", ENTHUSIAST_IFHAS) &&
 				!isMod(authUser);
 	}
 
