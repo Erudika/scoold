@@ -60,10 +60,10 @@
 			}
 			#features, #contact {background-color: white;}
 			#splash {
-				margin: 20px 110px;
+				margin: 20px 0;
 				box-shadow: 0px 11px 28px -19px;
 				border-radius: 10px;
-				padding: 80px 125px;
+				padding: 10% 15%;
 				background-color: white;
 			}
 			.pro-label {
@@ -198,13 +198,13 @@
 									</h5>
 
 									<div class="pvl">
-										<a href="#get-started" class="btn-large light-blue"><b>Get started</b></a>	
+										<a href="#get-started" class="btn-large light-blue"><b>Get started</b></a>
 									</div>
 								</div>
 							</div>
 
 						</div>
-						<div class="col m12 l8">
+						<div class="col m12 l7 offset-l1">
 							<img src="scoold_slack.png?v1" width="706" height="198" id="splash"
 									 class="responsive-img" alt="Scoold + Slack screenshot"/>
 						</div>
@@ -220,7 +220,7 @@
 						<div class="mediumText">
 							<p>Asking a question on Slack is as easy as writing <code>/scoold ask How do I...?</code></p>
 							<p>To answer, simply type in <code>/scoold answer [question URL] Here's my answer...</code></p>
-							<p>You can also turn any chat message into a Scoold question or answer by using the special message actions.</p>	
+							<p>You can also turn any chat message into a Scoold question or answer by using the special message actions.</p>
 						</div>
 					</div>
 					<div class="col m7">
@@ -230,7 +230,7 @@
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Full editing capability</h3>
-						
+
 						<p class="mediumText">You can compose questions and aswers by opening the "Edit & Ask" dialog. There you can write longer pieces of
 						text, choose the exact title and tags you want your question to have.</p>
 					</div>
@@ -241,8 +241,8 @@
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Search for questions, people or tags</h3>
-						
-						<p class="mediumText">You can perform advanced search queries from any Slack channel using the commands <br><code>/scoold search</code>, 
+
+						<p class="mediumText">You can perform advanced search queries from any Slack channel using the commands <br><code>/scoold search</code>,
 							<code>/scoold search-people</code> and <code>/scoold search-tags</code>.</p>
 					</div>
 					<div class="col m7">
@@ -253,9 +253,9 @@
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Real-time notifications</h3>
-						
-						<p class="mediumText">Your linked channels will be instantly notified whenever a new question or answer is created on Scoold. 
-						Mentions of people in chat are sent to the channel even if the person is mentioned at a later revision of the post. To mention 
+
+						<p class="mediumText">Your linked channels will be instantly notified whenever a new question or answer is created on Scoold.
+						Mentions of people in chat are sent to the channel even if the person is mentioned at a later revision of the post. To mention
 						someone from Slack, simply link to their Scoold profile in your post.</p>
 					</div>
 					<div class="col m7">
@@ -266,15 +266,15 @@
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Approve questions and answers without leaving the channel</h3>
-						
-						<p class="mediumText">This is a handy feature for moderators who wish to keep an eye on new posts on Scoold. If new posts require explicit 
+
+						<p class="mediumText">This is a handy feature for moderators who wish to keep an eye on new posts on Scoold. If new posts require explicit
 						approval from mods, Scoold will notify the chat by presenting the option to "Approve" or "Delete" the newly created post.</p>
 					</div>
 					<div class="col m7">
 						<img src="slack_intro5.png" alt="Slack intro 5" class="responsive-img slack-intro-img">
 					</div>
 				</div>
-				
+
 				<div class="container pvl center-align">
 					<a href="https://paraio.com/scoold-pro" class="btn-large light-blue"><b>Buy Scoold Pro</b></a>
 					<p><b>€299</b> per host, one-time fee, basic support included</p>
@@ -292,10 +292,10 @@
 							<li class="mvm mediumText">
 								<p class="plm">You'll need a copy of Scoold Pro before continuing.</p>
 								<span class="pam">
-									<b>1.</b> Create a new <a href="https://api.slack.com/apps?new_app=1">Slack app</a> and copy the App ID, Signing Secret, Client ID and 
-									Client Secret to your <tt>application.conf</tt>: 	
+									<b>1.</b> Create a new <a href="https://api.slack.com/apps?new_app=1">Slack app</a> and copy the App ID, Signing Secret, Client ID and
+									Client Secret to your <tt>application.conf</tt>:
 								</span>
-								
+
 									<code><pre>
   para.sl_app_id = "{Client ID}"
   para.sl_secret = "{Client Secret}"
@@ -341,7 +341,7 @@
 							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#slack-integration">README</a></tt> for more information.</b>
 						</p>
 					</div>
-										
+
 				</div>
 			</section>
 

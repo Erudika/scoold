@@ -49,6 +49,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Image uploads
 - Security notifications
 - Account suspensions/permabans
+- Wiki-style answers
 
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
@@ -156,6 +157,8 @@ para.avatar_edits_enabled = true
 para.name_edits_enabled = true
 # Enable/disable webhooks support
 para.webhooks_enabled = true
+# Enable/disable wiki style answers
+para.wiki_answers_enabled = true
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
