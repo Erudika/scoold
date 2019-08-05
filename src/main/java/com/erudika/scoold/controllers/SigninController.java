@@ -19,7 +19,6 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.annotations.Email;
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.App;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
@@ -105,12 +104,8 @@ public class SigninController {
 
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
-		String token = HttpUtils.getCookieValue(req, App.identifier(Config.getConfigParam("access_key", "")) + "-auth");
-		if (Config.getConfigBoolean("jwt_in_url", false) && !"?".equals(jwt)) {
-			token = jwt; // this is the old way of passing the JWT from Para to Scoold - DO NOT USE!
-		}
-		if (!StringUtils.isBlank(token)) {
-			setAuthCookie(token, req, res);
+		if (!StringUtils.isBlank(jwt)) {
+			setAuthCookie(jwt, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
