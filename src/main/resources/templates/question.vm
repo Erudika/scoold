@@ -102,9 +102,9 @@
 				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
 					<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
 				</div>
-				#if($showPost.updated)
+				#if($showPost.lastactivity)
 					<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('profile.about.lastseen')">
-						<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.updated "")
+						<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.lastactivity "")
 					</div>
 				#end
 				#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
