@@ -107,6 +107,8 @@ The settings shown below are all meant to be part of the Scoold config file.
 
 [Read the Para docs for more information.](https://paraio.org/docs)
 
+**SMTP settings must be configured correctly before you start using Scoold if you want to signup with an email and password.**
+
 ## Configuration
 
 > **Important:** Create a separate app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
