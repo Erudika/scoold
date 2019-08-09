@@ -62,6 +62,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ScooldServer extends SpringBootServletInitializer {
 
 	static {
+		String appName = System.getProperty("para.app_name");
+		if (StringUtils.isBlank(appName) || Config.PARA.equalsIgnoreCase(appName)) {
+			System.setProperty("para.app_name", "Scoold");
+		}
 		// tells ParaClient where to look for classes that implement ParaObject
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
 		System.setProperty("para.auth_cookie", Config.getRootAppIdentifier().concat("-auth"));
