@@ -729,7 +729,7 @@ $(function () {
 			}, 3000);
 
 			submitFormBind("#answer-question-form", function (data, status, xhr, form) {
-				clearInterval(saveDraftInterval1);
+				clearInterval(saveDraftInterval2);
 				var allPosts = answerForm.closest(".row").find(".postbox");
 				if (allPosts.length > 1) {
 					allPosts.last().after(data);
@@ -740,7 +740,7 @@ $(function () {
 				answerBody.value("");
 				localStorage.removeItem("answer-form-body");
 			}, function (xhr, status, error) {
-				clearInterval(saveDraftInterval1);
+				clearInterval(saveDraftInterval2);
 				localStorage.removeItem("answer-form-body");
 				window.location.reload(true);
 			});

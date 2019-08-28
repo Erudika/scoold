@@ -55,17 +55,18 @@
 								#getmessagebox("red white-text" $error.get("body"))
 
 								<input type="hidden" name="answer" value="true">
-
-								<label for="follow-thread-check">
-									#if($showPost.followers && $showPost.followers.containsKey($authUser.user.id))
-										<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked">
-									#elseif(($authUser.replyEmailsEnabled && $scooldUtils.isMine($showPost, $authUser)))
-										<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked" disabled>
-									#else
-										<input type="checkbox" class="filled-in" id="follow-thread-check">
-									#end
-									<span><strong class="mediumText">$!lang.get('posts.emailme')</strong></span>
-								</label>
+								<div>
+									<label for="follow-thread-check">
+										#if($showPost.followers && $showPost.followers.containsKey($authUser.user.id))
+											<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked">
+										#elseif(($authUser.replyEmailsEnabled && $scooldUtils.isMine($showPost, $authUser)))
+											<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked" disabled>
+										#else
+											<input type="checkbox" class="filled-in" id="follow-thread-check">
+										#end
+										<span><strong class="mediumText">$!lang.get('posts.emailme')</strong></span>
+									</label>
+								</div>
 
 								<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 								<button class="btn mtl waves-effect waves-light" type="submit">

@@ -199,12 +199,16 @@ public class QuestionController {
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
 				utils.sendReplyNotifications(showPost, answer);
-				return "reply";
+			} else {
+				model.addAttribute("error", error);
+				model.addAttribute("path", "question.vm");
+				res.setStatus(400);
 			}
+			return "reply";
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
-			return "base";
+			return "reply";
 		} else {
 			return "redirect:" + QUESTIONSLINK + "/" + id;
 		}
