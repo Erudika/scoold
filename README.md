@@ -264,12 +264,13 @@ It's also helpful to install the Heroku CLI tool.
 
 ## Deploying Scoold to DigitalOcean
 
-1. Create a droplet and install Java and `wget`
-2. Execute `wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh`
-2. Send the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/ubuntu`
-3. Restart Scoold with `ssh root@123.234.12.34 "systemctl restart scoold.service"`
-4. Go to `http://123.234.12.34` (use the correct IP address)
-5. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet
+1. Create a droplet running Ubuntu and SSH into it
+2. Create a user `ubuntu` with `adduser ubuntu`
+3. Execute (as root) `wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh`
+4. Copy the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/ubuntu`
+5. Restart Scoold with `ssh root@123.234.12.34 "systemctl restart scoold.service"`
+6. Go to `http://123.234.12.34:8000` and verify that Scoold is running (use the correct IP address of your droplet)
+7. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet (see instructions below)
 
 ## Deploying Scoold to AWS
 
@@ -833,6 +834,17 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
       }
     }
 </details>
+
+## Securing Scoold with SSL using Nginx and Certbot (Let's Encrypt)
+
+1. SSH into your Ubuntu server and install Nginx and Certbot
+```
+sudo apt-get install nginx certbot python-certbot-nginx
+```
+2. Get a certificate and autoconfigure nginx to use it
+```
+sudo certbot --nginx
+```
 
 ## Customizing the UI
 
