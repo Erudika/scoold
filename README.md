@@ -285,7 +285,7 @@ It's also helpful to install the Heroku CLI tool.
 3. Click "+ Add launch script" and copy/paste the contents of [installer.sh](https://github.com/Erudika/scoold/blob/master/installer.sh)
 4. Download the default SSH key pair or upload your own
 5. Choose the 512MB instance or larger (1GB recommended)
-6. Wait for the instance and open the IP address in your browser
+6. Wait for the instance to start and open the IP address in your browser at port `8000`
 
 **Elastic Container Service**
 
@@ -837,6 +837,8 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
 
 ## Securing Scoold with SSL using Nginx and Certbot (Let's Encrypt)
 
+First of all, configure the DNS records for your domai to point to the IP address where Scoold is hosted.
+
 1. SSH into your Ubuntu server and install Nginx and Certbot
 ```
 sudo apt-get install nginx certbot python-certbot-nginx
@@ -845,6 +847,24 @@ sudo apt-get install nginx certbot python-certbot-nginx
 ```
 sudo certbot --nginx
 ```
+3. Turn on the Ubuntu firewall to block port `8000` and only allow ports `80` and `443`.
+```
+ufw allow 'Nginx Full' && sudo ufw enable
+```
+4. Configure nginx to forward requests from the web on ports `80` and `443` to `localhost:8000`
+```
+location / {
+	proxy_pass http://localhost:8000;
+	proxy_redirect http:// $scheme://;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto https;
+	proxy_set_header Host $http_host;
+}
+```
+
+That's it! If the Certbot validation above fails, your DNS is not configured properly or you have conflicting firewall rules.
+Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04) for more details.
 
 ## Customizing the UI
 
