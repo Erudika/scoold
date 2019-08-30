@@ -28,8 +28,9 @@ User=ubuntu
 WantedBy=multi-user.target
 EOF
 
-iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-port ${PORT} && \
-iptables -t nat -A OUTPUT -p tcp --dport 80 -o lo -j REDIRECT --to-port ${PORT}
+# This is optional. These rules might interfere with other web server configurations like nginx and certbot.
+#iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-port ${PORT} && \
+#iptables -t nat -A OUTPUT -p tcp --dport 80 -o lo -j REDIRECT --to-port ${PORT}
 
 systemctl enable scoold.service && \
 systemctl start scoold.service
