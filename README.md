@@ -141,6 +141,8 @@ para.posts_need_approval = false
 para.posts_rep_threshold = 100
 # needed for geolocation filtering of posts
 para.gmaps_api_key = "********************************"
+# Enable/disable near me feature (geolocation)
+para.nearme_feature_enabled = true
 # the identifier of admin user - check Para user object
 para.admins = "admin@domain.com"
 # GA code
