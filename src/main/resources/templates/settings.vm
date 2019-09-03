@@ -53,7 +53,6 @@
 
 			<h4 class="ptl">$!lang.get('settings.notifications')</h4>
 			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>
-			#if($scooldUtils.isAdmin($authUser))
 			<div class="mbm">
 				<div class="switch">
 					<label>
@@ -69,7 +68,6 @@
 					<span class="mll mediumText">$!lang.get('settings.newpostemails')</span>
 				</div>
 			</div>
-			#end
 			<div class="mbm">
 				<div class="switch">
 					<label>

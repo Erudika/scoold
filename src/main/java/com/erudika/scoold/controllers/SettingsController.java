@@ -91,12 +91,10 @@ public class SettingsController {
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.update();
 
-			if (utils.isAdmin(authUser)) {
-				if (Boolean.valueOf(newpostEmailsOn)) {
-					utils.subscribeToNewPosts(authUser.getUser());
-				} else {
-					utils.unsubscribeFromNewPosts(authUser.getUser());
-				}
+			if (Boolean.valueOf(newpostEmailsOn)) {
+				utils.subscribeToNewPosts(authUser.getUser());
+			} else {
+				utils.unsubscribeFromNewPosts(authUser.getUser());
 			}
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
