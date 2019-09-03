@@ -262,6 +262,10 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .tabs .tab a:focus, .tabs .tab a:focus.active {
 	background-color: #FAFAFA;
 }
+.comment-text * {
+	font-size: inherit;
+	display: inline;
+}
 
 .userbox img {max-width: inherit;}
 @media (max-width: 1280px) {

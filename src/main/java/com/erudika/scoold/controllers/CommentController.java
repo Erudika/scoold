@@ -151,7 +151,7 @@ public class CommentController {
 				if (author != null) {
 					Map<String, Object> model = new HashMap<String, Object>();
 					String name = commentAuthor.getName();
-					String body = Utils.markdownToHtml(Utils.abbreviate(comment.getComment(), 255));
+					String body = Utils.markdownToHtml(comment.getComment());
 					String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
 					String postURL = getServerURL() + parentPost.getPostLink(false, false);
 					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));

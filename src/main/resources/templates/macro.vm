@@ -37,7 +37,8 @@
 
 	<div class="mbs ${hidden}">
 		#votebox($showcomment "left mrm pbs")
-		<span class="comment-text">$!showcomment.comment</span>
+		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
+		<span class="comment-text">$!{_commentHtml}</span>
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
