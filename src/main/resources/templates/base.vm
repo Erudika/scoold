@@ -30,12 +30,11 @@
 		<link href="$!imageslink/logowhite.png" rel="image_src">
 		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
 		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet">
-		<link href="https://unpkg.com/easymde/dist/easymde.min.css" rel="stylesheet">
+		<link href="$!styleslink/materialize.min.css" rel="stylesheet">
+		<link href="$!styleslink/font-awesome.min.css" rel="stylesheet">
+		<link href="$!styleslink/easymde.min.css" rel="stylesheet">
 		#if ($includeHighlightJS)
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+		<link href="$!styleslink/highlighting.css" rel="stylesheet">
 		#end
 		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
 		#if($!langDirection == "RTL")
@@ -324,13 +323,13 @@
 			</div>
 		</div>
 
-		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
-		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/jquery.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/diff_match_patch.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/materialize.min.js"></script>
 		#if ($includeHighlightJS)
-		<script nonce="$cspNonce" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js"></script>
 		#end
-		<script nonce="$cspNonce" src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js"></script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 		#if ($request.getServletPath() == "/signin")
 		<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>
