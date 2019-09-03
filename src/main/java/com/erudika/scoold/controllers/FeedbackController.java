@@ -173,12 +173,16 @@ public class FeedbackController {
 				answer.setAuthor(authUser);
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
-				return "reply";
+			} else {
+				model.addAttribute("error", error);
+				model.addAttribute("path", "feedback.vm");
+				res.setStatus(400);
 			}
+			return "reply";
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
-			return "base";
+			return "reply";
 		} else {
 			return "redirect:" + FEEDBACKLINK + "/" + id;
 		}
