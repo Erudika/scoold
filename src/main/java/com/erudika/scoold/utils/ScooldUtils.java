@@ -496,7 +496,7 @@ public final class ScooldUtils {
 	}
 
 	public boolean isNearMeFeatureEnabled() {
-		return Config.getConfigBoolean("nearme_feature_enabled", true);
+		return Config.getConfigBoolean("nearme_feature_enabled", !Config.getConfigParam("gmaps_api_key", "").isEmpty());
 	}
 
 	public boolean isDefaultSpacePublic() {

@@ -130,7 +130,7 @@ para.endpoint = "https://paraio.com"
 # access key for your Para app
 para.access_key = "app:scoold"
 # secret key for your Para app
-para.secret_key = "*****************"
+para.secret_key = ""
 # enable or disable email and password authentication
 para.password_auth_enabled = true
 # if false, commenting is allowed after 100+ reputation
@@ -140,9 +140,9 @@ para.posts_need_approval = false
 # reputation needed for posts to be auto-approved
 para.posts_rep_threshold = 100
 # needed for geolocation filtering of posts
-para.gmaps_api_key = "********************************"
+para.gmaps_api_key = ""
 # Enable/disable near me feature (geolocation)
-para.nearme_feature_enabled = true
+para.nearme_feature_enabled = false
 # the identifier of admin user - check Para user object
 para.admins = "admin@domain.com"
 # GA code

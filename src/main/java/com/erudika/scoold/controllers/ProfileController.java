@@ -100,7 +100,7 @@ public class ProfileController {
 		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
 		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
 		model.addAttribute("ogimage", showUser.getPicture());
-		model.addAttribute("includeGMapsScripts", true);
+		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
