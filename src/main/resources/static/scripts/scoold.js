@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, CSRF_COOKIE, google, hljs, RTL_ENABLED, CONTEXT_PATH, M: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -204,20 +204,28 @@ $(function () {
 
 	function submitForm(form, method, callbackfn, errorfn) {
 		if (method === "GET" || method === "POST") {
-			$.ajax({
-				type: method,
-				url: form.action,
-				data: $(form).serialize(),
-				success: function(data, status, xhr) {
-					clearLoading();
-					callbackfn(data, status, xhr, form);
-				},
-				error: function (xhr, statusText, error) {
-					clearLoading();
-					var cb = errorfn || $.noop;
-					cb(xhr, statusText, error);
-				}
-			});
+			var $form = $(form);
+			if ($form.data('submittedAjax') !== true) {
+				$form.data('submittedAjax', true);
+				$.ajax({
+					type: method,
+					url: form.action,
+					data: $form.serialize(),
+					success: function(data, status, xhr) {
+						clearLoading();
+						setTimeout(function () {
+							$form.data('submittedAjax', false);
+						}, 5000);
+						callbackfn(data, status, xhr, form);
+					},
+					error: function (xhr, statusText, error) {
+						clearLoading();
+						$form.data('submittedAjax', false);
+						var cb = errorfn || $.noop;
+						cb(xhr, statusText, error);
+					}
+				});
+			}
 		}
 	}
 
@@ -238,32 +246,21 @@ $(function () {
 		return false;
 	}
 
-	function getCookie(cookie) {
-		var name = cookie + "=";
-		var ca = document.cookie.split(';');
-		for (var i = 0; i < ca.length; i++) {
-			var c = (ca[i] || "").trim();
-			if (c.indexOf(name) === 0) {
-				return c.substring(name.length, c.length);
-			}
-		}
-		return "";
-	}
-
 	/****************************************************
      *					GLOBAL BINDINGS
      ****************************************************/
 
-	$.ajaxSetup({
-		beforeSend: function(xhr, settings) {
-			if (settings.type !== "GET") {
-				xhr.setRequestHeader("X-CSRF-TOKEN", getCookie(CSRF_COOKIE));
-			}
-		}
-	});
-
 	$(document).on("click", ".rusure",  function() {
 		return areYouSure($.noop, rusuremsg, true);
+	});
+
+	$(document).on("submit", "form",  function(e) {
+		var $form = $(this);
+		if ($form.data('submitted') === true) {
+			e.preventDefault();
+		} else {
+			$form.data('submitted', true);
+		}
 	});
 
 	$(document).on("click", "a.next-div-toggle",  function(e) {
@@ -464,7 +461,6 @@ $(function () {
 	$("#picture_url").on('focusout paste', function () {
 		var dis = $(this);
 		setTimeout(function () {
-			console.log(dis.val());
 			$("img.profile-pic:first").attr("src", dis.val());
 			$.post(dis.closest("form").attr("action"), {picture: dis.val()});
 		}, 200);

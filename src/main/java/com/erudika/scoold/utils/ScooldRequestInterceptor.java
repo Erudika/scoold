@@ -138,7 +138,6 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("GEEK_IFHAS", GEEK_IFHAS);
 		// Cookies
 		modelAndView.addObject("localeCookieName", LOCALE_COOKIE);
-		modelAndView.addObject("csrfCookieName", CSRF_COOKIE);
 		// Paths
 		modelAndView.addObject("imageslink", IMAGESLINK); // do not add context path prefix!
 		modelAndView.addObject("scriptslink", SCRIPTSLINK); // do not add context path prefix!

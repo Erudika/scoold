@@ -67,7 +67,6 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.RegExUtils;
@@ -199,9 +198,6 @@ public final class ScooldUtils {
 				res.sendRedirect(SIGNINLINK + "?code=3&error=true");
 				return null;
 			}
-		}
-		if (!isApiRequest) {
-			initCSRFToken(req, res);
 		}
 		return authUser;
 	}
@@ -475,16 +471,6 @@ public final class ScooldUtils {
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}
-	}
-
-	public void initCSRFToken(HttpServletRequest req, HttpServletResponse res) {
-		String csrfInSession = (String) req.getSession(true).getAttribute(TOKEN_PREFIX + "CSRF");
-		//String csrfInCookie = Utils.getStateParam(CSRF_COOKIE, req);
-		if (StringUtils.isBlank(csrfInSession)) {
-			csrfInSession = Utils.generateSecurityToken();
-			req.getSession(true).setAttribute(TOKEN_PREFIX + "CSRF", csrfInSession);
-		}
-		HttpUtils.setStateParam(CSRF_COOKIE, csrfInSession, req, res);
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
@@ -880,12 +866,7 @@ public final class ScooldUtils {
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
-			HttpSession session = req.getSession(false);
-			if (session != null) {
-				session.invalidate();
-			}
 			HttpUtils.removeStateParam(Config.AUTH_COOKIE, req, res);
-			HttpUtils.removeStateParam(CSRF_COOKIE, req, res);
 		}
 	}
 

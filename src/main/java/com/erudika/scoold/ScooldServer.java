@@ -21,17 +21,14 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
-import com.erudika.scoold.utils.CsrfFilter;
 import com.erudika.scoold.utils.ScooldEmailer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import javax.inject.Named;
-import javax.servlet.DispatcherType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -44,7 +41,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -75,7 +71,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 	}
 
 	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
-	public static final String CSRF_COOKIE = Config.getRootAppIdentifier() + "-csrf";
 	public static final String SPACE_COOKIE = Config.getRootAppIdentifier() + "-space";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
@@ -299,24 +294,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 		viewr.setSuffix(".vm");
 		viewr.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return viewr;
-	}
-
-	/**
-	 * @return CSRF protection filter bean
-	 */
-	@Bean
-	public FilterRegistrationBean<CsrfFilter> csrfFilterRegistrationBean() {
-		String path = "/*";
-		logger.debug("Initializing CSRF filter [{}]...", path);
-		FilterRegistrationBean<CsrfFilter> frb = new FilterRegistrationBean<>(new CsrfFilter());
-		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
-		frb.setName("csrfFilter");
-		frb.setAsyncSupported(true);
-		frb.addUrlPatterns(path);
-		frb.setMatchAfter(false);
-		frb.setEnabled(true);
-		frb.setOrder(2);
-		return frb;
 	}
 
 	/**
