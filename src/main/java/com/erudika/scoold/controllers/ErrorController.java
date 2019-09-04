@@ -23,8 +23,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ErrorController {
 		this.utils = utils;
 	}
 
-	@RequestMapping("/error/{code}")
+	@GetMapping("/error/{code}")
 	public String get(@PathVariable String code, HttpServletRequest req, Model model) {
 		model.addAttribute("path", "error.vm");
 		model.addAttribute("title", utils.getLang(req).get("error.title"));

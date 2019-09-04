@@ -163,9 +163,10 @@ public final class ScooldUtils {
 				Para.asyncExecute(new Runnable() {
 					public void run() {
 						try {
-							Thread.sleep(retryInterval * 1000);
+							Thread.sleep(retryInterval * 1000L);
 						} catch (InterruptedException ex) {
 							logger.error(null, ex);
+							Thread.currentThread().interrupt();
 						}
 						retryConnection(callable, count);
 					}
@@ -218,14 +219,16 @@ public final class ScooldUtils {
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
-		if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
-			logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
-			authUser.setGroups(User.Groups.ADMINS.toString());
-			return true;
-		} else if (isAdmin(authUser) && !isRecognizedAsAdmin(u)) {
-			logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
-			authUser.setGroups(User.Groups.USERS.toString());
-			return true;
+		if (authUser != null) {
+			if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
+				logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
+				authUser.setGroups(User.Groups.ADMINS.toString());
+				return true;
+			} else if (isAdmin(authUser) && !isRecognizedAsAdmin(u)) {
+				logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
+				authUser.setGroups(User.Groups.USERS.toString());
+				return true;
+			}
 		}
 		return false;
 	}
