@@ -283,6 +283,14 @@ public abstract class Post extends Sysprop {
 		updateTags(getTags(), null);
 	}
 
+	public static String getTagString(String tag) {
+		if (StringUtils.isBlank(tag)) {
+			return "";
+		}
+		String s = tag.replaceAll("[\\p{S}\\p{P}\\p{C}&&[^+\\.]]", " ").replaceAll("\\p{Z}+", " ").trim();
+		return StringUtils.truncate(Utils.noSpaces(s, "-"), 35);
+	}
+
 	private void createTags() {
 		if (getTags() == null || getTags().isEmpty()) {
 			return;
@@ -291,7 +299,7 @@ public abstract class Post extends Sysprop {
 		Pager tagged = new Pager(0);
 		for (int i = 0; i < getTags().size(); i++) {
 			String ntag = getTags().get(i);
-			Tag t = new Tag(StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(ntag, " "), "-"), 35));
+			Tag t = new Tag(getTagString(ntag));
 			if (!StringUtils.isBlank(t.getTag())) {
 				tagged.setCount(0);
 				client().findTagged(getType(), new String[]{t.getTag()}, tagged);
@@ -319,8 +327,8 @@ public abstract class Post extends Sysprop {
 
 		if (newTags != null) {
 			for (String newTag : newTags) {
-				if (!StringUtils.isBlank(newTag)) {
-					String tag = StringUtils.truncate(Utils.noSpaces(Utils.stripAndTrim(newTag, " "), "-"), 35);
+				String tag = getTagString(newTag);
+				if (!StringUtils.isBlank(tag)) {
 					newTagsSet.add(tag);
 					if (!oldTagsSet.contains(tag)) {
 						Tag t = new Tag(tag);
