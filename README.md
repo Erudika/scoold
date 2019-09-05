@@ -866,7 +866,24 @@ location / {
 ```
 
 That's it! If the Certbot validation above fails, your DNS is not configured properly or you have conflicting firewall rules.
-Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04) for more details.
+Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
+for more details.
+
+## Periodic summary emails
+
+**PRO**
+You can choose to enable periodic summary emails for all users in Scoold or allow them to opt-in for these messages.
+By default summary emails are disabled and users can unsubscribe if they are enabled by admins.
+A summary email contains all new questions for a past period of time (daily, weekly). Admins can enable summary emails
+for everyone from the Settings page if `para.summary_email_controlled_by_admins = true`. If that parameter is `false`
+each person (by default) controls whether they want to receive summary emails or not.
+
+The period for which a summary report is generated is controlled by:
+```
+para.summary_email_period_days = 2
+```
+The values of this setting can range from `1` to `30` days, where `2` means "every other day", `7` means "every week".
+The summary email contains a list of the top 25 recent questions. For more questions set `para.summary_email_items = 30`.
 
 ## Customizing the UI
 
