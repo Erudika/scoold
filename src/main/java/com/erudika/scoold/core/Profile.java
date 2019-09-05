@@ -542,6 +542,7 @@ public class Profile extends Sysprop {
 	public void delete() {
 		client().delete(this);
 		client().delete(getUser());
+		ScooldUtils.getInstance().unsubscribeFromAllNotifications(this);
 	}
 
 	public int countNewReports() {

@@ -369,6 +369,13 @@ public final class ScooldUtils {
 				stream().collect(Collectors.toSet());
 	}
 
+	public void unsubscribeFromAllNotifications(Profile p) {
+		User u = p.getUser();
+		if (u != null) {
+			unsubscribeFromNewPosts(u);
+		}
+	}
+
 	public boolean isEmailDomainApproved(String email) {
 		if (StringUtils.isBlank(email)) {
 			return false;
