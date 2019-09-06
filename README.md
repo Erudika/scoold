@@ -48,6 +48,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Advanced syntax highlighting
 - Image uploads
 - Security notifications
+- Email digest of recent questions
 - Account suspensions/permabans
 - Wiki-style answers
 
@@ -116,7 +117,7 @@ The settings shown below are all meant to be part of the Scoold config file.
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
 
-Copy the example configuration below to your **`application.conf`** and edit it if necessary:
+Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
 para.app_name = "Scoold"
 # the port for Scoold
@@ -196,23 +197,30 @@ First, create a new directory and copy `docker-compose.yml` to it from this repo
 
 1. `para.env` - containing environment variables for Para, like `JAVA_OPTS`
 2. `scoold.env` - containing environment variables for Scoold, like `JAVA_OPTS`
-3. `para-application.conf` - containing the Para configuration
-4. `scoold-application.conf` - containing the Scoold configuration
+3. `para-application.conf` - containing the Para configuration (see example below)
+4. `scoold-application.conf` - containing the Scoold configuration (see example above)
 
 An example `para.env` file:
 ```sh
 JAVA_OPTS=-Dconfig.file=/para/application.conf
 ```
-An `scoold.env` file:
+Example for `scoold.env`:
 ```sh
 JAVA_OPTS=-Dconfig.file=/scoold/application.conf
 BOOT_SLEEP=6
+```
+Example for `para-application.conf`:
+```ini
+para.env = "production"
+para.dao = "H2DAO"
 ```
 
 Then you can start both Scoold and Para with Docker Compose like so:
 ```
 $ docker-compose up
 ```
+Follow the quick start guide above to initialize Para and create a new app for Scoold. Once you have the access keys
+for that app, update `scoold-application.conf` with those and restart the Para + Scoold Docker stack.
 
 ## Kubernetes
 
