@@ -435,8 +435,7 @@ public final class ScooldUtils {
 			Set<String> emails = getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers");
 			if (emails != null) {
 				emailer.sendEmail(new ArrayList<String>(emails),
-						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) +
-								(question.getTitle().length() > 255 ? "...'" : "'"),
+						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}
@@ -476,8 +475,7 @@ public final class ScooldUtils {
 
 			if (parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) +
-								(reply.getTitle().length() > 255 ? "...'" : "'"),
+						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'",
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
 			}
 		}

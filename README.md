@@ -51,6 +51,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Email digest of recent questions
 - Account suspensions/permabans
 - Wiki-style answers
+- Mentions with notifications
 
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
@@ -877,7 +878,7 @@ That's it! If the Certbot validation above fails, your DNS is not configured pro
 Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
 for more details.
 
-## Periodic summary emails
+## Periodic summary emails (email digest)
 
 **PRO**
 You can choose to enable periodic summary emails for all users in Scoold or allow them to opt-in for these messages.
@@ -892,6 +893,20 @@ para.summary_email_period_days = 2
 ```
 The values of this setting can range from `1` to `30` days, where `2` means "every other day", `7` means "every week".
 The summary email contains a list of the top 25 recent questions. For more questions set `para.summary_email_items = 30`.
+
+## Mentions
+
+**PRO**
+In Scoold Pro you can mention anyone in a question, answer or comment with `@Name`. A popup menu will appear once you
+start typing after `@` giving you a list of names to choose from. The selected user will be mentioned with a special
+mention tag in the form of `@<userID|John Doe>`. You can edit the name part of that tag (after `|`) but nothing else,
+if you want the mention to work. You can mention up to 10 people in a post.
+
+Users can opt-in to receive email notifications when they are mentioned or that can be switched on/off by admins.
+For the latter option set:
+```
+para.mention_emails_controlled_by_admins = true
+```
 
 ## Customizing the UI
 
