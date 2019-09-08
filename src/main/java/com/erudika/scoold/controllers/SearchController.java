@@ -160,7 +160,7 @@ public class SearchController {
 	private SyndFeed getFeed() throws IOException, FeedException {
 		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
-		String baseurl = Config.getConfigParam("host_url", "https://scoold.com");
+		String baseurl = ScooldServer.getServerURL();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
 		SyndFeed feed = new SyndFeedImpl();
