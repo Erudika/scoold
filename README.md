@@ -848,7 +848,7 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
 
 ## Securing Scoold with SSL using Nginx and Certbot (Let's Encrypt)
 
-First of all, configure the DNS records for your domai to point to the IP address where Scoold is hosted.
+First of all, configure the DNS records for your domain to point to the IP address where Scoold is hosted.
 
 1. SSH into your Ubuntu server and install Nginx and Certbot
 ```
