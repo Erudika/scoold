@@ -248,7 +248,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 
 		// email verification
-		settings.put("security.allow_unverified_emails", Config.getConfigBoolean("security.allow_unverified_emails", false));
+		settings.put("security.allow_unverified_emails", Config.getConfigBoolean("security.allow_unverified_emails", !Config.IN_PRODUCTION));
 
 		// URLs for success and failure
 		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
