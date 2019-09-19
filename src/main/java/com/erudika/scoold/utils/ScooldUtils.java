@@ -181,9 +181,9 @@ public final class ScooldUtils {
 		boolean isApiRequest = isApiRequest(req);
 		if (isApiRequest) {
 			return checkApiAuth(req);
-		} else if (HttpUtils.getStateParam(Config.AUTH_COOKIE, req) != null &&
+		} else if (HttpUtils.getStateParam(AUTH_COOKIE, req) != null &&
 				!StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg")) {
-			User u = pc.me(HttpUtils.getStateParam(Config.AUTH_COOKIE, req));
+			User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
@@ -195,7 +195,7 @@ public final class ScooldUtils {
 				if (u != null) {
 					logger.warn("Attempted signin from an unknown domain: {}", u.getEmail());
 				} else {
-					logger.info("Invalid JWT found in cookie {}.", Config.AUTH_COOKIE);
+					logger.info("Invalid JWT found in cookie {}.", AUTH_COOKIE);
 				}
 				res.sendRedirect(SIGNINLINK + "?code=3&error=true");
 				return null;
@@ -910,7 +910,7 @@ public final class ScooldUtils {
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
-			HttpUtils.removeStateParam(Config.AUTH_COOKIE, req, res);
+			HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
 		}
 	}
 

@@ -23,6 +23,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.utils.HttpUtils;
@@ -361,7 +362,7 @@ public class SigninController {
 				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(Config.AUTH_COOKIE).append("=").append(jwt).append(";");
+		sb.append(AUTH_COOKIE).append("=").append(jwt).append(";");
 		sb.append("Path=/;");
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge).append(";");

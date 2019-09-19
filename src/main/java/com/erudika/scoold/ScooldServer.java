@@ -72,6 +72,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	public static final String HOMEPAGE = "/";
 	public static final String CONTEXT_PATH = StringUtils.stripEnd(getServerContextPath(), "/");
 	public static final String CDN_URL = StringUtils.stripEnd(Config.getConfigParam("cdn_url", CONTEXT_PATH), "/");
+	public static final String AUTH_COOKIE = Config.getConfigParam("auth_cookie", "scoold-auth");
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
 	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/images";
 	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/scripts";
