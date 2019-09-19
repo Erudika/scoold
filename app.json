@@ -38,6 +38,10 @@
 			"required": false,
 			"value": ""
 		},
+		"para_auth_cookie": {
+			"description": "The session cookie name.",
+			"value": "scoold-auth"
+		},
 		"para_is_default_space_public": {
 			"description": "Controls the visibility of questions, answers and users in the default space. Public by default.",
 			"value": "true"
