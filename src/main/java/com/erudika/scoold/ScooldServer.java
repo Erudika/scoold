@@ -58,8 +58,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ScooldServer extends SpringBootServletInitializer {
 
 	static {
-		String appName = System.getProperty("para.app_name");
-		if (StringUtils.isBlank(appName) || Config.PARA.equalsIgnoreCase(appName)) {
+		if (StringUtils.isBlank(Config.APP_NAME) || Config.PARA.equalsIgnoreCase(Config.APP_NAME)) {
 			System.setProperty("para.app_name", "Scoold");
 		}
 		// tells ParaClient where to look for classes that implement ParaObject
