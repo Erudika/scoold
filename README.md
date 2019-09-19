@@ -478,6 +478,7 @@ para.security.oauth.profile_url = "https://your-idp.com/userinfo"
 # extra options
 para.security.oauth.scope = "openid email profile"
 para.security.oauth.accept_header = ""
+para.security.oauth.domain = "paraio.com"
 para.security.oauth.parameters.id = "sub"
 para.security.oauth.parameters.picture = "picture"
 para.security.oauth.parameters.email = "email"
@@ -494,6 +495,35 @@ para.security.oauth.token_delegation_enabled = false
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
 revocates a delegated access token, then that user would automatically be logged out from Scoold and denied access
 immediately.
+
+You can add two additional custom OAuth 2.0/OpenID connect providers called "second" and "third". Here's what the settings
+look like for the "second" provider:
+
+```ini
+# minimal setup (second provider)
+para.oa2second_app_id = ""
+para.oa2second_secret = ""
+para.security.oauthsecond.authz_url = "https://your-idp.com/login"
+para.security.oauthsecond.token_url = "https://your-idp.com/token"
+para.security.oauthsecond.profile_url = "https://your-idp.com/userinfo"
+
+# extra options (second provider)
+para.security.oauthsecond.scope = "openid email profile"
+para.security.oauthsecond.accept_header = ""
+para.security.oauthsecond.domain = "paraio.com"
+para.security.oauthsecond.parameters.id = "sub"
+para.security.oauthsecond.parameters.picture = "picture"
+para.security.oauthsecond.parameters.email = "email"
+para.security.oauthsecond.parameters.name = "name"
+
+# Sets the string on the login button (second provider)
+para.security.oauthsecond.provider = "Continue with Second OAuth 2.0 provider"
+
+# Enable/disable access token delegation (second provider)
+para.security.oauthsecond.token_delegation_enabled = false
+```
+
+For the "third" OAuth 2.0 provider it's the same configuration but replace "second" with "third".
 
 ## LDAP configuration
 

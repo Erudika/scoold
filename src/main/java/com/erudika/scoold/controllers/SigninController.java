@@ -83,10 +83,16 @@ public class SigninController {
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
 		model.addAttribute("slLoginEnabled", !Config.SLACK_APP_ID.isEmpty());
 		model.addAttribute("oa2LoginEnabled", !Config.getConfigParam("oa2_app_id", "").isEmpty());
+		model.addAttribute("oa2secondLoginEnabled", !Config.getConfigParam("oa2second_app_id", "").isEmpty());
+		model.addAttribute("oa2thirdLoginEnabled", !Config.getConfigParam("oa2third_app_id", "").isEmpty());
 		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
 		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", true));
 		model.addAttribute("oa2LoginProvider", Config.getConfigParam("security.oauth.provider",
 				"Continue with OpenID Connect"));
+		model.addAttribute("oa2secondLoginProvider", Config.getConfigParam("security.oauthsecond.provider",
+				"Continue with OpenID Connect 2"));
+		model.addAttribute("oa2thirdLoginProvider", Config.getConfigParam("security.oauththird.provider",
+				"Continue with OpenID Connect 3"));
 		return "base";
 	}
 
@@ -233,9 +239,18 @@ public class SigninController {
 		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
 		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
 		sb.append("SLACK_APP_ID = \"").append(Config.SLACK_APP_ID).append("\"; ");
+
 		sb.append("OAUTH2_ENDPOINT = \"").append(Config.getConfigParam("security.oauth.authz_url", "")).append("\"; ");
 		sb.append("OAUTH2_APP_ID = \"").append(Config.getConfigParam("oa2_app_id", "")).append("\"; ");
 		sb.append("OAUTH2_SCOPE = \"").append(Config.getConfigParam("security.oauth.scope", "")).append("\"; ");
+
+		sb.append("OAUTH2_SECOND_ENDPOINT = \"").append(Config.getConfigParam("security.oauthsecond.authz_url", "")).append("\"; ");
+		sb.append("OAUTH2_SECOND_APP_ID = \"").append(Config.getConfigParam("oa2second_app_id", "")).append("\"; ");
+		sb.append("OAUTH2_SECOND_SCOPE = \"").append(Config.getConfigParam("security.oauthsecond.scope", "")).append("\"; ");
+
+		sb.append("OAUTH2_THIRD_ENDPOINT = \"").append(Config.getConfigParam("security.oauththird.authz_url", "")).append("\"; ");
+		sb.append("OAUTH2_THIRD_APP_ID = \"").append(Config.getConfigParam("oa2third_app_id", "")).append("\"; ");
+		sb.append("OAUTH2_THIRD_SCOPE = \"").append(Config.getConfigParam("security.oauththird.scope", "")).append("\"; ");
 
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req));
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");

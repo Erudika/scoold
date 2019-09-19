@@ -100,7 +100,8 @@
 					#set($rightColSize = "col l8 offset-l2 m10 offset-m1 s12" )
 				#end
 
-				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && !$inLoginEnabled && !$twLoginEnabled && !$msLoginEnabled && !$slLoginEnabled && !$oa2LoginEnabled)
+				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && !$inLoginEnabled && !$twLoginEnabled &&
+						!$msLoginEnabled && !$slLoginEnabled && !$oa2LoginEnabled && !$oa2secondLoginEnabled && !$oa2thirdLoginEnabled)
 					#set($leftColSize = "col l6 offset-l3 s12" )
 					#set($rightColSize = "hide" )
 				#end
@@ -223,6 +224,22 @@
 									<div class="mvl pvs">
 										<a id="oa2-login-btn" href="#" class="btn-large grey darken-2 truncate">
 											<i class="fa fa-openid left"></i> $!oa2LoginProvider
+										</a>
+									</div>
+								#end
+
+								#if($oa2secondLoginEnabled)
+									<div class="mvl pvs">
+										<a id="oa2second-login-btn" href="#" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-openid left"></i> $!oa2secondLoginProvider
+										</a>
+									</div>
+								#end
+
+								#if($oa2thirdLoginEnabled)
+									<div class="mvl pvs">
+										<a id="oa2third-login-btn" href="#" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-openid left"></i> $!oa2thirdLoginProvider
 										</a>
 									</div>
 								#end

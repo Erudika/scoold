@@ -230,6 +230,32 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("security.oauth.parameters.picture", Config.getConfigParam("security.oauth.parameters.picture", null));
 		settings.put("security.oauth.domain", Config.getConfigParam("security.oauth.domain", null));
 		settings.put("security.oauth.token_delegation_enabled", Config.getConfigBoolean("security.oauth.token_delegation_enabled", false));
+		// Second OAuth 2 provider
+		settings.put("oa2second_app_id", Config.getConfigParam("oa2second_app_id", ""));
+		settings.put("oa2second_secret", Config.getConfigParam("oa2second_secret", ""));
+		settings.put("security.oauthsecond.token_url", Config.getConfigParam("security.oauthsecond.token_url", ""));
+		settings.put("security.oauthsecond.profile_url", Config.getConfigParam("security.oauthsecond.profile_url", ""));
+		settings.put("security.oauthsecond.scope", Config.getConfigParam("security.oauthsecond.scope", "openid email profile"));
+		settings.put("security.oauthsecond.accept_header", Config.getConfigParam("security.oauthsecond.accept_header", ""));
+		settings.put("security.oauthsecond.parameters.id", Config.getConfigParam("security.oauthsecond.parameters.id", null));
+		settings.put("security.oauthsecond.parameters.name", Config.getConfigParam("security.oauthsecond.parameters.name", null));
+		settings.put("security.oauthsecond.parameters.email", Config.getConfigParam("security.oauthsecond.parameters.email", null));
+		settings.put("security.oauthsecond.parameters.picture", Config.getConfigParam("security.oauthsecond.parameters.picture", null));
+		settings.put("security.oauthsecond.domain", Config.getConfigParam("security.oauthsecond.domain", null));
+		settings.put("security.oauthsecond.token_delegation_enabled", Config.getConfigBoolean("security.oauthsecond.token_delegation_enabled", false));
+		// Third OAuth 2 provider
+		settings.put("oa2third_app_id", Config.getConfigParam("oa2third_app_id", ""));
+		settings.put("oa2third_secret", Config.getConfigParam("oa2third_secret", ""));
+		settings.put("security.oauththird.token_url", Config.getConfigParam("security.oauththird.token_url", ""));
+		settings.put("security.oauththird.profile_url", Config.getConfigParam("security.oauththird.profile_url", ""));
+		settings.put("security.oauththird.scope", Config.getConfigParam("security.oauththird.scope", "openid email profile"));
+		settings.put("security.oauththird.accept_header", Config.getConfigParam("security.oauththird.accept_header", ""));
+		settings.put("security.oauththird.parameters.id", Config.getConfigParam("security.oauththird.parameters.id", null));
+		settings.put("security.oauththird.parameters.name", Config.getConfigParam("security.oauththird.parameters.name", null));
+		settings.put("security.oauththird.parameters.email", Config.getConfigParam("security.oauththird.parameters.email", null));
+		settings.put("security.oauththird.parameters.picture", Config.getConfigParam("security.oauththird.parameters.picture", null));
+		settings.put("security.oauththird.domain", Config.getConfigParam("security.oauththird.domain", null));
+		settings.put("security.oauththird.token_delegation_enabled", Config.getConfigBoolean("security.oauththird.token_delegation_enabled", false));
 		// LDAP settings
 		settings.put("security.ldap.server_url", Config.getConfigParam("security.ldap.server_url", ""));
 		settings.put("security.ldap.base_dn", Config.getConfigParam("security.ldap.base_dn", ""));
