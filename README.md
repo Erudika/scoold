@@ -123,6 +123,8 @@ Copy the Scoold example configuration below to your **`application.conf`** and e
 para.app_name = "Scoold"
 # the port for Scoold
 para.port = 8000
+# Session cookie name
+para.auth_cookie = "scoold-auth"
 # change this to "production" later
 para.env = "development"
 # the URL where Scoold is hosted, or http://localhost:8000
