@@ -33,6 +33,7 @@ import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
+import static com.erudika.scoold.core.Post.ALL_MY_SPACES;
 import static com.erudika.scoold.core.Post.DEFAULT_SPACE;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.ENTHUSIAST;
@@ -712,12 +713,19 @@ public final class ScooldUtils {
 		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
 	}
 
+	public boolean isAllSpaces(String space) {
+		return ALL_MY_SPACES.equalsIgnoreCase(getSpaceId(space));
+	}
+
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
 		if (authUser == null) {
 			return isDefaultSpacePublic();
 		}
-		if (isMod(authUser)) {
+		if (isMod(authUser) || isAllSpaces(targetSpaceId)) {
 			return true;
+		}
+		if (StringUtils.isBlank(targetSpaceId) || targetSpaceId.length() < 2) {
+			return false;
 		}
 		if (isDefaultSpace(targetSpaceId)) {
 			// can user access the default space (blank)
@@ -734,7 +742,8 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {
-		return getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
+		String space = getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
+		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : space;
 	}
 
 	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
@@ -742,7 +751,12 @@ public final class ScooldUtils {
 				req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}
 
-	public String getValidSpaceId(Profile authUser, String space) {
+	public String getValidSpaceIdExcludingAll(Profile authUser, String space, HttpServletRequest req) {
+		String s = StringUtils.isBlank(space) ? getSpaceIdFromCookie(authUser, req) : space;
+		return isAllSpaces(s) ? getValidSpaceId(authUser, "x") : s;
+	}
+
+	private String getValidSpaceId(Profile authUser, String space) {
 		if (authUser == null) {
 			return DEFAULT_SPACE;
 		}
@@ -768,7 +782,29 @@ public final class ScooldUtils {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getSpaceIdFromCookie(authUser, req);
 		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
-				"properties.space:\"" + currentSpace + "\"";
+				getSpaceFilter(authUser, currentSpace);
+	}
+
+	public String getSpaceFilteredQuery(HttpServletRequest req, boolean isSpaceFiltered) {
+		return getSpaceFilteredQuery(req, isSpaceFiltered, null, "*");
+	}
+
+	public String getSpaceFilteredQuery(HttpServletRequest req, boolean isSpaceFiltered, String spaceFilter, String defaultQuery) {
+		Profile authUser = getAuthUser(req);
+		String currentSpace = getSpaceIdFromCookie(authUser, req);
+		if (isSpaceFiltered) {
+			return StringUtils.isBlank(spaceFilter) ? getSpaceFilter(authUser, currentSpace) : spaceFilter;
+		}
+		return canAccessSpace(authUser, currentSpace) ? defaultQuery : "";
+	}
+
+	public String getSpaceFilter(Profile authUser, String spaceId) {
+		if (isAllSpaces(spaceId)) {
+			return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
+					collect(Collectors.joining(" OR ")) + ")";
+		} else {
+			return "properties.space:\"" + spaceId + "\"";
+		}
 	}
 
 	public Sysprop buildSpaceObject(String space) {

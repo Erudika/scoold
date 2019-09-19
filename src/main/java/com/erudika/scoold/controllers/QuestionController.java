@@ -144,13 +144,11 @@ public class QuestionController {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 		}
 		if (showPost.isQuestion()) {
-			if (!utils.canAccessSpace(authUser, space)) {
-				space = utils.getSpaceIdFromCookie(authUser, req);
-			}
-			if (utils.canAccessSpace(authUser, space) && space != null &&
-					!utils.getSpaceId(space).equals(utils.getSpaceId(showPost.getSpace()))) {
-				showPost.setSpace(space);
-				changeSpaceForAllAnswers(showPost, space);
+			String validSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
+			if (utils.canAccessSpace(authUser, validSpace) && validSpace != null &&
+					!utils.getSpaceId(validSpace).equals(utils.getSpaceId(showPost.getSpace()))) {
+				showPost.setSpace(validSpace);
+				changeSpaceForAllAnswers(showPost, validSpace);
 			}
 		}
 		//note: update only happens if something has changed

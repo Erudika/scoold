@@ -442,6 +442,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	.userbox {width: 180px;}
 	.userbox-body {font-size: smaller;}
 	.userbox-body .chip {height: 18px;line-height: 18px;border-radius: 4px;padding: 0 4px;}
+	.sidenav .divider {margin: 0;}
 }
 @media (max-width: 990px) {
 	.chips-container {

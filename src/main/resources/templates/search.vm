@@ -1,7 +1,7 @@
+#if($currentSpace && !$currentSpace.isEmpty())
+	<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
+#end
 <div class="page-wrapper">
-	#if($currentSpace && !$currentSpace.isEmpty())
-		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
-	#end
 	<h2>
 		#if ($showParam)
 			#if ($showParam == "questions")

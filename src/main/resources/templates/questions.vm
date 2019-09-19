@@ -1,11 +1,11 @@
+#if($currentSpace && !$currentSpace.isEmpty())
+	<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
+#end
 <div class="page-wrapper">
-	#if($currentSpace && !$currentSpace.isEmpty())
-		<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
-	#end
 	#if ($askSelected)
 		<h2>$!lang.get("posts.ask")</h2>
 		<hr>
-		<div class="ptl">
+		<div class="pts">
 			<form method="post" id="ask-question-form">
 				#sectoken(false "CREATE_POST")
 				<div class="input-field">
@@ -33,10 +33,13 @@
 					</div>
 				</div>
 
+				#if($scooldUtils.isAllSpaces($currentSpace))
+					#spaceselect()
+				#end
+
 				#if($scooldUtils.isNearMeFeatureEnabled())
 					<a href="#" class="next-div-toggle mll pll click2hide">
 						<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
-						<span class="grey-text text-darken-1">($!lang.get("posts.locationtxt"))</span>
 					</a>
 					<div class="input-field hide">
 						<i class="fa fa-map-marker ptm prefix grey-text"></i>

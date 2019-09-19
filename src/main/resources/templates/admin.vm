@@ -53,7 +53,7 @@
 					#else
 						<i class="fa fa-lock red-text" title="Private"></i>
 					#end
-					<a href="$questionslink/space" title="$!{spaceName}">Default Space</a>
+					<a href="$questionslink/space" title="Default space">$!lang.get('defaultspace')</a>
 				</p>
 			</div>
 		</div>

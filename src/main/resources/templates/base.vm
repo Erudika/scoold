@@ -78,16 +78,28 @@
 								</li>
 							#end
 
-							#if($authenticated)
+							#macro(navbarspacesmenu $wrapped)
+								#set($spaceSelectedClass = "")
 								#if(($authUser.hasSpaces() || $isMod))
+									#if($wrapped)
 									<ul id="spaces-dropdown" class="dropdown-content">
+									#else
+										<li class="divider"></li>
+									#end
 										#if($scooldUtils.canAccessSpace($authUser, ""))
-											#if($!currentSpace.isEmpty())
+											#if($!currentSpace.isEmpty() || $scooldUtils.isDefaultSpace($currentSpace))
 													#set($spaceSelectedClass = "navbtn-hover white-text")
 											#end
-
-											<li><a href="$questionslink/space?returnto=$!returnto" title="Default Space"
-														 class="${spaceSelectedClass}">Default space</a></li>
+											<li><a href="$questionslink/space?returnto=$!returnto" title="Default space"
+														 class="${spaceSelectedClass}">$!lang.get('defaultspace')</a></li>
+											<li class="divider"></li>
+										#end
+										#if($authUser.hasSpaces() && !$isMod)
+											#if($scooldUtils.isAllSpaces($currentSpace))
+												#set($allSpacesSelectedClass = "navbtn-hover white-text")
+											#end
+											<li><a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces"
+														 class="${allSpacesSelectedClass}">$!lang.get('allspaces')</a></li>
 											<li class="divider"></li>
 										#end
 										#foreach($space in $authUser.spaces)
@@ -101,8 +113,14 @@
 														 class="$!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
 											<li class="divider"></li>
 										#end
+									#if($wrapped)
 									</ul>
+									#end
 								#end
+							#end
+
+							#if($authenticated)
+								#navbarspacesmenu(true)
 								<ul id="user-dropdown" class="dropdown-content">
 									<li><a href="$profilelink" title="$!{authUser.name}">$!lang.get('profile.title')</a></li>
 									#if($isAdmin)
@@ -204,35 +222,8 @@
 										</li>
 									#end
 
-									#set($spaceSelectedClass = "")
-
-									#if(($authUser.hasSpaces() || $isMod))
-										#if($scooldUtils.canAccessSpace($authUser, ""))
-											#if($!currentSpace.isEmpty())
-													#set($spaceSelectedClass = "navbtn-hover white-text")
-											#end
-
-											<li class="divider"></li>
-											<li><a href="$questionslink/space?returnto=$!returnto" title="Default Space"
-														 class="${spaceSelectedClass}">Default space</a></li>
-										#end
-										#foreach($space in $authUser.spaces)
-											<li class="divider"></li>
-											#if($!currentSpace == $space)
-												#set($spaceSelectedClass = "navbtn-hover white-text")
-											#else
-												#set($spaceSelectedClass = "")
-											#end
-											#set($spaceName = $scooldUtils.getSpaceName($space))
-											<li><a href="$questionslink/space/$!scooldUtils.getSpaceId($!space)?returnto=$!returnto" title="$!{spaceName}"
-														 class="$!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
-										#end
-									#end
-
-									<li class="divider"></li>
-									<li>
-										<li><a href="$signoutlink" title="Sign out" class="mts signout">$!lang.get('signout')</a></li>
-									</li>
+									#navbarspacesmenu(false)
+									<li><a href="$signoutlink" title="Sign out" class="signout">$!lang.get('signout')</a></li>
 								#end
 							</ul>
 						</div>

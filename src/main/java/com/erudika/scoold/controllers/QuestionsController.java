@@ -48,6 +48,7 @@ import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -150,7 +151,7 @@ public class QuestionsController {
 			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
-			String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
+			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, null, req);
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
@@ -188,22 +189,26 @@ public class QuestionsController {
 	public String setSpace(@PathVariable(required = false) String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (authUser != null) {
-			Sysprop spaceObj = pc.read(utils.getSpaceId(space));
-			if (!StringUtils.isBlank(space) && spaceObj == null) {
-				if (utils.canAccessSpace(authUser, space)) {
-					Iterator<String> it = authUser.getSpaces().iterator();
-					while (it.hasNext()) {
-						if (it.next().startsWith(utils.getSpaceId(space) + Config.SEPARATOR)) {
-							it.remove();
-						}
-					}
-					authUser.update();
-				}
-			}
-			if (spaceObj != null) {
-				space = spaceObj.getId().concat(Config.SEPARATOR).concat(spaceObj.getName());
+			if ("all".equals(space) || utils.isAllSpaces(space)) {
+				space = Post.ALL_MY_SPACES + ":" + utils.getLang(req).get("allspaces");
 			} else {
-				space = "";
+				Sysprop spaceObj = pc.read(utils.getSpaceId(space));
+				if (!StringUtils.isBlank(space) && spaceObj == null) {
+					if (utils.canAccessSpace(authUser, space)) {
+						Iterator<String> it = authUser.getSpaces().iterator();
+						while (it.hasNext()) {
+							if (it.next().startsWith(utils.getSpaceId(space) + Config.SEPARATOR)) {
+								it.remove();
+							}
+						}
+						authUser.update();
+					}
+				}
+				if (spaceObj != null) {
+					space = spaceObj.getId().concat(Config.SEPARATOR).concat(spaceObj.getName());
+				} else {
+					space = "";
+				}
 			}
 			utils.storeSpaceIdInCookie(space, req, res);
 		}
@@ -217,7 +222,7 @@ public class QuestionsController {
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
-		String query = getQuestionsQuery(authUser, sortby, currentSpace, itemcount);
+		String query = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
@@ -257,40 +262,31 @@ public class QuestionsController {
 	}
 
 	private String getSpaceFilteredFavtagsQuery(String currentSpace, Profile authUser) {
-		if (utils.canAccessSpace(authUser, currentSpace)) {
-			StringBuilder sb = new StringBuilder("properties.space:");
-			sb.append(currentSpace).append(" AND (");
-			for (int i = 0; i < authUser.getFavtags().size(); i++) {
-				sb.append(Config._TAGS).append(":").append(authUser.getFavtags().get(i));
-				if (i < authUser.getFavtags().size() - 1) {
-					sb.append(" OR ");
-				}
-			}
-			sb.append(")");
-			return sb.toString();
-		}
-		return "";
+		StringBuilder sb = new StringBuilder(utils.getSpaceFilter(authUser, currentSpace));
+		sb.append(" AND (").append(authUser.getFavtags().stream().collect(Collectors.joining(" OR "))).append(")");
+		return sb.toString();
 	}
 
-	private String getQuestionsQuery(Profile authUser, String sortby, String currentSpace, Pager itemcount) {
+	private String getQuestionsQuery(HttpServletRequest req, Profile authUser, String sortby, String currentSpace, Pager p) {
 		boolean spaceFiltered = isSpaceFilteredRequest(authUser, currentSpace);
-		String spaceFilter = "properties.space:\"" + currentSpace + "\"";
-		String query = spaceFiltered ? spaceFilter : (utils.canAccessSpace(authUser, currentSpace) ? "*" : "");
+		String query = utils.getSpaceFilteredQuery(req, spaceFiltered);
 		if ("activity".equals(sortby)) {
-			itemcount.setSortby("properties.lastactivity");
-			itemcount.setDesc(true);
+			p.setSortby("properties.lastactivity");
+			p.setDesc(true);
 		} else if ("votes".equals(sortby)) {
-			itemcount.setSortby("votes");
+			p.setSortby("votes");
 		} else if ("unanswered".equals(sortby)) {
-			itemcount.setSortby("timestamp");
-			itemcount.setDesc(false);
+			p.setSortby("timestamp");
+			p.setDesc(false);
 			String q = "properties.answercount:0";
-			query = spaceFiltered ? spaceFilter + " AND " + q : (utils.canAccessSpace(authUser, currentSpace) ? q : "");
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
+					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		} else if ("unapproved".equals(sortby)) {
-			itemcount.setSortby("timestamp");
-			itemcount.setDesc(false);
+			p.setSortby("timestamp");
+			p.setDesc(false);
 			String q = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]";
-			query = spaceFiltered ? spaceFilter + " AND " + q : (utils.canAccessSpace(authUser, currentSpace) ? q : "");
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
+					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		}
 		return query;
 	}

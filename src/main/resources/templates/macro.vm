@@ -335,106 +335,106 @@
 #end
 ####################################
 #macro(questionspage $posts )
-	#foreach($post in $posts)
-		#questionbox($post)
+	#set($showSpaceLabel = $scooldUtils.isAllSpaces($currentSpace))
+	#foreach($showpost in $posts)
+	#set($actionlink = "#getpostlink($showpost false true)")
+	#set($actionlink2 = "#getpostlink($showpost true true)")
+	#if($showpost.id == $request.getParameter("deleted"))
+		#set($deleted = "hide")
+	#else
+		#set($deleted = "")
 	#end
-#end
-####################################
-#macro(questionbox $showpost )
-#set($actionlink = "#getpostlink($showpost false true)")
-#set($actionlink2 = "#getpostlink($showpost true true)")
-#if($showpost.id == $request.getParameter("deleted"))
-	#set($deleted = "hide")
-#else
-	#set($deleted = "")
-#end
-#if($authenticated && $showpost.followers && $showpost.followers.containsKey($authUser.user.id))
-	#set($followedPostClass = "following-post")
-#else
-	#set($followedPostClass = "")
-#end
-#if($showpost.type == "unapprovedquestion")
-	#set($unapprovedClass = "unapproved-post")
-#else
-	#set($unapprovedClass = "")
-#end
-<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted} $!{unapprovedClass}">
-	<div class="row mbn questionbox">
-		#set($votes = $showpost.votes)
-		#set($viewcount = $showpost.viewcount)
-		#set($answercount = $showpost.answercount)
-		#if (!$votes) #set($votes = 0) #end
-		#if (!$viewcount) #set($viewcount = 0) #end
-		#if (!$answercount) #set($answercount = 0) #end
+	#if($authenticated && $showpost.followers && $showpost.followers.containsKey($authUser.user.id))
+		#set($followedPostClass = "following-post")
+	#else
+		#set($followedPostClass = "")
+	#end
+	#if($showpost.type == "unapprovedquestion")
+		#set($unapprovedClass = "unapproved-post")
+	#else
+		#set($unapprovedClass = "")
+	#end
+	<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted} $!{unapprovedClass}">
+		<div class="row mbn questionbox">
+			#set($votes = $showpost.votes)
+			#set($viewcount = $showpost.viewcount)
+			#set($answercount = $showpost.answercount)
+			#if (!$votes) #set($votes = 0) #end
+			#if (!$viewcount) #set($viewcount = 0) #end
+			#if (!$answercount) #set($answercount = 0) #end
 
-		#if ($showpost.answerid && !$showpost.answerid.isEmpty())
-			#set($bgclass = "light-green white-text" )
-		#else
-			#set($bgclass = "orange lighten-5" )
-		#end
+			#if ($showpost.answerid && !$showpost.answerid.isEmpty())
+				#set($bgclass = "light-green white-text" )
+			#else
+				#set($bgclass = "orange lighten-5" )
+			#end
 
-		#if ($votes < 0)
-			#set($bgclass1 = "red lighten-2 white-text" )
-		#elseif($votes >= 100)
-			#set($bgclass1 = "yellow lighten-3" )
-		#else
-			#set($bgclass1 = "" )
-		#end
-		<div class="col m2 l1 center-align hide-on-med-and-down">
-			<div class="qstatsbox">
-				<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
-				<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
-				<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
-					<small class="hide-on-med-and-down">$!lang.get('posts.views')</small>
-				</div>
-			</div>
-		</div>
-		<div class="col s12 l11">
-			<div class="qstatsbox hide-on-large-only">
-				<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
-				<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
-				<span class="mvs phm lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
-					<small>$!lang.get('posts.views')</small>
-				</span>
-			</div>
-			<div class="row mbn">
-				<div class="col s10 m11 l9">
-					<div class="mbm mediumText">
-						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
-							<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
-						#end
-						#if($showpost.type == "unapprovedquestion")
-							<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
-						#end
-						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
-					</div>
-					<div class="mbs">
-						#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )
-						<div>$!utils.abbreviate($showBody, 160)</div>
+			#if ($votes < 0)
+				#set($bgclass1 = "red lighten-2 white-text" )
+			#elseif($votes >= 100)
+				#set($bgclass1 = "yellow lighten-3" )
+			#else
+				#set($bgclass1 = "" )
+			#end
+			<div class="col m2 l1 center-align hide-on-med-and-down">
+				<div class="qstatsbox">
+					<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
+					<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
+					<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
+						<small class="hide-on-med-and-down">$!lang.get('posts.views')</small>
 					</div>
 				</div>
-				<div class="col s2 m1 l3">
-					#if(!$request.requestURI.startsWith("/profile"))
-						<div class=" hide-on-med-and-down">
-							#smallpersonbox($showpost.author)
-						</div>
-						<div class="hide-on-large-only">
-							#tinypersonbox($showpost.author)
-						</div>
-					#end
-				</div>
 			</div>
-			<div class="row mbn">
-				<div class="col m10 s12">
-					<div>#tagsbox($showpost.tags $actionlink2)</div>
+			<div class="col s12 l11">
+				<div class="qstatsbox hide-on-large-only">
+					<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
+					<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
+					<span class="mvs phm lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
+						<small>$!lang.get('posts.views')</small>
+					</span>
 				</div>
-				<div class="col m2 s12 mlm grey-text r">
-					<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
+				<div class="row mbn">
+					<div class="col s10 m11 l9">
+						#if($showSpaceLabel)
+						<div><small class="grey-text"><strong>$scooldUtils.getSpaceName($showpost.space)</strong></small></div>
+						#end
+						<div class="mbm mediumText">
+							#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
+								<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
+							#end
+							#if($showpost.type == "unapprovedquestion")
+								<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+							#end
+							<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+						</div>
+						<div class="mbs">
+							#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )
+							<div>$!utils.abbreviate($showBody, 160)</div>
+						</div>
+					</div>
+					<div class="col s2 m1 l3">
+						#if(!$request.requestURI.startsWith("/profile"))
+							<div class=" hide-on-med-and-down">
+								#smallpersonbox($showpost.author)
+							</div>
+							<div class="hide-on-large-only">
+								#tinypersonbox($showpost.author)
+							</div>
+						#end
+					</div>
+				</div>
+				<div class="row mbn">
+					<div class="col m10 s12">
+						<div>#tagsbox($showpost.tags $actionlink2)</div>
+					</div>
+					<div class="col m2 s12 mlm grey-text r">
+						<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+	#end
 #end
 ####################################
 #macro(compactanswerspage $answers)
@@ -595,24 +595,7 @@
 					#getmessagebox("red white-text" $error.get("tags"))
 				</div>
 
-				#if($authUser.hasSpaces() || $isMod)
-					<div class="input-field">
-						<i class="fa fa-th-large fa-2x prefix grey-text"></i>
-						<div class="mll pll">
-							<select name="space" class="browser-default pll">
-								#set($selectedPostSpace = $!scooldUtils.getSpaceName($!showpost.space))
-								<option value="$!showpost.space" disabled selected>#if($scooldUtils.isDefaultSpace($selectedPostSpace))Default space#else $!selectedPostSpace #end</option>
-								#if($scooldUtils.canAccessSpace($authUser, "default"))
-									<option value="">Default space</option>
-								#end
-								#foreach($space in $authUser.spaces)
-									<option value="$!space">$!scooldUtils.getSpaceName($space)</option>
-								#end
-							</select>
-						</div>
-					</div>
-					#getmessagebox("red white-text" $error.get("space"))
-				#end
+				#spaceselect($showpost)
 			#end
 
 			<br>
@@ -630,6 +613,31 @@
 		#paginate("\#commentspage(\$showpost.comments)" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
 	</div>
 </div>
+#end
+###################################
+#macro(spaceselect $post )
+	#if($authUser.hasSpaces() || $isMod)
+		<div class="input-field">
+			<i class="fa fa-th-large fa-2x prefix grey-text"></i>
+			<div class="mll pll">
+				<select name="space" class="browser-default pll">
+					#if($post)
+						#set($selectedPostSpace = $!scooldUtils.getSpaceName($!post.space))
+					#else
+						#set($selectedPostSpace = $!scooldUtils.getSpaceName($!scooldUtils.getValidSpaceIdExcludingAll($authUser, "", $request)))
+					#end
+					<option value="$!post.space" disabled selected>#if($scooldUtils.isDefaultSpace($selectedPostSpace))$!lang.get('defaultspace')#else $!selectedPostSpace #end</option>
+					#if($scooldUtils.canAccessSpace($authUser, "default"))
+						<option value="">$!lang.get('defaultspace')</option>
+					#end
+					#foreach($space in $authUser.spaces)
+						<option value="$!space">$!scooldUtils.getSpaceName($space)</option>
+					#end
+				</select>
+			</div>
+		</div>
+		#getmessagebox("red white-text" $error.get("space"))
+	#end
 #end
 ###################################
 #macro(translationspage $translations)
