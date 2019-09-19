@@ -465,7 +465,7 @@ This is required for authentication requests to be redirected back to the origin
 
 ## OAuth 2.0 login
 
-You can authenticate users against your own OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
+You can authenticate users against any OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
 Here are all the options which you can set in the Scoold configuration file:
 ```ini
 # minimal setup

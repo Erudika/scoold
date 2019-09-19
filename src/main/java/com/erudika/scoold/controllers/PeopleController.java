@@ -82,11 +82,11 @@ public class PeopleController {
 	}
 
 	@PostMapping("/bulk-edit")
-	public String bulkEdit(@RequestParam String[] selectedUsers, @RequestParam(required = false) String[] selectedSpaces,
-			HttpServletRequest req) {
+	public String bulkEdit(@RequestParam(required = false) String[] selectedUsers,
+			@RequestParam(required = false) String[] selectedSpaces, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		boolean isAdmin = utils.isAdmin(authUser);
-		if (isAdmin) {
+		if (isAdmin && selectedUsers != null) {
 			ArrayList<Map<String, Object>> toUpdate = new ArrayList<>();
 			for (String selectedUser : selectedUsers) {
 				if (!StringUtils.isBlank(selectedUser)) {
@@ -99,8 +99,10 @@ public class PeopleController {
 					toUpdate.add(profile);
 				}
 			}
-			// partial batch update
-			utils.getParaClient().invokePatch("_batch", Entity.json(toUpdate));
+			if (!toUpdate.isEmpty()) {
+				// partial batch update
+				utils.getParaClient().invokePatch("_batch", Entity.json(toUpdate));
+			}
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
 	}
