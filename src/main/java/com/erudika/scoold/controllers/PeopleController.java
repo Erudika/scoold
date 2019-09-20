@@ -24,16 +24,25 @@ import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.Entity;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,5 +114,37 @@ public class PeopleController {
 			}
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
+	}
+
+	@GetMapping(path = {"/avatar/**", "/avatar"})
+	public void avatar(HttpServletRequest req, HttpServletResponse res, Model model) throws IOException {
+		String url = StringUtils.removeStart(StringUtils.removeStart(req.getRequestURI(), "/people/avatar"), "/");
+		try (CloseableHttpResponse img = HttpUtils.getAvatar(Utils.urlDecode(url))) {
+			if (img != null) {
+				for (Header header : img.getAllHeaders()) {
+					res.setHeader(header.getName(), header.getValue());
+				}
+				if (!res.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+					res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+				}
+				IOUtils.copy(img.getEntity().getContent(), res.getOutputStream());
+			} else {
+				String anon = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+						+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
+						+ "version=\"1\" viewBox=\"0 0 200 200\">\n"
+						+ "  <g id=\"layer1\" transform=\"translate(0 -97)\">\n"
+						+ "    <rect id=\"rect1433\" width=\"282\" height=\"245\" x=\"-34\" y=\"79\" fill=\"#ececec\" rx=\"2\"/>\n"
+						+ "  </g>\n"
+						+ "  <g id=\"layer2\" fill=\"gray\">\n"
+						+ "    <circle id=\"path1421\" cx=\"102\" cy=\"-70\" r=\"42\" transform=\"scale(1 -1)\"/>\n"
+						+ "    <ellipse id=\"path1423\" cx=\"101\" cy=\"201\" rx=\"71\" ry=\"95\"/>\n"
+						+ "  </g>\n"
+						+ "</svg>";
+				res.setContentType("image/svg+xml");
+				res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+				res.setHeader(HttpHeaders.ETAG, Utils.md5(anon));
+				IOUtils.copy(new ByteArrayInputStream(anon.getBytes()), res.getOutputStream());
+			}
+		}
 	}
 }

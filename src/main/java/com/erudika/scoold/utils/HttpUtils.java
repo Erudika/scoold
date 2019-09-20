@@ -18,10 +18,21 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.utils.Config;
+import java.io.IOException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 
 /**
  * Various utilities for HTTP stuff - cookies, AJAX, etc.
@@ -29,10 +40,28 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class HttpUtils {
 
+	private static CloseableHttpClient httpclient;
+
 	/**
 	 * Default private constructor.
 	 */
 	private HttpUtils() { }
+
+	static CloseableHttpClient getHttpClient() {
+		if (httpclient == null) {
+			int timeout = 30 * 1000;
+			httpclient = HttpClientBuilder.create().
+					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
+					setDefaultRequestConfig(RequestConfig.custom().
+							setConnectTimeout(timeout).
+							setConnectionRequestTimeout(timeout).
+							setCookieSpec(CookieSpecs.STANDARD).
+							setSocketTimeout(timeout).
+							build()).
+					build();
+		}
+		return httpclient;
+	}
 
 	/**
 	 * Checks if a request comes from JavaScript.
@@ -133,6 +162,32 @@ public final class HttpUtils {
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals(name)) {
 				return cookie.getValue();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Fetches an avatar at a given URL.
+	 * @param url image URL
+	 * @return the content of the image or null
+	 */
+	public static CloseableHttpResponse getAvatar(String url) {
+		if (!StringUtils.isBlank(url)) {
+			HttpGet get = new HttpGet(url);
+			get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
+			try {
+				CloseableHttpResponse resp = HttpUtils.getHttpClient().execute(get);
+				if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK && resp.getEntity() != null) {
+					String contentType = resp.getEntity().getContentType().getValue();
+					if (StringUtils.equalsAnyIgnoreCase(contentType, "image/gif", "image/jpeg", "image/png",
+							"image/webp", "image/bmp", "image/svg+xml")) {
+						return resp;
+					}
+				}
+			} catch (IOException ex) {
+				LoggerFactory.getLogger(HttpUtils.class).
+						debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
 			}
 		}
 		return null;

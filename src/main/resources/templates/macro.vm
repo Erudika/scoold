@@ -185,7 +185,7 @@
 				<img src="#profilepic($!showu)" width="50" class="profile-pic responsive-img">
 			</a>
 		#else
-			<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="50" class="responsive-img" alt="Profile picture">
+			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="Profile picture">
 		#end
 	</div>
 	<div class="col s8 m7 l9">
@@ -229,7 +229,7 @@
 			<img src="#profilepic($!showu)" width="32" class="profile-pic responsive-img">
 		</a>
 	#else
-		<img src="https://www.gravatar.com/avatar/?size=50&d=mm" width="32" class="responsive-img" alt="Profile picture">
+		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="Profile picture">
 	#end
 </div>
 #end
@@ -795,7 +795,7 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
-#macro(profilepic $user)#if($user && $user.picture.matches("^(http:|https:|data:).*"))$!{user.picture}#else https://www.gravatar.com/avatar/?size=350&d=mm #end#end
+#macro(profilepic $user)#if($user && $user.picture.matches("^(http:|https:|data:).*"))$peoplelink/avatar/$utils.urlEncode($!user.picture)#else $!imageslink/anon.svg #end#end
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
