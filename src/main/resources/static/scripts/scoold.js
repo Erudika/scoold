@@ -473,18 +473,6 @@ $(function () {
 		$("#edit-picture-link").hide();
 	});
 
-	function fixBrokenImages() {
-		$('img.profile-pic').on('error', function (e) {
-			this.src = 'https://www.gravatar.com/avatar/?size=350&d=mm';
-		});
-	}
-
-	fixBrokenImages();
-
-	$(document).on("event:page", function() {
-		fixBrokenImages();
-	});
-
 	$("a.make-mod-btn").on('click', function () {
 		var dis = $(this);
 		$.post(dis.attr("href"));
