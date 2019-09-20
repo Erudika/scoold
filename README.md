@@ -940,6 +940,28 @@ For the latter option set:
 para.mention_emails_controlled_by_admins = true
 ```
 
+## Security headers
+
+Scoold attaches several security headers to each response. These can be enabled or disabled with the following configuration
+properties:
+
+```
+# Strict-Transport-Security
+para.hsts_header_enabled = true
+
+# X-Frame-Options
+para.framing_header_enabled = true
+
+# X-XSS-Protection
+para.xss_header_enabled = true
+
+# X-Content-Type-Options
+para.contenttype_header_enabled = true
+
+# Referrer-Policy
+para.referrer_header_enabled = true
+```
+
 ## Customizing the UI
 
 There are a number of settings that let you customize the appearance of the website without changing the code.
