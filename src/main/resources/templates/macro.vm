@@ -505,7 +505,7 @@
 				<div class="ptl center-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion")
-						<small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small>
+					<div><small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small></div>
 					#end
 					#if ($showpost.lasteditby)
 					<a href="$revisionslink/$!showpost.id" title="Revision history">
@@ -848,19 +848,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #####################################
 #macro(sectoken $bare $formId)
-	#set($seccsrfkey = "${TOKEN_PREFIX}CSRF")
-	#if ($bare && $bare == true)
-		$!request.session.getAttribute($!seccsrfkey)
-	#else
-		<input type="hidden" name="_csrf" value="$!request.session.getAttribute($!seccsrfkey)">
-		#if($formId && !$formId.isEmpty())
-			#if(!$request.session.getAttribute("${TOKEN_PREFIX}$!formId"))
-				$request.session.setAttribute("${TOKEN_PREFIX}$!formId", $utils.timestamp())
-			#end
-			<input type="hidden" name="_time" value='$!request.session.getAttribute("${TOKEN_PREFIX}$!formId")'>
-			<input type="hidden" name="_timekey" value="${TOKEN_PREFIX}$!formId">
-		#end
-	#end
+## RESERVED FOR FUTURE USE
 #end
 ################# END MACROS ###################################################
 
