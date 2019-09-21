@@ -720,13 +720,20 @@ For example:
 ## Image uploads
 
 **PRO**
-Image uploads are handled by Imgur. In the future, more upload services could be supported such as S3. To initiate a new
-image upload, open up the Markdown editor and drag'n'drop the image you want to upload. A link will automatically appear
-when the upload is finished. For this feature to work correctly you have to specify your Imgur API client id:
-
+Images can be uploaded to the local file system or Imgur. If you set the Imgur client id, Imgur is automatically selected
+as the storage service. To use Imgur for file storage, specify your Imgur API client id:
 ```
 para.imgur_client_id = "x23e8t0askdj"
 ```
+
+Local file storage is used by default. To configure the directory on the server where files will be stored, set:
+```
+para.file_uploads_dir = "uploads"
+```
+
+In the future, more upload services could be supported such as S3. To initiate a new
+image upload, open up the Markdown editor and drag'n'drop the image you want to upload. A link will automatically appear
+when the upload is finished.
 
 ## Slack integration
 
