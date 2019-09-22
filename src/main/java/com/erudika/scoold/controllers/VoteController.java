@@ -22,6 +22,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Votable;
 import com.erudika.para.core.Vote;
+import com.erudika.para.utils.Config;
 import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
 import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;
@@ -46,6 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -64,11 +67,19 @@ public class VoteController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final String expiresAfter;
+	private final String lockedAfter;
+	private final Integer expiresAfterSec;
+	private final Integer lockedAfterSec;
 
 	@Inject
 	public VoteController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		expiresAfter = Config.getConfigParam("vote_expires_after_sec", null);
+		lockedAfter = Config.getConfigParam("vote_expires_after_sec", null);
+		expiresAfterSec = NumberUtils.toInt(expiresAfter, Config.VOTE_EXPIRES_AFTER_SEC);
+		lockedAfterSec = NumberUtils.toInt(lockedAfter, Config.VOTE_LOCKED_AFTER_SEC);
 	}
 
 	@ResponseBody
@@ -106,11 +117,11 @@ public class VoteController {
 			boolean downvoteExists = voteObjects.stream().anyMatch((v) -> v instanceof Vote && ((Vote) v).isDownvote());
 			boolean isVoteCorrection = (isUpvote && downvoteExists) || (!isUpvote && upvoteExists);
 
-			if (isUpvote && pc.voteUp(votable, authUser.getId())) {
+			if (isUpvote && voteUp(votable, authUser.getId())) {
 				votes++;
 				result = true;
 				update = updateReputationOnUpvote(votable, votes, authUser, author, isVoteCorrection);
-			} else if (!isUpvote && pc.voteDown(votable, authUser.getId())) {
+			} else if (!isUpvote && voteDown(votable, authUser.getId())) {
 				votes--;
 				result = true;
 				hideCommentAndReport(votable, votes, id, req);
@@ -192,5 +203,19 @@ public class VoteController {
 			rep.setAuthorName("System");
 			rep.create();
 		}
+	}
+
+	private boolean voteUp(ParaObject votable, String userid) {
+		if (StringUtils.isBlank(expiresAfter) && StringUtils.isBlank(lockedAfter)) {
+			return pc.voteUp(votable, userid);
+		}
+		return pc.voteUp(votable, userid, expiresAfterSec, lockedAfterSec);
+	}
+
+	private boolean voteDown(ParaObject votable, String userid) {
+		if (StringUtils.isBlank(expiresAfter) && StringUtils.isBlank(lockedAfter)) {
+			return pc.voteDown(votable, userid);
+		}
+		return pc.voteDown(votable, userid, expiresAfterSec, lockedAfterSec);
 	}
 }

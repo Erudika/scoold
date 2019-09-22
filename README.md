@@ -969,6 +969,16 @@ para.contenttype_header_enabled = true
 para.referrer_header_enabled = true
 ```
 
+## Voting
+
+By default, votes expire after a certain period, meaning the same user can vote again on the same post
+(after 30 days by default). Votes can also be amended within a certain number of seconds (30s by default).
+There are two configurable parameters which allow you to modify the length of those periods:
+```
+para.vote_locked_after_sec = 30
+para.vote_expires_after_sec = 2592000
+```
+
 ## Customizing the UI
 
 There are a number of settings that let you customize the appearance of the website without changing the code.
