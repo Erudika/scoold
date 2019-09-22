@@ -646,7 +646,7 @@ public final class ScooldUtils {
 			if (!StringUtils.contains(postviews, showPost.getId())) {
 				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 				showPost.setViewcount(views + 1); //increment count
-				HttpUtils.setStateParam("postviews", postviews + "," + showPost.getId(), req, res);
+				HttpUtils.setStateParam("postviews", postviews + "." + showPost.getId(), req, res);
 				pc.update(showPost);
 			}
 		}
