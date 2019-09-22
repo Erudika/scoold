@@ -249,9 +249,6 @@
 			</header>
 
 			<main class="container">
-				## DEBUG INFO ##
-				##foreach($s in $request.session.getAttributeNames())$s = $request.session.getAttribute($s)<br>#end
-
 				#infostrip()
 				#parse($path)
 			</main>
