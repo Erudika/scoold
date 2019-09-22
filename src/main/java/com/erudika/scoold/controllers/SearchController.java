@@ -22,6 +22,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.ScooldServer;
+import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -131,7 +132,7 @@ public class SearchController {
 				+ "  <Description>Search for questions and answers</Description>\n"
 				+ "  <InputEncoding>UTF-8</InputEncoding>\n"
 				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">http://scoold.com/favicon.ico</Image>\n"
-				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + ScooldServer.getServerURL()
+				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + ScooldServer.getServerURL() + CONTEXT_PATH
 				+ "/search?q={searchTerms}\"></Url>\n"
 				+ "</OpenSearchDescription>";
 		return ResponseEntity.ok().

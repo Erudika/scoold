@@ -167,7 +167,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 	 * @return the context path of this Scoold server
 	 */
 	public static String getServerContextPath() {
-		return System.getProperty("server.servlet.context-path", Config.getConfigParam("context_path", ""));
+		String context = Config.getConfigParam("context_path", "");
+		return StringUtils.isBlank(context) ? System.getProperty("server.servlet.context-path", "") : context;
 	}
 
 	private static void initConfig() {

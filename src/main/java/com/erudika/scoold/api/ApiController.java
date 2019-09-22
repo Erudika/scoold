@@ -22,6 +22,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.ScooldServer;
+import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -59,7 +60,8 @@ public class ApiController {
 	@GetMapping
 	public Map<String, Object> get(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> intro = new HashMap<>();
-		intro.put("message", Config.APP_NAME + " API, see docs at " + ScooldServer.getServerURL() + "/api.html");
+		intro.put("message", Config.APP_NAME + " API, see docs at " + ScooldServer.getServerURL()
+				+ CONTEXT_PATH + "/api.html");
 		boolean healthy;
 		try {
 			healthy = pc != null && pc.getTimestamp() > 0;

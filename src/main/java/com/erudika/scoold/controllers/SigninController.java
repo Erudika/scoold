@@ -224,9 +224,8 @@ public class SigninController {
 	}
 
 	@ResponseBody
-	@GetMapping("/scripts/globals.js")
+	@GetMapping(path = "/scripts/globals.js", produces = "text/javascript")
 	public ResponseEntity<String> globals(HttpServletRequest req, HttpServletResponse res) {
-		res.setContentType("text/javascript");
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
 		sb.append("ENDPOINT = \"").append(pc.getEndpoint()).append("\"; ");

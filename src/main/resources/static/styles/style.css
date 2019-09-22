@@ -203,6 +203,9 @@ kbd {
 	border: none;
 	box-shadow: none;
 }
+textarea.edit-post {
+	min-height: 396px;
+}
 #edit-picture-link {
 	position: absolute;
 	top: 1px;

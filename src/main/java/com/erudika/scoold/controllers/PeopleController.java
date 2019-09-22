@@ -116,10 +116,9 @@ public class PeopleController {
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
 	}
 
-	@GetMapping(path = {"/avatar/**", "/avatar"})
-	public void avatar(HttpServletRequest req, HttpServletResponse res, Model model) throws IOException {
-		String url = StringUtils.removeStart(StringUtils.removeStart(req.getRequestURI(), "/people/avatar"), "/");
-		try (CloseableHttpResponse img = HttpUtils.getAvatar(Utils.urlDecode(url))) {
+	@GetMapping("/avatar")
+	public void avatar(@RequestParam(required = false) String url, HttpServletResponse res, Model model) throws IOException {
+		try (CloseableHttpResponse img = HttpUtils.getAvatar(url)) {
 			if (img != null) {
 				for (Header header : img.getAllHeaders()) {
 					res.setHeader(header.getName(), header.getValue());
