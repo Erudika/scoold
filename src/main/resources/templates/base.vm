@@ -86,7 +86,7 @@
 									#else
 										<li class="divider"></li>
 									#end
-										#if($scooldUtils.canAccessSpace($authUser, ""))
+										#if($scooldUtils.canAccessSpace($authUser, "default"))
 											#if($!currentSpace.isEmpty() || $scooldUtils.isDefaultSpace($currentSpace))
 													#set($spaceSelectedClass = "navbtn-hover white-text")
 											#end
