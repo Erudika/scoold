@@ -23,7 +23,6 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.utils.HttpUtils;
@@ -40,12 +39,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
+import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 
@@ -275,11 +273,6 @@ public class SigninController {
 		return "redirect:" + getBackToUrl(req);
 	}
 
-	private String getBackToUrl(HttpServletRequest req) {
-		String backtoFromCookie = Utils.urlDecode(HttpUtils.getStateParam("returnto", req));
-		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
-	}
-
 	private boolean activateWithEmailToken(User u, String token) {
 		if (u != null && token != null) {
 			Sysprop s = pc.read(u.getIdentifier());
@@ -368,20 +361,5 @@ public class SigninController {
 			}
 		}
 		return false;
-	}
-
-	private void setAuthCookie(String jwt, HttpServletRequest req, HttpServletResponse res) {
-		int maxAge = Config.SESSION_TIMEOUT_SEC;
-		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
-				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(AUTH_COOKIE).append("=").append(jwt).append(";");
-		sb.append("Path=/;");
-		sb.append("Expires=").append(expires).append(";");
-		sb.append("Max-Age=").append(maxAge).append(";");
-		sb.append("HttpOnly;");
-		sb.append("SameSite=Lax");
-		res.addHeader(HttpHeaders.SET_COOKIE, sb.toString());
 	}
 }
