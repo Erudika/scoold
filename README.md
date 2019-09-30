@@ -52,6 +52,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Account suspensions/permabans
 - Wiki-style answers
 - Mentions with notifications
+- Custom authentication support
 
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
@@ -493,7 +494,7 @@ para.security.oauth.token_delegation_enabled = false
 
 **Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
-revocates a delegated access token, then that user would automatically be logged out from Scoold and denied access
+revokes a delegated access token, then that user would automatically be logged out from Scoold and denied access
 immediately.
 
 You can add two additional custom OAuth 2.0/OpenID connect providers called "second" and "third". Here's what the settings
@@ -547,6 +548,17 @@ para.security.ldap.provider = "Continue with LDAP"
 For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 For regular LDAP, only `{0}` is a valid placeholder and it gets replaced with the person's username.
+
+**PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside
+of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
+accessible LDAP server. To enable this feature, add this to your configuration:
+```
+para.security.ldap.is_local = true
+# required for passwordless authentication with Para
+para.app_secret_key = "change_to_long_random_string"
+```
+Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
+(min. 32 chars).
 
 Please, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap) to learn more about the settings above.
 
@@ -622,6 +634,55 @@ para.security.saml.domain = "paraio.com"
 
 # Sets the string on the login button
 para.security.saml.provider = "Continue with SAML"
+```
+
+Scoold Pro can authenticate users with an internal (local) SAML provider, even if your Para backend is hosted outside of
+your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require your SAML
+endpoints to be publicly accessible. To enable this feature, add this to your configuration:
+```
+para.security.saml.is_local = true
+# required for passwordless authentication with Para
+para.app_secret_key = "change_to_long_random_string"
+```
+Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
+(min. 32 chars).
+
+## Custom authentication (Single Sign-on)
+
+**PRO**
+Para supports custom authentication providers through its "passwordless" filter. This means that you can send any
+user info to Para and it will authenticate that user automatically without passwords. The only verification done here is
+on this secret key value which you provide in your Scoold Pro configuration file:
+```
+para.app_secret_key = "change_to_long_random_string"
+```
+This key is used to protect requests to the passwordless filter and it's different from the Para secret key for your app.
+Here's the basic authentication flow:
+
+1. A user wants to sign in to Scoold Pro and clicks a button
+2. The button redirects the user to a remote login page you or your company set up.
+3. The user enters their credentials and logs in.
+4. If the credentials are valid, you send back a special JSON Web Token (JWT) to Scoold with the user's basic information.
+5. Scoold verifies the token and the user is signed in to Scoold
+
+The JWT must contain the following claims:
+
+- `email` - user's email address
+- `name` - user's display name
+- `identifier` - some unique ID for that user
+- `appid` - the app id (optional)
+
+The JWT is signed with the value of `para.app_secret_key` and should have a short validity period (e.g. 10 min).
+Once you generate the JWT on your backend (step 4 above), redirect the successful login request back to Scoold:
+```
+GET https://scoold-host/signin/success?jwt=eyJhbGciOiJIUzI1NiI..&passwordless=true
+```
+
+The UI button initiating the authentication flow above can be customized like this:
+```
+para.security.custom.provider = "Continue with Acme Co."
+# location of your company's login page
+para.security.custom.login_url = ""
 ```
 
 ## Spaces (a.k.a. Teams)
