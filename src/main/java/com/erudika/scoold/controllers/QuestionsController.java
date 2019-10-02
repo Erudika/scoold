@@ -88,7 +88,7 @@ public class QuestionsController {
 			if (qf.equals("*")) {
 				questionslist = pc.findTagged(type, new String[]{tag}, itemcount);
 			} else {
-				questionslist = pc.findQuery(type, qf + " AND " + Config._TAGS + ":" + tag, itemcount);
+				questionslist = pc.findQuery(type, qf + " AND " + tag, itemcount);
 			}
 		}
 		utils.fetchProfiles(questionslist);
