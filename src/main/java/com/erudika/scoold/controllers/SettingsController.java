@@ -75,15 +75,7 @@ public class SettingsController {
 			@RequestParam(required = false) String newpostEmailsOn, HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
-			if (!StringUtils.isBlank(tags)) {
-				Set<String> ts = new LinkedHashSet<String>();
-				for (String tag : tags.split(",")) {
-					if (!StringUtils.isBlank(tag) && ts.size() <= MAX_FAV_TAGS) {
-						ts.add(tag);
-					}
-				}
-				authUser.setFavtags(new LinkedList<String>(ts));
-			}
+			setFavTags(authUser, tags);
 			if (!StringUtils.isBlank(latlng)) {
 				authUser.setLatlng(latlng);
 			}
@@ -126,5 +118,19 @@ public class SettingsController {
 			}
 		}
 		return false;
+	}
+
+	private void setFavTags(Profile authUser, String tags) {
+		if (!StringUtils.isBlank(tags)) {
+			Set<String> ts = new LinkedHashSet<String>();
+			for (String tag : tags.split(",")) {
+				if (!StringUtils.isBlank(tag) && ts.size() <= MAX_FAV_TAGS) {
+					ts.add(tag);
+				}
+			}
+			authUser.setFavtags(new LinkedList<String>(ts));
+		} else {
+			authUser.setFavtags(null);
+		}
 	}
 }
