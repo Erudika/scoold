@@ -796,6 +796,9 @@ In the future, more upload services could be supported such as S3. To initiate a
 image upload, open up the Markdown editor and drag'n'drop the image you want to upload. A link will automatically appear
 when the upload is finished.
 
+Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
+user's `/profile` page. For best results, use a square image here.
+
 ## Slack integration
 
 Scoold **PRO** integrates with Slack on a number of levels. First, Scoold users can sign in with Slack. They can also
