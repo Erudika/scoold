@@ -297,6 +297,8 @@
 							#foreach($space in $showFriend.spaces)
 								#set($spaceString = $scooldUtils.getSpaceName($space))
 								${spaceString}#if($foreach.count < $showFriend.spaces.size()),#end
+								#set($spaceId = $scooldUtils.getSpaceId($space))
+								<input type="hidden" name="user-space-ids" value="$!{spaceId}">
 							#end
 						</div>
 					#end
