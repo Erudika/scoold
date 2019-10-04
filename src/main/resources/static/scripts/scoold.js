@@ -21,6 +21,7 @@ $(function () {
 	var mapCanvas = $("div#map-canvas");
 	var locationbox = $("input.locationbox");
 	var rusuremsg = "Are you sure about that?"; // john cena :)
+	var hostURL = window.location.protocol + "//" + window.location.host;
 
 	// Materialize CSS init
 
@@ -530,9 +531,9 @@ $(function () {
 		var commentsbox = that.closest("div.postbox").find("div.comments");
 		var pageContentDiv = commentsbox.find(".page-content");
 		if (pageContentDiv.length) {
-			pageContentDiv.append(data);
+			pageContentDiv.append(replaceMentionsWithHtmlLinks(data));
 		} else {
-			commentsbox.append(data);
+			commentsbox.append(replaceMentionsWithHtmlLinks(data));
 		}
 		that.closest("div.newcommentform").addClass("hide");
 		textbox.val("");
@@ -619,12 +620,44 @@ $(function () {
 		}
 	});
 
+	function replaceMentionsWithMarkdownLinks(text) {
+		return text.replace(/@<(\d+)\|(.*?)>/igm, function (m, group1, group2) {
+			return "[" + (group2 || "NoName") + "](" + hostURL + "/profile/" + group1 + ")";
+		});
+	}
+
+	function replaceMentionsWithHtmlLinks(text) {
+		return text.replace(/@(&lt;|<)(\d+)\|(.*?)(&gt;|>)/igm, function (m, group1, group2, group3) {
+			return "<a href=\"" + hostURL + "/profile/" + group2 + "\">" + (group3 || "NoName") + "</a>";
+		});
+	}
+
+	function updateMentionsWithLinks() {
+		var postboxes = $(".postbox .postbody, .commentbox .comment-text");
+		postboxes.html(function (i, html) {
+			return replaceMentionsWithHtmlLinks(html);
+		});
+		$(".questionbox").html(function (i, html) {
+			// also fix truncated links in post body where elipsis function is used
+			return replaceMentionsWithHtmlLinks(html).replace(/@(&lt;|<)*?.*?\.\.\./igm, "");
+		});
+	}
+
+	updateMentionsWithLinks();
+
+	$(document).on("event:page", function() {
+		updateMentionsWithLinks();
+	});
+
 	function initPostEditor(elem) {
 		var mde = new EasyMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
 			showIcons: ["code", "table", "strikethrough"],
-			spellChecker: false
+			spellChecker: false,
+			previewRender: function (plainText) {
+				return this.parent.markdown(replaceMentionsWithMarkdownLinks(plainText));
+			}
 		});
 		if (RTL_ENABLED) {
 			mde.codemirror.options.direction = "rtl";
