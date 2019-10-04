@@ -80,7 +80,7 @@
 					</div>
 				</div>
 			</div>
-			#if($showUser.website && !$showUser.website.isEmpty())
+			#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled)
 				<div class="card-action card-website center-align truncate">
 					<a href="$!showUser.website" class="blue-text">$!showUser.website.substring($!showUser.website.indexOf("/") + 2)</a>
 				</div>
@@ -128,10 +128,10 @@
 			#end
 
 			<div class="viewbox ${hideview1}">
-				#if ($showUser.aboutme && !$showUser.aboutme.isEmpty())
+				#if ($showUser.aboutme && !$showUser.aboutme.isEmpty() && !$showUser.anonymityEnabled)
 					<h4 class="black-text pbs">$!{showUser.aboutme}</h4>
 				#end
-				#if ($showUser.location && !$showUser.location.isEmpty())
+				#if ($showUser.location && !$showUser.location.isEmpty() && !$showUser.anonymityEnabled)
 					<h4 class="pvs"><i class="fa fa-map-marker grey-text text-darken-1"></i>&nbsp;
 						<span class="black-text">$!{showUser.location}</span></h4>
 				#end

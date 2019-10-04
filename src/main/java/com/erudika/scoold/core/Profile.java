@@ -47,6 +47,7 @@ public class Profile extends Sysprop {
 	private static final long serialVersionUID = 1L;
 
 	@Stored private String originalName;
+	@Stored private String originalPicture;
 	@Stored private Long lastseen;
 	@Stored private String location;
 	@Stored private String latlng;
@@ -63,6 +64,7 @@ public class Profile extends Sysprop {
 	@Stored private Set<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
+	@Stored private Boolean anonymityEnabled;
 	@Stored private Integer yearlyVotes;
 	@Stored private Integer quarterlyVotes;
 	@Stored private Integer monthlyVotes;
@@ -209,6 +211,14 @@ public class Profile extends Sysprop {
 		this.commentEmailsEnabled = commentEmailsEnabled;
 	}
 
+	public Boolean getAnonymityEnabled() {
+		return anonymityEnabled;
+	}
+
+	public void setAnonymityEnabled(Boolean anonymityEnabled) {
+		this.anonymityEnabled = anonymityEnabled;
+	}
+
 	public String getGroups() {
 		return groups;
 	}
@@ -345,6 +355,14 @@ public class Profile extends Sysprop {
 
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
+	}
+
+	public String getOriginalPicture() {
+		return originalPicture;
+	}
+
+	public void setOriginalPicture(String originalPicture) {
+		this.originalPicture = originalPicture;
 	}
 
 	@SuppressWarnings("unchecked")
