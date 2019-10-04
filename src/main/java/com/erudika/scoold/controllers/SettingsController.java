@@ -80,11 +80,7 @@ public class SettingsController {
 			if (!StringUtils.isBlank(latlng)) {
 				authUser.setLatlng(latlng);
 			}
-			if ("true".equalsIgnoreCase(req.getParameter("anon"))) {
-				anonymizeProfile(authUser);
-			} else if (authUser.getAnonymityEnabled()) {
-				deanonymizeProfile(authUser);
-			}
+			setAnonymity(authUser, req.getParameter("anon"));
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.update();
@@ -137,6 +133,14 @@ public class SettingsController {
 			authUser.setFavtags(new LinkedList<String>(ts));
 		} else {
 			authUser.setFavtags(null);
+		}
+	}
+
+	private void setAnonymity(Profile authUser, String anonParam) {
+		if ("true".equalsIgnoreCase(anonParam)) {
+			anonymizeProfile(authUser);
+		} else if (authUser.getAnonymityEnabled()) {
+			deanonymizeProfile(authUser);
 		}
 	}
 
