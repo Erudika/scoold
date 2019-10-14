@@ -673,6 +673,7 @@ The JWT must contain the following claims:
 - `appid` - the app id (optional)
 
 The JWT is signed with the value of `para.app_secret_key` and should have a short validity period (e.g. 10 min).
+The JWT should also contain the claims `iat` and `exp` and, optionally, `nbf`.
 Once you generate the JWT on your backend (step 4 above), redirect the successful login request back to Scoold:
 ```
 GET https://scoold-host/signin/success?jwt=eyJhbGciOiJIUzI1NiI..&passwordless=true
@@ -684,6 +685,8 @@ para.security.custom.provider = "Continue with Acme Co."
 # location of your company's login page
 para.security.custom.login_url = ""
 ```
+
+There's an [example login page](https://albogdano.github.io/scoold-login-page/) implementing this sort of authentication.
 
 ## Spaces (a.k.a. Teams)
 
