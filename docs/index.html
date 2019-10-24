@@ -458,34 +458,16 @@
 
 			<section id="instructions">
 				<div class="container pvl center-align">
-					<div class="white">
-						<h3><span class="phl">Getting started</span></h3>
+					<div class="white pvs">
+						<h3><span class="phl">Documentation</span></h3>
+						<h4><a href="https://github.com/Erudika/scoold/blob/master/README.md">README</a></h4>
 					</div>
-					<div class="white pvl">
-						<ul>
-							<li class="mvm"><span class="pam mediumText"><b>1.</b> Create a new app on <a href="https://paraio.com">ParaIO.com</a> and save the access keys <sup>1</sup></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>2.</b> Create <tt>application.conf</tt> and configure Scoold to connect to Para <sup>2</sup></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>3.</b> Run Scoold with <tt>java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar</tt></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>4.</b> Open <tt>http://localhost:8000</tt></span></li>
-						</ul>
-						<p class="pam">
-							<sup>1</sup> Alternatively, you can <a href="https://paraio.org/docs/#001-intro">start a local instance of Para</a> <br>
-							<sup>2</sup> When deploying to Heroku, config variables are set through the web interface and must not contain dots ".", e.g.
-							<tt>para.endpoint</tt> becomes <tt>para_endpoint</tt>. For other deployments
-							<a href="https://github.com/Erudika/scoold/blob/master/README.md#configuration">see the config file example.</a> <br>
-							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md">README.md</a></tt> for more information.</b>
-						</p>
-					</div>
-					<div class="white">
+					<div class="white pvs">
 						<h3><span class="phl">Docker</span></h3>
-					</div>
-					<div class="white pvl">
 						<code>$ docker run erudikaltd/scoold:1.35.2</code>
 					</div>
-					<div class="white">
+					<div class="white pvs">
 						<h3><span class="phl">One-click deployment</span></h3>
-					</div>
-					<div class="white pvl">
 						<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
 							<img src="https://www.herokucdn.com/deploy/button.svg" alt="deploy to heroku button" style="max-width:100%;">
 						</a> &nbsp;
@@ -496,36 +478,11 @@
 							<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="deploy to azure button">
 						</a> &nbsp;
 					</div>
-					<div class="white">
-						<h3><span class="phl">Customizing the UI</span></h3>
-					</div>
-					<div class="white pvl">
 
-						<p class="mediumText">There are a number of configuration settings that let you customize the appearance of the website without changing the code.</p>
-						<pre><code>
-	para.fixed_nav = false
-	para.show_branding = true
-	para.logo_url = "/logo.svg"
-	para.logo_width = 90
-	para.stylesheet_url = "/style.css"
-						</code></pre>
-
-						<p class="mediumText">For full customization, clone the GitHub repository and edit the files you need (Maven and Java required):</p>
-						<p class="mediumText"><b>1.</b> First, clone the project with <code>git clone https://github.com/Erudika/scoold.git</code></p>
-						<ul>
-							<li class="mvm"><span class="pam mediumText"><b>HTML</b> templates are in <tt>src/main/resources/templates/</tt></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>CSS</b> stylesheets can be found in <tt>src/main/resources/static/styles/</tt></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>JavaScript</b> files can be found in <tt>src/main/resources/static/scripts/</tt></span></li>
-							<li class="mvm"><span class="pam mediumText"><b>Images</b> are in located in <tt>src/main/resources/static/images/</tt></span></li>
-						</ul>
-						<p class="mediumText pvm"><b>2.</b> To see you changes, run Scoold locally with <code>mvn spring-boot:run</code></p>
-						<p class="mediumText"><b>3.</b> When you are done, run <code>mvn clean install</code> and your new JAR file will be in <code>target/scoold.jar</code></p>
-					</div>
-
-					<div class="white pvl">
+					<div class="white ptl">
 						<div class="row">
 							<div class="medium-12 columns text-center mvl">
-								<h2>FAQ</h2>
+								<h3>FAQ</h3>
 							</div>
 						</div>
 						<div class="row">
