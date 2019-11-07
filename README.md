@@ -427,7 +427,8 @@ For **Gmail** you have to turn on "Less secure app access" in your Google accoun
 
 ## Email verification
 
-You can enable or disable the email verification step by setting `para.security.allow_unverified_emails = true`.
+You can enable or disable the email verification step by setting `para.security.allow_unverified_emails = true`
+(in Scoold's `application.conf`). By default, email verification is turned off when Scoold is running in development mode.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
 
