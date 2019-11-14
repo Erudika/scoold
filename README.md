@@ -533,14 +533,17 @@ LDAP authentication is initiated with a request like this `POST /signin?provider
 There are several configuration options which Para needs in order to connect to your LDAP server. These are the defaults:
 
 ```ini
+# minimal setup
 para.security.ldap.server_url = "ldap://localhost:8389/"
 para.security.ldap.base_dn = "dc=springframework,dc=org"
+para.security.ldap.user_dn_pattern = "uid={0}"
+# add this ONLY if you are connecting to Active Directory
+para.security.ldap.active_directory_domain = ""
+
+# extra options
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
-para.security.ldap.user_dn_pattern = "uid={0}"
 para.security.ldap.password_attribute = "userPassword"
-# set this only if you are connecting to Active Directory
-para.security.ldap.active_directory_domain = ""
 
 # Sets the string on the login button (PRO)
 para.security.ldap.provider = "Continue with LDAP"
@@ -1152,6 +1155,11 @@ $ mvn install
 To run a local instance of Scoold for development, use:
 ```sh
 $ mvn -Dconfig.file=./application.conf spring-boot:run
+```
+
+To generate a WAR package, run: 
+```sh
+$ mvn -Pwar package
 ```
 
 ## Support
