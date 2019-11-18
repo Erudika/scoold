@@ -27,3 +27,6 @@ data/
 old/
 
 *.log
+/bin/
+/.classpath
+/.project
