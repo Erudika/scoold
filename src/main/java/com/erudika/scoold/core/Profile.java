@@ -138,6 +138,7 @@ public class Profile extends Sysprop {
 		this.quarterlyVotes = 0;
 		this.monthlyVotes = 0;
 		this.weeklyVotes = 0;
+		this.anonymityEnabled = false;
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
 	}
