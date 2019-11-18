@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg8" width="756" height="756" version="1" viewBox="0 0 200 200">
+  <g id="layer1" transform="translate(0 -97)">
+    <rect id="rect1433" width="282" height="245" x="-34" y="79" fill="#ececec" rx="2"/>
+  </g>
+  <g id="layer2" fill="gray">
+    <circle id="path1421" cx="102" cy="-70" r="42" transform="scale(1 -1)"/>
+    <ellipse id="path1423" cx="101" cy="201" rx="71" ry="95"/>
+  </g>
+</svg>
