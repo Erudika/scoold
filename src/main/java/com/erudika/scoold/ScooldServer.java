@@ -182,6 +182,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 				Boolean.toString(Config.getConfigBoolean("mail.tls", true)));
 		System.setProperty("spring.mail.properties.mail.smtp.ssl.enable",
 				Boolean.toString(Config.getConfigBoolean("mail.ssl", false)));
+		System.setProperty("spring.mail.properties.mail.debug",
+				Boolean.toString(Config.getConfigBoolean("mail.debug", false)));
 	}
 
 	private Map<String, Object> oauthSettings(String alias) {

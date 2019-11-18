@@ -419,6 +419,9 @@ para.mail.username = "user@example.com"
 para.mail.password = "password"
 para.mail.tls = true
 para.mail.ssl = false
+
+# enable SMTP debug logging
+para.mail.debug = true
 ```
 The email template is located in `src/main/resources/emails/notify.html`.
 
@@ -1157,7 +1160,7 @@ To run a local instance of Scoold for development, use:
 $ mvn -Dconfig.file=./application.conf spring-boot:run
 ```
 
-To generate a WAR package, run: 
+To generate a WAR package, run:
 ```sh
 $ mvn -Pwar package
 ```
