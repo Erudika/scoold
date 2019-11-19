@@ -558,6 +558,7 @@ para.security.ldap.active_directory_domain = ""
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
 para.security.ldap.password_attribute = "userPassword"
+para.security.ldap.username_as_name = false
 
 # Sets the string on the login button (PRO)
 para.security.ldap.provider = "Continue with LDAP"
