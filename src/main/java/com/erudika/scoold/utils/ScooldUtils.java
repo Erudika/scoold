@@ -238,6 +238,7 @@ public final class ScooldUtils {
 		Profile authUser = pc.read(Profile.id(u.getId()));
 		if (authUser == null) {
 			authUser = new Profile(u.getId(), u.getName());
+			authUser.setUser(u);
 			authUser.setOriginalName(u.getName());
 			authUser.setPicture(u.getPicture());
 			authUser.setAppid(u.getAppid());
