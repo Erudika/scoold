@@ -468,6 +468,17 @@ para.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
+**Important:** You must to whitelist the [Para endpoints](https://paraio.org/docs/#031-github) in the admin consoles of
+each authentication provider. For example, for GitHub you need to whitelist `https://parahost.com/github_auth` as a
+callback URL (redirect URL). Same thing applies for the other providers, **except Facebook and Google**.
+For these two providers you need to whitelist these two URLs, containing the public address of Scoold:
+```
+https://myscoold.com
+https://myscoold.com/signin
+```
+
+**If you skip this step, authentication will most likely not work.**
+
 ## OAuth 2.0 login
 
 You can authenticate users against any OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
