@@ -476,6 +476,8 @@ For these two providers you need to whitelist these two URLs, containing the pub
 https://myscoold.com
 https://myscoold.com/signin
 ```
+For locally hosted authentication providers (SAML, LDAP, Mattermost, etc.) the authentication endpoints will also be
+pointing to the URL of your Scoold server.
 
 **If you skip this step, authentication will most likely not work.**
 
