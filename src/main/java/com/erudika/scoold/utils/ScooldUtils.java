@@ -187,7 +187,9 @@ public final class ScooldUtils {
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
-				if (promoteOrDemoteUser(authUser, u) || updateProfilePictureAndName(authUser, u)) {
+				boolean updatedRank = promoteOrDemoteUser(authUser, u);
+				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
+				if (updatedRank || updatedProfile) {
 					authUser.update();
 				}
 			} else {
