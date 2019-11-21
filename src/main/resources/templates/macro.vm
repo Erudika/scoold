@@ -764,9 +764,9 @@ $utils.formatDate($date, $format, $currentLocale)
 			#end
 			#end
 		</select>
-		<div class="input-field">
+		<div class="input-field mtl">
 			<label>$!lang.get("reports.description")</label>
-			<textarea name="description" class="materialize-textarea"></textarea>
+			<textarea name="description" class="materialize-textarea" rows="4"></textarea>
 		</div>
 		<input type="hidden" name="parentid" value="$!parentid">
 		#if ($link && !$link.isEmpty())
@@ -797,7 +797,7 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
-#macro(profilepic $user)#if($user && $user.picture.matches("^(http:|https:|data:).*"))$peoplelink/avatar?url=$utils.urlEncode($!user.picture)#else $!imageslink/anon.svg #end#end
+#macro(profilepic $user)#if($user && $user.picture.matches("^(http:|https:).*"))$peoplelink/avatar?url=$utils.urlEncode($!user.picture)#elseif($user.picture.matches("^(data:).*"))$user.picture #else $!imageslink/anon.svg #end#end
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
