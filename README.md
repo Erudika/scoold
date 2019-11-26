@@ -171,6 +171,8 @@ para.wiki_answers_enabled = true
 # Comment limits
 para.max_comments_per_id = 1000
 para.max_comment_length = 255
+# Post body limit (characters)
+para.max_post_length = 20000
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will

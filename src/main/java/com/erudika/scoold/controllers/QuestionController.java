@@ -177,7 +177,7 @@ public class QuestionController {
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
-			if (!error.containsKey("body")) {
+			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());

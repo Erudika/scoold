@@ -577,7 +577,7 @@
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
-					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="6"
+					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="2"
 								 value="$!showpost.title" required>
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>

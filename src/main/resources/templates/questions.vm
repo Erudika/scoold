@@ -11,7 +11,7 @@
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
-					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="6" required>
+					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="2" required>
 					<div class="similar-posts pll mll mbs">
 						<div class="similar-posts-title smallText grey-text mbs">$!lang.get('posts.similar')</div>
 					</div>

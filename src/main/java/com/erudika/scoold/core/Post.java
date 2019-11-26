@@ -23,6 +23,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -53,9 +54,9 @@ public abstract class Post extends Sysprop {
 	public static final String DEFAULT_SPACE = "scooldspace:default";
 	public static final String ALL_MY_SPACES = "scooldspace:*";
 
-	@Stored @NotBlank @Size(min = 2, max = 20000)
+	@Stored
 	private String body;
-	@Stored @NotBlank @Size(min = 6, max = 255)
+	@Stored @NotBlank @Size(min = 2, max = 255)
 	private String title;
 	@Stored @NotEmpty @Size(min = 1, max = 5)
 	private List<String> tags;
@@ -238,6 +239,7 @@ public abstract class Post extends Sysprop {
 
 	public String create() {
 		createTags();
+		this.body = Utils.abbreviate(this.body, Config.getConfigInt("max_post_length", 20000));
 		Post p = client().create(this);
 		if (p != null) {
 			if (canHaveRevisions()) {
