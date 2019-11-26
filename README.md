@@ -440,6 +440,16 @@ You can enable or disable the email verification step by setting `para.security.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
 
+## Welcome email customization
+
+To customize the message sent when a new user signs up with Scoold, modify these properties in your Scoold configuration
+file:
+```ini
+para.emails.welcome_text1 = "You are now part of {0} - a friendly Q&A community..."
+para.emails.welcome_text2 = "To get started, simply navigate to the "Ask question" page and ask a question..."
+para.emails.welcome_text3 = "Best, <br>The {0} team<br><br>"
+```
+
 ## Social login
 
 For authenticating with Facebook or Google, you only need your Google client id

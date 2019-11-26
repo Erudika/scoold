@@ -293,9 +293,11 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
-			String body1 = Utils.formatMessage(lang.get("signin.welcome.body1"), Config.APP_NAME)  + "<br><br>";
-			String body2 = lang.get("signin.welcome.body2") + "<br><br>";
-			String body3 = "Best, <br>The Scoold team";
+			String body1 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text1",
+					lang.get("signin.welcome.body1") + "<br><br>"), Config.APP_NAME);
+			String body2 = Config.getConfigParam("emails.welcome_text2", lang.get("signin.welcome.body2") + "<br><br>");
+			String body3 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
+					Config.APP_NAME);
 
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
 				Sysprop s = pc.read(user.getIdentifier());
@@ -304,8 +306,7 @@ public final class ScooldUtils {
 					s.addProperty(Config._EMAIL_TOKEN, token);
 					pc.update(s);
 					token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
-					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>";
-					body3 += "Best, <br>The Scoold team<br><br>";
+					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body3;
 				}
 			}
 
@@ -325,7 +326,7 @@ public final class ScooldUtils {
 			String subject = lang.get("iforgot.title");
 			String body1 = "Open the link below to change your password:<br><br>";
 			String body2 = Utils.formatMessage("<b><a href=\"{0}\">RESET PASSWORD</a></b><br><br>", url);
-			String body3 = "Best, <br>The Scoold team<br><br>";
+			String body3 = "Best, <br>The " + Config.APP_NAME + " team<br><br>";
 
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
