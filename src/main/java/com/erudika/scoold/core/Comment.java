@@ -21,10 +21,10 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.utils.Config;
+import com.erudika.para.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
 import java.util.Objects;
-import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -34,11 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 public class Comment extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_MAX_COMMENT_LENGTH = 255;
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
-	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", DEFAULT_MAX_COMMENT_LENGTH);
+	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", 255);
 
-	@Stored @Size(max = DEFAULT_MAX_COMMENT_LENGTH) private String comment;
+	@Stored private String comment;
 	@Stored private Boolean hidden;
 	@Stored private String authorName;
 
@@ -89,6 +88,7 @@ public class Comment extends Sysprop {
 		if (count > MAX_COMMENTS_PER_ID) {
 			return null;
 		}
+		this.comment = Utils.abbreviate(this.comment, MAX_COMMENT_LENGTH);
 		Comment c = client().create(this);
 		if (c != null) {
 			setId(c.getId());

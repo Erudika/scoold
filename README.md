@@ -168,6 +168,9 @@ para.name_edits_enabled = true
 para.webhooks_enabled = true
 # Enable/disable wiki style answers
 para.wiki_answers_enabled = true
+# Comment limits
+para.max_comments_per_id = 1000
+para.max_comment_length = 255
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
@@ -492,9 +495,9 @@ para.oa2_secret = ""
 para.security.oauth.authz_url = "https://your-idp.com/login"
 para.security.oauth.token_url = "https://your-idp.com/token"
 para.security.oauth.profile_url = "https://your-idp.com/userinfo"
+para.security.oauth.scope = "openid email profile"
 
 # extra options
-para.security.oauth.scope = "openid email profile"
 para.security.oauth.accept_header = ""
 para.security.oauth.domain = "paraio.com"
 para.security.oauth.parameters.id = "sub"
@@ -524,9 +527,9 @@ para.oa2second_secret = ""
 para.security.oauthsecond.authz_url = "https://your-idp.com/login"
 para.security.oauthsecond.token_url = "https://your-idp.com/token"
 para.security.oauthsecond.profile_url = "https://your-idp.com/userinfo"
+para.security.oauthsecond.scope = "openid email profile"
 
 # extra options (second provider)
-para.security.oauthsecond.scope = "openid email profile"
 para.security.oauthsecond.accept_header = ""
 para.security.oauthsecond.domain = "paraio.com"
 para.security.oauthsecond.parameters.id = "sub"

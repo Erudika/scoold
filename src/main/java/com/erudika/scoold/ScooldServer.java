@@ -78,7 +78,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 	public static final String SCRIPTSLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/scripts";
 	public static final String STYLESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/styles";
 
-	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
 	public static final int MAX_TEXT_LENGTH = Config.getConfigInt("max_text_length", 20000);
 	public static final int MAX_TAGS_PER_POST = Config.getConfigInt("max_tags_per_post", 5);
 	public static final int MAX_REPLIES_PER_POST = Config.getConfigInt("max_replies_per_post", 500);
