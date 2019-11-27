@@ -140,7 +140,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
 		app.setWebApplicationType(WebApplicationType.SERVLET);
 		app.run(args);
-		logger.debug("var app-name--------------->"+System.getenv("para.app_name"));
+		logger.debug("var app-name--------------->" + System.getenv("para.app_name"));
 	}
 
 	@Override
