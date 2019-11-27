@@ -160,7 +160,38 @@
 				<configuration>
 					<configVars>
 						<para.app_name>Sa9si.ma</para.app_name>
-						
+						<para.port>8000</para.port>
+						<para.auth_cookie>sa9sima-auth</para.auth_cookie>
+						<para.env>production</para.env>
+						<para.host_url>http://www.sa9si.ma</para.host_url>
+						<para.endpoint>https://paraio.com</para.endpoint>
+						<para.access_key>app:sa9si-test</para.access_key>
+						<para.secret_key>xfRm3AelkfSqV2cNRXYN0R45xUDmbq1CgIfg06EMfF1v+g/VMyQjNA>></para.secret_key>
+						<para.password_auth_enabled>true</para.password_auth_enabled>
+						<para.new_users_can_comment>true</para.new_users_can_comment>
+						<para.posts_need_approval>false</para.posts_need_approval>
+						<para.posts_rep_threshold>100</para.posts_rep_threshold>
+						<para.gmaps_api_key></para.gmaps_api_key>
+						<para.nearme_feature_enabled>false</para.nearme_feature_enabled>
+						<para.admins>admin@sa9si.ma</para.admins>
+						<para.google_analytics_id>UA-123456-7</para.google_analytics_id>
+						<para.code_highlighting_enabled>true</para.code_highlighting_enabled>
+						<para.fb_app_id>123456789</para.fb_app_id>
+						<para.google_client_id>123-abcd.apps.googleusercontent.com</para.google_client_id>
+						<para.is_default_space_public>true</para.is_default_space_public>
+						<para.avatar_edits_enabled>true</para.avatar_edits_enabled>
+						<para.name_edits_enabled>true</para.name_edits_enabled>
+						<para.webhooks_enabled>true</para.webhooks_enabled>
+						<para.wiki_answers_enabled>true</para.wiki_answers_enabled>
+						<para.support_email>support@sa9si.ma</para.support_email>
+						<para.mail.host>sa9si.ma</para.mail.host>
+						<para.mail.port>465</para.mail.port>
+						<para.mail.username>notify@sa9si.ma</para.mail.username>
+						<para.mail.password>V_WrAD00475f</para.mail.password>
+						<para.mail.tls>true</para.mail.tls>
+						<para.mail.ssl>true</para.mail.ssl>
+						<para.show_branding>false</para.show_branding>
+
 					</configVars>
 				</configuration>
 			</plugin>
