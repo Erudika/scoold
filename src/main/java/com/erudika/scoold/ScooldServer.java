@@ -142,6 +142,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		app.run(args);
 		logger.debug("var app-name--------------->" + System.getenv("para.app_name"));
 		logger.debug("var para.secret_key--------------->" + System.getenv("para.secret_key"));
+		logger.debug("var para.show_branding--------------->" + System.getenv("para.show_branding"));
 	}
 
 	@Override
