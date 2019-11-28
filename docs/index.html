@@ -42,7 +42,7 @@
 
 		<style media="screen" type="text/css">
 			a, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
-			h1, h2, h3, h4, h5, h6 {color: #444444; font-weight: 200;}
+			h1, h2, h3, h4, h5, h6 {color: #444444; font-weight: 300;}
 			.btn, .btn-large {background-color: #303030;}
 			.btn:focus, .btn-large:focus, .btn-floating:focus {background-color: transparent; opacity: 0.7;}
 			.btn:hover, .btn-large:hover,span.badge.new,.sidenav span.badge.new, .collapsible span.badge.new {background-color: #039be5;}
@@ -50,8 +50,8 @@
 			main {background-color: white;}
 			nav ul a {color: #303030;}
 
-			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 100;}
-			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 100;}
+			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 200;}
+			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 200;}
 			body { font-weight: 300; }
 			#header, #instructions {
 				min-height: 400px;
@@ -60,7 +60,7 @@
 			}
 			#features, #contact {background-color: white;}
 			#splash {
-				margin: 20px 0;
+				margin: 15px 0px 40px 0px;
 				box-shadow: 0px 11px 28px -19px;
 				border-radius: 10px;
 				padding-bottom: 15px;
@@ -134,6 +134,8 @@
 			.mvm{margin-top:10px;margin-bottom:10px}
 			.mvl{margin-top:20px;margin-bottom:20px}
 
+			th {font-weight: 400}
+
 			header {
 				margin-bottom: 20px;
 				font-weight: 400;
@@ -165,14 +167,14 @@
 							<ul class="right hide-on-med-and-down">
 								<li><a href="https://github.com/Erudika/scoold/releases/download/1.35.3/scoold-1.35.3.jar" title="Download">Download</a></li>
 								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
-								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="#faq" title="Frequently asked questions">FAQ</a></li>
 								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
 							</ul>
 							<ul class="sidenav" id="mobile-drawer">
 								<li>&nbsp;</li>
 								<li><a href="https://github.com/Erudika/scoold/releases/download/1.35.3/scoold-1.35.3.jar" title="Download">Download</a></li>
 								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
-								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
+								<li><a href="#faq" title="Frequently asked questions">FAQ</a></li>
 								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
 							</ul>
 						</div>
@@ -182,16 +184,20 @@
 
 			<section id="header">
 				<div class="container ptl">
+					<div class="row">
+						<div class="col s12">
+							<h2 class="center-align" style="line-height: 1.2em;">
+								The most efficient way to share knowledge within your team or organization
+							</h2>
+						</div>
+					</div>
 					<div class="row mbn">
 						<div class="col m12 l4 center-align">
 							<div class="row">
 								<div class="col m12">
-									<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
-										Scoold is an open source Q&A platform written in Java.
-									</h4>
 									<h5 class="white pam" style="line-height: 1.5em;">
-										It's lightweight &mdash; the backend is completely decoupled and handled by
-										<a href="https://paraio.com">Para</a>. It can be deployed on premise or to any cloud.
+										Scoold is open source and works great as a Q&A, forum, knowledge base or customer support platform.
+										Deployable on premises or to any cloud.
 									</h5>
 								</div>
 							</div>
@@ -229,224 +235,481 @@
 			</section>
 
 			<section id="features">
-				<div class="row container center-align pvs">
+				<div class="row container center-align ptl">
 					<h3>Features</h3>
 					<p>These are the standard features in the free version of Scoold. Everything here is included in Scoold Pro.</p>
-					<div class="col m4">
-						<h5>Full featured Q&A platform</h5>
-						<hr style="width: 50%">
-						<p>Scoold is inspired by StackOverflow and implements most of its features.
-							You can ask and answer questions, upvote and downvote posts, earn badges and reputation.
-							Each edit creates an new revision, making it easy to follow the history of edits.</p>
-					</div>
-					<div class="col m4">
-						<h5>Ready for cloud deployment</h5>
-						<hr style="width: 50%">
-						<p>Scoold is optimized for the cloud. You can simply click one of the 'Deploy to ...' buttons below and get
-							up-and-running in minutes. You can also deploy it to your private cloud infrastructure.</p>
-					</div>
-					<div class="col m4">
-						<h5>Full-text search</h5>
-						<hr style="width: 50%">
-						<p>Each post is indexed and analyzed by <a href="https://paraio.com">Para</a> and Elasticsearch &mdash;
-							a powerful search engine.	You can search for users, questions and answers from the search bar on top.</p>
+					<div class="switch">
+						<label>
+							<span class="mediumText"><b>List</b></span>
+							<input type="checkbox" onclick="var a = document.getElementById('features-table');
+								var b = document.getElementById('features-grid');
+								if (a.style.display ==='none') {
+									a.style.display = 'block';
+									b.style.display = 'none';
+								} else {
+									a.style.display = 'none';
+									b.style.display = 'block';
+								}">
+							<span class="lever"></span>
+							<span class="mediumText"><b>Compare</b></span>
+						</label>
 					</div>
 				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Geolocation filtering of posts</h5>
-						<hr style="width: 50%">
-						<p>Questions can be associated with a specific location and then filtered based on that location.
-						This feature enables geolocation queries an gives you the option to search for questions around you.</p>
-					</div>
-					<div class="col m4">
-						<h5>Reputation system with badges</h5>
-						<hr style="width: 50%">
-						<p>Like all StackExchange sites, Scoold implements a simple but effective reputation system with badges.
-						People are awarded reputation points for good questions and answers, as well as various
-						badges for their achievements on the site.</p>
-					</div>
-					<div class="col m4">
-						<h5>Classic, lightweight frontend</h5>
-						<hr style="width: 50%">
-						<p>We kept things simple on the frontend, that's why we chose to use jQuery, the trusted JavaScript library.
-						It takes care of AJAX requests and toggles elements on the screen, nothing more.</p>
-					</div>
+
+				<div class="row container center-align" id="features-table" style="display: none">
+					<table class="responsive-table centered highlight">
+						<thead>
+							<tr>
+								<th>Features</th>
+								<th>Scoold</th>
+								<th>Scoold Pro</th>
+								<th>Scoold Pro + Source</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Price per instance (host)</td>
+								<td><b>Free</b></td>
+								<td>€299</td>
+								<td>contact us</td>
+							</tr>
+							<tr>
+								<td>License</td>
+								<td><a href="https://github.com/Erudika/scoold/blob/master/LICENSE">Apache 2.0</a></td>
+								<td><a href="https://github.com/Erudika/scoold-pro/blob/master/LICENSE">EULA</a></td>
+								<td><a href="https://github.com/Erudika/scoold-pro/blob/master/LICENSE">EULA</a></td>
+							</tr>
+							<tr>
+								<td>Source code included</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Deployment options</td>
+								<td>on premise, cloud or VPS</td>
+								<td>on premise, cloud or VPS</td>
+								<td>on premise, cloud or VPS <sup>1</sup></td>
+							</tr>
+							<tr>
+								<td>Support</td>
+								<td><a class="extlink" href="https://gitter.im/Erudika/scoold">chat</a>,
+									<a class="extlink" href="https://github.com/Erudika/scoold/issues">GitHub</a>
+								</td>
+								<td><a class="extlink" href="https://gitter.im/Erudika/scoold">chat</a>,
+									<a href="mailto:support@erudika.com">email</a>,
+									<a class="extlink" href="https://github.com/Erudika/scoold-pro/issues">GitHub</a>,
+									<a class="extlink" href="https://erudika.com/#support">priority</a>
+								</td>
+								<td><a class="extlink" href="https://gitter.im/Erudika/scoold">chat</a>,
+									<a href="mailto:support@erudika.com">email</a>,
+									<a class="extlink" href="https://github.com/Erudika/scoold-pro/issues">GitHub</a>,
+									<a class="extlink" href="https://erudika.com/#support">priority</a>
+								</td>
+							</tr>
+							<tr>
+								<td>Full featured Q&A platform</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Full-text search</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Responsive, lightweight frontend</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>SEO optimized</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Reputation system with badges</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Social login</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>OAuth 2.0 authentication support</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>LDAP authentication support</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>SAML authentication support</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Custom authentication support</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Similar posts suggestions</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Geolocation filtering of posts</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Email notifications</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>i18n with RTL support</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Spaces (Teams)</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Syntax highlighting</td>
+								<td>basic</td>
+								<td>advanced</td>
+								<td>advanced</td>
+							</tr>
+							<tr>
+								<td>Webhooks</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Sticky / Favorite posts</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Anonymous posts</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Maximum number of spaces</td>
+								<td>10</td>
+								<td>unlimited</td>
+								<td>unlimited</td>
+							</tr>
+							<tr>
+								<td>Maximum number of admins</td>
+								<td>1</td>
+								<td>unlimited</td>
+								<td>unlimited</td>
+							</tr>
+							<tr>
+								<td>Whitelisted identity domains</td>
+								<td>1</td>
+								<td>unlimited</td>
+								<td>unlimited</td>
+							</tr>
+							<tr>
+								<td>Image uploads</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Security notifications</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Account suspension</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Slack / Mattermost integration</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Wiki-style answers</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Email digest</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Mentions &amp; notifications</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>MathJax</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+						</tbody>
+					</table>
+					<p><sup>1</sup> You can purchase this type of license for up to 5 instances of Scoold.
+						We also offer an unlimited license with source code for resellers and large organizations.</p>
 				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Hints &amp; similar posts sidebar</h5>
-						<hr style="width: 50%">
-						<p>When you ask a new question, Scoold will give you hints if a similar question already exist. Aditionally,
-						on each question page there's a sidebar with suggestions for the top 10 similar posts.</p>
+				<div id="features-grid">
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Full featured Q&A platform</h5>
+							<hr style="width: 50%">
+							<p>Scoold is inspired by StackOverflow and implements most of its features.
+								You can ask and answer questions, upvote and downvote posts, earn badges and reputation.
+								Each edit creates an new revision, making it easy to follow the history of edits.</p>
+						</div>
+						<div class="col m4">
+							<h5>Ready for cloud deployment</h5>
+							<hr style="width: 50%">
+							<p>Scoold is optimized for the cloud. You can simply click one of the 'Deploy to ...' buttons below and get
+								up-and-running in minutes. You can also deploy it to your private cloud infrastructure.</p>
+						</div>
+						<div class="col m4">
+							<h5>Full-text search</h5>
+							<hr style="width: 50%">
+							<p>Each post is indexed and analyzed by <a href="https://paraio.com">Para</a> and Elasticsearch &mdash;
+								a powerful search engine.	You can search for users, questions and answers from the search bar on top.</p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>LDAP authentication support</h5>
-						<hr style="width: 50%">
-						<p>Scoold is enterprise-friendly and supports LDAP. It's great for intranet deployments behind corporate
-							firewalls and Scoold users can be seemlessly authenticated by your company's LDAP server.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Geolocation filtering of posts</h5>
+							<hr style="width: 50%">
+							<p>Questions can be associated with a specific location and then filtered based on that location.
+							This feature enables geolocation queries an gives you the option to search for questions around you.</p>
+						</div>
+						<div class="col m4">
+							<h5>Reputation system with badges</h5>
+							<hr style="width: 50%">
+							<p>Like all StackExchange sites, Scoold implements a simple but effective reputation system with badges.
+							People are awarded reputation points for good questions and answers, as well as various
+							badges for their achievements on the site.</p>
+						</div>
+						<div class="col m4">
+							<h5>Classic, lightweight frontend</h5>
+							<hr style="width: 50%">
+							<p>We kept things simple on the frontend, that's why we chose to use jQuery, the trusted JavaScript library.
+							It takes care of AJAX requests and toggles elements on the screen, nothing more.</p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>Email notifications</h5>
-						<hr style="width: 50%">
-						<p>You can subscribe to each question thread by clicking the checkbox at the bottom. Scoold will send you
-						emails whenever a new answer is published. Also you can subscribe to replies to your own answers from the
-						settings page.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Similar posts suggestions</h5>
+							<hr style="width: 50%">
+							<p>When you ask a new question, Scoold will give you hints if a similar question already exist. Aditionally,
+							on each question page there's a sidebar with suggestions for the top 10 similar posts.</p>
+						</div>
+						<div class="col m4">
+							<h5>LDAP authentication support</h5>
+							<hr style="width: 50%">
+							<p>Scoold is enterprise-friendly and supports LDAP. It's great for intranet deployments behind corporate
+								firewalls and Scoold users can be seemlessly authenticated by your company's LDAP server.</p>
+						</div>
+						<div class="col m4">
+							<h5>Email notifications</h5>
+							<hr style="width: 50%">
+							<p>You can subscribe to each question thread by clicking the checkbox at the bottom. Scoold will send you
+							emails whenever a new answer is published. Also you can subscribe to replies to your own answers from the
+							settings page.</p>
+						</div>
 					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Modern and responsive layout</h5>
-						<hr style="width: 50%">
-						<p>The frontend code is powered by Materialize CSS &mdash; a framework based on Google's Material Design Lite.
-						It's responsive and beautiful. Icons are from FontAwesome.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Modern and responsive layout</h5>
+							<hr style="width: 50%">
+							<p>The frontend code is powered by Materialize CSS &mdash; a framework based on Google's Material Design Lite.
+							It's responsive and beautiful. Icons are from FontAwesome.</p>
+						</div>
+						<div class="col m4">
+							<h5>Social login</h5>
+							<hr style="width: 50%">
+							<p>People can log in quickly without any registration forms or passwords. Facebook, Google,
+								GitHub, LinkedIn, Microsoft and Twitter are supported as identity providers. Email-and-password logins
+								are still supported and profile pictures are fetched from Gravatar.</p>
+						</div>
+						<div class="col m4">
+							<h5>SEO-friendly</h5>
+							<hr style="width: 50%">
+							<p>Pages are rendered on the server, just like in the good old days, making them easily crawlable by search
+							engines. Page URLs are pretty tidy, too. </p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>Social login</h5>
-						<hr style="width: 50%">
-						<p>People can log in quickly without any registration forms or passwords. Facebook, Google,
-							GitHub, LinkedIn, Microsoft and Twitter are supported as identity providers. Email-and-password logins
-							are still supported and profile pictures are fetched from Gravatar.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>I18n with RTL support</h5>
+							<hr style="width: 50%">
+							<p>The whole website is easily translatable into other languages. Right-to-left languages are also supported
+								and the layout is mirrored if an RTL language is detected.</p>
+						</div>
+						<div class="col m4">
+							<h5>Spaces (Teams)</h5>
+							<hr style="width: 50%">
+							<p>Spaces are a way to organize users and questions into isolated groups. You can edit users' spaces in bulk
+								and also move a question to a different space. Permission to access a space is given by an administrator.</p>
+						</div>
+						<div class="col m4">
+							<h5>Syntax highlighting</h5>
+							<hr style="width: 50%">
+							<p>All code snippets in posts are syntax highlighted. GitHub flavoured Markdown is supported, along with
+								tables, task lists and strikethrough. Oh, and you can use emojis too!</p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>SEO-friendly</h5>
-						<hr style="width: 50%">
-						<p>Pages are rendered on the server, just like in the good old days, making them easily crawlable by search
-						engines. Page URLs are pretty tidy, too. </p>
+					<div class="row container center-align pvs">
+						<div class="col m4 offset-m4">
+							<h5>Webhooks</h5>
+							<hr style="width: 50%">
+							<p>Administrators can create webhooks to external services for all mutating events in Para
+								(create, update, delete). The payloads are signed with HMAC-SHA256.</p>
+						</div>
 					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>I18n with RTL support</h5>
-						<hr style="width: 50%">
-						<p>The whole website is easily translatable into other languages. Right-to-left languages are also supported
-							and the layout is mirrored if an RTL language is detected.</p>
+					<!--PRO Features-->
+					<div class="row container center-align pvs">
+						<h3>Pro Features</h3>
+						<p>These features are only available in Scoold Pro.</p>
+						<div class="col m4">
+							<h5>Sticky / Favorite posts <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Questions marked as "sticky" will always appear on top, before all the others. You can also mark your
+								favorite questions with <span class="red-text">&hearts;</span> and they'll be saved to your profile.</p>
+						</div>
+						<div class="col m4">
+							<h5>SAML support <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Enterprise users can login with SAML (Single Sign-On). This makes it super easy for organizations to
+								integrate Scoold into their existing infrastructure.</p>
+						</div>
+						<div class="col m4">
+							<h5>Anonymous posts <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>This can either be enabled or disabled. When enabled, anybody will be able to ask a question or submit
+								an answer. This lowers the barrier for new users and increases engagement.</p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>Spaces (Teams)</h5>
-						<hr style="width: 50%">
-						<p>Spaces are a way to organize users and questions into isolated groups. You can edit users' spaces in bulk
-							and also move a question to a different space. Permission to access a space is given by an administrator.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Unlimited spaces <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Spaces are normally limited to 10, but in PRO this limit goes away. You can assign a space to each
+								team or department in your organization.</p>
+						</div>
+						<div class="col m4">
+							<h5>Multiple admins <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>You are no longer limited to a single admin user. Administrators can also promote anyone to
+								become an admin or a moderator.</p>
+						</div>
+						<div class="col m4">
+							<h5>Multiple identity domains <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>You can specify all your company domains in the configuration and restrict new registrations to
+								users with emails only from those whitelisted domains.</p>
+						</div>
 					</div>
-					<div class="col m4">
-						<h5>Syntax highlighting</h5>
-						<hr style="width: 50%">
-						<p>All code snippets in posts are syntax highlighted. GitHub flavoured Markdown is supported, along with
-							tables, task lists and strikethrough. Oh, and you can use emojis too!</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Advanced highlighting <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>The syntax hightlighting of code snippets is enhanced and supports additional languages
+								like LaTeX, Velocity, WebAssembly, JSX/TSX and PL/SQL. MathJax integration is also available. </p>
+						</div>
+						<div class="col m4">
+							<h5>Image uploads <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>People can upload screenshots and embed them in their posts. For now, files can be uploaded locally or
+								to Imgur. S3 support will be added in the near future.</p>
+						</div>
+						<div class="col m4">
+							<h5>Security notifications <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Administrators and moderators will receive an email when a new report comes in. Admin users can also
+								receive an email report each time the Content Security Policy (CSP) gets violated.</p>
+						</div>
 					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4 offset-m4">
-						<h5>Webhooks</h5>
-						<hr style="width: 50%">
-						<p>Administrators can create webhooks to external services for all mutating events in Para
-							(create, update, delete). The payloads are signed with HMAC-SHA256.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Account suspension <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Administrators and moderators can suspend user accounts for a period of time or ban misbehaving users
+								permanently.</p>
+						</div>
+						<div class="col m4">
+							<h5><a href="slack.html">Slack integration</a> <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Create questions and answers from Slack, get real-time in-channel notification of new posts and mentions,
+								approve posts and perform searches. Scoold can map your Slack teams and channels to spaces. Login with
+								Slack is also supported.</p>
+						</div>
+						<div class="col m4">
+							<h5>Wiki-style answers <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Make your answers editable by everyone by checking the "wiki" checkbox. This is useful if you want to
+							allow everyone to contribute to the knowledge around a question, regardless of their reputation points.</p>
+						</div>
 					</div>
-				</div>
-				<!--PRO Features-->
-				<div class="row container center-align pvs">
-					<h3>Pro Features</h3>
-					<p>These features are only available in Scoold Pro.</p>
-					<div class="col m4">
-						<h5>Sticky / Favorite posts <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Questions marked as "sticky" will always appear on top, before all the others. You can also mark your
-							favorite questions with <span class="red-text">&hearts;</span> and they'll be saved to your profile.</p>
-					</div>
-					<div class="col m4">
-						<h5>SAML support <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Enterprise users can login with SAML (Single Sign-On). This makes it super easy for organizations to
-							integrate Scoold into their existing infrastructure.</p>
-					</div>
-					<div class="col m4">
-						<h5>Anonymous posts <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>This can either be enabled or disabled. When enabled, anybody will be able to ask a question or submit
-							an answer. This lowers the barrier for new users and increases engagement.</p>
-					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Unlimited spaces <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Spaces are normally limited to 10, but in PRO this limit goes away. You can assign a space to each
-							team or department in your organization.</p>
-					</div>
-					<div class="col m4">
-						<h5>Multiple admins <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>You are no longer limited to a single admin user. Administrators can also promote anyone to
-							become an admin or a moderator.</p>
-					</div>
-					<div class="col m4">
-						<h5>Multiple identity domains <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>You can specify all your company domains in the configuration and restrict new registrations to
-							users with emails only from those whitelisted domains.</p>
-					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Advanced highlighting <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>The syntax hightlighting of code snippets is enhanced and supports additional languages
-							like LaTeX, Velocity, WebAssembly, JSX/TSX and PL/SQL. MathJax integration is also available. </p>
-					</div>
-					<div class="col m4">
-						<h5>Image uploads <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>People can upload screenshots and embed them in their posts. For now, files can be uploaded locally or
-							to Imgur. S3 support will be added in the near future.</p>
-					</div>
-					<div class="col m4">
-						<h5>Security notifications <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Administrators and moderators will receive an email when a new report comes in. Admin users can also
-							receive an email report each time the Content Security Policy (CSP) gets violated.</p>
-					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Account suspension <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Administrators and moderators can suspend user accounts for a period of time or ban misbehaving users
-							permanently.</p>
-					</div>
-					<div class="col m4">
-						<h5><a href="slack.html">Slack integration</a> <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Create questions and answers from Slack, get real-time in-channel notification of new posts and mentions,
-							approve posts and perform searches. Scoold can map your Slack teams and channels to spaces. Login with
-							Slack is also supported.</p>
-					</div>
-					<div class="col m4">
-						<h5>Wiki-style answers <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Make your answers editable by everyone by checking the "wiki" checkbox. This is useful if you want to
-						allow everyone to contribute to the knowledge around a question, regardless of their reputation points.</p>
-					</div>
-				</div>
-				<div class="row container center-align pvs">
-					<div class="col m4">
-						<h5>Email digest <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Administrators can turn on an email digest for all users or have each user decide if they want to opt-in.
-						And email digest contains a summary of the top questions published recently on Scoold. This can increase
-						engagement and stimulate users to come back to the site.</p>
-					</div>
-					<div class="col m4">
-						<h5>Mentions <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Mention anyone in your posts with <code>@Name</code>. Administrators can turn on an mention notifications
-							for all users or have each user decide if they want to opt-in. Mentions make discussions better by
-							allowing you to engage the right people.</p>
-					</div>
-					<div class="col m4">
-						<h5>Custom authentication <span class="pro-label">Pro</span></h5>
-						<hr style="width: 50%">
-						<p>Redirect users to your company's login page for a custom single sign-on experience. Virtually any
-							exernal authentication provider can be made to work with Scoold in this way.</p>
+					<div class="row container center-align pvs">
+						<div class="col m4">
+							<h5>Email digest <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Administrators can turn on an email digest for all users or have each user decide if they want to opt-in.
+							And email digest contains a summary of the top questions published recently on Scoold. This can increase
+							engagement and stimulate users to come back to the site.</p>
+						</div>
+						<div class="col m4">
+							<h5>Mentions <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Mention anyone in your posts with <code>@Name</code>. Administrators can turn on an mention notifications
+								for all users or have each user decide if they want to opt-in. Mentions make discussions better by
+								allowing you to engage the right people.</p>
+						</div>
+						<div class="col m4">
+							<h5>Custom authentication <span class="pro-label">Pro</span></h5>
+							<hr style="width: 50%">
+							<p>Redirect users to your company's login page for a custom single sign-on experience. Virtually any
+								exernal authentication provider can be made to work with Scoold in this way.</p>
+						</div>
 					</div>
 				</div>
 
@@ -480,7 +743,7 @@
 					</div>
 
 					<div class="white ptl">
-						<div class="row">
+						<div id="faq" class="row">
 							<div class="medium-12 columns text-center mvl">
 								<h3>FAQ</h3>
 							</div>

@@ -4,13 +4,16 @@
 
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Scoold** is a Q&A platform written in Java. The project was created back in 2008, released in 2012 as social network for
-schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
+**Scoold** is a Q&A/knowledge base platform written in Java. The project was created back in 2008, released in 2012 as
+social network for schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
 Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~4000 LOC),
 the backend is handled by a separate service called [Para](https://github.com/Erudika/para). Scoold does not require a
 database, and the controller logic is really simple because all the heavy lifting is delegated to Para.
 This makes the code easy to read and can be learned quickly by junior developers.
+
+**Scoold Pro**, the paid version of Scoold, has premium features which make it the perfect knowledge sharing platform for
+your company or team.
 
 **This project is fully funded and supported by [Erudika](https://erudika.com) - an independent, bootstrapped company.**
 
@@ -38,7 +41,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 
 ### Pro Features
 
-- Slack integration
+- Slack / Mattermost integration
 - SAML support
 - Anonymous posts
 - Unlimited spaces
@@ -54,6 +57,8 @@ This makes the code easy to read and can be learned quickly by junior developers
 - Mentions with notifications
 - Custom authentication support
 
+...and more!
+
 ## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
 ## Live Demo
@@ -61,7 +66,7 @@ This makes the code easy to read and can be learned quickly by junior developers
 *The demo is deployed on a free dyno and it might take a minute to wake up.*
 ### [Live demo on Heroku](https://live.scoold.com)
 
-### Quick Start (option 1 - managed Para backend, easier)
+### Quick Start with a managed Para backend (easier)
 
 [JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project.
 
@@ -75,7 +80,7 @@ Save the obtained API keys in `application.conf`, as shown below.
 appropriate authentication endpoint. For example, for GitHub, the redirect URL could be: `https://paraio.com/github_auth`.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
-2. Click one of the quick deploy buttons:
+2. Click one of the quick deploy buttons **or** skip to step 3 for local deployment:
 
 <a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
 	<img src="https://www.herokucdn.com/deploy/button.svg" alt="btn">
@@ -87,17 +92,23 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 	<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="btn">
 </a>
 
-### Quick Start (option 2 - self-hosted Para backend, harder)
+3. Create a *dedicated* `application.conf` for Scoold and configure it to connect to the hosted Para service at `https://paraio.com`
+4. Start Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+5. Open `http://localhost:8000` in your browser
+
+### Quick Start with a self-hosted Para backend (harder)
 
 **Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and save the access keys in `application.conf` OR [run Para locally on port 8080](https://paraio.org/docs/#001-intro)
-2. Create a *separate* `application.conf` for Scoold and configure it to connect to Para on port 8080
-3. Start Scoold on port 8000: `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
-4. Open `http://localhost:8000` in your browser
+1. [run Para locally on port 8080](https://paraio.org/docs/#001-intro) and initialize it with `GET localhost:8080/v1/_setup`
+2. Save the access keys for the root Para app somewhere safe, you'll need them to configure Para CLI tool below
+3. Create a new directory for Scoold containing its own *dedicated* `application.conf` and configure it to connect to Para on port `8080`
+4. Start Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+5. Open `http://localhost:8000` in your browser
 
-If you run Para locally, use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
+Use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
 ```sh
+$ npm install -g para-cli
 # run setup and enter the keys for the root app and endpoint 'http://localhost:8080'
 $ para-cli setup
 $ para-cli ping
@@ -106,11 +117,10 @@ $ para-cli new-app "scoold" --name "Scoold"
 
 > **Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
-The settings shown below are all meant to be part of the Scoold config file.
+All settings shown below are meant to be kept in the Scoold config file.
+If you want to sign up with an email and password, SMTP settings must be configured before deploying Scoold to production.
 
-[Read the Para docs for more information.](https://paraio.org/docs)
-
-**SMTP settings must be configured correctly before you start using Scoold if you want to signup with an email and password.**
+[Read the Para docs](https://paraio.org/docs) for details on how to run and configure your Scoold backend.
 
 ## Configuration
 
