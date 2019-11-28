@@ -202,8 +202,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 	@Bean
 	public ParaClient paraClientBean() {
 		logger.info("Listening on port {}...", getServerPort());
-		String accessKey = Config.getConfigParam("access_key", "x");
-		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
+		String accessKey = System.getenv("para.access_key");
+		ParaClient pc = new ParaClient(accessKey, System.getenv("para.secret_key"));
 		pc.setEndpoint(Config.getConfigParam("endpoint", null));
 		pc.setChunkSize(Config.getConfigInt("batch_request_size", 0)); // unlimited batch size
 
