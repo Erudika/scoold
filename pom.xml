@@ -159,7 +159,7 @@
 				<version>2.0.13</version>
 				<configuration>
 					<configVars>
-						<para.app_name>Sa9si.ma</para.app_name>
+						<para.app_name>Sa9si.maaa</para.app_name>
 						<para.port>8000</para.port>
 						<para.auth_cookie>sa9sima-auth</para.auth_cookie>
 						<para.env>production</para.env>
