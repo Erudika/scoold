@@ -165,8 +165,8 @@
 						<para.env>production</para.env>
 						<para.host_url>http://www.sa9si.ma</para.host_url>
 						<para.endpoint>https://paraio.com</para.endpoint>
-						<para.access_key>app:sa9si-test</para.access_key>
-						<para.secret_key>xfRm3AelkfSqV2cNRXYN0R45xUDmbq1CgIfg06EMfF1v+g/VMyQjNA>></para.secret_key>
+						<para.access_key>app:sa9si-ma</para.access_key>
+						<para.secret_key>rk/X7+Dl4iqAfOVjkjldM0MK73s+XU6cP67AgNAYOAzCA+XVHkjXtA==</para.secret_key>
 						<para.password_auth_enabled>true</para.password_auth_enabled>
 						<para.new_users_can_comment>true</para.new_users_can_comment>
 						<para.posts_need_approval>false</para.posts_need_approval>
