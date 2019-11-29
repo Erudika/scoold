@@ -1,6 +1,6 @@
 ![Scoold Q&A](https://raw.githubusercontent.com/Erudika/scoold/master/assets/header.png)
 
-## Stack Overflow in a JAR
+## Scoold - Stack Overflow in a JAR
 
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
