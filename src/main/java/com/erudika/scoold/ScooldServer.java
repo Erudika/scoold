@@ -58,7 +58,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ScooldServer extends SpringBootServletInitializer {
 
 	static {
-		String appName = System.getProperty("para.app_name");
+		String appName = System.getenv("app_name");
 		if (StringUtils.isBlank(appName) || Config.PARA.equalsIgnoreCase(appName)) {
 			System.setProperty("para.app_name", "Scoold");
 		}
