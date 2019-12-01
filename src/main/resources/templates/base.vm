@@ -33,6 +33,7 @@
 		<link href="$!styleslink/materialize.min.css" rel="stylesheet">
 		<link href="$!styleslink/font-awesome.min.css" rel="stylesheet">
 		<link href="$!styleslink/easymde.min.css" rel="stylesheet">
+		<script data-ad-client="ca-pub-7017907110557711" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 		#if ($includeHighlightJS)
 		<link href="$!styleslink/highlighting.css" rel="stylesheet">
 		#end
