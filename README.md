@@ -221,7 +221,7 @@ First, create a new directory and copy `docker-compose.yml` to it from this repo
 
 An example `para.env` file:
 ```sh
-JAVA_OPTS=-Dconfig.file=/para/application.conf
+JAVA_OPTS="-Dconfig.file=/para/application.conf -Dloader.path=lib"
 ```
 Example for `scoold.env`:
 ```sh
