@@ -272,6 +272,9 @@ which is valid for **12 hours**.
 
 For connecting Kubernetes to AWS ECR, please refer to [this article](https://medium.com/@damitj07/how-to-configure-and-use-aws-ecr-with-kubernetes-rancher2-0-6144c626d42c).
 
+In case you don't want to use AWS CLI for logging into the Scoold Pro registry, install the
+[AWS ECR Docker Credentials Helper](https://github.com/awslabs/amazon-ecr-credential-helper).
+
 
 ## Deploying Scoold to Heroku
 
@@ -715,11 +718,12 @@ The JWT must contain the following claims:
 
 - `email` - user's email address
 - `name` - user's display name
-- `identifier` - some unique ID for that user
+- `identifier` - a unique user id in the format `custom:123`
 - `appid` - the app id (optional)
 
 The JWT is signed with the value of `para.app_secret_key` and should have a short validity period (e.g. 10 min).
-The JWT should also contain the claims `iat` and `exp` and, optionally, `nbf`.
+The JWT should also contain the claims `iat` and `exp` and, optionally, `nbf`. Supported signature algorithms for the JWT
+are `HS256`, `HS384` or `HS512`.
 Once you generate the JWT on your backend (step 4 above), redirect the successful login request back to Scoold:
 ```
 GET https://scoold-host/signin/success?jwt=eyJhbGciOiJIUzI1NiI..&passwordless=true
@@ -926,6 +930,34 @@ Here are the interactive message actions which are currently implemented:
 
 These allow you to perform actions from any channel and best of all, these can turn any chat message into a question or
 answer.
+
+## Mattermost integration
+
+Scoold **PRO** integrates with Mattermost on a number of levels. First, Scoold users can sign in with Mattermost. They
+can also use slash commands to search and post questions. Also Scoold can notify Mattermost users when they are mentioned
+on Scoold. Finally, Scoold allows you to map spaces to Mattermost teams or channels. By default, each Mattermost team is
+mapped to a single Scoold space when people sign in with Slack.
+
+**Important:** Most of the Mattermost operations require a **valid Mattermost ID stored in Scoold** which enables the
+mapping of Mattermost users to Scoold accounts and vice versa. Mattermost IDs are set automatically when a Scoold user
+signs in with Mattermost.
+
+The integration endpoint for Mattermost is `/mattermost` - this is where Scoold will accept and process requests from
+Mattermost. To enable the Mattermost integration you need to enable OAuth 2.0 apps and create one in Mattermost's System
+Console. Then set `para.mm_app_id` and `para.mm_secret`. Follow the [detailed instructions here](https://scoold.com/mattermost.html).
+
+Here are the configuration properties for Mattermost:
+```
+para.mattermost.server_url = "http://localhost:8065"
+para.mattermost.bot_username = "scoold"
+para.mattermost.bot_icon_url = "http://localhost:8000/images/logowhite.png"
+para.mattermost.map_workspaces_to_spaces = true
+para.mattermost.map_channels_to_spaces = false
+para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
+
+para.mattermost.notify_on_new_question = true
+para.mattermost.notify_on_new_answer = true
+```
 
 ## Self-hosting Para and Scoold through SSL
 
