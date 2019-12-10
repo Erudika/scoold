@@ -319,18 +319,31 @@ It's also helpful to install the Heroku CLI tool.
 5. Choose the 512MB instance or larger (1GB recommended)
 6. Wait for the instance to start and open the IP address in your browser at port `8000`
 
-**Elastic Container Service**
-
-1. Find [Scoold on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07M97M63H)
-2. Click "Subscribe" and "Continue to Configuration/Launch"
-3. Follow the usage instructions and pull the container image from the given ECR registry URL
-
 **Elatic Beanstalk**
 
 1. Clone this repo and change directory to it
 2. Generate a WAR package with `mvn -Pwar package`
 3. [Create a new Beanstalk web app](https://console.aws.amazon.com/elasticbeanstalk/home?region=eu-west-1#/newApplication?applicationName=Scoold&platform=Tomcat&tierName=WebServer&instanceType=t1.micro)
 4. Upload the WAR package `target/scoold-x.y.z.war` to Beanstalk, modify any additional options and hit "Create"
+
+**Authentication with Amazon Cognito**
+
+Scoold is fully compatible with Amazon Cognito because Cognito is just another OAuth 2.0 service provider. Here's how to
+configure Scoold to work with Amazon Cognito:
+
+1. Create a Cognito user pool (if you don't have one already)
+2. Create a Cognito App client with the OAuth 2.0 authorization code grant enabled:
+3. Create a Cognito login subdomain for your app client like this: `https://scoold.auth.eu-west-1.amazoncognito.com`
+4. Edit the Scoold configuration file `application.conf` and add a new OAuth 2.0 authentication provider:
+```ini
+para.oa2_app_id = "cognito_app_client_id"
+para.oa2_secret = "cognito_app_client_secret"
+para.security.oauth.authz_url = "https://scoold.auth.eu-west-1.amazoncognito.com/login"
+para.security.oauth.token_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/token"
+para.security.oauth.profile_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/userInfo"
+para.security.oauth.provider = "Continue with Cognito"
+```
+5. Restart Scoold and login with a user from your Cognito user pool
 
 ## Deploying Scoold to Azure
 
