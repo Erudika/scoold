@@ -946,10 +946,10 @@ answer.
 
 ## Mattermost integration
 
-Scoold **PRO** integrates with Mattermost on a number of levels. First, Scoold users can sign in with Mattermost. They
-can also use slash commands to search and post questions. Also Scoold can notify Mattermost users when they are mentioned
-on Scoold. Finally, Scoold allows you to map spaces to Mattermost teams or channels. By default, each Mattermost team is
-mapped to a single Scoold space when people sign in with Slack.
+Scoold **PRO** also integrates with Mattermost. Scoold users can sign in with Mattermost, use slash commands to interact
+with Scoold and also get in-chat notification for mentions and new posts on Scoold. Scoold allows you to map spaces to
+Mattermost teams or channels. By default, each Mattermost team is mapped to a single Scoold space when people sign in
+with Mattermost.
 
 **Important:** Most of the Mattermost operations require a **valid Mattermost ID stored in Scoold** which enables the
 mapping of Mattermost users to Scoold accounts and vice versa. Mattermost IDs are set automatically when a Scoold user
@@ -971,6 +971,13 @@ para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
 para.mattermost.notify_on_new_question = true
 para.mattermost.notify_on_new_answer = true
 ```
+
+**Note:** Mattermost does not support message actions like in Slack. This means that you can't create a question from
+a any chat message. The reply dialog box can be opened from a "Reply" button under each question notification message.
+The dialog box for new questions is opened via the new slash command `/scoold ask-dialog`.
+
+All the other slash commands and notifications work just like with Slack and are described above. The Mattermost
+integration will automatically create a slash command for each channel linked to Scoold on the admin page.
 
 ## Self-hosting Para and Scoold through SSL
 
