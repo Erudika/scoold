@@ -39,7 +39,7 @@ body {
 }
 .postbody ul li {list-style-type: disc;}
 .postbody ul {padding-left: 40px;}
-.postbox, .questionbox {word-wrap: break-word;}
+.postbox, .questionbox, .spacebox {word-wrap: break-word;}
 .unapproved-post { opacity: 0.7; border: 2px dashed #CCC; }
 .postbox img {max-width: 100%;}
 .postbox img {max-width: 100%;}
@@ -274,6 +274,10 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
 	margin-right: 0;
 	text-transform: lowercase;
+}
+.card .card-image img {
+	background-color: #ccc;
+	min-height: 250px;
 }
 .editlink {
 	display: inline-flex;
