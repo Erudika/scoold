@@ -1047,7 +1047,8 @@ public final class ScooldUtils {
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com unpkg.com "
-				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " + Config.getConfigParam("csp_style_sources", "") + "; "
+				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +
+					Config.getConfigParam("csp_style_sources", Config.getConfigParam("stylesheet_url", "")) + "; "
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "
