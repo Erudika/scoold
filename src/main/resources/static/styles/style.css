@@ -37,6 +37,12 @@ body {
 	font-size: 16px;
 	font-family: "Roboto", sans-serif;
 }
+.tags-aside .chip {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 256px;
+}
 .postbody ul li {list-style-type: disc;}
 .postbody ul {padding-left: 40px;}
 .postbox, .questionbox, .spacebox {word-wrap: break-word;}

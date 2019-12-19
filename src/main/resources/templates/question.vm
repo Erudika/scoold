@@ -118,7 +118,7 @@
 				#end
 				#if ($showPost.tags && !$showPost.tags.isEmpty())
 					<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
-					<div class="mtm">#tagsbox($showPost.tags $questionslink)</div>
+					<div class="mtm tags-aside">#tagsbox($showPost.tags $questionslink)</div>
 				#end
 			</div>
 
