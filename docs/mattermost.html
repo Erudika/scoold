@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Scoold | Slack Integration</title>
+		<title>Scoold | Mattermost Integration</title>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -191,7 +191,7 @@
 							<div class="row">
 								<div class="col m12">
 									<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
-										Scoold<span class="pro-label">Pro</span> + Slack
+										Scoold<span class="pro-label">Pro</span> + Mattermost
 									</h4>
 									<h5 class="white pam" style="line-height: 1.5em;">
 										Seamlessly integrated for a better knowledge-sharing workflow.
@@ -205,8 +205,8 @@
 
 						</div>
 						<div class="col m12 l7 offset-l1">
-							<img src="scoold_slack.png?v1" width="706" height="198" id="splash"
-									 class="responsive-img" alt="Scoold + Slack screenshot"/>
+							<img src="scoold_mm.png?v1" width="706" height="198" id="splash"
+									 class="responsive-img" alt="Scoold + Mattermost screenshot"/>
 						</div>
 					</div>
 				</div>
@@ -218,35 +218,36 @@
 					<div class="col m5">
 						<h3>Create questions and answers instantly</h3>
 						<div class="mediumText">
-							<p>Asking a question on Slack is as easy as writing <code>/scoold ask How do I...?</code></p>
+							<p>Asking a question on Mattermost is as easy as writing <code>/scoold ask How do I...?</code></p>
 							<p>To answer, simply type in <code>/scoold answer [question URL] Here's my answer...</code></p>
 							<p>You can also turn any chat message into a Scoold question or answer by using the special message actions.</p>
 						</div>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro1.png" alt="Slack intro 1" class="responsive-img slack-intro-img">
+						<img src="mm_intro1.png" alt="Mattermost intro 1" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Full editing capability</h3>
 
-						<p class="mediumText">You can compose questions and aswers by opening the "Edit & Ask" dialog. There you can write longer pieces of
+						<p class="mediumText">You can compose a new question by typing in the <code>/scoold ask</code>. Similarly,
+							to compose a new answer, type in <code>/scoold answer</code> Thus, you can write longer pieces of
 						text, choose the exact title and tags you want your question to have.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro2.png" alt="Slack intro 2" class="responsive-img slack-intro-img">
+						<img src="mm_intro2.png" alt="Mattermost intro 2" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Search for questions, people or tags</h3>
 
-						<p class="mediumText">You can perform advanced search queries from any Slack channel using the commands <br><code>/scoold search</code>,
-							<code>/scoold search-people</code> and <code>/scoold search-tags</code>.</p>
+						<p class="mediumText">You can perform advanced search queries from any Mattermost channel using the commands
+							<br><code>/scoold search</code>, <code>/scoold search-people</code> and <code>/scoold search-tags</code>.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro3.png" alt="Slack intro 3" class="responsive-img slack-intro-img">
+						<img src="mm_intro3.png" alt="Mattermost intro 3" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
@@ -256,10 +257,10 @@
 
 						<p class="mediumText">Your linked channels will be instantly notified whenever a new question or answer is created on Scoold.
 						Mentions of people in chat are sent to the channel even if the person is mentioned at a later revision of the post. To mention
-						someone from Slack, simply link to their Scoold profile in your post.</p>
+						someone from Mattermost, simply link to their Scoold profile in your post.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro4.png" alt="Slack intro 4" class="responsive-img slack-intro-img">
+						<img src="mm_intro4.png" alt="Mattermost intro 4" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
@@ -271,14 +272,14 @@
 						approval from mods, Scoold will notify the chat by presenting the option to "Approve" or "Delete" the newly created post.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro5.png" alt="Slack intro 5" class="responsive-img slack-intro-img">
+						<img src="mm_intro5.png" alt="Mattermost intro 5" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
 				<div class="container pvl center-align">
 					<a href="https://paraio.com/scoold-pro" class="btn-large light-blue"><b>Buy Scoold Pro</b></a>
 					<p><b>€299</b> per host, one-time fee, basic support included</p>
-					<p>The integration with Slack is a premium feature, only available in Scoold Pro.</p>
+					<p>The integration with Mattermost is a premium feature, only available in Scoold Pro.</p>
 				</div>
 			</section>
 
@@ -292,53 +293,39 @@
 							<li class="mvm mediumText">
 								<p class="plm">You'll need a copy of Scoold Pro before continuing.</p>
 								<span class="pam">
-									<b>1.</b> Create a new <a href="https://api.slack.com/apps?new_app=1">Slack app</a> and copy the App ID, Signing Secret, Client ID and
-									Client Secret to your <tt>application.conf</tt>:
+									<b>1.</b> From the System Console, enable OAuth 2.0 Service Provider. Then, create a new
+									<b>trusted</b> Mattermost
+									OAuth 2.0 application from the Integrations section and copy the
+									Client ID and Client Secret to your <tt>application.conf</tt>:
 								</span>
 
 									<code><pre>
-  para.sl_app_id = "{Client ID}"
-  para.sl_secret = "{Client Secret}"
-  para.slack.app_id = "{App ID}"
-  para.slack.signing_secret = "{Signing Secret}"
+  para.mm_app_id = "{Client ID}"
+  para.mm_secret = "{Client Secret}"
 									</pre></code>
 
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>2.</b> Add the <a href="https://static.scoold.com/logosq.png">Scoold logo</a> to your Slack app, write a short description and "Save changes".</span><br>
-								<img src="slack_step1.png" alt="Step 1" class="responsive-img">
+								<b>2.</b> From the System Console, enable Incoming Webhooks, integrations to override usernames,
+								integrations to override profile picture icons and click "Save changes".</span><br>
+								<img src="mm_step1.png" alt="Step 1" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>3.</b> Activate incoming webhooks for your Slack app and "Save changes"</span><br><br>
-								<img src="slack_step2.png" alt="Step 2" class="responsive-img">
+								<b>3.</b> Whitelist the following redirect (callback) URLs in your OAuth 2.0 application settings: </span><br><br>
+								<img src="mm_step2.png" alt="Step 2" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>4.</b> Activate interactive components for your Slack app by entering the URL of your server and the path <code>/slack</code> </span><br><br>
-								<img src="slack_step3.png" alt="Step 3" class="responsive-img">
+								<b>4.</b> Visit the "Administration" page in Scoold and click the "Add to Mattermost" button.
+								This will authorize Scoold to call the Mattermost API. Then add a notification webhook for each channel
+								that you wan to receive notifications from Scoold. Repeat this step for up to 10 channels.</span><br><br>
+								<img src="mm_step3.png" alt="Step 3" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>5.</b> Create the following message actions and "Save changes"</span><br><br>
-								<img src="slack_step4.png" alt="Step 4" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>6.</b> Create the <code>/scoold</code> slash command pointing the "Request URL" to your Scoold instance, e.g. <code>https://myscoold.com/slack</code>.
-								"Escape channels, users, and links sent to your app" <b>must be checked</b></span><br><br>
-								<img src="slack_step5.png" alt="Step 5" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>7.</b> Whitelist your Para and Scoold integration endpoints. The first one is for enabling Slack authentication, the second one is for enabling Slack notifications on particular Slack channels, via the "Add to Slack button". </span><br><br>
-								<img src="slack_step6.png" alt="Step 6" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>8.</b> Visit the "Administration" page in Scoold and click the "Add to Slack" button. This will link a channel on Slack to Scoold and allow it to send notifications there. Repeat this step for up to 10 channels.</span><br><br>
-								<img src="slack_step7.png" alt="Step 7" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>9.</b> You're all set! Restart Scoold and it should be fully integrated with your Slack workspace.</span>
+								<b>5.</b> You're all set! Restart Scoold and it should be fully integrated with your Mattermost workspace.</span>
 							</li>
 						</ul>
 						<p class="pam">
-							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#slack-integration">README</a></tt> for more information.</b>
+							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#mattermost-integration">README</a></tt> for more information.</b>
 						</p>
 					</div>
 
