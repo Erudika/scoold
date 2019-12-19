@@ -607,9 +607,17 @@ para.security.ldap.username_as_name = false
 para.security.ldap.provider = "Continue with LDAP"
 ```
 
-For Active Directory LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
+For **Active Directory** LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
 this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
 For regular LDAP, only `{0}` is a valid placeholder and it gets replaced with the person's username.
+
+Here's an example **Active Directory** configuration (note that any other settings than the ones below will be ignored):
+```ini
+para.security.ldap.server_url = "ldap://server:389"
+para.security.ldap.active_directory_domain = "domain.com"
+para.security.ldap.user_search_filter = "userPrincipalName={0}"
+para.security.ldap.base_dn = "ou=dev,dc=domain,dc=com"
+```
 
 **PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside
 of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
@@ -888,6 +896,7 @@ para.slack.post_to_space = "workspace|scooldspace:myspace|default"
 
 para.slack.notify_on_new_question = true
 para.slack.notify_on_new_answer = true
+para.slack.default_question_tags = "via-mattermost"
 ```
 
 Setting `para.slack.map_channels_to_spaces` will ask for additional permissions, namely `channels:read` and `groups:read`.
@@ -944,6 +953,9 @@ Here are the interactive message actions which are currently implemented:
 These allow you to perform actions from any channel and best of all, these can turn any chat message into a question or
 answer.
 
+If you get an error **"User not authorised to open dialogs"** it means that your Scoold user is not logged in via Slack
+and Scoold doesn't have a Slack access token on record. Simply log into Scoold with Slack and the error should go away.
+
 ## Mattermost integration
 
 Scoold **PRO** also integrates with Mattermost. Scoold users can sign in with Mattermost, use slash commands to interact
@@ -970,11 +982,13 @@ para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
 
 para.mattermost.notify_on_new_question = true
 para.mattermost.notify_on_new_answer = true
+para.mattermost.default_question_tags = "via-mattermost"
 ```
 
 **Note:** Mattermost does not support message actions like in Slack. This means that you can't create a question from
-a any chat message. The reply dialog box can be opened from a "Reply" button under each question notification message.
-The dialog box for new questions is opened via the new slash command `/scoold ask-dialog`.
+a any chat message. The reply dialog box can be opened from a "Reply" button under each question notification message or
+via the `/scoold answer-form` command.
+The dialog box for new questions is opened via the new slash command `/scoold ask-form`.
 
 All the other slash commands and notifications work just like with Slack and are described above. The Mattermost
 integration will automatically create a slash command for each channel linked to Scoold on the admin page.
