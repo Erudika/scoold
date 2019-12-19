@@ -2,7 +2,7 @@
 set -e -x
 
 # Lightsail/DigitalOcean installer script for Ubuntu
-VERSION="1.35.3"
+VERSION="1.36.0"
 PORT="8000"
 WORKDIR="/home/ubuntu"
 JARURL="https://github.com/Erudika/scoold/releases/download/${VERSION}/scoold-${VERSION}.jar"
