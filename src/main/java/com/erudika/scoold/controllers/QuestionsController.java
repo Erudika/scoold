@@ -154,9 +154,12 @@ public class QuestionsController {
 			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, null, req);
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
-					"title", "body", "tags|,", "location");
+					"title", "body", "location");
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);
+			if (StringUtils.isBlank(req.getParameter("tags"))) {
+				q.setTags(Arrays.asList(Config.getConfigParam("default_question_tag", "question")));
+			}
 			Map<String, String> error = utils.validate(q);
 			if (error.isEmpty()) {
 				q.setLocation(location);
