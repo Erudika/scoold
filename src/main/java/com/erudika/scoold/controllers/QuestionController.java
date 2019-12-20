@@ -137,9 +137,8 @@ public class QuestionController {
 		if (!StringUtils.isBlank(title) && title.length() > 10) {
 			showPost.setTitle(title);
 		}
-		if (!StringUtils.isBlank(body)) {
-			showPost.setBody(body);
-		}
+		// body can be blank
+		showPost.setBody(body);
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 		}
