@@ -44,6 +44,7 @@ import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 
@@ -267,6 +268,10 @@ public class SigninController {
 				// the user password in this case is a Bearer token (JWT)
 				setAuthCookie(u.getPassword(), req, res);
 			} else {
+				if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
+					LoggerFactory.getLogger(SigninController.class).
+							warn("Signin denied for {} because that domain is not in the whitelist.", u.getEmail());
+				}
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 		}
