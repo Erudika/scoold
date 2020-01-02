@@ -11,7 +11,8 @@
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
-					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="2" required>
+					<input type="text" id="title_text" name="title" value="$!draftQuestion.title"
+								 class="validate" maxlength="255" minlength="2" required>
 					<div class="similar-posts pll mll mbs">
 						<div class="similar-posts-title smallText grey-text mbs">$!lang.get('posts.similar')</div>
 					</div>
@@ -20,14 +21,15 @@
 
 				<i class="fa fa-pencil fa-2x left grey-text"></i>
 				<div class="pll mll">
-					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
+					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10">$!draftQuestion.body</textarea>
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
 				<div class="input-field">
 					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-					<input type="hidden" name="tags" value="">
+					#set($tagz = "$!draftQuestion.tags")
+					<input type="hidden" name="tags" value="$!tagz.join(',')">
 					<div class="pll mll">
 						#getmessagebox("red white-text" $error.get("tags"))
 					</div>

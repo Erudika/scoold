@@ -154,10 +154,10 @@ public class QuestionsController {
 			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, null, req);
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
-					"title", "body", "location");
+					"title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);
-			if (StringUtils.isBlank(req.getParameter("tags"))) {
+			if (StringUtils.isBlank(q.getTagsString())) {
 				q.setTags(Arrays.asList(Config.getConfigParam("default_question_tag", "question")));
 			}
 			Map<String, String> error = utils.validate(q);
@@ -178,6 +178,7 @@ public class QuestionsController {
 				authUser.setLastseen(System.currentTimeMillis());
 			} else {
 				model.addAttribute("error", error);
+				model.addAttribute("draftQuestion", q);
 				model.addAttribute("path", "questions.vm");
 				model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 				model.addAttribute("askSelected", "navbtn-hover");
