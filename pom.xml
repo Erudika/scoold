@@ -81,6 +81,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+
+		<!--==============================================-->
+		<!-- PLEASE READ BEFORE ENABLING DEVTOOLS: -->
+		<!-- First, you MUST enable fork mode for the Spring Boot Mave plugin below. -->
+		<!--
+			When you run the project with spring-boot:run you MUST ALSO set the following system property:
+			-Dspring-boot.run.jvmArguments="-Dconfig.file=src/main/resources/application.conf"
+
+			Change the path to your configuration file accordingly.
+		-->
+		<!--==============================================-->
 <!--		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -122,7 +133,10 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<!--==============================================-->
+					<!-- ENABLE FORK MODE IF YOU WANT TO USE DEVTOOLS -->
 					<fork>false</fork>
+					<!--==============================================-->
 				</configuration>
 				<executions>
 					<execution>
