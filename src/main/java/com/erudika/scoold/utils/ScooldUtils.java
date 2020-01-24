@@ -782,11 +782,15 @@ public final class ScooldUtils {
 		return "scooldspace".equals(s) ? space : s;
 	}
 
+	public String getSpaceFilteredQuery(Profile authUser, String currentSpace) {
+		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
+				getSpaceFilter(authUser, currentSpace);
+	}
+
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getSpaceIdFromCookie(authUser, req);
-		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
-				getSpaceFilter(authUser, currentSpace);
+		return getSpaceFilteredQuery(authUser, currentSpace);
 	}
 
 	public String getSpaceFilteredQuery(HttpServletRequest req, boolean isSpaceFiltered) {
@@ -804,8 +808,12 @@ public final class ScooldUtils {
 
 	public String getSpaceFilter(Profile authUser, String spaceId) {
 		if (isAllSpaces(spaceId)) {
-			return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
-					collect(Collectors.joining(" OR ")) + ")";
+			if (authUser.hasSpaces()) {
+				return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
+						collect(Collectors.joining(" OR ")) + ")";
+			} else {
+				return "properties.space:\"" + DEFAULT_SPACE + "\"";
+			}
 		} else {
 			return "properties.space:\"" + spaceId + "\"";
 		}
