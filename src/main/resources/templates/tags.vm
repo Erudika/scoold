@@ -26,6 +26,23 @@
 					<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="mrs">
 						$!showtag.tag
 					</a>
+					#if($isMod)
+						<a href="#" title="Rename" class="next-div-toggle"><i class="fa fa-pencil-square orange-text"></i></a>
+						<div class="row mbn hide">
+							<form method="post">
+								<div class="col s12 m8">
+									<div class="input-field">
+										<label for="new_tag">$!lang.get('tags.tag')</label>
+										<input type="text" id="new_tag" name="newtag" class="locationbox validate" value="$!showtag.tag" required>
+										<input type="hidden" name="tag" class="locationbox validate" value="$!showtag.tag">
+									</div>
+								</div>
+								<div class="col s12 m4 r">
+									<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('save')</button>
+								</div>
+							</form>
+						</div>
+					#end
 				</div>
 			</div>
 			#end
