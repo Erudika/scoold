@@ -868,12 +868,13 @@ Local file storage is used by default. To configure the directory on the server 
 para.file_uploads_dir = "uploads"
 ```
 
-In the future, more upload services could be supported such as S3. To initiate a new
-image upload, open up the Markdown editor and drag'n'drop the image you want to upload. A link will automatically appear
-when the upload is finished.
+To upload an image just **drag & drop** the file you want to upload onto the post editor. A link will automatically appear
+when the upload is finished. 
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
 user's `/profile` page. For best results, use a square image here.
+
+In the future, more upload services could be supported such as S3.
 
 ## Slack integration
 
@@ -1277,6 +1278,13 @@ $ mvn -Pwar package
 You can get support here by submitting an issue. Also you can head over to the Gitter chat room for help.
 Issues related to **Scoold Pro** must be reported to [Erudika/scoold-pro](https://github.com/Erudika/scoold-pro/issues).
 [Paid/priority support is also available](https://erudika.com/#support).
+
+## Getting help
+
+- Have a question? - [ask it on Gitter](https://gitter.im/Erudika/scoold)
+- Found a bug? - submit a [bug report here](https://github.com/Erudika/scoold/issues)
+- Ask a question on Stack Overflow using the [`scoold`](https://stackoverflow.com/tags/scoold/info) tag
+- For questions related to Para, use the [`para`](https://stackoverflow.com/tags/para/info) tag on Stack Overflow
 
 ## Blog
 
