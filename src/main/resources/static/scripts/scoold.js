@@ -99,7 +99,7 @@ $(function () {
 						mapMarker = new google.maps.Marker({position: latlng, visible: true});
 						mapMarker.setMap(map);
 						map.setCenter(latlng);
-						map.setZoom(7);
+						map.setZoom(mapZoom);
 					}
 				});
 			}

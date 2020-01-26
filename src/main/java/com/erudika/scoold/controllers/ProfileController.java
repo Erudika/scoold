@@ -137,8 +137,9 @@ public class ProfileController {
 
 	@PostMapping("/{id}")
 	public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
-			@RequestParam(required = false) String location, @RequestParam(required = false) String website,
-			@RequestParam(required = false) String aboutme, @RequestParam(required = false) String picture, HttpServletRequest req) {
+			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
+			@RequestParam(required = false) String website, @RequestParam(required = false) String aboutme,
+			@RequestParam(required = false) String picture, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		if (canEditProfile(authUser, id)) {
 			Profile showUser = authUser;
@@ -147,6 +148,7 @@ public class ProfileController {
 				showUser = utils.getParaClient().read(Profile.id(id));
 			}
 			if (!StringUtils.equals(showUser.getLocation(), location)) {
+				showUser.setLatlng(latlng);
 				showUser.setLocation(location);
 				updateProfile = true;
 			}
