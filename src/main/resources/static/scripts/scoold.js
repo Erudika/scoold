@@ -72,10 +72,10 @@ $(function () {
 				locbox = locationbox,
 				latlngbox = $("input.latlngbox:first"),
 				mapElem = elem || mapCanvas.get(0),
-				mapZoom = 3,
+				mapZoom = 5,
 				mapMarker = new google.maps.Marker({visible: false});
 
-			var myLatlng = new google.maps.LatLng(42.6975, 23.3241);
+			var myLatlng = new google.maps.LatLng(47.6975, 9.3241);
 			if (latlngbox.length && latlngbox.val().length > 5) {
 				var ll = latlngbox.val().split(",");
 				myLatlng = new google.maps.LatLng(ll[0], ll[1]);

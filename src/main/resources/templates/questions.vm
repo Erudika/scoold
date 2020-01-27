@@ -45,7 +45,8 @@
 					</a>
 					<div class="input-field hide">
 						<i class="fa fa-map-marker ptm prefix grey-text"></i>
-						<input id="location_text" name="location" class="locationbox validate" type="text" value="">
+						<input id="location_text" name="location" class="locationbox validate" type="text" value=""
+									 placeholder="$!{lang.get('profile.about.location')}">
 						<input type="hidden" name="latlng" value="">
 						<input type="hidden" name="address" value="">
 					</div>

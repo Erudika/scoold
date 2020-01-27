@@ -599,10 +599,19 @@
 				</div>
 
 				#spaceselect($showpost)
+
+				#if($scooldUtils.isNearMeFeatureEnabled())
+					<div class="input-field">
+						<i class="fa fa-map-marker ptm prefix grey-text"></i>
+						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!showpost.location"
+									 placeholder="$!{lang.get('profile.about.location')}">
+						<input type="hidden" name="latlng" value="">
+						<input type="hidden" name="address" value="">
+					</div>
+				#end
 			#end
 
-			<br>
-			<div class="mts mbl">
+			<div class="mtl ptm mbl">
 				<button class="btn waves-effect waves-light" type="submit">
 					<i class="fa fa-save left"></i> $!lang.get('save')
 				</button> &nbsp;

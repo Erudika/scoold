@@ -18,7 +18,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Address;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
@@ -112,6 +114,7 @@ public class QuestionController {
 		model.addAttribute("answerslist", allPosts);
 		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
 		model.addAttribute("maxCommentLength", Comment.MAX_COMMENT_LENGTH);
+		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
 				Comment.MAX_COMMENT_LENGTH));
 		return "base";
@@ -120,7 +123,8 @@ public class QuestionController {
 	@PostMapping("/{id}/edit")
 	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
-			@RequestParam(required = false) String space, HttpServletRequest req) {
+			 @RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
+			 @RequestParam(required = false) String space, HttpServletRequest req) {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
@@ -139,6 +143,7 @@ public class QuestionController {
 		}
 		// body can be blank
 		showPost.setBody(body);
+		showPost.setLocation(location);
 		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 		}
@@ -153,6 +158,7 @@ public class QuestionController {
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
 			updatePost(showPost, authUser);
+			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
@@ -368,6 +374,18 @@ public class QuestionController {
 			} else {
 				showPost.update();
 			}
+		}
+	}
+
+	private void updateLocation(Post showPost, Profile authUser, String location, String latlng) {
+		if (!showPost.isReply() && !StringUtils.isBlank(latlng)) {
+			Address addr = new Address(showPost.getId() + Config.SEPARATOR + Utils.type(Address.class));
+			addr.setAddress(location);
+			addr.setCountry(location);
+			addr.setLatlng(latlng);
+			addr.setParentid(showPost.getId());
+			addr.setCreatorid(authUser.getId());
+			pc.create(addr);
 		}
 	}
 }

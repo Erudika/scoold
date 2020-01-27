@@ -167,7 +167,7 @@ public class QuestionsController {
 				String qid = q.create();
 				utils.sendNewPostNotifications(q);
 				if (!StringUtils.isBlank(latlng)) {
-					Address addr = new Address();
+					Address addr = new Address(qid + Config.SEPARATOR + Utils.type(Address.class));
 					addr.setAddress(address);
 					addr.setCountry(location);
 					addr.setLatlng(latlng);

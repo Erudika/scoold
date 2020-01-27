@@ -21,18 +21,23 @@
 		<hr>
 		<form method="post">
 			#if($scooldUtils.isNearMeFeatureEnabled())
-				<p>$!lang.get('settings.location')</p>
-				<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
-				<div id="map-canvas" class="gmap center">#ajaxloading(false)</div>
+				<h4>$!lang.get('posts.locationfilter')</h4>
+				<div class="mbm">
+					<p>$!lang.get('settings.location')</p>
+					<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
+					<div id="map-canvas" class="gmap center">#ajaxloading(false)</div>
+				</div>
 			#end
 
-			<p>$!lang.get("settings.tagfilter.text")</p>
-			#sectoken(false)
-
-			<div class="input-field">
-				<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
-				<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-				<input type="hidden" name="tags" value="$!authUser.favtagsString">
+			<div class="mbm">
+				<h4 class="ptl">$!lang.get('posts.tagfilter')</h4>
+				<p>$!lang.get("settings.tagfilter.text")</p>
+				#sectoken(false)
+				<div class="input-field">
+					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+					<input type="hidden" name="tags" value="$!authUser.favtagsString">
+				</div>
 			</div>
 
 			#if($authUser.user.identityProvider == "generic")
@@ -121,7 +126,7 @@
 		<br>
 		<br>
 		<div class="mvl">
-			<a href="${settingslink}?delete=true" title="" class="btn waves-effect waves-light red white-text">
+			<a href="${settingslink}?delete=true" title="Delete my account" class="red-text">
 				<strong>$!lang.get("settings.delete")</strong>
 			</a>
 		</div>
