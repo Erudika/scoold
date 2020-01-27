@@ -123,8 +123,8 @@ public class QuestionController {
 	@PostMapping("/{id}/edit")
 	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
-			 @RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			 @RequestParam(required = false) String space, HttpServletRequest req) {
+			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
+			@RequestParam(required = false) String space, HttpServletRequest req) {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);

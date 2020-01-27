@@ -21,13 +21,17 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -54,7 +58,7 @@ public final class HttpUtils {
 
 	static CloseableHttpClient getHttpClient() {
 		if (httpclient == null) {
-			int timeout = 30 * 1000;
+			int timeout = 5 * 1000;
 			httpclient = HttpClientBuilder.create().
 					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
 					setDefaultRequestConfig(RequestConfig.custom().
@@ -175,37 +179,71 @@ public final class HttpUtils {
 	/**
 	 * Fetches an avatar at a given URL.
 	 * @param url image URL
+	 * @param res response
 	 * @return the content of the image or null
 	 */
-	public static CloseableHttpResponse getAvatar(String url) {
-		if (!StringUtils.isBlank(url)) {
-			HttpGet get = new HttpGet(url);
-			get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
-			try {
-				CloseableHttpResponse resp = HttpUtils.getHttpClient().execute(get);
-				if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK && resp.getEntity() != null) {
-					String contentType = resp.getEntity().getContentType().getValue();
-					if (StringUtils.equalsAnyIgnoreCase(contentType, "image/gif", "image/jpeg", "image/png",
-							"image/webp", "image/bmp", "image/svg+xml")) {
-						return resp;
-					}
-				}
-			} catch (IOException ex) {
-				LoggerFactory.getLogger(HttpUtils.class).
-						debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
-			}
+	public static void getAvatar(String url, HttpServletResponse res) {
+		if (StringUtils.isBlank(url)) {
+			getDefaultAvatarImage(res);
+			return;
 		}
-		return null;
+		HttpGet get = new HttpGet(url);
+		get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
+		try (CloseableHttpResponse img = HttpUtils.getHttpClient().execute(get)) {
+			if (img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null) {
+				String contentType = img.getEntity().getContentType().getValue();
+				if (StringUtils.equalsAnyIgnoreCase(contentType, "image/gif", "image/jpeg", "image/jpg", "image/png",
+						"image/webp", "image/bmp", "image/svg+xml")) {
+					for (Header header : img.getAllHeaders()) {
+						res.setHeader(header.getName(), header.getValue());
+					}
+					if (!res.containsHeader(org.apache.http.HttpHeaders.CACHE_CONTROL)) {
+						res.setHeader(org.apache.http.HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+					}
+					IOUtils.copy(img.getEntity().getContent(), res.getOutputStream());
+				}
+			} else {
+				getDefaultAvatarImage(res);
+			}
+		} catch (IOException ex) {
+			getDefaultAvatarImage(res);
+			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
+		}
+	}
+
+	private static void getDefaultAvatarImage(HttpServletResponse res) {
+		try {
+			String anon = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+					+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
+					+ "version=\"1\" viewBox=\"0 0 200 200\">\n"
+					+ "  <g id=\"layer1\" transform=\"translate(0 -97)\">\n"
+					+ "    <rect id=\"rect1433\" width=\"282\" height=\"245\" x=\"-34\" y=\"79\" fill=\"#ececec\" rx=\"2\"/>\n"
+					+ "  </g>\n"
+					+ "  <g id=\"layer2\" fill=\"gray\">\n"
+					+ "    <circle id=\"path1421\" cx=\"102\" cy=\"-70\" r=\"42\" transform=\"scale(1 -1)\"/>\n"
+					+ "    <ellipse id=\"path1423\" cx=\"101\" cy=\"201\" rx=\"71\" ry=\"95\"/>\n"
+					+ "  </g>\n"
+					+ "</svg>";
+			res.setContentType("image/svg+xml");
+			res.setHeader(org.apache.http.HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+			res.setHeader(org.apache.http.HttpHeaders.ETAG, Utils.md5(anon));
+			IOUtils.copy(new ByteArrayInputStream(anon.getBytes()), res.getOutputStream());
+		} catch (IOException e) {
+			LoggerFactory.getLogger(HttpUtils.class).
+					debug("Failed to set default user avatar. {}", e.getMessage());
+		}
 	}
 
 	/**
 	 * Sets the session cookie.
-	 *
 	 * @param jwt a JWT from Para
 	 * @param req req
 	 * @param res res
 	 */
 	public static void setAuthCookie(String jwt, HttpServletRequest req, HttpServletResponse res) {
+		if (StringUtils.isBlank(jwt)) {
+			return;
+		}
 		int maxAge = Config.SESSION_TIMEOUT_SEC;
 		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
 				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
