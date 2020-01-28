@@ -510,6 +510,7 @@ $(function () {
 			} else {
 				div.html(trigr.data("loadedForm"));
 				div.find('select').formSelect();
+				$('textarea').characterCounter();
 			}
 			div.on("click", ".modal-close", function() {
 				$("#main-modal").modal("close");
@@ -524,7 +525,7 @@ $(function () {
      ****************************************************/
 
 	var commentInput = $("input[name='comment']", "form.new-comment-form");
-	commentInput.characterCounter();
+	setTimeout(function () { $("input.charcounter").characterCounter(); }, 200);
 	submitFormBind("form.new-comment-form", function(data, status, xhr, form) {
 		var textbox = commentInput;
 		var that = $(form);
