@@ -274,11 +274,16 @@ public class LanguageUtils {
 			progress.addProperty(getDefaultLanguageCode(), 100);
 		}
 		for (String langCode : ALL_LOCALES.keySet()) {
-			Object percent = progress.getProperties().get(langCode);
-			if (percent != null && percent instanceof Number) {
-				progressMap.put(langCode, (Integer) percent);
+			if (isMissing) {
+				readLanguageFromFileAndUpdateProgress(langCode, progressMap);
+				progress.getProperties().putAll(progressMap);
 			} else {
-				progressMap.put(langCode, 0);
+				Object percent = progress.getProperties().get(langCode);
+				if (percent != null && percent instanceof Number) {
+					progressMap.put(langCode, (Integer) percent);
+				} else {
+					progressMap.put(langCode, 0);
+				}
 			}
 		}
 		if (isMissing) {
@@ -349,6 +354,18 @@ public class LanguageUtils {
 		return false;
 	}
 
+	private int calculateProgressPercent(double approved, double defsize) {
+		// allow 5 identical words per language (i.e. Email, etc)
+		if (approved >= defsize - 5) {
+			approved = defsize;
+		}
+		if (defsize == 0) {
+			return 0;
+		} else {
+			return (int) ((approved / defsize) * 100.0);
+		}
+	}
+
 	/**
 	 * Updates the progress for all languages.
 	 * @param langCode the 2-letter language code
@@ -370,16 +387,7 @@ public class LanguageUtils {
 			approved = Math.round(percent * (defsize / 100) - 1);
 		}
 
-		// allow 3 identical words per language (i.e. Email, etc)
-		if (approved >= defsize - 5) {
-			approved = defsize;
-		}
-
-		if (((int) defsize) == 0) {
-			progress.put(langCode, 0);
-		} else {
-			progress.put(langCode, (int) ((approved / defsize) * 100));
-		}
+		progress.put(langCode, calculateProgressPercent(approved, defsize));
 		Sysprop updatedProgress = new Sysprop(progressKey);
 		for (Map.Entry<String, Integer> entry : progress.entrySet()) {
 			updatedProgress.addProperty(entry.getKey(), entry.getValue());
@@ -391,6 +399,10 @@ public class LanguageUtils {
 	}
 
 	private Map<String, String> readLanguageFromFile(String langCode) {
+		return readLanguageFromFileAndUpdateProgress(langCode, null);
+	}
+
+	private Map<String, String> readLanguageFromFileAndUpdateProgress(String langCode, Map<String, Integer> progressMap) {
 		if (langCode != null) {
 			Properties lang = new Properties();
 			String file = "lang_" + langCode.toLowerCase() + ".properties";
@@ -399,31 +411,31 @@ public class LanguageUtils {
 				ins = LanguageUtils.class.getClassLoader().getResourceAsStream(file);
 				if (ins != null) {
 					lang.load(ins);
-					if (!lang.isEmpty()) {
-						int progress = 0;
-						Map<String, String> langmap = new TreeMap<String, String>();
-						Set<String> keySet = langCode.equalsIgnoreCase(getDefaultLanguageCode()) ?
-								lang.stringPropertyNames() : getDefaultLanguage().keySet();
-						for (String propKey : keySet) {
-							String propVal = lang.getProperty(propKey);
-							if (!langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
-								String defaultVal = getDefaultLanguage().get(propKey);
-								if (!StringUtils.isBlank(propVal) && !StringUtils.equalsIgnoreCase(propVal, defaultVal)) {
-									progress++;
-								} else if (StringUtils.isBlank(propVal)) {
-									propVal = defaultVal;
-								}
+					int progress = 0;
+					Map<String, String> langmap = new TreeMap<String, String>();
+					Set<String> keySet = langCode.equalsIgnoreCase(getDefaultLanguageCode()) ?
+							lang.stringPropertyNames() : getDefaultLanguage().keySet();
+					for (String propKey : keySet) {
+						String propVal = lang.getProperty(propKey);
+						if (!langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
+							String defaultVal = getDefaultLanguage().get(propKey);
+							if (!StringUtils.isBlank(propVal) && !StringUtils.equalsIgnoreCase(propVal, defaultVal)) {
+								progress++;
+							} else if (StringUtils.isBlank(propVal)) {
+								propVal = defaultVal;
 							}
-							langmap.put(propKey, propVal);
 						}
-						if (langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
-							progress = langmap.size(); // 100%
-						}
-						if (progress > 0) {
-							updateTranslationProgressMap(langCode, progress);
-						}
-						return langmap;
+						langmap.put(propKey, propVal);
 					}
+					if (langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
+						progress = langmap.size(); // 100%
+					}
+					if (progress > 0 && progressMap == null) {
+						updateTranslationProgressMap(langCode, progress);
+					} else {
+						progressMap.put(langCode, calculateProgressPercent(progress, langmap.size()));
+					}
+					return langmap;
 				}
 			} catch (Exception e) {
 				logger.info("Could not read language file " + file + ": ", e);
