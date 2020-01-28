@@ -152,7 +152,6 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("termslink", CONTEXT_PATH + TERMSLINK);
 		modelAndView.addObject("tagslink", CONTEXT_PATH + TAGSLINK);
 		modelAndView.addObject("settingslink", CONTEXT_PATH + SETTINGSLINK);
-		modelAndView.addObject("translatelink", CONTEXT_PATH + TRANSLATELINK);
 		modelAndView.addObject("reportslink", CONTEXT_PATH + REPORTSLINK);
 		modelAndView.addObject("adminlink", CONTEXT_PATH + ADMINLINK);
 		modelAndView.addObject("votedownlink", CONTEXT_PATH + VOTEDOWNLINK);

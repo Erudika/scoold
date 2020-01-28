@@ -652,43 +652,6 @@
 	#end
 #end
 ###################################
-#macro(translationspage $translations)
-	#foreach($trans in $translations)
-		#translationbox($trans)
-	#end
-#end
-###################################
-#macro(translationbox $showtrans)
-<div class="card-panel translationbox">
-	<div class="row">
-		<div class="col m1">
-			#votebox($showtrans "mediumText")
-		</div>
-		<div class="col m7 trans-value">
-			<span class="mediumText">$!showtrans.value</span> <br>
-			<i class="fa fa-user-circle grey-text"></i> $!showtrans.authorName
-			<span class="grey-text trans-timestamp"><i class="fa fa-clock-o"></i> #formatdate($showtrans.timestamp '')</span>
-		</div>
-		<div class="col m4 mediumText r">
-			#if ($authenticated && ($showtrans.creatorid == $authUser.id || $isAdmin))
-				#if ($isAdmin)
-					#if ($showtrans.approved)#set($onclass = "green-text")#else#set($onclass = "")#end
-					<a href="$translatelink/approve/$!{showtrans.id}" class="approve-translation $!{onclass}" title="Toogle approved status">
-						<i class="fa fa-check-circle"></i>#if ($showtrans.approved) Approved #else Approve #end
-					</a>
-					&nbsp;
-				#end
-				<a href="$translatelink/delete/$!{showtrans.id}" title="Delete" class="delete-translation red-text mll">
-					<i class="fa fa-times"></i> $!lang.get('delete')
-				</a>
-			#else
-				#getreportlink($showtrans "$translatelink/$!showtrans.id" "notext")
-			#end
-		</div>
-	</div>
-</div>
-#end
-###################################
 #macro(badgebox $showbadge $num)
 #set($badgeinfo = $!lang.get("about.badges.$showbadge") )
 <span class="chip" title="$!badgeinfo">
