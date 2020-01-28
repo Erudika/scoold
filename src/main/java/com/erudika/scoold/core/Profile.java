@@ -64,6 +64,7 @@ public class Profile extends Sysprop {
 	@Stored private Set<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
+	@Stored private Boolean favtagsEmailsEnabled;
 	@Stored private Boolean anonymityEnabled;
 	@Stored private Integer yearlyVotes;
 	@Stored private Integer quarterlyVotes;
@@ -139,6 +140,7 @@ public class Profile extends Sysprop {
 		this.monthlyVotes = 0;
 		this.weeklyVotes = 0;
 		this.anonymityEnabled = false;
+		this.favtagsEmailsEnabled = false;
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
 	}
@@ -210,6 +212,14 @@ public class Profile extends Sysprop {
 
 	public void setCommentEmailsEnabled(Boolean commentEmailsEnabled) {
 		this.commentEmailsEnabled = commentEmailsEnabled;
+	}
+
+	public Boolean getFavtagsEmailsEnabled() {
+		return favtagsEmailsEnabled;
+	}
+
+	public void setFavtagsEmailsEnabled(Boolean favtagsEmailsEnabled) {
+		this.favtagsEmailsEnabled = favtagsEmailsEnabled;
 	}
 
 	public Boolean getAnonymityEnabled() {

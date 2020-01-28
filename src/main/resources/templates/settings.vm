@@ -94,6 +94,21 @@
 				<div class="switch">
 					<label>
 						$!lang.get('off')
+						#if($authUser.favtagsEmailsEnabled)
+						<input type="checkbox" name="favtagsEmailsOn" checked="checked" value="true">
+						#else
+						<input type="checkbox" name="favtagsEmailsOn" value="true">
+						#end
+						<span class="lever"></span>
+						$!lang.get('on')
+					</label>
+					<span class="mll mediumText">$!lang.get('settings.favtagsemails')</span>
+				</div>
+			</div>
+			<div class="mbm">
+				<div class="switch">
+					<label>
+						$!lang.get('off')
 						#if($authUser.replyEmailsEnabled)
 						<input type="checkbox" name="replyEmailsOn" checked="checked" value="true">
 						#else

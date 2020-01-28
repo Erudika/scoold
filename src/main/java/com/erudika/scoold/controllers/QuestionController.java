@@ -58,6 +58,7 @@ import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import java.util.HashSet;
 
 /**
  *
@@ -131,6 +132,9 @@ public class QuestionController {
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
+		boolean isQuestion = !showPost.isReply();
+		HashSet<String> tagsBeforeUpdate = new HashSet<>(showPost.getTags());
+		HashSet<String> addedTags = new HashSet<>();
 		Post beforeUpdate = null;
 		try {
 			beforeUpdate = (Post) BeanUtils.cloneBean(showPost);
@@ -144,10 +148,13 @@ public class QuestionController {
 		// body can be blank
 		showPost.setBody(body);
 		showPost.setLocation(location);
-		if (!StringUtils.isBlank(tags) && showPost.isQuestion()) {
+		showPost.setAuthor(authUser);
+		if (!StringUtils.isBlank(tags) && isQuestion) {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
+			addedTags.addAll(showPost.getTags());
+			addedTags.removeAll(tagsBeforeUpdate);
 		}
-		if (showPost.isQuestion()) {
+		if (isQuestion) {
 			String validSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
 			if (utils.canAccessSpace(authUser, validSpace) && validSpace != null &&
 					!utils.getSpaceId(validSpace).equals(utils.getSpaceId(showPost.getSpace()))) {
@@ -160,6 +167,7 @@ public class QuestionController {
 			updatePost(showPost, authUser);
 			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
+			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags));
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
 	}

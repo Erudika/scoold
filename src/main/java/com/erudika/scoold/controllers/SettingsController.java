@@ -73,7 +73,8 @@ public class SettingsController {
 	public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
-			@RequestParam(required = false) String newpostEmailsOn, HttpServletRequest req) {
+			@RequestParam(required = false) String newpostEmailsOn, @RequestParam(required = false) String favtagsEmailsOn,
+			HttpServletRequest req) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			setFavTags(authUser, tags);
@@ -83,6 +84,7 @@ public class SettingsController {
 			setAnonymity(authUser, req.getParameter("anon"));
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
+			authUser.setFavtagsEmailsEnabled(Boolean.valueOf(favtagsEmailsOn));
 			authUser.update();
 
 			if (Boolean.valueOf(newpostEmailsOn)) {

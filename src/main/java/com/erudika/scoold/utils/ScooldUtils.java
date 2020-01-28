@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -414,6 +415,56 @@ public final class ScooldUtils {
 		}
 	}
 
+	public Set<String> getFavTagsSubscribers(List<String> tags) {
+		if (!tags.isEmpty()) {
+			Set<String> emails = new LinkedHashSet<>();
+			// find all user objects even if there are more than 10000 users in the system
+			Pager pager = new Pager(1, "_docid", false, Config.DEFAULT_LIMIT);
+			List<Profile> profiles;
+			do {
+				profiles = pc.findQuery(Utils.type(Profile.class),
+						"properties.favtags:(" + tags.stream().
+								map(t -> "\"".concat(t).concat("\"")).distinct().
+								collect(Collectors.joining(" ")) + ") AND properties.favtagsEmailsEnabled:true", pager);
+				if (!profiles.isEmpty()) {
+					List<User> users = pc.readAll(profiles.stream().map(p -> p.getCreatorid()).
+							distinct().collect(Collectors.toList()));
+
+					users.stream().forEach(u -> emails.add(u.getEmail()));
+				}
+			} while (!profiles.isEmpty());
+			return emails;
+		}
+		return Collections.emptySet();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags) {
+		// sends a notification to subscibers of a tag if that tag was added to an existing question
+		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
+			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
+			Map<String, Object> model = new HashMap<String, Object>();
+			String name = postAuthor.getName();
+			String body = Utils.markdownToHtml(question.getBody());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
+			String tagsString = question.getTags().stream().map(t -> "<span class=\"tag\">" +
+					(addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
+					collect(Collectors.joining("&nbsp;"));
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, name));
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+					postURL, question.getTitle(), body, tagsString));
+
+			Set<String> emails = getFavTagsSubscribers(addedTags);
+			if (!emails.isEmpty()) {
+				emailer.sendEmail(new ArrayList<String>(emails),
+						name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
+						Utils.compileMustache(model, loadEmailTemplate("notify")));
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public void sendNewPostNotifications(Post question) {
 		if (question != null) {
@@ -423,22 +474,25 @@ public final class ScooldUtils {
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
 			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
+			String tagsString = question.getTags().stream().map(t -> "<span class=\"tag\">" + t + "</span>").
+					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
-			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div>",
-					postURL, question.getTitle(), body));
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+					postURL, question.getTitle(), body, tagsString));
 
 			if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
 				Report rep = new Report();
 				rep.setDescription("New question awaiting approval");
 				rep.setSubType(Report.ReportType.OTHER);
 				rep.setLink(question.getPostLink(false, false));
-				rep.setAuthorName(question.getAuthor().getName());
+				rep.setAuthorName(postAuthor.getName());
 				rep.create();
 			}
 
-			Set<String> emails = getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers");
-			if (emails != null) {
+			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
+			emails.addAll(getFavTagsSubscribers(question.getTags()));
+			if (!emails.isEmpty()) {
 				emailer.sendEmail(new ArrayList<String>(emails),
 						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
 						Utils.compileMustache(model, loadEmailTemplate("notify")));
