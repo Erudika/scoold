@@ -5,16 +5,12 @@
 		<h2 class="black-text">$!lang.get("areyousure")</h2>
 		<br>
 
-		#if ($request.getHeader("Referer"))
-			#set($ref = $request.getHeader("Referer"))
-		#else
-			#set($ref = $!request.contextPath)
-		#end
+		#set($ref = $request.getParameter("returnto"))
 
 		<form method="post" action="$!{confirmlink}">
 			#sectoken(false)
-			<button type="submit" class="btn waves-effect waves-light red mrl">$!lang.get('yes')</button>
-			<a class="btn waves-effect waves-light green" href="$!{ref}" title="No">$!lang.get("no")</a>
+			<button type="submit" class="btn-large waves-effect waves-light red mrl">$!lang.get('yes')</button>
+			<a class="btn-large waves-effect waves-light grey" href="$!{ref}" title="No">$!lang.get("no")</a>
 		</form>
 	</div>
 #else

@@ -216,11 +216,11 @@ public class AdminController {
 		if (confirmdelete && utils.isAdmin(authUser)) {
 			ParaObject object = pc.read(id);
 			if (object != null) {
-				pc.delete(object);
+				object.delete();
 				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
 						object.getClass().getName(), object.getId());
 			}
 		}
-		return "redirect:" + ADMINLINK;
+		return "redirect:" + Optional.ofNullable(req.getParameter("returnto")).orElse(ADMINLINK);
 	}
 }
