@@ -211,7 +211,7 @@ public class QuestionsController {
 				if (spaceObj != null) {
 					space = spaceObj.getId().concat(Config.SEPARATOR).concat(spaceObj.getName());
 				} else {
-					space = "";
+					space = Post.DEFAULT_SPACE;
 				}
 			}
 			utils.storeSpaceIdInCookie(space, req, res);
@@ -230,7 +230,7 @@ public class QuestionsController {
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
-				if (isSpaceFilteredRequest(authUser, currentSpace)) {
+				if (isSpaceFilteredRequest(authUser, currentSpace) && authUser.hasFavtags()) {
 					questionslist = pc.findQuery(type, getSpaceFilteredFavtagsQuery(currentSpace, authUser), itemcount);
 				} else {
 					questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
@@ -267,7 +267,9 @@ public class QuestionsController {
 
 	private String getSpaceFilteredFavtagsQuery(String currentSpace, Profile authUser) {
 		StringBuilder sb = new StringBuilder(utils.getSpaceFilter(authUser, currentSpace));
-		sb.append(" AND (").append(authUser.getFavtags().stream().collect(Collectors.joining(" OR "))).append(")");
+		if (authUser.hasFavtags()) {
+			sb.append(" AND (").append(authUser.getFavtags().stream().collect(Collectors.joining(" OR "))).append(")");
+		}
 		return sb.toString();
 	}
 
