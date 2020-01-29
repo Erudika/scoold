@@ -131,11 +131,11 @@ The most important settings are `para.endpoint` - the URL of the Para server, as
 
 Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
+### Minimal configuration ###
+# the name of the application
 para.app_name = "Scoold"
 # the port for Scoold
 para.port = 8000
-# Session cookie name
-para.auth_cookie = "scoold-auth"
 # change this to "production" later
 para.env = "development"
 # the URL where Scoold is hosted, or http://localhost:8000
@@ -146,8 +146,22 @@ para.endpoint = "https://paraio.com"
 para.access_key = "app:scoold"
 # secret key for your Para app
 para.secret_key = ""
+# the identifier of admin user - check Para user object
+para.admins = "admin@domain.com"
+##############################
+
+####### Authentication #######
 # enable or disable email and password authentication
 para.password_auth_enabled = true
+# Session cookie name
+para.auth_cookie = "scoold-auth"
+# Facebook - create your own Facebook app first!
+para.fb_app_id = "123456789"
+# Google - create your own Google app first!
+para.google_client_id = "123-abcd.apps.googleusercontent.com"
+###############################
+
+### Misc. ###
 # if false, commenting is allowed after 100+ reputation
 para.new_users_can_comment = true
 # if true, posts by new users require approval from moderator
@@ -158,16 +172,10 @@ para.posts_rep_threshold = 100
 para.gmaps_api_key = ""
 # Enable/disable near me feature (geolocation)
 para.nearme_feature_enabled = false
-# the identifier of admin user - check Para user object
-para.admins = "admin@domain.com"
 # GA code
 para.google_analytics_id = "UA-123456-7"
 # enables syntax highlighting in posts
 para.code_highlighting_enabled = true
-# Facebook - create your own Facebook app first!
-para.fb_app_id = "123456789"
-# Google - create your own Google app first!
-para.google_client_id = "123-abcd.apps.googleusercontent.com"
 # If true, the default space will be accessible by everyone
 para.is_default_space_public = true
 # If true, users can change their profile pictures
@@ -185,6 +193,8 @@ para.max_comment_length = 255
 para.max_post_length = 20000
 # Sets the default tag for new questions
 para.default_question_tag = "question"
+# Enable/disable numeric pagination (< 1 2 3...N >)
+para.numeric_pagination_enabled = false
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
@@ -869,7 +879,7 @@ para.file_uploads_dir = "uploads"
 ```
 
 To upload an image just **drag & drop** the file you want to upload onto the post editor. A link will automatically appear
-when the upload is finished. 
+when the upload is finished.
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
 user's `/profile` page. For best results, use a square image here.

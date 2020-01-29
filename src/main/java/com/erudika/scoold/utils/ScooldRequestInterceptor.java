@@ -113,6 +113,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONTEXT_PATH));
 		// Configurable constants
+		modelAndView.addObject("MAX_PAGES", Config.MAX_PAGES);
 		modelAndView.addObject("MAX_TEXT_LENGTH", MAX_TEXT_LENGTH);
 		modelAndView.addObject("MAX_TAGS_PER_POST", MAX_TAGS_PER_POST);
 		modelAndView.addObject("MAX_REPLIES_PER_POST", MAX_REPLIES_PER_POST);
@@ -190,6 +191,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("lang", utils.getLang(currentLocale));
 		modelAndView.addObject("langDirection", utils.isLanguageRTL(currentLocale.getLanguage()) ? "RTL" : "LTR");
 		// Pagination
+		modelAndView.addObject("numericPaginationEnabled", Config.getConfigBoolean("numeric_pagination_enabled", false));
 		// check for AJAX pagination requests
 		if (utils.isAjaxRequest(request) && (utils.param(request, "page") ||
 				utils.param(request, "page1") || utils.param(request, "page2"))) {

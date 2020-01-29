@@ -565,16 +565,23 @@ public final class ScooldUtils {
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
-		return new Pager(NumberUtils.toInt(req.getParameter(pageParamName), 1), Config.MAX_ITEMS_PER_PAGE);
+		return pagerFromParams(pageParamName, req);
 	}
 
 	public Pager pagerFromParams(HttpServletRequest req) {
+		return pagerFromParams("page", req);
+	}
+
+	public Pager pagerFromParams(String pageParamName, HttpServletRequest req) {
 		Pager p = new Pager();
-		p.setPage(NumberUtils.toLong(req.getParameter("page"), 1));
-		p.setDesc(Boolean.parseBoolean(req.getParameter("desc")));
+		p.setPage(Math.min(NumberUtils.toLong(req.getParameter(pageParamName), 1), Config.MAX_PAGES));
 		p.setLimit(NumberUtils.toInt(req.getParameter("limit"), Config.MAX_ITEMS_PER_PAGE));
 		String lastKey = req.getParameter("lastKey");
 		String sort = req.getParameter("sort");
+		String desc = req.getParameter("desc");
+		if (!StringUtils.isBlank(desc)) {
+			p.setDesc(Boolean.parseBoolean(desc));
+		}
 		if (!StringUtils.isBlank(lastKey)) {
 			p.setLastKey(lastKey);
 		}
