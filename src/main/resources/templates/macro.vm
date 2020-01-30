@@ -158,9 +158,8 @@
 #macro(paginate $macroCode $pager $_rpath $pageparam)
 #if($pager && $pager.count > 0)
 	#set($pageCount = ($pager.count / $pager.limit))
+	#if($pager.count % $pager.limit > 0) #set($pageCount = $pageCount + 1) #end
 	#if($pageCount > $MAX_PAGES)#set($pageCount = $MAX_PAGES)#end
-
-	#set($next = $pager.page + 1)
 	#if ($pager.page <= 1) #set($prev = 1) #else #set($prev = $pager.page - 1) #end
 
 	#if(!$_rpath || $_rpath.isEmpty())
@@ -179,49 +178,50 @@
 		<div class="pages center mtl">
 			#if($numericPaginationEnabled)
 				#set($maxPageLinks = 7)
+				#set($activeClass = "active light-blue")
 				#if ($pager.page >= $pageCount) #set($next = 1) #else #set($next = $pager.page + 1) #end
-				#if($pager.count % $pager.limit > 0) #set($pageCount = $pageCount + 1) #end
 				<ul class="pagination ptl">
 					<li><a href="${_rpath}${paramseparator}${pageparam}=$!prev"><i class="fa fa-chevron-left grey-text"></i></a></li>
 					#if($pager.page <= $maxPageLinks)
 						#set($startPage = 1)
-						#set($endPage = $maxPageLinks)
+						#if($pageCount < $maxPageLinks)#set($endPage = $pageCount)#else#set($endPage = $maxPageLinks)#end
 						#foreach($page in [$startPage..$endPage])
-							#if($page == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+							#if($page == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page">$!page</a></li>
 						#end
 						#if($pageCount > $maxPageLinks)
 							<i class="fa fa-ellipsis-h pvm phm"></i>
-							#if($pageCount == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+							#if($pageCount == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$pageCount">$pageCount</a></li>
 						#end
 					#elseif($pager.page > $maxPageLinks && $pager.page < ($pageCount - $maxPageLinks))
 						#set($startPage = $pager.page - ($maxPageLinks / 2))
 						#set($endPage = $pager.page + ($maxPageLinks / 2))
-						#if(1 == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+						#if(1 == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=1">1</a></li>
 						<i class="fa fa-ellipsis-h pvm phm"></i>
 						#foreach($page in [$startPage..$endPage])
-							#if($page == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+							#if($page == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page">$!page</a></li>
 						#end
 						<i class="fa fa-ellipsis-h pvm phm"></i>
-						#if($pageCount == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+						#if($pageCount == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$pageCount">$pageCount</a></li>
 					#else
-						#if(1 == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+						#if(1 == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=1">1</a></li>
 						<i class="fa fa-ellipsis-h pvm phm"></i>
 						#set($startPage = $pageCount - $maxPageLinks)
 						#set($endPage = $pageCount)
 						#foreach($page in [$startPage..$endPage])
-							#if($page == $pager.page)#set($currPage = "active")#else#set($currPage = "")#end
+							#if($page == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page">$!page</a></li>
 						#end
 					#end
 					<li><a href="${_rpath}${paramseparator}${pageparam}=$!next"><i class="fa fa-chevron-right grey-text"></i></a></li>
 				</ul>
 			#else
+				#set($next = $pager.page + 1)
 				<a href="${_rpath}${paramseparator}${pageparam}=$!next" class="more-link pagelink chip" title="Load more">$!lang.get("more")</a>
 				<span class="hide page-macro-code">$!macroCode</span>
 				<span class="$!{next}"></span>

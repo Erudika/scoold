@@ -70,6 +70,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .dashedborder{ border: 4px dashed #CCCCCC; border-radius: 3px;}
 .capitalize{ text-transform: capitalize; }
 .pages{ clear: both; }
+.pagination li a { font-weight: 400; }
 .diff-ins{ background-color: #E6FFE6;}
 .diff-del{ background-color: #FFE6E6;}
 .diff-ins .button-tiny{ background-color: #E6FFE6;}
