@@ -59,6 +59,7 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import java.util.HashSet;
+import java.util.Optional;
 
 /**
  *
@@ -133,7 +134,6 @@ public class QuestionController {
 			return "redirect:" + req.getRequestURI();
 		}
 		boolean isQuestion = !showPost.isReply();
-		HashSet<String> tagsBeforeUpdate = new HashSet<>(showPost.getTags());
 		HashSet<String> addedTags = new HashSet<>();
 		Post beforeUpdate = null;
 		try {
@@ -152,7 +152,7 @@ public class QuestionController {
 		if (!StringUtils.isBlank(tags) && isQuestion) {
 			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
 			addedTags.addAll(showPost.getTags());
-			addedTags.removeAll(tagsBeforeUpdate);
+			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
 		}
 		if (isQuestion) {
 			String validSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
