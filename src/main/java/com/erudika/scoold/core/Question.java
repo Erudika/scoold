@@ -17,6 +17,8 @@
  */
 package com.erudika.scoold.core;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
@@ -26,6 +28,7 @@ public class Question extends Post {
 
 	public Question() {
 		super();
+		setTags(new LinkedList<String>());
 	}
 
 	public boolean canHaveChildren() {
