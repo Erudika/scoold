@@ -15,9 +15,9 @@
 		<a href="$peoplelink?sortby=properties.weeklyVotes" class="chip $sortarr['properties.weeklyVotes']">$!lang.get('week')</a>
 		#if($isAdmin)
 			#if($request.getParameter("bulkedit"))
-				<a href="$peoplelink" class="chip grey darken-2 white-text">Bulk Edit Spaces</a>
+				<a href="$peoplelink" class="chip grey darken-2 white-text">$!lang.get('bulkeditspaces')</a>
 			#else
-				<a href="$peoplelink?bulkedit=true" class="chip">Bulk Edit Spaces</a>
+				<a href="$peoplelink?bulkedit=true" class="chip orange-text text-darken-2"><b>$!lang.get('bulkeditspaces')</b></a>
 			#end
 		#end
 	</div>
