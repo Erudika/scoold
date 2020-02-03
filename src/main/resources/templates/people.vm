@@ -7,12 +7,12 @@
 	<div class="chips-container">
 		#set($sortarr = {'votes': "", 'newest': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.montlyVotes': "", 'properties.weeklyVotes': ""} )
 		#setsortbyselection($sortarr 'newest')
-		<a href="$peoplelink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-		<a href="$peoplelink?sortby=votes" class="chip $sortarr.votes">$!lang.get("reputation")</a>
-		<a href="$peoplelink?sortby=properties.yearlyVotes" class="chip $sortarr['properties.yearlyVotes']">$!lang.get('year')</a>
-		<a href="$peoplelink?sortby=properties.quarterlyVotes" class="chip $sortarr['properties.quarterlyVotes']">$!lang.get('quarter')</a>
-		<a href="$peoplelink?sortby=properties.montlyVotes" class="chip $sortarr['properties.montlyVotes']">$!lang.get('month')</a>
-		<a href="$peoplelink?sortby=properties.weeklyVotes" class="chip $sortarr['properties.weeklyVotes']">$!lang.get('week')</a>
+		<a href="$peoplelink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon() $!lang.get("newest")</a>
+		<a href="$peoplelink?sortby=votes#sortorderparam('&' 'votes')" class="chip $sortarr.votes">#sortordericon("votes") $!lang.get("reputation")</a>
+		<a href="$peoplelink?sortby=properties.yearlyVotes#sortorderparam('&' 'properties.yearlyVotes')" class="chip $sortarr['properties.yearlyVotes']">#sortordericon("properties.yearlyVotes") $!lang.get('year')</a>
+		<a href="$peoplelink?sortby=properties.quarterlyVotes#sortorderparam('&' 'properties.quarterlyVotes')" class="chip $sortarr['properties.quarterlyVotes']">#sortordericon("properties.quarterlyVotes") $!lang.get('quarter')</a>
+		<a href="$peoplelink?sortby=properties.montlyVotes#sortorderparam('&' 'properties.monthlyVotes')" class="chip $sortarr['properties.montlyVotes']">#sortordericon("properties.monthlyVotes") $!lang.get('month')</a>
+		<a href="$peoplelink?sortby=properties.weeklyVotes#sortorderparam('&' 'properties.weeklyVotes')" class="chip $sortarr['properties.weeklyVotes']">#sortordericon("properties.weeklyVotes") $!lang.get('week')</a>
 		#if($isAdmin)
 			#if($request.getParameter("bulkedit"))
 				<a href="$peoplelink" class="chip grey darken-2 white-text">$!lang.get('bulkeditspaces')</a>

@@ -46,10 +46,10 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers"
-							 class="chip $sortarr.votes">$!lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest" title="Newest answers"
-							 class="chip $sortarr.newest">$!lang.get("newest")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)#sortorderparam('?')" title="Most voted answers"
+							 class="chip $sortarr.votes">#sortordericon() $!lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
+							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
 				</div>
@@ -133,9 +133,9 @@
 		<div class="chips-container">
 			#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
 			#setsortbyselection($sortarr 'newest')
-			<a href="$feedbacklink" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="$feedbacklink?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-			<a href="$feedbacklink?sortby=updated" class="chip $sortarr.updated">$!lang.get("posts.updated")</a>
+			<a href="$feedbacklink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon() $!lang.get("newest")</a>
+			<a href="$feedbacklink?sortby=votes#sortorderparam('&' 'votes')" class="chip $sortarr.votes">#sortordericon("votes") $!lang.get("votes")</a>
+			<a href="$feedbacklink?sortby=updated#sortorderparam('&' 'updated')" class="chip $sortarr.updated">#sortordericon("updated") $!lang.get("posts.updated")</a>
 		</div>
 
 		<h2 class="hide-on-med-and-down">#feedbackTitle()</h2>

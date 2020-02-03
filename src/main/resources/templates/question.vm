@@ -31,10 +31,10 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)" title="Most voted answers"
-							 class="chip $sortarr.votes">$!lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest" title="Newest answers"
-							 class="chip $sortarr.newest">$!lang.get("newest")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)#sortorderparam('?')" title="Most voted answers"
+							 class="chip $sortarr.votes">#sortordericon() $!lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
+							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
 				</div>

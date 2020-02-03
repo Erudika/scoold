@@ -876,6 +876,18 @@ $utils.formatDate($date, $format, $currentLocale)
 #if ($sbparam && !$sbparam.isEmpty()) #set($paramMap[$sbparam] = $sbclazz) #else #set($paramMap[$defkey] = $sbclazz) #end
 #end
 #####################################
+#macro(sortorderparam $prefix $sortparam)
+#if ("false" != $request.getParameter("desc") && $sortparam == $request.getParameter("sortby"))$!{prefix}desc=false#end
+#end
+#####################################
+#macro(sortorderparamasc $prefix $sortparam)
+#if ("false" == $request.getParameter("desc") && $sortparam == $request.getParameter("sortby"))$!{prefix}desc=true#else$!{prefix}desc=false#end
+#end
+#####################################
+#macro(sortordericon $sortparam)
+#if ("false" == $request.getParameter("desc") && $sortparam == $request.getParameter("sortby"))<i class="fa fa-sort-amount-asc phs" title="Ascending order"></i>#end
+#end
+#####################################
 #macro(sectoken $bare $formId)
 ## RESERVED FOR FUTURE USE
 #end

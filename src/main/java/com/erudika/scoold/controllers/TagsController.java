@@ -67,7 +67,6 @@ public class TagsController {
 			HttpServletRequest req, Model model) {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
-		itemcount.setDesc(!"tag".equals(sortby));
 
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
