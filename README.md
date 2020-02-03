@@ -1180,6 +1180,13 @@ para.show_branding = true
 para.logo_url = "/logo.svg"
 para.logo_width = 90
 para.stylesheet_url = "/style.css"
+para.inline_css = ""
+```
+
+If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
+simply add them as inline CSS:
+```ini
+para.inline_css = ".scoold-logo: { width: 100px; }"
 ```
 
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page:
