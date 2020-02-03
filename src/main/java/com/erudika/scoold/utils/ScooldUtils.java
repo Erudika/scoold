@@ -1068,7 +1068,7 @@ public final class ScooldUtils {
 		if (Config.getConfigBoolean("csp_header_enabled", true)) {
 			response.addHeader("Content-Security-Policy",
 					Config.getConfigParam("csp_header", getDefaultContentSecurityPolicy(request.isSecure())).
-							replaceFirst("\\{\\{nonce\\}\\}", nonce));
+							replaceAll("\\{\\{nonce\\}\\}", nonce));
 		}
 		// HSTS Header
 		if (Config.getConfigBoolean("hsts_header_enabled", true)) {
@@ -1115,12 +1115,12 @@ public final class ScooldUtils {
 				+ " scoold.com www.google-analytics.com www.googletagmanager.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
-				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com unpkg.com "
+				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com " // unsafe-inline required by MathJax and Google Maps!
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +
 					Config.getConfigParam("csp_style_sources", Config.getConfigParam("stylesheet_url", "")) + "; "
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "
-				+ "script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';";
+				+ "script-src 'nonce-{{nonce}}' 'strict-dynamic';";
 	}
 }
