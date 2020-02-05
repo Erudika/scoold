@@ -244,7 +244,7 @@
 		#end
 	</div>
 	<div class="col s8 m7 l9">
-		<div class="right">
+		<div class="right prm">
 			#if($showu && $showu.id)
 				#set($contextboxid = $utils.generateSecurityToken(10, true))
 				<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
@@ -323,7 +323,7 @@
 				</div>
 				<div class="col s9 m8">
 					#if(!$isAdmin)
-					<div class="right mrm">
+					<div class="right prm ptm">
 						#set($contextboxid = $utils.generateSecurityToken(10, true))
 						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
 						<ul id="${contextboxid}" class="dropdown-content">

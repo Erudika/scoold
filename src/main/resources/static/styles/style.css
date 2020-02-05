@@ -308,6 +308,9 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	font-size: inherit;
 	display: inline;
 }
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {background-color: #039be5;}
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
+[type="radio"].with-gap:checked+span:after {border: 2px solid #039be5;}
 
 .userbox img {max-width: inherit;}
 @media (max-width: 1280px) {
@@ -430,7 +433,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	}
 }
 
-/**** FEEL FREE TO MODIFY THESE PROPETIES ****/
+/**** FEEL FREE TO MODIFY THESE ****/
 a, h1, h2, h3, h4, h5, h6, .dropdown-content li>a, .dropdown-content li>span {color: #039be5;}
 .btn, .btn-large, .navbtn-hover {background-color: #ec407a;}
 .btn:focus, .btn-large:focus, .btn-floating:focus {background-color: #ec407a; opacity: 0.7;}

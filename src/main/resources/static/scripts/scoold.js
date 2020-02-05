@@ -467,11 +467,13 @@ $(function () {
 		currentPic.val(newPicValue);
 	});
 
-	$("#picture_url").on('focusout paste', function () {
+	var pictureUrlInput = $("#picture_url");
+	var pictureEditForm = pictureUrlInput.closest("form");
+	pictureUrlInput.on('focusout paste', function () {
 		var dis = $(this);
 		setTimeout(function () {
 			$("img.profile-pic:first").attr("src", dis.val());
-			$.post(dis.closest("form").attr("action"), {picture: dis.val()});
+			$.post(pictureEditForm.attr("action"), {picture: dis.val()});
 		}, 200);
 	});
 
@@ -638,7 +640,7 @@ $(function () {
 		postboxes.html(function (i, html) {
 			return replaceMentionsWithHtmlLinks(html);
 		});
-		$(".questionbox").html(function (i, html) {
+		$(".questionbox .question-header").html(function (i, html) {
 			// also fix truncated links in post body where elipsis function is used
 			return replaceMentionsWithHtmlLinks(html).replace(/@(&lt;|<)*?.*?\.\.\./igm, "");
 		});
@@ -819,6 +821,27 @@ $(function () {
 
 	// small fix for custom checkbox rendering of GFM task lists
 	$(".task-list-item>input[type=checkbox]").addClass("filled-in").after("<label style='height:15px'></label>");
+
+	var qfb = $("#question-filter-btn");
+	qfb.click(function () {
+		if (localStorage.getItem("questionFilterOpen")) {
+			localStorage.removeItem("questionFilterOpen");
+			$(this).removeClass("grey darken-2 white-text").blur().children("i").removeClass("fa-times").addClass("fa-filter");
+		} else {
+			localStorage.setItem("questionFilterOpen", true);
+			$(this).addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+		}
+	});
+
+	if (localStorage.getItem("questionFilterOpen")) {
+		$("#question-filter-drawer").removeClass("hide");
+		qfb.addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+	}
+
+	$("#question-filter-clear-btn").click(function () {
+		qfb.click();
+		return true;
+	});
 
 	/****************************************************
      *                   REVISIONS

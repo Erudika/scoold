@@ -577,7 +577,7 @@ public final class ScooldUtils {
 		p.setPage(Math.min(NumberUtils.toLong(req.getParameter(pageParamName), 1), Config.MAX_PAGES));
 		p.setLimit(NumberUtils.toInt(req.getParameter("limit"), Config.MAX_ITEMS_PER_PAGE));
 		String lastKey = req.getParameter("lastKey");
-		String sort = req.getParameter("sort");
+		String sort = req.getParameter("sortby");
 		String desc = req.getParameter("desc");
 		if (!StringUtils.isBlank(desc)) {
 			p.setDesc(Boolean.parseBoolean(desc));

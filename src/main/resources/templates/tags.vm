@@ -32,8 +32,8 @@
 							<form method="post">
 								<div class="col s12 m8">
 									<div class="input-field">
-										<label for="new_tag">$!lang.get('tags.tag')</label>
-										<input type="text" id="new_tag" name="newtag" class="locationbox validate" value="$!showtag.tag" required>
+										<label for="new-tag-${showtag.tag}">$!lang.get('tags.tag')</label>
+										<input type="text" id="new-tag-${showtag.tag}" name="newtag" class="locationbox validate" value="$!showtag.tag" required>
 										<input type="hidden" name="tag" class="locationbox validate" value="$!showtag.tag">
 									</div>
 								</div>

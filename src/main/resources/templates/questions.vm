@@ -28,8 +28,7 @@
 				<div class="input-field">
 					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-					#set($tagz = "$!draftQuestion.tags")
-					<input type="hidden" name="tags" value="$!tagz.join(',')">
+					<input type="hidden" name="tags" value="$!draftQuestion.getTagsString()">
 					<div class="pll mll">
 						#getmessagebox("red white-text" $error.get("tags"))
 					</div>
@@ -84,7 +83,7 @@
 				#if($scooldUtils.isNearMeFeatureEnabled())
 					#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
 					<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
-						<i class="fa fa-filter"></i> $!lang.get("posts.locationfilter")
+						<i class="fa fa-map-marker"></i> $!lang.get("posts.locationfilter")
 					</a>
 				#end
 
@@ -93,9 +92,89 @@
 					<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
 				</a>
 			#end
+
+			<a href="#" id="question-filter-btn" class="next-div-toggle chip tooltipped"
+				 data-tooltip="$!lang.get('filter')"><i class="fa fa-filter"></i></a>
 		</div>
 
 		<h2 class="hide-on-med-and-down">#questionsTitle()</h2>
+		<div id="question-filter-drawer" class="lightborder pam hide">
+			<form method="post" action="$questionslink/apply-filter">
+				<input type="hidden" name="tab" value="$!request.getParameter('sortby')">
+				<div class="row mbn">
+					<div class="col l6 m12 s12">
+						<strong>$!lang.get('tags.title')</strong>
+						<div class="input-field">
+							#set($tagz = "$utils.noSpaces($!authUser.getFavtags().toString(), '')")
+							<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+							#if ($authenticated && $tagFilterOn)
+								<input type="hidden" name="tags" value="$!tagz.replaceAll('[\[\]]', '')">
+							#else
+								#set($tagsFromPager = "$itemcount.name" )
+								#if($tagsFromPager && $tagsFromPager.startsWith("with_tags:"))
+									<input type="hidden" name="tags" value="$!tagsFromPager.replaceFirst('with_tags:', '')">
+								#else
+									<input type="hidden" name="tags" value="">
+								#end
+							#end
+						</div>
+					</div>
+					<div class="col l2 m4 s6">
+						<strong>$!lang.get('sorting')</strong>
+						<div class="input-field">
+							#macro(sortselected $prop)
+							#if($itemcount.sortby == $prop)selected#end
+							#end
+							<select name="sortby">
+								<option value="timestamp" #sortselected("timestamp")>Creation date</option>
+								<option value="creatorid" #sortselected("creatorid")>Creator ID</option>
+								<option value="votes" #sortselected("votes")>$!lang.get('votes')</option>
+								<option value="properties.answercount" #sortselected("properties.answercount")>$!lang.get('answers.title')</option>
+								<option value="properties.viewcount" #sortselected("properties.viewcount")>$!lang.get('posts.views')</option>
+								<option value="properties.lastactivity" #sortselected("properties.lastactivity")>$!lang.get('profile.about.lastseen')</option>
+								<option value="properties.lastedited" #sortselected("properties.lastedited")>Last edited</option>
+							</select>
+						</div>
+						<div>
+							<label>
+								#if($itemcount.desc)
+								<input name="desc" type="radio" value="true" checked>
+								#else
+								<input name="desc" type="radio" value="true">
+								#end
+								<span>$!lang.get('descending')</span>
+							</label>
+						</div>
+						<div>
+							<label>
+								#if(!$itemcount.desc)
+								<input name="desc" type="radio" value="false" checked>
+								#else
+								<input name="desc" type="radio" value="false">
+								#end
+								<span>$!lang.get('ascending')</span>
+							</label>
+						</div>
+					</div>
+					<div class="col l2 m4 s6">
+						<strong>$!lang.get('results')</strong>
+						<div class="input-field">
+							<input type="number" name="limit" min="10" max="100" value="$!itemcount.limit">
+							<span>$!lang.get('perpage')</span>
+						</div>
+					</div>
+					<div class="col l2 m4 s12">
+						<div class="center-align pvm">
+							<button type="submit" class="btn small waves-effect waves-light">$!lang.get('apply')</button>
+						</div>
+						<div class="center-align pvm">
+							<input id="question-filter-clear-btn" type="submit" class="btn btn-flat white"
+										 name="clear" value="$!lang.get('clear')">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 		<hr>
 
 		#if (!$questionslist || $questionslist.isEmpty())

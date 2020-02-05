@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -46,8 +47,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.utils.HttpUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -131,6 +136,22 @@ public class QuestionsController {
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
 		return "base";
+	}
+
+	@PostMapping("/questions/apply-filter")
+	public String applyFilter(@RequestParam(required = false) String sortby, @RequestParam(required = false) String tab,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (req.getParameter("clear") != null) {
+			HttpUtils.removeStateParam("questions-filter", req, res);
+		} else {
+			Pager p = utils.pagerFromParams(req);
+			if (!StringUtils.isBlank(req.getParameter(Config._TAGS))) {
+				p.setName("with_tags:" + req.getParameter(Config._TAGS));
+			}
+			savePagerToCookie(req, res, p);
+		}
+		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby=" +
+				Optional.ofNullable(tab).orElse(sortby));
 	}
 
 	@GetMapping("/questions/ask")
@@ -221,7 +242,7 @@ public class QuestionsController {
 	}
 
 	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
-		Pager itemcount = utils.getPager("page", req);
+		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req));
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
@@ -268,6 +289,7 @@ public class QuestionsController {
 	private String getSpaceFilteredFavtagsQuery(String currentSpace, Profile authUser) {
 		StringBuilder sb = new StringBuilder(utils.getSpaceFilter(authUser, currentSpace));
 		if (authUser.hasFavtags()) {
+			// should we specify the tags property here? like: tags:(tag1 OR tag2)
 			sb.append(" AND (").append(authUser.getFavtags().stream().collect(Collectors.joining(" OR "))).append(")");
 		}
 		return sb.toString();
@@ -278,26 +300,60 @@ public class QuestionsController {
 		String query = utils.getSpaceFilteredQuery(req, spaceFiltered);
 		if ("activity".equals(sortby)) {
 			p.setSortby("properties.lastactivity");
-			p.setDesc(true);
 		} else if ("votes".equals(sortby)) {
 			p.setSortby("votes");
 		} else if ("unanswered".equals(sortby)) {
-			p.setSortby("timestamp");
-			p.setDesc(false);
+			if ("default_pager".equals(p.getName()) && p.isDesc()) {
+				p.setDesc(false);
+			}
 			String q = "properties.answercount:0";
 			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
 					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		} else if ("unapproved".equals(sortby)) {
-			p.setSortby("timestamp");
-			p.setDesc(false);
+			if ("default_pager".equals(p.getName()) && p.isDesc()) {
+				p.setDesc(false);
+			}
 			String q = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]";
 			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
 					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
+		}
+		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
+		if (!StringUtils.isBlank(tags)) {
+			StringBuilder sb = new StringBuilder("*".equals(query) ? "" : query.concat(" AND "));
+			// should we specify the tags property here? like: tags:(tag1 OR tag2)
+			sb.append("tags").append(":(").append(tags.replaceAll(",", " OR ")).append(")");
+			query = sb.toString();
 		}
 		return query;
 	}
 
 	private boolean isSpaceFilteredRequest(Profile authUser, String space) {
 		return !(utils.isDefaultSpace(space) && utils.isMod(authUser)) && utils.canAccessSpace(authUser, space);
+	}
+
+	private Pager getPagerFromCookie(HttpServletRequest req, Pager defaultPager) {
+		try {
+			String cookie = HttpUtils.getCookieValue(req, "questions-filter");
+			if (StringUtils.isBlank(cookie)) {
+				return defaultPager;
+			}
+			Pager pager = ParaObjectUtils.getJsonReader(Pager.class).readValue(Utils.base64dec(cookie));
+			pager.setPage(defaultPager.getPage());
+			pager.setLastKey(null);
+			pager.setCount(0);
+			return pager;
+		} catch (JsonProcessingException ex) {
+			if (defaultPager != null) {
+				defaultPager.setName("default_pager");
+			}
+			return defaultPager;
+		}
+	}
+
+	private void savePagerToCookie(HttpServletRequest req, HttpServletResponse res, Pager p) {
+		try {
+			HttpUtils.setRawCookie("questions-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
+					writeValueAsBytes(p)), req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
+		} catch (JsonProcessingException ex) { }
 	}
 }
