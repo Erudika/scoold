@@ -122,6 +122,20 @@ If you want to sign up with an email and password, SMTP settings must be configu
 
 [Read the Para docs](https://paraio.org/docs) for details on how to run and configure your Scoold backend.
 
+### Hardware requirements
+
+Scoold and Para can both be hosted on the same machine, provided it has at least 3 GB of RAM. Scoold requires:
+- at least 500 MB RAM
+- 1 vCPU or more
+- 10 GB disk space or more (primarily for logs and storing images)
+
+Para requires:
+- at least 1 GB RAM
+- 1 vCPU (2 are recommended)
+- 10 GB disk space or more (unless the database is stored on the same machine)
+
+JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold.jar`
+
 ## Configuration
 
 > **Important:** Create a separate app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
