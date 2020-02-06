@@ -68,7 +68,7 @@ your company or team.
 
 ### Quick Start with a managed Para backend (easier)
 
-[JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project.
+[JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
 0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
@@ -857,6 +857,11 @@ users. Similarly, existing regular users will be *promoted* to admins if they ap
 This feature is enabled with `para.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
 replies, without having a Scoold account. Posting to the "Feedback" section will also be open without requiring users
 to sign in. This feature is disabled by default.
+
+Additionally, people may wish to make their profile details anonymous from the Settings page. To allow this option set:
+```
+para.profile_anonimity_enabled = true
+```
 
 ## Disabling the "Feedback" section
 
