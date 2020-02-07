@@ -41,6 +41,7 @@
 								#set($secondaryPicture = $!gravatarPicture)
 							#end
 							<input type="hidden" value="$!secondaryPicture">
+							<a href="#" id="clear-avatar-btn">$!lang.get('clear')</a>
 						</div>
 						<div class="switch right">
 							<label>

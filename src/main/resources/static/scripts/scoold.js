@@ -493,6 +493,15 @@ $(function () {
 		return false;
 	});
 
+	$("#clear-avatar-btn").click(function () {
+		var defaultAvatar = window.location.origin + "/people/avatar";
+		$("img.profile-pic").attr("src", defaultAvatar);
+		pictureUrlInput.val(defaultAvatar);
+		$.post($(this).closest("form").attr("action"), {picture: defaultAvatar});
+		return false;
+	});
+
+
 	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/
