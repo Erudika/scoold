@@ -415,7 +415,40 @@ public final class ScooldUtils {
 		}
 	}
 
-	public Set<String> getFavTagsSubscribers(List<String> tags) {
+	private Map<String, Profile> buildProfilesMap(List<User> users) {
+		if (users != null && !users.isEmpty()) {
+			Map<String, User> userz = users.stream().collect(Collectors.toMap(u -> u.getId(), u -> u));
+			List<Profile> profiles = pc.readAll(userz.keySet().stream().
+					map(uid -> Profile.id(uid)).collect(Collectors.toList()));
+			Map<String, Profile> profilesMap = new HashMap<String, Profile>(users.size());
+			profiles.forEach(pr -> profilesMap.put(userz.get(pr.getCreatorid()).getEmail(), pr));
+			return profilesMap;
+		}
+		return Collections.emptyMap();
+	}
+
+	private void sendEmailsToSubscribersInSpace(Set<String> emails, String space, String subject, String html) {
+		int i = 0;
+		int max = Config.MAX_ITEMS_PER_PAGE;
+		List<String> terms = new ArrayList<>(max);
+		for (String email : emails) {
+			terms.add(email);
+			if (++i == max) {
+				emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
+						entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space)).
+						map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
+				i = 0;
+				terms.clear();
+			}
+		}
+		if (!terms.isEmpty()) {
+			emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
+					entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space)).
+					map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
+		}
+	}
+
+	private Set<String> getFavTagsSubscribers(List<String> tags) {
 		if (!tags.isEmpty()) {
 			Set<String> emails = new LinkedHashSet<>();
 			// find all user objects even if there are more than 10000 users in the system
@@ -457,11 +490,9 @@ public final class ScooldUtils {
 					postURL, question.getTitle(), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
-			if (!emails.isEmpty()) {
-				emailer.sendEmail(new ArrayList<String>(emails),
-						name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-						Utils.compileMustache(model, loadEmailTemplate("notify")));
-			}
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
+					name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
+					Utils.compileMustache(model, loadEmailTemplate("notify")));
 		}
 	}
 
@@ -492,11 +523,9 @@ public final class ScooldUtils {
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
-			if (!emails.isEmpty()) {
-				emailer.sendEmail(new ArrayList<String>(emails),
-						name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-						Utils.compileMustache(model, loadEmailTemplate("notify")));
-			}
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
+					name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
+					Utils.compileMustache(model, loadEmailTemplate("notify")));
 		}
 	}
 
