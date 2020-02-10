@@ -308,6 +308,13 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	font-size: inherit;
 	display: inline;
 }
+.personbox .person-name {
+	font-size: 1em;
+	line-height: 1.2em;
+}
+.personbox .lastseen {
+	font-size: 0.9em;
+}
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {background-color: #039be5;}
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
 [type="radio"].with-gap:checked+span:after {border: 2px solid #039be5;}
@@ -385,7 +392,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 		padding-left: 0px;
 	}
 	.user-card {
-		min-height: 90px;
+		min-height: 96px;
 		margin-bottom: 10px;
 	}
 	.user-card img {

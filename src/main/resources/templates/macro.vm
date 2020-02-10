@@ -314,7 +314,7 @@
 #macro(peoplepage $people)
 	#foreach($showFriend in $people)
 	<div class="col s12 m6 l4">
-		<div class="card">
+		<div class="card personbox">
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
@@ -331,7 +331,7 @@
 						</ul>
 					</div>
 					#end
-					<div class="mediumText pts">
+					<div class="person-name pts">
 						#if($isAdmin && $request.getParameter("bulkedit"))
 							<span class="grey-text l">
 								<label for="$!showFriend.id">
@@ -357,7 +357,7 @@
 							#end
 						</div>
 					#end
-					<span class="chip mtm" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
+					<span class="chip mts" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
 					#if($showFriend.badges && $showFriend.badgesMap && $showFriend.badgesMap.size() > 0)
 						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 					#end
@@ -367,7 +367,7 @@
 					#if ($showFriend.groups == "mods")
 					<i class="fa fa-dot-circle-o orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 					#end
-					<div class="grey-text r prl tooltipped" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
+					<div class="grey-text r prm tooltipped lastseen" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
 					</div>
 				</div>
