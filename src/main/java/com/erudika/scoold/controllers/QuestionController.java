@@ -337,7 +337,7 @@ public class QuestionController {
 	}
 
 	private void changeSpaceForAllAnswers(Post showPost, String space) {
-		Pager pager = new Pager(1, "_docid", false, 25);
+		Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
 		List<Reply> answerslist;
 		try {
 			do {

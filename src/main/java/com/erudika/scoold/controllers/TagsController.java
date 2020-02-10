@@ -19,6 +19,7 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Tag;
+import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
@@ -99,7 +100,7 @@ public class TagsController {
 						authUser.getName(), authUser.getId(), tagg.getTag(), t.getTag());
 
 				int taggedCount = 0;
-				Pager pager = new Pager(1, "_docid", false, 25);
+				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
 				List<Question> questionslist;
 				do {
 					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tagg.getTag()}, pager);

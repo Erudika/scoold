@@ -419,7 +419,7 @@ public final class ScooldUtils {
 		if (!tags.isEmpty()) {
 			Set<String> emails = new LinkedHashSet<>();
 			// find all user objects even if there are more than 10000 users in the system
-			Pager pager = new Pager(1, "_docid", false, Config.DEFAULT_LIMIT);
+			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
 			List<Profile> profiles;
 			do {
 				profiles = pc.findQuery(Utils.type(Profile.class),
