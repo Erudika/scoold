@@ -29,7 +29,7 @@
 		<link href="$!request.contextPath/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
 		<link href="$!imageslink/logowhite.png" rel="image_src">
 		<link href="$!imageslink/logowhite.png" rel="apple-touch-icon">
-		<link href="$!imageslink/favicon.ico" rel="shortcut icon">
+		<link href="$!faviconUrl" rel="shortcut icon">
 		<link href="$!styleslink/materialize.min.css" rel="stylesheet">
 		<link href="$!styleslink/font-awesome.min.css" rel="stylesheet">
 		<link href="$!styleslink/easymde.min.css" rel="stylesheet">
