@@ -1200,6 +1200,7 @@ para.logo_url = "/logo.svg"
 para.logo_width = 90
 para.stylesheet_url = "/style.css"
 para.inline_css = ""
+para.favicon_url = "/favicon.ico"
 ```
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
