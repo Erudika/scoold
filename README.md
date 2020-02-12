@@ -308,14 +308,26 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Erudika/scoold)
 
-**Manual deployment**
+### Manual deployment - option 1 (code push)
 
 1. First, clone this repository and create a new Heroku app
 2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
 3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown above.
 4. Open the app in your browser at `https://{appname}.herokuapp.com`.
 
-**Note**: On Heroku, all configuration variables (config vars) **must** be set without dots ".", for example `para.endpoint`
+### Manual deployment - option 2 (JAR push)
+
+1. Build the Scoold JAR file or acquire the Scoold Pro JAR package by [buying Pro](https://paraio.com/scoold-pro)
+2. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+3. Create a Heroku app or use the id of an existing Heroku app where you want Scoold deployed
+3. Open a terminal in the directory containing the JAR file and execute:
+```
+$ heroku deploy:jar scoold.jar --app myscooldapp
+```
+The JAR push option is useful in cases where you have an existing Heroku app which hosts a free version of Scoold,
+deployed through the "one-click" Heroku button, and you want to upgrade it to Scoold Pro.
+
+**Note**: On Heroku, configuration variables (config vars) **must not** contain dots ".", for example `para.endpoint`
 becomes `para_endpoint`.
 
 It's also helpful to install the Heroku CLI tool.
