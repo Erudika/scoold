@@ -18,9 +18,11 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.App;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Webhook;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
@@ -41,12 +43,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.erudika.scoold.core.Question;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 /**
  *
@@ -92,6 +111,7 @@ public class AdminController {
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
+		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("itemcount1", itemcount1);
@@ -222,5 +242,85 @@ public class AdminController {
 			}
 		}
 		return "redirect:" + Optional.ofNullable(req.getParameter("returnto")).orElse(ADMINLINK);
+	}
+
+	@GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<StreamingResponseBody> download(HttpServletRequest req, HttpServletResponse response) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			return new ResponseEntity<StreamingResponseBody>(HttpStatus.UNAUTHORIZED);
+		}
+		String fileName = App.identifier(Config.getConfigParam("access_key", "scoold")) + "_" +
+					Utils.formatDate("YYYYMMdd_HHmmss", Locale.US);
+		response.setContentType("application/zip");
+		response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".zip");
+		return new ResponseEntity<StreamingResponseBody>(out -> {
+			ObjectWriter writer = ParaObjectUtils.getJsonWriterNoIdent().without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+			try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
+				long count = 0;
+				int partNum = 0;
+				// find all objects even if there are more than 10000 users in the system
+				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+				List<ParaObject> objects;
+				do {
+					objects = pc.findQuery("", "*", pager);
+					ZipEntry zipEntry = new ZipEntry(fileName + "_part" + (++partNum) + ".json");
+					zipOut.putNextEntry(zipEntry);
+					writer.writeValue(zipOut, objects);
+					count += objects.size();
+				} while (!objects.isEmpty());
+				logger.info("Exported {} objects to {}. Downloaded by {} (pager.count={})", count, fileName + ".zip",
+						authUser.getCreatorid() + " " + authUser.getName(), pager.getCount());
+			} catch (final IOException e) {
+				logger.error("Failed to export data.", e);
+			}
+		}, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/import")
+	public String handleFileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			res.setStatus(403);
+			return null;
+		}
+		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Sysprop>>() { });
+		int	count = 0;
+		String filename = file.getOriginalFilename();
+		Sysprop s = new Sysprop();
+		s.setType("scooldimport");
+		try (InputStream inputStream = file.getInputStream()) {
+			if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
+				try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
+					ZipEntry zipEntry;
+					while ((zipEntry = zipIn.getNextEntry()) != null) {
+						List<Sysprop> objects = reader.readValue(new FilterInputStream(zipIn) {
+							public void close() throws IOException {
+								zipIn.closeEntry();
+							}
+						});
+						count += objects.size();
+						pc.createAll(objects);
+					}
+				}
+			} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
+				List<Sysprop> objects = reader.readValue(inputStream);
+				count = objects.size();
+				pc.createAll(objects);
+			}
+			s.setCreatorid(authUser.getCreatorid());
+			s.setName(authUser.getName());
+			s.addProperty("count", count);
+			s.addProperty("file", filename);
+			logger.info("Imported {} objects to {}. Executed by {}", count,
+					Config.getConfigParam("access_key", "scoold"), authUser.getCreatorid() + " " + authUser.getName());
+
+			if (count > 0) {
+				pc.create(s);
+			}
+		} catch (IOException e) {
+			logger.error("Failed to import " + filename, e);
+		}
+		return "redirect:" + ADMINLINK;
 	}
 }

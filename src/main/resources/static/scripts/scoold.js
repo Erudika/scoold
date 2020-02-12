@@ -428,6 +428,20 @@ $(function () {
 		});
 	});
 
+	var importForm = $("#import-form");
+	importForm.find("input[type=text]").change(function () {
+		if ($(this).val().trim() === "") {
+			importForm.find(".import-text").next("strong").addClass("hide").end().removeClass("hide");
+		} else {
+			importForm.find(".import-text").next("strong").removeClass("hide").end().addClass("hide");
+		}
+	});
+
+	importForm.on("submit", function () {
+		$(this).find(".row:first").addClass("hide").end().find(".progress").removeClass("hide");
+		return true;
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/

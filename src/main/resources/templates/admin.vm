@@ -118,6 +118,77 @@
 	</div>
 	#end
 
+	<h4>$!lang.get('backups.title')</h4>
+
+	<div class="row mvn">
+		<div class="col s12 input-field">
+			<a href="$adminlink/export" class="btn waves-effect waves-light">
+				<i class="fa fa-download"></i> &nbsp;<b>$!lang.get('admin.export')</b>
+			</a>
+		</div>
+	</div>
+	<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
+		<div class="row">
+			<div class="col m6 s6">
+				<div class="file-field input-field">
+					<div class="btn">
+						<span>
+							<i class="fa fa-file-zip-o"></i>
+						</span>
+						<input type="file" name="file" accept=".json,.zip">
+					</div>
+					<div class="file-path-wrapper">
+						<input class="file-path validate" type="text" required>
+					</div>
+					<span class="import-text">$!lang.get('admin.import.text')</span>
+					<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
+				</div>
+			</div>
+			<div class="col s6">
+				<div class="input-field">
+					<button type="submit" class="btn waves-effect waves-light rusure">
+						<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="s12 columns">
+				<div class="progress mvl hide">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	#if($scooldimports && !$scooldimports.isEmpty())
+	<div class="row">
+		<div class="col s12">
+			<h5>$!lang.get('admin.importlog')</h5>
+			<table class="responsive-table">
+				<thead>
+					<tr>
+						<th class="capitalize">$!lang.get('date')</th>
+						<th>$!lang.get('admin.importlog.user')</th>
+						<th>$!lang.get('admin.importlog.file')</th>
+						<th>$!lang.get('admin.importlog.count')</th>
+					</tr>
+				</thead>
+				<tbody>
+					#foreach($import in $scooldimports)
+						<tr>
+							<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
+							<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
+							<td>$!import.getProperty("file")</td>
+							<td>$!import.getProperty("count")</td>
+						</tr>
+					#end
+				</tbody>
+			</table>
+		</div>
+	</div>
+	#end
+
 	<hr>
 	<div class="ptl">
 		<ul class="collapsible" data-collapsible="expandable">
