@@ -32,6 +32,7 @@ your company or team.
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
+- Backup and Restore
 - Spring Boot project (single JAR)
 - LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Twitter) with Gravatar support
@@ -1205,14 +1206,17 @@ para.vote_expires_after_sec = 2592000
 ## Customizing the UI
 
 There are a number of settings that let you customize the appearance of the website without changing the code.
-```
+```ini
 para.fixed_nav = false
 para.show_branding = true
 para.logo_url = "/logo.svg"
 para.logo_width = 90
-para.stylesheet_url = "/style.css"
-para.inline_css = ""
+# favicon image location
 para.favicon_url = "/favicon.ico"
+# overwrite the main stylesheet with your own
+para.stylesheet_url = "/style.css"
+# appends extra CSS rules to the main stylesheet
+para.inline_css = ""
 ```
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
@@ -1222,7 +1226,7 @@ para.inline_css = ".scoold-logo: { width: 100px; }"
 ```
 
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page:
-```
+```ini
 para.welcome_message = "Hello and welcome to Scoold!"
 ```
 
