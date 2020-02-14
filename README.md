@@ -328,10 +328,22 @@ $ heroku deploy:jar scoold.jar --app myscooldapp
 The JAR push option is useful in cases where you have an existing Heroku app which hosts a free version of Scoold,
 deployed through the "one-click" Heroku button, and you want to upgrade it to Scoold Pro.
 
-**Note**: On Heroku, configuration variables (config vars) **must not** contain dots ".", for example `para.endpoint`
-becomes `para_endpoint`.
+### Configuring Scoold on Heroku
 
-It's also helpful to install the Heroku CLI tool.
+On Heroku you don't have a configuration file, instead you use Heroku's environment variables to configure Scoold.
+You can add each Scoold configuration property as an environment variable on the Settings page of your Heroku admin page.
+Click "Reveal Config Vars". Configuration variables (config vars) **must not** contain dots ".", for example `para.endpoint`
+becomes `para_endpoint`. You **must** replace every dot with an underscore in order to convert a Scoold configuration
+property to a Heroku environment variable.
+
+It's also helpful to install the Heroku CLI tool. Using the CLI you can watch the Scoold logs with:
+```
+$ heroku logs --tail --app myscooldapp
+```
+Or you can restart your dyno with:
+```
+$ heroku restart --app myscooldapp
+```
 
 ## Deploying Scoold to DigitalOcean
 
