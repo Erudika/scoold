@@ -321,11 +321,17 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 1. Build the Scoold JAR file or acquire the Scoold Pro JAR package by [buying Pro](https://paraio.com/scoold-pro)
 2. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 3. Create a Heroku app or use the id of an existing Heroku app where you want Scoold deployed
-3. Open a terminal in the directory containing the JAR file and execute:
+4. Add the `heroku/jvm` and `heroku/java` buildpacks to your Heroku app from the Settings page
+5. Create a file `Procfile` containing this line:
 ```
-$ heroku deploy:jar scoold.jar --app myscooldapp
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar scoold-*.jar $JAR_OPTS
 ```
-The JAR push option is useful in cases where you have an existing Heroku app which hosts a free version of Scoold,
+6. Open a terminal in the directory containing the JAR file and execute:
+```
+$ heroku plugins:install java
+$ heroku deploy:jar scoold-x.y.z.jar --app myscooldapp
+```
+Pushing JARs to Heroku is useful in cases where you have an existing Heroku app which hosts a free version of Scoold,
 deployed through the "one-click" Heroku button, and you want to upgrade it to Scoold Pro.
 
 ### Configuring Scoold on Heroku
