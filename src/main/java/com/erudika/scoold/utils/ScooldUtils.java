@@ -29,6 +29,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.para.validation.ValidationUtils;
+import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
@@ -330,8 +331,7 @@ public final class ScooldUtils {
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
 			model.put("body", body1 + body2 + body3);
-			emailer.sendEmail(Arrays.asList(user.getEmail()), subject,
-					Utils.compileMustache(model, loadEmailTemplate("notify")));
+			emailer.sendEmail(Arrays.asList(user.getEmail()), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -348,7 +348,7 @@ public final class ScooldUtils {
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body1 + body2 + body3);
-			emailer.sendEmail(Arrays.asList(email), subject, Utils.compileMustache(model, loadEmailTemplate("notify")));
+			emailer.sendEmail(Arrays.asList(email), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -508,7 +508,7 @@ public final class ScooldUtils {
 			Set<String> emails = getFavTagsSubscribers(addedTags);
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
 					name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-					Utils.compileMustache(model, loadEmailTemplate("notify")));
+					compileEmailTemplate(model));
 		}
 	}
 
@@ -541,7 +541,7 @@ public final class ScooldUtils {
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
 					name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-					Utils.compileMustache(model, loadEmailTemplate("notify")));
+					compileEmailTemplate(model));
 		}
 	}
 
@@ -580,7 +580,7 @@ public final class ScooldUtils {
 			if (parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
 						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'",
-						Utils.compileMustache(model, loadEmailTemplate("notify")));
+						compileEmailTemplate(model));
 			}
 		}
 	}
@@ -1084,7 +1084,7 @@ public final class ScooldUtils {
 		return badgelist;
 	}
 
-	public String loadEmailTemplate(String name) {
+	private String loadEmailTemplate(String name) {
 		if (name == null) {
 			return "";
 		}
@@ -1110,6 +1110,13 @@ public final class ScooldUtils {
 			}
 		}
 		return template;
+	}
+
+	public String compileEmailTemplate(Map<String, Object> model) {
+		model.put("footerhtml", Config.getConfigParam("emails_footer_html",
+				"<a href=\"" + ScooldServer.getServerURL() + "\">" + Config.APP_NAME + "</a> &bull; "
+				+ "<a href=\"https://scoold.com\">Powered by Scoold</a>"));
+		return Utils.compileMustache(model, loadEmailTemplate("notify"));
 	}
 
 	public void setSecurityHeaders(String nonce, HttpServletRequest request, HttpServletResponse response) {
