@@ -195,8 +195,8 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		// Pagination
 		modelAndView.addObject("numericPaginationEnabled", Config.getConfigBoolean("numeric_pagination_enabled", false));
 		// check for AJAX pagination requests
-		if (utils.isAjaxRequest(request) && (utils.param(request, "page") ||
-				utils.param(request, "page1") || utils.param(request, "page2"))) {
+		if (utils.isAjaxRequest(request) && (utils.param(request, "page") || utils.param(request, "page1") ||
+				utils.param(request, "page2") || utils.param(request, "page3"))) {
 			modelAndView.setViewName("pagination"); // switch to page fragment view
 		}
 		// External scripts

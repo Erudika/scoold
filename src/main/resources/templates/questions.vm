@@ -192,7 +192,7 @@
 				</div>
 			</div>
 		#else
-			#paginate("\#questionspage(\$questionslist)" $itemcount "" "page")
+			#paginate("questions" $itemcount "" "page")
 		#end
 	#end
 </div>

@@ -1,18 +1,21 @@
+#evaluate($scooldUtils.getMacroCode($!request.getParameter('pageMacroCode')))
 #if($request.getParameter("page"))
-	#evaluate($!request.getParameter('pageMacroCode'))
-	#if($itemcount.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount.page + 1) #end
+	#if($itemcount.page > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $itemcount.page + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end
 #if($request.getParameter("page1"))
-	#evaluate($!request.getParameter('pageMacroCode'))
-	#if($itemcount1.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount1.page + 1) #end
+	#if($itemcount1.page > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $itemcount1.page + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end
 #if($request.getParameter("page2"))
-	#evaluate($!request.getParameter('pageMacroCode'))
-	#if($itemcount2.page > 1000) #set($pnext = 1) #else #set($pnext = $itemcount2.page + 1) #end
+	#if($itemcount2.page > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $itemcount2.page + 1) #end
+	<span class="$!{pnext}"></span>
+	#stop
+#end
+#if($request.getParameter("page3"))
+	#if($itemcount3.page > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $itemcount3.page + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end

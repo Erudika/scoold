@@ -48,7 +48,7 @@
 			#end
 		#end
 		<div class="row">
-			#paginate("\#tagspage(\$tagslist)" $itemcount "" "page")
+			#paginate("tags" $itemcount "" "page")
 		</div>
 	#end
 </div>

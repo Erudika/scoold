@@ -82,7 +82,7 @@
 				</div>
 			</div>
 		#else
-			#paginate("\#reportspage(\$reportslist)" $itemcount "" "page")
+			#paginate("reports" $itemcount "" "page")
 		#end
 	</div>
 #end

@@ -173,7 +173,7 @@
 	#set($_rpath = $_rpath.replaceAll($rexp, ""))
 	#set($_rpath = $_rpath.replaceAll("(&amp;|&|\?)$", ""))
 	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
-	<div class="page-content">#evaluate($macroCode)</div>
+	<div class="page-content">#evaluate($scooldUtils.getMacroCode($macroCode))</div>
 	#if ($pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
 		<div class="pages center mtl">
 			#if($numericPaginationEnabled)
@@ -676,7 +676,7 @@
 	#end
 
 	<div class="comments post-comments">
-		#paginate("\#commentspage(\$showpost.comments)" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
+		#paginate("postcomments" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
 	</div>
 </div>
 #end

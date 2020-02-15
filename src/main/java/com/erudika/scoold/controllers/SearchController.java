@@ -79,8 +79,8 @@ public class SearchController {
 	public String get(@PathVariable(required = false) String type, @PathVariable(required = false) String query,
 			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
 		List<Profile> userlist = new ArrayList<Profile>();
-		List<Post> questionlist = new ArrayList<Post>();
-		List<Post> answerlist = new ArrayList<Post>();
+		List<Post> questionslist = new ArrayList<Post>();
+		List<Post> answerslist = new ArrayList<Post>();
 		List<Post> feedbacklist = new ArrayList<Post>();
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.isBlank(q) ? query : q;
@@ -89,22 +89,22 @@ public class SearchController {
 		String qsUsers = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		if ("questions".equals(type)) {
-			questionlist = pc.findQuery(Utils.type(Question.class), qs, itemcount);
+			questionslist = pc.findQuery(Utils.type(Question.class), qs, itemcount);
 		} else if ("answers".equals(type)) {
-			answerlist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
+			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type)) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
 			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers, itemcount);
 		} else {
-			questionlist = pc.findQuery(Utils.type(Question.class), qs);
-			answerlist = pc.findQuery(Utils.type(Reply.class), qs);
+			questionslist = pc.findQuery(Utils.type(Question.class), qs);
+			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
 			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
-		list.addAll(questionlist);
-		list.addAll(answerlist);
+		list.addAll(questionslist);
+		list.addAll(answerslist);
 		list.addAll(feedbacklist);
 		utils.fetchProfiles(list);
 
@@ -115,8 +115,8 @@ public class SearchController {
 		model.addAttribute("searchQuery", queryString);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
-		model.addAttribute("questionlist", questionlist);
-		model.addAttribute("answerlist", answerlist);
+		model.addAttribute("questionslist", questionslist);
+		model.addAttribute("answerslist", answerslist);
 		model.addAttribute("feedbacklist", feedbacklist);
 
 		return "base";

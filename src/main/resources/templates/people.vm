@@ -63,7 +63,7 @@
 		</div>
 	#else
 		<div class="row">
-			#paginate("\#peoplepage(\$userlist)" $itemcount "" "page")
+			#paginate("people" $itemcount "" "page")
 		</div>
 	#end
 

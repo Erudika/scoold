@@ -94,6 +94,7 @@ public final class ScooldUtils {
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
 	private static Set<String> coreTypes;
+	private static Map<String, String> whitelistedMacros;
 	static {
 		coreTypes = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
 				Utils.type(Feedback.class),
@@ -104,6 +105,21 @@ public final class ScooldUtils {
 				Utils.type(Revision.class),
 				Utils.type(UnapprovedQuestion.class),
 				Utils.type(UnapprovedReply.class)));
+
+		whitelistedMacros = new HashMap<String, String>();
+		whitelistedMacros.put("spaces", "#spacespage($spaces)");
+		whitelistedMacros.put("webhooks", "#webhookspage($webhooks)");
+		whitelistedMacros.put("comments", "#commentspage($commentslist)");
+		whitelistedMacros.put("postcomments", "#commentspage($showpost.comments)");
+		whitelistedMacros.put("replies", "#answerspage($answerslist $showPost)");
+		whitelistedMacros.put("feedback", "#questionspage($feedbacklist)");
+		whitelistedMacros.put("people", "#peoplepage($userlist)");
+		whitelistedMacros.put("questions", "#questionspage($questionslist)");
+		whitelistedMacros.put("compactanswers", "#compactanswerspage($answerslist)");
+		whitelistedMacros.put("answers", "#answerspage($answerslist)");
+		whitelistedMacros.put("reports", "#reportspage($reportslist)");
+		whitelistedMacros.put("revisions", "#revisionspage($revisionslist $showPost)");
+		whitelistedMacros.put("tags", "#tagspage($tagslist)");
 	}
 
 	private ParaClient pc;
@@ -942,6 +958,10 @@ public final class ScooldUtils {
 				return qf + " AND " + q;
 			}
 		}
+	}
+
+	public String getMacroCode(String key) {
+		return whitelistedMacros.getOrDefault(key, "");
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {

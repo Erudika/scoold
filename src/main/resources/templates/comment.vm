@@ -6,7 +6,7 @@
 	#if ($showComment)
 		#commentbox($showComment)
 	#elseif($commentslist && $commentslist.size() > 0)
-		#paginate("\#commentspage(\$commentslist)" $itemcount "" "page" )
+		#paginate("comments" $itemcount "" "page" )
 	#elseif(!$scooldUtils.isAjaxRequest($request))
 		$!lang.get("search.notfound")
 	#end

@@ -39,7 +39,7 @@
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
 				</div>
 
-				#paginate("\#answerspage(\$answerslist \$showPost)" $itemcount "" "page")
+				#paginate("replies" $itemcount "" "page")
 
 				#if(!$showPost.isClosed())
 					#if ($authenticated)

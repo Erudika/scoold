@@ -30,14 +30,14 @@
 		#end
 
 		#if ($showParam == "questions")
-			#paginate("\#questionspage(\$questionlist)" $itemcount $params "page")
+			#paginate("questions" $itemcount $params "page")
 		#elseif ($showParam == "answers")
-			#paginate("\#answerspage(\$answerlist)" $itemcount $params "page")
+			#paginate("answers" $itemcount $params "page")
 		#elseif ($showParam == "feedback")
-			#paginate("\#questionspage(\$feedbacklist)" $itemcount $params "page")
+			#paginate("feedback" $itemcount $params "page")
 		#elseif ($showParam == "people")
 			<div class="row">
-				#paginate("\#peoplepage(\$userlist)" $itemcount $params "page")
+				#paginate("people" $itemcount $params "page")
 			</div>
 		#end
 	#else

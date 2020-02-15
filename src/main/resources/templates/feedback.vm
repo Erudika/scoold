@@ -54,7 +54,7 @@
 					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
 				</div>
 
-				#paginate("\#answerspage(\$answerslist \$showPost)" $itemcount "" "page")
+				#paginate("replies" $itemcount "" "page")
 
 				#if ($authenticated && !$showPost.isClosed())
 				<div class="pvl mbm">
@@ -148,7 +148,7 @@
 				</div>
 			</div>
 		#else
-			#paginate("\#questionspage(\$feedbacklist)" $itemcount "" "page")
+			#paginate("feedback" $itemcount "" "page")
 		#end
 
 		<div class="center-align mvl">
