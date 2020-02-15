@@ -245,7 +245,7 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<StreamingResponseBody> download(HttpServletRequest req, HttpServletResponse response) {
+	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse response) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isAdmin(authUser)) {
 			return new ResponseEntity<StreamingResponseBody>(HttpStatus.UNAUTHORIZED);
@@ -278,7 +278,7 @@ public class AdminController {
 	}
 
 	@PostMapping(value = "/import")
-	public String handleFileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest req, HttpServletResponse res) {
+	public String restore(@RequestParam("file") MultipartFile file, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isAdmin(authUser)) {
 			res.setStatus(403);
