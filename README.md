@@ -1235,6 +1235,8 @@ para.favicon_url = "/favicon.ico"
 para.stylesheet_url = "/style.css"
 # appends extra CSS rules to the main stylesheet
 para.inline_css = ""
+# edit the links in the footer of transactional emails
+para.emails_footer_html = ""
 ```
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
