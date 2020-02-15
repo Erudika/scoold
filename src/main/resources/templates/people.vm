@@ -1,4 +1,4 @@
-#if($currentSpace && !$currentSpace.isEmpty())
+#if($currentSpace && !$currentSpace.isEmpty() && !$request.getParameter("bulkedit"))
 	<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
 #end
 <div class="page-wrapper">

@@ -64,11 +64,16 @@ public class PeopleController {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
 		}
+		Profile authUser = utils.getAuthUser(req);
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		// [space query filter] + original query string
 		String qs = utils.sanitizeQueryString(q, req);
-		qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
+		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
+			qs = q;
+		} else {
+			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
+		}
 
 		List<Profile> userlist = utils.getParaClient().findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
@@ -76,7 +81,7 @@ public class PeopleController {
 		model.addAttribute("peopleSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);
-		if (req.getParameter("bulkedit") != null) {
+		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
 			List<ParaObject> spaces = utils.getParaClient().findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
 			model.addAttribute("spaces", spaces);
 		}
