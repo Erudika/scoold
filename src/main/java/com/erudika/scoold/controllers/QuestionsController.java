@@ -333,6 +333,7 @@ public class QuestionsController {
 
 	private Pager getPagerFromCookie(HttpServletRequest req, Pager defaultPager) {
 		try {
+			defaultPager.setName("default_pager");
 			String cookie = HttpUtils.getCookieValue(req, "questions-filter");
 			if (StringUtils.isBlank(cookie)) {
 				return defaultPager;
@@ -343,10 +344,11 @@ public class QuestionsController {
 			pager.setCount(0);
 			return pager;
 		} catch (JsonProcessingException ex) {
-			if (defaultPager != null) {
-				defaultPager.setName("default_pager");
-			}
-			return defaultPager;
+			return Optional.ofNullable(defaultPager).orElse(new Pager() {
+				public String getName() {
+					return "default_pager";
+				}
+			});
 		}
 	}
 
