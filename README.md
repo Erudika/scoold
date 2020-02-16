@@ -894,11 +894,10 @@ Additionally, people may wish to make their profile details anonymous from the S
 para.profile_anonimity_enabled = true
 ```
 
-## Disabling the "Feedback" section
+## Enabling the "Feedback" section
 
-**PRO**
-In Scoold PRO you can disable the "Feedback" functionality of the site by setting `para.feedback_enabled = false`.
-This will remove the link to `/feedback` and disable the feature entirely.
+You can enable or disable the "Feedback" page where people can discuss topics about the website itself or submit general
+feedback. This section is disabled by default and can be activated with `para.feedback_enabled = true`.
 
 ## LaTeX/MathML support and advanced highlighting
 

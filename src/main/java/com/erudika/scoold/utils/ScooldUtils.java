@@ -597,6 +597,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("nearme_feature_enabled", !Config.getConfigParam("gmaps_api_key", "").isEmpty());
 	}
 
+	public boolean isFeedbackEnabled() {
+		return Config.getConfigBoolean("feedback_enabled", false);
+	}
+
 	public boolean isDefaultSpacePublic() {
 		return Config.getConfigBoolean("is_default_space_public", true);
 	}

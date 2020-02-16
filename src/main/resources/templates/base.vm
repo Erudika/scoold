@@ -276,7 +276,9 @@
 							</h5>
 							<div class="pvl">
 								<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
+								#if($scooldUtils.isFeedbackEnabled())
 								<a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a>&nbsp;&nbsp;
+								#end
 								<a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
 								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
 							</div>
