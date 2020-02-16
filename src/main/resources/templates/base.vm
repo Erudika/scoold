@@ -268,12 +268,6 @@
 				<div class="container">
 					<div class="row mbn">
 						<div class="col l6 s12 sTextCenter">
-							<h5 class="white-text">
-								#if($showBranding)
-									Powered by <a href="https://paraio.com">
-										<img src="$imageslink/paradark.svg" width="100" alt="Para logo" class="para-logo-footer"></a>
-								#end
-							</h5>
 							<div class="pvl">
 								<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
 								#if($scooldUtils.isFeedbackEnabled())
@@ -283,13 +277,7 @@
 								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
 							</div>
 						</div>
-						<div class="col l6 s12 sTextCenter ${footerAlignClass}">
-							<div class="pvl white-text">
-								#if($showBranding)
-									Made with <i class="fa fa-coffee"></i> by
-									<a href="https://erudika.com"><b>Erudika</b></a>
-								#end
-							</div>
+						<div class="col l6 s12 sTextCenter mtl ${footerAlignClass}">
 							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey capitalize">
 								$!currentLocale.getDisplayLanguage($currentLocale)
 							</a>
@@ -298,13 +286,22 @@
 				</div>
 				<div class="footer-copyright">
 					<div class="container">
+
 						<div class="row mbn">
-							<div class="col s12 sTextCenter">
+							<div class="col l6 s12 sTextCenter">
 								#set($_liclink = $utils.formatMessage("$!lang.get('license')",
 								'<a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>') )
 								<i class="fa fa-creative-commons"></i> $_liclink
 							</div>
+							<div class="col l6 s12 sTextCenter ${footerAlignClass}">
+								#if($showBranding)
+									<span>This is a <a href="http://scoold.com"><b>Scoold</b></a> website powered by <a href="https://paraio.com">
+										<img src="$imageslink/paradark.svg" width="70" alt="Para logo" class="para-logo-footer"></a>
+									</span>
+								#end
+							</div>
 						</div>
+
 					</div>
 				</div>
 			</footer>
