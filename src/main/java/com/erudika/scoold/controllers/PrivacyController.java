@@ -17,13 +17,19 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.core.Sysprop;
+import com.erudika.para.utils.Config;
+import static com.erudika.scoold.ScooldServer.PRIVACYLINK;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -44,6 +50,22 @@ public class PrivacyController {
 	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "privacy.vm");
 		model.addAttribute("title", utils.getLang(req).get("privacy.title"));
+		model.addAttribute("privacyhtml", utils.getParaClient().read("template" + Config.SEPARATOR + "privacy"));
 		return "base";
+	}
+
+	@PostMapping
+	public String edit(@RequestParam String privacyhtml, HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + PRIVACYLINK;
+		}
+		Sysprop privacy = new Sysprop("template" + Config.SEPARATOR + "privacy");
+		if (StringUtils.isBlank(privacyhtml)) {
+			utils.getParaClient().delete(privacy);
+		} else {
+			privacy.addProperty("html", privacyhtml);
+			utils.getParaClient().create(privacy);
+		}
+		return "redirect:" + PRIVACYLINK;
 	}
 }

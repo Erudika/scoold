@@ -17,13 +17,19 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.erudika.para.core.Sysprop;
+import com.erudika.para.utils.Config;
+import static com.erudika.scoold.ScooldServer.TERMSLINK;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -44,6 +50,22 @@ public class TermsController {
 	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "terms.vm");
 		model.addAttribute("title", utils.getLang(req).get("terms.title"));
+		model.addAttribute("termshtml", utils.getParaClient().read("template" + Config.SEPARATOR + "terms"));
 		return "base";
+	}
+
+	@PostMapping
+	public String edit(@RequestParam String termshtml, HttpServletRequest req, Model model) {
+		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + TERMSLINK;
+		}
+		Sysprop terms = new Sysprop("template" + Config.SEPARATOR + "terms");
+		if (StringUtils.isBlank(termshtml)) {
+			utils.getParaClient().delete(terms);
+		} else {
+			terms.addProperty("html", termshtml);
+			utils.getParaClient().create(terms);
+		}
+		return "redirect:" + TERMSLINK;
 	}
 }

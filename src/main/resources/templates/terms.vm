@@ -1,6 +1,10 @@
 <div id="terms">
+	#if($isAdmin)
+	<button class="btn waves-effect waves-light editlink right mtl"><i class="fa fa-pencil-square-o mrs"></i>$!lang.get('edit')</button>
+	#end
 	<h1>$!lang.get("terms.title")</h1>
 	<hr>
+	#macro(termspage )
 	<p>
 		The following terms and conditions govern all use of the Scoold.com website and all content, services and products available at or through the website (taken together, the Website). The Website is owned and operated by <a href="https://erudika.com">Erudika, LTD.</a> (&quot;Erudika&quot;). The Website is offered subject to your acceptance without modification of all of the terms and conditions contained herein and all other operating rules, policies (including, without limitation, the <a href="$privacylink">Privacy Policy</a>) and procedures that may be published from time to time on this Site by Erudika (collectively, the &quot;Agreement&quot;).
 	</p>
@@ -133,5 +137,32 @@
 	</p>
 
 	<i class="lightgray">Originally published by Automattic, Inc. as the WordPress.com Terms of Service and made available by them under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Sharealike</a> License. This modified version is also made available under the terms of the same license. If you have any questions regarding this document, please send them to <a href="mailto:contact@scoold.com">contact@scoold.com</a>.</i>
-
+	#end
+	<div class="viewbox">
+		#if($termshtml)
+			#set($_terms = $termshtml.getProperty('html'))
+			$_terms
+		#else
+			#termspage()
+		#end
+	</div>
+	#if($isAdmin)
+	<div class="row editbox hide">
+    <form method="post" class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="termspage" name="termshtml" class="simple-editor">
+						#if($termshtml)$termshtml.getProperty('html')#else#termspage()#end
+					</textarea>
+        </div>
+			</div>
+      <div class="row">
+        <div class="input-field col s12 center-align">
+					<button type="submit" class="btn waves-effect waves-light mrl">$!lang.get('save')</button>
+					<button type="button" class="btn waves-effect waves-light canceledit">$!lang.get('cancel')</button>
+				</div>
+      </div>
+    </form>
+  </div>
+	#end
 </div>

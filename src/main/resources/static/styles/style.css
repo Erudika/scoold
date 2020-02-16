@@ -213,6 +213,14 @@ kbd {
 textarea.edit-post {
 	min-height: 396px;
 }
+textarea.simple-editor {
+	min-height: 500px;
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+	border: 0px;
+	border-bottom: 1px solid #CCC;
+}
 #edit-picture-link {
 	position: absolute;
 	top: 1px;
