@@ -641,15 +641,17 @@ public final class ScooldUtils {
 	}
 
 	public String getLanguageCode(HttpServletRequest req) {
+		String langCodeFromConfig = Config.getConfigParam("default_language_code", "");
 		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
 		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
-		return (cookieLoc != null) ? cookieLoc : requestLocale.getLanguage();
+		return (cookieLoc != null) ? cookieLoc : (StringUtils.isBlank(langCodeFromConfig) ?
+				requestLocale.getLanguage() : langutils.getProperLocale(langCodeFromConfig).getLanguage());
 	}
 
 	public Locale getCurrentLocale(String langname) {
 		Locale currentLocale = langutils.getProperLocale(langname);
 		if (currentLocale == null) {
-			currentLocale = langutils.getProperLocale("en");
+			currentLocale = langutils.getProperLocale(langutils.getDefaultLanguageCode());
 		}
 		return currentLocale;
 	}

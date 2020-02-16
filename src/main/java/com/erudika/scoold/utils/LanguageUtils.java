@@ -71,7 +71,6 @@ public class LanguageUtils {
 
 	private static Sysprop langProgressCache = new Sysprop();
 
-	private String deflangCode;
 	private final String keyPrefix = "language".concat(Config.SEPARATOR);
 	private final String progressKey = keyPrefix.concat("progress");
 	private final ParaClient pc;
@@ -174,7 +173,6 @@ public class LanguageUtils {
 	 */
 	public Map<String, String> getDefaultLanguage() {
 		if (!LANG_CACHE.containsKey(getDefaultLanguageCode())) {
-			logger.info("Default language map not set, loading English.");
 			Map<String, String> deflang = readLanguageFromFile(getDefaultLanguageCode());
 			if (deflang != null && !deflang.isEmpty()) {
 				LANG_CACHE.put(getDefaultLanguageCode(), deflang);
@@ -185,32 +183,11 @@ public class LanguageUtils {
 	}
 
 	/**
-	 * Sets the default language map. It is the basis language template which is to be translated.
-	 * @param deflang the default language map
-	 */
-	public void setDefaultLanguage(Map<String, String> deflang) {
-		if (deflang != null && !deflang.isEmpty()) {
-			LANG_CACHE.put(getDefaultLanguageCode(), deflang);
-		}
-	}
-
-	/**
 	 * Returns the default language code.
 	 * @return the 2-letter language code
 	 */
 	public String getDefaultLanguageCode() {
-		if (deflangCode == null) {
-			deflangCode = "en";
-		}
-		return deflangCode;
-	}
-
-	/**
-	 * Sets the default language code.
-	 * @param langCode the 2-letter language code
-	 */
-	public void setDefaultLanguageCode(String langCode) {
-		this.deflangCode = langCode;
+		return "en";
 	}
 
 	/**

@@ -210,6 +210,8 @@ para.max_post_length = 20000
 para.default_question_tag = "question"
 # Enable/disable numeric pagination (< 1 2 3...N >)
 para.numeric_pagination_enabled = false
+# Selects the default language to load on startup, defaults to 'en'
+para.default_language_code = ""
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
@@ -1312,6 +1314,8 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
 
+You can also change the default language of Scoold for all users by setting `para.default_language_code = "en"`, where
+instead of "en" you enter the 2-letter code of the language of your choice.
 
 ## Scoold API
 
