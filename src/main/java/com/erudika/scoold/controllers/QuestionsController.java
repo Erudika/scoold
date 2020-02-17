@@ -318,7 +318,7 @@ public class QuestionsController {
 					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		}
 		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
-		if (!StringUtils.isBlank(tags)) {
+		if (StringUtils.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
 			StringBuilder sb = new StringBuilder("*".equals(query) ? "" : query.concat(" AND "));
 			// should we specify the tags property here? like: tags:(tag1 OR tag2)
 			sb.append("tags").append(":(").append(tags.replaceAll(",", " OR ")).append(")");
