@@ -326,6 +326,8 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {background-color: #039be5;}
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
 [type="radio"].with-gap:checked+span:after {border: 2px solid #039be5;}
+.switch label input[type=checkbox]:checked+.lever { background-color: #93dafa; }
+.switch label input[type=checkbox]:checked+.lever:after { background-color: #03a9f4; }
 
 .userbox img {max-width: inherit;}
 @media (max-width: 1280px) {
