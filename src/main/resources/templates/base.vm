@@ -5,6 +5,7 @@
   (__  ) /__/ /_/ / /_/ / / /_/ /
  /____/\___/\____/\____/_/\__,_/
 
+ https://scoold.com
 -->
 <html lang="$!currentLocale.language" dir="$!langDirection">
 	<head>
@@ -14,6 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 		<meta name="description" content="$!description">
 		<meta name="keywords" content="$!KEYWORDS">
+		<meta name="generator" content="Scoold">
 		<meta property="fb:app_id" content="$!FB_APP_ID">
 		<meta property="og:title" content="$!APPNAME | $!title">
 		<meta property="og:type" content="article">
