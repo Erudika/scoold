@@ -442,6 +442,16 @@ Scoold is compatible with Tomcat 9+.
 To deploy Scoold at a different path instead of the root path, set `para.context_path = "/newpath`. The default value
 for this setting is blank, meaning Scoold will be deployed at the root directory.
 
+## Migrating from one Para deployment to another
+
+There are situations where you want to transfer your data from one Para server to another. This may be because you
+decided to switch databases or hosting providers. This process is made simple with the backup and restore feature in
+Scoold and Scoold Pro. Simply go to the Administration page and download all your data from the source installation.
+Then on the target installation go to the Administration page and import the ZIP file which contains the backup.
+
+**Important:** All data will be overwritten on restore, so it's highly recommended that the target Scoold installation
+is fresh and containing no data.
+
 ## Content-Security-Policy header
 
 This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
