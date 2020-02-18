@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
 import static com.erudika.scoold.ScooldServer.ABOUTLINK;
+import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,12 @@ public class AboutController {
 		model.addAttribute("path", "about.vm");
 		model.addAttribute("title", utils.getLang(req).get("about.title"));
 		model.addAttribute("abouthtml", utils.getParaClient().read("template" + Config.SEPARATOR + "about"));
+
+		model.addAttribute("NICEPROFILE_BONUS", Profile.Badge.NICEPROFILE.getReward());
+		model.addAttribute("SUPPORTER_BONUS", Profile.Badge.SUPPORTER.getReward());
+		model.addAttribute("NOOB_BONUS", Profile.Badge.NOOB.getReward());
+		model.addAttribute("GOODQUESTION_BONUS", Profile.Badge.GOODQUESTION.getReward());
+		model.addAttribute("GOODANSWER_BONUS", Profile.Badge.GOODANSWER.getReward());
 		return "base";
 	}
 

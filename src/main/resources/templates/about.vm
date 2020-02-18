@@ -82,10 +82,6 @@
 				<td>$!lang.get("about.badges.niceprofile") <strong>(+$!NICEPROFILE_BONUS $!lang.get("points"))</strong></td>
 			</tr>
 			<tr>
-				<td class="prl">#badgebox("tester" 0)</td>
-				<td>$!lang.get("about.badges.tester")</td>
-			</tr>
-			<tr>
 				<td class="prl">#badgebox("reporter" 0)</td>
 				<td>$!lang.get("about.badges.reporter")</td>
 			</tr>
@@ -160,10 +156,6 @@
 			<tr>
 				<td class="prl">#badgebox("disciplined" 0)</td>
 				<td>$!lang.get("about.badges.disciplined")</td>
-			</tr>
-			<tr>
-				<td class="prl">#badgebox("polyglot" 0)</td>
-				<td>$!lang.get("about.badges.polyglot") <strong>(+$!POLYGLOT_BONUS $!lang.get("points"))</strong></td>
 			</tr>
 		</tbody>
 	</table>

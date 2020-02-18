@@ -79,7 +79,6 @@ public class Profile extends Sysprop {
 		VETERAN(10),		//regular visitor		//NOT IMPLEMENTED
 
 		NICEPROFILE(10),	//100% profile completed
-		TESTER(0),			//for testers only
 		REPORTER(0),		//for every report
 		VOTER(0),			//100 total votes
 		COMMENTATOR(0),		//100+ comments
@@ -98,8 +97,7 @@ public class Profile extends Sysprop {
 		GOODANSWER(10),		//10+ votes
 		EUREKA(0),			//for every answer to own question
 		SENIOR(0),			//one year + member
-		DISCIPLINED(0),		//each time user deletes own comment
-		POLYGLOT(5);		//for every approved translation
+		DISCIPLINED(0);		//each time user deletes own comment
 
 		private final int reward;
 

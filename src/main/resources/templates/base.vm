@@ -297,7 +297,7 @@
 							</div>
 							<div class="col l6 s12 sTextCenter ${footerAlignClass}">
 								#if($showBranding)
-									<span>This is a <a href="http://scoold.com"><b>Scoold</b></a> website powered by <a href="https://paraio.com">
+									<span>This is a <a href="https://scoold.com"><b>Scoold</b></a> website powered by <a href="https://paraio.com">
 										<img src="$imageslink/paradark.svg" width="70" alt="Para logo" class="para-logo-footer"></a>
 									</span>
 								#end
