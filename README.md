@@ -1097,8 +1097,8 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
       server_name www.domain.com domain.com;
 
       # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
-      ssl_certificate /path/to/signed_cert_plus_intermediates;
-      ssl_certificate_key /path/to/private_key;
+      ssl_certificate /etc/ssl/certs/domain.crt;
+      ssl_certificate_key /etc/ssl/private/domain.key;
       ssl_session_timeout 1d;
       ssl_session_cache shared:SSL:50m;
       ssl_session_tickets off;
@@ -1116,19 +1116,20 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
       ssl_stapling_verify on;
 
       # Verify chain of trust of OCSP response using Root CA and Intermediate certs
-      ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;
+      #ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;
 
       # Cloudflare DNS
       resolver 1.1.1.1;
 
       # Required for LE certificate enrollment using certbot
-      location '/.well-known/acme-challenge' {
-        default_type "text/plain";
-        root /var/www/html;
-      }
+      # usually certbot would automatically modify this configuration
+      #location '/.well-known/acme-challenge' {
+      #  default_type "text/plain";
+      #  root /var/www/html;
+      #}
 
       location / {
-        proxy_pass http://localhost:8000;
+        proxy_pass http://127.0.0.1:8000;
         proxy_redirect http:// $scheme://;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -1157,7 +1158,7 @@ ufw allow 'Nginx Full' && sudo ufw enable
 4. Configure nginx to forward requests from the web on ports `80` and `443` to `localhost:8000`
 ```
 location / {
-	proxy_pass http://localhost:8000;
+	proxy_pass http://127.0.0.1:8000;
 	proxy_redirect http:// $scheme://;
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
