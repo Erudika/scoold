@@ -323,6 +323,10 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .personbox .lastseen {
 	font-size: 0.9em;
 }
+.filter-active {
+	background-color: #039be5;
+	color: white;
+}
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {background-color: #039be5;}
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
 [type="radio"].with-gap:checked+span:after {border: 2px solid #039be5;}

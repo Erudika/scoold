@@ -93,8 +93,15 @@
 				</a>
 			#end
 
-			<a href="#" id="question-filter-btn" class="next-div-toggle chip tooltipped"
-				 data-tooltip="$!lang.get('filter')"><i class="fa fa-filter"></i></a>
+			#if($itemcount.name && $itemcount.name == "default_pager")
+				#set($filterActiveClass = "")
+				#set($filterActiveTooltip = $!lang.get('filter'))
+			#else
+				#set($filterActiveClass = "filter-active")
+				#set($filterActiveTooltip = $!lang.get('posts.filtered'))
+			#end
+			<a href="#" id="question-filter-btn" class="next-div-toggle chip tooltipped ${filterActiveClass}"
+				 data-tooltip="${filterActiveTooltip}"><i class="fa fa-filter"></i></a>
 		</div>
 
 		<h2 class="hide-on-med-and-down">#questionsTitle()</h2>
