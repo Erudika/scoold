@@ -43,6 +43,8 @@
 		<link href="$!styleslink/rtl.css" rel="stylesheet">
 		#end
 		<script nonce="$cspNonce" src="$!request.contextPath/scripts/globals.js"></script>
+		#set($_confirmMsg = $!lang.get('areyousure'))
+		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end

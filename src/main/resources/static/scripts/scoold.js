@@ -15,12 +15,12 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
 	var locationbox = $("input.locationbox");
-	var rusuremsg = "Are you sure about that?"; // john cena :)
+	var rusuremsg = CONFIRM_MSG;
 	var hostURL = window.location.protocol + "//" + window.location.host;
 
 	// Materialize CSS init
