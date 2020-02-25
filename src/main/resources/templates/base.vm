@@ -326,9 +326,34 @@
 		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js"></script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
+
 		#if ($request.getServletPath() == "/signin")
-		<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>
+			#if($FB_APP_ID && !$FB_APP_ID.isEmpty())
+			<script nonce="$cspNonce">
+				(function(d, s, id) {
+					var js, fjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id)) return;
+					js = d.createElement(s); js.id = id;
+					js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0&appId=$FB_APP_ID";
+					fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+			</script>
+			#end
+			<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>
+			#if($GOOGLE_CLIENT_ID && !$GOOGLE_CLIENT_ID.isEmpty())
+			<script nonce="$cspNonce">
+				(function(d, s, id) {
+					var js, gjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id)) return;
+					js = d.createElement(s); js.id = id;
+					js.src = "https://apis.google.com/js/api:client.js";
+					js.addEventListener('load', function (e) { gpLogin(); }, false);
+					gjs.parentNode.insertBefore(js, gjs);
+				}(document, 'script', 'google-jssdk'));
+			</script>
+			#end
 		#end
+
 		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty())
 		<script nonce="$cspNonce" src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
 		<script nonce="$cspNonce">

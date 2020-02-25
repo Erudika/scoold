@@ -3,14 +3,6 @@
  * Facebook integration *
  ************************/
 if (FB_APP_ID && FB_APP_ID.trim() !== "") {
-	(function(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0&appId=" + FB_APP_ID;
-		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));
-
 	$('#fb-login-btn').on('click', function () {
 		FB.login(function(response) {
 			if (response.authResponse) {
@@ -26,15 +18,6 @@ if (FB_APP_ID && FB_APP_ID.trim() !== "") {
  * Google integration *
  **********************/
 if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "") {
-	(function(d, s, id) {
-		var js, gjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "https://apis.google.com/js/api:client.js";
-		js.addEventListener('load', function (e) { gpLogin(); }, false);
-		gjs.parentNode.insertBefore(js, gjs);
-	}(document, 'script', 'google-jssdk'));
-
 	function gpLogin() {
 		if ($('#gp-login-btn').length) {
 			gapi.load('auth2', function(){
