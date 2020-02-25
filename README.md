@@ -666,7 +666,7 @@ para.security.ldap.user_dn_pattern = "uid={0}"
 # add this ONLY if you are connecting to Active Directory
 para.security.ldap.active_directory_domain = ""
 
-# extra options
+# extra options - change only if necessary
 para.security.ldap.user_search_base = ""
 para.security.ldap.user_search_filter = "(cn={0})"
 para.security.ldap.password_attribute = "userPassword"
@@ -698,6 +698,9 @@ para.app_secret_key = "change_to_long_random_string"
 ```
 Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
 (min. 32 chars).
+
+To print out debug information about LDAP requests, start Para with `-Dlogging.level.org.springframework.ldap=DEBUG`.
+If you are connecting to an internal LDAP server, add the same system property to the Scoold command line.
 
 Please, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap) to learn more about the settings above.
 
@@ -1241,6 +1244,7 @@ para.fixed_nav = false
 para.show_branding = true
 para.logo_url = "/logo.svg"
 para.logo_width = 90
+
 # favicon image location
 para.favicon_url = "/favicon.ico"
 # overwrite the main stylesheet with your own
@@ -1249,6 +1253,8 @@ para.stylesheet_url = "/style.css"
 para.inline_css = ""
 # edit the links in the footer of transactional emails
 para.emails_footer_html = ""
+# change the logo in transactional emails
+para.small_logo_url = "https://scoold.com/logo.png"
 ```
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
