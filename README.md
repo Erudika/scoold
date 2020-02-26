@@ -93,8 +93,14 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 	<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="btn">
 </a>
 
-3. Create a *dedicated* `application.conf` for Scoold and configure it to connect to the hosted Para service at `https://paraio.com`
-4. Start Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
+3. Create Scoold's configuration file named `application.conf` and add the following properties to it:
+```ini
+para.app_name = "Scoold"
+para.access_key = "app:your_para_app"
+para.secret_key = "your_app_secret_key"
+para.endpoint = "https://paraio.com"
+```
+4. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold.jar`
 5. Open `http://localhost:8000` in your browser
 
 ### Quick Start with a self-hosted Para backend (harder)
@@ -103,18 +109,24 @@ appropriate authentication endpoint. For example, for GitHub, the redirect URL c
 
 1. [run Para locally on port 8080](https://paraio.org/docs/#001-intro) and initialize it with `GET localhost:8080/v1/_setup`
 2. Save the access keys for the root Para app somewhere safe, you'll need them to configure Para CLI tool below
-3. Create a new directory for Scoold containing its own *dedicated* `application.conf` and configure it to connect to Para on port `8080`
-4. Start Scoold with `java -jar -Dserver.port=8000 -Dconfig.file=./application.conf scoold.jar` OR `mvn spring-boot:run`
-5. Open `http://localhost:8000` in your browser
-
-Use the [Para CLI](https://github.com/Erudika/para-cli) tool to create a separate app for Scoold:
+3. Create a new directory for Scoold containing a file called `application.conf` and paste in the example configuration below.
+4. Create a new Para app called `scoold` using [Para CLI](https://github.com/Erudika/para-cli) tool:
 ```sh
+# !!! You will need to have Node.js and NPM installed beforehand.
 $ npm install -g para-cli
 # run setup and enter the keys for the root app and endpoint 'http://localhost:8080'
 $ para-cli setup
 $ para-cli ping
 $ para-cli new-app "scoold" --name "Scoold"
 ```
+5. Save the keys inside Scoold's `application.conf` like this:
+```ini
+para.access_key = "app:scoold"
+para.secret_key = "..."
+```
+6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold.jar` and keep an eye on the log for any error messages
+7. Open `http://localhost:8000` in your browser
+
 
 > **Important: Do not use the same `application.conf` file for both Para and Scoold!**
 Keep the two applications in separate directories, each with its own configuration file.
@@ -153,15 +165,15 @@ para.app_name = "Scoold"
 para.port = 8000
 # change this to "production" later
 para.env = "development"
-# the URL where Scoold is hosted, or http://localhost:8000
-para.host_url = "https://your-scoold-domain.com"
-# the URL of Para - could also be "http://localhost:8080"
-para.endpoint = "https://paraio.com"
+# the public-facing URL where Scoold is hosted
+para.host_url = "http://localhost:8000"
+# the URL of Para - can also be "https://paraio.com"
+para.endpoint = "http://localhost:8080"
 # access key for your Para app
 para.access_key = "app:scoold"
 # secret key for your Para app
 para.secret_key = ""
-# the identifier of admin user - check Para user object
+# the email or identifier of the admin user - check Para user object
 para.admins = "admin@domain.com"
 ##############################
 
@@ -315,7 +327,8 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 
 1. First, clone this repository and create a new Heroku app
 2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
-3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown above.
+3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown
+above but **replace all dots in the variable names with underscores**, e.g. `para.endpoint` -> `para_endpoint`.
 4. Open the app in your browser at `https://{appname}.herokuapp.com`.
 
 ### Manual deployment - option 2 (JAR push)
@@ -1257,6 +1270,8 @@ para.emails_footer_html = ""
 para.small_logo_url = "https://scoold.com/logo.png"
 ```
 
+In Scoold Pro you can change the logo of the website just by dragging and dropping a new image of your choice.
+
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
 simply add them as inline CSS:
 ```ini
@@ -1268,12 +1283,13 @@ You can set a short welcome message for unauthenticated users which will be disp
 para.welcome_message = "Hello and welcome to Scoold!"
 ```
 
-Alternatively, clone this repository and edit the following:
+Alternatively, clone this repository and edit the files you want:
 
 - **HTML** templates are in `src/main/resources/templates/`
 - **CSS** stylesheets can be found in `src/main/resources/static/styles/`
-- **JavaScript** files can be found in `src/main/resources/static/scripts`
+- **JavaScript** files can be found in `src/main/resources/static/scripts/`
 - **Images** are in located in `src/main/resources/static/images/`
+- **Themes** are in located in `src/main/resources/themes/`
 
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
