@@ -1,21 +1,16 @@
 h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #efefef; }
-a { color: #039be5; }
 .btn, .btn-large { background-color: #424242; }
 .navbtn-hover { background-color: #6d6d6d; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #424242; }
 .filter-active { background-color: #424242; color: white; }
 
 /* nav bar and footer */
+nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { background-color: #444; }
 .navbar-color { background-color: #424242; }
 .page-footer .footer-copyright { color: white; }
 .page-footer .btn-flat { color: white; }
 
 /* switches and inputs */
-[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after { background-color: #424242; }
-[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
-[type="radio"].with-gap:checked+span:after { border: 2px solid #424242; }
-.switch label input[type=checkbox]:checked+.lever { background-color: #efefef; }
-.switch label input[type=checkbox]:checked+.lever:after { background-color: #8d8d8d; }
 
 /* progress bars */
 .progress .indeterminate { background-color: #efefef; }

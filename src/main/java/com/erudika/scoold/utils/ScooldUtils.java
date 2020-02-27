@@ -1195,18 +1195,21 @@ public final class ScooldUtils {
 
 	public void setCustomTheme(String themeName, String themeCSS) {
 		String id = "theme" + Config.SEPARATOR + "custom";
+		boolean isCustom = "custom".equalsIgnoreCase(themeName);
+		String css = isCustom ? themeCSS : "";
 		Sysprop custom = new Sysprop(id);
-		custom.setName(StringUtils.isBlank(themeCSS) && "custom".equalsIgnoreCase(themeName) ? "default" : themeName);
-		custom.addProperty("theme", themeCSS);
+		custom.setName(StringUtils.isBlank(css) && isCustom ? "default" : themeName);
+		custom.addProperty("theme", css);
 		pc.create(custom);
 		FILE_CACHE.put("theme", themeName);
-		FILE_CACHE.put(getThemeKey(themeName), themeCSS);
+		FILE_CACHE.put(getThemeKey(themeName), isCustom ? css : loadResource(getThemeKey(themeName)));
 	}
 
 	public Sysprop getCustomTheme() {
+		String id = "theme" + Config.SEPARATOR + "custom";
 		String selectedTheme = FILE_CACHE.get("theme");
 		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
-			Sysprop s = new Sysprop();
+			Sysprop s = new Sysprop(id);
 			s.setName(selectedTheme);
 			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
 			return s;
@@ -1214,11 +1217,11 @@ public final class ScooldUtils {
 			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
 					orElseGet(() -> {
 						String themeName = "default";
-						Sysprop s = new Sysprop();
+						Sysprop s = new Sysprop(id);
 						s.setName(themeName);
 						s.addProperty("theme", "");
 						FILE_CACHE.put("theme", themeName);
-						FILE_CACHE.put(getThemeKey(themeName), "");
+						FILE_CACHE.put(getThemeKey(themeName), loadResource(getThemeKey(themeName)));
 						return s;
 					});
 		}
