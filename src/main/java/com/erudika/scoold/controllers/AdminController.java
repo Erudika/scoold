@@ -96,7 +96,7 @@ public class AdminController {
 		Map<String, Object> configMap = new LinkedHashMap<String, Object>();
 		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
 			ConfigValue value = entry.getValue();
-			configMap.put(Config.PARA + "_" + entry.getKey(), value != null ? value.unwrapped() : "-");
+			configMap.put(entry.getKey(), value != null ? value.unwrapped() : "-");
 		}
 		configMap.putAll(System.getenv());
 
@@ -104,7 +104,7 @@ public class AdminController {
 		Pager itemcount1 = utils.getPager("page1", req);
 		itemcount.setLimit(40);
 		model.addAttribute("path", "admin.vm");
-		model.addAttribute("title", utils.getLang(req).get("admin.title"));
+		model.addAttribute("title", utils.getLang(req).get("administration.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
 		model.addAttribute("endpoint", pc.getEndpoint());
@@ -117,6 +117,10 @@ public class AdminController {
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
 		model.addAttribute("scooldVersion", Optional.ofNullable(scooldVersion).orElse("unknown"));
+		Sysprop theme = utils.getCustomTheme();
+		String themeCSS = (String) theme.getProperty("theme");
+		model.addAttribute("selectedTheme", theme.getName());
+		model.addAttribute("customTheme", StringUtils.isBlank(themeCSS) ? utils.getDefaultTheme() : themeCSS);
 		return "base";
 	}
 
@@ -277,7 +281,7 @@ public class AdminController {
 		}, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/import")
+	@PostMapping("/import")
 	public String restore(@RequestParam("file") MultipartFile file, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isAdmin(authUser)) {
@@ -320,6 +324,15 @@ public class AdminController {
 			}
 		} catch (IOException e) {
 			logger.error("Failed to import " + filename, e);
+		}
+		return "redirect:" + ADMINLINK;
+	}
+
+	@PostMapping("/set-theme")
+	public String setTheme(@RequestParam String theme, @RequestParam String css, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			utils.setCustomTheme(Utils.stripAndTrim(theme, "", true), css);
 		}
 		return "redirect:" + ADMINLINK;
 	}

@@ -89,7 +89,7 @@ import org.springframework.stereotype.Component;
 public final class ScooldUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldUtils.class);
-	private static final Map<String, String> EMAIL_TEMPLATES = new ConcurrentHashMap<String, String>();
+	private static final Map<String, String> FILE_CACHE = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
@@ -1091,22 +1091,26 @@ public final class ScooldUtils {
 	}
 
 	private String loadEmailTemplate(String name) {
-		if (name == null) {
+		return loadResource("emails/" + name + ".html");
+	}
+
+	private String loadResource(String filePath) {
+		if (filePath == null) {
 			return "";
 		}
-		if (EMAIL_TEMPLATES.containsKey(name)) {
-			return EMAIL_TEMPLATES.get(name);
+		if (FILE_CACHE.containsKey(filePath)) {
+			return FILE_CACHE.get(filePath);
 		}
 		String template = "";
-		InputStream in = getClass().getClassLoader().getResourceAsStream("emails/" + name + ".html");
+		InputStream in = getClass().getClassLoader().getResourceAsStream(filePath);
 		if (in != null) {
 			try (Scanner s = new Scanner(in).useDelimiter("\\A")) {
 				template = s.hasNext() ? s.next() : "";
 				if (!StringUtils.isBlank(template)) {
-					EMAIL_TEMPLATES.put(name, template);
+					FILE_CACHE.put(filePath, template);
 				}
 			} catch (Exception ex) {
-				logger.info("Couldn't load email template '{0}'. - {1}", name, ex.getMessage());
+				logger.info("Couldn't load resource '{0}'. - {1}", filePath, ex.getMessage());
 			} finally {
 				try {
 					in.close();
@@ -1162,6 +1166,70 @@ public final class ScooldUtils {
 			}
 		}
 		return Collections.emptyMap();
+	}
+
+	public String getInlineCSS() {
+		Sysprop custom = getCustomTheme();
+		String themeName = custom.getName();
+		String inline = Config.getConfigParam("inline_css", "");
+		String loadedTheme;
+		if ("default".equalsIgnoreCase(themeName) || StringUtils.isBlank(themeName)) {
+			return inline;
+		} else if ("custom".equalsIgnoreCase(themeName)) {
+			loadedTheme = (String) custom.getProperty("theme");
+		} else {
+			loadedTheme = loadResource(getThemeKey(themeName));
+			if (StringUtils.isBlank(loadedTheme)) {
+				FILE_CACHE.put("theme", "default");
+				custom.setName("default");
+				pc.update(custom);
+				return inline;
+			} else {
+				FILE_CACHE.put("theme", themeName);
+			}
+		}
+		loadedTheme = StringUtils.replaceEachRepeatedly(loadedTheme,
+				new String[] {"<", "</", "<script", "<SCRIPT"}, new String[] {"", "", "", ""});
+		return loadedTheme + "\n/*** END OF THEME CSS ***/\n" + inline;
+	}
+
+	public void setCustomTheme(String themeName, String themeCSS) {
+		String id = "theme" + Config.SEPARATOR + "custom";
+		Sysprop custom = new Sysprop(id);
+		custom.setName(StringUtils.isBlank(themeCSS) && "custom".equalsIgnoreCase(themeName) ? "default" : themeName);
+		custom.addProperty("theme", themeCSS);
+		pc.create(custom);
+		FILE_CACHE.put("theme", themeName);
+		FILE_CACHE.put(getThemeKey(themeName), themeCSS);
+	}
+
+	public Sysprop getCustomTheme() {
+		String selectedTheme = FILE_CACHE.get("theme");
+		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
+			Sysprop s = new Sysprop();
+			s.setName(selectedTheme);
+			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
+			return s;
+		} else {
+			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
+					orElseGet(() -> {
+						String themeName = "default";
+						Sysprop s = new Sysprop();
+						s.setName(themeName);
+						s.addProperty("theme", "");
+						FILE_CACHE.put("theme", themeName);
+						FILE_CACHE.put(getThemeKey(themeName), "");
+						return s;
+					});
+		}
+	}
+
+	private String getThemeKey(String themeName) {
+		return "themes/" + themeName + ".css";
+	}
+
+	public String getDefaultTheme() {
+		return loadResource("themes/default.css");
 	}
 
 	public String getCSPNonce() {

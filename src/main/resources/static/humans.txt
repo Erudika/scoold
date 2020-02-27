@@ -1,8 +1,8 @@
-                                    ._      ._
-       ____   ____   ___    ___    / / ____/ /
-     / ___/ / ___/ / __ \ / __ \  / / / __  /
-    (__  ) / /__  / /_/ // /_/ / / / / /_/ /
-   /____/  \___/  \____/ \____/ /_/  \__,_/
+                                  ._      ._
+     ____   ____   ___    ___    / / ____/ /
+   / ___/ / ___/ / __ \ / __ \  / / / __  /
+  (__  ) / /__  / /_/ // /_/ / / / / /_/ /
+ /____/  \___/  \____/ \____/ /_/  \__,_/
 
 
 /* TEAM */
@@ -14,18 +14,17 @@
 /* THANKS */
 
    Inspiration & Help: StackOverflow
-   Site: http://www.stackoverflow.com
+   Site: https://www.stackoverflow.com
 
    Logo design: Dimo Trifonov
    Twitter: @denull
 
 /* SITE */
 
-   Last update: 2017/02/03
    Backend: Para - https://paraio.com
    Standards: HTML5, CSS3, OpenSearch, RSS
    Components: ParaIO.com, JS, CSS, HTML5 (clientside), Java (serverside)
-   Software: Apache Click, Amazon DynamoDB, Elasticsearch, Heroku, jQuery
+   Software: Spring, Amazon DynamoDB, Elasticsearch, Heroku, jQuery
    Fonts: FontAwesome
 
 

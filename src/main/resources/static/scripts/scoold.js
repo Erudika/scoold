@@ -442,6 +442,14 @@ $(function () {
 		return true;
 	});
 
+	$("#select-theme-form").on("click", "input", function() {
+		if (this.value === "custom") {
+			$(this).closest("form").find("textarea").parent("div").removeClass("hide");
+		} else {
+			$(this).closest("form").find("textarea").parent("div").addClass("hide");
+		}
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/

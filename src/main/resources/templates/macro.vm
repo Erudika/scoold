@@ -257,7 +257,7 @@
 			#if ($showu)
 				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="smallText">$showu.name</a>
 			#else
-				<span class="mediumText grey-text">$!lang.get("profile.deleted")</span>
+				<span class="grey-text">$!lang.get("profile.deleted")</span>
 			#end
 			#if ($showu)
 				<br>

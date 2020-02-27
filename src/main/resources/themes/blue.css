@@ -1,0 +1,29 @@
+/**** BLUE THEME ****/
+/* buttons, headings and links */
+a, h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #1565c0; }
+.btn, .btn-large, .navbtn-hover { background-color: #4fc3f7; }
+.btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #4fc3f7; }
+.filter-active { background-color: #1565c0; color: white; }
+
+/* nav bar and footer */
+body, footer.page-footer { background-color: #efefef; }
+.navbar-color { background-color: #1565c0; }
+.page-footer .footer-copyright { color: #333333; }
+.page-footer .btn-flat { color: white; }
+
+/* switches and inputs */
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after { background-color: #1565c0; }
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
+[type="radio"].with-gap:checked+span:after { border: 2px solid #1565c0; }
+.switch label input[type=checkbox]:checked+.lever { background-color: #93dafa; }
+.switch label input[type=checkbox]:checked+.lever:after { background-color: #1565c0; }
+[type="checkbox"].filled-in:checked+span:not(.lever):after { border: 2px solid #1565c0; background-color: #1565c0; }
+[type="checkbox"]:checked+span:not(.lever):before { border-right: 2px solid #1565c0; border-bottom: 2px solid #1565c0; }
+
+/* progress bars */
+.progress .indeterminate { background-color: #1565c0; }
+.progress { background-color: #93dafa; }
+
+/* tabs */
+.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a { color: #1565c0; }
+.tabs .indicator { background-color: #1565c0; }

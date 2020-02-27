@@ -1,0 +1,28 @@
+/**** ORANGE THEME ****/
+/* buttons, headings and links */
+a, h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #ff9800;}
+a, button { font-weight: 400; }
+.btn, .btn-large, .navbtn-hover { background-color: #d84315; }
+.btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #d84315; }
+.filter-active { background-color: #ff9800; color: white; }
+
+/* nav bar and footer */
+body, footer.page-footer { background-color: #333333; }
+.navbar-color { background-color: #ff9800; }
+
+/* switches and inputs */
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after { background-color: #ff9800; }
+[type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before,
+[type="radio"].with-gap:checked+span:after { border: 2px solid #ff9800; }
+.switch label input[type=checkbox]:checked+.lever { background-color: #ff7543; }
+.switch label input[type=checkbox]:checked+.lever:after { background-color: #9f0000; }
+[type="checkbox"].filled-in:checked+span:not(.lever):after { border: 2px solid #ff9800; background-color: #ff9800; }
+[type="checkbox"]:checked+span:not(.lever):before { border-right: 2px solid #ff9800; border-bottom: 2px solid #ff9800; }
+
+/* progress bars */
+.progress .indeterminate { background-color: #ff9800; }
+.progress { background-color: #ff7543; }
+
+/* tabs */
+.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a { color: #ff9800; }
+.tabs .indicator { background-color: #ff9800; }

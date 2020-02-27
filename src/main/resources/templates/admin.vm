@@ -27,7 +27,6 @@
 			<div class="row">
 				<div class="col s12 m6">
 					<div class="input-field">
-						<i class="fa fa-th-large pvm prefix grey-text"></i>
 						<label for="name_text">$!lang.get('name')</label>
 						<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
 						<span class="helper-text" data-error="Space is invalid or already exists!"></span>
@@ -45,7 +44,7 @@
 			<div class="card-panel center-align grey-text">
 				<p class="mediumText">
 					#if($isDefaultSpacePublic)
-						<i class="fa fa-unlock green-text" title="Public"></i>
+						<i class="fa fa-unlock grey-text" title="Public"></i>
 					#else
 						<i class="fa fa-lock red-text" title="Private"></i>
 					#end
@@ -123,71 +122,109 @@
 	<div class="row mvn">
 		<div class="col s12 input-field">
 			<a href="$adminlink/export" class="btn waves-effect waves-light">
-				<i class="fa fa-download"></i> &nbsp;<b>$!lang.get('admin.export')</b>
+				<i class="fa fa-download"></i> &nbsp;$!lang.get('admin.export')
 			</a>
 		</div>
 	</div>
-	<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
-		<div class="row">
-			<div class="col m6 s6">
-				<div class="file-field input-field">
-					<div class="btn">
-						<span>
-							<i class="fa fa-file-zip-o"></i>
-						</span>
-						<input type="file" name="file" accept=".json,.zip">
+	<div class="row mbl">
+		<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
+			<div class="row">
+				<div class="col m6 s6">
+					<div class="file-field input-field">
+						<div class="btn">
+							<span>
+								<i class="fa fa-file-zip-o"></i>
+							</span>
+							<input type="file" name="file" accept=".json,.zip">
+						</div>
+						<div class="file-path-wrapper">
+							<input class="file-path validate" type="text" required>
+						</div>
+						<span class="import-text">$!lang.get('admin.import.text')</span>
+						<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
 					</div>
-					<div class="file-path-wrapper">
-						<input class="file-path validate" type="text" required>
+				</div>
+				<div class="col s6">
+					<div class="input-field">
+						<button type="submit" class="btn waves-effect waves-light rusure">
+							<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
+						</button>
 					</div>
-					<span class="import-text">$!lang.get('admin.import.text')</span>
-					<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
 				</div>
 			</div>
-			<div class="col s6">
-				<div class="input-field">
-					<button type="submit" class="btn waves-effect waves-light rusure">
-						<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
-					</button>
+			<div class="row">
+				<div class="s12 columns">
+					<div class="progress mvl hide">
+						<div class="indeterminate"></div>
+					</div>
 				</div>
+			</div>
+		</form>
+
+		#if($scooldimports && !$scooldimports.isEmpty())
+		<div class="row">
+			<div class="col s12">
+				<h5>$!lang.get('admin.importlog')</h5>
+				<table class="responsive-table">
+					<thead>
+						<tr>
+							<th class="capitalize">$!lang.get('date')</th>
+							<th>$!lang.get('admin.importlog.user')</th>
+							<th>$!lang.get('admin.importlog.file')</th>
+							<th>$!lang.get('admin.importlog.count')</th>
+						</tr>
+					</thead>
+					<tbody>
+						#foreach($import in $scooldimports)
+							<tr>
+								<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
+								<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
+								<td>$!import.getProperty("file")</td>
+								<td>$!import.getProperty("count")</td>
+							</tr>
+						#end
+					</tbody>
+				</table>
 			</div>
 		</div>
-		<div class="row">
-			<div class="s12 columns">
-				<div class="progress mvl hide">
-					<div class="indeterminate"></div>
-				</div>
-			</div>
+		#end
+	</div>
+
+	<h4>$!lang.get('admin.themes')</h4>
+
+	<form action="$adminlink/set-theme" method="post" id="select-theme-form">
+		<div>
+		#set($themesMap = {	'default': ['light-blue', 'pink lighten-1'],
+												'red': ['red darken-3', 'blue-grey darken-3'],
+												'green': ['green darken-3', 'brown darken-3'],
+												'blue': ['blue darken-3', 'light-blue lighten-2'],
+												'orange': ['orange', 'deep-orange darken-3'],
+												'mono': ['grey darken-3', 'grey lighten-1'],
+												'custom': []})
+		#foreach($theme in $themesMap.keySet())
+			<label class="mrl">
+				#if($selectedTheme == $theme)
+				<input name="theme" type="radio" value="$theme" checked>
+				#else
+				<input name="theme" type="radio" value="$theme">
+				#end
+				<span class="capitalize mrm">$theme</span>
+				#if($themesMap.get($theme) && $themesMap.get($theme).size() > 1)
+					<span class="$themesMap.get($theme).get(0) phm">&nbsp;</span><span
+						class="$themesMap.get($theme).get(1) phm">&nbsp;</span>
+				#end
+			</label>
+		#end
+		</div>
+		#if($selectedTheme == "custom")#set($hideCSSbox = "")#else#set($hideCSSbox = "hide")#end
+		<div class="input-field ${hideCSSbox}">
+			<label>CSS</label>
+			<textarea name="css" class="materialize-textarea monotext">$!customTheme</textarea>
+		</div>
+		<div class="mvl">
+			<button type="submit" class="btn waves-effect waves-light">$!lang.get('apply')</button>
 		</div>
 	</form>
-
-	#if($scooldimports && !$scooldimports.isEmpty())
-	<div class="row">
-		<div class="col s12">
-			<h5>$!lang.get('admin.importlog')</h5>
-			<table class="responsive-table">
-				<thead>
-					<tr>
-						<th class="capitalize">$!lang.get('date')</th>
-						<th>$!lang.get('admin.importlog.user')</th>
-						<th>$!lang.get('admin.importlog.file')</th>
-						<th>$!lang.get('admin.importlog.count')</th>
-					</tr>
-				</thead>
-				<tbody>
-					#foreach($import in $scooldimports)
-						<tr>
-							<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
-							<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
-							<td>$!import.getProperty("file")</td>
-							<td>$!import.getProperty("count")</td>
-						</tr>
-					#end
-				</tbody>
-			</table>
-		</div>
-	</div>
-	#end
 
 	<hr>
 	<div class="ptl">
@@ -195,11 +232,11 @@
 			<li>
 				<div class="collapsible-header"><i class="fa fa-info-circle"></i>$!lang.get('admin.environment')</div>
 				<div class="collapsible-body">
-					<h4>Scoold version: <tt class="green-text text-darken-2">$!scooldVersion</tt></h4>
-					<h4>Production mode: <tt class="green-text text-darken-2">$!IN_PRODUCTION</tt></h4>
-					<h4>Para app: <tt class="green-text text-darken-2">$!paraapp</tt></h4>
-					<h4>Para version: <tt class="green-text text-darken-2">$!version</tt></h4>
-					<h4>Para endpoint: <tt class="green-text text-darken-2">$!endpoint</tt></h4>
+					<h5>Scoold version: <tt class="grey-text text-darken-2">$!scooldVersion</tt></h5>
+					<h5>Production mode: <tt class="grey-text text-darken-2">$!IN_PRODUCTION</tt></h5>
+					<h5>Para app: <tt class="grey-text text-darken-2">$!paraapp</tt></h5>
+					<h5>Para version: <tt class="grey-text text-darken-2">$!version</tt></h5>
+					<h5>Para endpoint: <tt class="grey-text text-darken-2">$!endpoint</tt></h5>
 				</div>
 			</li>
 			<li>
@@ -209,8 +246,8 @@
 						#foreach($conf in $configMap.entrySet())
 							<tr>
 								<td><code>$conf.key</code>:</td>
-								<td><code class="green-text text-darken-2">
-										#if(($conf.key.contains("secret") || $conf.key.contains("password")) ||
+								<td><code class="">
+										#if(($conf.key.contains("secret") || $conf.key.contains("password") || $conf.key.contains("privatekey")) ||
 											$conf.key.contains("pass") && $conf.value && !$conf.value.isEmpty())
 											***************************
 										#else
@@ -226,10 +263,10 @@
 				<div class="collapsible-header"><i class="fa fa-cog"></i>$!lang.get('admin.system')</div>
 				<div class="collapsible-body">
 					<table class="striped">
-							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "java.vm.specification.vendor", "user.timezone", "os.arch", "file.encoding"])
+							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "user.timezone", "os.name", "os.arch", "os.version", "file.encoding"])
 								<tr>
 									<td><code>$key:</code></td>
-									<td><code class="green-text text-darken-2">$!utils.getSystemProperty($key)</code></td>
+									<td><code class="">$!utils.getSystemProperty($key)</code></td>
 								</tr>
 							#end
 					</table>

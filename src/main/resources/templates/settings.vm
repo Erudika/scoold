@@ -135,6 +135,24 @@
 					<span class="mll mediumText">$!lang.get('settings.commentemails')</span>
 				</div>
 			</div>
+
+			<h4 class="ptl">$!lang.get('settings.darkmode')</h4>
+			<div class="mbm">
+				<div class="switch">
+					<label>
+						$!lang.get('off')
+						#if($darkModeEnabled)
+						<input type="checkbox" name="dark" checked="checked" value="true">
+						#else
+						<input type="checkbox" name="dark" value="true">
+						#end
+						<span class="lever"></span>
+						$!lang.get('on')
+					</label>
+					<span class="mll mediumText">$!lang.get('settings.darkmode.text')</span>
+				</div>
+			</div>
+
 			<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('save')</button>
 		</form>
 		<br>

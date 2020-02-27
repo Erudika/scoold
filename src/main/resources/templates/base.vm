@@ -49,14 +49,20 @@
 		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
 		#if($inlineUserCSS)
-			<style>$!{inlineUserCSS}</style>
+		#set($_inlineCSS = $inlineUserCSS)
+		<style>
+			$!{_inlineCSS}
+		</style>
+		#end
+		#if($darkModeEnabled)
+		<link href="$!styleslink/dark.css" rel="stylesheet">
 		#end
 	</head>
 	<body>
 		<div class="scoold-wrapper">
 			<header>
 				<div class="${navbarFixedClass}">
-					<nav class="light-blue">
+					<nav class="navbar-color">
 						<div class="nav-wrapper container">
 							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x"></i></a>
 
