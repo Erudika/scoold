@@ -27,7 +27,6 @@ $(function () {
 
 	function initMaterialize() {
 		$(".sidenav").sidenav();
-		$('select').formSelect();
 		$('textarea').characterCounter();
 		$('input.autocomplete').autocomplete();
 		$('.collapsible').collapsible();
@@ -40,6 +39,7 @@ $(function () {
 			coverTrigger: false,
 			alignment: RTL_ENABLED ? 'left' : 'right'
 		});
+		$('select').formSelect();
 	}
 
 	initMaterialize();

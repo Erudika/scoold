@@ -26,7 +26,7 @@ body, footer.page-footer, .footer-copyright, .card-panel, .card, .tabs { backgro
 #search-box, .white, .navbar-color, .orange.lighten-5, .CodeMirror { background-color: #333 !important; color: #efefef; }
 .chip, .dropdown-content, .collapsible-header, code, select, .modal, .editor-preview { background-color: #333; color: #efefef; }
 .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like { background-color: #333; }
-span.CodeMirror-selectedtext { background-color: #777; }
+span.CodeMirror-selectedtext, li.CodeMirror-hint-active { background-color: #777; }
 input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label { color: #efefef !important; }
 .tabs .tab a:focus, .tabs .tab a:focus.active { background-color: #333; }
 .hljs, .viewbox pre { background: #333; background-color: #333; color: #efefef; border-radius: 3px; }
@@ -34,8 +34,11 @@ code[class*="language-"], pre[class*="language-"] { color: #efefef; }
 #gp-login-btn { background: white !important; color: #222 !important; }
 .grey { background-color: #777 !important; }
 .lightborder { border: 1px solid #777; }
-.editor-toolbar button { color: #efefef; }
-.editor-toolbar.fullscreen { background-color: #202020; color: #efefef; }
+.editor-toolbar button, .CodeMirror-hint { color: #efefef; }
+.editor-toolbar.fullscreen, .CodeMirror-hints { background-color: #202020; color: #efefef; }
 .editor-toolbar button.active, .editor-toolbar button:hover { color: #333; }
 .editor-toolbar.fullscreen::before, .editor-toolbar.fullscreen::after { width: 0; }
 tr { border-bottom: 1px solid #777; }
+.autocomplete-content li .highlight { color: white; background-color: #202020; }
+.select-wrapper .caret { fill: white; }
+table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
