@@ -6,7 +6,7 @@
 		<div class="col s12 m6 l3">
 			#set($showLangKey = $entry.key)
 			#set($showLangName = $!entry.value.getDisplayName($!entry.value))
-			#set($progress = $!langProgressMap.get($!entry.key))
+			#set($progress = $!langProgressMap.getOrDefault($!entry.key, 0))
 
 			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green white-text") #else #set($selclass = "") #end
 			<div class="card-panel $!{selclass}">

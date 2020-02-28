@@ -21,9 +21,6 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Translation;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.utils.Config;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,10 +66,9 @@ public class LanguageUtils {
 	private static final Map<String, Map<String, String>> LANG_CACHE =
 			new ConcurrentHashMap<String, Map<String, String>>(ALL_LOCALES.size());
 
-	private static Sysprop langProgressCache = new Sysprop();
+	private static final Map<String, Integer> LANG_PROGRESS_CACHE = new HashMap<String, Integer>(ALL_LOCALES.size());
 
 	private final String keyPrefix = "language".concat(Config.SEPARATOR);
-	private final String progressKey = keyPrefix.concat("progress");
 	private final ParaClient pc;
 
 	/**
@@ -101,7 +97,7 @@ public class LanguageUtils {
 		}
 
 		// load language map from file
-		Map<String, String> lang = readLanguageFromFile(langCode);
+		Map<String, String> lang = readLanguageFromFileAndUpdateProgress(langCode);
 		if (lang == null || lang.isEmpty()) {
 			// or try to load from DB
 			lang = new TreeMap<String, String>(getDefaultLanguage());
@@ -119,34 +115,6 @@ public class LanguageUtils {
 		}
 		LANG_CACHE.put(langCode, lang);
 		return Collections.unmodifiableMap(lang);
-	}
-
-	/**
-	 * Persists the language map to a file. Overwrites any existing files.
-	 * @param langCode the 2-letter language code
-	 * @param lang the language map
-	 * @param writeToDatabase true if you want the language map to be stored in the DB as well
-	 */
-	public void writeLanguage(String langCode, Map<String, String> lang, boolean writeToDatabase) {
-		if (lang == null || lang.isEmpty() || StringUtils.isBlank(langCode) || !ALL_LOCALES.containsKey(langCode)) {
-			return;
-		}
-		writeLanguageToFile(langCode, lang);
-
-		if (writeToDatabase) {
-			// this will overwrite a saved language map!
-			Sysprop s = new Sysprop(keyPrefix.concat(langCode));
-			Map<String, String> dlang = getDefaultLanguage();
-			for (Map.Entry<String, String> entry : dlang.entrySet()) {
-				String key = entry.getKey();
-				if (lang.containsKey(key)) {
-					s.addProperty(key, lang.get(key));
-				} else {
-					s.addProperty(key, entry.getValue());
-				}
-			}
-			pc.create(s);
-		}
 	}
 
 	/**
@@ -173,11 +141,8 @@ public class LanguageUtils {
 	 */
 	public Map<String, String> getDefaultLanguage() {
 		if (!LANG_CACHE.containsKey(getDefaultLanguageCode())) {
-			Map<String, String> deflang = readLanguageFromFile(getDefaultLanguageCode());
-			if (deflang != null && !deflang.isEmpty()) {
-				LANG_CACHE.put(getDefaultLanguageCode(), deflang);
-				return Collections.unmodifiableMap(deflang);
-			}
+			// initialize the language cache maps
+			LANG_CACHE.put(getDefaultLanguageCode(), readLanguageFromFileAndUpdateProgress(getDefaultLanguageCode()));
 		}
 		return Collections.unmodifiableMap(LANG_CACHE.get(getDefaultLanguageCode()));
 	}
@@ -195,38 +160,15 @@ public class LanguageUtils {
 	 * @return a map indicating translation progress
 	 */
 	public Map<String, Integer> getTranslationProgressMap() {
-		Sysprop progress;
-		if (langProgressCache.getProperties().isEmpty()) {
-			progress = pc.read(progressKey);
-			if (progress != null) {
-				langProgressCache = progress;
-			}
-		} else {
-			progress = langProgressCache;
-		}
-		Map<String, Integer> progressMap = new HashMap<String, Integer>(ALL_LOCALES.size());
-		boolean isMissing = progress == null;
-		if (isMissing) {
-			progress = new Sysprop(progressKey);
-			progress.addProperty(getDefaultLanguageCode(), 100);
+		if (!LANG_PROGRESS_CACHE.isEmpty() && LANG_PROGRESS_CACHE.size() > 2) { // en + default user lang
+			return Collections.unmodifiableMap(LANG_PROGRESS_CACHE);
 		}
 		for (String langCode : ALL_LOCALES.keySet()) {
-			if (isMissing) {
-				readLanguageFromFileAndUpdateProgress(langCode, progressMap);
-				progress.getProperties().putAll(progressMap);
-			} else {
-				Object percent = progress.getProperties().get(langCode);
-				if (percent != null && percent instanceof Number) {
-					progressMap.put(langCode, (Integer) percent);
-				} else {
-					progressMap.put(langCode, 0);
-				}
+			if (!langCode.equals(getDefaultLanguageCode())) {
+				LANG_CACHE.put(langCode, readLanguageFromFileAndUpdateProgress(langCode));
 			}
 		}
-		if (isMissing) {
-			langProgressCache = pc.create(progress);
-		}
-		return progressMap;
+		return Collections.unmodifiableMap(LANG_PROGRESS_CACHE);
 	}
 
 	/**
@@ -234,12 +176,12 @@ public class LanguageUtils {
 	 * @return a map of language codes to locales
 	 */
 	public Map<String, Locale> getAllLocales() {
-		return ALL_LOCALES;
+		return Collections.unmodifiableMap(ALL_LOCALES);
 	}
 
 	private int calculateProgressPercent(double approved, double defsize) {
 		// allow 5 identical words per language (i.e. Email, etc)
-		if (approved >= defsize - 5) {
+		if (approved >= defsize - 10) {
 			approved = defsize;
 		}
 		if (defsize == 0) {
@@ -249,40 +191,11 @@ public class LanguageUtils {
 		}
 	}
 
-	/**
-	 * Updates the progress for all languages.
-	 * @param langCode the 2-letter language code
-	 * @param approved the total percent of completion (0-100)
-	 */
-	private void updateTranslationProgressMap(String langCode, int approved) {
-		if (getDefaultLanguageCode().equals(langCode)) {
-			return;
-		}
-		double defsize = getDefaultLanguage().size();
-		Map<String, Integer> progress = getTranslationProgressMap();
-		Integer percent = progress.get(langCode);
-		progress.put(langCode, calculateProgressPercent(approved, defsize));
-		Sysprop updatedProgress = new Sysprop(progressKey);
-		for (Map.Entry<String, Integer> entry : progress.entrySet()) {
-			updatedProgress.addProperty(entry.getKey(), entry.getValue());
-		}
-		langProgressCache = updatedProgress;
-		if (percent < 100 && !percent.equals(progress.get(langCode))) {
-			pc.create(updatedProgress);
-		}
-	}
-
-	private Map<String, String> readLanguageFromFile(String langCode) {
-		return readLanguageFromFileAndUpdateProgress(langCode, null);
-	}
-
-	private Map<String, String> readLanguageFromFileAndUpdateProgress(String langCode, Map<String, Integer> progressMap) {
+	private Map<String, String> readLanguageFromFileAndUpdateProgress(String langCode) {
 		if (langCode != null) {
 			Properties lang = new Properties();
 			String file = "lang_" + langCode.toLowerCase() + ".properties";
-			InputStream ins = null;
-			try {
-				ins = LanguageUtils.class.getClassLoader().getResourceAsStream(file);
+			try (InputStream ins = LanguageUtils.class.getClassLoader().getResourceAsStream(file)) {
 				if (ins != null) {
 					lang.load(ins);
 					int progress = 0;
@@ -304,58 +217,13 @@ public class LanguageUtils {
 					if (langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
 						progress = langmap.size(); // 100%
 					}
-					if (progress > 0 && progressMap == null) {
-						updateTranslationProgressMap(langCode, progress);
-					} else {
-						progressMap.put(langCode, calculateProgressPercent(progress, langmap.size()));
-					}
+					LANG_PROGRESS_CACHE.put(langCode, calculateProgressPercent(progress, langmap.size()));
 					return langmap;
 				}
 			} catch (Exception e) {
 				logger.info("Could not read language file " + file + ": ", e);
-			} finally {
-				try {
-					if (ins != null) {
-						ins.close();
-					}
-				} catch (IOException ex) {
-					logger.error(null, ex);
-				}
 			}
 		}
-		return null;
-	}
-
-	private void writeLanguageToFile(String langCode, Map<String, String> lang) {
-		if (lang != null && !lang.isEmpty() && langCode != null && langCode.length() == 2) {
-			FileOutputStream fos = null;
-			try {
-				Properties langProps = new Properties();
-				langProps.putAll(lang);
-				File file = new File("lang_" + langCode + ".properties");
-				fos = new FileOutputStream(file);
-				langProps.store(fos, langCode);
-
-				int progress = 0;
-				for (Map.Entry<String, String> entry : lang.entrySet()) {
-					if (!getDefaultLanguage().get(entry.getKey()).equals(entry.getValue())) {
-						progress++;
-					}
-				}
-				if (progress > 0) {
-					updateTranslationProgressMap(langCode, progress);
-				}
-			} catch (Exception ex) {
-				logger.error("Could not write language to file: ", ex);
-			} finally {
-				try {
-					if (fos != null) {
-						fos.close();
-					}
-				} catch (IOException ex) {
-					logger.error(null, ex);
-				}
-			}
-		}
+		return Collections.emptyMap();
 	}
 }
