@@ -806,7 +806,8 @@ public final class ScooldUtils {
 	}
 
 	public boolean isRecognizedAsAdmin(User u) {
-		return u.isAdmin() || ADMINS.contains(u.getIdentifier()) || ADMINS.contains(u.getEmail());
+		return u.isAdmin() || ADMINS.contains(u.getIdentifier()) ||
+				ADMINS.stream().filter(s -> s.equalsIgnoreCase(u.getEmail())).findAny().isPresent();
 	}
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {
