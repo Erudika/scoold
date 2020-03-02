@@ -489,7 +489,7 @@ or edit the value of `para.csp_header`.
 
 Additionally, there are 4 options to extend the values of `connect-src`, `frame-src`, `font-src` and `style-src`
 respectively:
-```
+```ini
 para.csp_connect_sources = "connect-domain1.com connect-domain2.com"
 para.csp_frame_sources = "frame-domain1.com frame-domain2.com"
 para.csp_font_sources = "font-domain1.com font-domain2.com"
@@ -502,7 +502,7 @@ Keep in mind that if your website has a lot of traffic, this will result in hund
 ## External scripts and JS snippets
 
 You can append external scripts and JS snippets to the end of the page by setting the `para.external_scripts` property.
-```
+```ini
 # URL
 para.external_scripts.myscript1 = "https://mydomain.com/script.js"
 # Base64 encoded JavaScript snippet
@@ -511,6 +511,16 @@ para.external_scripts.myscript2 = "J2Y2M3VlcH .... enZ2OScpOw=="
 
 **Important:** Watch out for console errors in the browser after you add external scripts. In such cases you might have to
 modify the `frame-src` or `connect-src` portions of the CSP header (see the 4 options above).
+
+## External CSS stylesheets
+
+You can add external stylesheets to the website with `para.external_styles`.
+```ini
+para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
+```
+
+Additionally, you can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules will
+override any of the previously declared stylesheets, including the main stylesheet rules.
 
 ## Serving static files from a CDN
 
@@ -689,9 +699,41 @@ para.security.ldap.username_as_name = false
 para.security.ldap.provider = "Continue with LDAP"
 ```
 
-For **Active Directory** LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`. The syntax for
-this allows either `{0}` (replaced with `username@domain`) or `{1}` (replaced with `username` only).
-For regular LDAP, only `{0}` is a valid placeholder and it gets replaced with the person's username.
+The search filter syntax allows you to use the placeholder `{0}` which gets replaced with the person's username.
+
+### Active Directory LDAP
+
+For **Active Directory** LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`.
+A good alternative search filter would be `(&(objectClass=user)(sAMAccountName={1}))`. Keep in mind that the domain you
+put in the configuration is actually the UPN suffix which gets appended to the username as `username@domain.com` if
+the supplied login username doesn't end with a domain. The domain has nothing to do with the AD domain or the location
+of the AD server.
+
+The only valid configuration properties for AD are:
+`user_search_filter`, `base_dn`, `server_url` and `active_directory_domain` - everything else is ignored so don't put
+it in the config file at all!
+
+Here's a working LDAP configuration for AD:
+```ini
+para.security.ldap.user_search_filter = "(&(objectClass=user)(sAMAccountName={1}))"
+para.security.ldap.base_dn = "ou=dev,dc=scoold,dc=com"
+para.security.ldap.server_url = "ldap://192.168.123.70:389"
+para.security.ldap.active_directory_domain = "scoold.com"
+```
+
+For the above configuration the following logins should work, given that a user `joe` exists:
+- `joe@scoold.com` + password
+- `joe@some-other-domain.com` + password
+- `joe` + password
+
+As you can see the domain part is actually ignored because it is irrelevant. You cannot bind an AD user with their email.
+You can bind them based on their `username` a.k.a. `sAMAccountName`. If the user has an email address where the alias is
+the same as the `sAMAccountName` but the domain is different, then the login will succeed. If the user above has an email
+`joe.smith@gmail.com` then the login with that email will fail because a bind is not possible,
+and the LDAP search request will return no results.
+
+The syntax for the search filter allows you to use the placeholders `{0}` (replaced with `username@domain`) and `{1}`
+(replaced with `username` only).
 
 Here's an example **Active Directory** configuration (note that any other settings than the ones below will be ignored):
 ```ini
@@ -700,6 +742,8 @@ para.security.ldap.active_directory_domain = "domain.com"
 para.security.ldap.user_search_filter = "userPrincipalName={0}"
 para.security.ldap.base_dn = "ou=dev,dc=domain,dc=com"
 ```
+
+### Local (internal) LDAP authentication
 
 **PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside
 of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
