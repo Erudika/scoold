@@ -1163,10 +1163,29 @@ public final class ScooldUtils {
 		if (Config.getConfig().hasPath("external_scripts")) {
 			ConfigObject extScripts = Config.getConfig().getObject("external_scripts");
 			if (extScripts != null && !extScripts.isEmpty()) {
-				return extScripts.unwrapped();
+				return extScripts.unwrapped().entrySet().stream().
+						sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).
+						collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
 			}
 		}
 		return Collections.emptyMap();
+	}
+
+	public List<String> getExternalStyles() {
+		String extStyles = Config.getConfigParam("external_styles", "");
+		if (!StringUtils.isBlank(extStyles)) {
+			String[] styles = extStyles.split("\\s*,\\s*");
+			if (!StringUtils.isBlank(extStyles) && styles != null && styles.length > 0) {
+				ArrayList<String> list = new ArrayList<String>();
+				for (String style : styles) {
+					if (!StringUtils.isBlank(style)) {
+						list.add(style);
+					}
+				}
+				return list;
+			}
+		}
+		return Collections.emptyList();
 	}
 
 	public String getInlineCSS() {
@@ -1251,7 +1270,8 @@ public final class ScooldUtils {
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com " // unsafe-inline required by MathJax and Google Maps!
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +
-					Config.getConfigParam("csp_style_sources", Config.getConfigParam("stylesheet_url", "")) + "; "
+					Config.getConfigParam("csp_style_sources", Config.getConfigParam("stylesheet_url", "") + " " +
+							Config.getConfigParam("external_styles", "").replaceAll(",", "")) + "; "
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "

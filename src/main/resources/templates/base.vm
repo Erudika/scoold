@@ -48,6 +48,9 @@
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
+		#foreach($externalStyle in $externalStyles)
+		<link href="$!externalStyle" rel="stylesheet">
+		#end
 		#if($inlineUserCSS)
 		#set($_inlineCSS = $inlineUserCSS)
 		<style>

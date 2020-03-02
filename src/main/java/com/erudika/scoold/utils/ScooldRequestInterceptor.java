@@ -202,6 +202,8 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		}
 		// External scripts
 		modelAndView.addObject("externalScripts", utils.getExternalScripts());
+		// External styles
+		modelAndView.addObject("externalStyles", utils.getExternalStyles());
 		// CSP nonce
 		String cspNonce = utils.getCSPNonce();
 		modelAndView.addObject("cspNonce", cspNonce);
