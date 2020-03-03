@@ -365,7 +365,7 @@
 			#end
 		#end
 
-		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty())
+		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty() && $cookieConsentGiven)
 		<script nonce="$cspNonce" src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
 		<script nonce="$cspNonce">
 			window.dataLayer = window.dataLayer || [];
@@ -375,16 +375,18 @@
 		</script>
 		#end
 		#foreach($externalScript in $externalScripts.entrySet())
-			<!-- External Script: $externalScript.key Begin -->
-			#if($externalScript.value.startsWith("http"))
-				<script nonce="$cspNonce" src="$externalScript.value"></script>
-			#else
-				#set($_extScript = $utils.base64dec($!externalScript.value) )
-				<script nonce="$cspNonce">
-					$!_extScript
-				</script>
+			#if($externalScript.getKey().startsWith("bypassconsent") || $cookieConsentGiven)
+				<!-- External Script: $externalScript.key Begin -->
+				#if($externalScript.value.startsWith("http"))
+					<script nonce="$cspNonce" src="$externalScript.value"></script>
+				#else
+					#set($_extScript = $scooldUtils.base64DecodeScript($!externalScript.value) )
+					<script nonce="$cspNonce">
+						$!_extScript
+					</script>
+				#end
+				<!-- External Script: $externalScript.key End -->
 			#end
-			<!-- External Script: $externalScript.key End -->
 		#end
 	</body>
 </html>

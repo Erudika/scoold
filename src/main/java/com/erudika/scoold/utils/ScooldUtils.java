@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -1159,13 +1160,28 @@ public final class ScooldUtils {
 		}
 	}
 
+	public boolean cookieConsentGiven(HttpServletRequest request) {
+		return !Config.getConfigBoolean("cookie_consent_required", false) ||
+				"allow".equals(HttpUtils.getCookieValue(request, "cookieconsent_status"));
+	}
+
+	public String base64DecodeScript(String encodedScript) {
+		if (StringUtils.isBlank(encodedScript)) {
+			return "";
+		}
+		try {
+			String decodedScript = Utils.base64dec(encodedScript);
+			return StringUtils.isBlank(decodedScript) ? encodedScript : decodedScript;
+		} catch (Exception e) {
+			return encodedScript;
+		}
+	}
+
 	public Map<String, Object> getExternalScripts() {
 		if (Config.getConfig().hasPath("external_scripts")) {
 			ConfigObject extScripts = Config.getConfig().getObject("external_scripts");
 			if (extScripts != null && !extScripts.isEmpty()) {
-				return extScripts.unwrapped().entrySet().stream().
-						sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).
-						collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+				return new TreeMap<>(extScripts.unwrapped());
 			}
 		}
 		return Collections.emptyMap();
