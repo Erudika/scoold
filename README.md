@@ -1337,6 +1337,39 @@ Alternatively, clone this repository and edit the files you want:
 
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
+## Third party cookie consent
+
+Some countries have laws that require explicit cookie consent (e.g. GDPR, CCPA). Scoold can be integrated with Osano's
+cookie consent script to enable the consent popup for compliance with those laws. Here's the configuration which enables
+cookie consent:
+```ini
+para.cookie_consent_required = true
+para.external_styles = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"
+para.external_scripts.bypassconsent1 = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
+para.external_scripts.bypassconsent2 = "d2luZG93LmNvb2tpZWNvbnNlbnQuaW5pdGlhbGlzZSh7CiAgInBhbGV0dGUiOiB7CiAgICAicG9wdXAiOiB7CiAgICAgICJiYWNrZ3JvdW5kIjogIiM0NDQ0NDQiCiAgICB9LAogICAgImJ1dHRvbiI6IHsKICAgICAgImJhY2tncm91bmQiOiAiIzc3Nzc3NyIKICAgIH0KICB9LAogICJ0aGVtZSI6ICJjbGFzc2ljIiwKICAicG9zaXRpb24iOiAiYm90dG9tLWxlZnQiLAogICJ0eXBlIjogIm9wdC1pbiIsCiAgIm9uU3RhdHVzQ2hhbmdlIjogZnVuY3Rpb24ocyl7bG9jYXRpb24ucmVsb2FkKCk7fQp9KTs="
+```
+That last snippet of code is the Base64-encoded initialization of the cookie consent script:
+```js
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#444444"
+    },
+    "button": {
+      "background": "#777777"
+    }
+  },
+  "theme": "classic",
+  "position": "bottom-left",
+  "type": "opt-in",
+  "onStatusChange": function(s){location.reload();}
+});
+```
+You can customize the above snippet however you like from [Osano's download page (Start coding link)](https://www.osano.com/cookieconsent/download/).
+After you customize the snippet, it is important that you add `"onStatusChange": function(s){location.reload();}` at the end.
+
+Note: Any other script can be used instead, as long as it set a cookie `cookieconsent_status = "allow"`.
+
 ## Translating Scoold
 
 You can translate Scoold to your language by copying the [English language file](https://github.com/Erudika/scoold/blob/master/src/main/resources/lang_en.properties)
