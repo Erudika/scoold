@@ -140,18 +140,22 @@ public class QuestionsController {
 
 	@PostMapping("/questions/apply-filter")
 	public String applyFilter(@RequestParam(required = false) String sortby, @RequestParam(required = false) String tab,
+			@RequestParam(required = false, defaultValue = "false") String compactViewEnabled,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (req.getParameter("clear") != null) {
 			HttpUtils.removeStateParam("questions-filter", req, res);
+			HttpUtils.removeStateParam("questions-view-compact", req, res);
 		} else {
 			Pager p = utils.pagerFromParams(req);
 			if (!StringUtils.isBlank(req.getParameter(Config._TAGS))) {
 				p.setName("with_tags:" + req.getParameter(Config._TAGS));
 			}
 			savePagerToCookie(req, res, p);
+			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
+					req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
 		}
-		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby=" +
-				Optional.ofNullable(tab).orElse(sortby));
+		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby="
+				+ Optional.ofNullable(StringUtils.trimToNull(tab)).orElse(sortby));
 	}
 
 	@GetMapping("/questions/ask")

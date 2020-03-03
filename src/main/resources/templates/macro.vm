@@ -348,7 +348,7 @@
 					#if($isAdmin && $request.getParameter("bulkedit"))
 						<div class="smallText">
 							<i class="fa fa-th-large grey-text"></i>
-							#if(!$showFriend.hasSpaces())default#end
+							#if(!$showFriend.hasSpaces())$!lang.get('defaultspace')#end
 							#foreach($space in $showFriend.spaces)
 								#set($spaceString = $scooldUtils.getSpaceName($space))
 								${spaceString}#if($foreach.count < $showFriend.spaces.size()),#end
@@ -411,7 +411,12 @@
 	#else
 		#set($unapprovedClass = "")
 	#end
-	<div id="$!showpost.id" class="card-panel ${followedPostClass} $!{deleted} $!{unapprovedClass}">
+	#if($compactViewEnabled)
+		#set($panelClass = "card mvm" )
+	#else
+		#set($panelClass = "card-panel" )
+	#end
+	<div id="$!showpost.id" class="${panelClass} ${followedPostClass} $!{deleted} $!{unapprovedClass}">
 		<div class="row mbn questionbox">
 			#set($votes = $showpost.votes)
 			#set($viewcount = $showpost.viewcount)
@@ -433,6 +438,56 @@
 			#else
 				#set($bgclass1 = "" )
 			#end
+
+			#if($compactViewEnabled)
+
+			<div class="col s12">
+				<div class="pvm">
+					#set($firstLink = $scooldUtils.getFirstLinkInPost($!showpost.body))
+					#set($isFirstLinkImage = $firstLink.endsWith(".gif") || $firstLink.endsWith(".svg") ||
+						$firstLink.endsWith(".png") || $firstLink.endsWith(".jpg") ||
+						$firstLink.endsWith(".jpeg") || $firstLink.endsWith(".webp"))
+					#if($isFirstLinkImage)
+						<img src="$!firstLink" width="80" alt="image" class="mrm mbm left">
+					#end
+					<div>
+						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
+						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
+						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
+						#if($showpost.isSticky())
+						<i class="fa fa-thumb-tack grey-text tooltipped mrs" data-tooltip="Sticky"></i>
+						#end
+						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
+						<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
+						#end
+						#if($showpost.type == "unapprovedquestion")
+						<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+						#end
+						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+					</div>
+					<div>
+						#if($showSpaceLabel)<small class="grey-text"><strong>$scooldUtils.getSpaceName($showpost.space)</strong></small>#end
+						#foreach($showtag in $showpost.tags)
+							#if ($showtag && $showtag.trim() != "")
+								<a href="$questionslink/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="mrm">
+									<tt class="grey-text">#</tt>$!showtag
+								</a>
+							#end
+						#end
+
+						#if($firstLink && !$isFirstLinkImage)
+						<i class="fa fa-link grey-text"></i> <a href="$!firstLink">$firstLink</a>
+						#end
+						<span class="right">
+							#personlink($showpost.author)
+							<span class="grey-text"><i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")</span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			#else
+
 			<div class="col m2 l1 center-align hide-on-med-and-down">
 				<div class="qstatsbox">
 					<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
@@ -455,7 +510,7 @@
 						#if($showSpaceLabel)
 						<div><small class="grey-text"><strong>$scooldUtils.getSpaceName($showpost.space)</strong></small></div>
 						#end
-						<div class="mbm mediumText">
+						<div class="mediumText">
 							#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 								<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
 							#end
@@ -489,6 +544,8 @@
 					</div>
 				</div>
 			</div>
+
+			#end
 		</div>
 	</div>
 	#end

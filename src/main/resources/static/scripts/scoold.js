@@ -767,11 +767,9 @@ $(function () {
 
 			askForm.on("submit", function () {
 				clearInterval(saveDraftInterval1);
-				if (tags.val() && tags.val().length > 0) {
-					localStorage.removeItem("ask-form-title");
-					localStorage.removeItem("ask-form-body");
-					localStorage.removeItem("ask-form-tags");
-				}
+				localStorage.removeItem("ask-form-title");
+				localStorage.removeItem("ask-form-body");
+				localStorage.removeItem("ask-form-tags");
 			});
 		} catch (exception) {}
 	}

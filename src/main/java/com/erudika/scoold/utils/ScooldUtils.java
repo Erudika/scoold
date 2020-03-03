@@ -65,6 +65,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -786,6 +788,17 @@ public final class ScooldUtils {
 		return similarquestions;
 	}
 
+	public String getFirstLinkInPost(String postBody) {
+		postBody = StringUtils.trimToEmpty(postBody);
+		Pattern p = Pattern.compile("^!?\\[.*\\]\\((.+)\\)");
+		Matcher m = p.matcher(postBody);
+
+		if (m.find()) {
+			return m.group(1);
+		}
+		return "";
+	}
+
 	public boolean param(HttpServletRequest req, String param) {
 		return req.getParameter(param) != null;
 	}
@@ -884,6 +897,9 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceName(String space) {
+		if (DEFAULT_SPACE.equalsIgnoreCase(space)) {
+			return "";
+		}
 		return RegExUtils.replaceAll(space, "^scooldspace:[^:]+:", "");
 	}
 

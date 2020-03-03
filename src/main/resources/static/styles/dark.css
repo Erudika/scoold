@@ -2,7 +2,6 @@ h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #efefef; }
 .btn, .btn-large { background-color: #424242; }
 .navbtn-hover { background-color: #6d6d6d; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #424242; }
-.filter-active { background-color: #424242; color: white; }
 
 /* nav bar and footer */
 nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { background-color: #444; }
@@ -42,3 +41,5 @@ tr { border-bottom: 1px solid #777; }
 .autocomplete-content li .highlight { color: white; background-color: #202020; }
 .select-wrapper .caret { fill: white; }
 table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
+.input-field input[type=search]:focus:not(.browser-default) { background-color: transparent; }
+.filter-active { background-color: #efefef; color: black; }

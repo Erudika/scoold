@@ -125,6 +125,19 @@
 								#end
 							#end
 						</div>
+						<div class="switch">
+							<strong class="mrm">View</strong>
+							<label>
+								<span><i class="fa fa-th-list fa-lg tooltipped" data-tooltip="Classic"></i></span>
+								#if($compactViewEnabled)
+								<input name="compactViewEnabled" type="checkbox" value="true" checked="checked">
+								#else
+								<input name="compactViewEnabled" type="checkbox" value="true">
+								#end
+								<span class="lever"></span>
+								<span><i class="fa fa-list fa-lg tooltipped" data-tooltip="Compact"></i></span>
+							</label>
+						</div>
 					</div>
 					<div class="col l2 m4 s6">
 						<strong>$!lang.get('sorting')</strong>
