@@ -303,6 +303,7 @@ public class QuestionsController {
 		} else if ("votes".equals(sortby)) {
 			p.setSortby("votes");
 		} else if ("unanswered".equals(sortby)) {
+			p.setSortby("timestamp");
 			if ("default_pager".equals(p.getName()) && p.isDesc()) {
 				p.setDesc(false);
 			}
@@ -310,6 +311,7 @@ public class QuestionsController {
 			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
 					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		} else if ("unapproved".equals(sortby)) {
+			p.setSortby("timestamp");
 			if ("default_pager".equals(p.getName()) && p.isDesc()) {
 				p.setDesc(false);
 			}

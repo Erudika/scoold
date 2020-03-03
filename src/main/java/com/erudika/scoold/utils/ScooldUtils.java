@@ -95,10 +95,10 @@ public final class ScooldUtils {
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
-	private static Set<String> coreTypes;
-	private static Map<String, String> whitelistedMacros;
+	private static final Set<String> CORE_TYPES;
+	private static final Map<String, String> WHITELISTED_MACROS;
 	static {
-		coreTypes = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
+		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
 				Utils.type(Feedback.class),
 				Utils.type(Profile.class),
 				Utils.type(Question.class),
@@ -108,20 +108,20 @@ public final class ScooldUtils {
 				Utils.type(UnapprovedQuestion.class),
 				Utils.type(UnapprovedReply.class)));
 
-		whitelistedMacros = new HashMap<String, String>();
-		whitelistedMacros.put("spaces", "#spacespage($spaces)");
-		whitelistedMacros.put("webhooks", "#webhookspage($webhooks)");
-		whitelistedMacros.put("comments", "#commentspage($commentslist)");
-		whitelistedMacros.put("postcomments", "#commentspage($showpost.comments)");
-		whitelistedMacros.put("replies", "#answerspage($answerslist $showPost)");
-		whitelistedMacros.put("feedback", "#questionspage($feedbacklist)");
-		whitelistedMacros.put("people", "#peoplepage($userlist)");
-		whitelistedMacros.put("questions", "#questionspage($questionslist)");
-		whitelistedMacros.put("compactanswers", "#compactanswerspage($answerslist)");
-		whitelistedMacros.put("answers", "#answerspage($answerslist)");
-		whitelistedMacros.put("reports", "#reportspage($reportslist)");
-		whitelistedMacros.put("revisions", "#revisionspage($revisionslist $showPost)");
-		whitelistedMacros.put("tags", "#tagspage($tagslist)");
+		WHITELISTED_MACROS = new HashMap<String, String>();
+		WHITELISTED_MACROS.put("spaces", "#spacespage($spaces)");
+		WHITELISTED_MACROS.put("webhooks", "#webhookspage($webhooks)");
+		WHITELISTED_MACROS.put("comments", "#commentspage($commentslist)");
+		WHITELISTED_MACROS.put("postcomments", "#commentspage($showpost.comments)");
+		WHITELISTED_MACROS.put("replies", "#answerspage($answerslist $showPost)");
+		WHITELISTED_MACROS.put("feedback", "#questionspage($feedbacklist)");
+		WHITELISTED_MACROS.put("people", "#peoplepage($userlist)");
+		WHITELISTED_MACROS.put("questions", "#questionspage($questionslist)");
+		WHITELISTED_MACROS.put("compactanswers", "#compactanswerspage($answerslist)");
+		WHITELISTED_MACROS.put("answers", "#answerspage($answerslist)");
+		WHITELISTED_MACROS.put("reports", "#reportspage($reportslist)");
+		WHITELISTED_MACROS.put("revisions", "#revisionspage($revisionslist $showPost)");
+		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
 	}
 
 	private ParaClient pc;
@@ -611,7 +611,7 @@ public final class ScooldUtils {
 	}
 
 	public Set<String> getCoreScooldTypes() {
-		return Collections.unmodifiableSet(coreTypes);
+		return Collections.unmodifiableSet(CORE_TYPES);
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
@@ -969,7 +969,7 @@ public final class ScooldUtils {
 	}
 
 	public String getMacroCode(String key) {
-		return whitelistedMacros.getOrDefault(key, "");
+		return WHITELISTED_MACROS.getOrDefault(key, "");
 	}
 
 	public boolean isMine(Post showPost, Profile authUser) {
