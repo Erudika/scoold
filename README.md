@@ -502,15 +502,21 @@ Keep in mind that if your website has a lot of traffic, this will result in hund
 ## External scripts and JS snippets
 
 You can append external scripts and JS snippets to the end of the page by setting the `para.external_scripts` property.
+Scripts are loaded in alphabetical order based on their key.
 ```ini
 # URL
 para.external_scripts.myscript1 = "https://mydomain.com/script.js"
-# Base64 encoded JavaScript snippet
+# Base64 encoded long JavaScript snippet
 para.external_scripts.myscript2 = "J2Y2M3VlcH .... enZ2OScpOw=="
+# Short raw JS snippet
+para.external_scripts.myscript3 = "var x = 5; console.log('x is', x);"
 ```
 
 **Important:** Watch out for console errors in the browser after you add external scripts. In such cases you might have to
 modify the `frame-src` or `connect-src` portions of the CSP header (see the 4 options above).
+
+If 3rd party cookie consent is enabled (for GDPR, CCPA), all external scripts will be disabled until the user gives their
+consent. You can bypass that by prefixing its key with "bypassconsent", e.g. `para.external_scripts.bypassconsent_myscript2`.
 
 ## External CSS stylesheets
 
@@ -1367,6 +1373,9 @@ window.cookieconsent.initialise({
 ```
 You can customize the above snippet however you like from [Osano's download page (Start coding link)](https://www.osano.com/cookieconsent/download/).
 After you customize the snippet, it is important that you add `"onStatusChange": function(s){location.reload();}` at the end.
+
+**Enabling cookie consent will automatically disable all external scripts and Google Analytics,
+until the user gives their explicit consent.**
 
 Note: Any other script can be used instead, as long as it set a cookie `cookieconsent_status = "allow"`.
 
