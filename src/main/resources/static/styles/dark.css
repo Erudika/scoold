@@ -26,7 +26,7 @@ body, footer.page-footer, .footer-copyright, .card-panel, .card, .tabs { backgro
 .chip, .dropdown-content, .collapsible-header, code, select, .modal, .editor-preview { background-color: #333; color: #efefef; }
 .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like { background-color: #333; }
 span.CodeMirror-selectedtext, li.CodeMirror-hint-active { background-color: #777; }
-input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label { color: #efefef !important; }
+input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label, .black-text { color: #efefef !important; }
 .tabs .tab a:focus, .tabs .tab a:focus.active { background-color: #333; }
 .hljs, .viewbox pre { background: #333; background-color: #333; color: #efefef; border-radius: 3px; }
 code[class*="language-"], pre[class*="language-"] { color: #efefef; }
@@ -43,3 +43,5 @@ tr { border-bottom: 1px solid #777; }
 table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
 .input-field input[type=search]:focus:not(.browser-default) { background-color: transparent; }
 .filter-active { background-color: #efefef; color: black; }
+.diff-ins { background-color: #9fff9f; color: black; }
+.diff-del { background-color: #ffa2a2; color: black; }
