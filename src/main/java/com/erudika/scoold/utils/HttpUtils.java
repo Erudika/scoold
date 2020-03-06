@@ -20,6 +20,7 @@ package com.erudika.scoold.utils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
+import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -247,10 +248,10 @@ public final class HttpUtils {
 		int maxAge = Config.SESSION_TIMEOUT_SEC;
 		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
 				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
-
+		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
 		StringBuilder sb = new StringBuilder();
 		sb.append(AUTH_COOKIE).append("=").append(jwt).append(";");
-		sb.append("Path=/;");
+		sb.append("Path=").append(path).append(";");
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge).append(";");
 		sb.append("HttpOnly;");
