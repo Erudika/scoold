@@ -517,8 +517,12 @@ public final class ScooldUtils {
 
 	@SuppressWarnings("unchecked")
 	public void sendNewPostNotifications(Post question) {
-		if (question != null) {
-			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
+		if (question == null) {
+			return;
+		}
+		// the current user - same as utils.getAuthUser(req)
+		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
+		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
@@ -531,20 +535,18 @@ public final class ScooldUtils {
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, question.getTitle(), body, tagsString));
 
-			if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
-				Report rep = new Report();
-				rep.setDescription("New question awaiting approval");
-				rep.setSubType(Report.ReportType.OTHER);
-				rep.setLink(question.getPostLink(false, false));
-				rep.setAuthorName(postAuthor.getName());
-				rep.create();
-			}
-
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
 					name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
 					compileEmailTemplate(model));
+		} else if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
+			Report rep = new Report();
+			rep.setDescription("New question awaiting approval");
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setLink(question.getPostLink(false, false));
+			rep.setAuthorName(postAuthor.getName());
+			rep.create();
 		}
 	}
 
