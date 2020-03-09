@@ -417,6 +417,8 @@ para.security.oauth.provider = "Continue with Cognito"
 ```
 5. Restart Scoold and login with a user from your Cognito user pool
 
+Make sure you whitelist your Para authentication endpoint with Cognito `https://para_url/oauth2_auth`.
+
 ## Deploying Scoold to Azure
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/Erudika/scoold)
@@ -647,6 +649,8 @@ para.security.oauth.provider = "Continue with OpenID Connect"
 # Enable/disable access token delegation
 para.security.oauth.token_delegation_enabled = false
 ```
+
+Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
 
 **Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
