@@ -432,7 +432,10 @@ public abstract class Post extends Sysprop {
 
 	@JsonIgnore
 	public List<Reply> getUnapprovedAnswers(Pager pager) {
-		return getAnswers(UnapprovedReply.class, pager);
+		if (isReply()) {
+			return Collections.emptyList();
+		}
+		return client().getChildren(this, Utils.type(UnapprovedReply.class), pager);
 	}
 
 	private List<Reply> getAnswers(Class<? extends Reply> type, Pager pager) {
