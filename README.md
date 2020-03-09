@@ -686,6 +686,10 @@ para.security.oauthsecond.token_delegation_enabled = false
 
 For the "third" OAuth 2.0 provider it's the same configuration but replace "second" with "third".
 
+**Note:** If Para and Scoold are hosted both on the same server and your Para instance is not publicly accessible from
+the Internet, you need to expose `localhost:8080/oauth2_auth` by configuring a proxy server to forward
+`yourdomain/oauth2_auth` requests to `localhost:8080/oauth2_auth`. If Para is publicly accessible this step is not necessary.
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `POST /signin?provider=ldap&access_token=username:password`.
