@@ -78,7 +78,8 @@ Save the obtained API keys in `application.conf`, as shown below.
 
 > **Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
 `https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
-appropriate authentication endpoint. For example, for GitHub, the redirect URL could be: `https://paraio.com/github_auth`.
+appropriate authentication endpoint. For example, for GitHub, the redirect URL would be: `https://paraio.com/github_auth`,
+for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/docs/#029-passwordless).
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Click one of the quick deploy buttons **or** skip to step 3 for local deployment:
