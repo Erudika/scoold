@@ -92,6 +92,9 @@ public class QuestionController {
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + (utils.isDefaultSpacePublic() || utils.isAuthenticated(req) ?
 					QUESTIONSLINK : SIGNINLINK + "?returnto=" + showPost.getPostLink(false, false));
+		} else if (!utils.isDefaultSpace(showPost.getSpace()) && pc.read(utils.getSpaceId(showPost.getSpace())) == null) {
+			showPost.setSpace(Post.DEFAULT_SPACE);
+			pc.update(showPost);
 		}
 
 		if (showPost instanceof UnapprovedQuestion && !(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {

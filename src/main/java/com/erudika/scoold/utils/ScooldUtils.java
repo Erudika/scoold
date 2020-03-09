@@ -876,12 +876,23 @@ public final class ScooldUtils {
 
 	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {
 		String space = getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
-		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : space;
+		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : verifyExistingSpace(authUser, space);
 	}
 
 	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
 		HttpUtils.setRawCookie(SPACE_COOKIE, Utils.base64encURL(space.getBytes()),
 				req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+	}
+
+	public String verifyExistingSpace(Profile authUser, String space) {
+		if (!isDefaultSpace(space) && pc.read(getSpaceId(space)) == null) {
+			if (authUser != null) {
+				authUser.removeSpace(space);
+				pc.update(authUser);
+			}
+			return DEFAULT_SPACE;
+		}
+		return space;
 	}
 
 	public String getValidSpaceIdExcludingAll(Profile authUser, String space, HttpServletRequest req) {

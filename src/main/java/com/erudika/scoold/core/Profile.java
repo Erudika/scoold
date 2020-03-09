@@ -34,6 +34,7 @@ import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -424,6 +425,16 @@ public class Profile extends Sysprop {
 
 	public boolean hasSpaces() {
 		return !getSpaces().isEmpty();
+	}
+
+	public void removeSpace(String space) {
+		String sid = ScooldUtils.getInstance().getSpaceId(space);
+		Iterator<String> it = getSpaces().iterator();
+		while (it.hasNext()) {
+			if (it.next().startsWith(sid + Config.SEPARATOR)) {
+				it.remove();
+			}
+		}
 	}
 
 	public long getTotalVotes() {

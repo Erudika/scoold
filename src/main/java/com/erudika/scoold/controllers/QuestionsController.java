@@ -49,7 +49,6 @@ import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.HttpUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -224,12 +223,7 @@ public class QuestionsController {
 				Sysprop spaceObj = pc.read(utils.getSpaceId(space));
 				if (!StringUtils.isBlank(space) && spaceObj == null) {
 					if (utils.canAccessSpace(authUser, space)) {
-						Iterator<String> it = authUser.getSpaces().iterator();
-						while (it.hasNext()) {
-							if (it.next().startsWith(utils.getSpaceId(space) + Config.SEPARATOR)) {
-								it.remove();
-							}
-						}
+						authUser.removeSpace(space);
 						authUser.update();
 					}
 				}
