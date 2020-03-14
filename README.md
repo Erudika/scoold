@@ -1445,17 +1445,26 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 You can also change the default language of Scoold for all users by setting `para.default_language_code = "en"`, where
 instead of "en" you enter the 2-letter code of the language of your choice.
 
-## Scoold API
+## REST API
 
-**The REST API is a work in progress.** The API can be accessed from `/api` and the Swagger documentation and console
-are located at `/api.html`.
+The REST API can be enabled with the following configuration:
+```ini
+para.api_enabled = true
+# A random string min. 32 chars long
+para.app_secret_key = "change_to_long_random_string"
+```
+The API can be accessed from `/api/*` and the OpenAPI documentation and console are located at `/api.html`.
+API keys can be generated from the "Administration" page and can be made to expire after a number of hours or never
+(validity period = 0). Keys are in the JWT format and signed with the secret defined in `para.app_secret_key`.
 
-You can use the public endpoint `/api` to check the health of the server. A `GET /api` will return `200` if the server
-is healthy and connected to Para, otherwise status code `500` is returned. The response body is similar to this:
+You can use the public endpoint `http://localhost:8000/api` to check the health of the server. A `GET /api` will
+return `200` if the server is healthy and connected to Para, otherwise status code `500` is returned.
+The response body is similar to this:
 ```
 {
   "healthy": true,
-  "message": "Scoold API, see docs at http://localhost:8000/api.html"
+  "message": "Scoold API, see docs at http://localhost:8000/api.html",
+	"pro": false
 }
 ```
 
