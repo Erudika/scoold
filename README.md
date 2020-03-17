@@ -33,6 +33,7 @@ your company or team.
 - Suggestions for similar questions and hints for duplicate posts
 - Email notifications for post replies and comments
 - Backup and Restore
+- RESTful API defined with OpenAPI 3.0
 - Spring Boot project (single JAR)
 - LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Twitter) with Gravatar support
@@ -1456,6 +1457,8 @@ para.app_secret_key = "change_to_long_random_string"
 The API can be accessed from `/api/*` and the OpenAPI documentation and console are located at `/api.html`.
 API keys can be generated from the "Administration" page and can be made to expire after a number of hours or never
 (validity period = 0). Keys are in the JWT format and signed with the secret defined in `para.app_secret_key`.
+API keys can also be generated with any JWT library. The body of the key should contain the `iat`, `appid` and `exp`
+claims and must be signed with the secret `para.app_secret_key`.
 
 You can use the public endpoint `http://localhost:8000/api` to check the health of the server. A `GET /api` will
 return `200` if the server is healthy and connected to Para, otherwise status code `500` is returned.
@@ -1467,6 +1470,10 @@ The response body is similar to this:
 	"pro": false
 }
 ```
+
+API clients can be auto-generated using [Swagger Codegen](https://github.com/swagger-api/swagger-codegen). You can
+also open the API schema file `src/main/resources/static/api.yaml` in [the Swagger Editor](https://editor.swagger.io/)
+and generate the clients from there.
 
 ## Building Scoold
 
