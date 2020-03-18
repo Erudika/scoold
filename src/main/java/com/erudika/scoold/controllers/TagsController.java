@@ -29,6 +29,7 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -106,7 +107,7 @@ public class TagsController {
 					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tagg.getTag()}, pager);
 					for (Question q : questionslist) {
 						taggedCount++;
-						q.setTags(q.getTags().stream().
+						q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
 								map(ts -> ts.equals(tagg.getTag()) ? t.getTag() : ts).
 								collect(Collectors.toList()));
 						logger.debug("Updated {} out of {} questions with new tag {}.",

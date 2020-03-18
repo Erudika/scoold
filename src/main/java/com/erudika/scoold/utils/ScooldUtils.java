@@ -497,8 +497,8 @@ public final class ScooldUtils {
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
 			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
-			String tagsString = question.getTags().stream().map(t -> "<span class=\"tag\">" +
-					(addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
+			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
+					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, name));
@@ -525,7 +525,8 @@ public final class ScooldUtils {
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
 			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
-			String tagsString = question.getTags().stream().map(t -> "<span class=\"tag\">" + t + "</span>").
+			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
+					map(t -> "<span class=\"tag\">" + t + "</span>").
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
