@@ -117,7 +117,8 @@ public class TagsController {
 					}
 				} while (!questionslist.isEmpty());
 				t.setCount(taggedCount);
-				pc.create(t);
+				Tag updated = pc.create(t);
+				model.addAttribute("tag", updated);
 			}
 		}
 		return "redirect:" + TAGSLINK;

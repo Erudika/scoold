@@ -87,7 +87,7 @@ public class ReportsController {
 	}
 
 	@PostMapping
-	public void create(HttpServletRequest req, HttpServletResponse res) {
+	public void create(HttpServletRequest req, HttpServletResponse res, Model model) {
 		Report rep = utils.populate(req, new Report(), "link", "description", "parentid", "subType", "authorName");
 		Map<String, String> error = utils.validate(rep);
 		if (error.isEmpty()) {
@@ -101,8 +101,10 @@ public class ReportsController {
 				rep.setAuthorName(utils.getLang(req).get("anonymous"));
 			}
 			rep.create();
+			model.addAttribute("newreport", rep);
 			res.setStatus(200);
 		} else {
+			model.addAttribute("error", error);
 			res.setStatus(400);
 		}
 	}

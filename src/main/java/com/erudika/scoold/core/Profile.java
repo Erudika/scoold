@@ -39,6 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
@@ -152,7 +153,28 @@ public class Profile extends Sysprop {
 		}
 	}
 
-	private ParaClient client() {
+	public static Profile fromUser(User u) {
+		Profile p = new Profile(u.getId(), u.getName());
+		p.setUser(u);
+		p.setOriginalName(u.getName());
+		p.setPicture(u.getPicture());
+		p.setAppid(u.getAppid());
+		p.setCreatorid(u.getId());
+		p.setTimestamp(u.getTimestamp());
+		p.setGroups(ScooldUtils.getInstance().isRecognizedAsAdmin(u)
+				? User.Groups.ADMINS.toString() : u.getGroups());
+		// auto-assign spaces to new users
+		String space = Config.getConfigParam("auto_assign_spaces", "");
+		if (!StringUtils.isBlank(space) && !ScooldUtils.getInstance().isDefaultSpace(space)) {
+			Sysprop s = client().read(ScooldUtils.getInstance().getSpaceId(space));
+			if (s != null) {
+				p.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+			}
+		}
+		return p;
+	}
+
+	private static ParaClient client() {
 		return ScooldUtils.getInstance().getParaClient();
 	}
 
@@ -484,7 +506,8 @@ public class Profile extends Sysprop {
 	}
 
 	private void updateVoteGains(int rep) {
-		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(getUpdated()), ZoneId.systemDefault());
+		Long updated = Optional.ofNullable(getUpdated()).orElse(Utils.timestamp());
+		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZoneId.systemDefault());
 		LocalDate now = LocalDate.now();
 		if (now.getYear() != lastUpdate.getYear()) {
 			yearlyVotes = rep;

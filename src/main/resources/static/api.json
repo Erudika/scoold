@@ -1,77 +1,109 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "description": "This is the API of [Scoold](https://scoold.com). You need to generate a [JWT super token](http://paraio.org/docs/#creating-super-tokens) from your Para secret key to access the API.",
+    "description": "This is the [Scoold](https://scoold.com) RESTful API. You need to generate an [API key](/admin) from the 'Administration' page to access the API.",
     "version": "1.0.0",
-    "title": "Scoold API",
-    "termsOfService": "https://live.scoold.com/terms",
-    "contact": {
-      "email": "support@scoold.com"
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
+    "title": "Scoold API"
+  },
+  "externalDocs": {
+    "description": "Scoold on GitHub",
+    "url": "https://github.com/Erudika/scoold"
   },
   "tags": [
     {
-      "name": "questions"
+      "name": "posts"
     },
     {
-      "name": "answers"
+      "name": "users"
     },
     {
-      "name": "profiles"
+      "name": "tags"
+    },
+    {
+      "name": "comments"
+    },
+    {
+      "name": "reports"
+    },
+    {
+      "name": "spaces"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "stats"
     }
   ],
   "paths": {
     "/api": {
       "get": {
-        "summary": "Intro and health",
-        "responses": {
-          "200": {
-            "description": "A paged array of questions"
-          }
-        }
-      }
-    },
-    "/api/questions": {
-      "get": {
-        "summary": "List all questions",
-        "operationId": "getQuestions",
+        "summary": "General information and health",
         "tags": [
-          "questions"
-        ],
-        "security": [
-          {
-            "scoold_auth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "How many items to return at one time (default 30)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
+          "stats"
         ],
         "responses": {
           "200": {
-            "description": "A paged array of questions",
+            "description": "Server is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Questions"
+                  "$ref": "#/components/schemas/Health"
                 }
               }
             }
           },
-          "default": {
-            "description": "unexpected error",
+          "500": {
+            "description": "Server is unhealthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts": {
+      "post": {
+        "summary": "Create a new post",
+        "description": "To publish the post in the given space, set the `space` field. Otherwise the post will be created in the default space.<br>To change the author, set the `creatorid` field to an existing user.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new post object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
             "content": {
               "application/json": {
                 "schema": {
@@ -81,18 +113,110 @@
             }
           }
         }
-      }
-    },
-    "/api/questions/{id}": {
+      },
       "get": {
-        "summary": "Request a specific question",
-        "operationId": "getQuestion",
+        "summary": "List questions on the front page",
         "tags": [
-          "questions"
+          "posts"
         ],
         "security": [
           {
-            "scoold_auth": []
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sortby",
+            "in": "query",
+            "required": false,
+            "description": "The `sortby` parameter could be a property name like `votes` or `properties.answercount` or a category like `activity`, `unanswered`, `unapproved` (posts without an approved answer)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "space",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "description": "The `filter` is used to filter results based on tags or location",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "favtags",
+                "local"
+              ]
+            }
+          },
+          {
+            "name": "favtags",
+            "in": "query",
+            "required": false,
+            "description": "Used in combination with the `favtags` filter parameter to filter posts based on a set of tags",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "latlng",
+            "in": "query",
+            "required": false,
+            "description": "Used in combination with the `local` filter parameter to filter posts based on location, for example `42.32,24.53`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/{id}": {
+      "get": {
+        "summary": "Returns a specific post along with its children (replies) and similar posts",
+        "description": "You can paginate through child objects using the `page` parameter",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
           }
         ],
         "parameters": [
@@ -100,7 +224,128 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The id of the question to retrieve",
+            "description": "The id of the post to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortby",
+            "in": "query",
+            "required": false,
+            "description": "Sort children by field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A post object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update post",
+        "description": "To change the user who edited the question, specify `lasteditby` in the request body.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete post",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post to delete",
             "schema": {
               "type": "string"
             }
@@ -108,17 +353,1223 @@
         ],
         "responses": {
           "200": {
-            "description": "Expected response to a valid request",
+            "description": "Post was deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/approve": {
+      "put": {
+        "summary": "Approve a post which awaits approval by a moderator",
+        "description": "Only works for posts of type `UnapprovedQuestion` or `UnapprovedReply`",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post was approved"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/accept/{replyid}": {
+      "put": {
+        "summary": "Accept an answer (reply) to post as the best answer",
+        "description": "Only works for posts of type `Reply`. This works as a toggle - each subsequent request will undo the previous action.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "replyid",
+            "in": "path",
+            "required": true,
+            "description": "The id of the `Reply` to accept",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post was accepted"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/close": {
+      "put": {
+        "summary": "Closes or opens a post - closed posts cannot have any more replies",
+        "description": "Only works for posts of type `Question`. This works as a toggle - each subsequent request will undo the previous action.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post was closed"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/pin": {
+      "put": {
+        "summary": "Pins or unpins a post - pinned posts always stay on top",
+        "description": "Only works for posts of type `Question` or `Sticky`. This works as a toggle - each subsequent request will undo the previous action.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post was pinned"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/restore/{revisionid}": {
+      "put": {
+        "summary": "Restores a revision of a post",
+        "description": "Restoring a revision reverts the content of a post to a previous state.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revisionid",
+            "in": "path",
+            "required": true,
+            "description": "The id of the revision to restore",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revision was restored"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/like": {
+      "put": {
+        "summary": "Likes or unlikes a post - liked posts go to a user's favorites list",
+        "description": "Only works for posts of type `Question` or `Sticky`. This works as a toggle - each subsequent request will undo the previous action.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post was liked"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/voteup": {
+      "put": {
+        "summary": "Upvotes a post",
+        "description": "Upvotes",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user voting",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "vote succeeded"
+          },
+          "400": {
+            "description": "vote failed"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/votedown": {
+      "put": {
+        "summary": "Downvotes a post",
+        "description": "Downvotes",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user voting",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "vote succeeded"
+          },
+          "400": {
+            "description": "vote failed"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/comments": {
+      "get": {
+        "summary": "Returns a page of comments for a given post",
+        "description": "By default, oldest comments are returned first, 5 per page. You can change that by setting the parameters `sortby`, `desc`, `limit` and `page`.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of comments",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Question"
+                  "$ref": "#/components/schemas/Comments"
                 }
               }
             }
           },
-          "default": {
-            "description": "unexpected error",
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/posts/{id}/revisions": {
+      "get": {
+        "summary": "Returns a page of revisions for a given post",
+        "description": "You can paginate through results using the parameters `sortby`, `desc`, `limit` and `page`.",
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of revisions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Revisions"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "To assign spaces to users, use the `spaces` field. Otherwise the user will be assigned to the default space.<br>The `user` field contains the core Para `User` corresponding to the new `Profile` object.",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new user object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List users",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "example": "*",
+            "description": "A query string to find specific users",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortby",
+            "in": "query",
+            "required": false,
+            "example": "timestamp",
+            "description": "This could be a property name like `votes`, `properties.yearlyVotes`, `properties.quarterlyVotes`, `properties.montlyVotes`  or `properties.weeklyVotes`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profiles"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Returns a specific user profile along with its user object",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile and user objects were deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/questions": {
+      "get": {
+        "summary": "Returns a list of questions created by a user",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/replies": {
+      "get": {
+        "summary": "Returns a list of replies (answers) created by a user",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/favorites": {
+      "get": {
+        "summary": "Returns a list of a user's favorite posts",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/moderator": {
+      "put": {
+        "summary": "Promote or demote user as moderator",
+        "description": "This works as a toggle - each subsequent request will undo the previous action.",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was promoted or demoted"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/ban": {
+      "put": {
+        "summary": "Ban or unban user",
+        "description": "You can permanently ban a user with `banuntil=-1`",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the post",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "banuntil",
+            "in": "query",
+            "required": false,
+            "description": "Ban period end date as a future Unix timestamp in milliseconds, use `0` to unban, `-1` to permaban",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was banned or unbanned"
+          }
+        }
+      }
+    },
+    "/api/users/spaces": {
+      "put": {
+        "summary": "Edit spaces in bulk",
+        "description": "Map users to spaces",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "spaces": {
+                    "description": "list of spaces",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "users": {
+                    "description": "list of user ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Spaces were updated"
+          }
+        }
+      }
+    },
+    "/api/tags": {
+      "post": {
+        "summary": "Create a new tag",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tag"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new tag object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List tags",
+        "description": "Returns a page of tags. Use the `page` parameter to paginate through results.",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of tags returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tags"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/{id}": {
+      "get": {
+        "summary": "Get tag",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the tag to get",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Rename tag",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the tag to rename",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "tag": {
+                    "description": "The new name of the tag",
+                    "type": "string",
+                    "example": "new-tag-name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tag was renamed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete tag",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the tag to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag was deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/tags/{id}/questions": {
+      "get": {
+        "summary": "List questions tagged with a specific tag",
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the tag",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Posts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/comments": {
+      "post": {
+        "summary": "Create a new comment",
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Set `creatorid` to change the author of the comment. Set `parentid` to the id of an existing post.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new comment object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
             "content": {
               "application/json": {
                 "schema": {
@@ -129,32 +1580,881 @@
           }
         }
       }
+    },
+    "/api/comments/{id}": {
+      "get": {
+        "summary": "Get comment",
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the comment to get",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete comment",
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the comment to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment was deleted"
+          }
+        }
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "summary": "Create a new report",
+        "description": "You can store any additional properties in the report object - simply pass those as JSON in the request body.",
+        "tags": [
+          "reports"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Set `creatorid` to change the author of the report.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Report"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new report object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List reports",
+        "tags": [
+          "reports"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "a page of report objects returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reports"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/{id}": {
+      "get": {
+        "summary": "Get report",
+        "tags": [
+          "reports"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the report to get",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete report",
+        "tags": [
+          "reports"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the report to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report was deleted"
+          }
+        }
+      }
+    },
+    "/api/reports/{id}/close": {
+      "put": {
+        "summary": "Close report",
+        "tags": [
+          "reports"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the report to close",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "solution": {
+                    "description": "Actions taken to solve the issue",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report was closed"
+          }
+        }
+      }
+    },
+    "/api/spaces": {
+      "post": {
+        "summary": "Create a new space",
+        "tags": [
+          "spaces"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Space"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new space object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Space"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List spaces",
+        "tags": [
+          "spaces"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of space objects returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Spaces"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{id}": {
+      "get": {
+        "summary": "Get space",
+        "tags": [
+          "spaces"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the space to get",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Space object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Space"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete space",
+        "tags": [
+          "spaces"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the space to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Space was deleted"
+          }
+        }
+      }
+    },
+    "/api/search/{type}/{query}": {
+      "get": {
+        "summary": "Perform full-text search on objects of given type",
+        "tags": [
+          "search"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "description": "The type of object to search for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query",
+            "in": "path",
+            "required": true,
+            "description": "The search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "found objects returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "totalHits": {
+                      "description": "number of total hits for this query",
+                      "type": "integer"
+                    },
+                    "page": {
+                      "description": "the page number",
+                      "type": "integer"
+                    },
+                    "items": {
+                      "description": "a list of search results",
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "lastKey": {
+                      "description": "the last key property of the pager for \"searchAfter\" queries",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "summary": "Returns various system statistics and server versions",
+        "tags": [
+          "stats"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "stats"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "Question": {
+      "Post": {
         "required": [
           "id",
-          "name"
+          "title"
         ],
         "properties": {
           "id": {
             "type": "integer",
             "format": "int64"
           },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix timestamp of when the post was created"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "question",
+              "reply",
+              "sticky"
+            ],
+            "description": "Can be one of `question`, `reply`, `sticky`"
+          },
           "name": {
             "type": "string"
           },
-          "tag": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "creatorid": {
+            "type": "string",
+            "description": "The `id` of the author of this post (an existing user)"
+          },
+          "location": {
+            "type": "string",
+            "description": "The location name associated with this post"
+          },
+          "latlng": {
+            "type": "string",
+            "description": "Coordinates of the location in the format `\"43.26,25.36\"`"
+          },
+          "address": {
+            "type": "string",
+            "description": "The location address associated with this post"
+          },
+          "lastactivity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastedited": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lasteditby": {
+            "type": "string"
+          },
+          "answerid": {
+            "type": "string"
+          },
+          "revisionid": {
+            "type": "string"
+          },
+          "closerid": {
+            "type": "string"
+          },
+          "wiki": {
+            "type": "boolean"
+          },
+          "space": {
+            "type": "string",
+            "description": "Selects a space or returns questions in the default space"
+          },
+          "comments": {
+            "$ref": "#/components/schemas/Comments"
+          },
+          "children": {
+            "$ref": "#/components/schemas/Posts"
+          },
+          "similar": {
+            "$ref": "#/components/schemas/Posts"
+          }
+        }
+      },
+      "Posts": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Post"
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "creatorid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bannedUntil": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "spaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "badges": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "slackUserId": {
+            "type": "string"
+          },
+          "mattermostUserId": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "latlng": {
+            "type": "string"
+          },
+          "aboutme": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "Profiles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Profile"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "identifier": {
+            "description": "Can be in the format - `user@domain.com`, `fb:123456` (Facebook), `gp:google_id` (Google), `ldap:ldap_id` (LDAP), `oa2:oauth_id` (OAuth2), etc. Check the [Para docs]() for more details.",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "password": {
             "type": "string"
           }
         }
       },
-      "Questions": {
+      "Revision": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "original": {
+            "type": "string"
+          }
+        }
+      },
+      "Revisions": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Question"
+          "$ref": "#/components/schemas/Revision"
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "Tags": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Tag"
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "creatorid": {
+            "type": "string"
+          },
+          "parentid": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "authorName": {
+            "type": "string"
+          }
+        }
+      },
+      "Comments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Comment"
+        }
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "creatorid": {
+            "type": "string"
+          },
+          "subType": {
+            "type": "string",
+            "enum": [
+              "SPAM",
+              "OFFENSIVE",
+              "DUPLICATE",
+              "INCORRECT",
+              "OTHER;"
+            ]
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "solution": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "closed": {
+            "type": "boolean"
+          },
+          "authorName": {
+            "type": "string"
+          }
+        }
+      },
+      "Reports": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Report"
+        }
+      },
+      "Space": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "Spaces": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Space"
+        }
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "healthy": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "pro": {
+            "type": "boolean"
+          }
         }
       },
       "Error": {
@@ -173,16 +2473,57 @@
         }
       }
     },
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "description": "How many items to return at one time (default 30)",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "default": 30
+        }
+      },
+      "page": {
+        "name": "page",
+        "in": "query",
+        "description": "Page number (paginate through results)",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "default": 1
+        }
+      },
+      "sortby": {
+        "name": "sortby",
+        "in": "query",
+        "description": "Field name on which results will be sorted",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "timestamp"
+        }
+      },
+      "desc": {
+        "name": "desc",
+        "in": "query",
+        "description": "Descending (true) or ascending (false) sort order",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
     "securitySchemes": {
       "scoold_auth": {
+        "description": "Don't have an API key? Generate one on the [Administration page](/admin).",
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
     }
-  },
-  "externalDocs": {
-    "description": "Scoold on GitHub",
-    "url": "https://github.com/Erudika/scoold"
   }
 }

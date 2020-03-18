@@ -172,8 +172,8 @@
 	#set($rexp = "${pageparam}=(\d+|&amp;)+")
 	#set($_rpath = $_rpath.replaceAll($rexp, ""))
 	#set($_rpath = $_rpath.replaceAll("(&amp;|&|\?)$", ""))
-	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
 	<div class="page-content">#evaluate($scooldUtils.getMacroCode($macroCode))</div>
+	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
 	#if ($pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
 		<div class="pages center mtl">
 			#if($numericPaginationEnabled)
@@ -367,9 +367,11 @@
 					#if ($showFriend.groups == "mods")
 					<i class="fa fa-dot-circle-o orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
 					#end
+					#if($showFriend.lastseen)
 					<div class="grey-text r prm tooltipped lastseen" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
 					</div>
+					#end
 				</div>
 			</div>
 		</div>

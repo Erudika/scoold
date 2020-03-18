@@ -32,7 +32,6 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -129,11 +128,12 @@ public class QuestionController {
 	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String space, HttpServletRequest req) {
+			@RequestParam(required = false) String space, HttpServletRequest req, Model model) {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
+			model.addAttribute("post", showPost);
 			return "redirect:" + req.getRequestURI();
 		}
 		boolean isQuestion = !showPost.isReply();
@@ -172,13 +172,14 @@ public class QuestionController {
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags));
 		}
+		model.addAttribute("post", showPost);
 		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
-	public String replyAjax(@PathVariable String id, @PathVariable(required = false) String title,
+	public String reply(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) Boolean emailme, HttpServletRequest req,
-			HttpServletResponse res, Model model) throws IOException {
+			HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (showPost != null && emailme != null) {
@@ -213,12 +214,15 @@ public class QuestionController {
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
 				utils.sendReplyNotifications(showPost, answer);
+				model.addAttribute("newpost", answer);
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("path", "question.vm");
 				res.setStatus(400);
 			}
 			return "reply";
+		} else {
+			model.addAttribute("error", "Parent post doesn't exist or cannot have children.");
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
@@ -289,10 +293,10 @@ public class QuestionController {
 	public String close(@PathVariable String id, HttpServletRequest req) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (!utils.canEdit(showPost, authUser) || showPost == null) {
+		if (showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
-		if (utils.isMod(authUser)) {
+		if (utils.isMod(authUser) && !showPost.isReply()) {
 			if (showPost.isClosed()) {
 				showPost.setCloserid("");
 			} else {
@@ -318,15 +322,17 @@ public class QuestionController {
 	}
 
 	@PostMapping("/{id}/delete")
-	public String delete(@PathVariable String id, HttpServletRequest req) {
+	public String delete(@PathVariable String id, HttpServletRequest req, Model model) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
+			model.addAttribute("post", showPost);
 			return "redirect:" + req.getRequestURI();
 		}
 		if (!showPost.isReply()) {
 			if ((utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
 				showPost.delete();
+				model.addAttribute("deleted", true);
 				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
 		} else if (showPost.isReply()) {
@@ -335,12 +341,16 @@ public class QuestionController {
 				parent.setAnswercount(parent.getAnswercount() - 1);
 				parent.update();
 				showPost.delete();
+				model.addAttribute("deleted", true);
 			}
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
 	private void changeSpaceForAllAnswers(Post showPost, String space) {
+		if (showPost == null || showPost.isReply()) {
+			return;
+		}
 		Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
 		List<Reply> answerslist;
 		try {
@@ -361,6 +371,9 @@ public class QuestionController {
 	}
 
 	private List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {
+		if (showPost == null || showPost.isReply()) {
+			return Collections.emptyList();
+		}
 		List<Reply> answers = new ArrayList<>();
 		Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
 		if (utils.postsNeedApproval() && (utils.isMine(showPost, authUser) || utils.isMod(authUser))) {

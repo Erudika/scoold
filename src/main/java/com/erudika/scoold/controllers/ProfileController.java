@@ -115,14 +115,14 @@ public class ProfileController {
 		return "base";
 	}
 
-	@PostMapping(path = "/{id}", params = {"makemod"})
-	public String mods(@PathVariable String id, @RequestParam Boolean makemod, HttpServletRequest req, HttpServletResponse res) {
+	@PostMapping("/{id}/make-mod")
+	public String makeMod(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {
 			Profile showUser = utils.getParaClient().read(Profile.id(id));
 			if (showUser != null) {
 				if (utils.isAdmin(authUser) && !utils.isAdmin(showUser)) {
-					showUser.setGroups(makemod ? MODS.toString() : USERS.toString());
+					showUser.setGroups(utils.isMod(showUser) ? USERS.toString() : MODS.toString());
 					showUser.update();
 				}
 			}
@@ -139,10 +139,10 @@ public class ProfileController {
 	public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String website, @RequestParam(required = false) String aboutme,
-			@RequestParam(required = false) String picture, HttpServletRequest req) {
+			@RequestParam(required = false) String picture, HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
-		if (canEditProfile(authUser, id)) {
-			Profile showUser = authUser;
+		Profile showUser = getProfileForEditing(id, authUser);
+		if (showUser != null) {
 			boolean updateProfile = false;
 			if (!isMyid(authUser, id)) {
 				showUser = utils.getParaClient().read(Profile.id(id));
@@ -170,8 +170,16 @@ public class ProfileController {
 			if (updateProfile || utils.addBadgeOnce(showUser, Badge.NICEPROFILE, isComplete)) {
 				showUser.update();
 			}
+			model.addAttribute("user", showUser);
 		}
 		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
+	}
+
+	private Profile getProfileForEditing(String id, Profile authUser) {
+		if (!canEditProfile(authUser, id)) {
+			return null;
+		}
+		return isMyid(authUser, id) ? authUser : (Profile) utils.getParaClient().read(Profile.id(id));
 	}
 
 	private boolean updateUserPictureAndName(Profile showUser, String picture, String name) {
@@ -223,7 +231,7 @@ public class ProfileController {
 				+ Utils.abbreviate(showUser.getAboutme(), 150);
 	}
 
-	private List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+	public List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
 		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
 			List<Question> qlist = new ArrayList<>();
 			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
@@ -236,7 +244,7 @@ public class ProfileController {
 		}
 	}
 
-	private List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+	public List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
 		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
 			List<Reply> alist = new ArrayList<>();
 			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());

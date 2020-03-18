@@ -71,6 +71,8 @@ public abstract class Post extends Sysprop {
 	@Stored private String lasteditby;
 	@Stored private String deletereportid;
 	@Stored private String location;
+	@Stored private String address;
+	@Stored private String latlng;
 	@Stored private List<String> commentIds;
 	@Stored private String space;
 	@Stored private Map<String, String> followers;
@@ -111,6 +113,7 @@ public abstract class Post extends Sysprop {
 		this.lastedited = lastedited;
 	}
 
+	@JsonIgnore
 	public Pager getItemcount() {
 		if (itemcount == null) {
 			itemcount = new Pager(5);
@@ -145,6 +148,22 @@ public abstract class Post extends Sysprop {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getLatlng() {
+		return latlng;
+	}
+
+	public void setLatlng(String latlng) {
+		this.latlng = latlng;
 	}
 
 	public List<String> getTags() {
@@ -395,7 +414,7 @@ public abstract class Post extends Sysprop {
 		this.comments = comments;
 	}
 
-	@JsonIgnore
+	@JsonIgnore // DO NOT REMOVE! clashes with User.getComments() field in index
 	public List<Comment> getComments() {
 		return this.comments;
 	}

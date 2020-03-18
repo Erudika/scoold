@@ -450,6 +450,15 @@ $(function () {
 		}
 	});
 
+	submitFormBind("#api-key-form", function (data, status, xhr, form) {
+		$(form).find("input[name=jwt]").on("click", function () {
+			$(this).focus();
+			$(this).select();
+			document.execCommand("copy");
+			$(this).next("span").text("Copied!").show().fadeOut(3000);
+		}).val(data.jwt).removeClass("hide");
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/
@@ -509,9 +518,8 @@ $(function () {
 	$("a.make-mod-btn").on('click', function () {
 		var dis = $(this);
 		$.post(dis.attr("href"));
-		dis.siblings(".make-mod-btn.hide").removeClass("hide");
+		dis.find("span").toggleClass("hide");
 		$(".moderator-icon").toggleClass("hide");
-		dis.addClass("hide");
 		return false;
 	});
 

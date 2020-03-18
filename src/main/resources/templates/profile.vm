@@ -92,12 +92,10 @@
 			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
 			#if ($isAdmin)
 				#if(!$scooldUtils.isAdmin($showUser))
-					#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
-					<a href="$profilelink/$showUser.creatorid/?makemod=false" class="chip make-mod-btn $!{unhidemakemod}">
-						<i class="fa fa-chevron-down"></i> Unmake mod
-					</a>
-					<a href="$profilelink/$showUser.creatorid/?makemod=true" class="chip make-mod-btn $!{hidemakemod}">
-						<i class="fa fa-chevron-up"></i> Make mod
+					<a href="$profilelink/$showUser.creatorid/make-mod" class="chip make-mod-btn">
+						#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
+							<span class="$!{unhidemakemod}"><i class="fa fa-chevron-down"></i> Unmake mod</span>
+							<span class="$!{hidemakemod}"><i class="fa fa-chevron-up "></i> Make mod</span>
 					</a>
 				#end
 				<a href="${adminlink}?delete=profile&id=$showUser.id&returnto=$peoplelink" title="Delete user account" class="red chip white-text">

@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -64,6 +65,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -335,5 +337,17 @@ public class AdminController {
 			utils.setCustomTheme(Utils.stripAndTrim(theme, "", true), css);
 		}
 		return "redirect:" + ADMINLINK;
+	}
+
+	@ResponseBody
+	@PostMapping(path = "/generate-api-key", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> generateAPIKey(@RequestParam Integer validityHours,
+			HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			return ResponseEntity.ok().body(Collections.singletonMap("jwt", ScooldUtils.
+					generateJWToken(Collections.emptyMap(), TimeUnit.HOURS.toSeconds(validityHours)).serialize()));
+		}
+		return ResponseEntity.status(403).build();
 	}
 }

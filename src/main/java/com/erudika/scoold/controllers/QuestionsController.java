@@ -172,10 +172,10 @@ public class QuestionsController {
 
 	@PostMapping("/questions/ask")
 	public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String address, HttpServletRequest req, Model model) {
+			@RequestParam(required = false) String address, String space, HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
-			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, null, req);
+			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
@@ -200,6 +200,7 @@ public class QuestionsController {
 					pc.create(addr);
 				}
 				authUser.setLastseen(System.currentTimeMillis());
+				model.addAttribute("newpost", q);
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("draftQuestion", q);
@@ -239,7 +240,7 @@ public class QuestionsController {
 		return "redirect:" + (StringUtils.isBlank(backTo) ? QUESTIONSLINK : backTo);
 	}
 
-	private List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
+	public List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
 		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req));
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
@@ -249,13 +250,17 @@ public class QuestionsController {
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
+				if (!authUser.hasFavtags()) {
+					authUser.setFavtags(Arrays.asList(req.getParameterValues("favtags"))); // API override
+				}
 				if (isSpaceFilteredRequest(authUser, currentSpace) && authUser.hasFavtags()) {
 					questionslist = pc.findQuery(type, getSpaceFilteredFavtagsQuery(currentSpace, authUser), itemcount);
 				} else {
 					questionslist = pc.findTermInList(type, Config._TAGS, authUser.getFavtags(), itemcount);
 				}
 			} else if ("local".equals(filter)) {
-				String[] ll = authUser.getLatlng() == null ? new String[0] : authUser.getLatlng().split(",");
+				String latlng = Optional.ofNullable(authUser.getLatlng()).orElse(req.getParameter("latlng"));
+				String[] ll =  latlng == null ? new String[0] : latlng.split(",");
 				if (ll.length == 2) {
 					double lat = NumberUtils.toDouble(ll[0]);
 					double lng = NumberUtils.toDouble(ll[1]);

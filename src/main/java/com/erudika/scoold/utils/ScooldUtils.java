@@ -19,7 +19,6 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.Para;
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.App;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
@@ -46,14 +45,26 @@ import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.typesafe.config.ConfigObject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,9 +108,16 @@ public final class ScooldUtils {
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
+	private static final Profile API_USER;
 	private static final Set<String> CORE_TYPES;
 	private static final Map<String, String> WHITELISTED_MACROS;
 	static {
+		API_USER = new Profile("1", "System");
+		API_USER.setVotes(1);
+		API_USER.setCreatorid("1");
+		API_USER.setPicture(getGravatar(Config.SUPPORT_EMAIL));
+		API_USER.setGroups(User.Groups.ADMINS.toString());
+
 		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
 				Utils.type(Feedback.class),
 				Utils.type(Profile.class),
@@ -231,15 +249,11 @@ public final class ScooldUtils {
 		if (req.getRequestURI().equals(CONTEXT_PATH + "/api")) {
 			return null;
 		}
-		String superToken = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
-		if (StringUtils.isBlank(superToken)) {
+		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
+		if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new WebApplicationException(401);
 		}
-		ParaObject app = pc.me(superToken);
-		if (app == null || !(app instanceof App)) {
-			throw new WebApplicationException(401);
-		}
-		return app;
+		return API_USER;
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
@@ -260,24 +274,7 @@ public final class ScooldUtils {
 	private Profile getOrCreateProfile(User u, HttpServletRequest req) {
 		Profile authUser = pc.read(Profile.id(u.getId()));
 		if (authUser == null) {
-			authUser = new Profile(u.getId(), u.getName());
-			authUser.setUser(u);
-			authUser.setOriginalName(u.getName());
-			authUser.setPicture(u.getPicture());
-			authUser.setAppid(u.getAppid());
-			authUser.setCreatorid(u.getId());
-			authUser.setTimestamp(u.getTimestamp());
-			authUser.setGroups(isRecognizedAsAdmin(u)
-					? User.Groups.ADMINS.toString() : u.getGroups());
-			// auto-assign spaces to new users
-			String space = Config.getConfigParam("auto_assign_spaces", "");
-			if (!StringUtils.isBlank(space) && !isDefaultSpace(space)) {
-				Sysprop s = pc.read(getSpaceId(space));
-				if (s != null) {
-					authUser.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
-				}
-			}
-
+			authUser = Profile.fromUser(u);
 			authUser.create();
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
@@ -614,6 +611,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("webhooks_enabled", true);
 	}
 
+	public boolean isApiEnabled() {
+		return Config.getConfigBoolean("api_enabled", false);
+	}
+
 	public Set<String> getCoreScooldTypes() {
 		return Collections.unmodifiableSet(CORE_TYPES);
 	}
@@ -696,6 +697,8 @@ public final class ScooldUtils {
 		for (ParaObject author : pc.readAll(ids)) {
 			authors.put(author.getId(), (Profile) author);
 		}
+		// add system profile
+		authors.put(API_USER.getId(), API_USER);
 		// set author object for each post
 		for (ParaObject obj : objects) {
 			if (obj instanceof Post) {
@@ -763,11 +766,12 @@ public final class ScooldUtils {
 	public void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
 		//do not count views from author
 		if (showPost != null && !isMine(showPost, getAuthUser(req))) {
-			String postviews = HttpUtils.getStateParam("postviews", req);
+			String postviews = StringUtils.trimToEmpty(HttpUtils.getStateParam("postviews", req));
 			if (!StringUtils.contains(postviews, showPost.getId())) {
 				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 				showPost.setViewcount(views + 1); //increment count
-				HttpUtils.setStateParam("postviews", postviews + "." + showPost.getId(), req, res);
+				HttpUtils.setStateParam("postviews", (postviews.isEmpty() ? "" : postviews + ".") + showPost.getId(),
+						req, res);
 				pc.update(showPost);
 			}
 		}
@@ -875,6 +879,12 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {
+		if (isAdmin(authUser) && req.getParameter("space") != null) {
+			Sysprop s = pc.read(getSpaceId(req.getParameter("space"))); // API override
+			if (s != null) {
+				return s.getId() + Config.SEPARATOR + s.getName();
+			}
+		}
 		String space = getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
 		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : verifyExistingSpace(authUser, space);
 	}
@@ -1010,9 +1020,22 @@ public final class ScooldUtils {
 		return authUser != null ? (authUser.hasBadge(TEACHER) || isMod(authUser) || isMine(showPost, authUser)) : false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <P extends ParaObject> P populate(HttpServletRequest req, P pobj, String... paramName) {
-		if (pobj != null && paramName != null) {
-			HashMap<String, Object> data = new HashMap<String, Object>();
+		if (pobj == null || paramName == null) {
+			return pobj;
+		}
+		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		if (isApiRequest(req)) {
+			try {
+				data = (Map<String, Object>) req.getAttribute(REST_ENTITY_ATTRIBUTE);
+				if (data == null) {
+					data = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
+				}
+			} catch (IOException ex) {
+				logger.error(null, ex);
+			}
+		} else {
 			for (String param : paramName) {
 				String[] values;
 				if (param.matches(".+?\\|.$")) {
@@ -1026,17 +1049,15 @@ public final class ScooldUtils {
 					}
 				} else {
 					values = req.getParameterValues(param);
-					String firstValue = (values != null && values.length > 0) ? values[0] : null;
-					if (values != null && values.length > 1) {
-						data.put(param, Arrays.asList(values));
-					} else if (firstValue != null) {
-						data.put(param, firstValue);
+					if (values != null && values.length > 0) {
+						data.put(param, values.length > 1 ? Arrays.asList(values) :
+								Arrays.asList(values).iterator().next());
 					}
 				}
 			}
-			if (!data.isEmpty()) {
-				ParaObjectUtils.setAnnotatedFields(pobj, data, null);
-			}
+		}
+		if (!data.isEmpty()) {
+			ParaObjectUtils.setAnnotatedFields(pobj, data, null);
 		}
 		return pobj;
 	}
@@ -1052,14 +1073,14 @@ public final class ScooldUtils {
 		return error;
 	}
 
-	public String getGravatar(String email) {
+	public static String getGravatar(String email) {
 		if (StringUtils.isBlank(email)) {
 			return "https://www.gravatar.com/avatar?d=retro&size=400";
 		}
 		return "https://www.gravatar.com/avatar/" + Utils.md5(email.toLowerCase()) + "?size=400&d=retro";
 	}
 
-	public String getGravatar(Profile profile) {
+	public static String getGravatar(Profile profile) {
 		if (profile == null || profile.getUser() == null) {
 			return "https://www.gravatar.com/avatar?d=retro&size=400";
 		} else {
@@ -1158,6 +1179,61 @@ public final class ScooldUtils {
 				"<a href=\"" + ScooldServer.getServerURL() + "\">" + Config.APP_NAME + "</a> &bull; "
 				+ "<a href=\"https://scoold.com\">Powered by Scoold</a>"));
 		return Utils.compileMustache(model, loadEmailTemplate("notify"));
+	}
+
+	public static boolean isValidJWToken(String jwt) {
+		try {
+			String secret = Config.getConfigParam("app_secret_key", "");
+			if (secret != null && jwt != null) {
+				JWSVerifier verifier = new MACVerifier(secret);
+				SignedJWT sjwt = SignedJWT.parse(jwt);
+				if (sjwt.verify(verifier)) {
+					Date referenceTime = new Date();
+					JWTClaimsSet claims = sjwt.getJWTClaimsSet();
+
+					Date expirationTime = claims.getExpirationTime();
+					Date notBeforeTime = claims.getNotBeforeTime();
+					boolean expired = expirationTime == null || expirationTime.before(referenceTime);
+					boolean notYetValid = notBeforeTime != null && notBeforeTime.after(referenceTime);
+
+					return !(expired || notYetValid);
+				}
+			}
+		} catch (JOSEException e) {
+			logger.warn(null, e);
+		} catch (ParseException ex) {
+			logger.warn(null, ex);
+		}
+		return false;
+	}
+
+	public static SignedJWT generateJWToken(Map<String, Object> claims) {
+		return generateJWToken(claims, Config.JWT_EXPIRES_AFTER_SEC);
+	}
+
+	public static SignedJWT generateJWToken(Map<String, Object> claims, long validitySeconds) {
+		String secret = Config.getConfigParam("app_secret_key", "");
+		if (!StringUtils.isBlank(secret)) {
+			try {
+				Date now = new Date();
+				JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder();
+				claimsSet.issueTime(now);
+				if (validitySeconds > 0) {
+					claimsSet.expirationTime(new Date(now.getTime() + (validitySeconds * 1000)));
+				}
+				claimsSet.notBeforeTime(now);
+				claimsSet.claim(Config._APPID, Config.getConfigParam("access_key", "x"));
+				claims.entrySet().forEach((claim) -> claimsSet.claim(claim.getKey(), claim.getValue()));
+				JWSSigner signer = new MACSigner(secret);
+				SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet.build());
+				signedJWT.sign(signer);
+				return signedJWT;
+			} catch (JOSEException e) {
+				logger.warn("Unable to sign JWT: {}.", e.getMessage());
+			}
+		}
+		logger.error("Failed to generate JWT token - app_secret_key is blank.");
+		return null;
 	}
 
 	public void setSecurityHeaders(String nonce, HttpServletRequest request, HttpServletResponse response) {

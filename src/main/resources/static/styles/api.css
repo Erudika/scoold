@@ -13,7 +13,6 @@ html
 body
 {
   margin:0;
-  background: #f9f6f1;
 }
 .main span.url, .topbar {
   display: none;
@@ -22,10 +21,12 @@ body
   display: block;
 }
 .swagger-ui .scheme-container,.swagger-ui .global-server-container {
-  background: #f9f6f1;
   box-shadow: none;
   padding: 0;
 }
-.swagger-ui .topbar {
-  background-color: #b8cf00;
+.swagger-ui .download-contents {
+	width: 100px;
+}
+.swagger-ui .auth-container input[type=password], .swagger-ui .auth-container input[type=text] {
+	width: 100%;
 }
