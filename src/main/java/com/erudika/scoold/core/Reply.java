@@ -27,12 +27,4 @@ public class Reply extends Post {
 	public Reply() {
 		super();
 	}
-
-	public boolean canHaveChildren() {
-		return true;
-	}
-
-	public boolean canHaveRevisions() {
-		return true;
-	}
 }

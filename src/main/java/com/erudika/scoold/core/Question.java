@@ -30,12 +30,4 @@ public class Question extends Post {
 		super();
 		setTags(new LinkedList<String>());
 	}
-
-	public boolean canHaveChildren() {
-		return true;
-	}
-
-	public boolean canHaveRevisions() {
-		return true;
-	}
 }

@@ -261,9 +261,7 @@ public abstract class Post extends Sysprop {
 		this.body = Utils.abbreviate(this.body, Config.getConfigInt("max_post_length", 20000));
 		Post p = client().create(this);
 		if (p != null) {
-			if (canHaveRevisions()) {
-				setRevisionid(Revision.createRevisionFromPost(p, true).create());
-			}
+			setRevisionid(Revision.createRevisionFromPost(p, true).create());
 			setId(p.getId());
 			setTimestamp(p.getTimestamp());
 			return p.getId();
@@ -272,9 +270,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void update() {
-		if (canHaveRevisions()) {
-			setRevisionid(Revision.createRevisionFromPost(this, false).create());
-		}
+		setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		client().update(this);
 	}
 
@@ -287,15 +283,13 @@ public abstract class Post extends Sysprop {
 		// delete Revisions
 		children.addAll(client().getChildren(this, Utils.type(Revision.class)));
 
-		if (canHaveChildren()) {
-			for (ParaObject reply : client().getChildren(this, Utils.type(Reply.class))) {
-				// delete answer
-				children.add(reply);
-				// delete Comments
-				children.addAll(client().getChildren(reply, Utils.type(Comment.class)));
-				// delete Revisions
-				children.addAll(client().getChildren(reply, Utils.type(Revision.class)));
-			}
+		for (ParaObject reply : client().getChildren(this, Utils.type(Reply.class))) {
+			// delete answer
+			children.add(reply);
+			// delete Comments
+			children.addAll(client().getChildren(reply, Utils.type(Comment.class)));
+			// delete Revisions
+			children.addAll(client().getChildren(reply, Utils.type(Revision.class)));
 		}
 		for (ParaObject child : children) {
 			ids.add(child.getId());
@@ -572,8 +566,4 @@ public abstract class Post extends Sysprop {
 	public int hashCode() {
 		return Objects.hashCode(getTitle()) + Objects.hashCode(getBody()) + Objects.hashCode(getTags());
 	}
-
-	public abstract boolean canHaveChildren();
-
-	public abstract boolean canHaveRevisions();
 }

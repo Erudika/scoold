@@ -28,14 +28,6 @@ public class Feedback extends Post {
 		super();
 	}
 
-	public boolean canHaveChildren() {
-		return true;
-	}
-
-	public boolean canHaveRevisions() {
-		return true;
-	}
-
 	public enum FeedbackType {
 		BUG,
 		QUESTION,
