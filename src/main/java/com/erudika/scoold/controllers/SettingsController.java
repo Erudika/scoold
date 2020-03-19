@@ -150,7 +150,7 @@ public class SettingsController {
 
 	private void setDarkMode(Profile authUser, String darkParam, HttpServletRequest req, HttpServletResponse res) {
 		if ("true".equalsIgnoreCase(darkParam)) {
-			HttpUtils.setRawCookie("dark-mode", "1", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365));
+			HttpUtils.setRawCookie("dark-mode", "1", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
 		} else {
 			HttpUtils.removeStateParam("dark-mode", req, res);
 		}

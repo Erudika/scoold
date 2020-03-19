@@ -1038,6 +1038,7 @@ public final class ScooldUtils {
 				}
 			} catch (IOException ex) {
 				logger.error(null, ex);
+				data = Collections.emptyMap();
 			}
 		} else {
 			for (String param : paramName) {
