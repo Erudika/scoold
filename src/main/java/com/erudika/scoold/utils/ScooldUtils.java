@@ -266,6 +266,9 @@ public final class ScooldUtils {
 				logger.info("User '{}' with id={} demoted to regular user.", u.getName(), authUser.getId());
 				authUser.setGroups(User.Groups.USERS.toString());
 				return true;
+			} else if (!isMod(authUser) && u.isModerator()) {
+				authUser.setGroups(User.Groups.MODS.toString());
+				return true;
 			}
 		}
 		return false;
