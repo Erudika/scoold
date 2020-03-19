@@ -713,9 +713,21 @@ para.security.ldap.username_as_name = false
 
 # Sets the string on the login button (PRO)
 para.security.ldap.provider = "Continue with LDAP"
+
+# automatic groups mapping
+para.security.ldap.mods_group_node = ""
+para.security.ldap.admins_group_node = ""
 ```
 
 The search filter syntax allows you to use the placeholder `{0}` which gets replaced with the person's username.
+
+You can also map LDAP DN nodes to Para user groups. For example, with the following configuration:
+```
+para.security.ldap.mods_group_node = "ou=Moderators"
+para.security.ldap.admins_group_node = "cn=Admins"
+```
+LDAP users with a DN `uid=Gordon,ou=Moderators,dc=domain,dc=org` will automatically become part of the `mods` group,
+i.e. `groups: "mods"`. Similarly, if their DN contains `cn=Admins` they will become administrators, i.e. `groups: "admins"`.
 
 ### Active Directory LDAP
 
