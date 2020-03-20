@@ -5,7 +5,7 @@ name: scoold
 home: https://scoold.com
 sources:
 - https://github.com/Erudika/scoold
-icon: https://static.scoold.com/logosq.png
+icon: https://scoold.com/logosq.png
 version: 0.1.0
 keywords:
 - scoold
