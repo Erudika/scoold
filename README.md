@@ -469,6 +469,18 @@ Then on the target installation go to the Administration page and import the ZIP
 **Important:** All data will be overwritten on restore, so it's highly recommended that the target Scoold installation
 is fresh and containing no data.
 
+When using the default H2 database, you can also copy the `./data` directory to the new installation or just copy all
+`*.db` files. The data directory also contains Lucene index folders for each app, e.g. `./data/scoold-lucene`. These
+folders can also be moved and copied or even deleted. You ca easily restore the Lucene index for a Para app by running
+a rebuild index task from the `para-cli` tool. Here's how to rebuild the root app `para` and a child app `scoold` with
+just two simple commands:
+
+```sh
+$ npm i -g para-cli
+$ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "secret1"
+$ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:scoold" --secretKey "secret2"
+```
+
 ## Content-Security-Policy header
 
 This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
