@@ -51,6 +51,17 @@ import org.springframework.http.HttpHeaders;
 public final class HttpUtils {
 
 	private static CloseableHttpClient httpclient;
+	private static final String DEFAULT_AVATAR = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+			+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
+			+ "version=\"1\" viewBox=\"0 0 200 200\">\n"
+			+ "  <g id=\"layer1\" transform=\"translate(0 -97)\">\n"
+			+ "    <rect id=\"rect1433\" width=\"282\" height=\"245\" x=\"-34\" y=\"79\" fill=\"#ececec\" rx=\"2\"/>\n"
+			+ "  </g>\n"
+			+ "  <g id=\"layer2\" fill=\"gray\">\n"
+			+ "    <circle id=\"path1421\" cx=\"102\" cy=\"-70\" r=\"42\" transform=\"scale(1 -1)\"/>\n"
+			+ "    <ellipse id=\"path1423\" cx=\"101\" cy=\"201\" rx=\"71\" ry=\"95\"/>\n"
+			+ "  </g>\n"
+			+ "</svg>";
 
 	/**
 	 * Default private constructor.
@@ -204,31 +215,22 @@ public final class HttpUtils {
 					IOUtils.copy(img.getEntity().getContent(), res.getOutputStream());
 				}
 			} else {
+				LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}, status: {} {}", url,
+						img.getStatusLine().getStatusCode(), img.getStatusLine().getReasonPhrase());
 				getDefaultAvatarImage(res);
 			}
 		} catch (IOException ex) {
 			getDefaultAvatarImage(res);
-			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
+			LoggerFactory.getLogger(HttpUtils.class).warn("Failed to get user avatar from {}: {}", url, ex.getMessage());
 		}
 	}
 
 	private static void getDefaultAvatarImage(HttpServletResponse res) {
 		try {
-			String anon = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-					+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
-					+ "version=\"1\" viewBox=\"0 0 200 200\">\n"
-					+ "  <g id=\"layer1\" transform=\"translate(0 -97)\">\n"
-					+ "    <rect id=\"rect1433\" width=\"282\" height=\"245\" x=\"-34\" y=\"79\" fill=\"#ececec\" rx=\"2\"/>\n"
-					+ "  </g>\n"
-					+ "  <g id=\"layer2\" fill=\"gray\">\n"
-					+ "    <circle id=\"path1421\" cx=\"102\" cy=\"-70\" r=\"42\" transform=\"scale(1 -1)\"/>\n"
-					+ "    <ellipse id=\"path1423\" cx=\"101\" cy=\"201\" rx=\"71\" ry=\"95\"/>\n"
-					+ "  </g>\n"
-					+ "</svg>";
 			res.setContentType("image/svg+xml");
 			res.setHeader(org.apache.http.HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
-			res.setHeader(org.apache.http.HttpHeaders.ETAG, Utils.md5(anon));
-			IOUtils.copy(new ByteArrayInputStream(anon.getBytes()), res.getOutputStream());
+			res.setHeader(org.apache.http.HttpHeaders.ETAG, Utils.md5(DEFAULT_AVATAR));
+			IOUtils.copy(new ByteArrayInputStream(DEFAULT_AVATAR.getBytes()), res.getOutputStream());
 		} catch (IOException e) {
 			LoggerFactory.getLogger(HttpUtils.class).
 					debug("Failed to set default user avatar. {}", e.getMessage());
