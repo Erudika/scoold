@@ -221,7 +221,7 @@ public final class HttpUtils {
 			}
 		} catch (IOException ex) {
 			getDefaultAvatarImage(res);
-			LoggerFactory.getLogger(HttpUtils.class).warn("Failed to get user avatar from {}: {}", url, ex.getMessage());
+			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
 		}
 	}
 
