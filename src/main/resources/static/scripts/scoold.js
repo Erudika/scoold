@@ -485,27 +485,44 @@ $(function () {
      *                    PROFILE
      ****************************************************/
 
-	$("#use-gravatar-switch").change(function () {
-		var dis = $(this);
-		var currentPic = $("#picture_url");
-		var newPic = $("#picture_url").next("input[type=hidden]");
-		var newPicValue = newPic.val();
-		$("img.profile-pic:first").attr("src", newPicValue);
-		$(".profilepage img.profile-pic").attr("src", newPicValue);
-		$.post(dis.closest("form").attr("action"), {picture: newPicValue});
-		// swap
-		newPic.val(currentPic.val());
-		currentPic.val(newPicValue);
-	});
-
+	var profilePic = $("img.profile-pic.on-profile-page");
+	var navbarPic = $("img.profile-pic:first");
 	var pictureUrlInput = $("#picture_url");
 	var pictureEditForm = pictureUrlInput.closest("form");
+
+	function changeAvatars(newPicValue) {
+		if (navbarPic.attr("src") === profilePic.attr("src")) {
+			navbarPic.attr("src", newPicValue);
+		}
+		profilePic.attr("src", newPicValue);
+	}
+
+	$("#use-gravatar-switch").change(function () {
+		var dis = $(this);
+		var newPic = pictureUrlInput.next("input[type=hidden]");
+		var newPicValue = newPic.val();
+		changeAvatars(newPicValue);
+		$.post(dis.closest("form").attr("action"), {picture: newPicValue});
+		// swap
+		newPic.val(pictureUrlInput.val());
+		pictureUrlInput.val(newPicValue);
+	});
+
 	pictureUrlInput.on('focusout paste', function () {
 		var dis = $(this);
 		setTimeout(function () {
-			$("img.profile-pic:first").attr("src", dis.val());
+			changeAvatars(dis.val());
 			$.post(pictureEditForm.attr("action"), {picture: dis.val()});
 		}, 200);
+	});
+
+	$("#clear-avatar-btn").click(function () {
+		var defaultAvatar = window.location.origin + "/people/avatar";
+		changeAvatars(defaultAvatar);
+		pictureUrlInput.val(defaultAvatar);
+		$.post($(this).closest("form").attr("action"), {picture: defaultAvatar});
+		$("#use-gravatar-switch").removeAttr("checked");
+		return false;
 	});
 
 	$("img.profile-pic, #edit-picture-link").on("mouseenter touchstart", function () {
@@ -522,15 +539,6 @@ $(function () {
 		$(".moderator-icon").toggleClass("hide");
 		return false;
 	});
-
-	$("#clear-avatar-btn").click(function () {
-		var defaultAvatar = window.location.origin + "/people/avatar";
-		$("img.profile-pic").attr("src", defaultAvatar);
-		pictureUrlInput.val(defaultAvatar);
-		$.post($(this).closest("form").attr("action"), {picture: defaultAvatar});
-		return false;
-	});
-
 
 	/****************************************************
      *                    MODAL DIALOGS

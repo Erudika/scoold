@@ -69,6 +69,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .l{ text-align: left;}
 .lightborder{ border: 1px solid #CCCCCC; border-radius: 2px;}
 .dashedborder{ border: 4px dashed #CCCCCC; border-radius: 3px;}
+.droptarget{ opacity: 0.5; outline: 5px dashed #222; }
 .capitalize{ text-transform: capitalize; }
 .pages{ clear: both; }
 .pagination li a { font-weight: 400; }

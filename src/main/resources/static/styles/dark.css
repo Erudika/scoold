@@ -46,3 +46,4 @@ table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
 .filter-active { background-color: #efefef; color: black; }
 .diff-ins { background-color: #9fff9f; color: black; }
 .diff-del { background-color: #ffa2a2; color: black; }
+.droptarget{ opacity: 0.5; outline: 5px dashed #777; }
