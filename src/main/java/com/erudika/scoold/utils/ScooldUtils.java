@@ -1401,6 +1401,6 @@ public final class ScooldUtils {
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "
-				+ "script-src 'nonce-{{nonce}}' 'strict-dynamic';";
+				+ "script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';"; // CSP2 backward compatibility
 	}
 }
