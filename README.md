@@ -960,7 +960,14 @@ create them for you.
 
 Webhooks are enabled by default in Scoold. To disable this functionality set `para.webhooks_enabled = false`. If you
 are self-hosting Para, you need to also enable webhooks there using the same configuration option.
-You can add/remove webhooks in the "Administration" page.
+You can add or remove webhooks in the "Administration" page. Webhooks can also be disabled and they will be
+disabled automatically when the target URL doesn't respond to requests from Para.
+
+Para will notify your target URL with a `POST` request containing the payload and a `X-Webhook-Signature` header. This
+header should be verified by the receiving party by computing `Base64(HmacSHA256(payload, secret))`.
+
+You can subscribe to custom events in Scoold using the REST API. This makes it easy to integrate Scoold with services
+like Zapier because it implements the [RESTHooks](https://resthooks.org/) best practices.
 
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
