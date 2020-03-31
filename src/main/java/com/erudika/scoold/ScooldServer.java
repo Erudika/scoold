@@ -238,6 +238,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("ms_secret", Config.MICROSOFT_SECRET);
 		settings.put("sl_app_id", Config.SLACK_APP_ID);
 		settings.put("sl_secret", Config.SLACK_SECRET);
+		settings.put("az_app_id", Config.AMAZON_APP_ID);
+		settings.put("az_secret", Config.AMAZON_SECRET);
 		// OAuth 2 settings
 		settings.putAll(oauthSettings(""));
 		settings.putAll(oauthSettings("second"));

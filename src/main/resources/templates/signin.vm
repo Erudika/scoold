@@ -104,7 +104,7 @@
 				#end
 
 				#if(!$fbLoginEnabled && !$gpLoginEnabled && !$ghLoginEnabled && !$inLoginEnabled && !$twLoginEnabled &&
-						!$msLoginEnabled && !$slLoginEnabled && !$oa2LoginEnabled && !$oa2secondLoginEnabled && !$oa2thirdLoginEnabled)
+						!$msLoginEnabled && !$slLoginEnabled && !$azLoginEnabled && !$oa2LoginEnabled && !$oa2secondLoginEnabled && !$oa2thirdLoginEnabled)
 					#set($leftColSize = "col l6 offset-l3 s12" )
 					#set($rightColSize = "hide" )
 				#end
@@ -214,11 +214,20 @@
 								#end
 
 								#if($slLoginEnabled)
-								<div class="mvl pvs">
-										<a id="sl-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
+									<div class="mvl pvs">
+										<a id="sl-login-btn" href="#" class="btn-large grey-text truncate pls prl">
 											<img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-199wkt/Slack_Mark.svg"
 													 width="54" height="54" alt="Slack logo" class="left"/>
 											$!lang.get("signin.slack")
+										</a>
+									</div>
+								#end
+
+								#if($azLoginEnabled)
+									<div class="mvl pvs">
+										<a id="az-login-btn" href="#" class="btn-large grey-text truncate pls prl">
+											<img src="$imageslink/amazon.svg" width="50" height="50" alt="Amazon logo" class="left pts phm"/>
+											$!lang.get("signin.amazon")
 										</a>
 									</div>
 								#end

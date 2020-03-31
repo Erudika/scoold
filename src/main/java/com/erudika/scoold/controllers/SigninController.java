@@ -81,6 +81,7 @@ public class SigninController {
 		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
 		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
 		model.addAttribute("slLoginEnabled", !Config.SLACK_APP_ID.isEmpty());
+		model.addAttribute("azLoginEnabled", !Config.AMAZON_APP_ID.isEmpty());
 		model.addAttribute("oa2LoginEnabled", !Config.getConfigParam("oa2_app_id", "").isEmpty());
 		model.addAttribute("oa2secondLoginEnabled", !Config.getConfigParam("oa2second_app_id", "").isEmpty());
 		model.addAttribute("oa2thirdLoginEnabled", !Config.getConfigParam("oa2third_app_id", "").isEmpty());
@@ -237,6 +238,7 @@ public class SigninController {
 		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
 		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
 		sb.append("SLACK_APP_ID = \"").append(Config.SLACK_APP_ID).append("\"; ");
+		sb.append("AMAZON_APP_ID = \"").append(Config.AMAZON_APP_ID).append("\"; ");
 
 		sb.append("OAUTH2_ENDPOINT = \"").append(Config.getConfigParam("security.oauth.authz_url", "")).append("\"; ");
 		sb.append("OAUTH2_APP_ID = \"").append(Config.getConfigParam("oa2_app_id", "")).append("\"; ");

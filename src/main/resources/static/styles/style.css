@@ -80,8 +80,11 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .editor-toolbar button { color: #555555; }
 h1, h2, h3, h4, h5, h6{font-weight: 300;}
 
-#fb-login-btn, #gp-login-btn, #gh-login-btn, #in-login-btn, #tw-login-btn, #ms-login-btn, #sl-login-btn, #oa2-login-btn { width: 100%; }
-#gp-login-btn, #sl-login-btn {padding-left: 13px;}
+#fb-login-btn, #gp-login-btn, #gh-login-btn, #in-login-btn, #tw-login-btn, #ms-login-btn, #sl-login-btn,
+#az-login-btn, #oa2-login-btn { width: 100%; }
+#gp-login-btn, #sl-login-btn, #az-login-btn {padding-left: 13px;}
+#sl-login-btn { background-color: white; color: #222; }
+#az-login-btn { background-color: #fad673; color: #222; }
 
 .leaveblank {opacity: 0.0001;}
 
