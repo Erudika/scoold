@@ -63,7 +63,6 @@
 				margin: 15px 0px 40px 0px;
 				box-shadow: 0px 11px 28px -19px;
 				border-radius: 10px;
-				padding-bottom: 15px;
 				background-color: white;
 			}
 			#instructions p {padding: 1px 60px;}
@@ -185,7 +184,7 @@
 			</header>
 
 			<section id="header">
-				<div class="container ptl">
+				<div class="container">
 					<div class="row">
 						<div class="col s12">
 							<h2 class="center-align" style="line-height: 1.2em;">
@@ -229,8 +228,8 @@
 
 						</div>
 						<div class="col m12 l8">
-							<img src="https://static.scoold.com/splash.png?v1" width="1924" height="1347" id="splash"
-									 class="responsive-img" alt="Scoold screenshot"/>
+							<img src="https://static.scoold.com/splash.png?v2" width="1920" height="1342" id="splash"
+								class="responsive-img" alt="Scoold screenshot"/>
 						</div>
 					</div>
 				</div>
@@ -323,6 +322,12 @@
 							</tr>
 							<tr>
 								<td>Responsive, lightweight frontend</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
+								<td>Themes &amp; dark mode</td>
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
@@ -632,6 +637,16 @@
 								executed through the API from any programming language.</p>
 						</div>
 					</div>
+					<div class="row container center-align pvs">
+						<div class="col m4">&nbsp;</div>
+						<div class="col m4">
+							<h5>Themes &amp; dark mode</h5>
+							<hr style="width: 50%">
+							<p>Quickly change the look and feel of your site by switching to one of the bundled themes or create your own.
+								There's also a dark theme for those who work in a dimly lit room.</p>
+						</div>
+						<div class="col m4">&nbsp;</div>
+					</div>
 					<!--PRO Features-->
 					<div class="row container center-align pvs">
 						<h3>Pro Features</h3>
@@ -895,6 +910,14 @@
 			}();
 			drift.SNIPPET_VERSION = '0.3.1';
 			drift.load('f63uepwuzvv9');
+
+			var splash = document.getElementById("splash");
+			splash.addEventListener("mouseenter", function(e) {
+				splash.src = event.target.src.replace(/\bsplash\.png\b/g, "splashdark.png");
+			}, false);
+			splash.addEventListener("mouseleave", function(e) {
+				splash.src = event.target.src.replace(/\bsplashdark\.png\b/g, "splash.png");
+			}, false);
 		</script>
 		<!-- End of Async Drift Code -->
   </body>
