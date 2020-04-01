@@ -21,6 +21,7 @@ import com.erudika.para.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import java.util.Locale;
@@ -251,6 +253,16 @@ public class SigninController {
 		sb.append("OAUTH2_THIRD_ENDPOINT = \"").append(Config.getConfigParam("security.oauththird.authz_url", "")).append("\"; ");
 		sb.append("OAUTH2_THIRD_APP_ID = \"").append(Config.getConfigParam("oa2third_app_id", "")).append("\"; ");
 		sb.append("OAUTH2_THIRD_SCOPE = \"").append(Config.getConfigParam("security.oauththird.scope", "")).append("\"; ");
+
+		Profile authUser = utils.getAuthUser(req);
+		String welcomeMsg = Config.getConfigParam("welcome_message", "");
+		String welcomeMsgOnlogin = Config.getConfigParam("welcome_message_onlogin", "");
+		if (StringUtils.contains(welcomeMsgOnlogin, "{{")) {
+			welcomeMsgOnlogin = Utils.compileMustache(Collections.singletonMap("user",
+					ParaObjectUtils.getAnnotatedFields(authUser, false)), welcomeMsgOnlogin);
+		}
+		sb.append("WELCOME_MESSAGE = \"").append(authUser == null ? welcomeMsg : "").append("\"; ");
+		sb.append("WELCOME_MESSAGE_ONLOGIN = \"").append(authUser != null ? welcomeMsgOnlogin : "").append("\"; ");
 
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req));
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");

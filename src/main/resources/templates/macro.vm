@@ -903,14 +903,16 @@ $utils.formatDate($date, $format, $currentLocale)
 		#else
 			#set($infoStripMsg = $!lang.get("newbadge"))
 		#end
+		#set($hideInfoStrip = "click2hide")
 	#elseif ($request.getParameter("code"))
 		#set($infoStripMsg = $!lang.get("msgcode.${request.getParameter('code')}"))
+		#set($hideInfoStrip = "click2hide")
+	#else
+		#set($hideInfoStrip = "")
 	#end
 
 	#if (!$infoStripMsg || $infoStripMsg.trim().isEmpty())
 		#set($hideInfoStrip = "hide")
-	#else
-		#set($hideInfoStrip = "")
 	#end
 
 	<noscript>
@@ -918,16 +920,19 @@ $utils.formatDate($date, $format, $currentLocale)
 			<i class="fa fa-warning"></i> $!{lang.get("nojavascript")}
 		</div>
 	</noscript>
-	<div class="card-panel infostrip center click2hide ${hideInfoStrip} ${infoStripClass}">
+	<div class="card-panel infostrip ${hideInfoStrip} ${infoStripClass}">
+		#if(!$hideInfoStrip.contains("click2hide"))
+			<a href="#" class="right close-infostrip"><i class="fa fa-times"></i></a>
+		#end
 		#set($_infoStripMsg = $infoStripMsg )
-		<span class="mediumText">
+		<div class="infostrip-content">
 			$!_infoStripMsg
 			#if (!$badgelist.isEmpty())
 				#foreach($badge in $badgelist)
 					#badgebox($badge 0)
 				#end
 			#end
-		</span>
+		</div>
 	</div>
 #end
 #####################################

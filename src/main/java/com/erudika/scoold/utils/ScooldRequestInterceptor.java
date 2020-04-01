@@ -176,7 +176,6 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
-		modelAndView.addObject("infoStripMsg", authUser == null ? Config.getConfigParam("welcome_message", "") : "");
 		modelAndView.addObject("authenticated", authUser != null);
 		modelAndView.addObject("canComment", utils.canComment(authUser, request));
 		modelAndView.addObject("isMod", utils.isMod(authUser));

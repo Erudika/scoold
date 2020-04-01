@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -377,6 +377,29 @@ $(function () {
 		$('#search-box').focus();
 		return false;
 	});
+
+	$(document).on("click", ".close-infostrip", function () {
+		var name = $(this).closest(".infostrip").hide().data("name");
+		localStorage.setItem(name + "-hidden", "true");
+		return false;
+	});
+
+	if (WELCOME_MESSAGE && WELCOME_MESSAGE.trim().length > 0) {
+		var hidden = "true" === localStorage.getItem("welcome-message-hidden");
+		if (!hidden && window.location.pathname !== CONTEXT_PATH + "/signin") {
+			$(".infostrip").removeClass("hide").data("name", "welcome-message");
+			$(".infostrip-content").html(WELCOME_MESSAGE);
+		}
+	}
+
+	if (WELCOME_MESSAGE_ONLOGIN && WELCOME_MESSAGE_ONLOGIN.trim().length > 0) {
+		var hidden = "true" === localStorage.getItem("welcome-message-onlogin-hidden");
+		if (!hidden && window.location.pathname !== CONTEXT_PATH + "/signin") {
+			$(".infostrip").removeClass("hide").data("name", "welcome-message-onlogin");
+			;
+			$(".infostrip-content").html(WELCOME_MESSAGE_ONLOGIN);
+		}
+	}
 
 	$(".signout").click(function () {
 		$.post($(this).attr("href"), function (data) {

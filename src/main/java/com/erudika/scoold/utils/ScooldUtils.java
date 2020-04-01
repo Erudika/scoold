@@ -240,10 +240,11 @@ public final class ScooldUtils {
 	public ParaObject checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
 		boolean isApiRequest = isApiRequest(req);
+		boolean isStaticRequest = StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg");
+		boolean isGlobalsJS = StringUtils.endsWithAny(req.getRequestURI(), "globals.js");
 		if (isApiRequest) {
 			return checkApiAuth(req);
-		} else if (HttpUtils.getStateParam(AUTH_COOKIE, req) != null &&
-				!StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg")) {
+		} else if (HttpUtils.getStateParam(AUTH_COOKIE, req) != null && (!isStaticRequest || isGlobalsJS)) {
 			User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);

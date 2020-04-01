@@ -180,8 +180,14 @@ kbd {
 .hidden-save-icon {
 	display: none;
 }
-.infostrip {
+.click2hide {
 	cursor: pointer;
+}
+.infostrip {
+	text-align: center;
+	line-height: 1.2em;
+	font-size: 1.2em;
+	margin: 3px 0;
 }
 .gmap {
 	height: 300px;
