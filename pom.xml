@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.36.1</version>
+			<version>1.37.0</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -84,7 +84,7 @@
 
 		<!--==============================================-->
 		<!-- PLEASE READ BEFORE ENABLING DEVTOOLS: -->
-		<!-- First, you MUST enable fork mode for the Spring Boot Mave plugin below. -->
+		<!-- First, you MUST enable fork mode for the Spring Boot Maven plugin below. -->
 		<!--
 			When you run the project with spring-boot:run you MUST ALSO set the following system property:
 			-Dspring-boot.run.jvmArguments="-Dconfig.file=src/main/resources/application.conf"
@@ -111,7 +111,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>8.9</version>
+			<version>8.10</version>
 		</dependency>
 
 		<!-- TESTING -->
