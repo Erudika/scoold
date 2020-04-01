@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.erudika.scoold.core.Question;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -57,6 +56,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -115,6 +115,7 @@ public class AdminController {
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
 		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
+		model.addAttribute("customHookEvents", utils.getCustomHookEvents());
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
@@ -176,8 +177,8 @@ public class AdminController {
 	}
 
 	@PostMapping("/create-webhook")
-	public String createWebhook(@RequestParam String targetUrl, @RequestParam String type, @RequestParam Boolean json,
-			@RequestParam Set<String> events, HttpServletRequest req, Model model) {
+	public String createWebhook(@RequestParam String targetUrl, @RequestParam(required = false) String type,
+			@RequestParam Boolean json, @RequestParam Set<String> events, HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (Utils.isValidURL(targetUrl) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
 			Webhook webhook = new Webhook(targetUrl);
@@ -187,10 +188,10 @@ public class AdminController {
 			webhook.setCreateAll(events.contains("createAll"));
 			webhook.setUpdateAll(events.contains("updateAll"));
 			webhook.setDeleteAll(events.contains("deleteAll"));
+			webhook.setCustomEvents(events.stream().filter(e -> !StringUtils.equalsAny(e,
+					"create", "update", "delete", "createAll", "updateAll", "deleteAll")).collect(Collectors.toList()));
 			if (utils.getCoreScooldTypes().contains(type)) {
 				webhook.setTypeFilter(type);
-			} else {
-				webhook.setTypeFilter(Utils.type(Question.class));
 			}
 			webhook.setUrlEncoded(!json);
 			webhook.resetSecret();

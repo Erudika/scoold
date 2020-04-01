@@ -58,6 +58,7 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 
 /**
@@ -214,7 +215,7 @@ public class QuestionController {
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
 				utils.sendReplyNotifications(showPost, answer);
-				model.addAttribute("newpost", answer);
+				model.addAttribute("newpost", getNewAnswerPayload(answer));
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("path", "question.vm");
@@ -262,12 +263,12 @@ public class QuestionController {
 			if (answer != null && answer.isReply()) {
 				Profile author = pc.read(answer.getCreatorid());
 				if (author != null && utils.isAuthenticated(req)) {
-					boolean same = author.equals(authUser);
+					boolean samePerson = author.equals(authUser);
 
 					if (answerid.equals(showPost.getAnswerid())) {
 						// Answer approved award - UNDO
 						showPost.setAnswerid("");
-						if (!same) {
+						if (!samePerson) {
 							author.removeRep(ANSWER_APPROVE_REWARD_AUTHOR);
 							authUser.removeRep(ANSWER_APPROVE_REWARD_VOTER);
 							pc.updateAll(Arrays.asList(author, authUser));
@@ -275,12 +276,14 @@ public class QuestionController {
 					} else {
 						// Answer approved award - GIVE
 						showPost.setAnswerid(answerid);
-						if (!same) {
+						if (!samePerson) {
 							author.addRep(ANSWER_APPROVE_REWARD_AUTHOR);
 							authUser.addRep(ANSWER_APPROVE_REWARD_VOTER);
 							utils.addBadgeOnce(authUser, Badge.NOOB, true);
 							pc.updateAll(Arrays.asList(author, authUser));
 						}
+						utils.triggerHookEvent("answer.accept",
+								getAcceptedAnswerPayload(showPost, answer, authUser, author));
 					}
 					showPost.update();
 				}
@@ -301,6 +304,7 @@ public class QuestionController {
 				showPost.setCloserid("");
 			} else {
 				showPost.setCloserid(authUser.getId());
+				utils.triggerHookEvent("question.close", showPost);
 			}
 			showPost.update();
 		}
@@ -412,5 +416,21 @@ public class QuestionController {
 			addr.setCreatorid(authUser.getId());
 			pc.create(addr);
 		}
+	}
+
+	private Map<String, Object> getNewAnswerPayload(Reply answer) {
+		Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(answer, false));
+		payload.put("author", answer == null ? null : answer.getAuthor());
+		utils.triggerHookEvent("answer.create", payload);
+		return payload;
+	}
+
+	private Object getAcceptedAnswerPayload(Post showPost, Reply answer, Profile authUser, Profile author) {
+		Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(showPost, false));
+		Map<String, Object> answerPayload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(answer, false));
+		answerPayload.put("author", author);
+		payload.put("children", answerPayload);
+		payload.put("authUser", authUser);
+		return payload;
 	}
 }

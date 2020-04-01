@@ -531,6 +531,7 @@ public abstract class Post extends Sysprop {
 			setLastactivity(System.currentTimeMillis());
 			//update post without creating a new revision
 			client().update(this);
+			ScooldUtils.getInstance().triggerHookEvent("revision.restore", rev);
 		}
 	}
 

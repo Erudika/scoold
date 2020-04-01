@@ -2,7 +2,7 @@
   "openapi": "3.0.2",
   "info": {
     "description": "This is the [Scoold](https://scoold.com) RESTful API. You need to generate an [API key](/admin) from the 'Administration' page to access the API.",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "title": "Scoold API"
   },
   "externalDocs": {
@@ -27,6 +27,9 @@
     },
     {
       "name": "spaces"
+    },
+    {
+      "name": "webhooks"
     },
     {
       "name": "search"
@@ -2012,6 +2015,279 @@
         }
       }
     },
+    "/api/webhooks": {
+      "post": {
+        "summary": "Create a new webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Webhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new webhook object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid request entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List webhooks",
+        "description": "Returns a page of webhooks. Use the `page` parameter to paginate through results.",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/sortby"
+          },
+          {
+            "$ref": "#/components/parameters/desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of webhooks returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhooks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}": {
+      "get": {
+        "summary": "Get webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the webhook to get",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook object returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the webhook to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request entity",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Webhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the webhook to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook was deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "summary": "List webhook events",
+        "description": "The list does not contain the standard `create`, `update`, `delete`, `createAll`, `updateAll`, `deleteAll`. You can subscribe to these events by creating a webhook with a `customEvents` property containing one or more of these events.",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/types": {
+      "get": {
+        "summary": "List available data types for use as webhook type filters.",
+        "description": "You can subscribe to CRUD events in combination with a type filter.",
+        "tags": [
+          "webhooks"
+        ],
+        "security": [
+          {
+            "scoold_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of data types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/search/{type}/{query}": {
       "get": {
         "summary": "Perform full-text search on objects of given type",
@@ -2204,6 +2480,9 @@
           },
           "similar": {
             "$ref": "#/components/schemas/Posts"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Profile"
           }
         }
       },
@@ -2321,6 +2600,9 @@
           },
           "original": {
             "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Profile"
           }
         }
       },
@@ -2441,6 +2723,67 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/Space"
+        }
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "targetUrl": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "typeFilter": {
+            "type": "string"
+          },
+          "urlEncoded": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "tooManyFailures": {
+            "type": "boolean"
+          },
+          "create": {
+            "type": "boolean"
+          },
+          "update": {
+            "type": "boolean"
+          },
+          "delete": {
+            "type": "boolean"
+          },
+          "createAll": {
+            "type": "boolean"
+          },
+          "updateAll": {
+            "type": "boolean"
+          },
+          "deleteAll": {
+            "type": "boolean"
+          },
+          "customEvents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "triggeredEvent": {
+            "type": "string",
+            "description": "Passed in the body of a trigger `POST` request. Only used to trigger a custom event."
+          },
+          "customPayload": {
+            "type": "object",
+            "description": "Passed in the body of a trigger `POST` request. Only used to trigger a custom event with a custom payload."
+          }
+        }
+      },
+      "Webhooks": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Webhook"
         }
       },
       "Health": {

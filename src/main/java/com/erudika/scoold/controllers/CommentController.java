@@ -35,6 +35,7 @@ import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -160,6 +161,11 @@ public class CommentController {
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
 					emailer.sendEmail(Arrays.asList(author.getEmail()), name + " commented on your post",
 							utils.compileEmailTemplate(model));
+
+					Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
+					payload.put("parent", parentPost);
+					payload.put("author", commentAuthor);
+					utils.triggerHookEvent("comment.create", payload);
 				}
 			}
 		}

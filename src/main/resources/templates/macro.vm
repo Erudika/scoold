@@ -94,7 +94,7 @@
 			#if(!$webhook.active)#set($showInactiveWebhook = "")#else #set($showInactiveWebhook = "hide")#end
 			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showActiveWebhook}" data-tooltip="Deactivate"><i class="fa fa-circle green-text"></i></a>
 			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showInactiveWebhook}" data-tooltip="Activate"><i class="fa fa-circle red-text"></i></a>
-			<span class="">$!webhook.targetUrl</span>
+			<span class="mrm">$!webhook.targetUrl</span>
 			#if($webhook.create)
 				<span class="chip"><tt>create</tt></span>
 			#end
@@ -114,7 +114,10 @@
 				<span class="chip"><tt>deleteAll</tt></span>
 			#end
 			#if($webhook.typeFilter)
-				<span class="chip"><tt><i class="fa fa-cube gray"></i> $!webhook.typeFilter</tt></span>
+				<span class="chip"><tt><i class="fa fa-filter gray"></i> $!webhook.typeFilter</tt></span>
+			#end
+			#foreach($event in $webhook.customEvents)
+				<span class="chip"><tt>$!event</tt></span>
 			#end
 			#if(!$webhook.urlEncoded)
 				<span class="chip" title="application/json"><tt>{JSON}</tt></span>

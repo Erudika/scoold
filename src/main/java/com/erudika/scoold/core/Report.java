@@ -134,6 +134,7 @@ public class Report extends Sysprop {
 	public String create() {
 		Report r = client().create(this);
 		if (r != null) {
+			ScooldUtils.getInstance().triggerHookEvent("report.create", this);
 			setId(r.getId());
 			setTimestamp(r.getTimestamp());
 			return r.getId();

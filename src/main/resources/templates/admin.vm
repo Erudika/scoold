@@ -80,18 +80,18 @@
 							<option value="createAll">createAll</option>
 							<option value="updateAll">updateAll</option>
 							<option value="deleteAll">deleteAll</option>
+							#foreach($event in $customHookEvents)
+							<option value="$!event">$!event</option>
+							#end
 						</select>
 					</div>
 				</div>
 				<div class="col s12 m2">
 					<div class="input-field">
-						<select name="type" required>
+						<select name="type">
+							<option value="">$!lang.get('filter')</option>
 							#foreach($type in $coreScooldTypes)
-								#if($type == "question")
-									<option value="$!type" selected="selected">$!type</option>
-								#else
-									<option value="$!type">$!type</option>
-								#end
+							<option value="$!type">$!type</option>
 							#end
 						</select>
 					</div>

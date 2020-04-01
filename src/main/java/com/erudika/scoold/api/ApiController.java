@@ -13,11 +13,13 @@
  */
 package com.erudika.scoold.api;
 
+import com.erudika.para.annotations.Locked;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
+import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
@@ -34,7 +36,6 @@ import com.erudika.scoold.controllers.QuestionController;
 import com.erudika.scoold.controllers.QuestionsController;
 import com.erudika.scoold.controllers.ReportsController;
 import com.erudika.scoold.controllers.RevisionsController;
-import com.erudika.scoold.controllers.SearchController;
 import com.erudika.scoold.controllers.TagsController;
 import com.erudika.scoold.controllers.VoteController;
 import com.erudika.scoold.core.Comment;
@@ -60,7 +61,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,8 +117,6 @@ public class ApiController {
 	private TagsController tagsController;
 	@Inject
 	private ReportsController reportsController;
-	@Inject
-	private SearchController searchController;
 
 	@Inject
 	public ApiController(ScooldUtils utils) {
@@ -146,7 +144,7 @@ public class ApiController {
 	}
 
 	@PostMapping("/posts")
-	public Post createPost(HttpServletRequest req, HttpServletResponse res) {
+	public Map<String, Object> createPost(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (!entity.containsKey(Config._TYPE)) {
 			entity.put(Config._TYPE, POST_TYPES[0]);
@@ -174,17 +172,20 @@ public class ApiController {
 		}
 
 		checkForErrorsAndThrow(model);
-		Post newpost = (Post) model.getAttribute("newpost");
+		Map<String, Object> newpost = (Map<String, Object>) model.getAttribute("newpost");
 		res.setStatus(HttpStatus.CREATED.value());
 		return newpost;
 	}
 
 	@GetMapping("/posts")
-	public List<Post> listQuestions(HttpServletRequest req) {
+	public List<Map<String, Object>> listQuestions(HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
 		questionsController.getQuestions(req.getParameter("sortby"), req.getParameter("filter"), req, model);
-		return Stream.concat(((List<Question>) model.getAttribute("stickylist")).stream(),
-				((List<Question>) model.getAttribute("questionslist")).stream()).collect(Collectors.toList());
+		return ((List<Question>) model.getAttribute("questionslist")).stream().map(p -> {
+			Map<String, Object> post = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
+			post.put("author", p.getAuthor());
+			return post;
+		}).collect(Collectors.toList());
 	}
 
 	@GetMapping("/posts/{id}")
@@ -199,10 +200,16 @@ public class ApiController {
 			return null;
 		}
 		Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(showPost, false));
+		List<Map<String, Object>> answerz = answers.stream().map(p -> {
+			Map<String, Object> post = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
+			post.put("author", p.getAuthor());
+			return post;
+		}).collect(Collectors.toList());
 		result.put("comments", showPost.getComments());
+		result.put("author", showPost.getAuthor());
 		showPost.setItemcount(null);
 		if (!showPost.isReply()) {
-			result.put("children", answers);
+			result.put("children", answerz);
 			result.put("similar", similar);
 		}
 		return result;
@@ -315,7 +322,8 @@ public class ApiController {
 	}
 
 	@GetMapping("/posts/{id}/revisions")
-	public List<Revision> getPostRevisions(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public List<Map<String, Object>> getPostRevisions(@PathVariable String id,
+			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
 		revisionsController.get(id, req, model);
 		Post post = (Post) model.getAttribute("showPost");
@@ -323,7 +331,11 @@ public class ApiController {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
-		return (List<Revision>) model.getAttribute("revisionslist");
+		return ((List<Revision>) model.getAttribute("revisionslist")).stream().map(r -> {
+			Map<String, Object> rev = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(r, false));
+			rev.put("author", r.getAuthor());
+			return rev;
+		}).collect(Collectors.toList());
 	}
 
 
@@ -357,6 +369,10 @@ public class ApiController {
 						Collections.emptyList())).toArray(new String[0])));
 				res.setStatus(HttpStatus.CREATED.value());
 				pc.create(profile);
+
+				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
+				payload.put("user", createdUser);
+				utils.triggerHookEvent("user.signup", payload);
 				logger.info("Created new user through API '{}' with id={}, groups={}, spaces={}.",
 					createdUser.getName(), profile.getId(), profile.getGroups(), profile.getSpaces());
 				Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
@@ -539,10 +555,15 @@ public class ApiController {
 	}
 
 	@GetMapping("/tags/{id}/questions")
-	public List<Post> listTaggedQuestions(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public List<Map<String, Object>> listTaggedQuestions(@PathVariable String id,
+			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
 		questionsController.getTagged(new Tag(id).getTag(), req, model);
-		return (List<Post>) model.getAttribute("questionslist");
+		return ((List<Post>) model.getAttribute("questionslist")).stream().map(p -> {
+			Map<String, Object> post = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
+			post.put("author", p.getAuthor());
+			return post;
+		}).collect(Collectors.toList());
 	}
 
 	@PostMapping("/comments")
@@ -675,6 +696,68 @@ public class ApiController {
 			return null;
 		}
 		return space;
+	}
+
+	@PostMapping("/webhooks")
+	public Webhook createWebhook(HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(req);
+		if (entity.isEmpty()) {
+			badReq("Missing request body.");
+		}
+		String targetUrl = (String) entity.get(Config._NAME);
+		if (!Utils.isValidURL(targetUrl)) {
+			badReq("Property 'targetUrl' must be a valid URL.");
+			return null;
+		}
+		Webhook webhook = pc.create(ParaObjectUtils.setAnnotatedFields(entity));
+		res.setStatus(HttpStatus.CREATED.value());
+		return webhook;
+	}
+
+	@GetMapping("/webhooks")
+	public List<Webhook> listWebhooks(HttpServletRequest req, HttpServletResponse res) {
+		return pc.findQuery(Utils.type(Webhook.class), "*", utils.pagerFromParams(req));
+	}
+
+	@GetMapping("/webhooks/{id}")
+	public Webhook getWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Webhook webhook = pc.read(Utils.type(Webhook.class), id);
+		if (webhook == null) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
+		return webhook;
+	}
+
+	@PatchMapping("/webhooks/{id}")
+	public Webhook updateWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Webhook webhook = pc.read(id);
+		if (webhook == null) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
+		Map<String, Object> entity = readEntity(req);
+		return pc.update(ParaObjectUtils.setAnnotatedFields(webhook, entity, Locked.class));
+	}
+
+	@DeleteMapping("/webhooks/{id}")
+	public void deleteWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Webhook webhook = pc.read(id);
+		if (webhook == null) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+			return;
+		}
+		pc.delete(webhook);
+	}
+
+	@GetMapping("/events")
+	public Set<String> listHookEvents(HttpServletRequest req, HttpServletResponse res) {
+		return utils.getCustomHookEvents();
+	}
+
+	@GetMapping("/types")
+	public Set<String> listCoreTypes(HttpServletRequest req, HttpServletResponse res) {
+		return utils.getCoreScooldTypes();
 	}
 
 	@GetMapping("/search/{type}/{query}")

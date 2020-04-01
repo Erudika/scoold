@@ -19,9 +19,13 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.Para;
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
+import com.erudika.para.core.Vote;
+import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
@@ -110,6 +114,7 @@ public final class ScooldUtils {
 
 	private static final Profile API_USER;
 	private static final Set<String> CORE_TYPES;
+	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
 	static {
 		API_USER = new Profile("1", "System");
@@ -126,7 +131,24 @@ public final class ScooldUtils {
 				Utils.type(Report.class),
 				Utils.type(Revision.class),
 				Utils.type(UnapprovedQuestion.class),
-				Utils.type(UnapprovedReply.class)));
+				Utils.type(UnapprovedReply.class),
+				// Para core types
+				Utils.type(Address.class),
+				Utils.type(Sysprop.class),
+				Utils.type(Tag.class),
+				Utils.type(User.class),
+				Utils.type(Vote.class)
+		));
+
+		HOOK_EVENTS = new HashSet<>(Arrays.asList(
+				"question.create",
+				"question.close",
+				"answer.create",
+				"answer.accept",
+				"report.create",
+				"comment.create",
+				"user.signup",
+				"revision.restore"));
 
 		WHITELISTED_MACROS = new HashMap<String, String>();
 		WHITELISTED_MACROS.put("spaces", "#spacespage($spaces)");
@@ -282,6 +304,9 @@ public final class ScooldUtils {
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
 			}
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
+			payload.put("user", u);
+			triggerHookEvent("user.signup", payload);
 			logger.info("Created new user '{}' with id={}, groups={}, spaces={}.",
 					u.getName(), authUser.getId(), authUser.getGroups(), authUser.getSpaces());
 		}
@@ -621,6 +646,10 @@ public final class ScooldUtils {
 
 	public Set<String> getCoreScooldTypes() {
 		return Collections.unmodifiableSet(CORE_TYPES);
+	}
+
+	public Set<String> getCustomHookEvents() {
+		return Collections.unmodifiableSet(HOOK_EVENTS);
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
@@ -1239,6 +1268,17 @@ public final class ScooldUtils {
 		}
 		logger.error("Failed to generate JWT token - app_secret_key is blank.");
 		return null;
+	}
+
+	public void triggerHookEvent(String eventName, Object payload) {
+		if (isWebhooksEnabled() && HOOK_EVENTS.contains(eventName)) {
+			Para.asyncExecute(() -> {
+				Webhook trigger = new Webhook();
+				trigger.setTriggeredEvent(eventName);
+				trigger.setCustomPayload(payload);
+				pc.create(trigger);
+			});
+		}
 	}
 
 	public void setSecurityHeaders(String nonce, HttpServletRequest request, HttpServletResponse response) {

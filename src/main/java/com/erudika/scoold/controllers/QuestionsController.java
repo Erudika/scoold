@@ -49,6 +49,7 @@ import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.HttpUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -200,7 +201,7 @@ public class QuestionsController {
 					pc.create(addr);
 				}
 				authUser.setLastseen(System.currentTimeMillis());
-				model.addAttribute("newpost", q);
+				model.addAttribute("newpost", getNewQuestionPayload(q));
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("draftQuestion", q);
@@ -362,5 +363,12 @@ public class QuestionsController {
 			HttpUtils.setRawCookie("questions-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
 					writeValueAsBytes(p)), req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
 		} catch (JsonProcessingException ex) { }
+	}
+
+	private Map<String, Object> getNewQuestionPayload(Question q) {
+		Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(q, false));
+		payload.put("author", q == null ? null : q.getAuthor());
+		utils.triggerHookEvent("question.create", payload);
+		return payload;
 	}
 }
