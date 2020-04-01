@@ -1373,10 +1373,20 @@ simply add them as inline CSS:
 para.inline_css = ".scoold-logo: { width: 100px; }"
 ```
 
-You can set a short welcome message for unauthenticated users which will be displayed on the top of the page:
+You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
+can also contain HTML:
 ```ini
-para.welcome_message = "Hello and welcome to Scoold!"
+para.welcome_message = "Hello and welcome to <a href='https://scoold.com'>Scoold</a>!"
 ```
+You can also set a custom message for users who are already logged in:
+```ini
+para.welcome_message_onlogin = "<h2>Welcome back <b>{{user.name}}</b>!"
+```
+Here you can use HTML tags and Mustache placeholders to show data from the `Profile` object of the logged in user.
+For a list of available user properties, take a look at the
+[`Profile`](https://github.com/Erudika/scoold/blob/master/src/main/java/com/erudika/scoold/core/Profile.java)
+and [`Sysprop`](https://github.com/Erudika/para/blob/master/para-core/src/main/java/com/erudika/para/core/Sysprop.java)
+classes.
 
 Alternatively, clone this repository and edit the files you want:
 
