@@ -645,6 +645,14 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("api_enabled", false);
 	}
 
+	public boolean isFooterLinksEnabled() {
+		return Config.getConfigBoolean("footer_links_enabled", true);
+	}
+
+	public String getFooterHTML() {
+		return Config.getConfigParam("footer_html", "");
+	}
+
 	public Set<String> getCoreScooldTypes() {
 		return Collections.unmodifiableSet(CORE_TYPES);
 	}

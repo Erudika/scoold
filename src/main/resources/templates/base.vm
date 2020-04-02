@@ -284,17 +284,24 @@
 			<footer class="page-footer">
 				<div class="container">
 					<div class="row mbn">
-						<div class="col l6 s12 sTextCenter">
+						<div class="col l7 s12 sTextCenter">
 							<div class="pvl">
+								#set($_footerHTML = $!scooldUtils.getFooterHTML())
+								$!_footerHTML
+								#if($scooldUtils.isFooterLinksEnabled())
 								<a href="$aboutlink" title="About">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
 								#if($scooldUtils.isFeedbackEnabled())
 								<a href="$feedbacklink" title="Feedback">$!{lang.get('feedback.title')}</a>&nbsp;&nbsp;
 								#end
 								<a href="$privacylink" title="Privacy">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
-								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>
+								<a href="$termslink" title="Terms">$!{lang.get('terms.title')}</a>&nbsp;&nbsp;
+								#if($scooldUtils.isApiEnabled())
+								<a href="$apidocslink" title="API docs">API</a>
+								#end
+								#end
 							</div>
 						</div>
-						<div class="col l6 s12 sTextCenter mtl ${footerAlignClass}">
+						<div class="col l5 s12 sTextCenter mtl ${footerAlignClass}">
 							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey capitalize">
 								$!currentLocale.getDisplayLanguage($currentLocale)
 							</a>
