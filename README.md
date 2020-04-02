@@ -1353,6 +1353,10 @@ para.show_branding = true
 para.logo_url = "/logo.svg"
 para.logo_width = 90
 
+# footer HTML - add your own links, etc.
+para.footer_html = ""
+# show standard footer links
+para.footer_links_enabled = true
 # favicon image location
 para.favicon_url = "/favicon.ico"
 # overwrite the main stylesheet with your own
@@ -1374,7 +1378,7 @@ para.inline_css = ".scoold-logo: { width: 100px; }"
 ```
 
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
-can also contain HTML:
+can also contain HTML (single quotes only!):
 ```ini
 para.welcome_message = "Hello and welcome to <a href='https://scoold.com'>Scoold</a>!"
 ```
@@ -1499,7 +1503,7 @@ para.api_enabled = true
 # A random string min. 32 chars long
 para.app_secret_key = "change_to_long_random_string"
 ```
-The API can be accessed from `/api/*` and the OpenAPI documentation and console are located at `/api.html`.
+The API can be accessed from `/api/*` and the OpenAPI documentation and console are located at `/apidocs`.
 API keys can be generated from the "Administration" page and can be made to expire after a number of hours or never
 (validity period = 0). Keys are in the JWT format and signed with the secret defined in `para.app_secret_key`.
 API keys can also be generated with any JWT library. The body of the key should contain the `iat`, `appid` and `exp`
@@ -1511,7 +1515,7 @@ The response body is similar to this:
 ```
 {
   "healthy": true,
-  "message": "Scoold API, see docs at http://localhost:8000/api.html",
+  "message": "Scoold API, see docs at http://localhost:8000/apidocs",
 	"pro": false
 }
 ```

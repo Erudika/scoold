@@ -47,3 +47,15 @@ table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
 .diff-ins { background-color: #9fff9f; color: black; }
 .diff-del { background-color: #ffa2a2; color: black; }
 .droptarget{ opacity: 0.5; outline: 5px dashed #777; }
+.swagger-ui *, .swagger-ui .opblock .opblock-summary-description, .swagger-ui .info .title,
+.swagger-ui .info li, .swagger-ui .info p, .swagger-ui .info table, .swagger-ui .dialog-ux .modal-ux-header h3,
+.swagger-ui .dialog-ux .modal-ux-content h4, .swagger-ui .dialog-ux .modal-ux-content p, .swagger-ui label,
+.swagger-ui .btn, .swagger-ui .opblock-description-wrapper p, .swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-title_normal p, .swagger-ui table thead tr td, .swagger-ui table thead tr th,
+.swagger-ui .parameter__name, .swagger-ui .parameter__type, .swagger-ui .response-col_status,
+.swagger-ui .opblock .opblock-section-header h4, .swagger-ui .model-title { color: #efefef; }
+.swagger-ui .scheme-container { background-color: transparent; }
+.swagger-ui .dialog-ux .modal-ux, .swagger-ui input[type=email], .swagger-ui input[type=file],
+.swagger-ui input[type=password], .swagger-ui input[type=search], .swagger-ui input[type=text],
+.swagger-ui textarea, .swagger-ui .opblock .opblock-section-header { background-color: #333; color: #efefef; }
+.swagger-ui section.models .model-container:hover { background-color: black; color: #efefef; }

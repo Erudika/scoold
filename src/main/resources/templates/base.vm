@@ -38,6 +38,10 @@
 		#if ($includeHighlightJS)
 		<link href="$!styleslink/highlighting.css" rel="stylesheet">
 		#end
+		#if($scooldUtils.isApiEnabled() && $request.getServletPath() == "/apidocs")
+		<link rel="stylesheet" type="text/css" href="$!styleslink/swagger-ui.css">
+		<link rel="stylesheet" href="$!styleslink/api.css">
+		#end
 		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css" rel="stylesheet">

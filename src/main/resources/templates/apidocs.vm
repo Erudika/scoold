@@ -1,0 +1,20 @@
+<div id="swagger-ui"></div>
+<script nonce="$cspNonce" src="$!scriptslink/swagger-ui-bundle.js"></script>
+<script nonce="$cspNonce" src="$!scriptslink/swagger-ui-standalone-preset.js"></script>
+<script nonce="$cspNonce">
+	window.onload = function() {
+  window.ui = SwaggerUIBundle({
+    url: "api.json",
+    dom_id: '#swagger-ui',
+			deepLinking: true,
+			presets: [
+				SwaggerUIBundle.presets.apis,
+				SwaggerUIStandalonePreset
+			],
+			plugins: [
+				SwaggerUIBundle.plugins.DownloadUrl
+			],
+			layout: "StandaloneLayout"
+		});
+	};
+</script>

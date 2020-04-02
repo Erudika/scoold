@@ -1181,7 +1181,7 @@ public final class ScooldUtils {
 		return loadResource("emails/" + name + ".html");
 	}
 
-	private String loadResource(String filePath) {
+	public String loadResource(String filePath) {
 		if (filePath == null) {
 			return "";
 		}
@@ -1189,22 +1189,15 @@ public final class ScooldUtils {
 			return FILE_CACHE.get(filePath);
 		}
 		String template = "";
-		InputStream in = getClass().getClassLoader().getResourceAsStream(filePath);
-		if (in != null) {
+		try (InputStream in = getClass().getClassLoader().getResourceAsStream(filePath)) {
 			try (Scanner s = new Scanner(in).useDelimiter("\\A")) {
 				template = s.hasNext() ? s.next() : "";
 				if (!StringUtils.isBlank(template)) {
 					FILE_CACHE.put(filePath, template);
 				}
-			} catch (Exception ex) {
-				logger.info("Couldn't load resource '{0}'. - {1}", filePath, ex.getMessage());
-			} finally {
-				try {
-					in.close();
-				} catch (IOException ex) {
-					logger.error(null, ex);
-				}
 			}
+		} catch (Exception ex) {
+			logger.info("Couldn't load resource '{}'.", filePath);
 		}
 		return template;
 	}

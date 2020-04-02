@@ -126,6 +126,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	public static final String REVISIONSLINK = HOMEPAGE + "revisions";
 	public static final String FEEDBACKLINK = HOMEPAGE + "feedback";
 	public static final String LANGUAGESLINK = HOMEPAGE + "languages";
+	public static final String APIDOCSLINK = HOMEPAGE + "apidocs";
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 

@@ -1,10 +1,10 @@
 openapi: "3.0.2"
 info:
-  description: "This is the [Scoold](https://scoold.com) RESTful API. You need to generate an [API key](/admin) from the 'Administration' page to access the API."
+  description: "This is the API console. First, you need to generate an [API key](/admin) in order to access the API."
   version: "1.1.0"
-  title: "Scoold API"
+  title: "API documentation"
 externalDocs:
-  description: "Scoold on GitHub"
+  description: "README"
   url: "https://github.com/Erudika/scoold"
 tags:
 - name: "posts"

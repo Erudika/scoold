@@ -164,6 +164,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("revisionslink", CONTEXT_PATH + REVISIONSLINK);
 		modelAndView.addObject("feedbacklink", CONTEXT_PATH + FEEDBACKLINK);
 		modelAndView.addObject("languageslink", CONTEXT_PATH + LANGUAGESLINK);
+		modelAndView.addObject("apidocslink", CONTEXT_PATH + APIDOCSLINK);
 		// Visual customization
 		modelAndView.addObject("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));
