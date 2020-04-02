@@ -51,7 +51,7 @@ your company or team.
 - Multiple identity domains
 - Sticky / Favorite posts
 - Advanced syntax highlighting
-- Image uploads
+- File uploads
 - Security notifications
 - Email digest of recent questions
 - Account suspensions/permabans
@@ -1036,15 +1036,26 @@ For example:
     var dict = new Dictionary<string>();
     ```
 
-## Image uploads
+## File uploads
 
 **PRO**
-Images can be uploaded to the local file system or Imgur. If you set the Imgur client id, Imgur is automatically selected
-as the storage service. To use Imgur for file storage, specify your Imgur API client id:
+Files can be uploaded to the local file system, Imgur or S3. File uploads are enabled by default in Scoold Pro.
+To disable file uploads altogether set `para.uploads_enabled = false`.
+
+**Imgur storage provider**
+To use Imgur for file storage, specify your Imgur API client id:
 ```
 para.imgur_client_id = "x23e8t0askdj"
 ```
+**AWS S3 storage provider**
+To use S3 for file storage, specify your AWS credentials:
+```
+para.s3_access_key = ""
+para.s3_secret_key = ""
+```
+These can also be automatically picked up from the environment.
 
+**Local storage**
 Local file storage is used by default. To configure the directory on the server where files will be stored, set:
 ```
 para.file_uploads_dir = "uploads"
@@ -1055,8 +1066,6 @@ when the upload is finished.
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
 user's `/profile` page. For best results, use a square image here.
-
-In the future, more upload services could be supported such as S3.
 
 ## Slack integration
 
