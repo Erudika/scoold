@@ -1353,8 +1353,8 @@ para.show_branding = true
 para.logo_url = "/logo.svg"
 para.logo_width = 90
 
-# footer HTML - add your own links, etc.
-para.footer_html = ""
+# footer HTML - add your own links, etc., escape double quotes with \"
+para.footer_html = "<a href=\"https://my.link\">My Link</a>"
 # show standard footer links
 para.footer_links_enabled = true
 # favicon image location
@@ -1378,13 +1378,13 @@ para.inline_css = ".scoold-logo: { width: 100px; }"
 ```
 
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
-can also contain HTML (single quotes only!):
+can also contain HTML (**use only single quotes or escape double quotes `\\\"`**):
 ```ini
 para.welcome_message = "Hello and welcome to <a href='https://scoold.com'>Scoold</a>!"
 ```
 You can also set a custom message for users who are already logged in:
 ```ini
-para.welcome_message_onlogin = "<h2>Welcome back <b>{{user.name}}</b>!"
+para.welcome_message_onlogin = "<h2>Welcome back <img src=\\\"{{user.picture}}\\\" width=30> <b>{{user.name}}</b>!</h2>"
 ```
 Here you can use HTML tags and Mustache placeholders to show data from the `Profile` object of the logged in user.
 For a list of available user properties, take a look at the
