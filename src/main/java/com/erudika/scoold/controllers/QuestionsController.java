@@ -251,7 +251,7 @@ public class QuestionsController {
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
-				if (!authUser.hasFavtags()) {
+				if (!authUser.hasFavtags() && req.getParameterValues("favtags") != null) {
 					authUser.setFavtags(Arrays.asList(req.getParameterValues("favtags"))); // API override
 				}
 				if (isSpaceFilteredRequest(authUser, currentSpace) && authUser.hasFavtags()) {
