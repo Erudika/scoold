@@ -1042,37 +1042,39 @@ For example:
 Files can be uploaded to the local file system, Imgur or S3. File uploads are enabled by default in Scoold Pro.
 To disable file uploads altogether set `para.uploads_enabled = false`.
 
-**Local storage**
+To upload a file just **drag & drop** the file onto the post editor area. A link will automatically appear
+when the upload is finished. Uploads can fail either because their size is too large or because their format is not in
+the white list of permitted formats (documents, images, archives, audio or video).
+
+Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
+user's `/profile` page. For best results, use a square image here.
+
+### Local storage
 Local file storage is used by default. To configure the directory on the server where files will be stored, set:
 ```
 para.file_uploads_dir = "uploads"
 ```
 
-**Imgur storage provider**
-To use Imgur for file storage, specify your Imgur API client id:
+### Imgur storage provider
+To use Imgur for storing images, specify your Imgur API client id:
 ```
 para.imgur_client_id = "x23e8t0askdj"
 ```
+Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
 
-**AWS S3 storage provider**
+### AWS S3 storage provider
 To use S3 for file storage, specify the name of the S3 bucket where you want the files to be uploaded. AWS credentials
 and region settings are optional as they can be picked up from the environment automatically.
-```
+```ini
 # required
 para.s3_bucket = ""
-
+# path within the bucket (object prefix)
+para.s3_path = "uploads"
 # these are optional
 para.s3_region = ""
 para.s3_access_key = ""
 para.s3_secret_key = ""
 ```
-
-To upload a file just **drag & drop** the file onto the post editor area. A link will automatically appear
-when the upload is finished. Uploads can fail either because theif size is too large or because their format is not in
-the white list of permitted formats.
-
-Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
-user's `/profile` page. For best results, use a square image here.
 
 ## Slack integration
 
