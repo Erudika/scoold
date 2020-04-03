@@ -183,14 +183,17 @@ public class QuestionController {
 			HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (showPost != null && emailme != null) {
-			if (emailme) {
-				showPost.addFollower(authUser.getUser());
+		if (authUser == null || showPost == null) {
+			if (utils.isAjaxRequest(req)) {
+				res.setStatus(400);
+				return "base";
 			} else {
-				showPost.removeFollower(authUser.getUser());
+				return "redirect:" + QUESTIONSLINK + "/" + id;
 			}
-			pc.update(showPost); // update without adding revisions
-		} else if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
+		}
+		if (emailme != null) {
+			followPost(showPost, authUser, emailme);
+		} else if (!showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			boolean needsApproval = utils.postNeedsApproval(authUser);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
@@ -432,5 +435,14 @@ public class QuestionController {
 		payload.put("children", answerPayload);
 		payload.put("authUser", authUser);
 		return payload;
+	}
+
+	private void followPost(Post showPost, Profile authUser, Boolean emailme) {
+		if (emailme) {
+			showPost.addFollower(authUser.getUser());
+		} else {
+			showPost.removeFollower(authUser.getUser());
+		}
+		pc.update(showPost); // update without adding revisions
 	}
 }
