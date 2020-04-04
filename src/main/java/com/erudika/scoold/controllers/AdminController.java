@@ -46,6 +46,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.nimbusds.jwt.SignedJWT;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -346,8 +347,10 @@ public class AdminController {
 			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.isAdmin(authUser)) {
-			return ResponseEntity.ok().body(Collections.singletonMap("jwt", ScooldUtils.
-					generateJWToken(Collections.emptyMap(), TimeUnit.HOURS.toSeconds(validityHours)).serialize()));
+			SignedJWT jwt = ScooldUtils.generateJWToken(Collections.emptyMap(), TimeUnit.HOURS.toSeconds(validityHours));
+			if (jwt != null) {
+				return ResponseEntity.ok().body(Collections.singletonMap("jwt", jwt.serialize()));
+			}
 		}
 		return ResponseEntity.status(403).build();
 	}
