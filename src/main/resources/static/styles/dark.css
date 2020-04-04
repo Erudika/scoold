@@ -53,7 +53,8 @@ table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
 .swagger-ui .btn, .swagger-ui .opblock-description-wrapper p, .swagger-ui .opblock-external-docs-wrapper p,
 .swagger-ui .opblock-title_normal p, .swagger-ui table thead tr td, .swagger-ui table thead tr th,
 .swagger-ui .parameter__name, .swagger-ui .parameter__type, .swagger-ui .response-col_status,
-.swagger-ui .opblock .opblock-section-header h4, .swagger-ui .model-title { color: #efefef; }
+.swagger-ui .opblock .opblock-section-header h4, .swagger-ui .model-title,
+.swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5 { color: #efefef; }
 .swagger-ui .scheme-container { background-color: transparent; }
 .swagger-ui .dialog-ux .modal-ux, .swagger-ui input[type=email], .swagger-ui input[type=file],
 .swagger-ui input[type=password], .swagger-ui input[type=search], .swagger-ui input[type=text],
