@@ -116,6 +116,8 @@ public final class ScooldUtils {
 	private static final Set<String> CORE_TYPES;
 	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
+	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
+
 	static {
 		API_USER = new Profile("1", "System");
 		API_USER.setVotes(1);
@@ -1217,7 +1219,7 @@ public final class ScooldUtils {
 		return Utils.compileMustache(model, loadEmailTemplate("notify"));
 	}
 
-	public static boolean isValidJWToken(String jwt) {
+	public boolean isValidJWToken(String jwt) {
 		try {
 			String secret = Config.getConfigParam("app_secret_key", "");
 			if (secret != null && jwt != null) {
@@ -1229,10 +1231,11 @@ public final class ScooldUtils {
 
 					Date expirationTime = claims.getExpirationTime();
 					Date notBeforeTime = claims.getNotBeforeTime();
-					boolean expired = expirationTime == null || expirationTime.before(referenceTime);
+					String jti = claims.getJWTID();
+					boolean expired = expirationTime != null && expirationTime.before(referenceTime);
 					boolean notYetValid = notBeforeTime != null && notBeforeTime.after(referenceTime);
-
-					return !(expired || notYetValid);
+					boolean jtiRevoked = isApiKeyRevoked(jti, expired);
+					return !(expired || notYetValid || jtiRevoked);
 				}
 			}
 		} catch (JOSEException e) {
@@ -1243,11 +1246,11 @@ public final class ScooldUtils {
 		return false;
 	}
 
-	public static SignedJWT generateJWToken(Map<String, Object> claims) {
+	public SignedJWT generateJWToken(Map<String, Object> claims) {
 		return generateJWToken(claims, Config.JWT_EXPIRES_AFTER_SEC);
 	}
 
-	public static SignedJWT generateJWToken(Map<String, Object> claims, long validitySeconds) {
+	public SignedJWT generateJWToken(Map<String, Object> claims, long validitySeconds) {
 		String secret = Config.getConfigParam("app_secret_key", "");
 		if (!StringUtils.isBlank(secret)) {
 			try {
@@ -1270,6 +1273,60 @@ public final class ScooldUtils {
 		}
 		logger.error("Failed to generate JWT token - app_secret_key is blank.");
 		return null;
+	}
+
+	public boolean isApiKeyRevoked(String jti, boolean expired) {
+		if (StringUtils.isBlank(jti)) {
+			return false;
+		}
+		if (API_KEYS.isEmpty()) {
+			Sysprop s = pc.read("api_keys");
+			if (s != null) {
+				API_KEYS.putAll(s.getProperties());
+			}
+		}
+		if (API_KEYS.containsKey(jti) && expired) {
+			API_KEYS.remove(jti);
+			saveApiKeysObject();
+		}
+		return !API_KEYS.containsKey(jti);
+	}
+
+	public void registerApiKey(String jti, String jwt) {
+		if (StringUtils.isBlank(jti) || StringUtils.isBlank(jwt)) {
+			return;
+		}
+		API_KEYS.put(jti, jwt);
+		saveApiKeysObject();
+	}
+
+	public void revokeApiKey(String jti) {
+		API_KEYS.remove(jti);
+		saveApiKeysObject();
+	}
+
+	public Map<String, Object> getApiKeys() {
+		return Collections.unmodifiableMap(API_KEYS);
+	}
+
+	public Map<String, Long> getApiKeysExpirations() {
+		return API_KEYS.keySet().stream().collect(Collectors.toMap(k -> k, k -> {
+			try {
+				Date exp = SignedJWT.parse((String) API_KEYS.get(k)).getJWTClaimsSet().getExpirationTime();
+				if (exp != null) {
+					return exp.getTime();
+				}
+			} catch (ParseException ex) {
+				logger.error(null, ex);
+			}
+			return 0L;
+		}));
+	}
+
+	private void saveApiKeysObject() {
+		Sysprop s = new Sysprop("api_keys");
+		s.setProperties(API_KEYS);
+		s.create();
 	}
 
 	public void triggerHookEvent(String eventName, Object payload) {

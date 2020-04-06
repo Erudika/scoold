@@ -473,13 +473,32 @@ $(function () {
 		}
 	});
 
+	$("input.api-key").on("click", function () {
+		$(this).focus();
+		$(this).select();
+		document.execCommand("copy");
+		$(this).next("span").text("Copied!").show().fadeOut(3000);
+	});
+
 	submitFormBind("#api-key-form", function (data, status, xhr, form) {
-		$(form).find("input[name=jwt]").on("click", function () {
-			$(this).focus();
-			$(this).select();
-			document.execCommand("copy");
-			$(this).next("span").text("Copied!").show().fadeOut(3000);
-		}).val(data.jwt).removeClass("hide");
+		var table = $(form).find(".api-key-table");
+		var row = table.find(".api-key-row:first").clone().removeClass("hide");
+		row.find("input.api-key").val(data.jwt);
+		row.find(".api-key-expires").text(data.exp || "never");
+		row.find("a").attr("href", function (href) {
+			return href + data.jti;
+		});
+		table.append(row).removeClass("hide");
+	});
+
+	$(document).on("click", ".api-key-revoke", function () {
+		var elem = $(this);
+		return areYouSure(function () {
+			elem.closest(".api-key-row").fadeOut("fast", function () {
+				elem.remove();
+			});
+			$.post(elem.attr("href"));
+		}, rusuremsg, false);
 	});
 
 	/****************************************************

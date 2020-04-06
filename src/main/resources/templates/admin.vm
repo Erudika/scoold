@@ -99,8 +99,8 @@
 				<div class="col s12 m2">
 					<div class="input-field">
 						<select name="json" required>
-							<option value="false" selected="selected">x-www-form-urlencoded</option>
-							<option value="true">json</option>
+							<option value="true" selected="selected">json</option>
+							<option value="false">x-www-form-urlencoded</option>
 						</select>
 					</div>
 				</div>
@@ -229,13 +229,13 @@
 	#if($scooldUtils.isApiEnabled())
 	<h4>API keys</h4>
 	<form action="$adminlink/generate-api-key" method="post" id="api-key-form">
-		<p>API keys in the JSON Web Token format and can only be revoked if you change the <code>app_secret_key</code>.
-			Validity period of 0 hours means that the key will never expire.</p>
-		<div class="row">
+		<p>API keys are in the JSON Web Token format. Changing <code>app_secret_key</code> would revoke all keys at once.
+			Validity period of 0 hours means the key never expires.</p>
+		<div class="row mbn">
 			<div class="col s6 m2">
 				<div class="input-field">
 					<label>Validity period (hours)</label>
-					<input type="number" name="validityHours" value="24" min="0">
+					<input type="number" name="validityHours" value="0" min="0">
 				</div>
 			</div>
 			<div class="col s4 m2">
@@ -243,12 +243,45 @@
 					<button type="submit" class="btn waves-effect waves-light">Generate</button>
 				</div>
 			</div>
-			<div class="col s12 m8">
-				<div class="input-field">
-					<input type="text" name="jwt" value="" class="hide">
-					<span class="green-text"></span><span>&nbsp;</span>
-				</div>
-			</div>
+		</div>
+		<div>
+			#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
+			<table class="striped api-key-table ${hideTable}">
+				#macro(apikeyrow $apiKey)
+					#if(!$apiKey)#set($hideRow = "hide")#else#set($hideRow = "")#end
+					<tr class="api-key-row ${hideRow}">
+						<td>
+							<a href="$adminlink/revoke-api-key?jti=$!apiKey.key" class="api-key-revoke red-text right">
+								<i class="fa fa-times"></i> Revoke
+							</a>
+							<div>
+								<strong>Expires:</strong>
+								<span class="api-key-expires">
+									#if($apiKey && $apiKey.key)
+										#if($apiKeysExpirations.get($apiKey.key) == 0)
+											never
+										#elseif($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
+											<span class="red">expired</span>
+										#else
+											#formatdate($apiKeysExpirations.get($apiKey.key), "YYYY-MM-dd HH:mm")
+										#end
+									#end
+								</span>
+								<a href="#" class="next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
+								<div class="hide">
+									<input type="text" value="$!apiKey.value" class="api-key">
+									<span class="green-text"></span><span>&nbsp;</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+				#end
+
+				#apikeyrow("")
+				#foreach($apiKey in $apiKeys.entrySet())
+					#apikeyrow($apiKey)
+				#end
+			</table>
 		</div>
 	</form>
 	#end

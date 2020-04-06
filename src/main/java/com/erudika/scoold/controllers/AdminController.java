@@ -50,12 +50,16 @@ import com.nimbusds.jwt.SignedJWT;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -117,6 +121,8 @@ public class AdminController {
 		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("customHookEvents", utils.getCustomHookEvents());
+		model.addAttribute("apiKeys", utils.getApiKeys());
+		model.addAttribute("apiKeysExpirations", utils.getApiKeysExpirations());
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
@@ -343,14 +349,34 @@ public class AdminController {
 
 	@ResponseBody
 	@PostMapping(path = "/generate-api-key", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> generateAPIKey(@RequestParam Integer validityHours,
-			HttpServletRequest req, Model model) {
+	public ResponseEntity<Map<String, Object>> generateAPIKey(@RequestParam Integer validityHours,
+			HttpServletRequest req, Model model) throws ParseException {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.isAdmin(authUser)) {
-			SignedJWT jwt = ScooldUtils.generateJWToken(Collections.emptyMap(), TimeUnit.HOURS.toSeconds(validityHours));
+			String jti = UUID.randomUUID().toString();
+			Map<String, Object> claims = Collections.singletonMap("jti", jti);
+			SignedJWT jwt = utils.generateJWToken(claims, TimeUnit.HOURS.toSeconds(validityHours));
 			if (jwt != null) {
-				return ResponseEntity.ok().body(Collections.singletonMap("jwt", jwt.serialize()));
+				String jwtString = jwt.serialize();
+				Date exp = jwt.getJWTClaimsSet().getExpirationTime();
+				utils.registerApiKey(jti, jwtString);
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put("jti", jti);
+				data.put("jwt", jwtString);
+				data.put("exp", exp == null ? 0L : Utils.formatDate(exp.getTime(), "YYYY-MM-dd HH:mm", Locale.UK));
+				return ResponseEntity.ok().body(data);
 			}
+		}
+		return ResponseEntity.status(403).build();
+	}
+
+	@ResponseBody
+	@PostMapping(path = "/revoke-api-key", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> revokeAPIKey(@RequestParam String jti, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			utils.revokeApiKey(jti);
+			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(403).build();
 	}
