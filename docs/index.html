@@ -53,8 +53,7 @@
 			.largeText{line-height: 1.2em;font-size: 1.8em; margin: 5px 0; font-weight: 200;}
 			.mediumText {line-height: 1.2em;font-size: 1.3em; margin: 3px 0; font-weight: 200;}
 			body { font-weight: 300; }
-			#header, #instructions {
-				min-height: 400px;
+			#header, #instructions, #faq, #integrations {
 				background-image: url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v6H0V0zm28 8h12v6H28V8zm14-8h12v6H42V0zm14 0h12v6H56V0zm0 8h12v6H56V8zM42 8h12v6H42V8zm0 16h12v6H42v-6zm14-8h12v6H56v-6zm14 0h12v6H70v-6zm0-16h12v6H70V0zM28 32h12v6H28v-6zM14 16h12v6H14v-6zM0 24h12v6H0v-6zm0 8h12v6H0v-6zm14 0h12v6H14v-6zm14 8h12v6H28v-6zm-14 0h12v6H14v-6zm28 0h12v6H42v-6zm14-8h12v6H56v-6zm0-8h12v6H56v-6zm14 8h12v6H70v-6zm0 8h12v6H70v-6zM14 24h12v6H14v-6zm14-8h12v6H28v-6zM14 8h12v6H14V8zM0 8h12v6H0V8z' fill='%230ea4f6' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
 				background-color: white;
 			}
@@ -429,6 +428,12 @@
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
 							</tr>
 							<tr>
+								<td>Zapier integration</td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
 								<td>Sticky / Favorite posts</td>
 								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
@@ -638,14 +643,19 @@
 						</div>
 					</div>
 					<div class="row container center-align pvs">
-						<div class="col m4">&nbsp;</div>
-						<div class="col m4">
+						<div class="col m4 offset-m2">
 							<h5>Themes &amp; dark mode</h5>
 							<hr style="width: 50%">
 							<p>Quickly change the look and feel of your site by switching to one of the bundled themes or create your own.
 								There's also a dark theme for those who work in a dimly lit room.</p>
 						</div>
-						<div class="col m4">&nbsp;</div>
+						<div class="col m4">
+							<h5><a href="https://zapier.com/developer/public-invite/96144/23ee4c1c6f03dc964b479b0d8ed027bb/">Zapier integration</a></h5>
+							<hr style="width: 50%">
+							<p>Zapier makes it easy to integrate Scoold with thousands of other applications. Thanks to the power of
+								REST hooks, you can have questions created automatically based on data from an external app or configure
+								Scoold to notify other apps when a new question is posted.</p>
+						</div>
 					</div>
 					<!--PRO Features-->
 					<div class="row container center-align pvs">
@@ -759,6 +769,29 @@
 					<a href="https://live.scoold.com" class="btn-large light-blue"><b>Live Demo!</b></a>
 					<p>Takes a minute to load as it's running on Heroku's free dynos.</p>
 				</div>
+
+				<div class="container pvl center-align">
+					<h3><span class="phl">Integrations</span></h3>
+					<div class="row">
+						<div class="col m4 s12">
+							<a href="slack.html">
+								<img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-ex8w65/Slack_RGB.svg" width="200" alt="Slack logo">
+							</a>
+						</div>
+						<div class="col m4 s12">
+							<a href="mattermost.html">
+								<img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Mattermost_logo_horizontal.svg"
+										 class="pvl mvs" width="250" alt="Mattermost logo">
+							</a>
+						</div>
+						<div class="col m4 s12">
+							<a href="https://zapier.com/developer/public-invite/96144/23ee4c1c6f03dc964b479b0d8ed027bb/">
+								<img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" class="pvl" width="120" alt="Zapier logo">
+							</a>
+						</div>
+					</div>
+				</div>
+
 			</section>
 
 			<section id="instructions">
@@ -766,32 +799,29 @@
 					<div class="white pvs">
 						<h3><span class="phl">Documentation</span></h3>
 						<h4><a href="https://github.com/Erudika/scoold/blob/master/README.md">README</a></h4>
-					</div>
-					<div class="white pvs">
 						<h3><span class="phl">Docker</span></h3>
 						<code>$ docker run erudikaltd/scoold:1.38.0</code>
-					</div>
-					<div class="white pvs">
-						<h3><span class="phl">One-click deployment</span></h3>
-						<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
-							<img src="https://www.herokucdn.com/deploy/button.svg" alt="deploy to heroku button" style="max-width:100%;">
-						</a> &nbsp;
-						<a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
-							<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
-						</a> &nbsp;
-						<a href="https://deploy.azure.com/?repository=https://github.com/Erudika/scoold" title="Install on Azure">
-							<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="deploy to azure button">
-						</a> &nbsp;
-					</div>
-
-					<div class="white ptl">
-						<div id="faq" class="row">
-							<div class="medium-12 columns text-center mvl">
-								<h3>FAQ</h3>
-							</div>
+						<div class="mvl">
+							<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
+								<img src="https://www.herokucdn.com/deploy/button.svg" alt="deploy to heroku button" style="max-width:100%;">
+							</a> &nbsp;
+							<a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
+								<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
+							</a> &nbsp;
+							<a href="https://deploy.azure.com/?repository=https://github.com/Erudika/scoold" title="Install on Azure">
+								<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="deploy to azure button">
+							</a> &nbsp;
 						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="faq">
+				<div class="container pvl center-align">
+					<div class="white ptl phl">
 						<div class="row">
-							<div class="medium-6 columns">
+							<h3>FAQ</h3>
+							<div class="col m6 s12">
 								<p><strong>What is Scoold PRO and how is it different than Scoold?</strong></p>
 								<p>Scoold is an open source project, <a class="extlink" href="https://github.com/Erudika/scoold">available to everyone</a>
 									without restriction. Scoold PRO is not free and it is closed source. PRO includes all Scoold features and
@@ -809,14 +839,14 @@
 								<p><strong>Can I self-host Scoold PRO and Para on my own servers?</strong></p>
 								<p>Yes. You can either host Para on your servers or connect to
 									<a class="extlink" href="https://paraio.com">ParaIO.com</a>  &mdash; the fully managed Para service.</p>
+							</div>
+							<div class="col m6 s12">
 								<p><strong>How can I get support and where can I report bugs?</strong></p>
 								<p>You can get support <a href="mailto:support@erudika.com">by email</a> or
 									<a class="extlink" href="https://gitter.im/Erudika/scoold">on Gitter</a>.
 									All issues related to Scoold Pro should be reported <a class="extlink" href="https://github.com/Erudika/scoold-pro/issues">on its GitHub page</a>.</p>
 								<p><strong>Can I get a refund?</strong></p>
 								<p>No, all sales are final.</p>
-							</div>
-							<div class="medium-6 columns">
 								<p><strong>Do I get charged immediately?</strong></p>
 								<p>Yes, we'll charge your card right after you go through the checkout page.</p>
 								<p><strong>Do you offer customization &amp; deployment services?</strong></p>

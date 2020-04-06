@@ -28,6 +28,7 @@ your company or team.
 - Reputation and voting system with badges
 - Spaces (Teams) - groups of isolated questions and users
 - Webhooks with signature signing
+- [Zapier integration](https://zapier.com/developer/public-invite/96144/23ee4c1c6f03dc964b479b0d8ed027bb/) (beta)
 - Minimal frontend JS code based on jQuery
 - Modern, responsive layout powered by Materialize CSS
 - Suggestions for similar questions and hints for duplicate posts
