@@ -42,27 +42,25 @@ your company or team.
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
 
-### Pro Features
+### [Buy Scoold Pro](https://paraio.com/scoold-pro) for 299 EUR and get these premium features:
 
 - Slack / Mattermost integration
-- SAML support
+- SAML authentication support
+- Custom authentication support
+- Mentions with notifications
+- File uploads (local, S3 or Imgur)
+- Account suspensions (permabans)
 - Anonymous posts
 - Unlimited spaces
 - Multiple admins
 - Multiple identity domains
 - Sticky / Favorite posts
 - Advanced syntax highlighting
-- File uploads
-- Security notifications
 - Email digest of recent questions
-- Account suspensions/permabans
+- Security notifications
 - Wiki-style answers
-- Mentions with notifications
-- Custom authentication support
 
 ...and more!
-
-## [Buy Scoold Pro 299 EUR](https://paraio.com/scoold-pro)
 
 ## Live Demo
 
