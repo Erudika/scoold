@@ -50,7 +50,7 @@ body {
 .unapproved-post { opacity: 0.7; border: 2px dashed #CCC; }
 .postbox img {max-width: 100%;}
 .postbox img {max-width: 100%;}
-.viewbox pre {background-color: #f8f8f8;}
+.viewbox pre {background-color: #f8f8f8; padding: 4px 8px; }
 .following-post {border-right: 5px solid #8bc34a;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
