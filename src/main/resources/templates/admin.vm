@@ -267,7 +267,7 @@
 										#end
 									#end
 								</span>
-								<a href="#" class="next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
+								<a href="#" class="api-key-show next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
 								<div class="hide">
 									<input type="text" value="$!apiKey.value" class="api-key">
 									<span class="green-text"></span><span>&nbsp;</span>

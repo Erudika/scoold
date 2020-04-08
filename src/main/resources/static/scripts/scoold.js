@@ -473,7 +473,7 @@ $(function () {
 		}
 	});
 
-	$("input.api-key").on("click", function () {
+	$(document).on("click", "input.api-key", function () {
 		$(this).focus();
 		$(this).select();
 		document.execCommand("copy");
@@ -485,10 +485,11 @@ $(function () {
 		var row = table.find(".api-key-row:first").clone().removeClass("hide");
 		row.find("input.api-key").val(data.jwt);
 		row.find(".api-key-expires").text(data.exp || "never");
-		row.find("a").attr("href", function (href) {
+		row.find("a").attr("href", function (i, href) {
 			return href + data.jti;
 		});
 		table.append(row).removeClass("hide");
+		row.find(".api-key-show").click();
 	});
 
 	$(document).on("click", ".api-key-revoke", function () {
