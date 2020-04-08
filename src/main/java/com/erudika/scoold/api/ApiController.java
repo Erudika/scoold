@@ -774,9 +774,6 @@ public class ApiController {
 
 	@GetMapping("/search/{type}/{query}")
 	public Map<String, Object> search(@PathVariable String type, @PathVariable String query, HttpServletRequest req) {
-		if ("user".equals(type)) {
-			type = Utils.type(Profile.class);
-		}
 		if ("answer".equals(type)) {
 			type = Utils.type(Reply.class);
 		}
