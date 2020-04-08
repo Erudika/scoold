@@ -41,8 +41,9 @@ your company or team.
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
+- Cookie consent (for GDPR, CCPA, etc.)
 
-### [Buy Scoold Pro](https://paraio.com/scoold-pro) for 299 EUR and get these premium features:
+### [Buy Scoold Pro](https://paraio.com/scoold-pro) and also get these premium features:
 
 - Slack / Mattermost integration
 - SAML authentication support
