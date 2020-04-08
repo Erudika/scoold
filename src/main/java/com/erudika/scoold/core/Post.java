@@ -51,7 +51,7 @@ public abstract class Post extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String DEFAULT_SPACE = "scooldspace:default";
+	public static final String DEFAULT_SPACE = "scooldspace:integrations";
 	public static final String ALL_MY_SPACES = "scooldspace:*";
 
 	@Stored
