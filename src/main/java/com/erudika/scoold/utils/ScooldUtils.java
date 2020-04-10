@@ -1286,8 +1286,7 @@ public final class ScooldUtils {
 			}
 		}
 		if (API_KEYS.containsKey(jti) && expired) {
-			API_KEYS.remove(jti);
-			saveApiKeysObject();
+			revokeApiKey(jti);
 		}
 		return !API_KEYS.containsKey(jti);
 	}
@@ -1326,7 +1325,7 @@ public final class ScooldUtils {
 	private void saveApiKeysObject() {
 		Sysprop s = new Sysprop("api_keys");
 		s.setProperties(API_KEYS);
-		s.create();
+		pc.create(s);
 	}
 
 	public void triggerHookEvent(String eventName, Object payload) {
