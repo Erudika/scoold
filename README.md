@@ -153,7 +153,7 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold.jar`
 
 ## Configuration
 
-> **Important:** Create a separate app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
+> **Important:** Create a dedicated app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
 
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
