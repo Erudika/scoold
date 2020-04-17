@@ -102,7 +102,7 @@ para.access_key = "app:your_para_app"
 para.secret_key = "your_app_secret_key"
 para.endpoint = "https://paraio.com"
 ```
-4. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold.jar`
+4. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
 5. Open `http://localhost:8000` in your browser
 
 ### Quick Start with a self-hosted Para backend (harder)
@@ -114,7 +114,7 @@ para.endpoint = "https://paraio.com"
 3. Create a new directory for Scoold containing a file called `application.conf` and paste in the example configuration below.
 4. Create a new Para app called `scoold` using [Para CLI](https://github.com/Erudika/para-cli) tool:
 ```sh
-# !!! You will need to have Node.js and NPM installed beforehand.
+# You will need to have Node.js and NPM installed beforehand.
 $ npm install -g para-cli
 # run setup and enter the keys for the root app and endpoint 'http://localhost:8080'
 $ para-cli setup
@@ -126,7 +126,7 @@ $ para-cli new-app "scoold" --name "Scoold"
 para.access_key = "app:scoold"
 para.secret_key = "..."
 ```
-6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold.jar` and keep an eye on the log for any error messages
+6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar` and keep an eye on the log for any error messages
 7. Open `http://localhost:8000` in your browser
 
 
@@ -149,7 +149,7 @@ Para requires:
 - 1 vCPU (2 are recommended)
 - 10 GB disk space or more (unless the database is stored on the same machine)
 
-JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold.jar`
+JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 ## Configuration
 
