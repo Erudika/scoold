@@ -216,6 +216,8 @@ public final class ScooldUtils {
 		try {
 			if (!callable.call()) {
 				throw new Exception();
+			} else if (retryCount > 0) {
+				logger.info("Connected to Para backend.");
 			}
 		} catch (Exception e) {
 			int maxRetries = Config.getConfigInt("connection_retries_max", 10);
