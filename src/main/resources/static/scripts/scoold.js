@@ -444,7 +444,7 @@ $(function () {
 	});
 
 	// bulk edit spaces
-	$("input[name=selectedUsers").click(function () {
+	$("input[name=selectedUsers]").click(function () {
 		$(this).closest(".user-card").find("input[name=user-space-ids]").each(function (i, el) {
 			var checks = $("input[id=\"" + el.value + "\"");
 			checks.prop("checked", "checked");
