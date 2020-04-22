@@ -396,7 +396,6 @@ $(function () {
 		var hidden = "true" === localStorage.getItem("welcome-message-onlogin-hidden");
 		if (!hidden && window.location.pathname !== CONTEXT_PATH + "/signin") {
 			$(".infostrip").removeClass("hide").data("name", "welcome-message-onlogin");
-			;
 			$(".infostrip-content").html(WELCOME_MESSAGE_ONLOGIN);
 		}
 	}
