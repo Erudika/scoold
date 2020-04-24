@@ -252,22 +252,61 @@
 						</div>
 					</nav>
 
-					<nav id="search-drawer" class="white z-depth-1 hide">
+					<nav id="search-drawer" class="white z-depth-1 hide hide-on-med-and-down">
 						<div class="nav-wrapper container">
 							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
 								<div class="input-field">
 									#if($!langDirection == "RTL")
 										<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
+										<a href="#" id="search-info-left"><i class="fa fa-question-circle grey-text"></i></a>
 									#end
 									<input id="search-box" type="search" name="q" placeholder="$!lang.get('search.search')" required>
 									<label class="label-icon" for="search-box"><i class="fa fa-search fa-2x grey-text"></i></label>
 									#if($!langDirection == "LTR")
+										<a href="#" id="search-info-right"><i class="fa fa-question-circle grey-text"></i></a>
 										<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
 									#end
 								</div>
 							</form>
 						</div>
 					</nav>
+					<div id="search-info-drawer" class="z-depth-0 hide hide-on-med-and-down">
+						<div class="pvl container">
+							<div class="row">
+								<div class="col m6 s12">
+									<div>
+										<b>Examples:</b> <code>query</code>, <code>"exact match"</code>, <code>wildcard*</code>,
+										<code>wild?ard</code>, <code>wild*rd</code>
+									</div>
+									<div>
+										<b>Fuzzy search:</b> <code>cake~</code> (finds <code>cakes</code>, <code>bake</code>)
+									</div>
+									<div>
+										<b>Term boost:</b> <code>"red velvet"^4</code>, <code>chocolate^2</code>
+									</div>
+									<div>
+										<b>Field grouping:</b> <code>tags:(+work -"fun-stuff")</code>
+									</div>
+									<div>
+										<b>Escaping:</b> Escape characters <code>+-&|!(){}[]^"~*?:\</code> with <code>\</code>, e.g. <code>\+</code>
+									</div>
+								</div>
+								<div class="col m6 s12">
+									<div>
+										<b>Range search:</b> <code>properties.timestamp:[1587729413488 TO *]</code> (inclusive),
+										<code>properties.title:{A TO Z}</code>(excluding A and Z)
+									</div>
+									<div>
+										<b>Combinations:</b> <code>chocolate AND vanilla</code>, <code>chocolate OR vanilla</code>,
+										<code>(chocolate OR vanilla) NOT "vanilla pudding"</code>
+									</div>
+									<div>
+										<b>Field search:</b> <code>properties.title:"The Title" AND text</code>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</header>
 

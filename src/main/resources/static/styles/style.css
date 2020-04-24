@@ -222,6 +222,14 @@ kbd {
 	border: none;
 	box-shadow: none;
 }
+#search-info-left {
+	position: absolute;
+	left: 35px;
+}
+#search-info-right {
+	position: absolute;
+	right: 50px;
+}
 textarea.edit-post {
 	min-height: 396px;
 }
@@ -487,6 +495,7 @@ body, footer.page-footer { background-color: #444444; }
 footer.page-footer { margin-top: 20px; }
 .page-footer a { font-weight: 400;}
 .navbar-color { background-color: #03a9f4; }
+nav { background-color: inherit; color: inherit; }
 
 /* switches and inputs */
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after { background-color: #039be5; }

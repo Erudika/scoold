@@ -378,6 +378,11 @@ $(function () {
 		return false;
 	});
 
+	$(document).on("click", "#search-info-left,#search-info-right", function() {
+		$('#search-info-drawer').toggleClass('hide');
+		return false;
+	});
+
 	$(document).on("click", ".close-infostrip", function () {
 		var name = $(this).closest(".infostrip").hide().data("name");
 		localStorage.setItem(name + "-hidden", "true");
