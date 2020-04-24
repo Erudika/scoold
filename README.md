@@ -540,6 +540,8 @@ You can add external stylesheets to the website with `para.external_styles`.
 ```ini
 para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 ```
+The external stylesheet will override the default one so, it's a good idea to copy the default CSS from
+[`/styles/style.css`](https://live.scoold.com/styles/style.css) and modify it.
 
 Additionally, you can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules will
 override any of the previously declared stylesheets, including the main stylesheet rules.
