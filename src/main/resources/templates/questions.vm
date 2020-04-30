@@ -121,7 +121,7 @@
 								#if($tagsFromPager && $tagsFromPager.startsWith("with_tags:"))
 									<input type="hidden" name="tags" value="$!tagsFromPager.replaceFirst('with_tags:', '')">
 								#else
-									<input type="hidden" name="tags" value="">
+									<input type="hidden" name="tags" value="$!tag">
 								#end
 							#end
 						</div>
