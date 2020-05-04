@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -368,9 +369,24 @@ public class ApiController {
 		String[] errors = ValidationUtils.validateObject(newUser);
 
 		if (errors.length == 0) {
-			User createdUser = pc.create(newUser);
+			// generic and password providers are identical but this was fixed in Para 1.37.1 (backwards compatibility)
+			String provider = "generic".equals(newUser.getIdentityProvider()) ? "password" : newUser.getIdentityProvider();
+			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Config.SEPARATOR +
+					newUser.getName() + Config.SEPARATOR + newUser.getPassword(), false);
+			// user is probably active:false so activate them
+			List<User> created = pc.findQuery(newUser.getType(), Config._EMAIL + ":" + newUser.getEmail());
+			if (createdUser == null && !created.isEmpty()) {
+				createdUser = created.iterator().next();
+				if (Utils.timestamp() - createdUser.getTimestamp() > TimeUnit.SECONDS.toMillis(20)) {
+					createdUser = null; // user existed previously
+				} else
+					if (newUser.getActive() && !createdUser.getActive()) {
+					createdUser.setActive(true);
+					pc.update(createdUser);
+				}
+			}
 			if (createdUser == null) {
-				badReq("Failed to create user.");
+				badReq("Failed to create user. User may already exist.");
 			} else {
 				Profile profile = Profile.fromUser(createdUser);
 				profile.getSpaces().addAll(readSpaces(((List<String>) entity.getOrDefault("spaces",
