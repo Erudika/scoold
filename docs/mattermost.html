@@ -152,6 +152,46 @@
 				}
 			}
 
+			.dropit ul {
+				font-size: 0;
+				list-style-type: none;
+				width: 100%;
+			}
+			.dropit ul li {
+				font-size: 1rem;
+				color: #303030;
+				display: block;
+				padding: 0 15px;
+				position: relative;
+				width: 100%;
+			}
+			.dropit ul li ul {
+				display: none;
+				background-color: white;
+			}
+			.dropit ul li ul li a {
+				padding: 0;
+				width: 100%;
+				background-color: transparent;
+			}
+			.dropit ul li:hover {
+				cursor: pointer;
+				background-color: #e5e5e5;
+			}
+			.dropit ul li:hover ul {
+				display: block;
+				width: 150px;
+				right: 0;
+				position: absolute;
+			}
+			.dropit ul li:hover ul li {
+				display: block;
+				background-color: white;
+			}
+			.dropit ul li:hover ul li:hover {
+				background-color: #e0e0e0;
+			}
+
 		</style>
 	</head>
   <body>
@@ -167,17 +207,27 @@
 								</a>
 							</div>
 							<ul class="right hide-on-med-and-down">
-								<li><a href="https://github.com/Erudika/scoold/releases/" title="Download">Download</a></li>
-								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
-								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
-								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
+								<li><a href="https://github.com/Erudika/scoold/releases/download/1.39.2/scoold-1.39.2.jar" title="Download">Download</a></li>
+								<li><a href="https://github.com/Erudika/scoold/blob/master/README.md" title="Documentation">Docs</a></li>
+								<li><a href="#faq" title="Frequently asked questions">FAQ</a></li>
+								<li class="dropit">
+									<ul>
+										<li>Demo
+											<ul>
+												<li><a href="https://live.scoold.com" title="Scoold Demo">Scoold Demo</a></li>
+												<li><a href="https://pro.scoold.com" title="Scoold Pro Demo">Scoold Pro Demo</a></li>
+											</ul>
+										</li>
+									</ul>
+								</li>
 							</ul>
 							<ul class="sidenav" id="mobile-drawer">
 								<li>&nbsp;</li>
-								<li><a href="https://github.com/Erudika/scoold/releases/" title="Download">Download</a></li>
+								<li><a href="https://github.com/Erudika/scoold/releases/download/1.39.2/scoold-1.39.2.jar" title="Download">Download</a></li>
 								<li><a href="https://paraio.com/scoold-pro" title="Buy Pro">Buy</a></li>
-								<li><a href="https://github.com/Erudika/scoold/" title="Source">Source</a></li>
-								<li><a href="https://live.scoold.com" title="Demo">Demo</a></li>
+								<li><a href="#faq" title="Frequently asked questions">FAQ</a></li>
+								<li><a href="https://live.scoold.com" title="Demo">Scoold Demo</a></li>
+								<li><a href="https://pro.scoold.com" title="Demo">Scoold Pro Demo</a></li>
 							</ul>
 						</div>
 					</nav>

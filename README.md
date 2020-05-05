@@ -63,10 +63,13 @@ your company or team.
 
 ...and more!
 
-## Live Demo
+## Live Demos
 
-*The demo is deployed on a free dyno and it might take a minute to wake up.*
-### [Live demo on Heroku](https://live.scoold.com)
+### [Scoold Demo](https://live.scoold.com)  |  [Scoold Pro Demo](https://pro.scoold.com)
+
+For **admin** access, open the Scoold Pro demo and login with "Demo login".
+
+*Sometimes the demos might take a minute to load.*
 
 ### Quick Start with a managed Para backend (easier)
 
