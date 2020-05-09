@@ -277,7 +277,9 @@ public final class ScooldUtils {
 			return null;
 		}
 		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
-		if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
+		if (req.getRequestURI().equals(CONTEXT_PATH + "/api/stats") && isValidJWToken(apiKeyJWT)) {
+			return API_USER;
+		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new WebApplicationException(401);
 		}
 		return API_USER;
