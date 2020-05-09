@@ -27,12 +27,14 @@ import static com.erudika.scoold.ScooldServer.TAGSLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,41 +90,65 @@ public class TagsController {
 	}
 
 	@PostMapping
-	public String rename(@RequestParam String tag, @RequestParam String newtag, HttpServletRequest req, Model model) {
+	public String rename(@RequestParam String tag, @RequestParam String newtag, HttpServletRequest req,
+			HttpServletResponse res, Model model) {
 		Profile authUser = utils.getAuthUser(req);
+		int count = 0;
 		if (utils.isMod(authUser)) {
-			Tag tagg = new Tag(tag);
-			Tag tagg2 = new Tag(newtag);
-			Tag t = pc.read(Utils.type(Tag.class), tagg.getId());
-			if (t != null && !tagg.getTag().equals(tagg2.getTag())) {
-				pc.delete(t);
-				t.setId(newtag);
-				logger.info("User {} ({}) is renaming tag '{}' to '{}'.",
-						authUser.getName(), authUser.getId(), tagg.getTag(), t.getTag());
+			Tag updated;
+			Tag oldTag = new Tag(tag);
+			Tag newTag = new Tag(newtag);
+			Tag t = pc.read(Utils.type(Tag.class), oldTag.getId());
+			if (t != null && !oldTag.getTag().equals(newTag.getTag())) {
+				if (oldTag.getTag().equals(newTag.getTag())) {
+					t.setCount(pc.getCount(Utils.type(Question.class),
+							Collections.singletonMap(Config._TAGS, oldTag.getTag())).intValue());
+					updated = pc.update(t);
+				} else {
+					pc.delete(t);
+					t.setId(newtag);
+					logger.info("User {} ({}) is renaming tag '{}' to '{}'.",
+							authUser.getName(), authUser.getCreatorid(), oldTag.getTag(), t.getTag());
 
-				int taggedCount = 0;
-				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
-				List<Question> questionslist;
-				do {
-					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{tagg.getTag()}, pager);
-					for (Question q : questionslist) {
-						taggedCount++;
-						q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
-								map(ts -> ts.equals(tagg.getTag()) ? t.getTag() : ts).
-								collect(Collectors.toList()));
-						logger.debug("Updated {} out of {} questions with new tag {}.",
-								questionslist.size(), pager.getCount(), t.getTag());
-					}
-					if (!questionslist.isEmpty()) {
-						pc.updateAll(questionslist);
-					}
-				} while (!questionslist.isEmpty());
-				t.setCount(taggedCount);
-				Tag updated = pc.create(t);
+					t.setCount(pc.getCount(Utils.type(Question.class),
+							Collections.singletonMap(Config._TAGS, newTag.getTag())).intValue());
+					Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+					List<Question> questionslist;
+					do {
+						questionslist = pc.findTagged(Utils.type(Question.class), new String[]{oldTag.getTag()}, pager);
+						for (Question q : questionslist) {
+							t.setCount(t.getCount() + 1);
+							q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
+									map(ts -> {
+										if (ts.equals(newTag.getTag())) {
+											t.setCount(t.getCount() - 1);
+										}
+										return ts.equals(oldTag.getTag()) ? t.getTag() : ts;
+									}).distinct().
+									collect(Collectors.toList()));
+							logger.debug("Updated {} out of {} questions with new tag {}.",
+									questionslist.size(), pager.getCount(), t.getTag());
+						}
+						if (!questionslist.isEmpty()) {
+							pc.updateAll(questionslist);
+						}
+					} while (!questionslist.isEmpty());
+					updated = pc.create(t); // overwrite new tag object
+				}
 				model.addAttribute("tag", updated);
+				count = t.getCount();
 			}
 		}
-		return "redirect:" + TAGSLINK;
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			res.setContentType("application/json");
+			try {
+				res.getWriter().println("{\"count\":" + count + ", \"tag\":\"" + new Tag(newtag).getTag() + "\"}");
+			} catch (IOException ex) { }
+			return "pagination";
+		} else {
+			return "redirect:" + TAGSLINK + "?" + req.getQueryString();
+		}
 	}
 
 	@ResponseBody

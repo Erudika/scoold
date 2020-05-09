@@ -30,14 +30,15 @@ import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
@@ -257,7 +258,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String create() {
-		createTags();
+		updateTags(null, getTags());
 		this.body = Utils.abbreviate(this.body, Config.getConfigInt("max_post_length", 20000));
 		Post p = client().create(this);
 		if (p != null) {
@@ -294,9 +295,9 @@ public abstract class Post extends Sysprop {
 		for (ParaObject child : children) {
 			ids.add(child.getId());
 		}
+		updateTags(getTags(), null);
 		client().deleteAll(ids);
 		client().delete(this);
-		updateTags(getTags(), null);
 	}
 
 	public static String getTagString(String tag) {
@@ -307,83 +308,45 @@ public abstract class Post extends Sysprop {
 		return StringUtils.truncate(Utils.noSpaces(s, "-"), 35);
 	}
 
-	private void createTags() {
-		if (getTags() == null || getTags().isEmpty()) {
-			return;
-		}
-		ArrayList<Tag> tagz = new ArrayList<Tag>();
-		Pager tagged = new Pager(0);
-		for (int i = 0; i < getTags().size(); i++) {
-			String ntag = getTags().get(i);
-			Tag t = new Tag(getTagString(ntag));
-			if (!StringUtils.isBlank(t.getTag())) {
-				tagged.setCount(0);
-				client().findTagged(getType(), new String[]{t.getTag()}, tagged);
-				t.setCount((int) tagged.getCount() + 1);
-				getTags().set(i, t.getTag());
-				tagz.add(t);
-			}
-		}
-		client().createAll(tagz);
-	}
-
 	public void updateTags(List<String> oldTags, List<String> newTags) {
-		if (oldTags == null || oldTags.isEmpty()) {
-			return;
-		}
-		List<String> toDelete = new LinkedList<>();
-		List<Tag> toCreate = new LinkedList<>();
-		Map<String, Tag> idTags = new LinkedHashMap<>();
-		Set<String> removedTags = new HashSet<>();
-		Set<String> addedTags = new HashSet<>();
-		Set<String> oldTagsSet = new HashSet<>();
-		Set<String> newTagsSet = new HashSet<>();
-		Pager tagged = new Pager(1);
-		oldTagsSet.addAll(oldTags);
-
-		if (newTags != null) {
-			for (String newTag : newTags) {
-				String tag = getTagString(newTag);
-				if (!StringUtils.isBlank(tag)) {
-					newTagsSet.add(tag);
-					if (!oldTagsSet.contains(tag)) {
-						Tag t = new Tag(tag);
-						t.setCount(1);
-						addedTags.add(tag);
-						idTags.put(t.getId(), t);
+		List<String> deleteUs = new LinkedList<>();
+		List<Tag> updateUs = new LinkedList<>();
+		Map<String, Tag> oldTagz = Optional.ofNullable(oldTags).orElse(Collections.emptyList()).stream().
+				map(t -> new Tag(getTagString(t))).collect(Collectors.toMap(t -> t.getId(), t -> t));
+		Map<String, Tag> newTagz = Optional.ofNullable(newTags).orElse(Collections.emptyList()).stream().
+				map(t -> new Tag(getTagString(t))).collect(Collectors.toMap(t -> t.getId(), t -> t));
+		Map<String, Tag> existingTagz = client().readAll(Stream.concat(oldTagz.keySet().stream(), newTagz.keySet().
+				stream()).distinct().collect(Collectors.toList())).
+				stream().collect(Collectors.toMap(t -> t.getId(), t -> (Tag) t));
+		// add newly created tags
+		client().createAll(newTagz.values().stream().filter(t -> {
+			t.setCount(1);
+			return !existingTagz.containsKey(t.getId());
+		}).collect(Collectors.toList()));
+		// increment or decrement the count of the rest
+		existingTagz.values().forEach(t -> {
+			if (!oldTagz.containsKey(t.getId()) && newTagz.containsKey(t.getId())) {
+				t.setCount(t.getCount() + 1);
+				updateUs.add(t);
+			} else if (oldTagz.containsKey(t.getId()) && (newTags == null || !newTagz.containsKey(t.getId()))) {
+				t.setCount(t.getCount() - 1);
+				if (t.getCount() <= 0) {
+					// check if actual count is different
+					int c = client().getCount(Utils.type(Question.class),
+							Collections.singletonMap(Config._TAGS, t.getTag())).intValue();
+					if (c <= 1) {
+						deleteUs.add(t.getId());
+					} else {
+						t.setCount(c);
 					}
+				} else {
+					updateUs.add(t);
 				}
-			}
-		}
-		for (String oldTag : oldTags) {
-			if (!newTagsSet.contains(oldTag)) {
-				Tag t = new Tag(oldTag);
-				t.setCount(0);
-				removedTags.add(oldTag);
-				idTags.put(t.getId(), t);
-			}
-		}
-		for (String tag : idTags.keySet()) {
-			tagged.setCount(0);
-			Tag t = new Tag(tag);
-			client().findTagged(getType(), new String[]{t.getTag()}, tagged);
-			if (addedTags.contains(t.getTag())) {
-				t.setCount((int) tagged.getCount() + 1);
-			} else if (removedTags.contains(t.getTag())) {
-				t.setCount((int) tagged.getCount() - 1);
-			}
-			idTags.put(t.getId(), t);
-		}
-		for (Tag tag : idTags.values()) {
-			if (tag.getCount() <= 0) {
-				toDelete.add(tag.getId());
-			} else {
-				toCreate.add(tag);
-			}
-		}
-		client().deleteAll(toDelete);
-		client().createAll(toCreate);
-		setTags(new ArrayList<>(newTagsSet));
+			} // else: count remains unchanged
+		});
+		client().updateAll(updateUs);
+		client().deleteAll(deleteUs);
+		setTags(newTagz.values().stream().map(t -> t.getTag()).collect(Collectors.toList()));
 	}
 
 	@JsonIgnore

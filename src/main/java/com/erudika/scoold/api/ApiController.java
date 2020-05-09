@@ -565,7 +565,7 @@ public class ApiController {
 			badReq("Missing request body.");
 		}
 		Model model = new ExtendedModelMap();
-		tagsController.rename(id, (String) entity.get("tag"), req, model);
+		tagsController.rename(id, (String) entity.get("tag"), req, res, model);
 		if (!model.containsAttribute("tag")) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;

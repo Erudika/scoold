@@ -650,20 +650,19 @@ $(function () {
 	});
 
 	/****************************************************
-     *                    TRANSLATIONS
+     *                      TAGS
      ****************************************************/
 
-	$(document).on("click", "a.delete-translation",  function() {
-		var that = $(this);
-		return areYouSure(function() {
-			that.closest("div.translationbox").fadeOut("fast", function() {
-				that.remove();
-			});
-			$.post(that.attr("href"));
-		}, rusuremsg, false);
+	submitFormBind("form.tag-rename-form", function(data, status, xhr, form) {
+		var $form = $(form);
+		var hiddenTag = $form.find("input[type=hidden]");
+		var tag = $form.find("input[name=newtag]").val();
+		hiddenTag.val(tag);
+		$form.closest(".col").find(".tag-count").html("&times; " + (data.count || 0)).end().
+				find(".next-div-toggle").click().prevAll("a").text(data.tag || tag).attr("href", function (i, href) {
+					return href.substring(0, href.lastIndexOf('/') + 1) + encodeURIComponent(data.tag);
+				});
 	});
-
-	$("form.new-translation-form").find("textarea").focus();
 
 	/****************************************************
      *                  PAGINATION

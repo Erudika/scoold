@@ -21,7 +21,7 @@
 			#foreach($showtag in $tagslist)
 			<div class="col m3">
 				<div class="card-panel pvl">
-					<strong class="right">&times; $!showtag.count</strong>
+					<strong class="right tag-count">&times; $!showtag.count</strong>
 					<i class="fa fa-tag grey-text"></i>&nbsp;
 					<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="mrs">
 						$!showtag.tag
@@ -29,12 +29,12 @@
 					#if($isMod)
 						<a href="#" title="Rename" class="next-div-toggle"><i class="fa fa-pencil-square orange-text"></i></a>
 						<div class="row mbn hide">
-							<form method="post">
+							<form method="post" class="tag-rename-form">
 								<div class="col s12 m8">
 									<div class="input-field">
 										<label for="new-tag-${showtag.tag}">$!lang.get('tags.tag')</label>
-										<input type="text" id="new-tag-${showtag.tag}" name="newtag" class="locationbox validate" value="$!showtag.tag" required>
-										<input type="hidden" name="tag" class="locationbox validate" value="$!showtag.tag">
+										<input type="text" id="new-tag-${showtag.tag}" name="newtag" class="validate" value="$!showtag.tag" required>
+										<input type="hidden" name="tag" class="validate" value="$!showtag.tag">
 									</div>
 								</div>
 								<div class="col s12 m4 r">

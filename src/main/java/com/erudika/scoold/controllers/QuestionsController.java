@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Tag;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
@@ -95,6 +96,12 @@ public class QuestionsController {
 			} else {
 				questionslist = pc.findQuery(type, qf + " AND " + Config._TAGS + ":" + tag + "*", itemcount);
 			}
+		}
+		int c = (int) itemcount.getCount();
+		Tag t = pc.read(new Tag(tag).getId());
+		if (t != null && t.getCount() != c) {
+			t.setCount(c);
+			pc.update(t);
 		}
 		utils.fetchProfiles(questionslist);
 		model.addAttribute("path", "questions.vm");
