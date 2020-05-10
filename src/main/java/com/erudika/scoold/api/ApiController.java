@@ -807,17 +807,41 @@ public class ApiController {
 	@GetMapping("/stats")
 	public Map<String, Object> stats(HttpServletRequest req) {
 		Map<String, Object> stats = new LinkedHashMap<>();
-		stats.put("questions", pc.getCount(Utils.type(Question.class)));
-		stats.put("replies", pc.getCount(Utils.type(Reply.class)));
-		stats.put("spaces", pc.getCount("scooldspace"));
-		stats.put("users", pc.getCount(Utils.type(Profile.class)));
-		stats.put("tags", pc.getCount(Utils.type(Tag.class)));
-		stats.put("reports", pc.getCount(Utils.type(Report.class)));
-		stats.put("comments", pc.getCount(Utils.type(Comment.class)));
-		stats.put("revisions", pc.getCount(Utils.type(Revision.class)));
-		stats.put("unapproved_questions", pc.getCount(Utils.type(UnapprovedQuestion.class)));
-		stats.put("unapproved_replies", pc.getCount(Utils.type(UnapprovedReply.class)));
-		stats.put("para_version", pc.getServerVersion());
+		long qcount = 0L;
+		long acount = 0L;
+		long scount = 0L;
+		long ucount = 0L;
+		long tcount = 0L;
+		long rcount = 0L;
+		long ccount = 0L;
+		long recount = 0L;
+		long uqcount = 0L;
+		long uacount = 0L;
+		String paraVer = null;
+		try {
+			qcount = pc.getCount(Utils.type(Question.class));
+			acount = pc.getCount(Utils.type(Reply.class));
+			scount = pc.getCount("scooldspace");
+			ucount = pc.getCount(Utils.type(Profile.class));
+			tcount = pc.getCount(Utils.type(Tag.class));
+			rcount = pc.getCount(Utils.type(Report.class));
+			ccount = pc.getCount(Utils.type(Comment.class));
+			recount = pc.getCount(Utils.type(Revision.class));
+			uqcount = pc.getCount(Utils.type(UnapprovedQuestion.class));
+			uacount = pc.getCount(Utils.type(UnapprovedReply.class));
+			paraVer = pc.getServerVersion();
+		} catch (Exception e) { }
+		stats.put("questions", qcount);
+		stats.put("replies", acount);
+		stats.put("spaces", scount);
+		stats.put("users", ucount);
+		stats.put("tags", tcount);
+		stats.put("reports", rcount);
+		stats.put("comments", ccount);
+		stats.put("revisions", recount);
+		stats.put("unapproved_questions", uqcount);
+		stats.put("unapproved_replies", uacount);
+		stats.put("para_version", Optional.ofNullable(paraVer).orElse("unknown"));
 		stats.put("scoold_version",  Optional.ofNullable(getClass().getPackage().getImplementationVersion()).
 				orElse("unknown"));
 		return stats;
