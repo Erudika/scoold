@@ -448,10 +448,13 @@ $(function () {
 	});
 
 	// bulk edit spaces
-	$("input[name=selectedUsers]").click(function () {
-		$(this).closest(".user-card").find("input[name=user-space-ids]").each(function (i, el) {
+	$(document).on("click", "input[name=selectedUsers]", function () {
+		var elem = $(this);
+		elem.closest(".user-card").find("input[name=user-space-ids]").each(function (i, el) {
 			var checks = $("input[id=\"" + el.value + "\"");
-			checks.prop("checked", "checked");
+			if (elem.is(":checked")) {
+				checks.prop("checked", "checked");
+			}
 		});
 	});
 
