@@ -219,7 +219,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		logger.info("Listening on port {}...", getServerPort());
 		String accessKey = Config.getConfigParam("access_key", "x");
 		ParaClient pc = new ParaClient(accessKey, Config.getConfigParam("secret_key", "x"));
-		pc.setEndpoint(Config.getConfigParam("endpoint", null));
+		pc.setEndpoint(Config.getConfigParam("endpoint", "http://localhost:8080"));
 		pc.setChunkSize(Config.getConfigInt("batch_request_size", 0)); // unlimited batch size
 
 		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);

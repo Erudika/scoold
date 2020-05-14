@@ -90,6 +90,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.WebApplicationException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1382,7 +1383,7 @@ public final class ScooldUtils {
 			return "";
 		}
 		try {
-			String decodedScript = Utils.base64dec(encodedScript);
+			String decodedScript = Base64.isBase64(encodedScript) ? Utils.base64dec(encodedScript) : "";
 			return StringUtils.isBlank(decodedScript) ? encodedScript : decodedScript;
 		} catch (Exception e) {
 			return encodedScript;
@@ -1417,28 +1418,33 @@ public final class ScooldUtils {
 	}
 
 	public String getInlineCSS() {
-		Sysprop custom = getCustomTheme();
-		String themeName = custom.getName();
-		String inline = Config.getConfigParam("inline_css", "");
-		String loadedTheme;
-		if ("default".equalsIgnoreCase(themeName) || StringUtils.isBlank(themeName)) {
-			return inline;
-		} else if ("custom".equalsIgnoreCase(themeName)) {
-			loadedTheme = (String) custom.getProperty("theme");
-		} else {
-			loadedTheme = loadResource(getThemeKey(themeName));
-			if (StringUtils.isBlank(loadedTheme)) {
-				FILE_CACHE.put("theme", "default");
-				custom.setName("default");
-				pc.update(custom);
+		try {
+			Sysprop custom = getCustomTheme();
+			String themeName = custom.getName();
+			String inline = Config.getConfigParam("inline_css", "");
+			String loadedTheme;
+			if ("default".equalsIgnoreCase(themeName) || StringUtils.isBlank(themeName)) {
 				return inline;
+			} else if ("custom".equalsIgnoreCase(themeName)) {
+				loadedTheme = (String) custom.getProperty("theme");
 			} else {
-				FILE_CACHE.put("theme", themeName);
+				loadedTheme = loadResource(getThemeKey(themeName));
+				if (StringUtils.isBlank(loadedTheme)) {
+					FILE_CACHE.put("theme", "default");
+					custom.setName("default");
+					pc.update(custom);
+					return inline;
+				} else {
+					FILE_CACHE.put("theme", themeName);
+				}
 			}
+			loadedTheme = StringUtils.replaceEachRepeatedly(loadedTheme,
+					new String[] {"<", "</", "<script", "<SCRIPT"}, new String[] {"", "", "", ""});
+			return loadedTheme + "\n/*** END OF THEME CSS ***/\n" + inline;
+		} catch (Exception e) {
+			logger.debug("Failed to load inline CSS.");
 		}
-		loadedTheme = StringUtils.replaceEachRepeatedly(loadedTheme,
-				new String[] {"<", "</", "<script", "<SCRIPT"}, new String[] {"", "", "", ""});
-		return loadedTheme + "\n/*** END OF THEME CSS ***/\n" + inline;
+		return "";
 	}
 
 	public void setCustomTheme(String themeName, String themeCSS) {
