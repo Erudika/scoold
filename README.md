@@ -7,7 +7,7 @@
 **Scoold** is a Q&A/knowledge base platform written in Java. The project was created back in 2008, released in 2012 as
 social network for schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
-Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~4000 LOC),
+Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~7000 LOC),
 the backend is handled by a separate service called [Para](https://github.com/Erudika/para). Scoold does not require a
 database, and the controller logic is really simple because all the heavy lifting is delegated to Para.
 This makes the code easy to read and can be learned quickly by junior developers.
@@ -115,7 +115,7 @@ para.endpoint = "https://paraio.com"
 1. [run Para locally on port 8080](https://paraio.org/docs/#001-intro) and initialize it with `GET localhost:8080/v1/_setup`
 2. Save the access keys for the root Para app somewhere safe, you'll need them to configure Para CLI tool below
 3. Create a new directory for Scoold containing a file called `application.conf` and paste in the example configuration below.
-4. Create a new Para app called `scoold` using [Para CLI](https://github.com/Erudika/para-cli) tool:
+4. Create a **new Para app** called `scoold` using [Para CLI](https://github.com/Erudika/para-cli) tool:
 ```sh
 # You will need to have Node.js and NPM installed beforehand.
 $ npm install -g para-cli
@@ -155,8 +155,6 @@ Para requires:
 JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 ## Configuration
-
-> **Important:** Create a dedicated app for Scoold, instead of using `app:para`, when hosting your own instance of Para.
 
 The most important settings are `para.endpoint` - the URL of the Para server, as well as,
 `para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
