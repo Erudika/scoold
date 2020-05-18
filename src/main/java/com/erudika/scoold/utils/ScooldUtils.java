@@ -944,7 +944,7 @@ public final class ScooldUtils {
 	}
 
 	public String verifyExistingSpace(Profile authUser, String space) {
-		if (!isDefaultSpace(space) && pc.read(getSpaceId(space)) == null) {
+		if (!isDefaultSpace(space) && !isAllSpaces(space) && pc.read(getSpaceId(space)) == null) {
 			if (authUser != null) {
 				authUser.removeSpace(space);
 				pc.update(authUser);
