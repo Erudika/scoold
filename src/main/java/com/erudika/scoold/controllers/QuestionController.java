@@ -152,7 +152,7 @@ public class QuestionController {
 			logger.error(null, ex);
 		}
 
-		if (!StringUtils.isBlank(title) && title.length() > 10) {
+		if (StringUtils.length(title) > 10) {
 			showPost.setTitle(title);
 		}
 		// body can be blank
