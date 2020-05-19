@@ -165,7 +165,8 @@ public class QuestionController {
 			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
 		}
 		if (isQuestion) {
-			String validSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
+			String validSpace = utils.getValidSpaceIdExcludingAll(authUser,
+					Optional.ofNullable(space).orElse(showPost.getSpace()), req);
 			if (utils.canAccessSpace(authUser, validSpace) && validSpace != null &&
 					!utils.getSpaceId(validSpace).equals(utils.getSpaceId(showPost.getSpace()))) {
 				showPost.setSpace(validSpace);

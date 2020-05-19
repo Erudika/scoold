@@ -397,7 +397,7 @@
 #end
 ####################################
 #macro(questionspage $posts )
-	#set($showSpaceLabel = $scooldUtils.isAllSpaces($currentSpace))
+	#set($showSpaceLabel = $scooldUtils.isAllSpaces($currentSpace) || $isMod)
 	#foreach($showpost in $posts)
 	#set($actionlink = "#getpostlink($showpost false true)")
 	#set($actionlink2 = "#getpostlink($showpost true true)")
@@ -468,10 +468,17 @@
 						#if($showpost.type == "unapprovedquestion")
 						<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
 						#end
-						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">
+							#if($showSpaceLabel)
+								#set($spaceLabel = "$!scooldUtils.getSpaceName($!showpost.space)")
+								#if(!$spaceLabel.trim().isEmpty())
+									<small class="grey-text"><strong class="mrs">$spaceLabel</strong><i class="fa fa-angle-right"></i></small>
+								#end
+							#end
+							$!showpost.title
+						</a>
 					</div>
 					<div>
-						#if($showSpaceLabel)<small class="grey-text"><strong>$scooldUtils.getSpaceName($showpost.space)</strong></small>#end
 						#foreach($showtag in $showpost.tags)
 							#if ($showtag && $showtag.trim() != "")
 								<a href="$questionslink/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="mrm">
