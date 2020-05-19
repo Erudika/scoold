@@ -22,7 +22,6 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
@@ -63,7 +62,7 @@ public class ReportsController {
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
 		if (!utils.isMod(utils.getAuthUser(req))) {
-			return "redirect:" + HOMEPAGE;
+			return "redirect:" + REPORTSLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);

@@ -23,6 +23,8 @@ import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
+import static com.erudika.scoold.ScooldServer.SEARCHLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -41,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -78,6 +81,9 @@ public class SearchController {
 	@GetMapping({"/search/{type}/{query}", "/search"})
 	public String get(@PathVariable(required = false) String type, @PathVariable(required = false) String query,
 			@RequestParam(required = false) String q, HttpServletRequest req, Model model) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + SEARCHLINK + "?q=" + Optional.ofNullable(query).orElse("*");
+		}
 		List<Profile> userlist = new ArrayList<Profile>();
 		List<Post> questionslist = new ArrayList<Post>();
 		List<Post> answerslist = new ArrayList<Post>();

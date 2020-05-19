@@ -86,6 +86,9 @@ public class QuestionsController {
 
 	@GetMapping("/questions/tag/{tag}")
 	public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
+		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
@@ -115,6 +118,10 @@ public class QuestionsController {
 
 	@GetMapping("/questions/similar/{like}")
 	public void getSimilarAjax(@PathVariable String like, HttpServletRequest req, HttpServletResponse res) throws IOException {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			res.setStatus(401);
+			return;
+		}
 		Profile authUser = utils.getAuthUser(req);
 		StringBuilder sb = new StringBuilder();
 		Question q = new Question();
@@ -138,6 +145,9 @@ public class QuestionsController {
 	@GetMapping("/questions/{filter}")
 	public String getSorted(@PathVariable(required = false) String filter,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
+		}
 		getQuestions(sortby, filter, req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));

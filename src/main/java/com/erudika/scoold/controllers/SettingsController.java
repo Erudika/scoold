@@ -21,7 +21,6 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -61,7 +60,7 @@ public class SettingsController {
 	@GetMapping
 	public String get(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + HOMEPAGE;
+			return "redirect:" + SETTINGSLINK;
 		}
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
