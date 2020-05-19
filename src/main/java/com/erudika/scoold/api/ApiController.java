@@ -173,7 +173,8 @@ public class ApiController {
 		post.setSpace(spaces.iterator().hasNext() ? spaces.iterator().next() : null);
 
 		if (post.isQuestion()) {
-			questionsController.post(post.getLocation(), post.getLatlng(), post.getAddress(), post.getSpace(), req, model);
+			questionsController.post(post.getLocation(), post.getLatlng(), post.getAddress(), post.getSpace(),
+					req, res, model);
 		} else if (post.isReply()) {
 			questionController.reply(post.getParentid(), "", null, req, res, model);
 		} else {
@@ -246,7 +247,7 @@ public class ApiController {
 		space = spaces.iterator().hasNext() ? spaces.iterator().next() : null;
 		Model model = new ExtendedModelMap();
 		questionController.edit(id, title, body, String.join(",", (List<String>) entity.get("tags")),
-				location, latlng, space, req, model);
+				location, latlng, space, req, res, model);
 
 		Post post = (Post) model.getAttribute("post");
 		if (post == null) {

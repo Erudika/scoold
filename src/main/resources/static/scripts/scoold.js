@@ -223,7 +223,7 @@ $(function () {
 						clearLoading();
 						$form.data('submittedAjax', false);
 						var cb = errorfn || $.noop;
-						cb(xhr, statusText, error);
+						cb(xhr, statusText, error, form);
 					}
 				});
 			}
@@ -756,7 +756,20 @@ $(function () {
 			spellChecker: false,
 			previewRender: function (plainText) {
 				return this.parent.markdown(replaceMentionsWithMarkdownLinks(plainText));
-			}
+			},
+			status: [{
+				className: "saved",
+				defaultValue: function(el) {
+					el.innerHTML = "";
+					$(document).on("event:post-edit-saved", function () {
+						el.innerHTML = "<b class='green-text'>saved</b>";
+						$(el).show().delay(2000).fadeOut();
+					});
+				},
+				onUpdate: function(el) {
+					el.innerHTML = "";
+				}
+			}, "lines", "words", "cursor"]
 		});
 		if (RTL_ENABLED) {
 			mde.codemirror.options.direction = "rtl";
@@ -764,17 +777,6 @@ $(function () {
 		}
 		return mde;
 	}
-
-	$(document).on("event:show", ".editbox", function () {
-		var el = $(this).find("textarea.edit-post:visible");
-		if (el.length) {
-			initPostEditor(el.get(0));
-		}
-		$("#title_text").on("keyup", function () {
-			$('#post-title').text($(this).val());
-		});
-	});
-
 
 	// save draft in localstorage
 	var askForm = $("form#ask-question-form, form#write-feedback-form");
@@ -804,7 +806,7 @@ $(function () {
 					saved = true;
 				}
 				if (saved) {
-					askForm.find(".save-icon").show().delay(2000).fadeOut();
+					$(document).trigger("event:post-edit-saved");
 				}
 			}, 3000);
 
@@ -830,11 +832,15 @@ $(function () {
 				}
 			});
 
-			askForm.on("submit", function () {
+			submitFormBind("#ask-question-form", function (data, status, xhr, form) {
 				clearInterval(saveDraftInterval1);
 				localStorage.removeItem("ask-form-title");
 				localStorage.removeItem("ask-form-body");
 				localStorage.removeItem("ask-form-tags");
+				window.location.href = data.url || "";
+			}, function (xhr, status, error) {
+				clearInterval(saveDraftInterval1);
+				window.location.reload(true);
 			});
 		} catch (exception) {}
 	}
@@ -847,7 +853,7 @@ $(function () {
 			var saveDraftInterval2 = setInterval(function () {
 				if (localStorage.getItem("answer-form-body") !== answerBody.value()) {
 					localStorage.setItem("answer-form-body", answerBody.value());
-					answerForm.find(".save-icon").show().delay(2000).fadeOut();
+					$(document).trigger("event:post-edit-saved");
 				}
 			}, 3000);
 
@@ -864,11 +870,80 @@ $(function () {
 				localStorage.removeItem("answer-form-body");
 			}, function (xhr, status, error) {
 				clearInterval(saveDraftInterval2);
-				localStorage.removeItem("answer-form-body");
 				window.location.reload(true);
 			});
 		} catch (exception) {}
 	}
+
+	var saveTimeout;
+	var saveTextToLocalStorage = function(id, val) {
+		clearTimeout(saveTimeout);
+		localStorage.setItem(id, val);
+		saveTimeout = setTimeout(function () {
+			$(document).trigger("event:post-edit-saved");
+		}, 1000);
+	};
+
+	// initialize all post edit forms
+	var editForms = $("form.edit-post-form");
+	if (editForms.length) {
+		for (var i = 0; i < editForms.length; i++) {
+			var $form = $(editForms[i]);
+			var title = $form.find("input[name=title]");
+			var tags = $form.find("input[name=tags]");
+			var titleId = title.attr("id");
+			var tagsId = tags.attr("id");
+
+			title.on("keyup", function () {
+				$('#post-title').text($(this).val());
+			});
+
+			title.val(localStorage.getItem(titleId) || title.val());
+			tags.val(localStorage.getItem(tagsId) || tags.val());
+	//			M.updateTextFields();
+			if (title.length) {
+				title.on("change textInput input", function () {
+					saveTextToLocalStorage($(this).attr("id"), $(this).val());
+				});
+			}
+			if (tags.length) {
+				tags.on("change textInput input", function () {
+					saveTextToLocalStorage($(this).attr("id"), $(this).val());
+				});
+			}
+		}
+	}
+
+	$(document).on("event:show", ".editbox", function () {
+		var txtElem = $(this).find("textarea.edit-post:visible");
+		if (txtElem.length) {
+			var bodyMDE = initPostEditor(txtElem.get(0));
+			bodyMDE.value(localStorage.getItem(txtElem.attr("id")) || bodyMDE.value());
+			bodyMDE.codemirror.on("change", function () {
+				saveTextToLocalStorage(txtElem.attr("id"), bodyMDE.value());
+			});
+		}
+	});
+
+	submitFormBind("form.edit-post-form", function (data, status, xhr, form) {
+		var $form = $(form);
+		localStorage.removeItem($form.find("input[name=title]").attr("id"));
+		localStorage.removeItem($form.find("textarea[name=body]").attr("id"));
+		localStorage.removeItem($form.find("input[name=tags]").attr("id"));
+		window.location.href = data.url || "";
+	}, function (xhr, status, error, form) {
+		var hashId = "post-" + $(form).closest(".postbox").attr("id");
+		var path = window.location.pathname.replace(/\/edit-post-.*$/, "");
+		window.location.href = window.location.origin + path + "/edit-" + hashId;
+	});
+
+	var editingPosts = $(".postbox.resume-editing:first").find(".editlink").click().end();
+	if (editingPosts.length) {
+		$("html, body").animate({
+			scrollTop: editingPosts.first().offset().top
+		}, 100);
+	}
+
 
 	$(document).on("click", "a.approve-answer, a.approve-translation", function() {
 		var on = "green-text";
@@ -1044,12 +1119,12 @@ $(function () {
 			$(c).find('i.close').text("");
 			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
 				return c.tag;
-			}).join(','));
+			}).join(',')).trigger('change');
 		},
 		onChipDelete: function () {
 			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
 				return c.tag;
-			}).join(','));
+			}).join(',')).trigger('change');
 		}
 	}).find('i.close').text("");
 

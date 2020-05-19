@@ -177,9 +177,6 @@ kbd {
 .para-logo-footer {
 	margin-bottom: -4px;
 }
-.hidden-save-icon {
-	display: none;
-}
 .click2hide {
 	cursor: pointer;
 }

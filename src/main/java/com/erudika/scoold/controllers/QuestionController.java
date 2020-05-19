@@ -57,6 +57,7 @@ import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -80,7 +81,7 @@ public class QuestionController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping({"/{id}", "/{id}/{title}"})
+	@GetMapping({"/{id}", "/{id}/{title}", "/{id}/{title}/*"})
 	public String get(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
 
@@ -91,7 +92,7 @@ public class QuestionController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + (utils.isDefaultSpacePublic() || utils.isAuthenticated(req) ?
-					QUESTIONSLINK : SIGNINLINK + "?returnto=" + showPost.getPostLink(false, false));
+					QUESTIONSLINK : SIGNINLINK + "?returnto=" + req.getRequestURI());
 		} else if (!utils.isDefaultSpace(showPost.getSpace()) && pc.read(utils.getSpaceId(showPost.getSpace())) == null) {
 			showPost.setSpace(Post.DEFAULT_SPACE);
 			pc.update(showPost);
@@ -129,13 +130,18 @@ public class QuestionController {
 	public String edit(@PathVariable String id, @RequestParam(required = false) String title,
 			@RequestParam(required = false) String body, @RequestParam(required = false) String tags,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String space, HttpServletRequest req, Model model) {
+			@RequestParam(required = false) String space, HttpServletRequest req, HttpServletResponse res, Model model) {
 
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			model.addAttribute("post", showPost);
-			return "redirect:" + req.getRequestURI();
+			if (utils.isAjaxRequest(req)) {
+				res.setStatus(400);
+				return "blank";
+			} else {
+				return "redirect:" + req.getRequestURI(); // + "/edit-post-12345" ?
+			}
 		}
 		boolean isQuestion = !showPost.isReply();
 		HashSet<String> addedTags = new HashSet<>();
@@ -174,7 +180,16 @@ public class QuestionController {
 			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags));
 		}
 		model.addAttribute("post", showPost);
-		return "redirect:" + showPost.getPostLink(false, false);
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			res.setContentType("application/json");
+			try {
+				res.getWriter().println("{\"url\":\"" + getPostLink(showPost) + "\"}");
+			} catch (IOException ex) { }
+			return "blank";
+		} else {
+			return "redirect:" + showPost.getPostLink(false, false);
+		}
 	}
 
 	@PostMapping({"/{id}", "/{id}/{title}"})
@@ -445,5 +460,9 @@ public class QuestionController {
 			showPost.removeFollower(authUser.getUser());
 		}
 		pc.update(showPost); // update without adding revisions
+	}
+
+	private String getPostLink(Post showPost) {
+		return showPost.getPostLink(false, false) + (showPost.isQuestion() ? "" :  "#post-" + showPost.getId());
 	}
 }

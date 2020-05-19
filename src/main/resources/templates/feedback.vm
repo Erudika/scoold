@@ -27,7 +27,6 @@
 					</div>
 				</div>
 
-				<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 				<button class="btn mtl waves-effect waves-light" type="submit">
 					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 				</button>
@@ -69,7 +68,6 @@
 						#getmessagebox("red white-text" $error.get("body"))
 
 						<input type="hidden" name="answer" value="true">
-						<div><i class="fa fa-save save-icon green-text hidden-save-icon"></i> &nbsp;</div>
 						<button class="btn mtl waves-effect waves-light" type="submit">
 							<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 						</button>

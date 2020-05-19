@@ -180,7 +180,8 @@ public class QuestionsController {
 
 	@PostMapping("/questions/ask")
 	public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String address, String space, HttpServletRequest req, Model model) {
+			@RequestParam(required = false) String address, String space,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
@@ -217,9 +218,23 @@ public class QuestionsController {
 				model.addAttribute("askSelected", "navbtn-hover");
 				return "base";
 			}
-			return "redirect:" + q.getPostLink(false, false);
+			if (utils.isAjaxRequest(req)) {
+				res.setStatus(200);
+				res.setContentType("application/json");
+				try {
+					res.getWriter().println("{\"url\":\"" + q.getPostLink(false, false) + "\"}");
+				} catch (IOException ex) { }
+				return "blank";
+			} else {
+				return "redirect:" + q.getPostLink(false, false);
+			}
 		}
-		return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(400);
+			return "blank";
+		} else {
+			return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK + "/ask";
+		}
 	}
 
 	@GetMapping({"/questions/space/{space}", "/questions/space"})

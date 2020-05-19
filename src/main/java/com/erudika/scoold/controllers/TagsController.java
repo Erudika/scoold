@@ -145,7 +145,7 @@ public class TagsController {
 			try {
 				res.getWriter().println("{\"count\":" + count + ", \"tag\":\"" + new Tag(newtag).getTag() + "\"}");
 			} catch (IOException ex) { }
-			return "pagination";
+			return "blank";
 		} else {
 			return "redirect:" + TAGSLINK + "?" + req.getQueryString();
 		}

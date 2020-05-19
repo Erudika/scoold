@@ -598,7 +598,8 @@
 ####################################
 #macro(postbox $showpost $parentpost)
 #set($actionlink = "#getpostlink($showpost false true)")
-<div id="$!showpost.id" class="postbox $!{showpost.type}box">
+#if($request.getServletPath().endsWith("/edit-post-$!showpost.id"))#set($resumeEditPost = "resume-editing")#else#set($resumeEditPost = "" )#end
+<div id="$!showpost.id" class="postbox $!{showpost.type}box $!{resumeEditPost}">
 	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="postbody pvs">
@@ -687,22 +688,23 @@
 
 	#if ($scooldUtils.canEdit($showpost, $authUser))
 	<div class="editbox pvm hide">
-		<form method="post" action="$questionlink/$!showpost.id/edit">
+		<form method="post" action="$questionlink/$!showpost.id/edit" class="edit-post-form">
 			#sectoken(false "EDIT_POST_$!showpost.id")
 
 			#if(!$showpost.isReply())
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
-					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="2"
-								 value="$!showpost.title" required>
+					<input type="text" name="title" class="validate" maxlength="255" minlength="2"
+								 value="$!showpost.title" id="edit-$!{showpost.id}-title" required>
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>
 			#end
 
 			<i class="fa fa-pencil fa-2x left grey-text"></i>
 			<div class="pll mll">
-				<textarea class="edit-post" name="body" length="$MAX_TEXT_LENGTH" minlength="10">$!showpost.body</textarea>
+				<textarea class="edit-post" name="body" length="$MAX_TEXT_LENGTH" minlength="10"
+									id="edit-$!{showpost.id}-body">$!showpost.body</textarea>
 				#getmessagebox("red white-text" $error.get("body"))
 			</div>
 
@@ -710,7 +712,7 @@
 				<div class="input-field">
 					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-					<input type="hidden" name="tags" value="$!showpost.tagsString">
+					<input type="hidden" name="tags" value="$!showpost.tagsString" id="edit-$!{showpost.id}-tags">
 					#getmessagebox("red white-text" $error.get("tags"))
 				</div>
 
