@@ -539,15 +539,26 @@ consent. You can bypass that by prefixing its key with "bypassconsent", e.g. `pa
 
 ## External CSS stylesheets
 
-You can add external stylesheets to the website with `para.external_styles`.
+You can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules **will
+override** any of the previously declared stylesheets, including the main stylesheet rules.
+
+```ini
+para.inline_css = "body { color: #abcdef; }"
+```
+Another option is to add external stylesheets to the website:
 ```ini
 para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 ```
-The external stylesheet will override the default one so, it's a good idea to copy the default CSS from
-[`/styles/style.css`](https://live.scoold.com/styles/style.css) and modify it.
+The last option is to completely replace the main stylesheet with a custom one. It's a good idea to copy the default
+CSS rules from [`/styles/style.css`](https://live.scoold.com/styles/style.css) and modify those, then upload the new
+custom stylesheet file to a public location and set:
 
-Additionally, you can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules will
-override any of the previously declared stylesheets, including the main stylesheet rules.
+```ini
+para.stylesheet_url = "https://public.cdn.com/custom.css"
+```
+
+The order in which CSS rules are loaded is this (each overrides the previous ones):
+1. main stylesheet, 2. external stylesheets, 3. inline CSS.
 
 ## Serving static files from a CDN
 
@@ -1382,8 +1393,8 @@ para.footer_html = "<a href=\"https://my.link\">My Link</a>"
 para.footer_links_enabled = true
 # favicon image location
 para.favicon_url = "/favicon.ico"
-# overwrite the main stylesheet with your own
-para.stylesheet_url = "/style.css"
+# add your own external stylesheets
+para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 # appends extra CSS rules to the main stylesheet
 para.inline_css = ""
 # edit the links in the footer of transactional emails
@@ -1397,7 +1408,7 @@ In Scoold Pro you can change the logo of the website just by dragging and droppi
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
 simply add them as inline CSS:
 ```ini
-para.inline_css = ".scoold-logo: { width: 100px; }"
+para.inline_css = ".scoold-logo { width: 100px; }"
 ```
 
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
