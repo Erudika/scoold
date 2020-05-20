@@ -221,6 +221,8 @@ para.max_comments_per_id = 1000
 para.max_comment_length = 255
 # Post body limit (characters)
 para.max_post_length = 20000
+# Tags per post limit, must be < 100
+para.max_tags_per_post = 5
 # Sets the default tag for new questions
 para.default_question_tag = "question"
 # Enable/disable numeric pagination (< 1 2 3...N >)
