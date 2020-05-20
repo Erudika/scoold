@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -1108,7 +1108,7 @@ $(function () {
 	});
 
 	autocomplete.chips({
-		limit: 5,
+		limit: MAX_TAGS_PER_POST,
 		placeholder: autocomplete.attr('title') || "Tags",
 		data: autocompleteInitData || [],
 		autocompleteOptions: {

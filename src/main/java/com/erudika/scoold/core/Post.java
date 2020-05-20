@@ -26,6 +26,7 @@ import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
+import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public abstract class Post extends Sysprop {
 	private String body;
 	@Stored @NotBlank @Size(min = 2, max = 255)
 	private String title;
-	@Stored @NotEmpty @Size(min = 1, max = 5)
+	@Stored @NotEmpty @Size(min = 1)
 	private List<String> tags;
 
 	@Stored private Long viewcount;
@@ -346,7 +347,8 @@ public abstract class Post extends Sysprop {
 		});
 		client().updateAll(updateUs);
 		client().deleteAll(deleteUs);
-		setTags(newTagz.values().stream().map(t -> t.getTag()).collect(Collectors.toList()));
+		int tagsLimit = Math.min(ScooldServer.MAX_TAGS_PER_POST, 100);
+		setTags(newTagz.values().stream().limit(tagsLimit).map(t -> t.getTag()).collect(Collectors.toList()));
 	}
 
 	@JsonIgnore

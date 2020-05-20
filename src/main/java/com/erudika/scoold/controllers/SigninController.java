@@ -26,6 +26,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.MAX_TAGS_PER_POST;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
@@ -266,6 +267,7 @@ public class SigninController {
 		}
 		sb.append("WELCOME_MESSAGE = \"").append(authUser == null ? welcomeMsg : "").append("\"; ");
 		sb.append("WELCOME_MESSAGE_ONLOGIN = \"").append(authUser != null ? welcomeMsgOnlogin : "").append("\"; ");
+		sb.append("MAX_TAGS_PER_POST = ").append(MAX_TAGS_PER_POST).append("; ");
 
 		String result = sb.toString();
 		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
