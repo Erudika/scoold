@@ -77,7 +77,7 @@ For **admin** access, open the Scoold Pro demo and login with "Demo login".
 
 0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
-This isn't necessary if you're planning to login with LDAP, SAML or with a email and password.
+This isn't necessary if you're planning to login with LDAP, SAML or with email and password.
 Save the obtained API keys in `application.conf`, as shown below.
 
 > **Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
@@ -483,6 +483,15 @@ $ npm i -g para-cli
 $ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "secret1"
 $ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:scoold" --secretKey "secret2"
 ```
+
+## Upgrading from Scoold to Scoold Pro
+
+You can seamlessly upgrade from Scoold to Scoold Pro without changing the configuration or anything else in your
+infrastructure. The process is very simple:
+
+1. Get your Scoold Pro package (JAR or WAR)
+2. Stop (undeploy) Scoold and replace its package with the Scoold Pro package
+3. Start Scoold Pro (or redeploy your Scoold Pro WAR file)
 
 ## Content-Security-Policy header
 
