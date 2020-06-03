@@ -151,7 +151,7 @@ public class SettingsController {
 		if ("true".equalsIgnoreCase(darkParam)) {
 			HttpUtils.setRawCookie("dark-mode", "1", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
 		} else {
-			HttpUtils.removeStateParam("dark-mode", req, res);
+			HttpUtils.setRawCookie("dark-mode", "0", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
 		}
 	}
 

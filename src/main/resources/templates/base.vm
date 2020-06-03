@@ -358,8 +358,9 @@
 							</div>
 							<div class="col l6 s12 sTextCenter ${footerAlignClass}">
 								#if($showBranding)
-									<span>This is a <a href="https://scoold.com"><b>Scoold</b></a> website powered by <a href="https://paraio.com">
-										<img src="$imageslink/paradark.svg" width="60" alt="Para logo" class="para-logo-footer"></a>
+								    <style>.heart{color:#e25555;}</style>
+									<span>Custom built with <span class="heart">❤</span> by <a href="https://github.com/jin09">
+										Gautam</a>
 									</span>
 								#end
 							</div>

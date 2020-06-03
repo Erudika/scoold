@@ -26,6 +26,7 @@ import com.erudika.scoold.core.Report.ReportType;
 import java.net.ConnectException;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -173,7 +174,14 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
 		modelAndView.addObject("faviconUrl", Config.getConfigParam("favicon_url", IMAGESLINK + "/favicon.ico"));
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
-		modelAndView.addObject("darkModeEnabled", "1".equals(HttpUtils.getCookieValue(request, "dark-mode")));
+
+		//////////////////Dark mode by default//////////////////////////
+		modelAndView.addObject("darkModeEnabled", "1".equals(HttpUtils.getCookieValue(request, "dark-mode") == null ? "1" : HttpUtils.getCookieValue(request, "dark-mode")));
+		if (HttpUtils.getCookieValue(request, "dark-mode") == null) {
+			HttpUtils.setRawCookie("dark-mode", "1", request, response, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
+		}
+		///////////////////////////////////////////////////////////////
+
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
 		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);

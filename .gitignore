@@ -25,5 +25,6 @@ src/web/src/main/webapp/WEB-INF/classes/
 src/main/webapp/click/
 data/
 old/
-
+scoold.iml
 *.log
+.idea

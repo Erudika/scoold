@@ -312,6 +312,8 @@ public final class ScooldUtils {
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
 			}
+			// by default subscribe to all new posts
+			subscribeToNewPosts(authUser.getUser());
 			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
 			payload.put("user", u);
 			triggerHookEvent("user.signup", payload);
@@ -1220,7 +1222,7 @@ public final class ScooldUtils {
 	public String compileEmailTemplate(Map<String, Object> model) {
 		model.put("footerhtml", Config.getConfigParam("emails_footer_html",
 				"<a href=\"" + ScooldServer.getServerURL() + "\">" + Config.APP_NAME + "</a> &bull; "
-				+ "<a href=\"https://scoold.com\">Powered by Scoold</a>"));
+				+ "<a href=\"https://github.com/jin09/scoold\">Contribute</a>"));
 		return Utils.compileMustache(model, loadEmailTemplate("notify"));
 	}
 
