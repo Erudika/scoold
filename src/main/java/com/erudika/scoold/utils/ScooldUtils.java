@@ -532,7 +532,7 @@ public final class ScooldUtils {
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
-			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
+			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
@@ -560,7 +560,7 @@ public final class ScooldUtils {
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
-			String postURL = getServerURL() + CONTEXT_PATH + question.getPostLink(false, false);
+			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + t + "</span>").
 					collect(Collectors.joining("&nbsp;"));
@@ -592,7 +592,7 @@ public final class ScooldUtils {
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
-			String postURL = getServerURL() + CONTEXT_PATH + parentPost.getPostLink(false, false);
+			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, name, body));

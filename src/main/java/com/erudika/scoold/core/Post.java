@@ -475,12 +475,13 @@ public abstract class Post extends Sysprop {
 		Post p = this;
 		String ptitle = Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-");
 		String pid = (noid ? "" : "/" + p.getId() + "/" + ptitle);
+		String ctx = ScooldServer.CONTEXT_PATH;
 		if (p.isQuestion()) {
-			return plural ? "/questions" : "/question" + pid;
+			return ctx + (plural ? ScooldServer.QUESTIONSLINK : ScooldServer.QUESTIONLINK + pid);
 		} else if (p.isFeedback()) {
-			return plural ? "/feedback" : "/feedback" + pid;
+			return ctx + ScooldServer.FEEDBACKLINK + (plural ? "" : pid);
 		} else if (p.isReply()) {
-			return "/question" + (noid ? "" : "/" + p.getParentid());
+			return ctx + ScooldServer.QUESTIONLINK + (noid ? "" : "/" + p.getParentid());
 		}
 		return "";
 	}

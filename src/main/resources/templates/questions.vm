@@ -51,9 +51,11 @@
 					</div>
 				#end
 
-				<button class="btn mtl waves-effect waves-light" type="submit">
-					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
-				</button>
+				<div>
+					<button class="btn mtl waves-effect waves-light" type="submit">
+						<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+					</button>
+				</div>
 			</form>
 		</div>
 	#else

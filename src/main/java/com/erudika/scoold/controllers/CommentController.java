@@ -24,7 +24,6 @@ import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
-import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.getServerURL;
 import com.erudika.scoold.core.Comment;
@@ -155,7 +154,7 @@ public class CommentController {
 					String name = commentAuthor.getName();
 					String body = Utils.markdownToHtml(comment.getComment());
 					String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
-					String postURL = getServerURL() + CONTEXT_PATH + parentPost.getPostLink(false, false);
+					String postURL = getServerURL() + parentPost.getPostLink(false, false);
 					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 					model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
