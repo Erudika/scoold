@@ -32,3 +32,4 @@ services:
      env_file: scoold.env
 volumes:
   paraData:
+  paraLib:
