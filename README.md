@@ -280,6 +280,15 @@ para.env = "production"
 para.dao = "H2DAO"
 ```
 
+Example for `scoold-application.conf`:
+```ini
+para.env = "production"
+para.endpoint = "http://172.18.0.2:8080"
+para.access_key = "app:scoold"
+para.secret_key = "..."
+```
+**Take note of the exact IP address/hostname of the Para docker container!**
+
 Then you can start both Scoold and Para with Docker Compose like so:
 ```
 $ docker-compose up
