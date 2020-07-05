@@ -151,6 +151,7 @@ public class AdminController {
 					authUser.getSpaces().add(spaceObj.getId() + Config.SEPARATOR + spaceObj.getName());
 					authUser.update();
 					model.addAttribute("space", spaceObj);
+					utils.getAllSpaces().add(spaceObj);
 				} else {
 					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
 				}
@@ -170,9 +171,11 @@ public class AdminController {
 	public String removeSpace(@RequestParam String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
-			pc.delete(new Sysprop(utils.getSpaceId(space)));
+			Sysprop s = new Sysprop(utils.getSpaceId(space));
+			pc.delete(s);
 			authUser.getSpaces().remove(space);
 			authUser.update();
+			utils.getAllSpaces().remove(s);
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);

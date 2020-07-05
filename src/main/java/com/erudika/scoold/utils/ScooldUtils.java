@@ -119,6 +119,8 @@ public final class ScooldUtils {
 	private static final Map<String, String> WHITELISTED_MACROS;
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
 
+	private List<Sysprop> allSpaces;
+
 	static {
 		API_USER = new Profile("1", "System");
 		API_USER.setVotes(1);
@@ -901,6 +903,13 @@ public final class ScooldUtils {
 
 	public boolean isAllSpaces(String space) {
 		return ALL_MY_SPACES.equalsIgnoreCase(getSpaceId(space));
+	}
+
+	public List<Sysprop> getAllSpaces() {
+		if (allSpaces == null || allSpaces.isEmpty()) {
+			allSpaces = pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
+		}
+		return allSpaces;
 	}
 
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {

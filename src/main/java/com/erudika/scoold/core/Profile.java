@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.URL;
 
@@ -299,6 +300,10 @@ public class Profile extends Sysprop {
 	}
 
 	public Set<String> getSpaces() {
+		if (ScooldUtils.getInstance().isMod(this)) {
+			spaces = ScooldUtils.getInstance().getAllSpaces().stream().
+					map(s -> s.getId() + Config.SEPARATOR + s.getName()).collect(Collectors.toSet());
+		}
 		if (spaces == null) {
 			spaces = new LinkedHashSet<String>();
 		}

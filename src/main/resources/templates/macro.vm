@@ -335,7 +335,7 @@
 					</div>
 					#end
 					<div class="person-name pts">
-						#if($isAdmin && $request.getParameter("bulkedit"))
+						#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
 							<span class="grey-text l">
 								<label for="$!showFriend.id">
 									<input type="checkbox" name="selectedUsers" value="$!showFriend.id" class="filled-in" id="$!showFriend.id">
@@ -348,7 +348,7 @@
 							<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 						#end
 					</div>
-					#if($isAdmin && $request.getParameter("bulkedit"))
+					#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
 						<div class="smallText">
 							<i class="fa fa-th-large grey-text"></i>
 							#if(!$showFriend.hasSpaces())$!lang.get('defaultspace')#end
