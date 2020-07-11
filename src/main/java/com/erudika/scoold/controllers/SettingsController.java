@@ -60,7 +60,7 @@ public class SettingsController {
 	@GetMapping
 	public String get(HttpServletRequest req, Model model) {
 		if (!utils.isAuthenticated(req)) {
-			return "redirect:" + SETTINGSLINK;
+			return "redirect:" + SIGNINLINK + "?returnto=" + SETTINGSLINK;
 		}
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
