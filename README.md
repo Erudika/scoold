@@ -742,6 +742,29 @@ For the "third" OAuth 2.0 provider it's the same configuration but replace "seco
 the Internet, you need to expose `localhost:8080/oauth2_auth` by configuring a proxy server to forward
 `yourdomain/oauth2_auth` requests to `localhost:8080/oauth2_auth`. If Para is publicly accessible this step is not necessary.
 
+#### Sign in with Okta
+
+This is an example guide for configuring Scoold to work with an authentication provider like Okta. The steps are similar
+for other providers, such as Auth0.
+
+1. Create a new client application (OAuth 2 client)
+   - Add `http://para-host:8080/oauth2_auth` as a login redirect URI
+   - Use the "Authorization Code" flow
+   - Select	that you want **client credentials**
+2. Copy the client credentials (client id, secret) to your Scoold `application.conf` file:
+```ini
+para.oa2_app_id = "0oa123...."
+para.oa2_secret = "secret"
+para.security.oauth.authz_url = "https://${yourOktaDomain}/oauth2/v1/authorize"
+para.security.oauth.token_url = "https://${yourOktaDomain}/oauth2/v1/token"
+para.security.oauth.profile_url = "https://${yourOktaDomain}/oauth2/v1/userinfo"
+para.security.oauth.scope = "openid email profile"
+para.security.oauth.provider = "Continue with Okta"
+```
+Make sure to replace `${yourOktaDomain}` with your actual Okta domain name.
+
+3. Restart Scoold and login with an Okta user account
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `POST /signin?provider=ldap&access_token=username:password`.
