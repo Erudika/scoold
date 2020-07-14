@@ -1101,7 +1101,13 @@ To disable file uploads altogether set `para.uploads_enabled = false`.
 
 To upload a file just **drag & drop** the file onto the post editor area. A link will automatically appear
 when the upload is finished. Uploads can fail either because their size is too large or because their format is not in
-the white list of permitted formats (documents, images, archives, audio or video).
+the white list of permitted formats (documents, images, archives, audio or video). You can extend the list of permitted
+file types by configuring:
+```ini
+para.allowed_upload_formats = "yml,py:text/plain,json:application/json"
+```
+If the MIME type is not specified in the format `extensio:mime_type`, the default `text/plain` is used when serving these
+files.
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
 user's `/profile` page. For best results, use a square image here.
