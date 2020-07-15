@@ -1106,7 +1106,7 @@ file types by configuring:
 ```ini
 para.allowed_upload_formats = "yml,py:text/plain,json:application/json"
 ```
-If the MIME type is not specified in the format `extensio:mime_type`, the default `text/plain` is used when serving these
+If the MIME type is not specified in the format `extension:mime_type`, the default `text/plain` is used when serving these
 files.
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
