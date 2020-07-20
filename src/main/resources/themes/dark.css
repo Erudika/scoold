@@ -1,0 +1,63 @@
+h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #efefef; }
+.btn, .btn-large { background-color: #424242; }
+.navbtn-hover { background-color: #6d6d6d; }
+.btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #424242; }
+
+/* nav bar and footer */
+nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { background-color: #444; }
+.navbar-color { background-color: #424242; }
+.page-footer .footer-copyright { color: white; }
+.page-footer .btn-flat { color: white; }
+
+/* switches and inputs */
+
+/* progress bars */
+.progress .indeterminate { background-color: #efefef; }
+.progress { background-color: #6d6d6d; }
+
+/* tabs */
+/*.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a { color: #efefef; }*/
+.tabs .indicator { background-color: #424242; }
+
+ /** DARK OVERRIDES **/
+main, .scoold-wrapper, nav { background-color: #202020; color: #efefef; }
+body, footer.page-footer, .footer-copyright, .card-panel, .card, .tabs { background-color: #1A1A1A !important; }
+#search-box, .white, .navbar-color, .orange.lighten-5, .CodeMirror { background-color: #333 !important; color: #efefef; }
+.chip, .dropdown-content, .collapsible-header, code, select, .modal, .editor-preview { background-color: #333; color: #efefef; }
+.CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like { background-color: #333; }
+span.CodeMirror-selectedtext, li.CodeMirror-hint-active { background-color: #777; }
+input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label, .black-text { color: #efefef !important; }
+.tabs .tab a:focus, .tabs .tab a:focus.active { background-color: #333; }
+.hljs, .viewbox pre { background: #333; background-color: #333; color: #efefef; border-radius: 3px; }
+.hljs-tag, .hljs-name, .hljs-attribute { color: #9999ff; }
+code[class*="language-"], pre[class*="language-"] { color: #efefef; }
+#gp-login-btn { background: white !important; color: #222 !important; }
+.grey { background-color: #777 !important; }
+.lightborder { border: 1px solid #777; }
+.editor-toolbar button, .CodeMirror-hint { color: #efefef; }
+.editor-toolbar.fullscreen, .CodeMirror-hints { background-color: #202020; color: #efefef; }
+.editor-toolbar button.active, .editor-toolbar button:hover { color: #333; }
+.editor-toolbar.fullscreen::before, .editor-toolbar.fullscreen::after { width: 0; }
+tr { border-bottom: 1px solid #777; }
+.autocomplete-content li .highlight { color: white; background-color: #202020; }
+.select-wrapper .caret { fill: white; }
+table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
+.input-field input[type=search]:focus:not(.browser-default) { background-color: transparent; }
+.filter-active { background-color: #efefef; color: black; }
+.diff-ins { background-color: #9fff9f; color: black; }
+.diff-del { background-color: #ffa2a2; color: black; }
+.droptarget{ opacity: 0.5; outline: 5px dashed #777; }
+.swagger-ui *, .swagger-ui .opblock .opblock-summary-description, .swagger-ui .info .title,
+.swagger-ui .info li, .swagger-ui .info p, .swagger-ui .info table, .swagger-ui .dialog-ux .modal-ux-header h3,
+.swagger-ui .dialog-ux .modal-ux-content h4, .swagger-ui .dialog-ux .modal-ux-content p, .swagger-ui label,
+.swagger-ui .btn, .swagger-ui .opblock-description-wrapper p, .swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-title_normal p, .swagger-ui table thead tr td, .swagger-ui table thead tr th,
+.swagger-ui .parameter__name, .swagger-ui .parameter__type, .swagger-ui .response-col_status,
+.swagger-ui .opblock .opblock-section-header h4, .swagger-ui .model-title,
+.swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5,
+.hljs-keyword, .hljs-selector-tag, .hljs-subst { color: #efefef; }
+.swagger-ui .scheme-container { background-color: transparent; }
+.swagger-ui .dialog-ux .modal-ux, .swagger-ui input[type=email], .swagger-ui input[type=file],
+.swagger-ui input[type=password], .swagger-ui input[type=search], .swagger-ui input[type=text],
+.swagger-ui textarea, .swagger-ui .opblock .opblock-section-header { background-color: #333; color: #efefef; }
+.swagger-ui section.models .model-container:hover { background-color: black; color: #efefef; }

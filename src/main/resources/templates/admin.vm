@@ -200,6 +200,7 @@
 												'blue': ['blue darken-3', 'light-blue lighten-2'],
 												'orange': ['orange', 'deep-orange darken-3'],
 												'mono': ['grey darken-3', 'grey lighten-1'],
+												'dark': ['black', 'grey darken-3'],
 												'custom': []})
 		#foreach($theme in $themesMap.keySet())
 			<label class="mrl">

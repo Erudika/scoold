@@ -39,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
-import com.erudika.scoold.utils.HttpUtils;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -148,11 +146,10 @@ public class SettingsController {
 	}
 
 	private void setDarkMode(Profile authUser, String darkParam, HttpServletRequest req, HttpServletResponse res) {
-		if ("true".equalsIgnoreCase(darkParam)) {
-			HttpUtils.setRawCookie("dark-mode", "1", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
-		} else {
-			HttpUtils.removeStateParam("dark-mode", req, res);
-		}
+		boolean enabled = "true".equalsIgnoreCase(darkParam);
+		utils.toggleDarkMode(enabled, req, res);
+		authUser.setDarkmodeEnabled(enabled);
+		utils.getParaClient().update(authUser);
 	}
 
 	private void anonymizeProfile(Profile authUser) {

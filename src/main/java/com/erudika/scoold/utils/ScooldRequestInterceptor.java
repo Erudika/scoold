@@ -173,10 +173,11 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
 		modelAndView.addObject("faviconUrl", Config.getConfigParam("favicon_url", IMAGESLINK + "/favicon.ico"));
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
-		modelAndView.addObject("darkModeEnabled", "1".equals(HttpUtils.getCookieValue(request, "dark-mode")));
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
-		// Auth & Badges
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
+		modelAndView.addObject("darkModeEnabled", (authUser != null && authUser.getDarkmodeEnabled()) ||
+				"1".equals(HttpUtils.getCookieValue(request, "dark-mode")));
+		// Auth & Badges
 		modelAndView.addObject("authenticated", authUser != null);
 		modelAndView.addObject("canComment", utils.canComment(authUser, request));
 		modelAndView.addObject("isMod", utils.isMod(authUser));

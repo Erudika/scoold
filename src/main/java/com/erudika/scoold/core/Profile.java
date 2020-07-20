@@ -69,6 +69,7 @@ public class Profile extends Sysprop {
 	@Stored private Boolean commentEmailsEnabled;
 	@Stored private Boolean favtagsEmailsEnabled;
 	@Stored private Boolean anonymityEnabled;
+	@Stored private Boolean darkmodeEnabled;
 	@Stored private Integer yearlyVotes;
 	@Stored private Integer quarterlyVotes;
 	@Stored private Integer monthlyVotes;
@@ -141,6 +142,7 @@ public class Profile extends Sysprop {
 		this.monthlyVotes = 0;
 		this.weeklyVotes = 0;
 		this.anonymityEnabled = false;
+		this.darkmodeEnabled = false;
 		this.favtagsEmailsEnabled = false;
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
@@ -250,6 +252,14 @@ public class Profile extends Sysprop {
 
 	public void setAnonymityEnabled(Boolean anonymityEnabled) {
 		this.anonymityEnabled = anonymityEnabled;
+	}
+
+	public Boolean getDarkmodeEnabled() {
+		return darkmodeEnabled;
+	}
+
+	public void setDarkmodeEnabled(Boolean darkmodeEnabled) {
+		this.darkmodeEnabled = darkmodeEnabled;
 	}
 
 	public String getGroups() {
