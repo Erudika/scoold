@@ -80,7 +80,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -257,7 +256,6 @@ public final class ScooldUtils {
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
-				toggleDarkMode(authUser.getDarkmodeEnabled(), req, res);
 				boolean updatedRank = promoteOrDemoteUser(authUser, u);
 				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
 				if (updatedRank || updatedProfile) {
@@ -345,12 +343,9 @@ public final class ScooldUtils {
 		return update;
 	}
 
-	public void toggleDarkMode(boolean enabled, HttpServletRequest req, HttpServletResponse res) {
-		if (enabled) {
-			HttpUtils.setRawCookie("dark-mode", "1", req, res, false, (int) TimeUnit.DAYS.toSeconds(2 * 365L));
-		} else {
-			HttpUtils.removeStateParam("dark-mode", req, res);
-		}
+	public boolean isDarkModeEnabled(Profile authUser, HttpServletRequest req) {
+		return (authUser != null && authUser.getDarkmodeEnabled()) ||
+				"1".equals(HttpUtils.getCookieValue(req, "dark-mode"));
 	}
 
 	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {

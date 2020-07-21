@@ -175,8 +175,7 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
-		modelAndView.addObject("darkModeEnabled", (authUser != null && authUser.getDarkmodeEnabled()) ||
-				"1".equals(HttpUtils.getCookieValue(request, "dark-mode")));
+		modelAndView.addObject("darkModeEnabled", utils.isDarkModeEnabled(authUser, request));
 		// Auth & Badges
 		modelAndView.addObject("authenticated", authUser != null);
 		modelAndView.addObject("canComment", utils.canComment(authUser, request));

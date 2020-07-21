@@ -146,9 +146,7 @@ public class SettingsController {
 	}
 
 	private void setDarkMode(Profile authUser, String darkParam, HttpServletRequest req, HttpServletResponse res) {
-		boolean enabled = "true".equalsIgnoreCase(darkParam);
-		utils.toggleDarkMode(enabled, req, res);
-		authUser.setDarkmodeEnabled(enabled);
+		authUser.setDarkmodeEnabled("true".equalsIgnoreCase(darkParam));
 		utils.getParaClient().update(authUser);
 	}
 
