@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
+import java.util.List;
 
 /**
  *
@@ -72,10 +73,11 @@ public class SettingsController {
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
 			@RequestParam(required = false) String newpostEmailsOn, @RequestParam(required = false) String favtagsEmailsOn,
-			HttpServletRequest req, HttpServletResponse res) {
+			@RequestParam(required = false) List<String> favspaces, HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			setFavTags(authUser, tags);
+			setFavSpaces(authUser, favspaces);
 			if (!StringUtils.isBlank(latlng)) {
 				authUser.setLatlng(latlng);
 			}
@@ -134,6 +136,18 @@ public class SettingsController {
 			authUser.setFavtags(new LinkedList<String>(ts));
 		} else {
 			authUser.setFavtags(null);
+		}
+	}
+
+	private void setFavSpaces(Profile authUser, List<String> spaces) {
+		authUser.setFavspaces(null);
+		if (spaces != null && !spaces.isEmpty()) {
+			for (String space : spaces) {
+				String spaceId = utils.getSpaceId(space);
+				if (!StringUtils.isBlank(spaceId) && utils.canAccessSpace(authUser, spaceId)) {
+					authUser.getFavspaces().add(spaceId);
+				}
+			}
 		}
 	}
 

@@ -494,7 +494,8 @@ public final class ScooldUtils {
 			terms.add(email);
 			if (++i == max) {
 				emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
-						entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space)).
+						entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space) &&
+								!isIgnoredSpaceForNotifications(e.getValue(), space)).
 						map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
 				i = 0;
 				terms.clear();
@@ -502,7 +503,8 @@ public final class ScooldUtils {
 		}
 		if (!terms.isEmpty()) {
 			emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
-					entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space)).
+					entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space) &&
+							!isIgnoredSpaceForNotifications(e.getValue(), space)).
 					map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
 		}
 	}
@@ -939,6 +941,10 @@ public final class ScooldUtils {
 			}
 		}
 		return isMemberOfSpace;
+	}
+
+	private boolean isIgnoredSpaceForNotifications(Profile profile, String space) {
+		return profile != null && !profile.getFavspaces().isEmpty() && !profile.getFavspaces().contains(getSpaceId(space));
 	}
 
 	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {

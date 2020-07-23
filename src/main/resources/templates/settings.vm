@@ -80,14 +80,49 @@
 					<label>
 						$!lang.get('off')
 						#if($newpostEmailsEnabled)
-						<input type="checkbox" name="newpostEmailsOn" checked="checked" value="true">
+						<input id="newpostEmailsSwitch" type="checkbox" name="newpostEmailsOn" checked="checked" value="true">
 						#else
-						<input type="checkbox" name="newpostEmailsOn" value="true">
+						<input id="newpostEmailsSwitch" type="checkbox" name="newpostEmailsOn" value="true">
 						#end
 						<span class="lever"></span>
 						$!lang.get('on')
 					</label>
 					<span class="mll mediumText">$!lang.get('settings.newpostemails')</span>
+					#if(($authUser.favspaces && !$authUser.favspaces.isEmpty()) || $newpostEmailsEnabled)
+						#set($hideFilterToggleClass = "" )
+					#else
+						#set($hideFilterToggleClass = "hide" )
+					#end
+					<a	href="#" id="newpostEmailsFilterToggle" class="${$hideFilterToggleClass} mlm">
+						<i class="fa fa-filter"></i> $!lang.get('filter')
+					</a>
+				</div>
+				#if($authUser.favspaces && !$authUser.favspaces.isEmpty())
+					#set($hideFavspacesClass = "" )
+				#else
+					#set($hideFavspacesClass = "hide" )
+				#end
+				<div id="newpostEmailsFilter" class="${hideFavspacesClass}">
+					<div class="row">
+						<div class="col s12 m8">
+							<p class="mediumText pvl mtm">$!lang.get('settings.filterbyspace')</p>
+						</div>
+						<div class="col s12 m4">
+							<div class="input-field">
+								<select multiple name="favspaces">
+									#foreach($space in $authUser.spaces)
+										#set($spaceId = $!scooldUtils.getSpaceId($!space))
+										#if($newpostEmailsEnabled && $authUser.favspaces.contains($spaceId))
+											<option value="$spaceId" selected="selected">$!scooldUtils.getSpaceName($space)</option>
+										#else
+											<option value="$spaceId">$!scooldUtils.getSpaceName($space)</option>
+										#end
+									#end
+								</select>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 			<div class="mbm">

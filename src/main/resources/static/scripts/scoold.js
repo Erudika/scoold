@@ -591,6 +591,24 @@ $(function () {
 	});
 
 	/****************************************************
+     *                      SETTINGS
+     ****************************************************/
+
+	$("#newpostEmailsSwitch").on("click", function () {
+		if ($(this).is(":checked")) {
+			$("#newpostEmailsFilterToggle").removeClass("hide");
+		} else {
+			$("#newpostEmailsFilterToggle").addClass("hide");
+			$("#newpostEmailsFilter").addClass("hide");
+		}
+	});
+
+	$("#newpostEmailsFilterToggle").on("click", function () {
+		$("#newpostEmailsFilter").toggleClass("hide");
+		return false;
+	});
+
+	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/
 

@@ -64,6 +64,7 @@ public class Profile extends Sysprop {
 	@Stored @URL private String picture;
 	@Stored @URL private String website;
 	@Stored private List<String> favtags;
+	@Stored private Set<String> favspaces;
 	@Stored private Set<String> spaces;
 	@Stored private Boolean replyEmailsEnabled;
 	@Stored private Boolean commentEmailsEnabled;
@@ -307,6 +308,17 @@ public class Profile extends Sysprop {
 
 	public void setFavtags(List<String> favtags) {
 		this.favtags = favtags;
+	}
+
+	public Set<String> getFavspaces() {
+		if (favspaces == null) {
+			favspaces = new LinkedHashSet<String>();
+		}
+		return favspaces;
+	}
+
+	public void setFavspaces(Set<String> favspaces) {
+		this.favspaces = favspaces;
 	}
 
 	public Set<String> getSpaces() {
