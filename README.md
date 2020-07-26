@@ -311,19 +311,25 @@ For more info, read the README at `helm/README.md`.
 
 If you purchase Scoold Pro you can get access to the private Docker registry hosted on the AWS Elastic Container Registry.
 Access to the private registry is not given automatically upon purchase - you have to request it. You will then be issued
-a special access key and secret for AWS ECR which you save as a new profile in your `~/.aws/credentials`. Then execute
-the following BASH commands:
+a special access key and secret for AWS ECR. Then execute the following BASH commands (these require
+[AWS CLI v2.x](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)):
+1. Configure AWS CLI to use the new credentials:
 ```
-# authenticate docker with ECR using the temporary access token
-$(aws --profile ScooldEcrProfile ecr get-login --no-include-email --region eu-west-1)
-# list all tags
-aws --profile ScooldEcrProfile ecr list-images --repository-name scoold-pro
-# pull image with a specific tag
+aws configure
+```
+2. Authenticate Docker with ECR using the temporary access token:
+```
+aws ecr get-login-password --region eu-west-1 | \
+	docker login --username AWS --password-stdin 374874639893.dkr.ecr.eu-west-1.amazonaws.com
+```
+3. Pull a Scoold Pro image with a specific tag:
+```
+aws ecr list-images --repository-name scoold-pro
 docker pull 374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:{tag}
 ```
 
-The `:latest` tag is not supported. The command `aws get-login` gives you an access token to the private Docker registry
-which is valid for **12 hours**.
+The `:latest` tag is not supported. The command `aws get-login-password` gives you an access token to the private
+Docker registry which is valid for **12 hours**.
 
 For connecting Kubernetes to AWS ECR, please refer to [this article](https://medium.com/@damitj07/how-to-configure-and-use-aws-ecr-with-kubernetes-rancher2-0-6144c626d42c).
 
