@@ -102,7 +102,7 @@ public class QuestionsController {
 		}
 		int c = (int) itemcount.getCount();
 		Tag t = pc.read(new Tag(tag).getId());
-		if (t != null && t.getCount() != c) {
+		if (t != null && t.getCount() != c && utils.isMod(utils.getAuthUser(req))) {
 			t.setCount(c);
 			pc.update(t);
 		}
@@ -333,7 +333,7 @@ public class QuestionsController {
 
 	private String getQuestionsQuery(HttpServletRequest req, Profile authUser, String sortby, String currentSpace, Pager p) {
 		boolean spaceFiltered = isSpaceFilteredRequest(authUser, currentSpace);
-		String query = utils.getSpaceFilteredQuery(req, spaceFiltered);
+		String query = utils.getSpaceFilteredQuery(req, spaceFiltered, null, utils.getSpaceFilter(authUser, currentSpace));
 		if ("activity".equals(sortby)) {
 			p.setSortby("properties.lastactivity");
 		} else if ("votes".equals(sortby)) {

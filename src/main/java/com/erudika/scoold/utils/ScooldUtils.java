@@ -921,7 +921,7 @@ public final class ScooldUtils {
 
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
 		if (authUser == null) {
-			return isDefaultSpacePublic();
+			return isDefaultSpacePublic() && isDefaultSpace(targetSpaceId);
 		}
 		if (isMod(authUser) || isAllSpaces(targetSpaceId)) {
 			return true;
@@ -1005,18 +1005,13 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceFilteredQuery(Profile authUser, String currentSpace) {
-		return isDefaultSpace(currentSpace) ? (canAccessSpace(authUser, currentSpace) ? "*" : "") :
-				getSpaceFilter(authUser, currentSpace);
+		return canAccessSpace(authUser, currentSpace) ? getSpaceFilter(authUser, currentSpace) : "";
 	}
 
 	public String getSpaceFilteredQuery(HttpServletRequest req) {
 		Profile authUser = getAuthUser(req);
 		String currentSpace = getSpaceIdFromCookie(authUser, req);
 		return getSpaceFilteredQuery(authUser, currentSpace);
-	}
-
-	public String getSpaceFilteredQuery(HttpServletRequest req, boolean isSpaceFiltered) {
-		return getSpaceFilteredQuery(req, isSpaceFiltered, null, "*");
 	}
 
 	public String getSpaceFilteredQuery(HttpServletRequest req, boolean isSpaceFiltered, String spaceFilter, String defaultQuery) {
@@ -1036,6 +1031,8 @@ public final class ScooldUtils {
 			} else {
 				return "properties.space:\"" + DEFAULT_SPACE + "\"";
 			}
+		} else if (isDefaultSpace(spaceId) && isMod(authUser)) {
+			return "*";
 		} else {
 			return "properties.space:\"" + spaceId + "\"";
 		}
