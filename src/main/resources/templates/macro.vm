@@ -179,7 +179,7 @@
 	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
 	#if ($pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
 		<div class="pages center mtl">
-			#if($numericPaginationEnabled)
+			#if($numericPaginationEnabled && $macroCode != "postcomments")
 				#set($maxPageLinks = 7)
 				#set($activeClass = "active light-blue")
 				#if ($pager.page >= $pageCount) #set($next = 1) #else #set($next = $pager.page + 1) #end
