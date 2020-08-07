@@ -5,10 +5,14 @@
 ################# COMMENTS MACROS #####################
 #macro(newcommentform $parentid $hidden $uri)
 #if ($hidden) #set($hide = "hide") #else	#set($hide = "") #end
-<div class="newcommentform mvm ${hide}">
+<div class="newcommentform mtm ${hide}">
 	<form method="post" action="$commentlink" class="new-comment-form">
 		##sectoken(false "ADD_COMMENT_$!parentid") ## BREAKS AJAX - NOT USED
-		<div class="row">
+		<div>
+			<small class="grey-text mtnl"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
+				<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></small>
+		</div>
+		<div class="row mbn">
 			<div class="col s10">
 				<div class="input-field">
 					#set($maxplus1 = $!maxCommentLength + 1)

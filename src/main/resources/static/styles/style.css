@@ -333,6 +333,9 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	font-size: inherit;
 	display: inline;
 }
+.character-counter {
+	margin-top: -18px;
+}
 .personbox .person-name {
 	font-size: 1em;
 	line-height: 1.2em;
