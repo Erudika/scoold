@@ -242,7 +242,7 @@
 	#if (!$answerslist.isEmpty())
 	<div id="answers" class="col s12">
 		<div class="mvm">
-			#paginate("compactanswers" $itemcount2 "" "page2")
+			#paginate("compactanswers" $itemcount2 "#answers" "page2")
 		</div>
 	</div>
 	#end
