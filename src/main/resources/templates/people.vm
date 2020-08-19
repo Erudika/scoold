@@ -34,23 +34,39 @@
 	</form>
 
 	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
-		<div class="pvl center">
-			<strong>Edit space membership of selected users:</strong>
-		</div>
 		<div class="row">
-			#sectoken(false "BULK_EDIT")
-			#foreach($space in $spaces)
-			<div class="col s6 m4 l3">
-				<label for="$!space.id">
-					<input type="checkbox" name="selectedSpaces" value="$!space.id:$!space.name" class="filled-in" id="$!space.id">
-					<span><strong class="mediumText">$!space.name</strong></span>
-				</label> &nbsp;
+			<div class="col s12 m6">
+				<div class="input-field">
+					<select multiple name="selectedSpaces">
+						#foreach($space in $authUser.spaces)
+						<option value="$space">$!scooldUtils.getSpaceName($space)</option>
+						#end
+					</select>
+					<label>$!lang.get('spaces.title')</label>
+				</div>
 			</div>
-			#end
-			<br>
-		</div>
-		<div class="center">
-			<button class="btn waves-effect waves-light mvl" type="submit"><b>$!lang.get('save')</b></button>
+			<div class="col s12 m2">
+				<div class="input-field">
+					<select name="operation" id="bulk-operation">
+						<option value="set" selected="selected">Assign to</option>
+						<option value="add">$!lang.get('add')</option>
+						<option value="remove">$!lang.get('remove')</option>
+					</select>
+					<label for="bulk-operation">Operation</label>
+				</div>
+			</div>
+			<div class="col s12 m2">
+				<div class="input-field">
+					<select name="selection" id="bulk-selection">
+						<option value="selected" selected="selected">Selected users</option>
+						<option value="all">All users</option>
+					</select>
+					<label for="bulk-selection">Selection</label>
+				</div>
+			</div>
+			<div class="col s12 m2">
+				<button class="btn waves-effect waves-light mvl right" type="submit"><b>$!lang.get('apply')</b></button>
+			</div>
 		</div>
 	#end
 	<hr>

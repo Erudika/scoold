@@ -110,8 +110,9 @@
 											#if($!currentSpace.isEmpty() || $scooldUtils.isDefaultSpace($currentSpace))
 													#set($spaceSelectedClass = "navbtn-hover white-text")
 											#end
-											<li><a href="$questionslink/space?returnto=$!returnto" title="Default space"
-														 class="${spaceSelectedClass}">$!lang.get('defaultspace')</a></li>
+											<li><a href="$questionslink/space?returnto=$!returnto" class="${spaceSelectedClass}">
+													#if($isMod)$!lang.get('allspaces')#else$!lang.get('defaultspace')#end
+												</a></li>
 											<li class="divider"></li>
 										#end
 										#if($authUser.hasSpaces() && !$isMod)

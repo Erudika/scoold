@@ -447,17 +447,6 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	// bulk edit spaces
-	$(document).on("click", "input[name=selectedUsers]", function () {
-		var elem = $(this);
-		elem.closest(".user-card").find("input[name=user-space-ids]").each(function (i, el) {
-			var checks = $("input[id=\"" + el.value + "\"");
-			if (elem.is(":checked")) {
-				checks.prop("checked", "checked");
-			}
-		});
-	});
-
 	var importForm = $("#import-form");
 	importForm.find("input[type=text]").change(function () {
 		if ($(this).val().trim() === "") {
