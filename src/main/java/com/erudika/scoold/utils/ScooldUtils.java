@@ -1351,6 +1351,10 @@ public final class ScooldUtils {
 		pc.create(s);
 	}
 
+	public Profile getSystemUser() {
+		return API_USER;
+	}
+
 	public void triggerHookEvent(String eventName, Object payload) {
 		if (isWebhooksEnabled() && HOOK_EVENTS.contains(eventName)) {
 			Para.asyncExecute(() -> {

@@ -457,7 +457,7 @@ $(function () {
 	});
 
 	importForm.on("submit", function () {
-		$(this).find(".row:first").addClass("hide").end().find(".progress").removeClass("hide");
+		$(this).find(".row:lt(2)").addClass("hide").end().find(".progress").removeClass("hide");
 		return true;
 	});
 

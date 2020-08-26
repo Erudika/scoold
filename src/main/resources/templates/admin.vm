@@ -67,13 +67,13 @@
 				<div class="col s12 m4">
 					<div class="input-field">
 						<label for="targetUrl">Destination URL</label>
-						<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" required>
+						<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" placeholder="https://" required>
 						<span class="helper-text" data-error="Please enter a valid URL"></span>
 					</div>
 				</div>
 				<div class="col s12 m2">
 					<div class="input-field">
-						<select multiple name="events" required>
+						<select id="webhook-events" multiple name="events" required>
 							<option value="create" selected="selected">create</option>
 							<option value="update">update</option>
 							<option value="delete">delete</option>
@@ -84,24 +84,27 @@
 							<option value="$!event">$!event</option>
 							#end
 						</select>
+						<label for="webhook-events">Event triggers</label>
 					</div>
 				</div>
 				<div class="col s12 m2">
 					<div class="input-field">
-						<select name="type">
-							<option value="">$!lang.get('filter')</option>
+						<select id="webhook-types" name="type">
+							<option value=""></option>
 							#foreach($type in $coreScooldTypes)
 							<option value="$!type">$!type</option>
 							#end
 						</select>
+						<label for="webhook-types">Type filter</label>
 					</div>
 				</div>
 				<div class="col s12 m2">
 					<div class="input-field">
-						<select name="json" required>
+						<select id="webhook-json" name="json" required>
 							<option value="true" selected="selected">json</option>
 							<option value="false">x-www-form-urlencoded</option>
 						</select>
+						<label for="webhook-json">Payload format</label>
 					</div>
 				</div>
 
@@ -128,6 +131,7 @@
 	</div>
 	<div class="row mbl">
 		<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
+			<div class="import-text mlm">$!lang.get('admin.import.text')</div>
 			<div class="row">
 				<div class="col m6 s6">
 					<div class="file-field input-field">
@@ -140,11 +144,16 @@
 						<div class="file-path-wrapper">
 							<input class="file-path validate" type="text" required>
 						</div>
-						<span class="import-text">$!lang.get('admin.import.text')</span>
 						<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
 					</div>
+					<label>
+						<input type="checkbox" name="isso" class="filled-in">
+						<span>This is an archive exported from Stack Overflow for Teams</span>
+					</label>
 				</div>
-				<div class="col s6">
+			</div>
+			<div class="row">
+				<div class="col s12">
 					<div class="input-field">
 						<button type="submit" class="btn waves-effect waves-light rusure">
 							<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
@@ -152,12 +161,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="s12 columns">
-					<div class="progress mvl hide">
-						<div class="indeterminate"></div>
-					</div>
-				</div>
+			<div class="progress mvl hide">
+				<div class="indeterminate"></div>
 			</div>
 		</form>
 
