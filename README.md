@@ -39,6 +39,7 @@ your company or team.
 - LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Amazon, Twitter) with Gravatar support
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
+- Import data from Stack Overflow for Teams
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
 - SEO friendly
 - Cookie consent (for GDPR, CCPA, etc.)
@@ -489,7 +490,7 @@ is fresh and containing no data.
 
 When using the default H2 database, you can also copy the `./data` directory to the new installation or just copy all
 `*.db` files. The data directory also contains Lucene index folders for each app, e.g. `./data/scoold-lucene`. These
-folders can also be moved and copied or even deleted. You ca easily restore the Lucene index for a Para app by running
+folders can also be moved and copied or even deleted. You can easily restore the Lucene index for a Para app by running
 a rebuild index task from the `para-cli` tool. Here's how to rebuild the root app `para` and a child app `scoold` with
 just two simple commands:
 
@@ -498,6 +499,15 @@ $ npm i -g para-cli
 $ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:para" --secretKey "secret1"
 $ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:scoold" --secretKey "secret2"
 ```
+
+## Migrating from Stack Overflow for Teams to Scoold
+
+1. Start Scoold and login as admin
+2. Download you data archive from Stack Overflow by browsing to 'Admin settings -> Account info -> Download data'
+3. On Scoold's Administration page click 'Import' and select the Stack Overflow archive (.zip)
+4. Check "This archive was exported from Stack Overflow" and click import
+
+All the data for your team on Stack Overflow, except for user badges, will be imported into Scoold.
 
 ## Upgrading from Scoold to Scoold Pro
 
