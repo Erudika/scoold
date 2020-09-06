@@ -1622,7 +1622,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Maltese** | [lang_mt.properties](src/main/resources/lang_mt.properties) | 0%
 **Norwegian** | [lang_no.properties](src/main/resources/lang_no.properties) | 0%
 **Polish** | [lang_pl.properties](src/main/resources/lang_pl.properties) | 0%
-**Portuguese** | [lang_pt.properties](src/main/resources/lang_pt.properties) | 0%
+**Portuguese** | [lang_pt.properties](src/main/resources/lang_pt.properties) | :heavy_check_mark: Thanks Karina Varela!
 **Romanian** | [lang_ro.properties](src/main/resources/lang_ro.properties) | 0%
 **Russian** | [lang_ru.properties](src/main/resources/lang_ru.properties) | 0%
 **Serbian** | [lang_sr.properties](src/main/resources/lang_sr.properties) | 0%
