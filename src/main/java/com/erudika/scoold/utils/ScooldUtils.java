@@ -1025,13 +1025,13 @@ public final class ScooldUtils {
 
 	public String getSpaceFilter(Profile authUser, String spaceId) {
 		if (isAllSpaces(spaceId)) {
-			if (authUser.hasSpaces()) {
+			if (authUser != null && authUser.hasSpaces()) {
 				return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
 						collect(Collectors.joining(" OR ")) + ")";
 			} else {
 				return "properties.space:\"" + DEFAULT_SPACE + "\"";
 			}
-		} else if (isDefaultSpace(spaceId) && isMod(authUser)) {
+		} else if (isDefaultSpace(spaceId) && ((authUser == null && isDefaultSpacePublic()) || isMod(authUser))) {
 			return "*";
 		} else {
 			return "properties.space:\"" + spaceId + "\"";
