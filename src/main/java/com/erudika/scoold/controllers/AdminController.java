@@ -29,6 +29,7 @@ import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
@@ -108,7 +109,9 @@ public class AdminController {
 
 	@GetMapping
 	public String get(HttpServletRequest req, Model model) {
-		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
 		Map<String, Object> configMap = new LinkedHashMap<String, Object>();
