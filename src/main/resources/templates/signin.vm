@@ -7,6 +7,9 @@
 			<div class="card-panel">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signup.title")</h2>
 				<div class="phl">
+					#if($nosmtp)
+						<b class="orange-text"><i class="fa fa-warning"></i> $!lang.get('signup.nosmtp1') $!lang.get('signup.nosmtp2')</b>
+					#end
 					#if($verify)
 						<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
 						<p>$!lang.get('signin.verify.text')</p>
@@ -52,6 +55,9 @@
 			<div class="card-panel lighten-4">
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("iforgot.title")</h2>
 				<div class="pal">
+					#if($nosmtp)
+						<b class="orange-text"><i class="fa fa-warning"></i> $!lang.get('signup.nosmtp1')</b>
+					#end
 					#if($verify)
 					<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
 					<p>$!lang.get('signin.verify.text')</p>
@@ -79,7 +85,8 @@
 						#if($token)
 							<button type="submit" class="btn">$!lang.get('change')</button>
 						#else
-							<button type="submit" class="btn">$!lang.get('send')</button>
+							#if($nosmtp)#set($nosend = "disabled='disabled'")#else#set($nosend = "")#end
+							<button type="submit" class="btn" $nosend>$!lang.get('send')</button>
 						#end
 					</form>
 					#end

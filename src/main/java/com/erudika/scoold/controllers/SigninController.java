@@ -135,6 +135,7 @@ public class SigninController {
 		model.addAttribute("emailPattern", Email.EMAIL_PATTERN);
 		model.addAttribute("register", true);
 		model.addAttribute("verify", verify);
+		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
 		if (id != null && token != null) {
 			boolean verified = activateWithEmailToken((User) pc.read(id), token);
 			if (verified) {
@@ -148,12 +149,17 @@ public class SigninController {
 
 	@PostMapping("/signin/register")
 	public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
-			HttpServletRequest req, Model model) {
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (!utils.isAuthenticated(req) && approvedDomain) {
 			if (!isEmailRegistered(email) && isSubmittedByHuman(req)) {
-				pc.signIn("password", email + ":" + name + ":" + passw, false);
-				verifyEmailIfNecessary("password", name, email, req);
+				User u = pc.signIn("password", email + ":" + name + ":" + passw, false);
+				if (u != null && u.getActive()) {
+					setAuthCookie(u.getPassword(), req, res);
+					return "redirect:" + getBackToUrl(req);
+				} else {
+					verifyEmailIfNecessary(name, email, req);
+				}
 			} else {
 				model.addAttribute("path", "signin.vm");
 				model.addAttribute("title", utils.getLang(req).get("signup.title"));
@@ -182,6 +188,7 @@ public class SigninController {
 		model.addAttribute("signinSelected", "navbtn-hover");
 		model.addAttribute("iforgot", true);
 		model.addAttribute("verify", verify);
+		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
 		if (email != null && token != null) {
 			model.addAttribute("email", email);
 			model.addAttribute("token", token);
@@ -319,17 +326,15 @@ public class SigninController {
 		return ident != null && ident.hasProperty(Config._PASSWORD);
 	}
 
-	private void verifyEmailIfNecessary(String provider, String name, String email, HttpServletRequest req) {
-		if ("password".equals(provider)) {
-			Sysprop ident = pc.read(email);
-			if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
-				User u = new User(ident.getCreatorid());
-				u.setActive(false);
-				u.setName(name);
-				u.setEmail(email);
-				u.setIdentifier(email);
-				utils.sendWelcomeEmail(u, true, req);
-			}
+	private void verifyEmailIfNecessary(String name, String email, HttpServletRequest req) {
+		Sysprop ident = pc.read(email);
+		if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
+			User u = new User(ident.getCreatorid());
+			u.setActive(false);
+			u.setName(name);
+			u.setEmail(email);
+			u.setIdentifier(email);
+			utils.sendWelcomeEmail(u, true, req);
 		}
 	}
 
