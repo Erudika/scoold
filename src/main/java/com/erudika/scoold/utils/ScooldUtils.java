@@ -1031,7 +1031,8 @@ public final class ScooldUtils {
 			} else {
 				return "properties.space:\"" + DEFAULT_SPACE + "\"";
 			}
-		} else if (isDefaultSpace(spaceId) && ((authUser == null && isDefaultSpacePublic()) || isMod(authUser))) {
+		} else if (isDefaultSpace(spaceId) && ((authUser == null && isDefaultSpacePublic()) ||
+				canAccessSpace(authUser, DEFAULT_SPACE) || isMod(authUser))) {
 			return "*";
 		} else {
 			return "properties.space:\"" + spaceId + "\"";
