@@ -312,6 +312,13 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 .user-card img {
 	max-height: 120px;
 }
+img.profile-pic {
+	object-fit: cover;
+	height: 100%;
+}
+.user-card img.profile-pic {
+	width: 100%;
+}
 .card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
 	margin-right: 0;
 	text-transform: lowercase;
