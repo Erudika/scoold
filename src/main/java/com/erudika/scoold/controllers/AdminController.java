@@ -119,7 +119,6 @@ public class AdminController {
 			ConfigValue value = entry.getValue();
 			configMap.put(entry.getKey(), value != null ? value.unwrapped() : "-");
 		}
-		configMap.putAll(System.getenv());
 
 		Pager itemcount = utils.getPager("page", req);
 		Pager itemcount1 = utils.getPager("page1", req);
