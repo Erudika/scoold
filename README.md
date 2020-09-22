@@ -504,7 +504,7 @@ $ para-cli rebuild-index --endpoint "http://localhost:8080" --accessKey "app:sco
 ## Migrating from Stack Overflow for Teams to Scoold
 
 1. Start Scoold and login as admin
-2. Download you data archive from Stack Overflow by browsing to 'Admin settings -> Account info -> Download data'
+2. Download your data archive from Stack Overflow by browsing to 'Admin settings -> Account info -> Download data'
 3. On Scoold's Administration page click 'Import' and select the Stack Overflow archive (.zip)
 4. Check "This archive was exported from Stack Overflow" and click import
 
