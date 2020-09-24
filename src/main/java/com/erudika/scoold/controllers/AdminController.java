@@ -127,7 +127,7 @@ public class AdminController {
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
-		model.addAttribute("endpoint", pc.getEndpoint());
+		model.addAttribute("endpoint", Config.getConfigParam("security.redirect_uri", pc.getEndpoint()));
 		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));

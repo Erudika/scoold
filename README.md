@@ -691,6 +691,12 @@ pointing to the URL of your Scoold server.
 
 **If you skip this step, authentication will most likely not work.**
 
+In some cases ([see related issue](https://github.com/Erudika/scoold/issues/199)) you want to have Scoold connect to
+Para which is hosted somewhere on your local network and logging in with some authentication providers, like Microsoft,
+doesn't work. In such cases you would see an error "redirect_uri mismatch" or "invalid redirect_uri - must start with
+https:// or http://localhost". To make it work you can set `para.security.redirect_uri = "https://public-para.host"`
+while still keeping `para.endpoint = "http://local-ip:8080"`.
+
 ## OAuth 2.0 login
 
 You can authenticate users against any OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.

@@ -238,7 +238,7 @@ public class SigninController {
 	public ResponseEntity<String> globals(HttpServletRequest req, HttpServletResponse res) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
-		sb.append("ENDPOINT = \"").append(pc.getEndpoint()).append("\"; ");
+		sb.append("ENDPOINT = \"").append(Config.getConfigParam("security.redirect_uri", pc.getEndpoint())).append("\"; ");
 		sb.append("CONTEXT_PATH = \"").append(CONTEXT_PATH).append("\"; ");
 		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
 		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
