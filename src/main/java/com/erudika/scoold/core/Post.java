@@ -397,10 +397,11 @@ public abstract class Post extends Sysprop {
 		this.commentIds = commentIds;
 	}
 
-	public void addCommentId(String id) {
+	public boolean addCommentId(String id) {
 		if (getCommentIds() != null && getCommentIds().size() < getItemcount().getLimit()) {
-			getCommentIds().add(id);
+			return getCommentIds().add(id);
 		}
+		return false;
 	}
 
 	@JsonIgnore
