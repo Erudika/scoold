@@ -725,9 +725,14 @@ public class ApiController {
 
 	@PostMapping("/webhooks")
 	public Webhook createWebhook(HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isWebhooksEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return null;
+		}
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
 			badReq("Missing request body.");
+			return null;
 		}
 		String targetUrl = (String) entity.get("targetUrl");
 		if (!Utils.isValidURL(targetUrl)) {
@@ -745,11 +750,19 @@ public class ApiController {
 
 	@GetMapping("/webhooks")
 	public List<Webhook> listWebhooks(HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isWebhooksEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return null;
+		}
 		return pc.findQuery(Utils.type(Webhook.class), "*", utils.pagerFromParams(req));
 	}
 
 	@GetMapping("/webhooks/{id}")
 	public Webhook getWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isWebhooksEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return null;
+		}
 		Webhook webhook = pc.read(Utils.type(Webhook.class), id);
 		if (webhook == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
@@ -760,6 +773,10 @@ public class ApiController {
 
 	@PatchMapping("/webhooks/{id}")
 	public Webhook updateWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isWebhooksEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return null;
+		}
 		Webhook webhook = pc.read(id);
 		if (webhook == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
@@ -771,6 +788,9 @@ public class ApiController {
 
 	@DeleteMapping("/webhooks/{id}")
 	public void deleteWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isWebhooksEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+		}
 		Webhook webhook = pc.read(id);
 		if (webhook == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
