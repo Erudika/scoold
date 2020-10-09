@@ -97,7 +97,8 @@ public class AdminController {
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 	private final String scooldVersion = getClass().getPackage().getImplementationVersion();
 	private static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
-	private final String soDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	private final String soDateFormat1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	private final String soDateFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
@@ -479,7 +480,7 @@ public class AdminController {
 			p.setId("post_" + (Integer) obj.getOrDefault("id", Utils.getNewId()));
 			p.setBody((String) obj.get("bodyMarkdown"));
 			p.setVotes((Integer) obj.getOrDefault("score", 0));
-			p.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat).getTime());
+			p.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			Integer creatorId = (Integer) obj.getOrDefault("ownerUserId", null);
 			if (creatorId == null || creatorId == -1) {
 				p.setCreatorid(utils.getSystemUser().getId());
@@ -510,7 +511,7 @@ public class AdminController {
 			c.setComment((String) obj.get("text"));
 			Integer parentId = (Integer) obj.getOrDefault("postId", null);
 			c.setParentid(parentId != null ? "post_" + parentId : null);
-			c.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat).getTime());
+			c.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			Integer creatorId = (Integer) obj.getOrDefault("userId", null);
 			String userid = "user_" + creatorId;
 			c.setCreatorid(creatorId != null ? Profile.id(userid) : utils.getSystemUser().getId());
@@ -526,7 +527,7 @@ public class AdminController {
 		for (Map<String, Object> obj : objs) {
 			User u = new User();
 			u.setId("user_" + (Integer) obj.get("id"));
-			u.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat).getTime());
+			u.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			u.setActive(true);
 			u.setCreatorid(((Integer) obj.get("accountId")).toString());
 			u.setGroups("admin".equalsIgnoreCase((String) obj.get("userTypeId"))
@@ -535,7 +536,8 @@ public class AdminController {
 			u.setIdentifier(u.getEmail());
 			u.setName((String) obj.get("realName"));
 			String lastLogin = (String) obj.get("lastLoginDate");
-			u.setUpdated(StringUtils.isBlank(lastLogin) ? null : DateUtils.parseDate(lastLogin, soDateFormat).getTime());
+			u.setUpdated(StringUtils.isBlank(lastLogin) ? null :
+					DateUtils.parseDate(lastLogin, soDateFormat1, soDateFormat2).getTime());
 			u.setPicture((String) obj.get("profileImageUrl"));
 			u.setPassword(Utils.generateSecurityToken(10));
 
