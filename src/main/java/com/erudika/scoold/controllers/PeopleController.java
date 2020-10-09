@@ -80,6 +80,10 @@ public class PeopleController {
 			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
 		}
 
+		if (utils.isDefaultSpacePublic() && qs.equals("properties.spaces:\"scooldspace:default\"")) {
+			qs = "*";
+		}
+
 		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
