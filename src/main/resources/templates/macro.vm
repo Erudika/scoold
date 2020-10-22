@@ -359,10 +359,11 @@
 					#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
 						<div class="smallText">
 							<i class="fa fa-th-large grey-text"></i>
-							#if(!$showFriend.hasSpaces())$!lang.get('defaultspace')#end
-							#foreach($space in $showFriend.spaces)
+							#if(!$showFriend.hasSpaces() || $showFriend.getSpaces().contains($scooldUtils.getDefaultSpace()))$!lang.get('defaultspace')#end
+							#set($userSpaces = $showFriend.allSpaces)
+							#foreach($space in $userSpaces)
 								#set($spaceString = $scooldUtils.getSpaceName($space))
-								${spaceString}#if($foreach.count < $showFriend.spaces.size()),#end
+								${spaceString}#if($foreach.count < $userSpaces.size()),#end
 								#set($spaceId = $scooldUtils.getSpaceId($space))
 								<input type="hidden" name="user-space-ids" value="$!{spaceId}">
 							#end
@@ -775,7 +776,7 @@
 					#if($scooldUtils.canAccessSpace($authUser, "default"))
 						<option value="">$!lang.get('defaultspace')</option>
 					#end
-					#foreach($space in $authUser.spaces)
+					#foreach($space in $authUser.allSpaces)
 						<option value="$!space">$!scooldUtils.getSpaceName($space)</option>
 					#end
 				</select>

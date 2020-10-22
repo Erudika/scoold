@@ -38,7 +38,8 @@
 			<div class="col s12 m6">
 				<div class="input-field">
 					<select multiple name="selectedSpaces">
-						#foreach($space in $authUser.spaces)
+						<option selected="selected" value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
+						#foreach($space in $authUser.allSpaces)
 						<option value="$space">$!scooldUtils.getSpaceName($space)</option>
 						#end
 					</select>

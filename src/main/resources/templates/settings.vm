@@ -93,7 +93,7 @@
 					#else
 						#set($hideFilterToggleClass = "hide" )
 					#end
-					<a	href="#" id="newpostEmailsFilterToggle" class="${$hideFilterToggleClass} mlm">
+					<a	href="#" id="newpostEmailsFilterToggle" class="${hideFilterToggleClass} mlm">
 						<i class="fa fa-filter"></i> $!lang.get('filter')
 					</a>
 				</div>
@@ -110,7 +110,7 @@
 						<div class="col s12 m4">
 							<div class="input-field">
 								<select multiple name="favspaces">
-									#foreach($space in $authUser.spaces)
+									#foreach($space in $authUser.allSpaces)
 										#set($spaceId = $!scooldUtils.getSpaceId($!space))
 										#if($newpostEmailsEnabled && $authUser.favspaces.contains($spaceId))
 											<option value="$spaceId" selected="selected">$!scooldUtils.getSpaceName($space)</option>

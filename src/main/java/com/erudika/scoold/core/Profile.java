@@ -329,11 +329,22 @@ public class Profile extends Sysprop {
 		if (spaces == null) {
 			spaces = new LinkedHashSet<String>();
 		}
+		if (spaces.isEmpty()) {
+			spaces.add(Post.DEFAULT_SPACE);
+		}
+		if (spaces.size() > 1 && spaces.contains(Post.DEFAULT_SPACE)) {
+			spaces.remove(Post.DEFAULT_SPACE);
+		}
 		return spaces;
 	}
 
 	public void setSpaces(Set<String> spaces) {
 		this.spaces = spaces;
+	}
+
+	@JsonIgnore
+	public Set<String> getAllSpaces() {
+		return getSpaces().stream().filter(s -> !s.equalsIgnoreCase(Post.DEFAULT_SPACE)).collect(Collectors.toSet());
 	}
 
 	public Long getLastseen() {
@@ -473,7 +484,7 @@ public class Profile extends Sysprop {
 	}
 
 	public boolean hasSpaces() {
-		return !getSpaces().isEmpty();
+		return !(getSpaces().size() <= 1 && getSpaces().contains(Post.DEFAULT_SPACE));
 	}
 
 	public void removeSpace(String space) {

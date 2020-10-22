@@ -908,6 +908,10 @@ public final class ScooldUtils {
 		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
 	}
 
+	public String getDefaultSpace() {
+		return DEFAULT_SPACE;
+	}
+
 	public boolean isAllSpaces(String space) {
 		return ALL_MY_SPACES.equalsIgnoreCase(getSpaceId(space));
 	}

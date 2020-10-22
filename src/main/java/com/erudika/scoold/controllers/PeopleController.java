@@ -27,14 +27,13 @@ import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,10 +79,6 @@ public class PeopleController {
 			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
 		}
 
-		if (utils.isDefaultSpacePublic() && qs.equals("properties.spaces:\"scooldspace:default\"")) {
-			qs = "*";
-		}
-
 		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
@@ -108,34 +103,40 @@ public class PeopleController {
 			// find all user objects even if there are more than 10000 users in the system
 			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
 			List<Profile> profiles;
-			ArrayList<Map<String, Object>> toUpdate = new ArrayList<>();
+			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
 			List<String> spaces = (selectedSpaces == null || selectedSpaces.length == 0) ?
 					Collections.emptyList() : Arrays.asList(selectedSpaces);
 			do {
 				String query = (selection == null || "selected".equals(selection)) ?
 						Config._ID + ":(\"" + String.join("\" \"", selectedUsers) + "\")" : "*";
-				profiles = pc.findQuery(Utils.type(Profile.class), query, pager).stream().
-						filter(p -> !utils.isMod(((Profile) p))).
-						map(p -> {
-							if ("add".equals(operation)) {
-								((Profile) p).getSpaces().addAll(spaces);
-							} else if ("remove".equals(operation)) {
-								((Profile) p).getSpaces().removeAll(spaces);
-							} else {
-								((Profile) p).setSpaces(new HashSet<String>(spaces));
-							}
-							Map<String, Object> profile = new HashMap<>();
-							profile.put(Config._ID, p.getId());
-							profile.put("spaces", ((Profile) p).getSpaces());
-							toUpdate.add(profile);
-							return (Profile) p;
-						}).collect(Collectors.toList());
-				if (!toUpdate.isEmpty()) {
-					// partial batch update
-					pc.invokePatch("_batch", Entity.json(toUpdate));
-					toUpdate.clear();
-				}
+				profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
+				profiles.stream().filter(p -> !utils.isMod(p)).forEach(p -> {
+					if ("add".equals(operation)) {
+						p.getSpaces().addAll(spaces);
+					} else if ("remove".equals(operation)) {
+						p.getSpaces().removeAll(spaces);
+					} else {
+						p.setSpaces(new HashSet<String>(spaces));
+					}
+					Map<String, Object> profile = new HashMap<>();
+					profile.put(Config._ID, p.getId());
+					profile.put("spaces", p.getSpaces());
+					toUpdate.add(profile);
+				});
 			} while (!profiles.isEmpty());
+			// always patch outside the loop because we modify _docid values!!!
+			LinkedList<Map<String, Object>> batch = new LinkedList<>();
+			while (!toUpdate.isEmpty()) {
+				batch.add(toUpdate.pop());
+				if (batch.size() >= 100) {
+					// partial batch update
+					pc.invokePatch("_batch", Entity.json(batch));
+					batch.clear();
+				}
+			}
+			if (!batch.isEmpty()) {
+				pc.invokePatch("_batch", Entity.json(batch));
+			}
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
 	}
