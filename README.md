@@ -1386,6 +1386,20 @@ That's it! If the Certbot validation above fails, your DNS is not configured pro
 Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
 for more details.
 
+### Complex proxy server setup
+
+In some rare cases, your Scoold server may be behind more than one proxy server. In these cases you have configuration like
+this:
+```ini
+para.host_url = "http://192.168.3.4:8000"
+para.host_url = "http://192.168.3.4:8080"
+```
+This would work except for transactional emails where inbound links point to the wrong address. The solution is to add this
+to your configuration:
+```ini
+para.rewrite_inbound_links_with_fqdn = "https://public-scoold-domain.com"
+```
+
 ## Periodic summary emails (email digest)
 
 **PRO**

@@ -1243,6 +1243,12 @@ public final class ScooldUtils {
 		model.put("footerhtml", Config.getConfigParam("emails_footer_html",
 				"<a href=\"" + ScooldServer.getServerURL() + "\">" + Config.APP_NAME + "</a> &bull; "
 				+ "<a href=\"https://scoold.com\">Powered by Scoold</a>"));
+		String fqdn = Config.getConfigParam("rewrite_inbound_links_with_fqdn", "");
+		if (!StringUtils.isBlank(fqdn)) {
+			model.entrySet().stream().filter(e -> (e.getValue() instanceof String)).forEachOrdered(e -> {
+				model.put(e.getKey(), StringUtils.replace((String) e.getValue(), ScooldServer.getServerURL(), fqdn));
+			});
+		}
 		return Utils.compileMustache(model, loadEmailTemplate("notify"));
 	}
 
