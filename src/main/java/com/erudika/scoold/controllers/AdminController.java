@@ -330,6 +330,7 @@ public class AdminController {
 		ObjectReader mapReader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
 		Map<String, String> comments2authors = new LinkedHashMap<>();
 		int	count = 0;
+		int importBatchSize = Config.getConfigInt("import_batch_size", 100);
 		String filename = file.getOriginalFilename();
 		Sysprop s = new Sysprop();
 		s.setType("scooldimport");
@@ -337,18 +338,27 @@ public class AdminController {
 			if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
 				try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
 					ZipEntry zipEntry;
+					List<ParaObject> toCreate = new LinkedList<ParaObject>();
 					while ((zipEntry = zipIn.getNextEntry()) != null) {
 						List<ParaObject> objects;
 						if (isso) {
 							objects = importFromSOArchive(zipIn, zipEntry, mapReader, comments2authors);
 						} else {
-							objects = pc.createAll(reader.readValue(new FilterInputStream(zipIn) {
+							objects = reader.readValue(new FilterInputStream(zipIn) {
 								public void close() throws IOException {
 									zipIn.closeEntry();
 								}
-							}));
+							});
+							toCreate.addAll(objects);
+							if (toCreate.size() >= importBatchSize) {
+								pc.createAll(toCreate);
+								toCreate.clear();
+							}
 						}
 						count += objects.size();
+					}
+					if (!toCreate.isEmpty()) {
+						pc.createAll(toCreate);
 					}
 					if (isso) {
 						updateSOCommentAuthors(comments2authors);
