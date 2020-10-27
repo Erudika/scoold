@@ -593,7 +593,7 @@ para.stylesheet_url = "https://public.cdn.com/custom.css"
 ```
 
 The order in which CSS rules are loaded is this (each overrides the previous ones):
-1. main stylesheet, 2. external stylesheets, 3. inline CSS.
+1. main stylesheet, 2. external stylesheets, 3. inline CSS or custom theme
 
 ## Serving static files from a CDN
 
