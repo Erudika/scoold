@@ -246,13 +246,12 @@ public final class ScooldUtils {
 
 	public ParaObject checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
-		boolean isApiRequest = isApiRequest(req);
-		boolean isStaticRequest = StringUtils.endsWithAny(req.getRequestURI(), ".js", ".css", ".svg", ".png", ".jpg");
-		boolean isGlobalsJS = StringUtils.endsWithAny(req.getRequestURI(), "globals.js");
-		if (isApiRequest) {
+		String jwt = HttpUtils.getStateParam(AUTH_COOKIE, req);
+		if (isApiRequest(req)) {
 			return checkApiAuth(req);
-		} else if (HttpUtils.getStateParam(AUTH_COOKIE, req) != null && (!isStaticRequest || isGlobalsJS)) {
-			User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
+		} else if (jwt != null && !StringUtils.endsWithAny(req.getRequestURI(),
+				".js", ".css", ".svg", ".png", ".jpg", ".ico", ".gif", ".woff2", ".woff", "people/avatar")) {
+			User u = pc.me(jwt);
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
@@ -631,6 +630,15 @@ public final class ScooldUtils {
 						compileEmailTemplate(model));
 			}
 		}
+	}
+
+	public Profile readAuthUser(HttpServletRequest req) {
+		Profile authUser = null;
+		User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
+		if (u != null && isEmailDomainApproved(u.getEmail())) {
+			return getOrCreateProfile(u, req);
+		}
+		return authUser;
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
@@ -1493,24 +1501,27 @@ public final class ScooldUtils {
 
 	public Sysprop getCustomTheme() {
 		String id = "theme" + Config.SEPARATOR + "custom";
-		String selectedTheme = FILE_CACHE.get("theme");
+		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
 		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
 			Sysprop s = new Sysprop(id);
 			s.setName(selectedTheme);
 			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
 			return s;
-		} else {
+		} else if ("custom".equalsIgnoreCase(selectedTheme)) {
 			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
-					orElseGet(() -> {
-						String themeName = "default";
-						Sysprop s = new Sysprop(id);
-						s.setName(themeName);
-						s.addProperty("theme", "");
-						FILE_CACHE.put("theme", themeName);
-						FILE_CACHE.put(getThemeKey(themeName), loadResource(getThemeKey(themeName)));
-						return s;
-					});
+					orElseGet(() -> getDefaultThemeObject());
 		}
+		return getDefaultThemeObject();
+	}
+
+	private Sysprop getDefaultThemeObject() {
+		String themeName = "default";
+		Sysprop s = new Sysprop("theme" + Config.SEPARATOR + "custom");
+		s.setName(themeName);
+		s.addProperty("theme", "");
+		FILE_CACHE.put("theme", themeName);
+		FILE_CACHE.put(getThemeKey(themeName), loadResource(getThemeKey(themeName)));
+		return s;
 	}
 
 	private String getThemeKey(String themeName) {
