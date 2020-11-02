@@ -938,10 +938,12 @@ $(function () {
 		localStorage.removeItem($form.find("textarea[name=body]").attr("id"));
 		localStorage.removeItem($form.find("input[name=tags]").attr("id"));
 		window.location.href = data.url || "";
+		location.reload();
 	}, function (xhr, status, error, form) {
 		var hashId = "post-" + $(form).closest(".postbox").attr("id");
 		var path = window.location.pathname.replace(/\/edit-post-.*$/, "");
 		window.location.href = window.location.origin + path + "/edit-" + hashId;
+		location.reload();
 	});
 
 	var editingPosts = $(".postbox.resume-editing:first").find(".editlink").click().end();

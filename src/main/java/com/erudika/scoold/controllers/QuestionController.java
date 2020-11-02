@@ -55,12 +55,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  *
@@ -144,7 +146,7 @@ public class QuestionController {
 			}
 		}
 		boolean isQuestion = !showPost.isReply();
-		HashSet<String> addedTags = new HashSet<>();
+		Set<String> addedTags = new HashSet<>();
 		Post beforeUpdate = null;
 		try {
 			beforeUpdate = (Post) BeanUtils.cloneBean(showPost);
@@ -152,26 +154,16 @@ public class QuestionController {
 			logger.error(null, ex);
 		}
 
-		if (StringUtils.length(title) > 10) {
-			showPost.setTitle(title);
-		}
 		// body can be blank
 		showPost.setBody(body);
 		showPost.setLocation(location);
 		showPost.setAuthor(authUser);
-		if (!StringUtils.isBlank(tags) && isQuestion) {
-			showPost.updateTags(showPost.getTags(), Arrays.asList(StringUtils.split(tags, ",")));
-			addedTags.addAll(showPost.getTags());
-			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
-		}
 		if (isQuestion) {
-			String validSpace = utils.getValidSpaceIdExcludingAll(authUser,
-					Optional.ofNullable(space).orElse(showPost.getSpace()), req);
-			if (utils.canAccessSpace(authUser, validSpace) && validSpace != null &&
-					!utils.getSpaceId(validSpace).equals(utils.getSpaceId(showPost.getSpace()))) {
-				showPost.setSpace(validSpace);
-				changeSpaceForAllAnswers(showPost, validSpace);
+			if (StringUtils.length(title) > 2) {
+				showPost.setTitle(title);
 			}
+			addedTags = updateTags(showPost, tags);
+			updateSpaces(showPost, authUser, space, req);
 		}
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
@@ -419,8 +411,11 @@ public class QuestionController {
 			if (questionPost != null) {
 				showPost.setSpace(questionPost.getSpace());
 				questionPost.setLastactivity(System.currentTimeMillis());
+				// create revision manually because post.update() is not called
+				showPost.setRevisionid(Revision.createRevisionFromPost(showPost, false).create());
 				pc.updateAll(Arrays.asList(showPost, questionPost));
 			} else {
+				// create revision here
 				showPost.update();
 			}
 		}
@@ -435,6 +430,27 @@ public class QuestionController {
 			addr.setParentid(showPost.getId());
 			addr.setCreatorid(authUser.getId());
 			pc.create(addr);
+		}
+	}
+
+	private Set<String> updateTags(Post showPost, String tags) {
+		if (!StringUtils.isBlank(tags)) {
+			List<String> newTags = Arrays.asList(StringUtils.split(tags, ","));
+			HashSet<String> addedTags = new HashSet<>(newTags);
+			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
+			showPost.updateTags(showPost.getTags(), newTags);
+			return addedTags;
+		}
+		return Collections.emptySet();
+	}
+
+	private void updateSpaces(Post showPost, Profile authUser, String space, HttpServletRequest req) {
+		String validSpace = utils.getValidSpaceIdExcludingAll(authUser,
+				Optional.ofNullable(space).orElse(showPost.getSpace()), req);
+		if (utils.canAccessSpace(authUser, validSpace) && validSpace != null
+				&& !utils.getSpaceId(validSpace).equals(utils.getSpaceId(showPost.getSpace()))) {
+			showPost.setSpace(validSpace);
+			changeSpaceForAllAnswers(showPost, validSpace);
 		}
 	}
 

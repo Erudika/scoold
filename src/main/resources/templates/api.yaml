@@ -150,7 +150,7 @@ paths:
           description: Not found
     patch:
       summary: Update post
-      description: To change the user who edited the question, specify `lasteditby` in the request body.
+      description: To change the user who edited the question, specify `lasteditby` in the request body. Additionally, you can modify the properties `space`, `latlng` and `location` in the request body to change their values.
       tags:
         - posts
       security:
