@@ -341,7 +341,7 @@
 								#end
 							</div>
 						</div>
-						<div class="col l5 s12 sTextCenter mtl ${footerAlignClass}">
+						<div class="col l5 s12 sTextCenter mtm ${footerAlignClass}">
 							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey capitalize">
 								$!currentLocale.getDisplayLanguage($currentLocale)
 							</a>

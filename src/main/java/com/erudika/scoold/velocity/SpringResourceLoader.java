@@ -86,8 +86,8 @@ public class SpringResourceLoader extends ResourceLoader {
 				this.resourceLoaderPaths[i] = path + "/";
 			}
 		}
-		if (logger.isInfoEnabled()) {
-			logger.info("SpringResourceLoader for Velocity: using resource loader [" + this.resourceLoader +
+		if (logger.isDebugEnabled()) {
+			logger.debug("SpringResourceLoader for Velocity: using resource loader [" + this.resourceLoader +
 					"] and resource loader paths " + Arrays.asList(this.resourceLoaderPaths));
 		}
 	}
