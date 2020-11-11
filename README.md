@@ -231,6 +231,8 @@ para.default_question_tag = "question"
 para.numeric_pagination_enabled = false
 # Selects the default language to load on startup, defaults to 'en'
 para.default_language_code = ""
+# Enable/disable basic HTML tags in the text editor
+para.html_in_markdown_enabled = false
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will

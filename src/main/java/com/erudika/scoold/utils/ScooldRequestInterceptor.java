@@ -196,6 +196,8 @@ public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
 		modelAndView.addObject("langDirection", utils.isLanguageRTL(currentLocale.getLanguage()) ? "RTL" : "LTR");
 		// Pagination
 		modelAndView.addObject("numericPaginationEnabled", Config.getConfigBoolean("numeric_pagination_enabled", false));
+		// Markdown with HTML
+		modelAndView.addObject("htmlInMarkdownEnabled", Config.getConfigBoolean("html_in_markdown_enabled", false));
 		// check for AJAX pagination requests
 		if (utils.isAjaxRequest(request) && (utils.param(request, "page") || utils.param(request, "page1") ||
 				utils.param(request, "page2") || utils.param(request, "page3"))) {

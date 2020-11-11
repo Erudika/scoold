@@ -619,7 +619,7 @@
 	#if($showpost.isReply())<hr>#end
 	<div id="post-$!showpost.id" class="viewbox mbm">
 		<div class="postbody pvs">
-			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body))
+			#set($_bodyHtml = $utils.markdownToHtml($!showpost.body, $!htmlInMarkdownEnabled))
 			$!{_bodyHtml}
 		</div>
 
