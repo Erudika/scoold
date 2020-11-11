@@ -62,11 +62,14 @@ public class PeopleController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping
+	@GetMapping(path = {"", "/bulk-edit"})
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
+		}
+		if (req.getRequestURI().endsWith("/bulk-edit")) {
+			return "redirect:" + PEOPLELINK + "?bulk-edit=true";
 		}
 		Profile authUser = utils.getAuthUser(req);
 		Pager itemcount = utils.getPager("page", req);
