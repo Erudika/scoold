@@ -16,10 +16,11 @@
 		#else
 		<h2>$!lang.get("error.title")</h2>
 		#end
-		$!status $!reason
 
-		#if($code == "500" && $reason.contains("ConnectException"))
-			<h5 class="red-text">No connection to Para backend.</h5>
+		#if($code == "500" && ($reason.contains("ConnectException") || $reason.contains("Connection refused")))
+			<h4 class="red-text">No connection to Para backend.</h4>
+		#else
+			$!status $!reason
 		#end
 		<br>
 	</div>
