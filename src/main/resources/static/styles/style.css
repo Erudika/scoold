@@ -3,7 +3,7 @@
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 300;
-  font-display: auto;
+  font-display: swap;
   src: local('Roboto Light'), local('Roboto-Light'),
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
@@ -13,7 +13,7 @@
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
-  font-display: auto;
+  font-display: swap;
   src: local('Roboto'), local('Roboto-Regular'),
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
@@ -23,7 +23,7 @@
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
-  font-display: auto;
+  font-display: swap;
   src: local('Roboto Bold'), local('Roboto-Bold'),
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
 		url('../fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
@@ -38,7 +38,7 @@ body {
 	letter-spacing: 0;
 	/*font-size: 13pt;*/
 	font-size: 16px;
-	font-family: "Roboto", sans-serif;
+	font-family: "Roboto", "Helvetica", "Arial" sans-serif;
 }
 .tags-aside .chip {
 	white-space: nowrap;
