@@ -36,15 +36,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @Component
 @Named
-public class ScooldRequestInterceptor extends HandlerInterceptorAdapter {
+public class ScooldRequestInterceptor implements HandlerInterceptor {
 
 	public static final Logger logger = LoggerFactory.getLogger(ScooldRequestInterceptor.class);
 	private final ScooldUtils utils;
