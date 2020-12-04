@@ -241,6 +241,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("sl_secret", Config.SLACK_SECRET);
 		settings.put("az_app_id", Config.AMAZON_APP_ID);
 		settings.put("az_secret", Config.AMAZON_SECRET);
+		// Microsoft tenant id support - https://github.com/Erudika/scoold/issues/208
+		settings.put("ms_tenant_id", Config.getConfigParam("ms_tenant_id", null));
 		// OAuth 2 settings
 		settings.putAll(oauthSettings(""));
 		settings.putAll(oauthSettings("second"));
