@@ -912,6 +912,22 @@ public final class ScooldUtils {
 				!isMod(authUser);
 	}
 
+	public String getWelcomeMessage(Profile authUser) {
+		return authUser == null ? Config.getConfigParam("welcome_message", "") : "";
+	}
+
+	public String getWelcomeMessageOnLogin(Profile authUser) {
+		if (authUser == null) {
+			return "";
+		}
+		String welcomeMsgOnlogin = Config.getConfigParam("welcome_message_onlogin", "");
+		if (StringUtils.contains(welcomeMsgOnlogin, "{{")) {
+			welcomeMsgOnlogin = Utils.compileMustache(Collections.singletonMap("user",
+					ParaObjectUtils.getAnnotatedFields(authUser, false)), welcomeMsgOnlogin);
+		}
+		return welcomeMsgOnlogin;
+	}
+
 	public boolean isDefaultSpace(String space) {
 		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
 	}

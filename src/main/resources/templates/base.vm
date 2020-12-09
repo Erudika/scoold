@@ -387,6 +387,12 @@
 		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js"></script>
 		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js"></script>
+		#set($isAdminJS = "IS_ADMIN = $isAdmin")
+		#set($_welcomeMsg = $scooldUtils.getWelcomeMessage($authUser))
+		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
+		#set($_welcomeMsgOnLogin = $scooldUtils.getWelcomeMessageOnLogin($authUser))
+		#set($_welcomeMessageOnLoginJS = "WELCOME_MESSAGE_ONLOGIN = '$_welcomeMsgOnLogin'")
+		<script nonce="$cspNonce">$isAdminJS;$_welcomeMessageJS;$_welcomeMessageOnLoginJS;</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 
 		#if ($request.getServletPath() == "/signin")

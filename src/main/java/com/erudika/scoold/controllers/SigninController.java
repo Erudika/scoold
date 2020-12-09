@@ -21,10 +21,8 @@ import com.erudika.para.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MAX_TAGS_PER_POST;
@@ -42,11 +40,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.LoggerFactory;
@@ -266,17 +262,6 @@ public class SigninController {
 
 		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req));
 		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");
-
-		boolean isAuthenticated = !StringUtils.isBlank(HttpUtils.getCookieValue(req, AUTH_COOKIE));
-		String welcomeMsg = Config.getConfigParam("welcome_message", "");
-		String welcomeMsgOnlogin = Config.getConfigParam("welcome_message_onlogin", "");
-		if (isAuthenticated && StringUtils.contains(welcomeMsgOnlogin, "{{")) {
-			Profile authUser = Optional.ofNullable(utils.readAuthUser(req)).orElse(new Profile());
-			welcomeMsgOnlogin = Utils.compileMustache(Collections.singletonMap("user",
-					ParaObjectUtils.getAnnotatedFields(authUser, false)), welcomeMsgOnlogin);
-		}
-		sb.append("WELCOME_MESSAGE = \"").append(!isAuthenticated ? welcomeMsg : "").append("\"; ");
-		sb.append("WELCOME_MESSAGE_ONLOGIN = \"").append(isAuthenticated ? welcomeMsgOnlogin : "").append("\"; ");
 		sb.append("MAX_TAGS_PER_POST = ").append(MAX_TAGS_PER_POST).append("; ");
 
 		String result = sb.toString();
