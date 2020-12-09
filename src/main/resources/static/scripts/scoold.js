@@ -937,6 +937,7 @@ $(function () {
 		localStorage.removeItem($form.find("input[name=title]").attr("id"));
 		localStorage.removeItem($form.find("textarea[name=body]").attr("id"));
 		localStorage.removeItem($form.find("input[name=tags]").attr("id"));
+		window.location.hash = "post-" + $(form).closest(".postbox").attr("id");
 		window.location.href = data.url || "";
 		location.reload();
 	}, function (xhr, status, error, form) {
