@@ -55,6 +55,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  *
@@ -134,7 +135,7 @@ public class QuestionsController {
 				sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");
 				sb.append(similarPost.getVotes());
 				sb.append("</span> <a href=\"").append(similarPost.getPostLink(false, false)).append("\">");
-				sb.append(similarPost.getTitle()).append("</a><br>");
+				sb.append(HtmlUtils.htmlEscape(similarPost.getTitle())).append("</a><br>");
 			}
 		}
 		res.setCharacterEncoding("UTF-8");
