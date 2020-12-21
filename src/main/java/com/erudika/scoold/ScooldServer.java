@@ -131,7 +131,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
 	public static void main(String[] args) {
-		((ch.qos.logback.classic.Logger) logger).setLevel(ch.qos.logback.classic.Level.TRACE);
 		SpringApplication app = new SpringApplication(ScooldServer.class);
 		initConfig();
 		app.setAdditionalProfiles(Config.ENVIRONMENT);
