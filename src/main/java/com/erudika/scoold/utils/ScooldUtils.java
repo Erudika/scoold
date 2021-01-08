@@ -1517,17 +1517,19 @@ public final class ScooldUtils {
 
 	public Sysprop getCustomTheme() {
 		String id = "theme" + Config.SEPARATOR + "custom";
-		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
-		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
-			Sysprop s = new Sysprop(id);
-			s.setName(selectedTheme);
-			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
-			return s;
-		} else if ("custom".equalsIgnoreCase(selectedTheme)) {
-			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
-					orElseGet(() -> getDefaultThemeObject());
-		}
-		return getDefaultThemeObject();
+		return (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(() -> getDefaultThemeObject());
+		// !!!!!!!: make this more efficient by storing the selected theme in cookie, then get from cache.
+//		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
+//		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
+//			Sysprop s = new Sysprop(id);
+//			s.setName(selectedTheme);
+//			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
+//			return s;
+//		} else if ("custom".equalsIgnoreCase(selectedTheme)) {
+//			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
+//					orElseGet(() -> getDefaultThemeObject());
+//		}
+//		return getDefaultThemeObject();
 	}
 
 	private Sysprop getDefaultThemeObject() {
