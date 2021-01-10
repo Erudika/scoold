@@ -94,6 +94,7 @@ public class SigninController {
 				"Continue with OpenID Connect 2"));
 		model.addAttribute("oa2thirdLoginProvider", Config.getConfigParam("security.oauththird.provider",
 				"Continue with OpenID Connect 3"));
+		model.addAttribute("ldapLoginProvider", Config.getConfigParam("security.ldap.provider", "Continue with LDAP"));
 		return "base";
 	}
 

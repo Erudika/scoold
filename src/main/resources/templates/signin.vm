@@ -146,7 +146,7 @@
 						#end
 
 						#if($ldapLoginEnabled)
-						<h4>LDAP</h4>
+						<h4>$!ldapLoginProvider</h4>
 						<div class="pal">
 							<form method="post" id="ldap-login-form">
 								#sectoken(false "SIGNIN_LDAP")
