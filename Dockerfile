@@ -1,27 +1,25 @@
-FROM openjdk:8-jdk-alpine
+FROM maven:3.6-jdk-11-slim AS build
 
-RUN apk --update add git openssh maven && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm /var/cache/apk/*
-
-ENV BOOT_SLEEP=0 \
-    JAVA_OPTS=""
-
-RUN addgroup -S scoold && adduser -S -G scoold scoold && \
-	mkdir -p /scoold/clone && \
+RUN addgroup --system scoold && adduser --system --group scoold && \
+	mkdir -p /scoold && \
 	chown -R scoold:scoold /scoold
 
 USER scoold
 
 WORKDIR /scoold
 
-RUN git clone --depth=1 https://github.com/Erudika/scoold /scoold/clone && \
-	cd /scoold/clone && \
-	mvn -DskipTests=true clean package && \
-	mv target/scoold-*.jar /scoold/ && \
-	cd /scoold && rm -rf /scoold/clone && rm -rf ~/.m2
+RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
+
+RUN cd /scoold/scoold-master && mvn -q -DskipTests=true clean package
+
+FROM openjdk:11-jre-slim
+
+ENV BOOT_SLEEP=0 \
+    JAVA_OPTS=""
+
+COPY --from=build /scoold/scoold-master/target/scoold-*.jar /scoold/scoold.jar
 
 EXPOSE 8000
 
 CMD sleep $BOOT_SLEEP && \
-	java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar scoold-*.jar
+	java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /scoold/scoold.jar
