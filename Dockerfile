@@ -1,15 +1,7 @@
 FROM maven:3.6-jdk-11-slim AS build
 
-RUN addgroup --system scoold && adduser --system --group scoold && \
-	mkdir -p /scoold && \
-	chown -R scoold:scoold /scoold
-
-USER scoold
-
-WORKDIR /scoold
-
+RUN mkdir -p /scoold
 RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
-
 RUN cd /scoold/scoold-master && mvn -q -DskipTests=true clean package
 
 FROM openjdk:11-jre-slim
