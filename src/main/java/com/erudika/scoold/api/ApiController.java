@@ -152,6 +152,11 @@ public class ApiController {
 		return intro;
 	}
 
+	@GetMapping("/ping")
+	public String ping(HttpServletRequest req, HttpServletResponse res) {
+		return "pong";
+	}
+
 	@PostMapping("/posts")
 	public Map<String, Object> createPost(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
