@@ -959,13 +959,15 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(targetSpaceId) || targetSpaceId.length() < 2) {
 			return false;
 		}
-		if (isDefaultSpace(targetSpaceId)) {
-			// can user access the default space (blank)
-			return isDefaultSpacePublic() || isMod(authUser) || !authUser.hasSpaces();
-		}
+		// this is confusing - let admins control who is in the default space
+		//if (isDefaultSpace(targetSpaceId)) {
+		//	// can user access the default space (blank)
+		//	return isDefaultSpacePublic() || isMod(authUser) || !authUser.hasSpaces();
+		//}
 		boolean isMemberOfSpace = false;
 		for (String space : authUser.getSpaces()) {
-			if (StringUtils.startsWithIgnoreCase(space, getSpaceId(targetSpaceId) + Config.SEPARATOR)) {
+			String spaceId = getSpaceId(targetSpaceId);
+			if (StringUtils.startsWithIgnoreCase(space, spaceId + Config.SEPARATOR) || space.equalsIgnoreCase(spaceId)) {
 				isMemberOfSpace = true;
 				break;
 			}

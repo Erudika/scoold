@@ -332,9 +332,10 @@ public class Profile extends Sysprop {
 		if (spaces.isEmpty()) {
 			spaces.add(Post.DEFAULT_SPACE);
 		}
-		if (spaces.size() > 1 && spaces.contains(Post.DEFAULT_SPACE)) {
-			spaces.remove(Post.DEFAULT_SPACE);
-		}
+		// this is confusing - let admins control who is in the default space
+		//if (spaces.size() > 1 && spaces.contains(Post.DEFAULT_SPACE)) {
+		//	spaces.remove(Post.DEFAULT_SPACE);
+		//}
 		return spaces;
 	}
 
