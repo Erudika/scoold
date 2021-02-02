@@ -151,6 +151,41 @@ public class TagsController {
 		}
 	}
 
+	@PostMapping("/delete")
+	public String delete(@RequestParam String tag, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isMod(authUser)) {
+			Tag t = pc.read(Utils.type(Tag.class), new Tag(tag).getId());
+			if (t != null) {
+				pc.delete(t);
+				logger.info("User {} ({}) deleted tag '{}'.",
+						authUser.getName(), authUser.getCreatorid(), t.getTag());
+
+				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+				List<Question> questionslist;
+				do {
+					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{t.getTag()}, pager);
+					for (Question q : questionslist) {
+						t.setCount(t.getCount() + 1);
+						q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
+								filter(ts -> !ts.equals(t.getTag())).distinct().collect(Collectors.toList()));
+						logger.debug("Removed tag {} from {} out of {} questions.",
+								t.getTag(), questionslist.size(), pager.getCount());
+					}
+					if (!questionslist.isEmpty()) {
+						pc.updateAll(questionslist);
+					}
+				} while (!questionslist.isEmpty());
+			}
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "blank";
+		} else {
+			return "redirect:" + TAGSLINK + "?" + req.getQueryString();
+		}
+	}
+
 	@ResponseBody
 	@GetMapping(path = "/{keyword}", produces = MediaType.APPLICATION_JSON)
 	public List<?> findTags(@PathVariable String keyword) {

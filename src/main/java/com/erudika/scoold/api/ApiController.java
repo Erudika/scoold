@@ -581,7 +581,7 @@ public class ApiController {
 
 	@DeleteMapping("/tags/{id}")
 	public void deleteTag(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		pc.delete(new Tag(id));
+		tagsController.delete(id, req, res);
 	}
 
 	@GetMapping("/tags/{id}/questions")

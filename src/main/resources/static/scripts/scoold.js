@@ -674,6 +674,13 @@ $(function () {
 				});
 	});
 
+	$(document).on("click", "a.delete-tag",  function() {
+		var that = $(this);
+		that.closest("div.tagbox").fadeOut("fast", function() {that.remove();});
+		$.post(that.attr("href"));
+		return false;
+	});
+
 	/****************************************************
      *                  PAGINATION
      ****************************************************/
