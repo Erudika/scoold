@@ -1,8 +1,8 @@
 openapi: "3.0.2"
 info:
-  description: "This is the API console. First, you need to generate an [API key](/admin) in order to access the API."
+  description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
   version: "1.1.0"
-  title: "API documentation"
+  title: "Scoold API documentation"
 externalDocs:
   description: "README"
   url: "https://github.com/Erudika/scoold"
@@ -16,6 +16,7 @@ tags:
 - name: "webhooks"
 - name: "search"
 - name: "stats"
+- name: "backups"
 paths:
   /api:
     get:
@@ -338,7 +339,7 @@ paths:
           schema:
             type: string
         - name: userid
-          in: path
+          in: query
           required: true
           description: The id of the user voting
           schema:
@@ -364,7 +365,7 @@ paths:
           schema:
             type: string
         - name: userid
-          in: path
+          in: query
           required: true
           description: The id of the user voting
           schema:
@@ -1320,6 +1321,39 @@ paths:
       responses:
         '200':
           description: stats
+  /api/backup:
+    get:
+      summary: Returns a backup ZIP archive of all the data in Scoold
+      tags:
+        - backups
+      security:
+      - scoold_auth: []
+      responses:
+        '200':
+          description: A ZIP backup archive
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+  /api/restore:
+    put:
+      summary: Restores a backup ZIP archive, overwriting all existing data in Scoold
+      tags:
+        - backups
+      security:
+      - scoold_auth: []
+      requestBody:
+        description: A ZIP backup archive
+        required: true
+        content:
+          application/zip:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: restore was successful
 components:
   schemas:
     Post:

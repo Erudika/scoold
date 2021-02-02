@@ -33,6 +33,7 @@ import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_USER_ATTRIBUTE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.REST_ENTITY_ATTRIBUTE;
+import com.erudika.scoold.controllers.AdminController;
 import com.erudika.scoold.controllers.CommentController;
 import com.erudika.scoold.controllers.PeopleController;
 import com.erudika.scoold.controllers.ProfileController;
@@ -75,6 +76,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -88,6 +90,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 /**
  * Scoold REST API
@@ -122,6 +126,8 @@ public class ApiController {
 	private TagsController tagsController;
 	@Inject
 	private ReportsController reportsController;
+	@Inject
+	private AdminController adminController;
 
 	@Inject
 	public ApiController(ScooldUtils utils) {
@@ -876,6 +882,18 @@ public class ApiController {
 	@DeleteMapping("/spaces/{id}")
 	public void deleteSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		pc.delete(new Sysprop(utils.getSpaceId(id)));
+	}
+
+	@GetMapping("/backup")
+	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse res) {
+		return adminController.backup(req, res);
+	}
+
+	@PutMapping("/restore")
+	public void restore(@RequestParam("file") MultipartFile file,
+			@RequestParam(required = false, defaultValue = "false") Boolean isso,
+			HttpServletRequest req, HttpServletResponse res) {
+		adminController.restore(file, isso, req, res);
 	}
 
 	private boolean voteRequest(boolean isUpvote, String id, String userid, HttpServletRequest req) {
