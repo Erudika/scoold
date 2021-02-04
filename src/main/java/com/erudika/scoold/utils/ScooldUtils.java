@@ -267,7 +267,7 @@ public final class ScooldUtils {
 				} else {
 					logger.info("Invalid JWT found in cookie {}.", AUTH_COOKIE);
 				}
-				res.sendRedirect(SIGNINLINK + "?code=3&error=true");
+				res.sendRedirect(getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 				return null;
 			}
 		}
