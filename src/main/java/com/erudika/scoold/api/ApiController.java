@@ -851,16 +851,17 @@ public class ApiController {
 		long uacount = 0L;
 		String paraVer = null;
 		try {
-			qcount = pc.getCount(Utils.type(Question.class));
-			acount = pc.getCount(Utils.type(Reply.class));
-			scount = pc.getCount("scooldspace");
-			ucount = pc.getCount(Utils.type(Profile.class));
-			tcount = pc.getCount(Utils.type(Tag.class));
-			rcount = pc.getCount(Utils.type(Report.class));
-			ccount = pc.getCount(Utils.type(Comment.class));
-			recount = pc.getCount(Utils.type(Revision.class));
-			uqcount = pc.getCount(Utils.type(UnapprovedQuestion.class));
-			uacount = pc.getCount(Utils.type(UnapprovedReply.class));
+			Map<String, Number> typesCount = pc.typesCount();
+			qcount = typesCount.getOrDefault(Utils.type(Question.class), 0).longValue();
+			acount =  typesCount.getOrDefault(Utils.type(Reply.class), 0).longValue();
+			scount =  typesCount.getOrDefault("scooldspace", 0).longValue();
+			ucount =  typesCount.getOrDefault(Utils.type(Profile.class), 0).longValue();
+			tcount =  typesCount.getOrDefault(Utils.type(Tag.class), 0).longValue();
+			rcount =  typesCount.getOrDefault(Utils.type(Report.class), 0).longValue();
+			ccount =  typesCount.getOrDefault(Utils.type(Comment.class), 0).longValue();
+			recount = typesCount.getOrDefault(Utils.type(Revision.class), 0).longValue();
+			uqcount = typesCount.getOrDefault(Utils.type(UnapprovedQuestion.class), 0).longValue();
+			uacount = typesCount.getOrDefault(Utils.type(UnapprovedReply.class), 0).longValue();
 			paraVer = pc.getServerVersion();
 		} catch (Exception e) { }
 		stats.put("questions", qcount);
