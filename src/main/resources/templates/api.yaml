@@ -477,7 +477,7 @@ paths:
           in: query
           required: false
           example: "timestamp"
-          description: This could be a property name like `votes`, `properties.yearlyVotes`, `properties.quarterlyVotes`, `properties.montlyVotes`  or `properties.weeklyVotes`.
+          description: This could be a property name like `votes`, `properties.yearlyVotes`, `properties.quarterlyVotes`, `properties.monthlyVotes`  or `properties.weeklyVotes`.
           schema:
             type: string
         - $ref: '#/components/parameters/limit'

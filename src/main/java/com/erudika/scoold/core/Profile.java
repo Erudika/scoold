@@ -192,7 +192,7 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getYearlyVotes() {
-		return yearlyVotes;
+		return Math.min(Math.abs(yearlyVotes), 0);
 	}
 
 	public void setYearlyVotes(Integer yearlyVotes) {
@@ -200,7 +200,7 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getQuarterlyVotes() {
-		return quarterlyVotes;
+		return Math.min(Math.abs(quarterlyVotes), 0);
 	}
 
 	public void setQuarterlyVotes(Integer quarterlyVotes) {
@@ -208,7 +208,7 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getMonthlyVotes() {
-		return monthlyVotes;
+		return Math.min(Math.abs(monthlyVotes), 0);
 	}
 
 	public void setMonthlyVotes(Integer monthlyVotes) {
@@ -216,7 +216,7 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getWeeklyVotes() {
-		return weeklyVotes;
+		return Math.min(Math.abs(weeklyVotes), 0);
 	}
 
 	public void setWeeklyVotes(Integer weeklyVotes) {
@@ -545,7 +545,7 @@ public class Profile extends Sysprop {
 	}
 
 	private void updateVoteGains(int rep) {
-		Long updated = Optional.ofNullable(getUpdated()).orElse(Utils.timestamp());
+		Long updated = Optional.ofNullable(getUpdated()).orElse(getTimestamp());
 		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZoneId.systemDefault());
 		LocalDate now = LocalDate.now();
 		if (now.getYear() != lastUpdate.getYear()) {
@@ -568,6 +568,7 @@ public class Profile extends Sysprop {
 		} else {
 			weeklyVotes += rep;
 		}
+		setUpdated(Utils.timestamp());
 	}
 
 	public boolean hasBadge(Badge b) {
@@ -636,6 +637,7 @@ public class Profile extends Sysprop {
 
 	public void update() {
 		setLastseen(System.currentTimeMillis());
+		updateVoteGains(0); // reset vote gains if they we're past the time frame
 		client().update(this);
 	}
 

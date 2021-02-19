@@ -369,7 +369,19 @@
 							#end
 						</div>
 					#end
-					<span class="chip mts" title="$!lang.get('reputation')">$utils.abbreviateInt($!showFriend.votes, 0)</span>
+					<span class="chip mts" title="$!lang.get('reputation')">
+						#if($request.getParameter("sortby") == "properties.yearlyVotes")
+							$utils.abbreviateInt($!showFriend.yearlyVotes, 0)
+						#elseif($request.getParameter("sortby") == "properties.quarterlyVotes")
+							$utils.abbreviateInt($!showFriend.quarterlyVotes, 0)
+						#elseif($request.getParameter("sortby") == "properties.monthlyVotes")
+							$utils.abbreviateInt($!showFriend.monthlyVotes, 0)
+						#elseif($request.getParameter("sortby") == "properties.weeklyVotes")
+							$utils.abbreviateInt($!showFriend.weeklyVotes, 0)
+						#else
+							$utils.abbreviateInt($!showFriend.votes, 0)
+						#end
+					</span>
 					#if($showFriend.badges && $showFriend.badgesMap && $showFriend.badgesMap.size() > 0)
 						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
 					#end
