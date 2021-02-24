@@ -254,6 +254,13 @@ $ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold/applicatio
   -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold
 ```
 
+For **Scoold Pro** the images are located in a private registry. You can get access to it once you purchase a Pro license.
+The run command for **Scoold Pro** is similar with the only difference being the uploads volume:
+```
+$ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold-pro/application.conf \
+  -v scoold-uploads:/scoold-pro/uploads -e JAVA_OPTS="-Dconfig.file=/scoold-pro/application.conf" ecr/scoold-pro
+```
+
 **Environment variables**
 
 `JAVA_OPTS` - Java system properties, e.g. `-Dpara.port=8000`
