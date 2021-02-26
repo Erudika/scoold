@@ -326,8 +326,7 @@ public class AdminController {
 			res.setStatus(403);
 			return null;
 		}
-		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Sysprop>>() { });
-		ObjectReader mapReader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
+		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
 		Map<String, String> comments2authors = new LinkedHashMap<>();
 		int	count = 0;
 		int importBatchSize = Config.getConfigInt("import_batch_size", 100);
@@ -340,22 +339,23 @@ public class AdminController {
 					ZipEntry zipEntry;
 					List<ParaObject> toCreate = new LinkedList<ParaObject>();
 					while ((zipEntry = zipIn.getNextEntry()) != null) {
-						List<ParaObject> objects;
 						if (isso) {
-							objects = importFromSOArchive(zipIn, zipEntry, mapReader, comments2authors);
-						} else {
-							objects = reader.readValue(new FilterInputStream(zipIn) {
+							count += importFromSOArchive(zipIn, zipEntry, reader, comments2authors).size();
+						} else if (zipEntry.getName().endsWith(".json")) {
+							List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
 								public void close() throws IOException {
 									zipIn.closeEntry();
 								}
 							});
-							toCreate.addAll(objects);
+							objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
 							if (toCreate.size() >= importBatchSize) {
 								pc.createAll(toCreate);
 								toCreate.clear();
 							}
+							count += objects.size();
+						} else {
+							logger.error("Expected JSON but found unknown file type to import: {}", zipEntry.getName());
 						}
-						count += objects.size();
 					}
 					if (!toCreate.isEmpty()) {
 						pc.createAll(toCreate);
