@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.2</version>
+		<version>2.4.3</version>
 	</parent>
 
 	<organization>
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.38.3</version>
+			<version>1.38.4</version>
 		</dependency>
 
 		<!-- VELOCITY -->
