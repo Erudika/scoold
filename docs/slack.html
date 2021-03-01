@@ -371,12 +371,12 @@
 								<img src="slack_step4.png" alt="Step 4" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>6.</b> Create the <code>/scoold</code> slash command pointing the "Request URL" to your Scoold instance, e.g. <code>https://myscoold.com/slack</code>.
+								<b>6.</b> Create the <code>/scoold</code> slash command pointing the "Request URL" to your Scoold Pro instance, e.g. <code>https://myscoold.com/slack</code>.
 								"Escape channels, users, and links sent to your app" <b>must be checked</b></span><br><br>
 								<img src="slack_step5.png" alt="Step 5" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>7.</b> Whitelist your Para and Scoold integration endpoints. The first one is for enabling Slack authentication, the second one is for enabling Slack notifications on particular Slack channels, via the "Add to Slack button". </span><br><br>
+								<b>7.</b> Whitelist your Para and Scoold integration endpoints under Slack's "OAuth & Permissions". The first one should contain the URL of your Para server, e.g. <code>https://paraio.com/slack_auth</code>, the second one should contain the URL of your Scoold Pro website <code>https://myscoold.com/admin/slack_auth</code>. </span><br><br>
 								<img src="slack_step6.png" alt="Step 6" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
