@@ -365,9 +365,11 @@ public class AdminController {
 					}
 				}
 			} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
-				List<Sysprop> objects = reader.readValue(inputStream);
+				List<Map<String, Object>> objects = reader.readValue(inputStream);
+				List<ParaObject> toCreate = new LinkedList<ParaObject>();
+				objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
 				count = objects.size();
-				pc.createAll(objects);
+				pc.createAll(toCreate);
 			}
 			s.setCreatorid(authUser.getCreatorid());
 			s.setName(authUser.getName());
