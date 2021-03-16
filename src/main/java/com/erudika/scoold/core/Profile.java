@@ -192,7 +192,10 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getYearlyVotes() {
-		return Math.min(Math.abs(yearlyVotes), 0);
+		if (yearlyVotes < 0) {
+			yearlyVotes = 0;
+		}
+		return yearlyVotes;
 	}
 
 	public void setYearlyVotes(Integer yearlyVotes) {
@@ -200,7 +203,10 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getQuarterlyVotes() {
-		return Math.min(Math.abs(quarterlyVotes), 0);
+		if (quarterlyVotes < 0) {
+			quarterlyVotes = 0;
+		}
+		return quarterlyVotes;
 	}
 
 	public void setQuarterlyVotes(Integer quarterlyVotes) {
@@ -208,7 +214,10 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getMonthlyVotes() {
-		return Math.min(Math.abs(monthlyVotes), 0);
+		if (monthlyVotes < 0) {
+			monthlyVotes = 0;
+		}
+		return monthlyVotes;
 	}
 
 	public void setMonthlyVotes(Integer monthlyVotes) {
@@ -216,7 +225,10 @@ public class Profile extends Sysprop {
 	}
 
 	public Integer getWeeklyVotes() {
-		return Math.min(Math.abs(weeklyVotes), 0);
+		if (weeklyVotes < 0) {
+			weeklyVotes = 0;
+		}
+		return weeklyVotes;
 	}
 
 	public void setWeeklyVotes(Integer weeklyVotes) {
