@@ -379,6 +379,30 @@ public final class ScooldUtils {
 		}
 	}
 
+	public void sendVerificationEmail(String email, HttpServletRequest req) {
+		if (!StringUtils.isBlank(email)) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
+			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
+			String body = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
+					Config.APP_NAME);
+
+			Sysprop s = pc.read(email);
+			if (s != null) {
+				String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+				s.addProperty(Config._EMAIL_TOKEN, token);
+				pc.update(s);
+				token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + s.getCreatorid() + "&token=" + token;
+				body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
+			}
+
+			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("heading", lang.get("hello"));
+			model.put("body", body);
+			emailer.sendEmail(Arrays.asList(email), subject, compileEmailTemplate(model));
+		}
+	}
+
 	public void sendPasswordResetEmail(String email, String token, HttpServletRequest req) {
 		if (email != null && token != null) {
 			Map<String, Object> model = new HashMap<String, Object>();

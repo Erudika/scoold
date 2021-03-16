@@ -122,6 +122,7 @@ public class SigninController {
 
 	@GetMapping(path = "/signin/register")
 	public String register(@RequestParam(name = "verify", required = false, defaultValue = "false") Boolean verify,
+			@RequestParam(name = "resend", required = false, defaultValue = "false") Boolean resend,
 			@RequestParam(name = "id", required = false) String id,
 			@RequestParam(name = "token", required = false) String token,
 			HttpServletRequest req, Model model) {
@@ -134,6 +135,8 @@ public class SigninController {
 		model.addAttribute("emailPattern", Email.EMAIL_PATTERN);
 		model.addAttribute("register", true);
 		model.addAttribute("verify", verify);
+		model.addAttribute("resend", resend);
+		model.addAttribute("bademail", req.getParameter("email"));
 		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
 		if (id != null && token != null) {
 			boolean verified = activateWithEmailToken((User) pc.read(id), token);
@@ -172,6 +175,14 @@ public class SigninController {
 			}
 		}
 		return "redirect:" + SIGNINLINK + (approvedDomain ? "/register?verify=true" : "?code=3&error=true");
+	}
+
+	@PostMapping("/signin/register/resend")
+	public String signup(@RequestParam String email, HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (!utils.isAuthenticated(req) && isAccountLocked(email)) {
+			utils.sendVerificationEmail(email, req);
+		}
+		return "redirect:" + SIGNINLINK + "/register?verify=true";
 	}
 
 	@GetMapping(path = "/signin/iforgot")
@@ -285,7 +296,9 @@ public class SigninController {
 					LoggerFactory.getLogger(SigninController.class).
 							warn("Signin denied for {} because that domain is not in the whitelist.", u.getEmail());
 				}
-				return "redirect:" + SIGNINLINK + "?code=3&error=true";
+				boolean isLocked = isAccountLocked(email);
+				return "redirect:" + SIGNINLINK + "?code=" + (isLocked ? "6" : "3") + "&error=true" +
+						(isLocked ? "&email=" + email : "");
 			}
 		}
 		return "redirect:" + getBackToUrl(req);
@@ -313,6 +326,15 @@ public class SigninController {
 	private boolean isEmailRegistered(String email) {
 		Sysprop ident = pc.read(email);
 		return ident != null && ident.hasProperty(Config._PASSWORD);
+	}
+
+	public boolean isAccountLocked(String email) {
+		Sysprop ident = pc.read(email);
+		if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
+			User u = pc.read(Utils.type(User.class), ident.getCreatorid());
+			return u != null && !u.getActive();
+		}
+		return false;
 	}
 
 	private void verifyEmailIfNecessary(String name, String email, HttpServletRequest req) {
