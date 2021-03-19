@@ -1040,6 +1040,12 @@ If you want to assign space(s) to new users automatically, add this to your conf
 # put space ids here, the "scooldspace:" prefix is optional
 para.auto_assign_spaces = "my-space-one,my-other-space"
 ```
+When using the option above, new spaces are added to existing spaces for each user. You can configure auto-assigned
+spaces to overwrite the existing user spaces (like the "default" space, assigned to everyone) by setting:
+```
+para.reset_spaces_on_new_assignment = true
+```
+This is turned on for all users authenticated with LDAP, SAML or OAuth 2.0.
 
 Alternatively, Scoold Pro can have spaces delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
 You have to enable access token delegation with `para.security.oauth.token_delegation_enabled = true` and Scoold will
