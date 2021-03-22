@@ -674,6 +674,7 @@ para.tw_secret = ""
 # Microsoft
 para.ms_app_id = ""
 para.ms_secret = ""
+para.ms_tenant_id = ""
 # Slack
 para.sl_app_id = ""
 para.sl_secret = ""
