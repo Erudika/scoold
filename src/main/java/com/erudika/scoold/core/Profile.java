@@ -168,11 +168,16 @@ public class Profile extends Sysprop {
 		p.setGroups(ScooldUtils.getInstance().isRecognizedAsAdmin(u)
 				? User.Groups.ADMINS.toString() : u.getGroups());
 		// auto-assign spaces to new users
-		String space = Config.getConfigParam("auto_assign_spaces", "");
+		String space = StringUtils.substringBefore(Config.getConfigParam("auto_assign_spaces", ""), ",");
 		if (!StringUtils.isBlank(space) && !ScooldUtils.getInstance().isDefaultSpace(space)) {
 			Sysprop s = client().read(ScooldUtils.getInstance().getSpaceId(space));
 			if (s != null) {
-				p.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+				if (Config.getConfigBoolean("reset_spaces_on_new_assignment",
+						u.isOAuth2User() || u.isLDAPUser() || u.isSAMLUser())) {
+					p.setSpaces(Collections.singleton(s.getId() + Config.SEPARATOR + s.getName()));
+				} else {
+					p.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+				}
 			}
 		}
 		return p;
