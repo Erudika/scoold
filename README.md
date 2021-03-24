@@ -102,7 +102,22 @@ Here's an overview of the architecture:
 
 [JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
-0. First, you *need* to create a developer app with [Facebook](https://developers.facebook.com),
+1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
+2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
+```ini
+para.env = "development"
+para.app_name = "Scoold"
+para.access_key = "app:your_para_app"
+para.secret_key = "your_app_secret_key"
+para.endpoint = "https://paraio.com"
+para.admins = "my@email.com"
+```
+3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
+4. Open `http://localhost:8000/signin/register` in your browser
+5. Register a new account with your email address (same as above - my@email.com)
+
+If you want to login with a social account, first you *need* to create a developer app with
+[Facebook](https://developers.facebook.com),
 [Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
 This isn't necessary if you're planning to login with LDAP, SAML or with email and password.
 Save the obtained API keys in `application.conf`, as shown below.
@@ -111,29 +126,6 @@ Save the obtained API keys in `application.conf`, as shown below.
 `https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
 appropriate authentication endpoint. For example, for GitHub, the redirect URL would be: `https://paraio.com/github_auth`,
 for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/docs/#029-passwordless).
-
-1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
-2. Click one of the quick deploy buttons **or** skip to step 3 for local deployment:
-
-<a href="https://heroku.com/deploy?template=https://github.com/Erudika/scoold" title="Deploy to Heroku">
-	<img src="https://www.herokucdn.com/deploy/button.svg" alt="btn">
-</a>
-<a href="https://lightsail.aws.amazon.com/ls/webapp/create/instance" title="Deploy to Lightsail">
-	<img src="https://s3-eu-west-1.amazonaws.com/com.scoold.files/awsdeploy.svg" height="32" alt="deploy to aws button">
-</a>
-<a href="https://deploy.azure.com/?repository=https://github.com/Erudika/scoold" title="Install on Azure">
-	<img src="https://azuredeploy.net/deploybutton.svg" height="32" alt="btn">
-</a>
-
-3. Create Scoold's configuration file named `application.conf` and add the following properties to it:
-```ini
-para.app_name = "Scoold"
-para.access_key = "app:your_para_app"
-para.secret_key = "your_app_secret_key"
-para.endpoint = "https://paraio.com"
-```
-4. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
-5. Open `http://localhost:8000` in your browser
 
 ### Quick Start with a self-hosted Para backend (harder)
 
@@ -151,13 +143,17 @@ $ para-cli setup
 $ para-cli ping
 $ para-cli new-app "scoold" --name "Scoold"
 ```
-5. Save the keys inside Scoold's `application.conf` like this:
+5. Save the keys inside Scoold's `application.conf`. The contents of this file should look like this:
 ```ini
+para.env = "development"
+para.app_name = "Scoold"
 para.access_key = "app:scoold"
-para.secret_key = "..."
+para.secret_key = "scoold_secret_key"
+para.endpoint = "http://localhost:8080"
+para.admins = "my@email.com"
 ```
 6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar` and keep an eye on the log for any error messages
-7. Open `http://localhost:8000` in your browser
+7. Open `http://localhost:8000` in your browser and register an account with the same email you put in the configuration
 
 
 > **Important: Do not use the same `application.conf` file for both Para and Scoold!**
