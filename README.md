@@ -73,13 +73,13 @@ For **admin** access, open the Scoold Pro demo and login with "Demo login".
 
 *Sometimes the demos might take a minute to load.*
 
-## Scoold architecture intro - what the heck is Para?
+## Scoold architecture intro (or 'what the heck is Para?')
 
-Scoold is a client application (frontend) of the Para backend server. Almost every request to Scoold also involes at
-least one request to Para as well. When you ask a question on Scoold, a `create` request is sent to Para to the location
-`POST /v1/questions`. Here are a few key points about that architecture:
+Scoold is a client application (frontend) of the [Para](https://paraio.org) backend server. Almost every request to
+Scoold also involes at least one request to Para as well. When you ask a question on Scoold, a `create` request is
+sent to Para to the location `POST /v1/questions`. Here are a few key points about that architecture:
 - A Para server can be hosted anywhere and store data inside any of the [supported databases](https://github.com/Erudika/para#database-integrations).
-- Para stores data in isolated environments called "apps".
+- Para is a multi-tenant server which stores data in isolated environments called "apps".
 - Each app environment is completely separated from others and has its own database table and search index.
 - Each instance of the Scoold server needs one Para app for data storage.
 - Two or more instance of Scoold (like a cluster) can connect to the same Para app environment and share the data.
