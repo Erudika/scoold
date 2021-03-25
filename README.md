@@ -1222,6 +1222,7 @@ para.slack.post_to_space = "workspace|scooldspace:myspace|default"
 
 para.slack.notify_on_new_question = true
 para.slack.notify_on_new_answer = true
+para.slack.notify_on_new_comment = true
 para.slack.default_question_tags = "via-mattermost"
 para.slack.auth_enabled = true
 ```
@@ -1312,6 +1313,7 @@ para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
 
 para.mattermost.notify_on_new_question = true
 para.mattermost.notify_on_new_answer = true
+para.mattermost.notify_on_new_comment = true
 para.mattermost.default_question_tags = "via-mattermost"
 ```
 
