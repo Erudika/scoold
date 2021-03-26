@@ -84,6 +84,7 @@ sent to Para to the location `POST /v1/questions`. Here are a few key points abo
 - Each instance of the Scoold server needs one Para app for data storage.
 - Two or more instance of Scoold (like a cluster) can connect to the same Para app environment and share the data.
 - Both Scoold and Para can be hosted on the same machine or on multiple machines, on different networks.
+- Scoold talks to Para via HTTP so Para must be directly accessible from Scoold, but can also be hosted on a private network.
 
 Here's an overview of the architecture:
 <pre>
@@ -1157,7 +1158,8 @@ For example:
 
 **PRO**
 Files can be uploaded to the local file system, Imgur or S3. File uploads are enabled by default in Scoold Pro.
-To disable file uploads altogether set `para.uploads_enabled = false`.
+To disable file uploads altogether set `para.uploads_enabled = false`. To protect uploaded files from unauthenticated
+access, set `para.uploads_require_auth = true`.
 
 To upload a file just **drag & drop** the file onto the post editor area. A link will automatically appear
 when the upload is finished. Uploads can fail either because their size is too large or because their format is not in
