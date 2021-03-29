@@ -6,7 +6,7 @@ build:
 
 services:
    para:
-     image: erudikaltd/para
+     image: erudikaltd/para:latest_stable
      ports:
        - "8080:8080"
      volumes:
@@ -25,7 +25,7 @@ services:
    scoold:
      depends_on:
        - para
-     image: erudikaltd/scoold
+     image: erudikaltd/scoold:latest_stable
      ports:
        - "8000:8000"
      volumes:

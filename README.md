@@ -268,12 +268,14 @@ para.connection_retry_interval_sec = 10
 
 ## Docker
 
-Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub.
+Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub. **It's highly recommended that you
+pull only release images like `:1.42.0` or `:latest_stable` because the `:latest` tag can be broken or unstable.**
+The `:latest_stable` tag always points to the latest release version.
 First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
 
 ```
 $ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold/application.conf \
-  -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold
+  -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold:latest_stable
 ```
 
 For **Scoold Pro** the images are located in a private registry. You can get access to it once you purchase a Pro license.
