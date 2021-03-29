@@ -476,7 +476,7 @@ Make sure you whitelist your Para authentication endpoint with Cognito `https://
 
 ## Deploying Scoold to Azure
 
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/Erudika/scoold)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FErudika%2Fscoold%2Fmaster%2Fazuredeploy.json)
 
 1. Click the button above
 2. Fill in the required parameters

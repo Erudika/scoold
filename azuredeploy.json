@@ -14,7 +14,7 @@
 			"metadata": {
 				"description": "Container image to deploy."
 			},
-			"defaultValue": "erudikaltd/scoold:latest"
+			"defaultValue": "erudikaltd/scoold:latest_stable"
 		},
 		"port": {
 			"type": "string",

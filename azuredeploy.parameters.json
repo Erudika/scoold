@@ -6,7 +6,7 @@
       "value": "scoold"
     },
     "image": {
-      "value": "erudikaltd/scoold:latest"
+      "value": "erudikaltd/scoold:latest_stable"
     }
   }
 }
