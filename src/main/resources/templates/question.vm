@@ -1,6 +1,6 @@
 <div class="page-wrapper">
 	<div class="row questionpage">
-		<div class="col m12 l9">
+		<div class="col s12 l9">
 			<span class="grey-text">
 			#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 				<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showPost.location"></i>

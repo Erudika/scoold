@@ -34,7 +34,7 @@
 		</div>
 	#elseif ($showPost)
 		<div class="row">
-			<div class="col m12 l9">
+			<div class="col s12 l9">
 				<div id="post-title" class="largeText">$!{showPost.title}</div>
 				<hr>
 				<div class="mbl pbl">
