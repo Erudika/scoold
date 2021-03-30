@@ -1,9 +1,5 @@
 version: '3.4'
 
-build:
-  context: .
-  network: host
-
 services:
    para:
      image: erudikaltd/para:latest_stable
