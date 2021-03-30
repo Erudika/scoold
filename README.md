@@ -318,14 +318,15 @@ para.dao = "H2DAO"
 Example for `scoold-application.conf`:
 ```ini
 para.env = "production"
+para.app_name = "Scoold"
 para.endpoint = "http://para:8080"
-para.access_key = "app:para"
+para.access_key = "app:scoold"
 para.secret_key = "..."
 ```
-Docker Compose autoamtically creates DNS names for each of the services.
+Docker Compose automatically creates DNS names for each of the services.
 This is why the exemplary `scoold-application.conf` contains 
 `http://para:8080` as the value for `para.endpoint`. The internal IP
-of Para will be resolved by Docker automatically. 
+of Para will be resolved by Docker automatically.
 
 Then you can start both Scoold and Para with Docker Compose like so:
 ```
