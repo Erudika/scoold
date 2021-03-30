@@ -318,18 +318,27 @@ para.dao = "H2DAO"
 Example for `scoold-application.conf`:
 ```ini
 para.env = "production"
-para.endpoint = "http://172.18.0.2:8080"
-para.access_key = "app:scoold"
+para.endpoint = "http://para:8080"
+para.access_key = "app:para"
 para.secret_key = "..."
 ```
-**Take note of the exact IP address/hostname of the Para docker container!**
+Docker Compose autoamtically creates DNS names for each of the services.
+This is why the exemplary `scoold-application.conf` contains 
+`http://para:8080` as the value for `para.endpoint`. The internal IP
+of Para will be resolved by Docker automatically. 
 
 Then you can start both Scoold and Para with Docker Compose like so:
 ```
 $ docker-compose up
 ```
 Follow the quick start guide above to initialize Para and create a new app for Scoold. Once you have the access keys
-for that app, update `scoold-application.conf` with those and restart the Para + Scoold Docker stack.
+for that app, update `scoold-application.conf` with those and restart the Para + Scoold Docker stack:
+
+1. Stop the containers using <kbd>Ctrl</kbd> + <kbd>C</kbd>
+2. Rerun `docker-compose up`
+
+The same pair of containers will be run, but this time Scoold has the proper
+configuration, allowing it to communicate with Para successfully.
 
 ## Kubernetes
 
