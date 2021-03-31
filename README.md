@@ -374,8 +374,8 @@ aws ecr list-images --repository-name scoold-pro
 docker pull 374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:{tag}
 ```
 
-The `:latest` tag is not supported. The command `aws get-login-password` gives you an access token to the private
-Docker registry which is valid for **12 hours**.
+The `:latest` tag is not supported but you can use `:latest_stable`. The command `aws get-login-password`
+gives you an access token to the private Docker registry which is valid for **12 hours**.
 
 For connecting Kubernetes to AWS ECR, please refer to [this article](https://medium.com/@damitj07/how-to-configure-and-use-aws-ecr-with-kubernetes-rancher2-0-6144c626d42c).
 
