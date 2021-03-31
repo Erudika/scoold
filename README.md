@@ -851,7 +851,7 @@ as its authentication provider. The steps are similar to other OAuth2.0 identity
    setting in your configuration.
 9. Navigate to *Certificates and Secrets* in the sidebar on the left.
 10. Create a new secret by clicking on *New client secret*.
-11. Copy the generated secret (you will not be able to see that secret anymore on Azure Portal) - it is the value 
+11. Copy the generated secret (you will not be able to see that secret anymore on Azure Portal) - it is the value
     for `para.oa2_secret` setting in your configuration.
 12. Fill in the configuration of Scoold:
 
@@ -1562,7 +1562,7 @@ There are a number of settings that let you customize the appearance of the webs
 ```ini
 para.fixed_nav = false
 para.show_branding = true
-para.logo_url = "/logo.svg"
+para.logo_url = "https://static.scoold.com/logo.svg"
 para.logo_width = 90
 
 # footer HTML - add your own links, etc., escape double quotes with \"
