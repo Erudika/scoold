@@ -2,6 +2,7 @@
 
 ## Scoold - Stack Overflow in a JAR
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.erudika%3Ascoold&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.erudika%3Ascoold)
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Scoold** is a Q&A/knowledge base platform written in Java. The project was created back in 2008, released in 2012 as
@@ -324,7 +325,7 @@ para.access_key = "app:scoold"
 para.secret_key = "..."
 ```
 Docker Compose automatically creates DNS names for each of the services.
-This is why the exemplary `scoold-application.conf` contains 
+This is why the exemplary `scoold-application.conf` contains
 `http://para:8080` as the value for `para.endpoint`. The internal IP
 of Para will be resolved by Docker automatically.
 
