@@ -93,7 +93,7 @@ public class Revision extends Sysprop {
 		this.author = author;
 	}
 
-	public static Revision createRevisionFromPost(Post post, boolean orig) {
+	public static void createRevisionFromPost(Post post, boolean orig) {
 		if (post != null && post.getId() != null) {
 			String revUserid = post.getLasteditby();
 			if (revUserid == null) {
@@ -106,9 +106,11 @@ public class Revision extends Sysprop {
 			postrev.setBody(post.getBody());
 			postrev.setTags(post.getTags());
 			postrev.setOriginal(orig);
-			return postrev;
+			String rid = postrev.create();
+			if (rid != null) {
+				post.setRevisionid(rid);
+			}
 		}
-		return null;
 	}
 
 	public void delete() {

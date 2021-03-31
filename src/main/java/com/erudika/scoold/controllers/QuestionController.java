@@ -167,6 +167,10 @@ public class QuestionController {
 		}
 		//note: update only happens if something has changed
 		if (!showPost.equals(beforeUpdate)) {
+			// create revision manually
+			if (showPost.hasUpdatedContent(beforeUpdate)) {
+				Revision.createRevisionFromPost(showPost, false);
+			}
 			updatePost(showPost, authUser);
 			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
@@ -411,8 +415,6 @@ public class QuestionController {
 			if (questionPost != null) {
 				showPost.setSpace(questionPost.getSpace());
 				questionPost.setLastactivity(System.currentTimeMillis());
-				// create revision manually because post.update() is not called
-				showPost.setRevisionid(Revision.createRevisionFromPost(showPost, false).create());
 				pc.updateAll(Arrays.asList(showPost, questionPost));
 			} else {
 				// create revision here

@@ -656,9 +656,13 @@
 					<div><small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small></div>
 					#end
 					#if ($showpost.lasteditby)
-					<a href="$revisionslink/$!showpost.id" title="Revision history">
-						$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
-					</a>
+						#if($showpost.revisionid)
+							<a href="$revisionslink/$!showpost.id" title="Revision history">
+								$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
+							</a>
+						#else
+							<span>$!lang.get("posts.edited") #formatdate($showpost.lastedited "")</span>
+						#end
 					#end
 				</div>
 			</div>

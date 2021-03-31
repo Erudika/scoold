@@ -263,7 +263,7 @@ public abstract class Post extends Sysprop {
 		this.body = Utils.abbreviate(this.body, Config.getConfigInt("max_post_length", 20000));
 		Post p = client().create(this);
 		if (p != null) {
-			setRevisionid(Revision.createRevisionFromPost(p, true).create());
+			Revision.createRevisionFromPost(p, true);
 			setId(p.getId());
 			setTimestamp(p.getTimestamp());
 			return p.getId();
@@ -272,7 +272,6 @@ public abstract class Post extends Sysprop {
 	}
 
 	public void update() {
-		setRevisionid(Revision.createRevisionFromPost(this, false).create());
 		client().update(this);
 	}
 
@@ -521,12 +520,22 @@ public abstract class Post extends Sysprop {
 		return (followers != null && !followers.isEmpty());
 	}
 
+	public boolean hasUpdatedContent(Post beforeUpdate) {
+		if (beforeUpdate == null) {
+			return false;
+		}
+		return !StringUtils.equals(getTitle(), beforeUpdate.getTitle())
+				|| !StringUtils.equals(getBody(), beforeUpdate.getBody())
+				|| !Objects.equals(getTags(), beforeUpdate.getTags());
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
 		return Objects.equals(getTitle(), ((Post) obj).getTitle())
 				&& Objects.equals(getBody(), ((Post) obj).getBody())
+				&& Objects.equals(getLocation(), ((Post) obj).getLocation())
 				&& Objects.equals(getSpace(), ((Post) obj).getSpace())
 				&& Objects.equals(getTags(), ((Post) obj).getTags());
 	}
