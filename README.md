@@ -1676,7 +1676,7 @@ The response body is similar to this:
 ```
 
 API clients can be auto-generated using [Swagger Codegen](https://github.com/swagger-api/swagger-codegen). You can
-also open the API schema file `src/main/resources/static/api.yaml` in [the Swagger Editor](https://editor.swagger.io/)
+also open the [API schema file](src/main/resources/templates/api.yaml) in [the Swagger Editor](https://editor.swagger.io/)
 and generate the clients from there.
 
 ## Support
