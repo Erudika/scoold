@@ -832,6 +832,42 @@ Make sure to replace `${yourOktaDomain}` with your actual Okta domain name.
 
 3. Restart Scoold and login with an Okta user account
 
+#### Sign in with Azure Active Directory (AAD)
+
+This is an example guide for configuring Scoold to use Azure Active Directory (aka Microsoft Identity Platform)
+as its authentication provider. The steps are similar to other OAuth2.0 identity providers setup.
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Navigate to your *Azure Acive Directory* tenant
+3. Go to *App registrations* (in the left sidebar, under *Manage* section)
+4. Choose *New registration*
+5. Put the name of the new app, and select supported account types (accoding to your requirements)
+6. Provide the *Redirect URI* - it needs to point to Para's `/oauth2_auth` endpoint (make sure that
+   this URL is accessible from your users' devices). For development purposes `http://localhost:8080/oauth2_auth`
+   is probably sufficient.
+7. Click *Register*.
+8. Copy the *Application (client) ID* that you should be seeing now at the top - it is the value for `para.oa2_app_id`
+   setting in your configuration.
+9. Navigate to *Certificates and Secrets* in the sidebar on the left.
+10. Create a new secret by clicking on *New client secret*.
+11. Copy the generated secret (you will not be able to see that secret anymore on Azure Portal) - it is the value 
+    for `para.oa2_secret` setting in your configuration.
+12. Fill in the configuration of Scoold:
+
+```ini
+para.oa2_app_id = "e538..."
+para.oa2_secret = "secret"
+para.security.oauth.authz_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/authorize"
+para.security.oauth.token_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/token"
+para.security.oauth.profile_url = "https://graph.microsoft.com/oidc/userinfo"
+para.security.oauth.scope = "openid email profile"
+para.security.oauth.provider = "Continue with AAD"
+```
+
+Make sure to replace `${yourAADTenantId}` with your actual AAD tenant ID.
+
+13. Restart Scoold and login with an AAD user account
+
 ## LDAP configuration
 
 LDAP authentication is initiated with a request like this `POST /signin?provider=ldap&access_token=username:password`.
