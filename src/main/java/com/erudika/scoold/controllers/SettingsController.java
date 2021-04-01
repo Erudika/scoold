@@ -82,7 +82,7 @@ public class SettingsController {
 				authUser.setLatlng(latlng);
 			}
 			setAnonymity(authUser, req.getParameter("anon"));
-			setDarkMode(authUser, req.getParameter("dark"), req, res);
+			setDarkMode(authUser, req.getParameter("dark"));
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			authUser.setFavtagsEmailsEnabled(Boolean.valueOf(favtagsEmailsOn));
@@ -161,9 +161,11 @@ public class SettingsController {
 		}
 	}
 
-	private void setDarkMode(Profile authUser, String darkParam, HttpServletRequest req, HttpServletResponse res) {
-		authUser.setDarkmodeEnabled("true".equalsIgnoreCase(darkParam));
-		utils.getParaClient().update(authUser);
+	private void setDarkMode(Profile authUser, String darkParam) {
+		if (utils.isDarkModeEnabled()) {
+			authUser.setDarkmodeEnabled("true".equalsIgnoreCase(darkParam));
+			utils.getParaClient().update(authUser);
+		}
 	}
 
 	private void anonymizeProfile(Profile authUser) {

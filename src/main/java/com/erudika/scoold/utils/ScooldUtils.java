@@ -703,6 +703,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("footer_links_enabled", true);
 	}
 
+	public boolean isDarkModeEnabled() {
+		return Config.getConfigBoolean("dark_mode_enabled", true);
+	}
+
 	public String getFooterHTML() {
 		return Config.getConfigParam("footer_html", "");
 	}

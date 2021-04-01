@@ -1581,6 +1581,8 @@ para.inline_css = ""
 para.emails_footer_html = ""
 # change the logo in transactional emails
 para.small_logo_url = "https://scoold.com/logo.png"
+# enable/disable dark mode
+para.dark_mode_enabled = true
 ```
 
 In Scoold Pro you can change the logo of the website just by dragging and dropping a new image of your choice.

@@ -173,6 +173,7 @@
 				</div>
 			</div>
 
+			#if($scooldUtils.isDarkModeEnabled())
 			<h4 class="ptl">$!lang.get('settings.darkmode')</h4>
 			<div class="mbm">
 				<div class="switch">
@@ -189,6 +190,7 @@
 					<span class="mll mediumText">$!lang.get('settings.darkmode.text')</span>
 				</div>
 			</div>
+			#end
 
 			<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('save')</button>
 		</form>
