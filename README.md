@@ -1179,7 +1179,9 @@ This feature is enabled with `para.anonymous_posts_enabled = true`. It allows ev
 replies, without having a Scoold account. Posting to the "Feedback" section will also be open without requiring users
 to sign in. This feature is disabled by default.
 
-Additionally, people may wish to make their profile details anonymous from the Settings page. To allow this option set:
+## Anonymous profiles
+
+People may wish to make their profile details anonymous from the Settings page. To allow this option set:
 ```
 para.profile_anonimity_enabled = true
 ```

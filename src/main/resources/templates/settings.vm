@@ -56,22 +56,24 @@
 				</div>
 			#end
 
-			<h4 class="ptl">$!lang.get('settings.anonymity')</h4>
-			<div class="mbm">
-				<div class="switch">
-					<label>
-						$!lang.get('off')
-						#if($authUser.anonymityEnabled)
-						<input type="checkbox" name="anon" checked="checked" value="true">
-						#else
-						<input type="checkbox" name="anon" value="true">
-						#end
-						<span class="lever"></span>
-						$!lang.get('on')
-					</label>
-					<span class="mll mediumText">$!lang.get('settings.anonymity.text')</span>
+			#if($scooldUtils.isAnonymityEnabled())
+				<h4 class="ptl">$!lang.get('settings.anonymity')</h4>
+				<div class="mbm">
+					<div class="switch">
+						<label>
+							$!lang.get('off')
+							#if($authUser.anonymityEnabled)
+							<input type="checkbox" name="anon" checked="checked" value="true">
+							#else
+							<input type="checkbox" name="anon" value="true">
+							#end
+							<span class="lever"></span>
+							$!lang.get('on')
+						</label>
+						<span class="mll mediumText">$!lang.get('settings.anonymity.text')</span>
+					</div>
 				</div>
-			</div>
+			#end
 
 			<h4 class="ptl">$!lang.get('settings.notifications')</h4>
 			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>

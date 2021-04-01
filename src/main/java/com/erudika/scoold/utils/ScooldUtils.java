@@ -691,6 +691,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("webhooks_enabled", true);
 	}
 
+	public boolean isAnonymityEnabled() {
+		return Config.getConfigBoolean("profile_anonimity_enabled", false);
+	}
+
 	public boolean isApiEnabled() {
 		return Config.getConfigBoolean("api_enabled", false);
 	}

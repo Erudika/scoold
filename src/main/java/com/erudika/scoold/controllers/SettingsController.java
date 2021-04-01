@@ -152,10 +152,12 @@ public class SettingsController {
 	}
 
 	private void setAnonymity(Profile authUser, String anonParam) {
-		if ("true".equalsIgnoreCase(anonParam)) {
-			anonymizeProfile(authUser);
-		} else if (authUser.getAnonymityEnabled()) {
-			deanonymizeProfile(authUser);
+		if (utils.isAnonymityEnabled()) {
+			if ("true".equalsIgnoreCase(anonParam)) {
+				anonymizeProfile(authUser);
+			} else if (authUser.getAnonymityEnabled()) {
+				deanonymizeProfile(authUser);
+			}
 		}
 	}
 
