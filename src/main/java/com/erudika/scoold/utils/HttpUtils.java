@@ -24,6 +24,8 @@ import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
@@ -203,9 +205,7 @@ public final class HttpUtils {
 		get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
 		try (CloseableHttpResponse img = HttpUtils.getHttpClient().execute(get)) {
 			if (img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null) {
-				String contentType = img.getEntity().getContentType().getValue();
-				if (StringUtils.equalsAnyIgnoreCase(contentType, "image/gif", "image/jpeg", "image/jpg", "image/png",
-						"image/webp", "image/bmp", "image/svg+xml")) {
+				if (isImage(img, url)) {
 					for (Header header : img.getAllHeaders()) {
 						res.setHeader(header.getName(), header.getValue());
 					}
@@ -219,10 +219,17 @@ public final class HttpUtils {
 						img.getStatusLine().getStatusCode(), img.getStatusLine().getReasonPhrase());
 				getDefaultAvatarImage(res);
 			}
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			getDefaultAvatarImage(res);
 			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
 		}
+	}
+
+	private static boolean isImage(CloseableHttpResponse img, String url) throws MalformedURLException {
+		return img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null &&
+				StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType().getValue(),
+						"image/gif", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/bmp", "image/svg+xml") ||
+				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp");
 	}
 
 	private static void getDefaultAvatarImage(HttpServletResponse res) {
