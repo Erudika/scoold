@@ -227,9 +227,9 @@ public final class HttpUtils {
 
 	private static boolean isImage(CloseableHttpResponse img, String url) throws MalformedURLException {
 		return img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null &&
-				StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType().getValue(),
+				(StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType().getValue(),
 						"image/gif", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/bmp", "image/svg+xml") ||
-				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp");
+				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp"));
 	}
 
 	private static void getDefaultAvatarImage(HttpServletResponse res) {
