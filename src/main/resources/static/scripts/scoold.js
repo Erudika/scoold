@@ -405,13 +405,6 @@ $(function () {
 		}
 	}
 
-	$(".signout").click(function () {
-		$.post($(this).attr("href"), function (data) {
-			window.location = CONTEXT_PATH + "/signin?code=5&success=true";
-		});
-		return false;
-	});
-
 	/****************************************************
      *                    ADMIN
      ****************************************************/

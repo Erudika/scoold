@@ -148,7 +148,13 @@
 									#end
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
 									<li class="divider"></li>
-									<li><a href="$signoutlink" title="Sign out" class="mtm signout">$!lang.get('signout')</a></li>
+									<li>
+										<form action="$signoutlink" method="post">
+											<button type="submit" name="signout" title="Sign out" class="signout-btn light-blue-text lighten-1 pll left-align">
+												$!lang.get('signout')
+											</button>
+										</form>
+									</li>
 								</ul>
 							#end
 
@@ -246,7 +252,13 @@
 									#end
 
 									#navbarspacesmenu(false)
-									<li><a href="$signoutlink" title="Sign out" class="signout">$!lang.get('signout')</a></li>
+									<li>
+										<form action="$signoutlink" method="post">
+											<button type="submit" name="signout" title="Sign out" class="signout-btn pll left-align">
+												<strong class="plm">$!lang.get('signout')</strong>
+											</button>
+										</form>
+									</li>
 								#end
 							</ul>
 						</div>

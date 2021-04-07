@@ -89,6 +89,20 @@ h1, h2, h3, h4, h5, h6{font-weight: 300;}
 #sl-login-btn { background-color: white; color: #222; }
 #az-login-btn { background-color: #fad673; color: #222; }
 
+.signout-btn {
+	border: 0;
+	background-color: inherit;
+	width: 100%;
+	color: inherit;
+	display: block;
+	font-size: 16px;
+	height: 48px;
+	cursor: pointer;
+}
+.signout-btn:hover {
+	background-color: rgba(0,0,0,0.05);
+}
+
 .leaveblank {opacity: 0.0001;}
 
 .pan{padding:0}
@@ -514,7 +528,8 @@ body, footer.page-footer { background-color: #444444; }
 footer.page-footer { margin-top: 20px; }
 .page-footer a { font-weight: 400;}
 .navbar-color { background-color: #03a9f4; }
-nav { background-color: inherit; color: inherit; }
+nav { background-color: inherit; color: inherit; height: 64px; line-height: 64px;}
+nav .sidenav-trigger i { height: 64px; line-height: 64px; }
 
 /* switches and inputs */
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after { background-color: #039be5; }

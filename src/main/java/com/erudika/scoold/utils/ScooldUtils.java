@@ -1672,4 +1672,35 @@ public final class ScooldUtils {
 	public String getParaAppId() {
 		return StringUtils.removeStart(Config.getConfigParam("access_key", "app:scoold"), "app:");
 	}
+
+	public String getFirstConfiguredLoginURL() {
+		if (!Config.GITHUB_APP_ID.isEmpty()) {
+			return getGitHubLoginURL();
+		}
+		if (!Config.LINKEDIN_APP_ID.isEmpty()) {
+			return getLinkedInLoginURL();
+		}
+		if (!Config.TWITTER_APP_ID.isEmpty()) {
+			return getTwitterLoginURL();
+		}
+		if (!Config.MICROSOFT_APP_ID.isEmpty()) {
+			return getMicrosoftLoginURL();
+		}
+		if (!Config.SLACK_APP_ID.isEmpty()) {
+			return getSlackLoginURL();
+		}
+		if (!Config.AMAZON_APP_ID.isEmpty()) {
+			return getAmazonLoginURL();
+		}
+		if (!Config.getConfigParam("oa2_app_id", "").isEmpty()) {
+			return getOAuth2LoginURL();
+		}
+		if (!Config.getConfigParam("oa2second_app_id", "").isEmpty()) {
+			return getOAuth2SecondLoginURL();
+		}
+		if (!Config.getConfigParam("oa2third_app_id", "").isEmpty()) {
+			return getOAuth2ThirdLoginURL();
+		}
+		return SIGNINLINK + "?code=3&error=true";
+	}
 }

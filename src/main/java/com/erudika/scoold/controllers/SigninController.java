@@ -65,6 +65,9 @@ public class SigninController {
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
 		}
+		if (Config.getConfigBoolean("redirect_signin_to_idp", false) && !"5".equals(req.getParameter("code"))) {
+			return "redirect:" + utils.getFirstConfiguredLoginURL();
+		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
 		model.addAttribute("signinSelected", "navbtn-hover");
@@ -231,7 +234,7 @@ public class SigninController {
 	public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			utils.clearSession(req, res);
-			return "redirect:" + SIGNINLINK + "?code=5&success=true";
+			return "redirect:" + Config.getConfigParam("signout_url", SIGNINLINK + "?code=5&success=true");
 		}
 		return "redirect:" + HOMEPAGE;
 	}

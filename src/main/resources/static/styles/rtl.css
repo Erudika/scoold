@@ -117,6 +117,7 @@ td, th {
 	right: 1rem;
 }
 
+
 @media (max-width: 990px) {
 	.chips-container {
 		float: none;
@@ -135,6 +136,8 @@ td, th {
 .l{ text-align: right;}
 .right{ float: left !important; }
 .left{ float: right !important; }
+.left-align {	text-align: right; }
+.right-align {	text-align: left; }
 
 .prn{padding-left:0}
 .prs{padding-left:5px;padding-right:0}
