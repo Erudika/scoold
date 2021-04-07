@@ -1608,4 +1608,68 @@ public final class ScooldUtils {
 				+ "report-uri /reports/cspv; "
 				+ "script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';"; // CSP2 backward compatibility
 	}
+
+	public String getGitHubLoginURL() {
+		return "https://github.com/login/oauth/authorize?response_type=code&client_id=" + Config.GITHUB_APP_ID +
+				"&scope=user%3Aemail&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/github_auth";
+	}
+
+	public String getLinkedInLoginURL() {
+		return "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + Config.LINKEDIN_APP_ID +
+				"&scope=r_liteprofile%20r_emailaddress&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/linkedin_auth";
+	}
+
+	public String getTwitterLoginURL() {
+		return getParaEndpoint() + "/twitter_auth?state=" + getParaAppId();
+	}
+
+	public String getMicrosoftLoginURL() {
+		return "https://login.microsoftonline.com/" + Config.getConfigParam("ms_tenant_id", "common") +
+				"/oauth2/v2.0/authorize?response_type=code&client_id=" + Config.MICROSOFT_APP_ID +
+				"&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/microsoft_auth";
+	}
+
+	public String getSlackLoginURL() {
+		return "https://slack.com/oauth/v2/authorize?response_type=code&client_id=" + Config.SLACK_APP_ID +
+				"&user_scope=identity.basic%20identity.email%20identity.team%20identity.avatar&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/slack_auth";
+	}
+
+	public String getAmazonLoginURL() {
+		return "https://www.amazon.com/ap/oa?response_type=code&client_id=" + Config.AMAZON_APP_ID +
+				"&scope=profile&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/amazon_auth";
+	}
+
+	public String getOAuth2LoginURL() {
+		return Config.getConfigParam("security.oauth.authz_url", "") + "?" +
+				"response_type=code&client_id=" + Config.getConfigParam("oa2_app_id", "") +
+				"&scope=" + Config.getConfigParam("security.oauth.scope", "") + "&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+	}
+
+	public String getOAuth2SecondLoginURL() {
+		return Config.getConfigParam("security.oauthsecond.authz_url", "") + "?" +
+				"response_type=code&client_id=" + Config.getConfigParam("oa2second_app_id", "") +
+				"&scope=" + Config.getConfigParam("security.oauthsecond.scope", "") + "&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+	}
+
+	public String getOAuth2ThirdLoginURL() {
+		return Config.getConfigParam("security.oauththird.authz_url", "") + "?" +
+				"response_type=code&client_id=" + Config.getConfigParam("oa2third_app_id", "") +
+				"&scope=" + Config.getConfigParam("security.oauththird.scope", "") + "&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+	}
+
+	public String getParaEndpoint() {
+		return Config.getConfigParam("security.redirect_uri", pc.getEndpoint());
+	}
+
+	public String getParaAppId() {
+		return StringUtils.removeStart(Config.getConfigParam("access_key", "app:scoold"), "app:");
+	}
 }

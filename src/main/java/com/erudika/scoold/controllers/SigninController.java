@@ -23,9 +23,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
-import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.MAX_TAGS_PER_POST;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -39,15 +37,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.CacheControl;
-import org.springframework.http.ResponseEntity;
 
 @Controller
 public class SigninController {
@@ -243,49 +236,16 @@ public class SigninController {
 		return "redirect:" + HOMEPAGE;
 	}
 
-	@ResponseBody
-	@GetMapping(path = "/scripts/globals.js", produces = "text/javascript")
-	public ResponseEntity<String> globals(HttpServletRequest req, HttpServletResponse res) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("APPID = \"").append(Config.getConfigParam("access_key", "app:scoold").substring(4)).append("\"; ");
-		sb.append("ENDPOINT = \"").append(Config.getConfigParam("security.redirect_uri", pc.getEndpoint())).append("\"; ");
-		sb.append("CONTEXT_PATH = \"").append(CONTEXT_PATH).append("\"; ");
-		sb.append("FB_APP_ID = \"").append(Config.FB_APP_ID).append("\"; ");
-		sb.append("GOOGLE_CLIENT_ID = \"").append(Config.getConfigParam("google_client_id", "")).append("\"; ");
-		sb.append("GOOGLE_ANALYTICS_ID = \"").append(Config.getConfigParam("google_analytics_id", "")).append("\"; ");
-		sb.append("GITHUB_APP_ID = \"").append(Config.GITHUB_APP_ID).append("\"; ");
-		sb.append("LINKEDIN_APP_ID = \"").append(Config.LINKEDIN_APP_ID).append("\"; ");
-		sb.append("TWITTER_APP_ID = \"").append(Config.TWITTER_APP_ID).append("\"; ");
-		sb.append("MICROSOFT_APP_ID = \"").append(Config.MICROSOFT_APP_ID).append("\"; ");
-		sb.append("SLACK_APP_ID = \"").append(Config.SLACK_APP_ID).append("\"; ");
-		sb.append("AMAZON_APP_ID = \"").append(Config.AMAZON_APP_ID).append("\"; ");
-
-		sb.append("OAUTH2_ENDPOINT = \"").append(Config.getConfigParam("security.oauth.authz_url", "")).append("\"; ");
-		sb.append("OAUTH2_APP_ID = \"").append(Config.getConfigParam("oa2_app_id", "")).append("\"; ");
-		sb.append("OAUTH2_SCOPE = \"").append(Config.getConfigParam("security.oauth.scope", "")).append("\"; ");
-
-		sb.append("OAUTH2_SECOND_ENDPOINT = \"").append(Config.getConfigParam("security.oauthsecond.authz_url", "")).append("\"; ");
-		sb.append("OAUTH2_SECOND_APP_ID = \"").append(Config.getConfigParam("oa2second_app_id", "")).append("\"; ");
-		sb.append("OAUTH2_SECOND_SCOPE = \"").append(Config.getConfigParam("security.oauthsecond.scope", "")).append("\"; ");
-
-		sb.append("OAUTH2_THIRD_ENDPOINT = \"").append(Config.getConfigParam("security.oauththird.authz_url", "")).append("\"; ");
-		sb.append("OAUTH2_THIRD_APP_ID = \"").append(Config.getConfigParam("oa2third_app_id", "")).append("\"; ");
-		sb.append("OAUTH2_THIRD_SCOPE = \"").append(Config.getConfigParam("security.oauththird.scope", "")).append("\"; ");
-
-		Locale currentLocale = utils.getCurrentLocale(utils.getLanguageCode(req));
-		sb.append("RTL_ENABLED = ").append(utils.isLanguageRTL(currentLocale.getLanguage())).append("; ");
-		sb.append("MAX_TAGS_PER_POST = ").append(MAX_TAGS_PER_POST).append("; ");
-
-		String result = sb.toString();
-		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
-				.eTag(Utils.md5(result)).body(result);
-	}
-
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
 			String email = getEmailFromAccessToken(accessToken);
 			if ("password".equals(provider) && !isEmailRegistered(email)) {
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
+			}
+			if (StringUtils.equalsAnyIgnoreCase(accessToken, "password", "ldap")) {
+				accessToken = req.getParameter("username") + ":" +
+						("password".equals(accessToken) ? ":" : "") +
+						req.getParameter("password");
 			}
 			User u = pc.signIn(provider, accessToken, false);
 			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {

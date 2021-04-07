@@ -145,17 +145,17 @@
 								#sectoken(false "SIGNIN_PASS")
 								<div class="input-field mvm">
 									<label for="email">$!lang.get('signup.form.email')</label>
-									<input id="email" type="email" value="$!request.getParameter('email')" required>
+									<input id="email" type="email" value="$!request.getParameter('email')" name="username" required>
 									#if($!request.getParameter('code') == "6")
 										<a href="$signinlink/register?resend=true&email=$!request.getParameter('email')">$!lang.get('signup.resend')</a>
 									#end
 								</div>
 								<div class="input-field mvm">
 									<label for="passw">$!lang.get('password')</label>
-									<input id="passw" type="password" value="" minlength="6" required>
+									<input id="passw" type="password" value="" minlength="6" name="password" required>
 								</div>
 								<input type="hidden" name="provider" value="password">
-								<input type="hidden" name="access_token" value="">
+								<input type="hidden" name="access_token" value="password">
 								<div class="mtl">
 									<button type="submit" class="btn">$!lang.get('signin.title')</button>
 								</div>
@@ -173,14 +173,14 @@
 								#sectoken(false "SIGNIN_LDAP")
 								<div class="input-field mvm">
 									<label for="username">Username</label>
-									<input id="username" type="text" value="" required>
+									<input id="username" name="username" type="text" value="" required>
 								</div>
 								<div class="input-field mvm">
 									<label for="password">$!lang.get('password')</label>
-									<input id="password" type="password" value="" required>
+									<input id="password" name="password" type="password" value="" required>
 								</div>
 								<input type="hidden" name="provider" value="ldap">
-								<input type="hidden" name="access_token" value="">
+								<input type="hidden" name="access_token" value="ldap">
 								<div class="mtl">
 									<button type="submit" class="btn">$!lang.get('signin.title')</button>
 								</div>
@@ -211,7 +211,7 @@
 
 								#if($ghLoginEnabled)
 									<div class="mvl pvs">
-										<a id="gh-login-btn" href="#" class="btn-large grey darken-3 white-text truncate">
+										<a id="gh-login-btn" href="$!scooldUtils.gitHubLoginURL" class="btn-large grey darken-3 white-text truncate">
 											<i class="fa fa-github left"></i> $!lang.get("signin.github")
 										</a>
 									</div>
@@ -219,7 +219,7 @@
 
 								#if($inLoginEnabled)
 									<div class="mvl pvs">
-										<a id="in-login-btn" href="#" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
+										<a id="in-login-btn" href="$!scooldUtils.linkedInLoginURL" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
 											<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
 										</a>
 									</div>
@@ -227,7 +227,7 @@
 
 								#if($twLoginEnabled)
 									<div class="mvl pvs">
-										<a id="tw-login-btn" href="#" class="btn-large light-blue white-text lighten-1 truncate">
+										<a id="tw-login-btn" href="$!scooldUtils.twitterLoginURL" class="btn-large light-blue white-text lighten-1 truncate">
 											<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
 										</a>
 									</div>
@@ -235,7 +235,7 @@
 
 								#if($msLoginEnabled)
 									<div class="mvl pvs">
-										<a id="ms-login-btn" href="#" class="btn-large blue-grey white-text darken-2 truncate">
+										<a id="ms-login-btn" href="$!scooldUtils.microsoftLoginURL" class="btn-large blue-grey white-text darken-2 truncate">
 											<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
 										</a>
 									</div>
@@ -243,17 +243,16 @@
 
 								#if($slLoginEnabled)
 									<div class="mvl pvs">
-										<a id="sl-login-btn" href="#" class="btn-large grey-text truncate pls prl">
+										<a id="sl-login-btn" href="$!scooldUtils.slackLoginURL" class="btn-large truncate pls prl">
 											<img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-199wkt/Slack_Mark.svg"
-													 width="54" height="54" alt="Slack logo" class="left"/>
-											$!lang.get("signin.slack")
+													 width="54" height="54" alt="Slack logo" class="left"/> $!lang.get("signin.slack")
 										</a>
 									</div>
 								#end
 
 								#if($azLoginEnabled)
 									<div class="mvl pvs">
-										<a id="az-login-btn" href="#" class="btn-large grey-text truncate pls prl">
+										<a id="az-login-btn" href="$!scooldUtils.amazonLoginURL" class="btn-large truncate pls prl">
 											<img src="$imageslink/amazon.svg" width="50" height="50" alt="Amazon logo" class="left pts phm"/>
 											$!lang.get("signin.amazon")
 										</a>
@@ -262,24 +261,24 @@
 
 								#if($oa2LoginEnabled)
 									<div class="mvl pvs">
-										<a id="oa2-login-btn" href="#" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-openid left"></i> $!oa2LoginProvider
+										<a id="oa2-login-btn" href="$!scooldUtils.oAuth2LoginURL" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-sign-in left"></i> $!oa2LoginProvider
 										</a>
 									</div>
 								#end
 
 								#if($oa2secondLoginEnabled)
 									<div class="mvl pvs">
-										<a id="oa2second-login-btn" href="#" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-openid left"></i> $!oa2secondLoginProvider
+										<a id="oa2second-login-btn" href="$!scooldUtils.oAuth2SecondLoginURL" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-sign-in left"></i> $!oa2secondLoginProvider
 										</a>
 									</div>
 								#end
 
 								#if($oa2thirdLoginEnabled)
 									<div class="mvl pvs">
-										<a id="oa2third-login-btn" href="#" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-openid left"></i> $!oa2thirdLoginProvider
+										<a id="oa2third-login-btn" href="$!scooldUtils.oAuth2ThirdLoginURL" class="btn-large grey darken-2 truncate">
+											<i class="fa fa-sign-in left"></i> $!oa2thirdLoginProvider
 										</a>
 									</div>
 								#end

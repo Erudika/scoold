@@ -46,7 +46,6 @@
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css" rel="stylesheet">
 		#end
-		<script nonce="$cspNonce" src="$!request.contextPath/scripts/globals.js"></script>
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
@@ -387,27 +386,40 @@
 		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js"></script>
 		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js"></script>
+
+		#set($ctxPathJS = "CONTEXT_PATH = '$CONTEXT_PATH'")
+		#set($isRTLJS = "RTL_ENABLED = $RTL_ENABLED")
 		#set($isAdminJS = "IS_ADMIN = $isAdmin")
+		#set($maxTagsJS = "MAX_TAGS_PER_POST = $MAX_TAGS_PER_POST")
 		#set($_welcomeMsg = $scooldUtils.getWelcomeMessage($authUser))
 		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
 		#set($_welcomeMsgOnLogin = $scooldUtils.getWelcomeMessageOnLogin($authUser))
 		#set($_welcomeMessageOnLoginJS = "WELCOME_MESSAGE_ONLOGIN = '$_welcomeMsgOnLogin'")
-		<script nonce="$cspNonce">$isAdminJS;$_welcomeMessageJS;$_welcomeMessageOnLoginJS;</script>
+		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$_welcomeMessageJS;$_welcomeMessageOnLoginJS;</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 
-		#if ($request.getServletPath() == "/signin")
+		#if ($request.getServletPath() == $signinlink)
 			#if($FB_APP_ID && !$FB_APP_ID.isEmpty())
 			<script nonce="$cspNonce">
 				(function(d, s, id) {
 					var js, fjs = d.getElementsByTagName(s)[0];
 					if (d.getElementById(id)) return;
 					js = d.createElement(s); js.id = id;
-					js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0&appId=$FB_APP_ID";
+					js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0&appId=$!FB_APP_ID";
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
+				$('#fb-login-btn').on('click', function () {
+					FB.login(function(response) {
+						if (response.authResponse) {
+							window.location = "${CONTEXT_PATH}/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
+						} else {
+							window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
+						}
+					}, {scope: 'public_profile,email'});
+					return false;
+				});
 			</script>
 			#end
-			<script nonce="$cspNonce" src="$!scriptslink/signin.js"></script>
 			#if($GOOGLE_CLIENT_ID && !$GOOGLE_CLIENT_ID.isEmpty())
 			<script nonce="$cspNonce">
 				(function(d, s, id) {
@@ -415,7 +427,21 @@
 					if (d.getElementById(id)) return;
 					js = d.createElement(s); js.id = id;
 					js.src = "https://apis.google.com/js/api:client.js";
-					js.addEventListener('load', function (e) { gpLogin(); }, false);
+					js.addEventListener('load', function (e) {
+						if ($('#gp-login-btn').length) {
+							gapi.load('auth2', function(){
+								gapi.auth2.init({
+									client_id: "$!GOOGLE_CLIENT_ID",
+									scope: 'openid email'
+								}).attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
+									window.location = "${CONTEXT_PATH}/signin?provider=google&access_token=" +
+											googleUser.getAuthResponse(true).access_token;
+								}, function(error) {
+									window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
+								});
+							});
+						}
+					}, false);
 					gjs.parentNode.insertBefore(js, gjs);
 				}(document, 'script', 'google-jssdk'));
 			</script>
@@ -428,7 +454,7 @@
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
-			gtag('config', GOOGLE_ANALYTICS_ID, { 'anonymize_ip': true });
+			gtag('config', '$!GOOGLE_ANALYTICS_ID', { 'anonymize_ip': true });
 		</script>
 		#end
 		#foreach($externalScript in $externalScripts.entrySet())
