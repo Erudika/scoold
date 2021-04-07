@@ -1043,7 +1043,7 @@ para.security.saml.provider = "Continue with SAML"
 Scoold Pro can authenticate users with an internal (local) SAML provider, even if your Para backend is hosted outside of
 your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require your SAML
 endpoints to be publicly accessible. To enable this feature, add this to your configuration:
-```
+```ini
 para.security.saml.is_local = true
 # required for passwordless authentication with Para
 para.app_secret_key = "change_to_long_random_string"
@@ -1085,13 +1085,26 @@ GET https://scoold-host/signin/success?jwt=eyJhbGciOiJIUzI1NiI..&passwordless=tr
 ```
 
 The UI button initiating the authentication flow above can be customized like this:
-```
+```ini
 para.security.custom.provider = "Continue with Acme Co."
 # location of your company's login page
 para.security.custom.login_url = ""
 ```
 
 There's an [example login page](https://albogdano.github.io/scoold-login-page/) implementing this sort of authentication.
+
+## Login and logout redirects
+
+You can configure Scoold to redirect users straight to the identity provider when they click the "Sign in" button.
+This feature is disabled by default:
+```ini
+para.redirect_signin_to_idp = false
+```
+
+You can also configure users to be redirected to an external location when they log out:
+```ini
+para.signout_url = "https://homepage.com"
+```
 
 ## Spaces (a.k.a. Teams)
 
