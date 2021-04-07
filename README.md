@@ -1100,6 +1100,8 @@ This feature is disabled by default:
 ```ini
 para.redirect_signin_to_idp = false
 ```
+When enabled and combined with `para.is_default_space_public = false`, unauthenticated users will be sent directly
+to the IDP without seeing the "Sign in" page or any other page on Scoold.
 
 You can also configure users to be redirected to an external location when they log out:
 ```ini
@@ -1596,8 +1598,21 @@ para.emails_footer_html = ""
 para.small_logo_url = "https://scoold.com/logo.png"
 # enable/disable dark mode
 para.dark_mode_enabled = true
+
+# custom navbar links
+para.navbar_link1_url = ""
+para.navbar_link2_url = ""
+para.navbar_link1_text = "Link1"
+para.navbar_link2_text = "Link2"
+
+# custom navbar menu links (shown to logged in users)
+para.navbar_menu_link1_url = ""
+para.navbar_menu_link2_url = ""
+para.navbar_menu_link1_text = "Menu Link1"
+para.navbar_menu_link2_text = "Menu Link2"
 ```
 
+### Custom Logo
 In Scoold Pro you can change the logo of the website just by dragging and dropping a new image of your choice.
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
@@ -1606,6 +1621,7 @@ simply add them as inline CSS:
 para.inline_css = ".scoold-logo { width: 100px; }"
 ```
 
+### Custom welcome message (banner)
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
 can also contain HTML (**use only single quotes or escape double quotes `\\\"`**):
 ```ini
@@ -1621,13 +1637,28 @@ For a list of available user properties, take a look at the
 and [`Sysprop`](https://github.com/Erudika/para/blob/master/para-core/src/main/java/com/erudika/para/core/Sysprop.java)
 classes.
 
-Alternatively, clone this repository and edit the files you want:
+### Custom links in navbar
+
+There are a total of 4 slots for external links in the navbar area - two links publicly visible can go in the navbar and
+another two links can go in the navbar menu, shown only to logged in users. Here's how to set a private link in the
+navbar menu:
+```ini
+para.navbar_menu_link1_url = "https://homepage.com"
+para.navbar_menu_link1_text = "Visit my page"
+```
+
+### Expert-level customization
+
+If you want to completely customize the frontend code, clone this repository and edit the files you want:
 
 - **HTML** templates are in `src/main/resources/templates/`
 - **CSS** stylesheets can be found in `src/main/resources/static/styles/`
 - **JavaScript** files can be found in `src/main/resources/static/scripts/`
 - **Images** are in located in `src/main/resources/static/images/`
 - **Themes** are in located in `src/main/resources/themes/`
+
+In Scoold Pro, you don't have access to the files above but you can purchase the **Pro with Source code**
+license, for full customization capability.
 
 Also, please refer to the documentation for Spring Boot and Spring MVC.
 
