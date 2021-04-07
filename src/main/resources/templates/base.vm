@@ -71,12 +71,29 @@
 					<nav class="navbar-color">
 						<div class="nav-wrapper container">
 							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x"></i></a>
+							#macro(customnavbarlinks)
+								#if($scooldUtils.isNavbarLink1Enabled())
+								<li><a href="$scooldUtils.navbarLink1URL" title="$scooldUtils.navbarLink1Text">$scooldUtils.navbarLink1Text</a></li>
+								#end
+								#if($scooldUtils.isNavbarLink2Enabled())
+								<li><a href="$scooldUtils.navbarLink2URL" title="$scooldUtils.navbarLink2Text">$scooldUtils.navbarLink2Text</a></li>
+								#end
+							#end
+							#macro(customnavbarmenulinks)
+								#if($scooldUtils.isNavbarMenuLink1Enabled())
+								<li><a href="$scooldUtils.navbarMenuLink1URL" title="$scooldUtils.navbarMenuLink1Text">$scooldUtils.navbarMenuLink1Text</a></li>
+								#end
+								#if($scooldUtils.isNavbarMenuLink2Enabled())
+								<li><a href="$scooldUtils.navbarMenuLink2URL" title="$scooldUtils.navbarMenuLink2Text">$scooldUtils.navbarMenuLink2Text</a></li>
+								#end
+							#end
 
 							#macro(navbarlinks)
 								<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
 								<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
 								<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
 								<li><a href="$questionslink/ask" title="Ask Question" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+								#customnavbarlinks()
 								#if ($authenticated && $isMod)
 									<li>
 										<a href="$reportslink" title="Reports" class="$!{reportsSelected}">$!lang.get("reports.title")
@@ -147,6 +164,7 @@
 										<li><a href="$adminlink" title="Admin">$!lang.get('administration.title')</a></li>
 									#end
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+									#customnavbarmenulinks()
 									<li class="divider"></li>
 									<li>
 										<form action="$signoutlink" method="post">
@@ -232,6 +250,7 @@
 										<li><a href="$adminlink" title="Admin">$!lang.get('administration.title')</a></li>
 									#end
 									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+									#customnavbarmenulinks()
 								#else
 									<li><a href="${signinlink}?returnto=$!{returnto}" title="Sign in"
 												 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
@@ -240,6 +259,7 @@
 								<li><a href="$questionslink" title="Questions" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
 								<li><a href="$peoplelink" title="Users" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
 								<li><a href="$tagslink" title="Tags" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+								#customnavbarlinks()
 								#if ($authenticated)
 									#if ($isMod)
 										<li>

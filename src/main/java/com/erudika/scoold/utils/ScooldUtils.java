@@ -711,6 +711,54 @@ public final class ScooldUtils {
 		return Config.getConfigParam("footer_html", "");
 	}
 
+	public boolean isNavbarLink1Enabled() {
+		return !StringUtils.isBlank(getNavbarLink1URL());
+	}
+
+	public String getNavbarLink1URL() {
+		return Config.getConfigParam("navbar_link1_url", "");
+	}
+
+	public String getNavbarLink1Text() {
+		return Config.getConfigParam("navbar_link1_text", "Link1");
+	}
+
+	public boolean isNavbarLink2Enabled() {
+		return !StringUtils.isBlank(getNavbarLink2URL());
+	}
+
+	public String getNavbarLink2URL() {
+		return Config.getConfigParam("navbar_link2_url", "");
+	}
+
+	public String getNavbarLink2Text() {
+		return Config.getConfigParam("navbar_link2_text", "Link2");
+	}
+
+	public boolean isNavbarMenuLink1Enabled() {
+		return !StringUtils.isBlank(getNavbarMenuLink1URL());
+	}
+
+	public String getNavbarMenuLink1URL() {
+		return Config.getConfigParam("navbar_menu_link1_url", "");
+	}
+
+	public String getNavbarMenuLink1Text() {
+		return Config.getConfigParam("navbar_menu_link1_text", "Menu Link1");
+	}
+
+	public boolean isNavbarMenuLink2Enabled() {
+		return !StringUtils.isBlank(getNavbarMenuLink2URL());
+	}
+
+	public String getNavbarMenuLink2URL() {
+		return Config.getConfigParam("navbar_menu_link2_url", "");
+	}
+
+	public String getNavbarMenuLink2Text() {
+		return Config.getConfigParam("navbar_menu_link2_text", "Menu Link2");
+	}
+
 	public Set<String> getCoreScooldTypes() {
 		return Collections.unmodifiableSet(CORE_TYPES);
 	}
@@ -1553,7 +1601,7 @@ public final class ScooldUtils {
 
 	public Sysprop getCustomTheme() {
 		String id = "theme" + Config.SEPARATOR + "custom";
-		return (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(() -> getDefaultThemeObject());
+		return (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(this::getDefaultThemeObject);
 		// !!!!!!!: make this more efficient by storing the selected theme in cookie, then get from cache.
 //		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
 //		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
@@ -1594,7 +1642,7 @@ public final class ScooldUtils {
 		return (isSecure ? "upgrade-insecure-requests; " : "")
 				+ "default-src 'self'; "
 				+ "base-uri 'self'; "
-				+ "form-action 'self'; "
+				+ "form-action 'self' " + Config.getConfigParam("signout_url", "") + "; "
 				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
 				+ " scoold.com www.google-analytics.com www.googletagmanager.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
