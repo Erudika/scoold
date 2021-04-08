@@ -1100,8 +1100,9 @@ This feature is disabled by default:
 ```ini
 para.redirect_signin_to_idp = false
 ```
-When enabled and combined with `para.is_default_space_public = false`, unauthenticated users will be sent directly
-to the IDP without seeing the "Sign in" page or any other page on Scoold.
+This works only for social login identity providers (except Facebook and Google) and SAML. It won't work for LDAP or
+basic password authentication. When enabled and combined with `para.is_default_space_public = false`,
+unauthenticated users will be sent directly to the IDP without seeing the "Sign in" page or any other page on Scoold.
 
 You can also configure users to be redirected to an external location when they log out:
 ```ini
