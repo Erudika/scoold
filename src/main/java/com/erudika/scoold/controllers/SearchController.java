@@ -92,21 +92,22 @@ public class SearchController {
 		String queryString = StringUtils.isBlank(q) ? query : q;
 		// [space query filter] + original query string
 		String qs = utils.sanitizeQueryString(queryString, req);
-		String qsUsers = qs.replaceAll("properties\\.space:", "properties.spaces:");
 
 		if ("questions".equals(type)) {
 			questionslist = pc.findQuery(Utils.type(Question.class), qs, itemcount);
 		} else if ("answers".equals(type)) {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
-		} else if ("feedback".equals(type)) {
+		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
-			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers, itemcount);
+			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), itemcount);
 		} else {
 			questionslist = pc.findQuery(Utils.type(Question.class), qs);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
-			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
-			userlist = pc.findQuery(Utils.type(Profile.class), qsUsers);
+			if (utils.isFeedbackEnabled()) {
+				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
+			}
+			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
 		list.addAll(questionslist);
@@ -126,6 +127,20 @@ public class SearchController {
 		model.addAttribute("feedbacklist", feedbacklist);
 
 		return "base";
+	}
+
+	private String getUsersSearchQuery(String queryString, HttpServletRequest req) {
+		String qs = StringUtils.strip(queryString).replaceAll("[\\*\"\\)\\(]", "").replaceAll("_", " ");
+		String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
+		if (!StringUtils.isBlank(qs)) {
+			String template = "(name:({1}) OR name:({0}*) OR properties.location:({0}*) OR "
+					+ "properties.aboutme:({0}*) OR properties.groups:({0}))";
+			qs = (StringUtils.isBlank(spaceFilter) ? "" : spaceFilter + " AND ") +
+					Utils.formatMessage(template, qs, StringUtils.capitalize(qs));
+		} else {
+			qs = StringUtils.isBlank(spaceFilter) ? "*" : spaceFilter;
+		}
+		return qs;
 	}
 
 	@ResponseBody
