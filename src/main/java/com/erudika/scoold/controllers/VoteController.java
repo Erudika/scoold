@@ -97,7 +97,7 @@ public class VoteController {
 	}
 
 	boolean processVoteRequest(boolean isUpvote, String type, String id, HttpServletRequest req) {
-		ParaObject votable = pc.read(type, id);
+		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
 		Profile author = null;
 		Profile authUser = utils.getAuthUser(req);
 		boolean result = false;

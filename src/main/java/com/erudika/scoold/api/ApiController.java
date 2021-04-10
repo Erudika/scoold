@@ -904,9 +904,7 @@ public class ApiController {
 				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
 			}
 		}
-		ParaObject votable = pc.read(id);
-		return votable != null && (isUpvote ? voteController.voteup(id, votable.getType(), req) :
-				voteController.votedown(id, votable.getType(), req));
+		return isUpvote ? voteController.voteup(null, id, req) : voteController.votedown(null, id, req);
 	}
 
 	private List<String> readSpaces(Collection<String> spaces) {
