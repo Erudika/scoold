@@ -86,18 +86,19 @@ public class VoteController {
 	@GetMapping("/voteup/{type}/{id}")
 	public Boolean voteup(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
-		return processVoteRequest(true, type, id, req);
+		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
+		return processVoteRequest(true, votable, req);
 	}
 
 	@ResponseBody
 	@GetMapping("/votedown/{type}/{id}")
 	public Boolean votedown(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
-		return processVoteRequest(false, type, id, req);
+		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
+		return processVoteRequest(false, votable, req);
 	}
 
-	boolean processVoteRequest(boolean isUpvote, String type, String id, HttpServletRequest req) {
-		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
+	boolean processVoteRequest(boolean isUpvote, ParaObject votable, HttpServletRequest req) {
 		Profile author = null;
 		Profile authUser = utils.getAuthUser(req);
 		boolean result = false;
@@ -108,8 +109,8 @@ public class VoteController {
 
 		try {
 			List<ParaObject> voteObjects = pc.readAll(Arrays.asList(votable.getCreatorid(),
-					new Vote(authUser.getId(), id, Votable.VoteValue.UP).getId(),
-					new Vote(authUser.getId(), id, Votable.VoteValue.DOWN).getId()));
+					new Vote(authUser.getId(), votable.getId(), Votable.VoteValue.UP).getId(),
+					new Vote(authUser.getId(), votable.getId(), Votable.VoteValue.DOWN).getId()));
 
 			author = (Profile) voteObjects.stream().filter((p) -> p instanceof Profile).findFirst().orElse(null);
 			Integer votes = votable.getVotes() != null ? votable.getVotes() : 0;
@@ -124,7 +125,7 @@ public class VoteController {
 			} else if (!isUpvote && voteDown(votable, authUser.getId())) {
 				votes--;
 				result = true;
-				hideCommentAndReport(votable, votes, id, req);
+				hideCommentAndReport(votable, votes, votable.getId(), req);
 				update = updateReputationOnDownvote(votable, votes, authUser, author, isVoteCorrection);
 			}
 		} catch (Exception ex) {
