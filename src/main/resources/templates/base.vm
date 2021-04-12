@@ -480,15 +480,6 @@
 			#end
 		#end
 
-		#if ($GOOGLE_ANALYTICS_ID && !$GOOGLE_ANALYTICS_ID.isEmpty() && $cookieConsentGiven)
-		<script nonce="$cspNonce" src="https://www.googletagmanager.com/gtag/js?id=$!{GOOGLE_ANALYTICS_ID}" async></script>
-		<script nonce="$cspNonce">
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', '$!GOOGLE_ANALYTICS_ID', { 'anonymize_ip': true });
-		</script>
-		#end
 		#foreach($externalScript in $externalScripts.entrySet())
 			#if($externalScript.getKey().startsWith("bypassconsent") || $cookieConsentGiven)
 				<!-- External Script: $externalScript.key Begin -->

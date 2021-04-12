@@ -227,8 +227,6 @@ para.posts_rep_threshold = 100
 para.gmaps_api_key = ""
 # Enable/disable near me feature (geolocation)
 para.nearme_feature_enabled = false
-# GA code
-para.google_analytics_id = "UA-123456-7"
 # enables syntax highlighting in posts
 para.code_highlighting_enabled = true
 # If true, the default space will be accessible by everyone

@@ -192,11 +192,6 @@
 			"required": false,
 			"value": ""
 		},
-		"para_google_analytics_id": {
-			"description": "Google Analytics ID for the GA snippet (leave blank to disable GA)",
-			"required": false,
-			"value": ""
-		},
 		"para_csp_header_enabled": {
 			"description": "Enable or disable the Content-Security-Policy header. Enable this in production for better security.",
 			"required": false,

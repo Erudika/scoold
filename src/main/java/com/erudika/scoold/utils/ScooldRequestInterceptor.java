@@ -109,7 +109,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("FB_APP_ID", Config.FB_APP_ID);
 		modelAndView.addObject("GMAPS_API_KEY", Config.getConfigParam("gmaps_api_key", ""));
 		modelAndView.addObject("GOOGLE_CLIENT_ID", Config.getConfigParam("google_client_id", ""));
-		modelAndView.addObject("GOOGLE_ANALYTICS_ID", Config.getConfigParam("google_analytics_id", ""));
 		modelAndView.addObject("RTL_ENABLED", utils.isLanguageRTL(utils.getCurrentLocale(utils.getLanguageCode(request)).getLanguage()));
 		modelAndView.addObject("MAX_TAGS_PER_POST", ScooldServer.MAX_TAGS_PER_POST);
 		modelAndView.addObject("includeHighlightJS", Config.getConfigBoolean("code_highlighting_enabled", true));
