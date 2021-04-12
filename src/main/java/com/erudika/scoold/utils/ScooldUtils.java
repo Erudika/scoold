@@ -159,6 +159,7 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("spaces", "#spacespage($spaces)");
 		WHITELISTED_MACROS.put("webhooks", "#webhookspage($webhooks)");
 		WHITELISTED_MACROS.put("comments", "#commentspage($commentslist)");
+		WHITELISTED_MACROS.put("simplecomments", "#simplecommentspage($commentslist)");
 		WHITELISTED_MACROS.put("postcomments", "#commentspage($showpost.comments)");
 		WHITELISTED_MACROS.put("replies", "#answerspage($answerslist $showPost)");
 		WHITELISTED_MACROS.put("feedback", "#questionspage($feedbacklist)");

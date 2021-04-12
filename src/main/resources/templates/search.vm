@@ -12,6 +12,8 @@
 				$!lang.get("feedback.title") #showcount($itemcount.count)
 			#elseif ($showParam == "people")
 				$!lang.get("people.title") #showcount($itemcount.count)
+			#elseif ($showParam == "comments")
+				$!lang.get("comments.title") #showcount($itemcount.count)
 			#end
 		#else
 			$!lang.get("search.title")
@@ -35,6 +37,8 @@
 			#paginate("answers" $itemcount $params "page")
 		#elseif ($showParam == "feedback")
 			#paginate("feedback" $itemcount $params "page")
+		#elseif ($showParam == "comments")
+			#paginate("simplecomments" $itemcount $params "page")
 		#elseif ($showParam == "people")
 			<div class="row">
 				#paginate("people" $itemcount $params "page")
@@ -42,7 +46,7 @@
 		#end
 	#else
 
-		#if ($questionslist.isEmpty() && $answerslist.isEmpty() && $feedbacklist.isEmpty() && $userlist.isEmpty())
+		#if ($questionslist.isEmpty() && $answerslist.isEmpty() && $feedbacklist.isEmpty() && $userlist.isEmpty() && $commentslist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">
 				<div class="em5v">
 					$!lang.get("search.notfound")
@@ -66,14 +70,6 @@
 			</div>
 		#end
 
-		#if (!$feedbacklist.isEmpty())
-			<div class="largeText pvl">$!lang.get("feedback.title")</div>
-			#questionspage($feedbacklist)
-			<div class="mvl">
-				<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
-			</div>
-		#end
-
 		#if (!$userlist.isEmpty())
 			<div class="largeText pvl">$!lang.get("people.title")</div>
 			<div class="row">
@@ -81,6 +77,22 @@
 			</div>
 			<div class="mvl">
 				<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
+		#end
+
+		#if (!$commentslist.isEmpty())
+			<div class="largeText pvl">$!lang.get("comments.title")</div>
+			#simplecommentspage($commentslist)
+			<div class="mvl">
+				<a href="$searchlink/comments/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			</div>
+		#end
+
+		#if (!$feedbacklist.isEmpty())
+			<div class="largeText pvl">$!lang.get("feedback.title")</div>
+			#questionspage($feedbacklist)
+			<div class="mvl">
+				<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
 			</div>
 		#end
 

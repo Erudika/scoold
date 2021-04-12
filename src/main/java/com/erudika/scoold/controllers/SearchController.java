@@ -25,6 +25,7 @@ import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.SEARCHLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -88,6 +89,7 @@ public class SearchController {
 		List<Post> questionslist = new ArrayList<Post>();
 		List<Post> answerslist = new ArrayList<Post>();
 		List<Post> feedbacklist = new ArrayList<Post>();
+		List<Post> commentslist = new ArrayList<Post>();
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.trimToEmpty(StringUtils.isBlank(q) ? query : q);
 		// [space query filter] + original query string
@@ -101,13 +103,16 @@ public class SearchController {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
 			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(qs, req), itemcount);
+		} else if ("comments".equals(type)) {
+			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
 			questionslist = pc.findQuery(Utils.type(Question.class), qs);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
 			}
-			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
+			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(qs, req));
+			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
 		list.addAll(questionslist);
@@ -125,6 +130,7 @@ public class SearchController {
 		model.addAttribute("questionslist", questionslist);
 		model.addAttribute("answerslist", answerslist);
 		model.addAttribute("feedbacklist", feedbacklist);
+		model.addAttribute("commentslist", commentslist);
 
 		return "base";
 	}

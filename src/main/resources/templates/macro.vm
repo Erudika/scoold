@@ -70,6 +70,26 @@
 	#end
 #end
 ####################################
+#macro(simplecommentbox $showcomment)
+<div class="commentbox ${hide}">
+	<div class="card-panel mbs">
+		<span class="lightborder phm mrm">$!showcomment.votes</span>
+		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
+		<a href="$questionlink/$showcomment.parentid" title="View answer"><span class="comment-text">$!{_commentHtml}</span></a>
+		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
+		&mdash;
+		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
+		<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
+	</div>
+</div>
+#end
+####################################
+#macro(simplecommentspage $comments)
+	#foreach($comment in $comments)
+		#simplecommentbox($comment)
+	#end
+#end
+####################################
 #macro(spacebox $space )
 <div class="col s12 m6 l3 spacebox">
 	<div class="card-panel center-align">
