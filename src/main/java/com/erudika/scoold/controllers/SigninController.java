@@ -241,14 +241,14 @@ public class SigninController {
 
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
-			String email = getEmailFromAccessToken(accessToken);
-			if ("password".equals(provider) && !isEmailRegistered(email)) {
-				return "redirect:" + SIGNINLINK + "?code=3&error=true";
-			}
 			if (StringUtils.equalsAnyIgnoreCase(accessToken, "password", "ldap")) {
 				accessToken = req.getParameter("username") + ":" +
 						("password".equals(accessToken) ? ":" : "") +
 						req.getParameter("password");
+			}
+			String email = getEmailFromAccessToken(accessToken);
+			if ("password".equals(provider) && !isEmailRegistered(email)) {
+				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 			User u = pc.signIn(provider, accessToken, false);
 			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
