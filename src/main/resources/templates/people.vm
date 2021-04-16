@@ -5,10 +5,11 @@
 	<h4 class="hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
 
 	<div class="chips-container">
-		#set($sortarr = {'votes': "", 'newest': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.monthlyVotes': "", 'properties.weeklyVotes': ""} )
+		#set($sortarr = {'votes': "", 'newest': "", 'name': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.monthlyVotes': "", 'properties.weeklyVotes': ""} )
 		#setsortbyselection($sortarr 'newest')
 		<a href="$peoplelink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon() $!lang.get("newest")</a>
 		<a href="$peoplelink?sortby=votes#sortorderparam('&' 'votes')" class="chip $sortarr.votes">#sortordericon("votes") $!lang.get("reputation")</a>
+		<a href="$peoplelink?sortby=name#sortorderparamasc('&' 'name')" class="chip $sortarr.name">#sortordericon("name") $!lang.get("name")</a>
 		<a href="$peoplelink?sortby=properties.yearlyVotes#sortorderparam('&' 'properties.yearlyVotes')" class="chip $sortarr['properties.yearlyVotes']">#sortordericon("properties.yearlyVotes") $!lang.get('year')</a>
 		<a href="$peoplelink?sortby=properties.quarterlyVotes#sortorderparam('&' 'properties.quarterlyVotes')" class="chip $sortarr['properties.quarterlyVotes']">#sortordericon("properties.quarterlyVotes") $!lang.get('quarter')</a>
 		<a href="$peoplelink?sortby=properties.monthlyVotes#sortorderparam('&' 'properties.monthlyVotes')" class="chip $sortarr['properties.monthlyVotes']">#sortordericon("properties.monthlyVotes") $!lang.get('month')</a>
