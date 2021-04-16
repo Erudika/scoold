@@ -82,6 +82,10 @@ public class PeopleController {
 			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
 		}
 
+		if (!qs.endsWith("*")) {
+			qs += " OR properties.groups:(admins)"; // admins are members of every space and always visible
+		}
+
 		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));

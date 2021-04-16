@@ -1178,6 +1178,8 @@ public final class ScooldUtils {
 			return defaultQuery;
 		} else if ("*".equals(qf)) {
 			return q;
+		} else if ("*".equals(q)) {
+			return qf;
 		} else {
 			if (q.isEmpty()) {
 				return qf;
