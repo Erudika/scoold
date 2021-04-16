@@ -81,6 +81,7 @@ hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}
 .diff-ins .button-tiny{ background-color: #E6FFE6;}
 .diff-del .button-tiny{ background-color: #FFE6E6;}
 .editor-toolbar button { color: #555555; }
+button:focus{ outline: none;background-color: inherit; }
 h1, h2, h3, h4, h5, h6{font-weight: 300;}
 
 #fb-login-btn, #gp-login-btn, #gh-login-btn, #in-login-btn, #tw-login-btn, #ms-login-btn, #sl-login-btn,
