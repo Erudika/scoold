@@ -183,6 +183,7 @@ public class QuestionsController {
 		}
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("askSelected", "navbtn-hover");
+		model.addAttribute("defaultTag", Config.getConfigParam("default_question_tag", ""));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - "
 				+ utils.getLang(req).get("posts.ask"));
@@ -224,6 +225,7 @@ public class QuestionsController {
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("draftQuestion", q);
+				model.addAttribute("defaultTag", "");
 				model.addAttribute("path", "questions.vm");
 				model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 				model.addAttribute("askSelected", "navbtn-hover");

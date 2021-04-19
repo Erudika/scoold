@@ -28,7 +28,7 @@
 				<div class="input-field">
 					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-					<input type="hidden" name="tags" value="$!draftQuestion.getTagsString()">
+					<input type="hidden" name="tags" value="$!defaultTag$!draftQuestion.getTagsString()">
 					<div class="pll mll">
 						#getmessagebox("red white-text" $error.get("tags"))
 					</div>
