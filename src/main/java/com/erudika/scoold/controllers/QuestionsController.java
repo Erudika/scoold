@@ -123,13 +123,14 @@ public class QuestionsController {
 			res.setStatus(401);
 			return;
 		}
+		Pager pager = new Pager(1, "votes", true, Config.getConfigInt("max_similar_posts", 7));
 		Profile authUser = utils.getAuthUser(req);
 		StringBuilder sb = new StringBuilder();
 		Question q = new Question();
 		q.setTitle(like);
 		q.setBody("");
 		q.setTags(Arrays.asList(""));
-		for (Post similarPost : utils.getSimilarPosts(q, new Pager(Config.getConfigInt("max_similar_posts", 7)))) {
+		for (Post similarPost : utils.getSimilarPosts(q, pager)) {
 			if (utils.isMod(authUser) || utils.canAccessSpace(authUser, similarPost.getSpace())) {
 				boolean hasAnswer = !StringUtils.isBlank(similarPost.getAnswerid());
 				sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");
