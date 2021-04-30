@@ -196,6 +196,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("security.oauth" + a + ".accept_header", Config.getConfigParam("security.oauth" + a + ".accept_header", ""));
 		settings.put("security.oauth" + a + ".parameters.id", Config.getConfigParam("security.oauth" + a + ".parameters.id", null));
 		settings.put("security.oauth" + a + ".parameters.name", Config.getConfigParam("security.oauth" + a + ".parameters.name", null));
+		settings.put("security.oauth" + a + ".parameters.given_name", Config.getConfigParam("security.oauth" + a + ".parameters.given_name", null));
+		settings.put("security.oauth" + a + ".parameters.family_name", Config.getConfigParam("security.oauth" + a + ".parameters.family_name", null));
 		settings.put("security.oauth" + a + ".parameters.email", Config.getConfigParam("security.oauth" + a + ".parameters.email", null));
 		settings.put("security.oauth" + a + ".parameters.picture", Config.getConfigParam("security.oauth" + a + ".parameters.picture", null));
 		settings.put("security.oauth" + a + ".domain", Config.getConfigParam("security.oauth" + a + ".domain", null));

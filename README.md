@@ -760,6 +760,8 @@ para.security.oauth.parameters.id = "sub"
 para.security.oauth.parameters.picture = "picture"
 para.security.oauth.parameters.email = "email"
 para.security.oauth.parameters.name = "name"
+para.security.oauth.parameters.given_name = "given_name"
+para.security.oauth.parameters.family_name = "family_name"
 
 # Sets the string on the login button
 para.security.oauth.provider = "Continue with OpenID Connect"
@@ -794,6 +796,8 @@ para.security.oauthsecond.parameters.id = "sub"
 para.security.oauthsecond.parameters.picture = "picture"
 para.security.oauthsecond.parameters.email = "email"
 para.security.oauthsecond.parameters.name = "name"
+para.security.oauthsecond.parameters.given_name = "given_name"
+para.security.oauthsecond.parameters.family_name = "family_name"
 
 # Sets the string on the login button (second provider)
 para.security.oauthsecond.provider = "Continue with Second OAuth 2.0 provider"
