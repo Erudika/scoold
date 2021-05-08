@@ -312,9 +312,9 @@ public abstract class Post extends Sysprop {
 		List<String> deleteUs = new LinkedList<>();
 		List<Tag> updateUs = new LinkedList<>();
 		Map<String, Tag> oldTagz = Optional.ofNullable(oldTags).orElse(Collections.emptyList()).stream().
-				map(t -> new Tag(getTagString(t))).collect(Collectors.toMap(t -> t.getId(), t -> t));
+				map(t -> new Tag(getTagString(t))).distinct().collect(Collectors.toMap(t -> t.getId(), t -> t));
 		Map<String, Tag> newTagz = Optional.ofNullable(newTags).orElse(Collections.emptyList()).stream().
-				map(t -> new Tag(getTagString(t))).collect(Collectors.toMap(t -> t.getId(), t -> t));
+				map(t -> new Tag(getTagString(t))).distinct().collect(Collectors.toMap(t -> t.getId(), t -> t));
 		Map<String, Tag> existingTagz = client().readAll(Stream.concat(oldTagz.keySet().stream(), newTagz.keySet().
 				stream()).distinct().collect(Collectors.toList())).
 				stream().collect(Collectors.toMap(t -> t.getId(), t -> (Tag) t));
