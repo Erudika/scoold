@@ -107,7 +107,7 @@ public class SettingsController {
 			utils.getAuthUser(req).delete();
 			utils.clearSession(req, res);
 		}
-		return "redirect:" + SIGNINLINK + "?code=4&success=true";
+		return "redirect:" + Config.getConfigParam("signout_url", SIGNINLINK + "?code=4&success=true");
 	}
 
 	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {
