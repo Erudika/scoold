@@ -77,7 +77,7 @@ public class VoteController {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
 		expiresAfter = Config.getConfigParam("vote_expires_after_sec", null);
-		lockedAfter = Config.getConfigParam("vote_expires_after_sec", null);
+		lockedAfter = Config.getConfigParam("vote_locked_after_sec", null);
 		expiresAfterSec = NumberUtils.toInt(expiresAfter, Config.VOTE_EXPIRES_AFTER_SEC);
 		lockedAfterSec = NumberUtils.toInt(lockedAfter, Config.VOTE_LOCKED_AFTER_SEC);
 	}
