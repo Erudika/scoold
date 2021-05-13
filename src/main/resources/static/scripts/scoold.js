@@ -826,7 +826,8 @@ $(function () {
 				}
 				if (title.val() && title.val().trim().length > 0) {
 					titleTimeout = setTimeout(function () {
-						$.get(CONTEXT_PATH + "/questions/similar/" + title.val(), function (data) {
+						var liketxt = title.val().replaceAll(/[^\p{Alpha}]/gmu, " ").replaceAll(/\s+/gmi, " ").trim() || "*";
+						$.get(CONTEXT_PATH + "/questions/similar/" + liketxt, function (data) {
 							if (data && data.trim().length > 0) {
 								similarContainer.html(data).prepend(similarTitle);
 							} else {
