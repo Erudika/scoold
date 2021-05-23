@@ -1294,7 +1294,8 @@ para.slack.post_to_space = "workspace|scooldspace:myspace|default"
 para.slack.notify_on_new_question = true
 para.slack.notify_on_new_answer = true
 para.slack.notify_on_new_comment = true
-para.slack.default_question_tags = "via-mattermost"
+para.slack.dm_on_new_comment = false
+para.slack.default_question_tags = "via-slack"
 para.slack.auth_enabled = true
 ```
 
@@ -1311,6 +1312,9 @@ posted from Slack will go to the default space.
 
 You can also create answers to questions from Slack, either from the message action button or by typing in the
 `/scoold ask` command. This requires the URL of a specific question you wish to answer.
+
+When `para.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
 Slack authentication can be disabled with `para.slack.auth_enabled = false` and the "Continue with Slack" button
 will be hidden away.
