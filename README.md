@@ -1313,7 +1313,7 @@ posted from Slack will go to the default space.
 You can also create answers to questions from Slack, either from the message action button or by typing in the
 `/scoold ask` command. This requires the URL of a specific question you wish to answer.
 
-When `para.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+When `para.slack.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
 Slack authentication can be disabled with `para.slack.auth_enabled = false` and the "Continue with Slack" button
@@ -1389,6 +1389,7 @@ para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
 para.mattermost.notify_on_new_question = true
 para.mattermost.notify_on_new_answer = true
 para.mattermost.notify_on_new_comment = true
+para.mattermost.dm_on_new_comment = false
 para.mattermost.default_question_tags = "via-mattermost"
 ```
 
@@ -1399,6 +1400,9 @@ The dialog box for new questions is opened via the new slash command `/scoold as
 
 All the other slash commands and notifications work just like with Slack and are described above. The Mattermost
 integration will automatically create a slash command for each channel linked to Scoold on the admin page.
+
+When `para.mattermost.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
 ## Self-hosting Para and Scoold through SSL
 
