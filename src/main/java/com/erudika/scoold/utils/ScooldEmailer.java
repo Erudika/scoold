@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
  * A simple JavaMail implementation of {@link Emailer}.
@@ -50,28 +49,21 @@ public class ScooldEmailer implements Emailer {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
-		asyncExecute(new Runnable() {
-			public void run() {
-				MimeMessagePreparator preparator = new MimeMessagePreparator() {
-					public void prepare(MimeMessage mimeMessage) throws Exception {
+		asyncExecute(() -> {
+			emails.forEach(email -> {
+				try {
+					mailSender.send((MimeMessage mimeMessage) -> {
 						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-						if (emails.size() == 1) {
-							msg.setTo(emails.iterator().next());
-						} else {
-							msg.setBcc(emails.toArray(new String[0]));
-						}
+						msg.setTo(email);
 						msg.setSubject(subject);
 						msg.setFrom(Config.SUPPORT_EMAIL, Config.APP_NAME);
 						msg.setText(body, true); // body is assumed to be HTML
-					}
-				};
-				try {
-					mailSender.send(preparator);
-					logger.debug("Email sent to {}, {}", emails, subject);
+					});
+					logger.debug("Email sent to {}, {}", email, subject);
 				} catch (MailException ex) {
-					logger.error("Failed to send email to [{}] with body [{}]. {}", emails, body, ex.getMessage());
+					logger.error("Failed to send email to {} with body [{}]. {}", email, body, ex.getMessage());
 				}
-			}
+			});
 		});
 		return true;
 	}
