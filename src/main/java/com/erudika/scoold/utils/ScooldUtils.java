@@ -1067,11 +1067,16 @@ public final class ScooldUtils {
 				return s.getId() + Config.SEPARATOR + s.getName();
 			}
 		}
-		String space = getValidSpaceId(authUser, Utils.base64dec(getCookieValue(req, SPACE_COOKIE)));
+		String spaceAttr = (String) req.getAttribute(SPACE_COOKIE);
+		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, SPACE_COOKIE)) : spaceAttr;
+		String space = getValidSpaceId(authUser, spaceValue);
 		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : verifyExistingSpace(authUser, space);
 	}
 
 	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
+		// directly set the space on the requests, overriding the cookie value
+		// used for setting the space from a direct URL to a particular space
+		req.setAttribute(SPACE_COOKIE, space);
 		HttpUtils.setRawCookie(SPACE_COOKIE, Utils.base64encURL(space.getBytes()),
 				req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}

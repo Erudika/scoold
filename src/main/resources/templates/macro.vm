@@ -108,6 +108,13 @@
 	#end
 #end
 ####################################
+#macro(spacelabel $currentSpace)
+<p class="mediumText grey-text bookmark-spaceurl">$scooldUtils.getSpaceName($!currentSpace)
+	<a href="$questionslink/space/$scooldUtils.getSpaceId($!currentSpace)"
+		 class="hide tooltipped" data-tooltip="Copy link"><i class="fa fa-bookmark-o"></i></a>
+</p>
+#end
+####################################
 #macro(webhookbox $webhook )
 <div class="col s12 webhookbox">
 	<div class="card-panel">

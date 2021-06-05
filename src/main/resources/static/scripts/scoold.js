@@ -1023,6 +1023,14 @@ $(function () {
 		return true;
 	});
 
+	$(".bookmark-spaceurl").hover(function () {
+		$(this).find("a").toggleClass("hide").on("click", function (e) {
+			navigator.clipboard.writeText(window.location.href);
+			$(this).find("i").text("Copied!").attr("class", "green-text smallText").show().fadeOut(3000);
+			return false;
+		});
+	});
+
 	/****************************************************
      *                   REVISIONS
      ****************************************************/

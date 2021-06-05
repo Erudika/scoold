@@ -1,5 +1,5 @@
 #if($currentSpace && !$currentSpace.isEmpty() && !$request.getParameter("bulkedit"))
-	<p class="mediumText grey-text">$scooldUtils.getSpaceName($!currentSpace)</p>
+	#spacelabel($currentSpace)
 #end
 <div class="page-wrapper">
 	<h4 class="hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
