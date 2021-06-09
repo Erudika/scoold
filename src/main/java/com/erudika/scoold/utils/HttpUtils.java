@@ -43,6 +43,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
@@ -75,6 +76,7 @@ public final class HttpUtils {
 			int timeout = 5 * 1000;
 			httpclient = HttpClientBuilder.create().
 					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
+					setRedirectStrategy(new LaxRedirectStrategy()).
 					setDefaultRequestConfig(RequestConfig.custom().
 							setConnectTimeout(timeout).
 							setConnectionRequestTimeout(timeout).
