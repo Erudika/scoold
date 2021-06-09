@@ -281,7 +281,8 @@ For **Scoold Pro** the images are located in a private registry. You can get acc
 The run command for **Scoold Pro** is similar with the only difference being the uploads volume:
 ```
 $ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold-pro/application.conf \
-  -v scoold-uploads:/scoold-pro/uploads -e JAVA_OPTS="-Dconfig.file=/scoold-pro/application.conf" ecr/scoold-pro
+  -v scoold-uploads:/scoold-pro/uploads -e JAVA_OPTS="-Dconfig.file=/scoold-pro/application.conf" \
+  374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:latest_stable
 ```
 
 **Environment variables**
@@ -292,22 +293,13 @@ $ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold-pro/applic
 **Docker Compose**
 
 You can start the whole stack, Para + Scoold, with a single command using `docker-compose`.
-First, create a new directory and copy `docker-compose.yml` to it from this repository. Create these 4 files:
+First, create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro** the
+[`docker-compose.yml` is here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml))
+to it from this repository. Also create these files in the same directory:
 
-1. `para.env` - containing environment variables for Para, like `JAVA_OPTS`
-2. `scoold.env` - containing environment variables for Scoold, like `JAVA_OPTS`
-3. `para-application.conf` - containing the Para configuration (see example below)
-4. `scoold-application.conf` - containing the Scoold configuration (see example above)
+1. `para-application.conf` - containing the Para configuration
+2. `scoold-application.conf` - containing the Scoold configuration
 
-An example `para.env` file:
-```sh
-JAVA_OPTS="-Dconfig.file=/para/application.conf -Dloader.path=lib"
-```
-Example for `scoold.env`:
-```sh
-JAVA_OPTS=-Dconfig.file=/scoold/application.conf
-BOOT_SLEEP=6
-```
 Example for `para-application.conf`:
 ```ini
 para.env = "production"

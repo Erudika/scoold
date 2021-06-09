@@ -16,7 +16,8 @@ services:
          source: ./para-application.conf
          target: /para/application.conf
      restart: always
-     env_file: para.env
+     environment:
+       - JAVA_OPTS=-Dconfig.file=/para/application.conf -Dloader.path=/para/lib
 
    scoold:
      depends_on:
@@ -29,7 +30,9 @@ services:
          source: ./scoold-application.conf
          target: /scoold/application.conf
      restart: always
-     env_file: scoold.env
+     environment:
+       - JAVA_OPTS=-Dconfig.file=/scoold/application.conf
+       - BOOT_SLEEP=5
 volumes:
   paraData:
   paraLib:
