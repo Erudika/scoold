@@ -1118,15 +1118,24 @@ set `para.is_default_space_public = false`.
 in PRO you can automatically assign multiple spaces to new users, whereas in the OSS version you can only assign one.
 
 If you want to assign space(s) to new users automatically, add this to your configuration:
-```
+```ini
 # put space ids here, the "scooldspace:" prefix is optional
 para.auto_assign_spaces = "my-space-one,my-other-space"
 ```
+You can assign both the default space and a custom space to new users (values can contain spaces):
+```ini
+para.auto_assign_spaces = "default,My Custom Space"
+```
 When using the option above, new spaces are added to existing spaces for each user. You can configure auto-assigned
 spaces to overwrite the existing user spaces (like the "default" space, assigned to everyone) by setting:
-```
+```ini
 para.reset_spaces_on_new_assignment = true
 ```
+So when you have that set to `false` and you have configured Scoold to assign custom spaces to new users
+(e.g. "my-space-1" and "my-space-2"), those users will become members of  "my-space-1", "my-space-2" **and** the
+default space. If the value is `true`, the default space gets overwritten by the custom spaces you have specified in
+`para.auto_assign_spaces` and new users will only be members of "my-space-1" and "my-space-2".
+
 This is turned on for all users authenticated with LDAP, SAML or OAuth 2.0.
 
 Alternatively, Scoold Pro can have spaces delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
