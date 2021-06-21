@@ -323,7 +323,7 @@ $(function () {
 		var newvotes = parseInt(votes.text(), 10) || 0;
 		if (!dis.data("disabled")) {
 			dis.data("disabled", true);
-			$.get(this.href, function(data) {
+			$.post(this.href, function(data) {
 				if (data === true) {
 					if (up) {
 						newvotes++;

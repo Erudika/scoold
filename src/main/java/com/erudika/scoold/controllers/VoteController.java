@@ -52,8 +52,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -83,7 +83,7 @@ public class VoteController {
 	}
 
 	@ResponseBody
-	@GetMapping("/voteup/{type}/{id}")
+	@PostMapping("/voteup/{type}/{id}")
 	public Boolean voteup(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
 		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
@@ -91,7 +91,7 @@ public class VoteController {
 	}
 
 	@ResponseBody
-	@GetMapping("/votedown/{type}/{id}")
+	@PostMapping("/votedown/{type}/{id}")
 	public Boolean votedown(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
 		//addModel("voteresult", result);
 		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
