@@ -19,6 +19,7 @@ package com.erudika.scoold.utils;
 
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
@@ -165,7 +166,7 @@ public final class HttpUtils {
 		cookie.setHttpOnly(httpOnly);
 		cookie.setMaxAge(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge);
 		cookie.setPath(CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH);
-		cookie.setSecure(req.isSecure());
+		cookie.setSecure(StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure());
 		res.addCookie(cookie);
 	}
 
@@ -266,6 +267,9 @@ public final class HttpUtils {
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge).append(";");
 		sb.append("HttpOnly;");
+		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
+			sb.append("Secure;");
+		}
 		sb.append("SameSite=Lax");
 		res.addHeader(javax.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
 	}
