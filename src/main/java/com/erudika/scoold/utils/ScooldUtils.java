@@ -125,6 +125,7 @@ public final class ScooldUtils {
 		API_USER = new Profile("1", "System");
 		API_USER.setVotes(1);
 		API_USER.setCreatorid("1");
+		API_USER.setTimestamp(Utils.timestamp());
 		API_USER.setPicture(getGravatar(Config.SUPPORT_EMAIL));
 		API_USER.setGroups(User.Groups.ADMINS.toString());
 
