@@ -200,7 +200,9 @@ public final class HttpUtils {
 	 * @return the content of the image or null
 	 */
 	public static void getAvatar(String url, HttpServletResponse res) {
-		if (StringUtils.isBlank(url)) {
+		if (StringUtils.isBlank(url) || !StringUtils.startsWithIgnoreCase(url, "https://") ||
+				StringUtils.containsAnyIgnoreCase(url, "localhost", "127.0.0.1", "0177.0.0.1", "0x7f.0.0.1", "0x7f000001",
+						"2130706433", "017700000001", "127.0.1", "127.1")) {
 			getDefaultAvatarImage(res);
 			return;
 		}
