@@ -197,15 +197,20 @@ public final class HttpUtils {
 	/**
 	 * Fetches an avatar at a given URL.
 	 * @param url image URL
+	 * @param req request
 	 * @param res response
 	 * @return the content of the image or null
 	 */
-	public static void getAvatar(String url, HttpServletResponse res) {
-		if (StringUtils.isBlank(url) || !StringUtils.startsWithIgnoreCase(url, "https://") || isLocalRequest(url)) {
+	public static void getAvatar(String url, HttpServletRequest req, HttpServletResponse res) {
+		if (isLocalOrInsecureHost(url)) {
 			getDefaultAvatarImage(res);
 			return;
 		}
 		HttpGet get = new HttpGet(url);
+		// attach auth cookie to requests for locally uploaded avatars - without this custom avatars will not be loaded!
+		if (StringUtils.startsWithIgnoreCase(url, ScooldServer.getServerURL())) {
+			get.setHeader("Cookie", AUTH_COOKIE + "=" + HttpUtils.getStateParam(AUTH_COOKIE, req));
+		}
 		get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
 		try (CloseableHttpResponse img = HttpUtils.getHttpClient().execute(get)) {
 			if (img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null) {
@@ -236,7 +241,16 @@ public final class HttpUtils {
 				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp"));
 	}
 
-	private static boolean isLocalRequest(String url) {
+	private static boolean isLocalOrInsecureHost(String url) {
+		if (StringUtils.isBlank(url)) {
+			return true;
+		}
+		if (Config.IN_DEVELOPMENT) {
+			return false;
+		}
+		if (!StringUtils.startsWithIgnoreCase(url, "https://")) {
+			return true;
+		}
 		try {
 			InetAddress addr = InetAddress.getByName(StringUtils.substringBefore(StringUtils.substringAfter(url, "//"), "/"));
 			return StringUtils.containsAnyIgnoreCase(addr.getHostAddress(),

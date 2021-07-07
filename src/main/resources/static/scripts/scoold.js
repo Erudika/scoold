@@ -549,7 +549,7 @@ $(function () {
 	});
 
 	$("#clear-avatar-btn").click(function () {
-		var defaultAvatar = window.location.origin + "/people/avatar";
+		var defaultAvatar = window.location.origin + CONTEXT_PATH + "/people/avatar";
 		changeAvatars(defaultAvatar);
 		pictureUrlInput.val(defaultAvatar);
 		$.post($(this).closest("form").attr("action"), {picture: defaultAvatar});

@@ -149,7 +149,8 @@ public class PeopleController {
 	}
 
 	@GetMapping("/avatar")
-	public void avatar(@RequestParam(required = false) String url, HttpServletResponse res, Model model) {
-		HttpUtils.getAvatar(url, res);
+	public void avatar(@RequestParam(required = false) String url,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
+		HttpUtils.getAvatar(url, req, res);
 	}
 }
