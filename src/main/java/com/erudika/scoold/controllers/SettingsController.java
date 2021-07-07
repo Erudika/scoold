@@ -95,6 +95,7 @@ public class SettingsController {
 			}
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
+				utils.clearSession(req, res);
 				return "redirect:" + SETTINGSLINK + "?passChanged=true";
 			}
 		}
