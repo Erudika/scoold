@@ -25,6 +25,7 @@ import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.TimeZone;
@@ -200,9 +201,7 @@ public final class HttpUtils {
 	 * @return the content of the image or null
 	 */
 	public static void getAvatar(String url, HttpServletResponse res) {
-		if (StringUtils.isBlank(url) || !StringUtils.startsWithIgnoreCase(url, "https://") ||
-				StringUtils.containsAnyIgnoreCase(url, "localhost", "127.0.0.1", "0177.0.0.1", "0x7f.0.0.1", "0x7f000001",
-						"2130706433", "017700000001", "127.0.1", "127.1")) {
+		if (StringUtils.isBlank(url) || !StringUtils.startsWithIgnoreCase(url, "https://") || isLocalRequest(url)) {
 			getDefaultAvatarImage(res);
 			return;
 		}
@@ -235,6 +234,17 @@ public final class HttpUtils {
 				(StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType().getValue(),
 						"image/gif", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/bmp", "image/svg+xml") ||
 				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp"));
+	}
+
+	private static boolean isLocalRequest(String url) {
+		try {
+			InetAddress addr = InetAddress.getByName(StringUtils.substringBefore(StringUtils.substringAfter(url, "//"), "/"));
+			return StringUtils.containsAnyIgnoreCase(addr.getHostAddress(),
+					"localhost", "0177.0.0.1", "177.0.0.1", "0x7f.0.0.1", "0x7f000001", "2130706433", "017700000001") ||
+					StringUtils.startsWithAny(addr.getHostAddress(), "127.", "177.");
+		} catch (Exception e) {
+			return true;
+		}
 	}
 
 	private static void getDefaultAvatarImage(HttpServletResponse res) {
