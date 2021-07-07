@@ -225,7 +225,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 			modelAndView.addObject("description", Config.getConfigParam("meta_description", ""));
 		}
 		if (!modelAndView.getModel().containsKey("ogimage")) {
-			modelAndView.addObject("ogimage", IMAGESLINK + "/logowhite.png");
+			modelAndView.addObject("ogimage", Config.getConfigParam("meta_app_icon", IMAGESLINK + "/logowhite.png"));
 		}
 	}
 }
