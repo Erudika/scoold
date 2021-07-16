@@ -76,28 +76,29 @@ For **admin** access, open the Scoold Pro demo and login with "Demo login".
 
 ## Scoold architecture intro (or 'what the heck is Para?')
 
-Scoold is a client application (frontend) of the [Para](https://paraio.org) backend server. Almost every request to
-Scoold also involes at least one request to Para as well. When you ask a question on Scoold, a `create` request is
+Scoold is a client application of the [Para](https://paraio.org) backend server. Almost every request to
+Scoold produces at least one request to Para as well. When you ask a question on Scoold, a `create` request is
 sent to Para to the location `POST /v1/questions`. Here are a few key points about that architecture:
 - A Para server can be hosted anywhere and store data inside any of the [supported databases](https://github.com/Erudika/para#database-integrations).
 - Para is a multi-tenant server which stores data in isolated environments called "apps".
-- Each app environment is completely separated from others and has its own database table and search index.
 - Each instance of the Scoold server needs one Para app for data storage.
 - Two or more instance of Scoold (like a cluster) can connect to the same Para app environment and share the data.
+- Multiple separate Scoold websites can be powered by the same Para backend using different Para apps.
+- Each app environment is completely separated from others and has its own database table and search index.
 - Both Scoold and Para can be hosted on the same machine or on multiple machines, on different networks.
 - Scoold talks to Para via HTTP so Para must be directly accessible from Scoold, but can also be hosted on a private network.
 
 Here's an overview of the architecture:
 <pre>
-                                  ┌────────────┐
-                              ┌───►  Database  │
-┌────────────┐   ┌──────────┐ │   ┌────────────┤
-│            │   │          │ │   └────────────┤
-│   Scoold   ◄───►   Para   ◄─┼───►   Search   │
-│            │   │          │ │   ┌────────────┤
-└────────────┘   └──────────┘ │   └────────────┤
-                              └───►   Cache    │
-                                  └────────────┘
+                              ┌────────────┐
+                          ┌───►  Database  │
+┌──────────┐  ┌────────┐  │   ┌────────────┤
+│ Scoold 1 ├──►        │  │   └────────────┤
+├──────────┤  │  Para  ◄──┼───►   Search   │
+│ Scoold 2 ├──►        │  │   ┌────────────┤
+└──────────┘  └────────┘  │   └────────────┤
+                          └───►   Cache    │
+                              └────────────┘
 </pre>
 
 ### Quick Start with a managed Para backend (easier)
