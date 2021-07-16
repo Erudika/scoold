@@ -286,6 +286,9 @@ $ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold-pro/applic
   374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:latest_stable
 ```
 
+**Follow the [getting started guide](#quick-start-with-a-self-hosted-para-backend-harder)
+after starting the Para and Scoold containers.**
+
 **Environment variables**
 
 `JAVA_OPTS` - Java system properties, e.g. `-Dpara.port=8000`
@@ -324,8 +327,9 @@ Then you can start both Scoold and Para with Docker Compose like so:
 ```
 $ docker-compose up
 ```
-Follow the quick start guide above to initialize Para and create a new app for Scoold. Once you have the access keys
-for that app, update `scoold-application.conf` with those and restart the Para + Scoold Docker stack:
+**Follow the [quick start guide](#quick-start-with-a-self-hosted-para-backend-harder) above** to initialize Para and
+create a new app for Scoold. Once you have the access keys for that app, update `scoold-application.conf`
+with those and restart the Para + Scoold Docker stack:
 
 1. Stop the containers using <kbd>Ctrl</kbd> + <kbd>C</kbd>
 2. Rerun `docker-compose up`
