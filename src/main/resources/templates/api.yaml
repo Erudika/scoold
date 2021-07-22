@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.1.0"
+  version: "1.1.1"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
@@ -1456,6 +1456,8 @@ components:
         slackUserId:
           type: string
         mattermostUserId:
+          type: string
+        microsoftUserId:
           type: string
         location:
           type: string

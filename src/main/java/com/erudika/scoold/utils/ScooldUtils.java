@@ -1232,6 +1232,7 @@ public final class ScooldUtils {
 	}
 
 	public String getUsersSearchQuery(String qs, String spaceFilter) {
+		qs = Utils.stripAndTrim(qs).toLowerCase();
 		if (!StringUtils.isBlank(qs)) {
 			String wildcardLower = qs.matches("[\\p{IsAlphabetic}]*") ? qs + "*" : qs;
 			String wildcardUpper = StringUtils.capitalize(wildcardLower);

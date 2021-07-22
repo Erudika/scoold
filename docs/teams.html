@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Scoold | Slack Integration</title>
+		<title>Scoold | Microsoft Teams Integration</title>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -242,7 +242,7 @@
 							<div class="row">
 								<div class="col m12">
 									<h4 class="center-align pvm white" style="line-height: 1.5em; font-weight: 300;">
-										Scoold<span class="pro-label">Pro</span> + Slack
+										Scoold<span class="pro-label">Pro</span> + Teams
 									</h4>
 									<h5 class="white pam" style="line-height: 1.5em;">
 										Seamlessly integrated for a better knowledge-sharing workflow.
@@ -256,8 +256,8 @@
 
 						</div>
 						<div class="col m12 l7 offset-l1">
-							<img src="scoold_slack.png?v1" width="706" height="198" id="splash"
-									 class="responsive-img" alt="Scoold + Slack screenshot"/>
+							<img src="scoold_teams.png?v1" width="706" height="198" id="splash"
+									 class="responsive-img" alt="Scoold + Teams screenshot"/>
 						</div>
 					</div>
 				</div>
@@ -269,35 +269,37 @@
 					<div class="col m5">
 						<h3>Create questions and answers instantly</h3>
 						<div class="mediumText">
-							<p>Asking a question on Slack is as easy as writing <code>/scoold ask How do I...?</code></p>
-							<p>To answer, simply type in <code>/scoold answer [question URL] Here's my answer...</code></p>
+							<p>Asking a question on Teams is as easy as writing <code>@Scoold ask How do I...?</code></p>
+							<p>To answer, simply type in <code>@Scoold answer [question URL] Here's my answer...</code></p>
 							<p>You can also turn any chat message into a Scoold question or answer by using the special message actions.</p>
 						</div>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro1.png" alt="Slack intro 1" class="responsive-img slack-intro-img">
+						<img src="teams_intro1.png" alt="Teams intro 1" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Full editing capability</h3>
 
-						<p class="mediumText">You can compose questions and answers by opening the "Edit & Ask" dialog. There you can write longer pieces of
+						<p class="mediumText">You can compose a new question by typing in the <code>@Scoold ask</code>. Similarly,
+							to compose a new answer, type in <code>@Scoold answer</code> Thus, you can write longer pieces of
 						text, choose the exact title and tags you want your question to have.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro2.png" alt="Slack intro 2" class="responsive-img slack-intro-img">
+						<img src="teams_intro2.png" alt="Teams intro 2" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 				<div class="row container center-align pvl">
 					<div class="col m5">
 						<h3>Search for questions, people or tags</h3>
 
-						<p class="mediumText">You can perform advanced search queries from any Slack channel using the commands <br><code>/scoold search</code>,
-							<code>/scoold search-people</code> and <code>/scoold search-tags</code>.</p>
+						<p class="mediumText">You can perform advanced search queries from the message compose box in Teams by typing
+							<br><code>@Scoold search</code> and choosing a search option from the menu. Find any question, person or
+							tag instantly and share the results with your team.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro3.png" alt="Slack intro 3" class="responsive-img slack-intro-img">
+						<img src="teams_intro3.png" alt="Teams intro 3" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
@@ -307,10 +309,10 @@
 
 						<p class="mediumText">Your linked channels will be instantly notified whenever a new question or answer is created on Scoold.
 						Mentions of people in chat are sent to the channel even if the person is mentioned at a later revision of the post. To mention
-						someone from Slack, simply link to their Scoold profile in your post.</p>
+						someone from Teams, simply link to their Scoold profile in your post.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro4.png" alt="Slack intro 4" class="responsive-img slack-intro-img">
+						<img src="teams_intro4.png" alt="Teams intro 4" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
@@ -322,14 +324,14 @@
 						approval from mods, Scoold will notify the chat by presenting the option to "Approve" or "Delete" the newly created post.</p>
 					</div>
 					<div class="col m7">
-						<img src="slack_intro5.png" alt="Slack intro 5" class="responsive-img slack-intro-img">
+						<img src="teams_intro5.png" alt="Teams intro 5" class="responsive-img slack-intro-img">
 					</div>
 				</div>
 
 				<div class="container pvl center-align">
 					<a href="https://paraio.com/scoold-pro" class="btn-large light-blue"><b>Buy Scoold Pro</b></a>
 					<p><b>€299</b> per host, one-time fee, basic support included</p>
-					<p>The integration with Slack is a premium feature, only available in Scoold Pro.</p>
+					<p>The integration with Microsoft Teams is a premium feature, only available in Scoold Pro.</p>
 				</div>
 			</section>
 
@@ -343,57 +345,77 @@
 							<li class="mvm mediumText">
 								<p class="plm">You'll need a copy of Scoold Pro before continuing.</p>
 								<span class="pam">
-									<b>1.</b> <a href="https://api.slack.com/apps?new_app=1">Create a new Slack app</a> and copy the App ID, Signing Secret, Client ID and
-									Client Secret to your <tt>application.conf</tt>:
+									<b>1.</b> Visit the Azure Poral and create an OAuth 2.0 web application client. Skip this step if you
+									have already configured Microsoft authentication in Scoold. Get the client ID and
+									secret key and add them to your Scoold configuration file <tt>application.conf</tt>:
 								</span>
 
-									<code><pre>
-  para.sl_app_id = "{Client ID}"
-  para.sl_secret = "{Client Secret}"
-  para.slack.app_id = "{App ID}"
-  para.slack.signing_secret = "{Signing Secret}"
-									</pre></code>
+								<code><pre>
+  para.ms_app_id = "{Client ID}"
+  para.ms_secret = "{Client Secret}"
+								</pre></code>
 
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>2.</b> Add the <a href="https://scoold.com/logosq.png">Scoold logo</a> to your Slack app, write a short description and "Save changes".</span><br>
-								<img src="slack_step1.png" alt="Step 1" class="responsive-img">
+								<b>2.</b> Visit the <a href="https://dev.teams.microsoft.com/bots">Teams Developer Portal</a> and
+								create a new Bot from the "Tools > Bot management" page. Name the bot "Scoold" and take a note of the
+								bot's ID and secret key. Configure the Bot endpoint address to be the URL of your Scoold Pro server, for
+								example "https://scoold.org.com/teams" and click "Save".
+								</span><br><br>
+								<img src="teams_step1.png" alt="Step 1" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>3.</b> Activate incoming webhooks for your Slack app and "Save changes"</span><br><br>
-								<img src="slack_step2.png" alt="Step 2" class="responsive-img">
+								<b>3.</b> Add the Bot ID and secret to your configuration file <tt>application.conf</tt> and restart Scoold:
+								</span>
+
+								<code><pre>
+  para.teams.bot_id = "{Bot ID}"
+  para.teams.bot_secret = "{Bot Secret}"
+								</pre></code>
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>4.</b> On the "Interactivity &amp; Shortcuts" page in Slack, activate interactive components for your Slack app by entering the URL of your server and the path <code>/slack</code> </span><br><br>
-								<img src="slack_step3.png" alt="Step 3" class="responsive-img">
+								<b>4.</b> Whitelist the following redirect (callback) URLs in your OAuth 2.0 application settings
+								(Azure Portal > App registrations > Authentication): </span>
+
+								<code><pre>
+  https://para_host/microsoft_auth
+  https://scoold_host/admin/microsoft_auth
+								</pre></code>
+
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>5.</b> On the same page, under "Shortcuts", create the following message shortcuts (actions), then click "Save changes"</span><br><br>
-								<img src="slack_step4.png" alt="Step 4" class="responsive-img">
+								<b>5.</b> Visit the "Administration" page in Scoold and click the "Add to Microsoft Teams" button.
+								You will then be able to select the Teams channel where you would like Scoold to send notifications.
+								Add a notification webhook for each of the channels you want. Up to 10 channels can be configured for
+								notifications in this way.</span><br><br>
+								<img src="teams_step2.png" alt="Step 5" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>6.</b> Create the <code>/scoold</code> slash command pointing the "Request URL" to your Scoold Pro instance, e.g. <code>https://myscoold.com/slack</code>.
-								"Escape channels, users, and links sent to your app" <b>must be checked</b></span><br><br>
-								<img src="slack_step5.png" alt="Step 5" class="responsive-img">
+									<b>6.</b> On the same page, click the "Download app package" button. Download the Zip file and sideload
+									it (click Import app) in <a href="https://dev.teams.microsoft.com/apps">Teams Developer Portal > Apps</a> or
+									directly add it to the Teams app catalog.</span>
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>7.</b> Whitelist your Para and Scoold integration endpoints under Slack's "OAuth & Permissions". The first one should contain the URL of your Para server, e.g. <code>https://paraio.com/slack_auth</code>, the second one should contain the URL of your Scoold Pro website <code>https://myscoold.com/admin/slack_auth</code>. </span><br><br>
-								<img src="slack_step6.png" alt="Step 6" class="responsive-img">
+								<b>7.</b> Verify that all settings are correct and/or modify them if necessary. Visit the
+								<a href="https://dev.teams.microsoft.com">Teams Developer Portal</a> and verify that:</span>
+								<ul>
+									<li>your Scoold app is using the correct Scoold bot, created in the previous step</li>
+									<li>the list of allowed domains contains the URL of your Scoold Pro server</li>
+									<li>the app validation check passes without errors</li>
+								</ul><br>
+								<div class="row">
+									<div class="col m7 s12"><img src="teams_step4.png" alt="Step 7b" class="responsive-img"></div>
+									<div class="col m5 s12"><img src="teams_step3.png" alt="Step 7a" class="responsive-img"></div>
+								</div>
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>8.</b> Visit the "Administration" page in Scoold and click the "Add to Slack" button. This will link a channel on Slack to Scoold and allow it to send notifications there. Repeat this step for up to 10 channels.</span><br><br>
-								<img src="slack_step7.png" alt="Step 7" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>9.</b> Go to "OAuth & Permissions" in Slack and make sure your app is using granular scopes (all newer apps use them). Then add following scopes:</span><br><br>
-								<img src="slack_step8.png" alt="Step 8" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>10.</b> You're all set! Restart Scoold and it should be fully integrated with your Slack workspace.</span>
+								<b>8.</b> Finally, click "Publish your app" to add it to your organization's app catalog.
+									After approving the app in the <a href="https://admin.teams.microsoft.com/policies/manage-apps">Teams Admin Center</a>,
+									you will then be able to install it as a Teams app for any of your teams.</span>
 							</li>
 						</ul>
 						<p class="pam">
-							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#slack-integration">README</a></tt> for more information.</b>
+							<b>Check the <tt><a href="https://github.com/Erudika/scoold/blob/master/README.md#microsoft-teams-integration">README</a></tt> for more information.</b>
 						</p>
 					</div>
 

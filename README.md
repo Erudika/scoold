@@ -49,6 +49,7 @@ your company or team.
 
 - [Slack integration](https://scoold.com/slack.html)
 - [Mattermost integration](https://scoold.com/mattermost.html)
+- [Microsoft Teams integration](https://scoold.com/teams.html)
 - SAML authentication support
 - Custom authentication support
 - Mentions with notifications
@@ -1288,7 +1289,8 @@ Slack users to Scoold accounts and vice versa. Slack IDs are set automatically w
 
 The integration endpoint for Slack is `/slack` - this is where Scoold will accept and process requests from Slack.
 To enable the Slack integration you need to register for a Slack app first and set `para.sl_app_id` and `para.sl_secret`.
-Follow the [detailed instructions here](https://scoold.com/slack.html).
+
+### [Getting started guide for Scoold + Slack](https://scoold.com/slack.html).
 
 Here are the configuration properties for Slack:
 ```
@@ -1325,23 +1327,7 @@ the post on which somebody commented. By default, DMs are turned off and the not
 Slack authentication can be disabled with `para.slack.auth_enabled = false` and the "Continue with Slack" button
 will be hidden away.
 
-### Slack notifications
-
-Scoold will notify the channels where you have it installed, whenever a new question or answer is created. To install
-the application on multiple channels go to the Administration page and click the "Add to Slack" button for each channel.
-You can receive notification on up to 10 channels simultaneously. Notification for new posts will go to the channel
-associated with the space in which the post was created. For example if `para.slack.map_workspaces_to_spaces` is `true`,
-and a question is created in space "Team1 #general", Scoold will search for webhook registrations matching that
-team/channel combination and send a notification there. Direct message webhooks will be used only if there's no
-space-matching channel found.
-
-### Approving new posts from Slack
-
-This works if you have enabled `para.posts_need_approval`. When a new question or answer is created by a user with less
-reputation than the threshold, a notification message will be sent to Slack, giving you the option to either approve or
-delete that post. The action can only be performed by moderators.
-
-### Slash commands
+### Slash commands in Slack
 
 Typing in `/scoold help` gives you a list of commands available:
 
@@ -1355,7 +1341,7 @@ Typing in `/scoold help` gives you a list of commands available:
 - `/scoold whoami` Get information for your Scoold account.
 - `/scoold stats` Get general statistics.
 
-### Message actions
+### Message actions in Slack
 
 Here are the interactive message actions which are currently implemented:
 - `create_question` - "Ask on Scoold", Creates a new question on Scoold directly from a chat message.
@@ -1381,7 +1367,9 @@ signs in with Mattermost.
 
 The integration endpoint for Mattermost is `/mattermost` - this is where Scoold will accept and process requests from
 Mattermost. To enable the Mattermost integration you need to enable OAuth 2.0 apps and create one in Mattermost's System
-Console. Then set `para.mm_app_id` and `para.mm_secret`. Follow the [detailed instructions here](https://scoold.com/mattermost.html).
+Console. Then set `para.mm_app_id` and `para.mm_secret`.
+
+### [Getting started guide for Scoold + Mattermost](https://scoold.com/mattermost.html).
 
 Here are the configuration properties for Mattermost:
 ```
@@ -1409,6 +1397,65 @@ integration will automatically create a slash command for each channel linked to
 
 When `para.mattermost.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
+
+## Microsoft Teams integration
+
+Scoold **PRO** also integrates with Microsoft Teams. Scoold users can sign in with a Microsoft account,
+use bot commands to interact with Scoold and also get in-chat notification for mentions and new posts on Scoold.
+Scoold allows you to map spaces to teams or channels. By default, each team in MS Teams is mapped to a single Scoold
+space when people sign in with Microsoft.
+
+**Important:** Most of the Teams operations require a **valid Microsoft ID stored in your Scoold profile** which enables the
+mapping of Teams users to Scoold accounts and vice versa. Microsoft IDs are added to each profile automatically when a
+Scoold user signs in with Microsoft.
+
+The integration endpoint for Teams is `/teams` - this is where Scoold will accept and process requests from
+MS Teams. To enable the Teams integration you first need to create a new bot for your app.
+After creating the bot, take note of its ID and client secret and add those to your Scoold configuration file.
+Then sideload (upload) the `Scoold.zip` app package in the [Teams Developer Portal](https://dev.teams.microsoft.com).
+The app package can be downloaded from the Administration page after your bot has been created.
+Also set `para.ms_app_id` and `para.ms_secret` as you normally would for an OAuth2 authentication with Microsoft.
+
+### [Getting started guide for Scoold + Teams](https://scoold.com/teams.html).
+
+Here are the configuration properties for MS Teams:
+```
+para.teams.bot_id = ""
+para.teams.bot_secret = ""
+para.teams.map_workspaces_to_spaces = true
+para.teams.map_channels_to_spaces = false
+para.teams.post_to_space = "workspace|scooldspace:myspace|default"
+
+para.teams.notify_on_new_question = true
+para.teams.notify_on_new_answer = true
+para.teams.notify_on_new_comment = true
+para.teams.dm_on_new_comment = false
+para.teams.default_question_tags = "via-teams"
+```
+
+You can type `@Scoold help` to get a list of all supported actions. All the other bot commands and notifications work
+just like with Slack and Mattermost, described above. A bot registration is required for the Teams integration
+and it has to be created manually from the [Teams Developer Portal](https://dev.teams.microsoft.com/bots).
+
+When `para.teams.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
+
+## Notifications in Slack/Mattermost/Teams
+
+Scoold will notify the channels where you have it installed, whenever a new question or answer is created, and also
+whenever a user is mentioned. To install the application on multiple channels go to the Administration page and click
+one of the "Add to Slack/Mattermost/Teams" buttons for each channel where you wish to get notifications. You can receive
+notification on up to 10 channels simultaneously. Notifications for new posts will go to the channel associated with the
+space in which the post was created. For example, when using Slack, if `para.slack.map_workspaces_to_spaces` is `true`,
+and a question is created in space "Team1 #general", Scoold will search for webhook registrations matching that
+team/channel combination and only send a notification there. Direct message webhooks will be used only if there's no
+space-matching channel found.
+
+## Approving new posts from Slack/Mattermost/Teams
+
+This works if you have enabled `para.posts_need_approval`. When a new question or answer is created by a user with less
+reputation than the threshold, a notification message will be sent to Slack/Mattermost/Teams, giving you the option to
+either approve or delete that post. The action can only be performed by moderators.
 
 ## Self-hosting Para and Scoold through SSL
 
@@ -1767,6 +1814,7 @@ You can translate Scoold to your language by copying the [English language file]
 and translating it. When you're done, change the file name from "lang_en.properties" to "lang_xx.properties"
 where "xx" is the language code for your locale. Finally, open a pull request here.
 
+<details><summary><b>List of available languages</b></summary>
 | Language | File | Progress
 --- | --- | ---
 **Albanian** | [lang_sq.properties](src/main/resources/lang_sq.properties) | 0%
@@ -1814,6 +1862,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | :heavy_check_mark: Thanks Aysad Kozanoglu!
 **Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
+</details>
 
 You can also change the default language of Scoold for all users by setting `para.default_language_code = "en"`, where
 instead of "en" you enter the 2-letter code of the language of your choice.
