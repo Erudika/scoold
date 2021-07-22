@@ -18,30 +18,19 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.getServerURL;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
 import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,13 +53,11 @@ public class CommentController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
-	private final Emailer emailer;
 
 	@Inject
-	public CommentController(ScooldUtils utils, Emailer emailer) {
+	public CommentController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		this.emailer = emailer;
 	}
 
 	@GetMapping("/{id}")
@@ -140,45 +127,10 @@ public class CommentController {
 					if (parentPost != null && parentPost.addCommentId(showComment.getId())) {
 						pc.update(parentPost); // update without adding revisions
 					}
-					sendCommentNotification(parentPost, showComment, authUser);
+					utils.sendCommentNotification(parentPost, showComment, authUser);
 				}
 			}
 		}
 		return "comment";
-	}
-
-	private void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor) {
-		// send email notification to author of post except when the comment is by the same person
-		if (parentPost != null && comment != null) {
-			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
-			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
-			boolean isCommentatorThePostAuthor = StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid());
-			Set<String> last5ids = pc.findChildren(parentPost, Utils.type(Comment.class),
-					"!(" + Config._CREATORID + ":\"" + comment.getCreatorid() + "\")", p).
-					stream().map(c -> c.getCreatorid()).distinct().collect(Collectors.toSet());
-			if (!isCommentatorThePostAuthor && !last5ids.contains(parentPost.getCreatorid())) {
-				last5ids = new HashSet<>(last5ids);
-				last5ids.add(parentPost.getCreatorid());
-			}
-			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
-			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
-			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				Map<String, Object> model = new HashMap<String, Object>();
-				String name = commentAuthor.getName();
-				String body = Utils.markdownToHtml(comment.getComment());
-				String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
-				String postURL = getServerURL() + parentPost.getPostLink(false, false);
-				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
-				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
-						parentPost.getTitle() + "'", utils.compileEmailTemplate(model));
-
-				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
-				payload.put("parent", parentPost);
-				payload.put("author", commentAuthor);
-				utils.triggerHookEvent("comment.create", payload);
-			});
-		}
 	}
 }

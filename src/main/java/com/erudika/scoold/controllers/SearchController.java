@@ -102,7 +102,7 @@ public class SearchController {
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
 		} else if ("people".equals(type)) {
-			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(qs, req), itemcount);
+			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), itemcount);
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
@@ -111,7 +111,7 @@ public class SearchController {
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
 			}
-			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(qs, req));
+			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();
@@ -137,16 +137,7 @@ public class SearchController {
 
 	private String getUsersSearchQuery(String qs, HttpServletRequest req) {
 		String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
-		if (!StringUtils.isBlank(qs)) {
-			String template = "(name:({1}) OR name:({2}) OR properties.location:({0}) OR "
-					+ "properties.aboutme:({0}) OR properties.groups:({0}))";
-			qs = (StringUtils.isBlank(spaceFilter) ? "" : spaceFilter + " AND ") +
-					Utils.formatMessage(template, qs, StringUtils.capitalize(qs),
-							qs.matches("[\\p{IsAlphabetic}]*") ? qs + "*" : qs);
-		} else {
-			qs = StringUtils.isBlank(spaceFilter) ? "*" : spaceFilter;
-		}
-		return qs;
+		return utils.getUsersSearchQuery(qs, spaceFilter);
 	}
 
 	@ResponseBody

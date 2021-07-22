@@ -284,7 +284,7 @@ public class AdminController {
 		return "redirect:" + Optional.ofNullable(req.getParameter("returnto")).orElse(ADMINLINK);
 	}
 
-	@GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/export", produces = "application/zip")
 	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse response) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isAdmin(authUser)) {

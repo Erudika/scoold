@@ -660,6 +660,42 @@ public final class ScooldUtils {
 		}
 	}
 
+	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor) {
+		// send email notification to author of post except when the comment is by the same person
+		if (parentPost != null && comment != null) {
+			parentPost.setAuthor(pc.read(Profile.id(parentPost.getCreatorid()))); // parent author is not current user (authUser)
+			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
+			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
+			boolean isCommentatorThePostAuthor = StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid());
+			Set<String> last5ids = pc.findChildren(parentPost, Utils.type(Comment.class),
+					"!(" + Config._CREATORID + ":\"" + comment.getCreatorid() + "\")", p).
+					stream().map(c -> c.getCreatorid()).distinct().collect(Collectors.toSet());
+			if (!isCommentatorThePostAuthor && !last5ids.contains(parentPost.getCreatorid())) {
+				last5ids = new HashSet<>(last5ids);
+				last5ids.add(parentPost.getCreatorid());
+			}
+			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
+			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
+			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
+				Map<String, Object> model = new HashMap<String, Object>();
+				String name = commentAuthor.getName();
+				String body = Utils.markdownToHtml(comment.getComment());
+				String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
+				String postURL = getServerURL() + parentPost.getPostLink(false, false);
+				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
+				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
+				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
+						parentPost.getTitle() + "'", compileEmailTemplate(model));
+
+				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
+				payload.put("parent", parentPost);
+				payload.put("author", commentAuthor);
+				triggerHookEvent("comment.create", payload);
+			});
+		}
+	}
+
 	public Profile readAuthUser(HttpServletRequest req) {
 		Profile authUser = null;
 		User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
@@ -1193,6 +1229,20 @@ public final class ScooldUtils {
 				return qf + " AND " + q;
 			}
 		}
+	}
+
+	public String getUsersSearchQuery(String qs, String spaceFilter) {
+		if (!StringUtils.isBlank(qs)) {
+			String wildcardLower = qs.matches("[\\p{IsAlphabetic}]*") ? qs + "*" : qs;
+			String wildcardUpper = StringUtils.capitalize(wildcardLower);
+			String template = "(name:({1}) OR name:({2} OR {3}) OR properties.location:({0}) OR "
+					+ "properties.aboutme:({0}) OR properties.groups:({0}))";
+			qs = (StringUtils.isBlank(spaceFilter) ? "" : spaceFilter + " AND ") +
+					Utils.formatMessage(template, qs, StringUtils.capitalize(qs), wildcardLower, wildcardUpper);
+		} else {
+			qs = StringUtils.isBlank(spaceFilter) ? "*" : spaceFilter;
+		}
+		return qs;
 	}
 
 	public String getMacroCode(String key) {
