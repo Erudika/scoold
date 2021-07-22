@@ -144,7 +144,7 @@ public class Profile extends Sysprop {
 		this.weeklyVotes = 0;
 		this.anonymityEnabled = false;
 		this.darkmodeEnabled = false;
-		this.favtagsEmailsEnabled = false;
+		this.favtagsEmailsEnabled = Config.getConfigBoolean("favtags_emails_enabled", false);
 		this.replyEmailsEnabled = Config.getConfigBoolean("reply_emails_enabled", false);
 		this.commentEmailsEnabled = Config.getConfigBoolean("comment_emails_enabled", false);
 	}

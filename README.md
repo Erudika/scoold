@@ -1674,6 +1674,11 @@ para.navbar_menu_link1_url = ""
 para.navbar_menu_link2_url = ""
 para.navbar_menu_link1_text = "Menu Link1"
 para.navbar_menu_link2_text = "Menu Link2"
+
+# default email notification toggles for all users
+para.favtags_emails_enabled = false
+para.reply_emails_enabled = false
+para.comment_emails_enabled = false
 ```
 
 ### Custom Logo
