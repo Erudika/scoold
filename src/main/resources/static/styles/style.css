@@ -392,6 +392,12 @@ img.profile-pic {
 	display: none;
 }
 
+#passw.pass-meter, #newpassword.pass-meter { border-bottom: 3px solid #F44336; box-shadow: none;}
+#passw.pass-meter.psms-25, #newpassword.pass-meter.psms-25 { border-bottom: 3px solid #F44336; box-shadow: none; }
+#passw.pass-meter.psms-50, #newpassword.pass-meter.psms-50 { border-bottom: 3px solid #FFC000; box-shadow: none; }
+#passw.pass-meter.psms-75, #newpassword.pass-meter.psms-75 { border-bottom: 3px solid #b2ca7d; box-shadow: none; }
+#passw.pass-meter.psms-100, #newpassword.pass-meter.psms-100 { border-bottom: 3px solid #88AF12; box-shadow: none; }
+
 @media (max-width: 1400px) {
 	.container {width: 90%;}
 }

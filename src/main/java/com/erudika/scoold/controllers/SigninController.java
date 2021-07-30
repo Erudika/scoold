@@ -24,6 +24,8 @@ import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
+import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -150,7 +152,8 @@ public class SigninController {
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (!utils.isAuthenticated(req) && approvedDomain) {
-			if (!isEmailRegistered(email) && isSubmittedByHuman(req)) {
+			boolean goodPass = isPasswordStrongEnough(passw);
+			if (!isEmailRegistered(email) && isSubmittedByHuman(req) && goodPass) {
 				User u = pc.signIn("password", email + ":" + name + ":" + passw, false);
 				if (u != null && u.getActive()) {
 					setAuthCookie(u.getPassword(), req, res);
@@ -166,7 +169,11 @@ public class SigninController {
 				model.addAttribute("name", name);
 				model.addAttribute("bademail", email);
 				model.addAttribute("emailPattern", Email.EMAIL_PATTERN);
-				model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.1")));
+				if (!goodPass) {
+					model.addAttribute("error", Collections.singletonMap("passw", utils.getLang(req).get("msgcode.8")));
+				} else {
+					model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.1")));
+				}
 				return "base";
 			}
 		}
@@ -222,7 +229,11 @@ public class SigninController {
 				model.addAttribute("token", "");
 				model.addAttribute("verified", !error);
 				if (error) {
-					model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.7")));
+					if (!isPasswordStrongEnough(newpassword)) {
+						model.addAttribute("error", Collections.singletonMap("newpassword", utils.getLang(req).get("msgcode.8")));
+					} else {
+						model.addAttribute("error", Collections.singletonMap("email", utils.getLang(req).get("msgcode.7")));
+					}
 				}
 				return "base";
 			}
@@ -317,6 +328,33 @@ public class SigninController {
 		return StringUtils.isBlank(req.getParameter("leaveblank")) && (System.currentTimeMillis() - time >= 7000);
 	}
 
+	private boolean isPasswordStrongEnough(String password) {
+		if (StringUtils.length(password) >= MIN_PASS_LENGTH) {
+			int score = 0;
+			if (password.matches(".*[a-z].*")) {
+				score++;
+			}
+			if (password.matches(".*[A-Z].*")) {
+				score++;
+			}
+			if (password.matches(".*[0-9].*")) {
+				score++;
+			}
+			if (password.matches(".*[^\\w\\s\\n\\t].*")) {
+				score++;
+			}
+			// 1 = good strength, 2 = medium strength, 3 = high strength
+			if (MIN_PASS_STRENGTH <= 1) {
+				return score >= 2;
+			} else if (MIN_PASS_STRENGTH == 2) {
+				return score >= 3;
+			} else {
+				return score >= 4;
+			}
+		}
+		return false;
+	}
+
 	private String generatePasswordResetToken(String email, HttpServletRequest req) {
 		if (StringUtils.isBlank(email)) {
 			return "";
@@ -334,7 +372,7 @@ public class SigninController {
 	}
 
 	private boolean resetPassword(String email, String newpass, String token) {
-		if (StringUtils.isBlank(newpass) || StringUtils.isBlank(token) || newpass.length() < Config.MIN_PASS_LENGTH) {
+		if (StringUtils.isBlank(newpass) || StringUtils.isBlank(token) || !isPasswordStrongEnough(newpass)) {
 			return false;
 		}
 		Sysprop s = pc.read(email);

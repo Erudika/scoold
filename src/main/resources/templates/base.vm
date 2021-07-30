@@ -423,11 +423,12 @@
 		#set($isRTLJS = "RTL_ENABLED = $RTL_ENABLED")
 		#set($isAdminJS = "IS_ADMIN = $isAdmin")
 		#set($maxTagsJS = "MAX_TAGS_PER_POST = $MAX_TAGS_PER_POST")
+		#set($minPassLen = "MIN_PASS_LENGTH = $MIN_PASS_LENGTH")
 		#set($_welcomeMsg = $scooldUtils.getWelcomeMessage($authUser))
 		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
 		#set($_welcomeMsgOnLogin = $scooldUtils.getWelcomeMessageOnLogin($authUser))
 		#set($_welcomeMessageOnLoginJS = "WELCOME_MESSAGE_ONLOGIN = '$_welcomeMsgOnLogin'")
-		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$_welcomeMessageJS;$_welcomeMessageOnLoginJS;</script>
+		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$minPassLen;$_welcomeMessageJS;$_welcomeMessageOnLoginJS;</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 
 		#if ($request.getServletPath() == $signinlink)

@@ -121,6 +121,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("MAX_TAGS_PER_POST", MAX_TAGS_PER_POST);
 		modelAndView.addObject("MAX_REPLIES_PER_POST", MAX_REPLIES_PER_POST);
 		modelAndView.addObject("MAX_FAV_TAGS", MAX_FAV_TAGS);
+		modelAndView.addObject("MIN_PASS_LENGTH", MIN_PASS_LENGTH);
 		modelAndView.addObject("ANSWER_VOTEUP_REWARD_AUTHOR", ANSWER_VOTEUP_REWARD_AUTHOR);
 		modelAndView.addObject("QUESTION_VOTEUP_REWARD_AUTHOR", QUESTION_VOTEUP_REWARD_AUTHOR);
 		modelAndView.addObject("VOTEUP_REWARD_AUTHOR", VOTEUP_REWARD_AUTHOR);

@@ -83,6 +83,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 	public static final int MAX_TAGS_PER_POST = Config.getConfigInt("max_tags_per_post", 5);
 	public static final int MAX_REPLIES_PER_POST = Config.getConfigInt("max_replies_per_post", 500);
 	public static final int MAX_FAV_TAGS = Config.getConfigInt("max_fav_tags", 50);
+	public static final int MIN_PASS_LENGTH = Config.getConfigInt("min_password_length", 8);
+	public static final int MIN_PASS_STRENGTH = Config.getConfigInt("min_password_strength", 2);
 
 	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = Config.getConfigInt("answer_voteup_reward_author", 10);
 	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = Config.getConfigInt("question_voteup_reward author", 5);

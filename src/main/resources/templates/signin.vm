@@ -43,7 +43,9 @@
 							#if(!$resend)
 							<div class="input-field mvm">
 								<label for="passw">$!lang.get('password')</label>
-								<input id="passw" type="password" name="passw" value="" minlength="6" required>
+								<input id="passw" type="password" name="passw" value="" minlength="$MIN_PASS_LENGTH" required>
+								<div><small id="pass-meter-message" class="grey-text"></small></div>
+								#getmessagebox("red white-text" $error.get("passw"))
 							</div>
 							#end
 
@@ -97,7 +99,9 @@
 						#if($token)
 							<div class="input-field mvm">
 								<label for="newpassword">$!lang.get('newpassword')</label>
-								<input id="newpassword" type="password" name="newpassword" value="" minlength="6" required>
+								<input id="newpassword" type="password" name="newpassword" value="" minlength="$MIN_PASS_LENGTH" required>
+								<div><small id="pass-meter-message" class="grey-text"></small></div>
+								#getmessagebox("red white-text" $error.get("newpassword"))
 							</div>
 						#end
 						#if($token)

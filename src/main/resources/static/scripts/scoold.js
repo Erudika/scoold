@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -1188,4 +1188,65 @@ $(function () {
 			return true;
 		});
 	}
+
+	if (window.location.pathname.indexOf(CONTEXT_PATH + '/signin/') >= 0) {
+		var passwordInput = $('#passw, #newpassword');
+		console.log(passwordInput);
+		var scoreMessage = $('#pass-meter-message');
+		var messagesList = ['Too simple', 'Weak', 'Good', 'Strong', 'Very strong'];
+		passwordInput.on('keyup', function () {
+			var score = 0;
+			var val = passwordInput.val();
+			if (val.length >= (MIN_PASS_LENGTH || 8)) {
+				console.log("len");
+				++score;
+			}
+			if (val.match(/(?=.*[a-z])/)) {
+				console.log("lower");
+				++score;
+			}
+			if (val.match(/(?=.*[A-Z])/)) {
+				console.log("upper");
+				++score;
+			}
+			if (val.match(/(?=.*[0-9])/)) {
+				console.log("num");
+				++score;
+			}
+			if (val.match(/(?=.*[^\w\s\n\t])/)) {
+				console.log("sym");
+				++score;
+			}
+			if (val.length === 0) {
+				score = -1;
+			}
+			switch (score) {
+				case 0:
+				case 1:
+					passwordInput.attr('class', 'pass-meter');
+					scoreMessage.text(messagesList[0]);
+					break;
+				case 2:
+					passwordInput.attr('class', 'pass-meter psms-25');
+					scoreMessage.text(messagesList[1]);
+					break;
+				case 3:
+					passwordInput.attr('class', 'pass-meter psms-50');
+					scoreMessage.text(messagesList[2]);
+					break;
+				case 4:
+					passwordInput.attr('class', 'pass-meter psms-75');
+					scoreMessage.text(messagesList[3]);
+					break;
+				case 5:
+					passwordInput.attr('class', 'pass-meter psms-100');
+					scoreMessage.text(messagesList[4]);
+					break;
+				default:
+					passwordInput.attr('class', '');
+					scoreMessage.text('');
+			}
+		});
+	}
+
 });
