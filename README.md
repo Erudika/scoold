@@ -210,6 +210,10 @@ para.admins = "admin@domain.com"
 ####### Authentication #######
 # enable or disable email and password authentication
 para.password_auth_enabled = true
+# min. password length
+para.min_password_length = 7
+# min. password strength (1=Good, 2=Strong, 3=Very Strong)
+para.min_password_strength = 1
 # Session cookie name
 para.auth_cookie = "scoold-auth"
 # Facebook - create your own Facebook app first!
