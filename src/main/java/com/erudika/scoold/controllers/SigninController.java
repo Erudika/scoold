@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.LoggerFactory;
 
@@ -360,9 +361,11 @@ public class SigninController {
 			return "";
 		}
 		Sysprop s = pc.read(email);
-		if (s != null) {
+		// pass reset emails can be sent once every 12h
+		if (s != null && (s.getUpdated() == null || Utils.timestamp() > (s.getUpdated() + TimeUnit.HOURS.toNanos(12)))) {
 			String token = Utils.generateSecurityToken(42, true);
 			s.addProperty(Config._RESET_TOKEN, token);
+			s.setUpdated(Utils.timestamp());
 			if (pc.update(s) != null) {
 				utils.sendPasswordResetEmail(email, token, req);
 			}
