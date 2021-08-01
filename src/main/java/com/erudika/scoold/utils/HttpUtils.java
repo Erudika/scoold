@@ -311,7 +311,7 @@ public final class HttpUtils {
 		}
 		if ((StringUtils.startsWithIgnoreCase(backtoFromCookie, "http://") ||
 				StringUtils.startsWithIgnoreCase(backtoFromCookie, "https://")) &&
-				!StringUtils.startsWithIgnoreCase(backtoFromCookie, ScooldServer.getServerURL())) {
+				!StringUtils.startsWithIgnoreCase(backtoFromCookie, ScooldServer.getServerURL() + "/")) {
 			backtoFromCookie = "";
 		}
 		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
