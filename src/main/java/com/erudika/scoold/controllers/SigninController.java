@@ -60,10 +60,10 @@ public class SigninController {
 	public String get(@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
-			return "redirect:" + (StringUtils.startsWithIgnoreCase(returnto, SIGNINLINK) ? HOMEPAGE : returnto);
+			return "redirect:" + (StringUtils.startsWithIgnoreCase(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
 		}
 		if (!HOMEPAGE.equals(returnto) && !SIGNINLINK.equals(returnto)) {
-			HttpUtils.setStateParam("returnto", Utils.urlEncode(returnto), req, res);
+			HttpUtils.setStateParam("returnto", Utils.urlEncode(getBackToUrl(req)), req, res);
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
 		}

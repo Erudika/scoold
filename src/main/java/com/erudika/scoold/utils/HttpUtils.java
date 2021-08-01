@@ -306,6 +306,14 @@ public final class HttpUtils {
 	 */
 	public static String getBackToUrl(HttpServletRequest req) {
 		String backtoFromCookie = Utils.urlDecode(HttpUtils.getStateParam("returnto", req));
+		if (StringUtils.isBlank(backtoFromCookie)) {
+			backtoFromCookie = req.getParameter("returnto");
+		}
+		if ((StringUtils.startsWithIgnoreCase(backtoFromCookie, "http://") ||
+				StringUtils.startsWithIgnoreCase(backtoFromCookie, "https://")) &&
+				!StringUtils.startsWithIgnoreCase(backtoFromCookie, ScooldServer.getServerURL())) {
+			backtoFromCookie = "";
+		}
 		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
 	}
 }
