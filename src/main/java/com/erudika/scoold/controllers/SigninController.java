@@ -182,9 +182,20 @@ public class SigninController {
 	}
 
 	@PostMapping("/signin/register/resend")
-	public String signup(@RequestParam String email, HttpServletRequest req, HttpServletResponse res, Model model) {
-		if (!utils.isAuthenticated(req) && isAccountLocked(email)) {
-			utils.sendVerificationEmail(email, req);
+	public String resend(@RequestParam String email, HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (!utils.isAuthenticated(req)) {
+			Sysprop ident = pc.read(email);
+			// confirmation emails can be resent once every 6h
+			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN)) &&
+					(!ident.hasProperty("confirmationTimestamp") || Utils.timestamp() >
+					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6)))) {
+				User u = pc.read(Utils.type(User.class), ident.getCreatorid());
+				if (u != null && !u.getActive()) {
+					utils.sendVerificationEmail(email, req);
+					ident.addProperty("confirmationTimestamp", Utils.timestamp());
+					pc.update(ident);
+				}
+			}
 		}
 		return "redirect:" + SIGNINLINK + "/register?verify=true";
 	}
@@ -303,7 +314,7 @@ public class SigninController {
 		return ident != null && ident.hasProperty(Config._PASSWORD);
 	}
 
-	public boolean isAccountLocked(String email) {
+	private boolean isAccountLocked(String email) {
 		Sysprop ident = pc.read(email);
 		if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
 			User u = pc.read(Utils.type(User.class), ident.getCreatorid());
