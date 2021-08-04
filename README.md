@@ -616,6 +616,9 @@ modify the `frame-src` or `connect-src` portions of the CSP header (see the 4 op
 If 3rd party cookie consent is enabled (for GDPR, CCPA), all external scripts will be disabled until the user gives their
 consent. You can bypass that by prefixing its key with "bypassconsent", e.g. `para.external_scripts.bypassconsent_myscript2`.
 
+Additionally, you can put scripts in the `<head>` element by prefixing their name with "head", for example:
+`para.external_scripts.head_script`.
+
 ## External CSS stylesheets
 
 You can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules **will
