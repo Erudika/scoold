@@ -461,6 +461,11 @@
 	#else
 		#set($followedPostClass = "")
 	#end
+	#if ($showpost.isDeprecated())
+		#set($deprecatedClass = "deprecated-post")
+	#else
+		#set($deprecatedClass = "")
+	#end
 	#if($showpost.type == "unapprovedquestion")
 		#set($unapprovedClass = "unapproved-post")
 	#else
@@ -471,7 +476,7 @@
 	#else
 		#set($panelClass = "card-panel" )
 	#end
-	<div id="$!showpost.id" class="${panelClass} ${followedPostClass} $!{deleted} $!{unapprovedClass}">
+	<div id="$!showpost.id" class="${panelClass} ${followedPostClass} $!{deleted} $!{unapprovedClass} $!{deprecatedClass}">
 		<div class="row mbn questionbox">
 			#set($votes = $showpost.votes)
 			#set($viewcount = $showpost.viewcount)
@@ -509,8 +514,8 @@
 						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
 						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
-						#if($showpost.isSticky())
-						<i class="fa fa-thumb-tack grey-text tooltipped mrs" data-tooltip="Sticky"></i>
+						#if($showpost.isDeprecated())
+						<i class="fa fa-exclamation-circle orange-text tooltipped mrs" data-tooltip="$!lang.get('deprecated')"></i>
 						#end
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 						<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
@@ -732,6 +737,14 @@
 						<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm"><i class="fa fa-unlock"></i> $!lang.get("reopen")</a>
 						#else
 						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
+						#end
+
+						#if ($parentpost.isDeprecated())
+						<a href="$!actionlink/$showpost.id/deprecate" title="Revert" class="post-refresh-ask prm">
+							<i class="fa fa-undo"></i> $!lang.get("undeprecate")</a>
+						#else
+						<a href="$!actionlink/$showpost.id/deprecate" title="Deprecate" class="post-refresh-ask prm">
+							<i class="fa fa-exclamation-circle"></i> $!lang.get("deprecate")</a>
 						#end
 					#end
 

@@ -55,6 +55,7 @@ body {
 .postbox img {max-width: 100%;}
 .viewbox pre {background-color: #f8f8f8; padding: 4px 8px; }
 .following-post {border-right: 5px solid #8bc34a;}
+.deprecated-post {border-top: 3px solid #ff9800;}
 .em3v{margin: 3rem 0 3rem 0;}
 .em5v{margin: 5rem 0 5rem 0;}
 hr { height: 1px; border: 0; background-color: #CCC; width: 100%;}

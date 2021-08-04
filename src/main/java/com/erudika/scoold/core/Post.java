@@ -78,6 +78,7 @@ public abstract class Post extends Sysprop {
 	@Stored private List<String> commentIds;
 	@Stored private String space;
 	@Stored private Map<String, String> followers;
+	@Stored private Boolean deprecated;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -91,6 +92,17 @@ public abstract class Post extends Sysprop {
 
 	private ParaClient client() {
 		return ScooldUtils.getInstance().getParaClient();
+	}
+
+	public Boolean isDeprecated() {
+		if (deprecated == null || isReply()) {
+			deprecated = false;
+		}
+		return deprecated;
+	}
+
+	public void setDeprecated(Boolean deprecated) {
+		this.deprecated = deprecated;
 	}
 
 	public Long getLastactivity() {

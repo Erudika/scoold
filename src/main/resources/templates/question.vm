@@ -7,7 +7,7 @@
 			#end
 
 			#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
-				<strong class="grey-text">$scooldUtils.getSpaceName($!showPost.space) / </strong>
+				<strong class="grey-text">$scooldUtils.getSpaceName($!showPost.space)</strong> / 
 			#end
 			#if ($showPost.answercount > 0)
 				#if ($showPost.answerid && !$showPost.answerid.isEmpty())
@@ -17,6 +17,9 @@
 			#else
 				$!lang.get("posts.unanswered")
 			#end
+			#if($showPost.isDeprecated())
+				/ <strong class="orange-text">$!lang.get('deprecated')</strong>
+			#end
 			</span>
 			<div id="post-title" class="largeText">$!{showPost.title}</div>
 			<hr>
@@ -24,6 +27,14 @@
 			<div class="mbl pbl">
 				#postbox($showPost $showPost)
 			</div>
+
+			#if ($showPost.isDeprecated())
+			<div class="center card pvs phl mediumText">
+				<p class="grey-text text-darken-2">
+					<i class="fa fa-exclamation-circle orange-text"></i> <strong>$!lang.get('deprecated'):</strong> $!lang.get("posts.deprecated")
+				</p>
+			</div>
+			#end
 
 			#if (!$showPost.isReply())
 				#if ($answerslist && !$answerslist.isEmpty()) #set($hideAnswersHead = "") #else #set($hideAnswersHead = "hide")#end

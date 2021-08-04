@@ -367,6 +367,20 @@ public class QuestionController {
 		return "redirect:" + showPost.getPostLink(false, false);
 	}
 
+	@PostMapping("/{id}/deprecate")
+	public String deprecate(@PathVariable String id, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.canEdit(showPost, authUser) || showPost == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (utils.canEdit(showPost, authUser)) {
+			showPost.setDeprecated(!showPost.isDeprecated());
+			showPost.update();
+		}
+		return "redirect:" + showPost.getPostLink(false, false);
+	}
+
 	private void changeSpaceForAllAnswers(Post showPost, String space) {
 		if (showPost == null || showPost.isReply()) {
 			return;
