@@ -1012,6 +1012,28 @@ $utils.formatDate($date, $format, $currentLocale)
 	</div>
 #end
 #####################################
+#macro(externalScripts $inhead)
+	#foreach($externalScript in $externalScripts.entrySet())
+		#if($inhead)
+			#set($head = $externalScript.getKey().startsWith("head"))
+		#else
+			#set($head = !$externalScript.getKey().startsWith("head"))
+		#end
+		#if($head && ($externalScript.getKey().startsWith("bypassconsent") || $cookieConsentGiven))
+			<!-- External Script: $externalScript.key Begin -->
+			#if($externalScript.value.startsWith("http:") || $externalScript.value.startsWith("https:"))
+				<script nonce="$cspNonce" src="$externalScript.value"></script>
+			#else
+				#set($_extScript = $scooldUtils.base64DecodeScript($!externalScript.value) )
+				<script nonce="$cspNonce">
+					$!_extScript
+				</script>
+			#end
+			<!-- External Script: $externalScript.key End -->
+		#end
+	#end
+#end
+#####################################
 #macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($!utils.stripAndTrim($str, " "), "-"))#end
 #####################################
 #macro(setsortbyselection $paramMap $defkey )

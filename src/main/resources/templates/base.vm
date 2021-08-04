@@ -51,6 +51,7 @@
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
+		#externalScripts(true)
 		#foreach($externalStyle in $externalStyles)
 		<link href="$!externalStyle" rel="stylesheet">
 		#end
@@ -481,19 +482,6 @@
 			#end
 		#end
 
-		#foreach($externalScript in $externalScripts.entrySet())
-			#if($externalScript.getKey().startsWith("bypassconsent") || $cookieConsentGiven)
-				<!-- External Script: $externalScript.key Begin -->
-				#if($externalScript.value.startsWith("http"))
-					<script nonce="$cspNonce" src="$externalScript.value"></script>
-				#else
-					#set($_extScript = $scooldUtils.base64DecodeScript($!externalScript.value) )
-					<script nonce="$cspNonce">
-						$!_extScript
-					</script>
-				#end
-				<!-- External Script: $externalScript.key End -->
-			#end
-		#end
+		#externalScripts(false)
 	</body>
 </html>
