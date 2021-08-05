@@ -94,7 +94,7 @@ public abstract class Post extends Sysprop {
 		return ScooldUtils.getInstance().getParaClient();
 	}
 
-	public Boolean isDeprecated() {
+	public Boolean getDeprecated() {
 		if (deprecated == null || isReply()) {
 			deprecated = false;
 		}

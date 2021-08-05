@@ -19,6 +19,8 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
+import com.erudika.para.core.ParaObject;
+import com.erudika.para.core.User;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Pager;
@@ -63,6 +65,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Set;
+import javax.ws.rs.Produces;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -375,10 +379,60 @@ public class QuestionController {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser)) {
-			showPost.setDeprecated(!showPost.isDeprecated());
+			showPost.setDeprecated(!showPost.getDeprecated());
 			showPost.update();
 		}
 		return "redirect:" + showPost.getPostLink(false, false);
+	}
+
+	@PostMapping("/{id}/merge-into")
+	public String merge(@PathVariable String id, @RequestParam String id2, HttpServletRequest req) {
+		Post showPost = pc.read(id);
+		Post targetPost = pc.read(id2);
+		Profile authUser = utils.getAuthUser(req);
+		if (!(utils.canEdit(showPost, authUser) && utils.canEdit(targetPost, authUser)) || showPost == null ||
+				targetPost == null || showPost.isReply() || targetPost.isReply() || showPost.equals(targetPost)) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (utils.canEdit(showPost, authUser) && utils.canEdit(targetPost, authUser)) {
+			if (Config.getConfigBoolean("merge_question_bodies", true)) {
+				targetPost.setBody(targetPost.getBody() + "\n\n" + showPost.getBody());
+			}
+			targetPost.setAnswercount(targetPost.getAnswercount() + showPost.getAnswercount());
+			targetPost.setViewcount(targetPost.getViewcount() + showPost.getViewcount());
+			if (showPost.hasFollowers()) {
+				for (Map.Entry<String, String> entry : showPost.getFollowers().entrySet()) {
+					User u = new User(entry.getKey());
+					u.setEmail(entry.getValue());
+					targetPost.addFollower(u);
+				}
+			}
+			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+			List<Reply> answers;
+			do {
+				answers = pc.getChildren(showPost, Utils.type(Reply.class), pager);
+				for (Reply answer : answers) {
+					answer.setParentid(targetPost.getId());
+					answer.setTitle(targetPost.getTitle());
+				}
+				pc.createAll(answers); // overwrite
+			} while (!answers.isEmpty());
+			targetPost.update();
+			showPost.delete();
+		}
+		return "redirect:" + targetPost.getPostLink(false, false);
+	}
+
+	@GetMapping("/find/{q}")
+	@Produces("application/json")
+	public ResponseEntity<List<ParaObject>> findAjax(@PathVariable String q, HttpServletRequest req, HttpServletResponse res) {
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			res.setStatus(401);
+			return ResponseEntity.status(401).body(Collections.emptyList());
+		}
+		String qs = utils.sanitizeQueryString(q + "*", req);
+		Pager pager = new Pager(1, "votes", true, 10);
+		return ResponseEntity.ok(pc.findQuery(Utils.type(Question.class), qs, pager));
 	}
 
 	private void changeSpaceForAllAnswers(Post showPost, String space) {

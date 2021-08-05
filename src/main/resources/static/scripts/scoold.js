@@ -1031,6 +1031,48 @@ $(function () {
 		});
 	});
 
+	$(".open-merge-window").click(function () {
+		$(this).closest(".editbox").addClass("hide");
+		$(".merge-window").removeClass("hide");
+		return false;
+	});
+
+	$(".close-merge-window").click(function () {
+		$(".open-merge-window").closest(".editbox").removeClass("hide");
+		$(".merge-window").addClass("hide");
+		return false;
+	});
+
+	var listOfQuestionsFound = {};
+	var listOfQuestionsFoundData = {};
+
+	$('.merge-window input.autocomplete').autocomplete({
+		data: {},
+		sortFunction: false,
+		limit: 10,
+		onAutocomplete: function (el) {
+			if (listOfQuestionsFound[el]) {
+				$(".merge-window").find("input[name=id2]").val(listOfQuestionsFound[el].id);
+			}
+		}
+	});
+
+	$('.merge-window input.autocomplete').keyup(function (e) {
+		// Don't capture enter or arrow key usage.
+		if (e.which === 13 || e.which === 38 || e.which === 40) {
+			return;
+		}
+		var instance = M.Autocomplete.getInstance(this);
+		$.get(CONTEXT_PATH + "/question/find/" + $(this).val(), function (data) {
+			for (var i = 0; i < data.length; i++) {
+				listOfQuestionsFoundData[data[i].title] = null;
+				listOfQuestionsFound[data[i].title] = data[i];
+			}
+			instance.updateData(listOfQuestionsFoundData);
+			instance.open();
+		});
+	});
+
 	/****************************************************
      *                   REVISIONS
      ****************************************************/

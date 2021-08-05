@@ -461,7 +461,7 @@
 	#else
 		#set($followedPostClass = "")
 	#end
-	#if ($showpost.isDeprecated())
+	#if ($showpost.deprecated)
 		#set($deprecatedClass = "deprecated-post")
 	#else
 		#set($deprecatedClass = "")
@@ -514,7 +514,7 @@
 						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
 						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
-						#if($showpost.isDeprecated())
+						#if($showpost.deprecated)
 						<i class="fa fa-exclamation-circle orange-text tooltipped mrs" data-tooltip="$!lang.get('deprecated')"></i>
 						#end
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
@@ -739,7 +739,7 @@
 						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
 						#end
 
-						#if ($parentpost.isDeprecated())
+						#if ($parentpost.deprecated)
 						<a href="$!actionlink/$showpost.id/deprecate" title="Revert" class="post-refresh-ask prm">
 							<i class="fa fa-undo"></i> $!lang.get("undeprecate")</a>
 						#else
@@ -808,9 +808,35 @@
 					<i class="fa fa-save left"></i> $!lang.get('save')
 				</button> &nbsp;
 				<button class="btn waves-effect waves-light canceledit">$!lang.get('close')</button>
+				#if(!$showpost.isReply())
+				<span class="right">
+					<a href="#" class="canceledit open-merge-window"><i class="fa fa-compress"></i> $!lang.get('posts.mergeinto')</a>
+				</span>
+				#end
 			</div>
 		</form>
 	</div>
+	#if(!$showpost.isReply())
+	<div class="hide merge-window">
+		<form method="post" action="$questionlink/$!showpost.id/merge-into" class="merge-posts-form">
+			#sectoken(false "MERGE_POST_$!showpost.id")
+
+			<div class="input-field">
+				<i class="fa fa-search pvm prefix grey-text"></i>
+				<input type="text" class="autocomplete" placeholder="$!lang.get('search.questions')">
+				<input type="hidden" name="id2" value="">
+				#getmessagebox("red white-text" $error.get("title"))
+			</div>
+
+			<div class="mtl ptm mbl">
+				<button class="btn waves-effect waves-light rusure" type="submit">
+					<i class="fa fa-compress left"></i> $!lang.get('posts.mergedelete')
+				</button> &nbsp;
+				<button type="button" class="btn waves-effect waves-light close-merge-window">$!lang.get('close')</button>
+			</div>
+		</form>
+	</div>
+	#end
 	#end
 
 	<div class="comments post-comments">

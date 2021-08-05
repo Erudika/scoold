@@ -7,7 +7,7 @@
 			#end
 
 			#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
-				<strong class="grey-text">$scooldUtils.getSpaceName($!showPost.space)</strong> / 
+				<strong class="grey-text">$scooldUtils.getSpaceName($!showPost.space)</strong> /
 			#end
 			#if ($showPost.answercount > 0)
 				#if ($showPost.answerid && !$showPost.answerid.isEmpty())
@@ -17,7 +17,7 @@
 			#else
 				$!lang.get("posts.unanswered")
 			#end
-			#if($showPost.isDeprecated())
+			#if($showPost.deprecated)
 				/ <strong class="orange-text">$!lang.get('deprecated')</strong>
 			#end
 			</span>
@@ -28,7 +28,7 @@
 				#postbox($showPost $showPost)
 			</div>
 
-			#if ($showPost.isDeprecated())
+			#if ($showPost.deprecated)
 			<div class="center card pvs phl mediumText">
 				<p class="grey-text text-darken-2">
 					<i class="fa fa-exclamation-circle orange-text"></i> <strong>$!lang.get('deprecated'):</strong> $!lang.get("posts.deprecated")
