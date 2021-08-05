@@ -44,7 +44,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags:  erudikaltd/scoold:${{ env.RELEASE_VERSION }}
+          tags: erudikaltd/scoold:${{ env.RELEASE_VERSION }}, erudikaltd/scoold:latest_stable
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
