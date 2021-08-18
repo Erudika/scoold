@@ -206,7 +206,7 @@
 
 								#if($gpLoginEnabled)
 								<div class="mvl pvs">
-										<a id="gp-login-btn" href="#" class="btn-large white grey-text text-darken-1 truncate pls prl">
+										<a id="gp-login-btn" href="$!scooldUtils.googleLoginURL" class="btn-large white grey-text text-darken-1 truncate pls prl">
 											<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
 											$!lang.get("signin.google")
 										</a>

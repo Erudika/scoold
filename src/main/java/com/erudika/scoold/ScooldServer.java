@@ -226,6 +226,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		pc.setChunkSize(Config.getConfigInt("batch_request_size", 0)); // unlimited batch size
 
 		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
+		printGoogleMigrationNotice();
 		// update the Scoold App settings through the Para App settings API.
 		Map<String, Object> settings = new HashMap<String, Object>();
 		settings.put("gp_app_id", Config.GPLUS_APP_ID);
@@ -336,5 +337,13 @@ public class ScooldServer extends SpringBootServletInitializer {
 				epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
 			}
 		};
+	}
+
+	private void printGoogleMigrationNotice() {
+		if (!Config.getConfigParam("google_client_id", "").isEmpty() && StringUtils.isBlank(Config.GPLUS_APP_ID)) {
+			logger.warn("Please migrate to the standard OAuth2 authentication method for signin in with Google. "
+					+ "Change 'para.google_client_id' to 'para.gp_app_id' and also add the secret key for your OAuth2 "
+					+ "app as 'para.gp_secret' in your configuration. https://console.cloud.google.com/apis/credentials");
+		}
 	}
 }

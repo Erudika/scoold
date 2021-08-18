@@ -8,9 +8,10 @@ env_variables:
   para_access_key: <access_key>
   para_secret_key: <secret_key>
   para_host_url: <https://scoold.yourdomain.com>
-  
+
   para_fb_app_id: <fb_appid>
-  para_google_client_id: <google_client_id>
+  para_gp_app_id: <google_app_id>
+  para_gp_secret: <google_secret>
 
   para_app_secret_key: <random_secret>
   para_admins: <admin_identifier>

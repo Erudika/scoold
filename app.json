@@ -102,8 +102,13 @@
 			"required": false,
 			"value": ""
 		},
-		"para_google_client_id": {
+		"para_gp_app_id": {
 			"description": "Google OAuth client id (for login with Google)",
+			"required": false,
+			"value": ""
+		},
+		"para_gp_secret": {
+			"description": "Google OAuth secret",
 			"required": false,
 			"value": ""
 		},

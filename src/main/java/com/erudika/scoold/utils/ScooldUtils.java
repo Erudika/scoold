@@ -1705,10 +1705,10 @@ public final class ScooldUtils {
 				+ "base-uri 'self'; "
 				+ "form-action 'self' " + Config.getConfigParam("signout_url", "") + "; "
 				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
-				+ " scoold.com www.google-analytics.com www.googletagmanager.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
+				+ " scoold.com www.google-analytics.com www.googletagmanager.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
 				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
-				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com " // unsafe-inline required by MathJax and Google Maps!
+				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com " // unsafe-inline required by MathJax and Google Maps!
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +
 					Config.getConfigParam("csp_style_sources", Config.getConfigParam("stylesheet_url", "") + " " +
 							Config.getConfigParam("external_styles", "").replaceAll(",", "")) + "; "
@@ -1716,6 +1716,12 @@ public final class ScooldUtils {
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "
 				+ "script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';"; // CSP2 backward compatibility
+	}
+
+	public String getGoogleLoginURL() {
+		return "https://accounts.google.com/o/oauth2/v2/auth?" +
+				"client_id=" + Config.GPLUS_APP_ID + "&response_type=code&scope=openid%20profile%20email&redirect_uri="
+				+ getParaEndpoint() + "/google_auth&state=" + getParaAppId();
 	}
 
 	public String getGitHubLoginURL() {
@@ -1783,6 +1789,9 @@ public final class ScooldUtils {
 	}
 
 	public String getFirstConfiguredLoginURL() {
+		if (!Config.GPLUS_APP_ID.isEmpty()) {
+			return getGoogleLoginURL();
+		}
 		if (!Config.GITHUB_APP_ID.isEmpty()) {
 			return getGitHubLoginURL();
 		}

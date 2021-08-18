@@ -454,32 +454,6 @@
 				});
 			</script>
 			#end
-			#if($GOOGLE_CLIENT_ID && !$GOOGLE_CLIENT_ID.isEmpty())
-			<script nonce="$cspNonce">
-				(function(d, s, id) {
-					var js, gjs = d.getElementsByTagName(s)[0];
-					if (d.getElementById(id)) return;
-					js = d.createElement(s); js.id = id;
-					js.src = "https://apis.google.com/js/api:client.js";
-					js.addEventListener('load', function (e) {
-						if ($('#gp-login-btn').length) {
-							gapi.load('auth2', function(){
-								gapi.auth2.init({
-									client_id: "$!GOOGLE_CLIENT_ID",
-									scope: 'openid email'
-								}).attachClickHandler($('#gp-login-btn').get(0), {}, function(googleUser) {
-									window.location = "${CONTEXT_PATH}/signin?provider=google&access_token=" +
-											googleUser.getAuthResponse(true).access_token;
-								}, function(error) {
-									window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
-								});
-							});
-						}
-					}, false);
-					gjs.parentNode.insertBefore(js, gjs);
-				}(document, 'script', 'google-jssdk'));
-			</script>
-			#end
 		#end
 
 		#externalScripts(false)
