@@ -111,10 +111,14 @@ Here's an overview of the architecture:
 ```ini
 para.env = "development"
 para.app_name = "Scoold"
-para.access_key = "app:your_para_app"
-para.secret_key = "your_app_secret_key"
+para.access_key = "app:scoold"
+para.secret_key = "scoold_secret_key_from_para"
+# change to http://localhost:8080 if Para is running locally
 para.endpoint = "https://paraio.com"
+# add your email here
 para.admins = "my@email.com"
+# (optional) require login to view content
+para.is_default_space_public = false
 ```
 3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
 4. Open `http://localhost:8000/signin/register` in your browser
@@ -126,7 +130,7 @@ If you want to login with a social account, first you *need* to create a develop
 This isn't necessary if you're planning to login with LDAP, SAML or with email and password.
 Save the obtained API keys in `application.conf`, as shown below.
 
-> **Important:** Authorized redirect URLs for Google and Facebook should look like this: `https://{your_scoold_host}`,
+> **Important:** Authorized redirect URLs for Facebook should look like this: `https://{your_scoold_host}`,
 `https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
 appropriate authentication endpoint. For example, for GitHub, the redirect URL would be: `https://paraio.com/github_auth`,
 for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/docs/#029-passwordless).
@@ -219,7 +223,8 @@ para.auth_cookie = "scoold-auth"
 # Facebook - create your own Facebook app first!
 para.fb_app_id = "123456789"
 # Google - create your own Google app first!
-para.google_client_id = "123-abcd.apps.googleusercontent.com"
+para.gp_app_id = "123-abcd.apps.googleusercontent.com"
+para.gp_secret = ""
 ###############################
 
 ### Misc. ###
@@ -570,10 +575,10 @@ The default value is modified through `para.csp_header = "new_value"`. The defau
 ```ini
 default-src 'self';
 base-uri 'self';
-connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com;
+connect-src 'self' scoold.com www.google-analytics.com www.googletagmanager.com accounts.google.com;
 frame-src 'self' accounts.google.com staticxx.facebook.com;
 font-src cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com;
-style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com;
+style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com static.scoold.com accounts.google.com;
 img-src 'self' https: data:;
 object-src 'none;
 report-uri /reports/cspv;
@@ -697,9 +702,10 @@ and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
 ```ini
 # Facebook
-para.fb_app_id = "123456789"
+para.fb_app_id = ""
 # Google
-para.google_client_id = "123-abcd.apps.googleusercontent.com"
+para.gp_app_id = ""
+para.gp_secret = ""
 # GitHub
 para.gh_app_id = ""
 para.gh_secret = ""
@@ -728,7 +734,7 @@ This is required for authentication requests to be redirected back to the origin
 
 **Important:** You must to whitelist the [Para endpoints](https://paraio.org/docs/#031-github) in the admin consoles of
 each authentication provider. For example, for GitHub you need to whitelist `https://parahost.com/github_auth` as a
-callback URL (redirect URL). Same thing applies for the other providers, **except Facebook and Google**.
+callback URL (redirect URL). Same thing applies for the other providers, **except Facebook**.
 For these two providers you need to whitelist these two URLs, containing the public address of Scoold:
 ```
 https://myscoold.com
@@ -1107,7 +1113,7 @@ This feature is disabled by default:
 ```ini
 para.redirect_signin_to_idp = false
 ```
-This works only for social login identity providers (except Facebook and Google) and SAML. It won't work for LDAP or
+This works only for social login identity providers (except Facebook) and SAML. It won't work for LDAP or
 basic password authentication. When enabled and combined with `para.is_default_space_public = false`,
 unauthenticated users will be sent directly to the IDP without seeing the "Sign in" page or any other page on Scoold.
 
@@ -1769,7 +1775,7 @@ window.cookieconsent.initialise({
 You can customize the above snippet however you like from [Osano's download page (Start coding link)](https://www.osano.com/cookieconsent/download/).
 After you customize the snippet, it is important that you add `"onStatusChange": function(s){location.reload();}` at the end.
 
-**Enabling cookie consent will automatically disable all external scripts and Google Analytics,
+**Enabling cookie consent will automatically disable all external scripts (like Google Analytics, etc.),
 until the user gives their explicit consent.**
 
 Note: Any other script can be used instead, as long as it set a cookie `cookieconsent_status = "allow"`.
