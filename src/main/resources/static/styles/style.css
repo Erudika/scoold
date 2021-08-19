@@ -355,10 +355,16 @@ img.profile-pic:before {
   background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3NTYiIGhlaWdodD0iNzU2IiB2ZXJzaW9uPSIxIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjI4MiIgaGVpZ2h0PSIyNDUiIHg9Ii0zNCIgeT0iNzkiIGZpbGw9IiNlY2VjZWMiIHJ4PSIyIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIC05NykiLz48ZyBmaWxsPSJncmF5Ij48Y2lyY2xlIGN4PSIxMDIiIGN5PSItNzAiIHI9IjQyIiB0cmFuc2Zvcm09InNjYWxlKDEgLTEpIi8+PGVsbGlwc2UgY3g9IjEwMSIgY3k9IjIwMSIgcng9IjcxIiByeT0iOTUiLz48L2c+PC9zdmc+');
 	background-clip: initial;
 	background-attachment: initial;
-	background-position: initial;
+	background-position: center;
 	background-size: cover;
-  height: calc(100% - 11%);
-  width: calc(100% - 71%);
+}
+.personbox img.profile-pic:before {
+  height: 89%;
+  width: 29%;
+}
+.questionbox img.profile-pic:before {
+  height: 5%;
+  width: inherit;
 }
 .card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
 	margin-right: 0;
@@ -420,7 +426,7 @@ img.profile-pic:before {
 }
 @media (max-width: 1280px) {
 	.userbox img {max-width: 40px;}
-	.userbox {width: 180px;}
+	/*.userbox {width: 180px;}*/
 	.userbox-body {font-size: smaller;}
 	.userbox-body .chip {height: 18px;line-height: 18px;border-radius: 4px;padding: 0 4px;}
 	.sidenav .divider {margin: 0;}
@@ -429,6 +435,10 @@ img.profile-pic:before {
 	.chips-container {
 		padding: 0;
 		float: none;
+	}
+	.questionbox img.profile-pic:before {
+		height: 3.4%;
+		width: 4%;
 	}
 }
 @media (max-width: 900px) {
@@ -508,6 +518,10 @@ img.profile-pic:before {
 	.fa-3x {
 		font-size: 2em;
 	}
+	.questionbox img.profile-pic:before {
+		height: 3%;
+		width: 4.8%;
+	}
 }
 @media (max-width: 600px) {
 	.votebox {
@@ -536,9 +550,13 @@ img.profile-pic:before {
 	.approve-answer-btn {
 		padding: 0 10px;
 	}
-	img.profile-pic:before {
-		height: calc(100% - 14%);
-		width: calc(100% - 79%);
+	.personbox img.profile-pic:before {
+		height: 86%;
+		width: 21%;
+	}
+	.questionbox img.profile-pic:before {
+		height: 3.5%;
+		width: 6%;
 	}
 }
 
