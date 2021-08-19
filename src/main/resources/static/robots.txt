@@ -2,9 +2,19 @@
 
 User-agent: *
 
-Disallow: /click/
+Disallow: /error
+Disallow: /feedback
+Disallow: /api/*
 Disallow: /p/
 Disallow: /signout/
 Disallow: /search/
 Disallow: /*?getreportform*
 Allow: /
+User-agent: Yahoo Pipes 1.0
+Disallow: /
+User-agent: 008
+Disallow: /
+User-agent: voltron
+Disallow: /
+User-agent: Bytespider
+Disallow: /

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.Profile;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -48,11 +49,12 @@ public class RevisionsController {
 	}
 
 	@GetMapping("/{postid}")
-	public String get(@PathVariable String postid, HttpServletRequest req, Model model) {
+	public String get(@PathVariable String postid, HttpServletRequest req, HttpServletResponse res, Model model) {
 		Post showPost = utils.getParaClient().read(postid);
 		if (showPost == null) {
 			return "redirect:" + QUESTIONSLINK;
 		}
+		res.setHeader("X-Robots-Tag", "noindex, nofollow"); // https://github.com/Erudika/scoold/issues/254
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + QUESTIONSLINK;

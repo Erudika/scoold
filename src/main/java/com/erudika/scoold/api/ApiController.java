@@ -346,7 +346,7 @@ public class ApiController {
 	public List<Map<String, Object>> getPostRevisions(@PathVariable String id,
 			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
-		revisionsController.get(id, req, model);
+		revisionsController.get(id, req, res, model);
 		Post post = (Post) model.getAttribute("showPost");
 		if (post == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
