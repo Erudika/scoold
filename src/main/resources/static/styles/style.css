@@ -352,7 +352,7 @@ img.profile-pic:before {
   display: block;
   position: absolute;
 	box-sizing: border-box;
-  background-image: url('/people/avatar');
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3NTYiIGhlaWdodD0iNzU2IiB2ZXJzaW9uPSIxIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjI4MiIgaGVpZ2h0PSIyNDUiIHg9Ii0zNCIgeT0iNzkiIGZpbGw9IiNlY2VjZWMiIHJ4PSIyIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIC05NykiLz48ZyBmaWxsPSJncmF5Ij48Y2lyY2xlIGN4PSIxMDIiIGN5PSItNzAiIHI9IjQyIiB0cmFuc2Zvcm09InNjYWxlKDEgLTEpIi8+PGVsbGlwc2UgY3g9IjEwMSIgY3k9IjIwMSIgcng9IjcxIiByeT0iOTUiLz48L2c+PC9zdmc+');
 	background-clip: initial;
 	background-attachment: initial;
 	background-position: initial;
