@@ -10,7 +10,9 @@
 		<property name="fileExtensions" value="java, xml, properties, js, html, css" />
 	</module>
 
-	<module name="FileLength"/>
+	<module name="FileLength">
+		<property name="max" value="4000"/>
+	</module>
 
 	<module name="TreeWalker">
 		<module name="RegexpSinglelineJava">

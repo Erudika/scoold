@@ -745,6 +745,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("dark_mode_enabled", true);
 	}
 
+	public boolean isAvatarValidationEnabled() {
+		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
+	}
+
 	public String getFooterHTML() {
 		return Config.getConfigParam("footer_html", "");
 	}
@@ -1326,6 +1330,14 @@ public final class ScooldUtils {
 		} else {
 			return getGravatar(profile.getUser().getEmail());
 		}
+	}
+
+	public String getFullAvatarURL(Profile profile) {
+		if (profile == null) {
+			return getGravatar("");
+		}
+		return isAvatarValidationEnabled() ? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(profile.getPicture()) :
+				profile.getPicture();
 	}
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {

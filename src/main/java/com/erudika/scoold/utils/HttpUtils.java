@@ -196,6 +196,12 @@ public final class HttpUtils {
 
 	/**
 	 * Fetches an avatar at a given URL.
+	 *
+	 * /////////////////////////////////////
+	 * THIS CODE IS CAUSING MORE PROBLEMS
+	 * THAN IT SOLVES! CONSIDER DELETING!!!
+	 * ////////////////////////////////////
+	 *
 	 * @param url image URL
 	 * @param req request
 	 * @param res response
@@ -204,6 +210,9 @@ public final class HttpUtils {
 	public static void getAvatar(String url, HttpServletRequest req, HttpServletResponse res) {
 		if (isLocalOrInsecureHost(url)) {
 			getDefaultAvatarImage(res);
+			return;
+		}
+		if (!ScooldUtils.getInstance().isAvatarValidationEnabled()) {
 			return;
 		}
 		HttpGet get = new HttpGet(url);

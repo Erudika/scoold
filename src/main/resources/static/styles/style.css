@@ -347,6 +347,19 @@ img.profile-pic {
 .user-card img.profile-pic {
 	width: 100%;
 }
+img.profile-pic:before {
+  content: " ";
+  display: block;
+  position: absolute;
+	box-sizing: border-box;
+  background-image: url('/people/avatar');
+	background-clip: initial;
+	background-attachment: initial;
+	background-position: initial;
+	background-size: cover;
+  height: calc(100% - 11%);
+  width: calc(100% - 71%);
+}
 .card .card-website a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
 	margin-right: 0;
 	text-transform: lowercase;
@@ -522,6 +535,10 @@ img.profile-pic {
 	}
 	.approve-answer-btn {
 		padding: 0 10px;
+	}
+	img.profile-pic:before {
+		height: calc(100% - 14%);
+		width: calc(100% - 79%);
 	}
 }
 
