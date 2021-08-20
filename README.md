@@ -82,12 +82,11 @@ Scoold produces at least one request to Para as well. When you ask a question on
 sent to Para to the location `POST /v1/questions`. Here are a few key points about that architecture:
 - A Para server can be hosted anywhere and store data inside any of the [supported databases](https://github.com/Erudika/para#database-integrations).
 - Para is a multi-tenant server which stores data in isolated environments called "apps".
-- Each instance of the Scoold server needs one Para app for data storage.
-- Two or more instance of Scoold (like a cluster) can connect to the same Para app environment and share the data.
+- One or more instance of Scoold (like a cluster) can connect to the same Para app environment and share the data.
 - Multiple separate Scoold websites can be powered by the same Para backend using different Para apps.
-- Each app environment is completely separated from others and has its own database table and search index.
+- Each app environment is completely independent from others and has its own database table and search index.
 - Both Scoold and Para can be hosted on the same machine or on multiple machines, on different networks.
-- Scoold talks to Para via HTTP so Para must be directly accessible from Scoold, but can also be hosted on a private network.
+- Scoold talks to Para via HTTP(S) so Para must be directly accessible from Scoold, but can also be hosted on a private network.
 
 Here's an overview of the architecture:
 <pre>
@@ -1473,7 +1472,7 @@ either approve or delete that post. The action can only be performed by moderato
 ## Self-hosting Para and Scoold through SSL
 
 The recommended way for enabling HTTPS with your own SSL certificate in a self-hosted environment is to run a
-reverse-proxy server like NGINX in front of Scoold. As an alternative you can use Apache or Lighttpd.
+proxy server like NGINX in front of Scoold and Para. As an alternative you can use Apache or Lighttpd.
 
 1. Start Para on port `:8080`
 2. Start Scoold on port `:8000`
@@ -1541,6 +1540,30 @@ reverse-proxy server like NGINX in front of Scoold. As an alternative you can us
       }
     }
 </details>
+
+As an alternative, you can enable SSL and HTTP2 directly in Scoold:
+1. Run the script [`gencerts.sh`](gencerts.sh) to generate the required self-signed certificates
+```
+echo "scoold.local" | sudo tee -a /etc/hosts
+./gencerts.sh scoold.local secret
+```
+The result of that command will be 6 files `ScooldRootCA.(crt,key,pem)` and `scoold.local.(crt,key,pem)` as well as a
+Java Keystore file `scoold.p12`
+
+2. Run Scoold using the following command which enables SSL and HTTP2:
+```
+java -jar -Dconfig.file=./application.conf \
+ -Dserver.ssl.key-store-type=PKCS12 \
+ -Dserver.ssl.key-store=scoold.p12 \
+ -Dserver.ssl.key-store-password=secret \
+ -Dserver.ssl.key-password=secret \
+ -Dserver.ssl.key-alias=scoold \
+ -Dserver.ssl.enabled=true \
+ -Dserver.http2.enabled=true \
+scoold-*.jar
+```
+3. Trust the root CA file `ScooldRootCA.crt` by importing it in you OS keyring or browser (check Google for instructions).
+4. Open `https://scoold.local:8000`
 
 ## Securing Scoold with SSL using Nginx and Certbot (Let's Encrypt)
 
