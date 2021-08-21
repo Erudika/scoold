@@ -16,7 +16,7 @@ openssl x509 -outform pem -in ScooldRootCA.pem -out ScooldRootCA.crt
 NAME=$1 # Use your own domain name
 SECRET=$2
 # Create a certificate-signing request
-openssl req -new -nodes -newkey rsa:2048 -keyout $NAME.key -out $NAME.csr -subj "/C=BG/ST=EU/L=Sofia/O=Erudika/CN=scoold.local"
+openssl req -new -nodes -newkey rsa:2048 -keyout $NAME.key -out $NAME.csr -subj "/C=BG/ST=EU/L=Sofia/O=Erudika/CN=$NAME"
 # Create a config file for the extensions
 >$NAME.ext cat <<-EOF
 authorityKeyIdentifier=keyid,issuer
