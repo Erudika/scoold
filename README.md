@@ -1290,6 +1290,21 @@ para.s3_access_key = ""
 para.s3_secret_key = ""
 ```
 
+### Azure Blob storage provider
+To use Azure Blob storage for storing uploaded files, first you'll need to create a storage account and get a SAS URL
+and token. Scoold Pro will need full permissions to your storage container so it's best that you dedicate a container
+just for Scoold files.
+
+```ini
+# required
+para.blob_storage_account = ""
+para.blob_storage_token = ""
+# name of the container
+para.blob_storage_container = ""
+# path prefix within a container (subfolder)
+para.blob_storage_path = "uploads"
+```
+
 ## Slack integration
 
 Scoold **PRO** integrates with Slack on a number of levels. First, Scoold users can sign in with Slack. They can also
@@ -1635,7 +1650,7 @@ location / {
   proxy_ssl_verify_depth 2;
 }
 ```
-<details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+<details><summary><b>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
     java -jar -Dconfig.file=./application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
@@ -1667,7 +1682,7 @@ for each service which contains the certificate of the other.
 keytool -v -importcert -file scoold.local.pem -alias scoold -keystore para-scoold-truststore.p12 -storepass secret -noprompt
 keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-truststore.p12 -storepass secret -noprompt
 ```
-<details><summary>Run Para with this command which enables TLS, HTTP2 and mTLS.</summary>
+<details><summary><b>Run Para with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
     java -jar -Dconfig.file=/para/application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
@@ -1683,7 +1698,7 @@ keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-tr
     para-*.jar
 
 </details>
-<details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+<details><summary><b>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
     java -jar -Dconfig.file=/scoold/application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
