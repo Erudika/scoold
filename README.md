@@ -1636,20 +1636,18 @@ location / {
 }
 ```
 <details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
-```
-java -jar -Dconfig.file=./application.conf \
- -Dserver.ssl.key-store-type=PKCS12 \
- -Dserver.ssl.key-store=scoold-keystore.p12 \
- -Dserver.ssl.key-store-password=secret \
- -Dserver.ssl.key-password=secret \
- -Dserver.ssl.trust-store=scoold-nginx-truststore.p12 \
- -Dserver.ssl.trust-store-password=secret \
- -Dserver.ssl.key-alias=scoold \
- -Dserver.ssl.client-auth=need \
- -Dserver.ssl.enabled=true \
- -Dserver.http2.enabled=true
-scoold-*.jar
-```
+    java -jar -Dconfig.file=./application.conf \
+     -Dserver.ssl.key-store-type=PKCS12 \
+     -Dserver.ssl.key-store=scoold-keystore.p12 \
+     -Dserver.ssl.key-store-password=secret \
+     -Dserver.ssl.key-password=secret \
+     -Dserver.ssl.trust-store=scoold-nginx-truststore.p12 \
+     -Dserver.ssl.trust-store-password=secret \
+     -Dserver.ssl.key-alias=scoold \
+     -Dserver.ssl.client-auth=need \
+     -Dserver.ssl.enabled=true \
+     -Dserver.http2.enabled=true
+    scoold-*.jar
 </details>
 
 If you want to trust the Root CA instead, the steps are similar but in the Nginx configuration use this line:
@@ -1668,37 +1666,33 @@ keytool -v -importcert -file scoold.local.pem -alias scoold -keystore para-scool
 keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-truststore.p12 -storepass secret -noprompt
 ```
 <details><summary>Run Para with this command which enables TLS, HTTP2 and mTLS.</summary>
-```
-java -jar -Dconfig.file=/para/application.conf \
- -Dserver.ssl.key-store-type=PKCS12 \
- -Dserver.ssl.key-store=para-keystore.p12 \
- -Dserver.ssl.key-store-password=secret \
- -Dserver.ssl.key-password=secret \
- -Dserver.ssl.trust-store=para-scoold-truststore.p12 \
- -Dserver.ssl.trust-store-password=secret \
- -Dserver.ssl.key-alias=para \
- -Dserver.ssl.client-auth=need \
- -Dserver.ssl.enabled=true \
- -Dserver.http2.enabled=true
-para-*.jar
-```
+    java -jar -Dconfig.file=/para/application.conf \
+     -Dserver.ssl.key-store-type=PKCS12 \
+     -Dserver.ssl.key-store=para-keystore.p12 \
+     -Dserver.ssl.key-store-password=secret \
+     -Dserver.ssl.key-password=secret \
+     -Dserver.ssl.trust-store=para-scoold-truststore.p12 \
+     -Dserver.ssl.trust-store-password=secret \
+     -Dserver.ssl.key-alias=para \
+     -Dserver.ssl.client-auth=need \
+     -Dserver.ssl.enabled=true \
+     -Dserver.http2.enabled=true
+    para-*.jar
 </details>
 <details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
-```
-java -jar -Dconfig.file=/scoold/application.conf \
- -Dserver.ssl.key-store-type=PKCS12 \
- -Dserver.ssl.key-store=scoold-keystore.p12 \
- -Dserver.ssl.key-store-password=secret \
- -Dserver.ssl.key-password=secret \
- -Dpara.client.ssl_keystore=scoold-keystore.p12 \
- -Dpara.client.ssl_keystore_password=secret \
- -Dpara.client.ssl_truststore=scoold-para-truststore.p12 \
- -Dpara.client.ssl_truststore_password=secret \
- -Dserver.ssl.key-alias=scoold \
- -Dserver.ssl.enabled=true \
- -Dserver.http2.enabled=true
-scoold-*.jar
-```
+    java -jar -Dconfig.file=/scoold/application.conf \
+     -Dserver.ssl.key-store-type=PKCS12 \
+     -Dserver.ssl.key-store=scoold-keystore.p12 \
+     -Dserver.ssl.key-store-password=secret \
+     -Dserver.ssl.key-password=secret \
+     -Dpara.client.ssl_keystore=scoold-keystore.p12 \
+     -Dpara.client.ssl_keystore_password=secret \
+     -Dpara.client.ssl_truststore=scoold-para-truststore.p12 \
+     -Dpara.client.ssl_truststore_password=secret \
+     -Dserver.ssl.key-alias=scoold \
+     -Dserver.ssl.enabled=true \
+     -Dserver.http2.enabled=true
+    scoold-*.jar
 </details>
 
 If you want to trust the Root CA instead, the steps are similar but using the previously generated Truststores
@@ -1964,7 +1958,6 @@ You can translate Scoold to your language by copying the [English language file]
 and translating it. When you're done, change the file name from "lang_en.properties" to "lang_xx.properties"
 where "xx" is the language code for your locale. Finally, open a pull request here.
 
-<details><summary><b>List of available languages</b></summary>
 | Language | File | Progress
 --- | --- | ---
 **Albanian** | [lang_sq.properties](src/main/resources/lang_sq.properties) | 0%
@@ -2012,7 +2005,6 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Turkish** | [lang_tr.properties](src/main/resources/lang_tr.properties) | :heavy_check_mark: Thanks Aysad Kozanoglu!
 **Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
-</details>
 
 You can also change the default language of Scoold for all users by setting `para.default_language_code = "en"`, where
 instead of "en" you enter the 2-letter code of the language of your choice.
