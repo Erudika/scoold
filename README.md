@@ -1636,6 +1636,7 @@ location / {
 }
 ```
 <details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+
     java -jar -Dconfig.file=./application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=scoold-keystore.p12 \
@@ -1648,6 +1649,7 @@ location / {
      -Dserver.ssl.enabled=true \
      -Dserver.http2.enabled=true
     scoold-*.jar
+
 </details>
 
 If you want to trust the Root CA instead, the steps are similar but in the Nginx configuration use this line:
@@ -1666,6 +1668,7 @@ keytool -v -importcert -file scoold.local.pem -alias scoold -keystore para-scool
 keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-truststore.p12 -storepass secret -noprompt
 ```
 <details><summary>Run Para with this command which enables TLS, HTTP2 and mTLS.</summary>
+
     java -jar -Dconfig.file=/para/application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=para-keystore.p12 \
@@ -1678,8 +1681,10 @@ keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-tr
      -Dserver.ssl.enabled=true \
      -Dserver.http2.enabled=true
     para-*.jar
+
 </details>
 <details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+
     java -jar -Dconfig.file=/scoold/application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=scoold-keystore.p12 \
@@ -1693,6 +1698,7 @@ keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-tr
      -Dserver.ssl.enabled=true \
      -Dserver.http2.enabled=true
     scoold-*.jar
+
 </details>
 
 If you want to trust the Root CA instead, the steps are similar but using the previously generated Truststores
