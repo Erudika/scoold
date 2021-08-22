@@ -37,6 +37,7 @@ your company or team.
 - Backup and Restore
 - RESTful API defined with OpenAPI 3.0
 - Spring Boot project (single JAR)
+- Mutual authentication support (mTLS)
 - LDAP authentication support
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Amazon, Twitter) with Gravatar support
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
