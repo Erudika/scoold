@@ -1469,7 +1469,7 @@ This works if you have enabled `para.posts_need_approval`. When a new question o
 reputation than the threshold, a notification message will be sent to Slack/Mattermost/Teams, giving you the option to
 either approve or delete that post. The action can only be performed by moderators.
 
-## Self-hosting Para and Scoold through SSL
+## Self-hosting Para and Scoold with HTTPS
 
 The recommended way for enabling HTTPS with your own SSL certificate in a self-hosted environment is to run a
 proxy server like NGINX in front of Scoold and Para. As an alternative you can use Apache or Lighttpd.
@@ -1547,14 +1547,18 @@ As an alternative, you can enable SSL and HTTP2 directly in Scoold:
 echo "scoold.local" | sudo tee -a /etc/hosts
 ./gencerts.sh scoold.local secret
 ```
-The result of that command will be 6 files `ScooldRootCA.(crt,key,pem)` and `scoold.local.(crt,key,pem)` as well as a
-Java Keystore file `scoold.p12`
+The result of that command will be 8 files - `ScooldRootCA.(crt,key,pem)`, `scoold.local.(crt,key,pem)` as well as a
+Java Keystore file `scoold-keystore.p12` and a Truststore file `scoold-truststore.p12`.
+Optionally, you can run generate the server certificates using an existing `RootCA.pem` and `RootCA.key` files like so:
+```
+./gencerts.sh para.local secret /path/to/ca/RootCA
+```
 
 2. Run Scoold using the following command which enables SSL and HTTP2:
 ```
 java -jar -Dconfig.file=./application.conf \
  -Dserver.ssl.key-store-type=PKCS12 \
- -Dserver.ssl.key-store=scoold.p12 \
+ -Dserver.ssl.key-store=scoold-keystore.p12 \
  -Dserver.ssl.key-store-password=secret \
  -Dserver.ssl.key-password=secret \
  -Dserver.ssl.key-alias=scoold \
@@ -1565,7 +1569,7 @@ scoold-*.jar
 3. Trust the root CA file `ScooldRootCA.crt` by importing it in you OS keyring or browser (check Google for instructions).
 4. Open `https://scoold.local:8000`
 
-## Securing Scoold with SSL using Nginx and Certbot (Let's Encrypt)
+## Securing Scoold with TLS using Nginx and Certbot (Let's Encrypt)
 
 First of all, configure the DNS records for your domain to point to the IP address where Scoold is hosted.
 
@@ -1596,6 +1600,110 @@ location / {
 That's it! If the Certbot validation above fails, your DNS is not configured properly or you have conflicting firewall rules.
 Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
 for more details.
+
+## Mutual TLS authentication
+
+You can enable mTLS between Scoold and Para, as well as between Scoold and a proxy like Nginx.
+There are two ways to do that:
+- each service can trust each other's public certificate
+- each service can use a TLS certificate signed by a CA which is trusted by all services
+
+### mTLS between Scoold and an TLS-terminating Nginx proxy
+To go the first route, execute the `getcerts.sh` script as shown above. You may need to run it once for Scoold and once
+for Nginx, unless Nginx has its own certificate already. Then add the Nginx certificate to the Truststore.
+```
+./gencerts.sh scoold.local secret
+keytool -v -importcert -file /path/to/nginx_public_cert.pem -alias nginx -keystore scoold-nginx-truststore.p12 -storepass secret -noprompt
+```
+Configure Nginx to trust the CA which was used to sign Scoold's server certificate:
+```
+server_name scoold-pro.local;
+listen 443 ssl http2;
+location / {
+	proxy_pass https://scoold.local:8000;
+	proxy_redirect http:// $scheme://;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto https;
+	proxy_set_header Host $http_host;
+
+	proxy_ssl_certificate /path/to/nginx_public_cert.pem;
+	proxy_ssl_certificate_key /path/to/nginx_public_cert.key;
+	proxy_ssl_trusted_certificate /path/to/RootCA.pem;
+  proxy_ssl_verify on;
+  proxy_ssl_verify_depth 2;
+}
+```
+<details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+```
+java -jar -Dconfig.file=./application.conf \
+ -Dserver.ssl.key-store-type=PKCS12 \
+ -Dserver.ssl.key-store=scoold-keystore.p12 \
+ -Dserver.ssl.key-store-password=secret \
+ -Dserver.ssl.key-password=secret \
+ -Dserver.ssl.trust-store=scoold-nginx-truststore.p12 \
+ -Dserver.ssl.trust-store-password=secret \
+ -Dserver.ssl.key-alias=scoold \
+ -Dserver.ssl.client-auth=need \
+ -Dserver.ssl.enabled=true \
+ -Dserver.http2.enabled=true
+scoold-*.jar
+```
+</details>
+
+If you want to trust the Root CA instead, the steps are similar but in the Nginx configuration use this line:
+```
+ssl_client_certificate /path/to/RootCA.pem;
+```
+And start Scoold using the previously generated Truststore `scoold-truststore.p12` which should already contain the Root CA.
+
+### mTLS between Scoold and Para
+To go the first route, execute the `getcerts.sh` script as shown above for both Scoold and Para. Then create a Truststore
+for each service which contains the certificate of the other.
+```
+./gencerts.sh scoold.local secret
+./gencerts.sh para.local secret
+keytool -v -importcert -file scoold.local.pem -alias scoold -keystore para-scoold-truststore.p12 -storepass secret -noprompt
+keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-truststore.p12 -storepass secret -noprompt
+```
+<details><summary>Run Para with this command which enables TLS, HTTP2 and mTLS.</summary>
+```
+java -jar -Dconfig.file=/para/application.conf \
+ -Dserver.ssl.key-store-type=PKCS12 \
+ -Dserver.ssl.key-store=para-keystore.p12 \
+ -Dserver.ssl.key-store-password=secret \
+ -Dserver.ssl.key-password=secret \
+ -Dserver.ssl.trust-store=para-scoold-truststore.p12 \
+ -Dserver.ssl.trust-store-password=secret \
+ -Dserver.ssl.key-alias=para \
+ -Dserver.ssl.client-auth=need \
+ -Dserver.ssl.enabled=true \
+ -Dserver.http2.enabled=true
+para-*.jar
+```
+</details>
+<details><summary>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</summary>
+```
+java -jar -Dconfig.file=/scoold/application.conf \
+ -Dserver.ssl.key-store-type=PKCS12 \
+ -Dserver.ssl.key-store=scoold-keystore.p12 \
+ -Dserver.ssl.key-store-password=secret \
+ -Dserver.ssl.key-password=secret \
+ -Dpara.client.ssl_keystore=scoold-keystore.p12 \
+ -Dpara.client.ssl_keystore_password=secret \
+ -Dpara.client.ssl_truststore=scoold-para-truststore.p12 \
+ -Dpara.client.ssl_truststore_password=secret \
+ -Dserver.ssl.key-alias=scoold \
+ -Dserver.ssl.enabled=true \
+ -Dserver.http2.enabled=true
+scoold-*.jar
+```
+</details>
+
+If you want to trust the Root CA instead, the steps are similar but using the previously generated Truststores
+- `scoold-truststore.p12` and `para-truststore.p12` respectively, which should already contain the Root CA.
+
+For end-to-end encryption of traffic, you can enable mTLS between your TLS-terminating proxy (like nginx), Scoold and Para.
 
 ### Complex proxy server setup
 
