@@ -54,7 +54,7 @@ your company or team.
 - SAML authentication support
 - Custom authentication support
 - Mentions with notifications
-- File uploads (local, S3 or Imgur)
+- File uploads (local, AWS S3, Azure Blob, or Imgur)
 - Account suspensions (permabans)
 - Anonymous posts
 - Unlimited spaces
@@ -1246,7 +1246,7 @@ For example:
 ## File uploads
 
 **PRO**
-Files can be uploaded to the local file system, Imgur or S3. File uploads are enabled by default in Scoold Pro.
+Files can be uploaded to the local file system or to cloud storage. File uploads are enabled by default in Scoold Pro.
 To disable file uploads altogether set `para.uploads_enabled = false`. To protect uploaded files from unauthenticated
 access, set `para.uploads_require_auth = true`.
 
