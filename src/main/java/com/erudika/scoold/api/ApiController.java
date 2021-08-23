@@ -98,7 +98,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api", produces = "application/json")
 @SuppressWarnings("unchecked")
 public class ApiController {
 
