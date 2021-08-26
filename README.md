@@ -53,6 +53,7 @@ your company or team.
 - [Microsoft Teams integration](https://scoold.com/teams.html)
 - SAML authentication support
 - Custom authentication support
+- SCIM 2.0 for automatic user provisioning
 - Mentions with notifications
 - File uploads (local, AWS S3, Azure Blob, or Imgur)
 - Account suspensions (permabans)
@@ -1120,6 +1121,36 @@ unauthenticated users will be sent directly to the IDP without seeing the "Sign 
 You can also configure users to be redirected to an external location when they log out:
 ```ini
 para.signout_url = "https://homepage.com"
+```
+
+## SCIM 2.0 support
+
+**PRO**
+Scoold Pro has a dedicated SCIM API endpoint for automatic user provisioning at `http://localhost:8000/scim`.
+This allows you to manage Scoold Pro users externally, on an identity management platform of your choice.
+Here's an example configuration for enabling SCIM in Scoold:
+
+```ini
+para.scim_enabled = true
+para.scim_secret_token = "secret"
+para.scim_map_groups_to_spaces = true
+para.scim_allow_provisioned_users_only = false
+```
+By default, Scoold Pro will create a space for each SCIM `Group` it receives from your identity platform and assign the
+members of that group to the corresponding space.
+
+If `para.scim_allow_provisioned_users_only = true`, user accounts which have not been SCIM-provisioned will be blocked
+even if those users are members of your identity pool. This allows system administrators to provision a subset of the
+user pool in Scoold.
+
+**Important:** When users are provisioned from a SCIM client (Azure AD, Okta, OneLogin, etc.) ensure that the SCIM
+`userName` attribute is unique. This means that when a SCIM client sends an update to Scoold Pro,
+the user will be matched based on their `userName`.
+
+You can also map groups from your identity pool to Para user groups. For example:
+```
+para.security.scim.mods_group_equivalent_to = "Moderators"
+para.security.scim.admins_group_equivalent_to = "Administrators"
 ```
 
 ## Spaces (a.k.a. Teams)

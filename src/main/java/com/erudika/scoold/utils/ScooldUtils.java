@@ -264,11 +264,7 @@ public final class ScooldUtils {
 				}
 			} else {
 				clearSession(req, res);
-				if (u != null) {
-					logger.warn("Attempted signin from an unknown domain: {}", u.getEmail());
-				} else {
-					logger.info("Invalid JWT found in cookie {}.", AUTH_COOKIE);
-				}
+				logger.info("Invalid JWT found in cookie {}.", AUTH_COOKIE);
 				res.sendRedirect(getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 				return null;
 			}
@@ -472,8 +468,9 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(email)) {
 			return false;
 		}
-		if (!APPROVED_DOMAINS.isEmpty()) {
-			return APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@"));
+		if (!APPROVED_DOMAINS.isEmpty() && !APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@"))) {
+			logger.warn("Attempted signin from an unknown domain - email {} is part of an unapproved domain.", email);
+			return false;
 		}
 		return true;
 	}
