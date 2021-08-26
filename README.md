@@ -1137,7 +1137,7 @@ para.scim_map_groups_to_spaces = true
 para.scim_allow_provisioned_users_only = false
 ```
 By default, Scoold Pro will create a space for each SCIM `Group` it receives from your identity platform and assign the
-members of that group to the corresponding space.
+members of that group to the corresponding space. Just make sure that groups are pushed from your IdM platform to Scoold.
 
 If `para.scim_allow_provisioned_users_only = true`, user accounts which have not been SCIM-provisioned will be blocked
 even if those users are members of your identity pool. This allows system administrators to provision a subset of the
