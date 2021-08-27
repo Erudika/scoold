@@ -788,13 +788,16 @@ para.security.oauth.spaces_attribute_name = "spaces"
 para.security.oauth.groups_attribute_name = "roles"
 para.security.oauth.mods_equivalent_claim_value = "mod"
 para.security.oauth.admins_equivalent_claim_value = "admin"
+
+# Enable/disable avatar fetching from IDP
+para.security.oauth.download_avatars = false
 ```
 
 Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
 
 **Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
-revokes a delegated access token, then that user would automatically be logged out from Scoold and denied access
+revokes a delegated access token, then that user would automatically be logged out from Scoold Pro and denied access
 immediately.
 
 You can add two additional custom OAuth 2.0/OpenID connect providers called "second" and "third". Here's what the settings
@@ -1196,10 +1199,10 @@ default space. If the value is `true`, the default space gets overwritten by the
 
 This is turned on for all users authenticated with LDAP, SAML or OAuth 2.0.
 
-Alternatively, Scoold Pro can have spaces delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
-You have to enable access token delegation with `para.security.oauth.token_delegation_enabled = true` and Scoold will
+Alternatively, Scoold Pro can have spaces and roles delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
+You have to enable access token delegation with `para.security.oauth.token_delegation_enabled = true` and Scoold Pro will
 try to obtain spaces from a custom attribute like `spaces`. Such custom attributes can be configured in the IDP and
-pushed to clients (Scoold) embedded in access tokens. If you want to change the name of the custom attribute supplied
+pushed to clients (Scoold Pro) embedded in access tokens. If you want to change the name of the custom attribute supplied
 by your IDP, set `para.security.oauth.spaces_attribute_name`, which by default is equal to `spaces`. The value of that
 attribute should contain comma-separated list of spaces. If the spaces pushed from the IDP do not exist, Scoold will
 create them for you.
