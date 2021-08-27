@@ -780,6 +780,14 @@ para.security.oauth.provider = "Continue with OpenID Connect"
 
 # Enable/disable access token delegation
 para.security.oauth.token_delegation_enabled = false
+
+# Assigns spaces to each user from the OAuth2 claim 'spaces'
+para.security.oauth.spaces_attribute_name = "spaces"
+
+# Assigns moderator/admin roles from the OAuth2 claim 'roles'
+para.security.oauth.groups_attribute_name = "roles"
+para.security.oauth.mods_equivalent_claim_value = "mod"
+para.security.oauth.admins_equivalent_claim_value = "admin"
 ```
 
 Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
@@ -1148,7 +1156,7 @@ user pool in Scoold.
 the user will be matched based on their `userName`.
 
 You can also map groups from your identity pool to Para user groups. For example:
-```
+```ini
 para.security.scim.mods_group_equivalent_to = "Moderators"
 para.security.scim.admins_group_equivalent_to = "Administrators"
 ```
