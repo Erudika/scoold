@@ -2047,7 +2047,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Polish** | [lang_pl.properties](src/main/resources/lang_pl.properties) | 0%
 **Portuguese** | [lang_pt.properties](src/main/resources/lang_pt.properties) | :heavy_check_mark: Thanks Karina Varela!
 **Romanian** | [lang_ro.properties](src/main/resources/lang_ro.properties) | 0%
-**Russian** | [lang_ru.properties](src/main/resources/lang_ru.properties) | :heavy_check_mark: Thanks @Vovidez!
+**Russian** | [lang_ru.properties](src/main/resources/lang_ru.properties) | :heavy_check_mark: Thanks Vladimir Perevezentsev!
 **Serbian** | [lang_sr.properties](src/main/resources/lang_sr.properties) | 0%
 **Slovak** | [lang_sk.properties](src/main/resources/lang_sk.properties) | 0%
 **Slovenian** | [lang_sl.properties](src/main/resources/lang_sl.properties) | 0%
