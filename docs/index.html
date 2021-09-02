@@ -441,6 +441,12 @@
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
 							</tr>
 							<tr>
+								<td>SCIM 2.0 support</td>
+								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+								<td><i class="fa fa-check blue-text fa-2x"></i></td>
+							</tr>
+							<tr>
 								<td>Custom authentication support</td>
 								<td><i class="fa fa-minus grey-text fa-2x"></i></td>
 								<td><i class="fa fa-check blue-text fa-2x"></i></td>
@@ -733,15 +739,24 @@
 							<p>Migrating from Stack Overflow for Teams to Scoold is effortless and seamless. Simply download your data from Stack Overflow and import it into Scoold.</p>
 						</div>
 					</div>
+					<div class="row container center-align pvs">
+						<div class="col m4 offset-m4">
+							<h5>Full SSL and mTLS support</h5>
+							<hr style="width: 50%">
+							<p>Secure all connections to Scoold with HTTPS by using your own SSL certificate without the need for a proxy. Tighten security with mutual authentication 
+							between a proxy, Scoold and Para (mTLS).</p>
+						</div>
+					</div>
 					<!--PRO Features-->
 					<div class="row container center-align pvs">
 						<h3>Pro Features</h3>
 						<p>These features are only available in Scoold Pro.</p>
 						<div class="col m4">
-							<h5>Sticky / Favorite posts</h5>
+							<h5>Mentions</h5>
 							<hr style="width: 50%">
-							<p>Questions marked as "sticky" will always appear on top, before all the others. You can also mark your
-								favorite questions with <span class="red-text">&hearts;</span> and they'll be saved to your profile.</p>
+							<p>Mention anyone in your posts with <code>@Name</code>. Administrators can turn on an mention notifications
+								for all users or have each user decide if they want to opt-in. Mentions make discussions better by
+								allowing you to engage the right people.</p>
 						</div>
 						<div class="col m4">
 							<h5>SAML support</h5>
@@ -750,10 +765,10 @@
 								integrate Scoold into their existing infrastructure.</p>
 						</div>
 						<div class="col m4">
-							<h5>Anonymous posts</h5>
+							<h5>File uploads</h5>
 							<hr style="width: 50%">
-							<p>This can either be enabled or disabled. When enabled, anybody will be able to ask a question or submit
-								an answer. This lowers the barrier for new users and increases engagement.</p>
+							<p>Easily attach images and documents to posts. Files can either be uploaded to the local file system or 
+								to Microsoft Azure Blob Storage, AWS S3 or Imgur.</p>
 						</div>
 					</div>
 					<div class="row container center-align pvs">
@@ -783,11 +798,12 @@
 							<p>The syntax highlighting of code snippets is enhanced and supports additional languages
 								like LaTeX, Velocity, WebAssembly, JSX/TSX and PL/SQL. MathJax integration is also available. </p>
 						</div>
+						
 						<div class="col m4">
-							<h5>File uploads</h5>
+							<h5>Anonymous posts</h5>
 							<hr style="width: 50%">
-							<p>People can upload images and documents and attach them to posts. Files can either be uploaded locally,
-								to Imgur or AWS S3.</p>
+							<p>This can either be enabled or disabled. When enabled, anybody will be able to ask a question or submit
+								an answer. This lowers the barrier for new users and increases engagement.</p>
 						</div>
 						<div class="col m4">
 							<h5>Security notifications</h5>
@@ -827,17 +843,24 @@
 							engagement and stimulate users to come back to the site.</p>
 						</div>
 						<div class="col m4">
-							<h5>Mentions</h5>
+							<h5>Sticky / Favorite posts</h5>
 							<hr style="width: 50%">
-							<p>Mention anyone in your posts with <code>@Name</code>. Administrators can turn on an mention notifications
-								for all users or have each user decide if they want to opt-in. Mentions make discussions better by
-								allowing you to engage the right people.</p>
+							<p>Questions marked as "sticky" will always appear on top, before all the others. You can also mark your
+								favorite questions with <span class="red-text">&hearts;</span> and they'll be saved to your profile.</p>
 						</div>
 						<div class="col m4">
 							<h5>Custom authentication</h5>
 							<hr style="width: 50%">
 							<p>Redirect users to your company's login page for a custom single sign-on experience. Virtually any
 								external authentication provider can be made to work with Scoold in this way.</p>
+						</div>
+					</div>
+					<div class="row container center-align pvs">
+						<div class="col m4 offset-m4">
+							<h5>SCIM 2.0 support</h5>
+							<hr style="width: 50%">
+							<p>Manage all Scoold users centrally with SCIM &mdash; quickly provision and deprovision accounts from your
+							identity platform of choice.</p>
 						</div>
 					</div>
 				</div>
