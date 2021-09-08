@@ -387,6 +387,9 @@ img.profile-pic:before {
 	font-size: inherit;
 	display: inline;
 }
+.comment-timestamp {
+	display: inline-block;
+}
 .character-counter {
 	margin-top: -18px;
 }
