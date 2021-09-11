@@ -34,9 +34,7 @@
 					</div>
 				</div>
 
-				#if($scooldUtils.isAllSpaces($currentSpace))
-					#spaceselect()
-				#end
+				#spaceselect()
 
 				#if($scooldUtils.isNearMeFeatureEnabled())
 					<a href="#" class="next-div-toggle mll pll click2hide">
