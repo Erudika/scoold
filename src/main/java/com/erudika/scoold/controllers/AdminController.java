@@ -209,6 +209,46 @@ public class AdminController {
 		}
 	}
 
+	@PostMapping("/rename-space")
+	public String renameSpace(@RequestParam String space, @RequestParam String newspace,
+			HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		Sysprop s = pc.read(utils.getSpaceId(space));
+		if (s != null && utils.isAdmin(authUser)) {
+			String origSpace = s.getId() + Config.SEPARATOR + s.getName();
+			int index = utils.getAllSpaces().indexOf(s);
+			s.setName(newspace);
+			pc.update(s);
+			if (index >= 0) {
+				utils.getAllSpaces().get(index).setName(newspace);
+			}
+			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
+			List<Profile> profiles;
+			do {
+				String query = "properties.spaces:(\"" + origSpace + "\")";
+				profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
+				profiles.stream().forEach(p -> {
+					p.getSpaces().remove(origSpace);
+					p.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+					Map<String, Object> profile = new HashMap<>();
+					profile.put(Config._ID, p.getId());
+					profile.put("spaces", p.getSpaces());
+					toUpdate.add(profile);
+				});
+				if (!toUpdate.isEmpty()) {
+					pc.invokePatch("_batch", Entity.json(toUpdate));
+				}
+			} while (!profiles.isEmpty());
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "space";
+		} else {
+			return "redirect:" + ADMINLINK;
+		}
+	}
+
 	@PostMapping("/create-webhook")
 	public String createWebhook(@RequestParam String targetUrl, @RequestParam(required = false) String type,
 			@RequestParam Boolean json, @RequestParam Set<String> events, HttpServletRequest req, Model model) {

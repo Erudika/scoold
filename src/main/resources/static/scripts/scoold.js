@@ -425,6 +425,13 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
+	submitFormBind("form.space-rename-form", function (data, status, xhr, form) {
+		var $form = $(form);
+		var space = $form.find("input[name=newspace]").val();
+		$form.closest(".card-panel").find(".editlink").click();
+		$form.closest(".card-panel").find(".space-name-box").text(space);
+	});
+
 	$(document).on("click", "a.toggle-webhook", function () {
 		var elem = $(this);
 		elem.toggleClass("hide").siblings("a.toggle-webhook").toggleClass("hide");

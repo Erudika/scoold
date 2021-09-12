@@ -1120,12 +1120,17 @@ public final class ScooldUtils {
 	}
 
 	public String verifyExistingSpace(Profile authUser, String space) {
-		if (!isDefaultSpace(space) && !isAllSpaces(space) && pc.read(getSpaceId(space)) == null) {
-			if (authUser != null) {
-				authUser.removeSpace(space);
-				pc.update(authUser);
+		if (!isDefaultSpace(space) && !isAllSpaces(space)) {
+			Sysprop s = pc.read(getSpaceId(space));
+			if (s == null) {
+				if (authUser != null) {
+					authUser.removeSpace(space);
+					pc.update(authUser);
+				}
+				return DEFAULT_SPACE;
+			} else {
+				return s.getId() + Config.SEPARATOR + s.getName(); // updates current space name in case it was renamed
 			}
-			return DEFAULT_SPACE;
 		}
 		return space;
 	}

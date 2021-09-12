@@ -92,12 +92,31 @@
 ####################################
 #macro(spacebox $space )
 <div class="col s12 m6 l3 spacebox">
-	<div class="card-panel center-align">
-		<a href="$adminlink/remove-space?space=$!space.id:$space.name" class="red-text right tooltipped pts delete-space"
-			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
-		<p class="mediumText">
-			<a href="$questionslink/space/$!space.id" title="$!{spaceName}">$!space.name</a>
-		</p>
+	<div class="card-panel">
+		<div class="row mbn viewbox">
+			<div class="col s12 m8 columns">
+				<a href="$questionslink/space/$!space.id" class="mediumText space-name-box" title="$!{spaceName}">$!space.name</a>
+			</div>
+			<div class="col s12 m4 columns right-align">
+				<a href="#" title="$!lang.get('edit')" class="editlink"><i class="fa fa-pencil-square orange-text"></i></a>
+			</div>
+		</div>
+		<div class="row mbn hide editbox">
+			<form method="post" action="$adminlink/rename-space" class="space-rename-form">
+				<div class="">
+					<div class="input-field">
+						<label for="new-space-${space.name}">$!lang.get('name')</label>
+						<input type="text" id="new-space-${space.name}" name="newspace" class="validate" value="$!space.name" required>
+						<input type="hidden" name="space" class="validate" value="$!space.id">
+					</div>
+				</div>
+				<div class="">
+					<a href="$adminlink/remove-space?space=$!space.id:$space.name"
+						 class="red-text right mts delete-space">$!lang.get('delete')</a>
+					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </div>
 #end

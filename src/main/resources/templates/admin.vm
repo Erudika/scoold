@@ -41,15 +41,15 @@
 
 	<div class="row spaces-wrapper">
 		<div class="col s12 m6 l3 spacebox">
-			<div class="card-panel center-align grey-text">
-				<p class="mediumText">
+			<div class="card-panel grey-text">
+				<span class="mediumText">
 					#if($isDefaultSpacePublic)
 						<i class="fa fa-unlock grey-text" title="Public"></i>
 					#else
 						<i class="fa fa-lock red-text" title="Private"></i>
 					#end
 					<a href="$questionslink/space" title="Default space">$!lang.get('defaultspace')</a>
-				</p>
+				</span>
 			</div>
 		</div>
 		#paginate("spaces" $itemcount "" "page" )
