@@ -167,7 +167,8 @@ public class QuestionsController {
 		} else {
 			Pager p = utils.pagerFromParams(req);
 			if (!StringUtils.isBlank(req.getParameter(Config._TAGS))) {
-				p.setName("with_tags:" + req.getParameter(Config._TAGS));
+				boolean matchAll = "true".equals(req.getParameter("matchAllTags"));
+				p.setName("with_tags:" + (matchAll ? "+" : "") + req.getParameter(Config._TAGS));
 			}
 			savePagerToCookie(req, res, p);
 			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
@@ -364,9 +365,10 @@ public class QuestionsController {
 		}
 		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
 		if (StringUtils.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
+			String logicalOperator = tags.startsWith("+") ? " AND " : " OR ";
 			StringBuilder sb = new StringBuilder("*".equals(query) ? "" : query.concat(" AND "));
 			// should we specify the tags property here? like: tags:(tag1 OR tag2)
-			sb.append("tags").append(":(").append(tags.replaceAll(",", " OR ")).append(")");
+			sb.append("tags").append(":(").append(tags.replaceAll(",", logicalOperator)).append(")");
 			query = sb.toString();
 		}
 		return query;
