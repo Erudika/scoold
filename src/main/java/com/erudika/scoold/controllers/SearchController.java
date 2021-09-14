@@ -96,7 +96,7 @@ public class SearchController {
 		String qs = utils.sanitizeQueryString(queryString, req);
 
 		if ("questions".equals(type)) {
-			questionslist = pc.findQuery(Utils.type(Question.class), qs, itemcount);
+			questionslist = utils.fullQuestionsSearch(qs, itemcount);
 		} else if ("answers".equals(type)) {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
@@ -106,7 +106,7 @@ public class SearchController {
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
-			questionslist = pc.findQuery(Utils.type(Question.class), qs);
+			questionslist = utils.fullQuestionsSearch(qs);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);

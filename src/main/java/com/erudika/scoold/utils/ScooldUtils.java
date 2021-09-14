@@ -80,6 +80,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1250,6 +1251,45 @@ public final class ScooldUtils {
 			qs = StringUtils.isBlank(spaceFilter) ? "*" : spaceFilter;
 		}
 		return qs;
+	}
+
+	public List<Post> fullQuestionsSearch(String query, Pager... pager) {
+		String typeFilter = Config._TYPE + ":(" + String.join(" OR ",
+						Utils.type(Question.class), Utils.type(Reply.class), Utils.type(Comment.class)) + ")";
+		String qs = StringUtils.isBlank(query) || query.startsWith("*") ? typeFilter : query + " AND " + typeFilter;
+		List<ParaObject> mixedResults = pc.findQuery("", qs, pager);
+		Predicate<ParaObject> isQuestion =  obj -> obj.getType().equals(Utils.type(Question.class));
+
+		Map<String, ParaObject> idsToQuestions = new HashMap<>(mixedResults.stream().filter(isQuestion).
+				collect(Collectors.toMap(q -> q.getId(), q -> q)));
+		Set<String> toRead = new LinkedHashSet<>();
+		mixedResults.stream().filter(isQuestion.negate()).forEach(obj -> {
+			if (!idsToQuestions.containsKey(obj.getParentid())) {
+				toRead.add(obj.getParentid());
+			}
+		});
+		// find all parent posts but this excludes parents of parents - i.e. won't work for comments in answers
+		List<Post> parentPostsLevel1 = pc.readAll(new ArrayList<>(toRead));
+		parentPostsLevel1.stream().filter(isQuestion).forEach(q -> idsToQuestions.put(q.getId(), q));
+
+		toRead.clear();
+
+		// read parents of parents if any
+		parentPostsLevel1.stream().filter(isQuestion.negate()).forEach(obj -> {
+			if (!idsToQuestions.containsKey(obj.getParentid())) {
+				toRead.add(obj.getParentid());
+			}
+		});
+		List<Post> parentPostsLevel2 = pc.readAll(new ArrayList<>(toRead));
+		parentPostsLevel2.stream().forEach(q -> idsToQuestions.put(q.getId(), q));
+
+		ArrayList<Post> results = new ArrayList<Post>(idsToQuestions.size());
+		for (ParaObject result : idsToQuestions.values()) {
+			if (result instanceof Post) {
+				results.add((Post) result);
+			}
+		}
+		return results;
 	}
 
 	public String getMacroCode(String key) {

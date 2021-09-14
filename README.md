@@ -755,6 +755,8 @@ while still keeping `para.endpoint = "http://local-ip:8080"`.
 ## OAuth 2.0 login
 
 You can authenticate users against any OAuth 2.0/OpenID Connect server through the generic OAuth 2 filter in Para.
+Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
+
 Here are all the options which you can set in the Scoold configuration file:
 ```ini
 # minimal setup
@@ -798,8 +800,7 @@ para.security.oauth.download_avatars = false
 **Note:** When assigning roles from OAuth2 claims, you can explicitly specify a subset of allowed users who can access
 Scoold by setting `para.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
 to `"scoold_user"`, and a user having the claim of `"roles": ["sales_rep"]` tries to login, they will be denied access.
-
-Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
+By default, all OAuth2 users are allowed to log into Scoold.
 
 **Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
