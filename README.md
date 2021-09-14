@@ -788,10 +788,16 @@ para.security.oauth.spaces_attribute_name = "spaces"
 para.security.oauth.groups_attribute_name = "roles"
 para.security.oauth.mods_equivalent_claim_value = "mod"
 para.security.oauth.admins_equivalent_claim_value = "admin"
+# if specified, users will be denied access when not members of group
+para.security.oauth.users_equivalent_claim_value = ""
 
 # Enable/disable avatar fetching from IDP
 para.security.oauth.download_avatars = false
 ```
+
+**Note:** When assigning roles from OAuth2 claims, you can explicitly specify a subset of allowed users who can access
+Scoold by setting `para.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
+to `"scoold_user"`, and a user having the claim of `"roles": ["sales_rep"]` tries to login, they will be denied access.
 
 Make sure you **whitelist** your Para authentication endpoint `https://para_url/oauth2_auth` as a trusted redirect URL.
 
