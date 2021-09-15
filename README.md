@@ -780,13 +780,13 @@ para.security.oauth.parameters.family_name = "family_name"
 # Sets the string on the login button
 para.security.oauth.provider = "Continue with OpenID Connect"
 
-# Enable/disable access token delegation
+# [PRO] Enable/disable access token delegation
 para.security.oauth.token_delegation_enabled = false
 
-# Assigns spaces to each user from the OAuth2 claim 'spaces'
+# [PRO] Assigns spaces to each user from the OAuth2 claim 'spaces'
 para.security.oauth.spaces_attribute_name = "spaces"
 
-# Assigns moderator/admin roles from the OAuth2 claim 'roles'
+# [PRO] Assigns moderator/admin roles from the OAuth2 claim 'roles'
 para.security.oauth.groups_attribute_name = "roles"
 para.security.oauth.mods_equivalent_claim_value = "mod"
 para.security.oauth.admins_equivalent_claim_value = "admin"
