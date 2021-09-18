@@ -1388,7 +1388,7 @@ Setting `para.slack.map_channels_to_spaces` will ask for additional permissions,
 On sign in, Scoold will read all your channels and create spaces from them. The workspace space is always created if
 `para.slack.map_workspaces_to_spaces = true`, which is the default setting.
 
-When creating quesitons from Slack they are posted to the channel workspace by default, if
+When creating questions from Slack they are posted to the channel workspace by default, if
 `para.slack.map_channels_to_spaces` is enabled. For example, in this case, for a team "My Team" and channel "chan",
 your space will become "My Team #chan". This is controlled by `para.slack.post_to_space` which is blank by default.
 If you set it to `workspace`, then questions will be posted to the "My Team" space. Or you could set a specific Scoold
@@ -1397,6 +1397,9 @@ posted from Slack will go to the default space.
 
 You can also create answers to questions from Slack, either from the message action button or by typing in the
 `/scoold ask` command. This requires the URL of a specific question you wish to answer.
+
+Clicking the "Ask on Scoold" message action will also save the full message thread on Scoold. The action will create a new
+question from the first message of the thread and save each reply as an answer on Scoold.
 
 When `para.slack.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
@@ -1475,6 +1478,9 @@ integration will automatically create a slash command for each channel linked to
 When `para.mattermost.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
+You can also save a full message thread on Scoold with the command `/scoold save {thread_link}` - this will create a new
+question from the first message of the thread and save each reply as an answer on Scoold.
+
 ## Microsoft Teams integration
 
 Scoold **PRO** also integrates with Microsoft Teams. Scoold users can sign in with a Microsoft account,
@@ -1492,6 +1498,9 @@ After creating the bot, take note of its ID and client secret and add those to y
 Then sideload (upload) the `Scoold.zip` app package in the [Teams Developer Portal](https://dev.teams.microsoft.com).
 The app package can be downloaded from the Administration page after your bot has been created.
 Also set `para.ms_app_id` and `para.ms_secret` as you normally would for an OAuth2 authentication with Microsoft.
+
+**Note:** Clicking the "Ask on Scoold" message extension button will also save the full message thread on Scoold.
+The action will create a new question from the first message of the thread and save each reply as an answer on Scoold.
 
 ### [Getting started guide for Scoold + Teams](https://scoold.com/teams.html).
 
