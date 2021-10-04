@@ -36,16 +36,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
@@ -75,15 +72,13 @@ public final class HttpUtils {
 
 	static CloseableHttpClient getHttpClient() {
 		if (httpclient == null) {
-			int timeout = 5 * 1000;
+			int timeout = 5;
 			httpclient = HttpClientBuilder.create().
-					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
-					setRedirectStrategy(new LaxRedirectStrategy()).
+//					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
+//					setRedirectStrategy(new LaxRedirectStrategy()).
 					setDefaultRequestConfig(RequestConfig.custom().
-							setConnectTimeout(timeout).
-							setConnectionRequestTimeout(timeout).
-							setCookieSpec(CookieSpecs.STANDARD).
-							setSocketTimeout(timeout).
+							setConnectTimeout(timeout, TimeUnit.SECONDS).
+							setConnectionRequestTimeout(timeout, TimeUnit.SECONDS).
 							build()).
 					build();
 		}
@@ -222,19 +217,19 @@ public final class HttpUtils {
 		}
 		get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
 		try (CloseableHttpResponse img = HttpUtils.getHttpClient().execute(get)) {
-			if (img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null) {
+			if (img.getCode() == HttpStatus.SC_OK && img.getEntity() != null) {
 				if (isImage(img, url)) {
-					for (Header header : img.getAllHeaders()) {
+					for (Header header : img.getHeaders()) {
 						res.setHeader(header.getName(), header.getValue());
 					}
-					if (!res.containsHeader(org.apache.http.HttpHeaders.CACHE_CONTROL)) {
-						res.setHeader(org.apache.http.HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+					if (!res.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+						res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
 					}
 					IOUtils.copy(img.getEntity().getContent(), res.getOutputStream());
 				}
 			} else {
 				LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}, status: {} {}", url,
-						img.getStatusLine().getStatusCode(), img.getStatusLine().getReasonPhrase());
+						img.getCode(), img.getReasonPhrase());
 				getDefaultAvatarImage(res);
 			}
 		} catch (Exception ex) {
@@ -244,8 +239,8 @@ public final class HttpUtils {
 	}
 
 	private static boolean isImage(CloseableHttpResponse img, String url) throws MalformedURLException {
-		return img.getStatusLine().getStatusCode() == HttpStatus.SC_OK && img.getEntity() != null &&
-				(StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType().getValue(),
+		return img.getCode() == HttpStatus.SC_OK && img.getEntity() != null &&
+				(StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType(),
 						"image/gif", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/bmp", "image/svg+xml") ||
 				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp"));
 	}
@@ -273,8 +268,8 @@ public final class HttpUtils {
 	private static void getDefaultAvatarImage(HttpServletResponse res) {
 		try {
 			res.setContentType("image/svg+xml");
-			res.setHeader(org.apache.http.HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
-			res.setHeader(org.apache.http.HttpHeaders.ETAG, Utils.md5(DEFAULT_AVATAR));
+			res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
+			res.setHeader(HttpHeaders.ETAG, Utils.md5(DEFAULT_AVATAR));
 			IOUtils.copy(new ByteArrayInputStream(DEFAULT_AVATAR.getBytes()), res.getOutputStream());
 		} catch (IOException e) {
 			LoggerFactory.getLogger(HttpUtils.class).
