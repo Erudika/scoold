@@ -76,7 +76,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.Entity;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.HttpStatus;
@@ -237,7 +236,7 @@ public class AdminController {
 					toUpdate.add(profile);
 				});
 				if (!toUpdate.isEmpty()) {
-					pc.invokePatch("_batch", Entity.json(toUpdate));
+					pc.invokePatch("_batch", toUpdate, Map.class);
 				}
 			} while (!profiles.isEmpty());
 		}
@@ -625,7 +624,7 @@ public class AdminController {
 					}
 				});
 			}
-			pc.invokePatch("_batch", Entity.json(toPatch));
+			pc.invokePatch("_batch", toPatch, Map.class);
 			toPatch.clear();
 		} while (!users.isEmpty());
 	}
@@ -644,7 +643,7 @@ public class AdminController {
 				}
 				toPatch.add(user);
 			}
-			pc.invokePatch("_batch", Entity.json(toPatch));
+			pc.invokePatch("_batch", toPatch, Map.class);
 		}
 	}
 }

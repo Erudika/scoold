@@ -37,7 +37,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.Entity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -137,12 +136,12 @@ public class PeopleController {
 				batch.add(toUpdate.pop());
 				if (batch.size() >= 100) {
 					// partial batch update
-					pc.invokePatch("_batch", Entity.json(batch));
+					pc.invokePatch("_batch", batch, Map.class);
 					batch.clear();
 				}
 			}
 			if (!batch.isEmpty()) {
-				pc.invokePatch("_batch", Entity.json(batch));
+				pc.invokePatch("_batch", batch, Map.class);
 			}
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
