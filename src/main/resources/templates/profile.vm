@@ -45,6 +45,7 @@
 							#end
 							<input type="hidden" value="$!secondaryPicture">
 						</div>
+						#if($scooldUtils.isGravatarEnabled())
 						<div class="row">
 							<div class="col s6">
 								<strong class="left">$!lang.get('profile.usegravatar')</strong>
@@ -64,6 +65,7 @@
 								</div>
 							</div>
 						</div>
+						#end
 						<div class="row mvn pts">
 							<div class="col s6">
 								<button type="button" id="clear-avatar-btn" class="btn-flat">$!lang.get('clear')</button>

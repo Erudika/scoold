@@ -289,6 +289,13 @@ public class Profile extends Sysprop {
 	}
 
 	public String getPicture() {
+		if (StringUtils.contains(picture, "gravatar.com") && !ScooldUtils.isGravatarEnabled()) {
+			if (StringUtils.contains(originalPicture, "gravatar.com")) {
+				return ScooldUtils.getGravatar(this); // returns default image, not gravatar
+			} else {
+				return StringUtils.isBlank(originalPicture) ? ScooldUtils.getGravatar(this) : originalPicture;
+			}
+		}
 		return picture;
 	}
 

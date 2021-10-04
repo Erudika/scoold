@@ -258,6 +258,7 @@ public final class ScooldUtils {
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
+				authUser.setOriginalPicture(u.getPicture());
 				boolean updatedRank = promoteOrDemoteUser(authUser, u);
 				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
 				if (updatedRank || updatedProfile) {
@@ -745,6 +746,10 @@ public final class ScooldUtils {
 
 	public boolean isAvatarValidationEnabled() {
 		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
+	}
+
+	public static boolean isGravatarEnabled() {
+		return Config.getConfigBoolean("gravatars_enabled", true);
 	}
 
 	public String getFooterHTML() {
@@ -1360,6 +1365,9 @@ public final class ScooldUtils {
 	}
 
 	public static String getGravatar(String email) {
+		if (!isGravatarEnabled()) {
+			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
+		}
 		if (StringUtils.isBlank(email)) {
 			return "https://www.gravatar.com/avatar?d=retro&size=400";
 		}
@@ -1367,6 +1375,9 @@ public final class ScooldUtils {
 	}
 
 	public static String getGravatar(Profile profile) {
+		if (!isGravatarEnabled()) {
+			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
+		}
 		if (profile == null || profile.getUser() == null) {
 			return "https://www.gravatar.com/avatar?d=retro&size=400";
 		} else {
