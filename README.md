@@ -1880,6 +1880,8 @@ para.emails_footer_html = ""
 para.small_logo_url = "https://scoold.com/logo.png"
 # enable/disable dark mode
 para.dark_mode_enabled = true
+# enabled/disable Gravatars
+para.gravatars_enabled = true
 
 # custom navbar links
 para.navbar_link1_url = ""
