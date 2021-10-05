@@ -212,7 +212,7 @@ public class QuestionsController {
 				q.setLocation(location);
 				q.setAuthor(authUser);
 				String qid = q.create();
-				utils.sendNewPostNotifications(q);
+				utils.sendNewPostNotifications(q, req);
 				if (!StringUtils.isBlank(latlng)) {
 					Address addr = new Address(qid + Config.SEPARATOR + Utils.type(Address.class));
 					addr.setAddress(address);

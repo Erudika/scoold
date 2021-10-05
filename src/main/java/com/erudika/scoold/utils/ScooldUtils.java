@@ -591,7 +591,7 @@ public final class ScooldUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendNewPostNotifications(Post question) {
+	public void sendNewPostNotifications(Post question, HttpServletRequest req) {
 		if (question == null) {
 			return;
 		}
@@ -599,6 +599,7 @@ public final class ScooldUtils {
 		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
 		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
@@ -606,10 +607,10 @@ public final class ScooldUtils {
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
-			String subject = name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'";
+			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name, Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, escapeHtml(name)));
+			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage(
 					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
