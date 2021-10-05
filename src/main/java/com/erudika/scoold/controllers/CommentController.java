@@ -127,7 +127,7 @@ public class CommentController {
 					if (parentPost != null && parentPost.addCommentId(showComment.getId())) {
 						pc.update(parentPost); // update without adding revisions
 					}
-					utils.sendCommentNotification(parentPost, showComment, authUser);
+					utils.sendCommentNotification(parentPost, showComment, authUser, req);
 				}
 			}
 		}

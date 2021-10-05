@@ -672,7 +672,7 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor) {
+	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
 		// send email notification to author of post except when the comment is by the same person
 		if (parentPost != null && comment != null) {
 			parentPost.setAuthor(pc.read(Profile.id(parentPost.getCreatorid()))); // parent author is not current user (authUser)
@@ -690,14 +690,15 @@ public final class ScooldUtils {
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
 				Map<String, Object> model = new HashMap<String, Object>();
+				Map<String, String> lang = getLang(req);
 				String name = commentAuthor.getName();
 				String body = Utils.markdownToHtml(comment.getComment());
 				String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
 				String postURL = getServerURL() + parentPost.getPostLink(false, false);
-				String subject = name + " commented on '" + parentPost.getTitle() + "'";
+				String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
 				model.put("subject", escapeHtml(subject));
 				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
+				model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"), Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
 
