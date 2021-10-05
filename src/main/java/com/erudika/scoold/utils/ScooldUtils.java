@@ -646,7 +646,9 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name, Utils.abbreviate(reply.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"), Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+			model.put("heading", Utils.formatMessage(
+					lang.get("notification.reply.heading"),
+					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
@@ -702,7 +704,9 @@ public final class ScooldUtils {
 				String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
 				model.put("subject", escapeHtml(subject));
 				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"), Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+				model.put("heading", Utils.formatMessage(
+						lang.get("notification.comment.heading"),
+						Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
 
