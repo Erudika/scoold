@@ -740,6 +740,26 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("footer_links_enabled", true);
 	}
 
+	public boolean isNotificationsAllowed() {
+		return Config.getConfigBoolean("notification_emails_allowed", true);
+	}
+
+	public boolean isNewPostNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("newpost_emails_allowed", true);
+	}
+
+	public boolean isFavTagsNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("favtags_emails_allowed", true);
+	}
+
+	public boolean isReplyNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("reply_emails_allowed", true);
+	}
+
+	public boolean isCommentNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("comment_emails_allowed", true);
+	}
+
 	public boolean isDarkModeEnabled() {
 		return Config.getConfigBoolean("dark_mode_enabled", true);
 	}
