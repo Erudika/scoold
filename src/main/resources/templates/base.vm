@@ -90,14 +90,14 @@
 							#end
 
 							#macro(navbarlinks)
-								<li><a href="$questionslink" title="$!lang.get("questions.title")" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
-								<li><a href="$peoplelink" title="$!lang.get("people.title")" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
-								<li><a href="$tagslink" title="$!lang.get("tags.title")" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
-								<li><a href="$questionslink/ask" title="$!lang.get("posts.ask")" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+								<li><a href="$questionslink" title="$!lang.get('questions.title')" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="$!lang.get('people.title')" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+								<li><a href="$tagslink" title="$!lang.get('tags.title')" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+								<li><a href="$questionslink/ask" title="$!lang.get('posts.ask')" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
 								#customnavbarlinks()
 								#if ($authenticated && $isMod)
 									<li>
-										<a href="$reportslink" title="$!lang.get("reports.title")" class="$!{reportsSelected}">$!lang.get("reports.title")
+										<a href="$reportslink" title="$!lang.get('reports.title')" class="$!{reportsSelected}">$!lang.get("reports.title")
 											#if ($authUser.countNewReports() > 0)
 												<span class="badge new">$authUser.countNewReports()</span>
 											#end
@@ -162,9 +162,9 @@
 								<ul id="user-dropdown" class="dropdown-content">
 									<li><a href="$profilelink" title="$!{authUser.name}">$!lang.get('profile.title')</a></li>
 									#if($isAdmin)
-										<li><a href="$adminlink" title="Admin">$!lang.get('administration.title')</a></li>
+										<li><a href="$adminlink" title="$!lang.get('administration.title')">$!lang.get('administration.title')</a></li>
 									#end
-									<li><a href="$settingslink" title="Settings">$!{lang.get('settings.title')}</a></li>
+									<li><a href="$settingslink" title="$!lang.get('settings.title')">$!lang.get('settings.title')</a></li>
 									#customnavbarmenulinks()
 									<li class="divider"></li>
 									<li>
@@ -209,7 +209,7 @@
 										#navbarspaces()
 									#end
 								#else
-									<li><a href="${signinlink}?returnto=$!{returnto}" title="$!lang.get("signin.title")"
+									<li><a href="${signinlink}?returnto=$!{returnto}" title="$!lang.get('signin.title')"
 												 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
 								#end
 
@@ -250,21 +250,21 @@
 									#if($isAdmin)
 										<li><a href="$adminlink" title="$!lang.get('administration.title')">$!lang.get('administration.title')</a></li>
 									#end
-									<li><a href="$settingslink" title="$!{lang.get('settings.title')}">$!{lang.get('settings.title')}</a></li>
+									<li><a href="$settingslink" title="$!lang.get('settings.title')">$!lang.get('settings.title')</a></li>
 									#customnavbarmenulinks()
 								#else
-									<li><a href="${signinlink}?returnto=$!{returnto}" title="$!lang.get("signin.title")"
+									<li><a href="${signinlink}?returnto=$!{returnto}" title="$!lang.get('signin.title')"
 												 class="$!{signinSelected}">$!lang.get("signin.title")</a></li>
 								#end
-								<li><a href="$questionslink/ask" title="$!lang.get("posts.ask")" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
-								<li><a href="$questionslink" title="$!lang.get("questions.title")" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
-								<li><a href="$peoplelink" title="$!lang.get("people.title")" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
-								<li><a href="$tagslink" title="$!lang.get("tags.title")" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
+								<li><a href="$questionslink/ask" title="$!lang.get('posts.ask')" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
+								<li><a href="$questionslink" title="$!lang.get('questions.title')" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
+								<li><a href="$peoplelink" title="$!lang.get('people.title')" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
+								<li><a href="$tagslink" title="$!lang.get('tags.title')" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
 								#customnavbarlinks()
 								#if ($authenticated)
 									#if ($isMod)
 										<li>
-											<a href="$reportslink" title="$!lang.get("reports.title")" class="$!{reportsSelected}">$!lang.get("reports.title")
+											<a href="$reportslink" title="$!lang.get('reports.title')" class="$!{reportsSelected}">$!lang.get("reports.title")
 												#if ($authUser.countNewReports() > 0)
 													<span class="badge new">$authUser.countNewReports()</span>
 												#end
@@ -361,12 +361,12 @@
 								#set($_footerHTML = $!scooldUtils.getFooterHTML())
 								$!_footerHTML
 								#if($scooldUtils.isFooterLinksEnabled())
-								<a href="$aboutlink" title="$!{lang.get('about.title')}">$!{lang.get('about.title')}</a>&nbsp;&nbsp;
+								<a href="$aboutlink" title="$!lang.get('about.title')">$!lang.get('about.title')</a>&nbsp;&nbsp;
 								#if($scooldUtils.isFeedbackEnabled())
-								<a href="$feedbacklink" title="$!{lang.get('feedback.title')}">$!{lang.get('feedback.title')}</a>&nbsp;&nbsp;
+								<a href="$feedbacklink" title="$!lang.get('feedback.title')">$!lang.get('feedback.title')</a>&nbsp;&nbsp;
 								#end
-								<a href="$privacylink" title="$!{lang.get('privacy.title')}">$!{lang.get('privacy.title')}</a>&nbsp;&nbsp;
-								<a href="$termslink" title="$!{lang.get('terms.title')}">$!{lang.get('terms.title')}</a>&nbsp;&nbsp;
+								<a href="$privacylink" title="$!lang.get('privacy.title')">$!lang.get('privacy.title')</a>&nbsp;&nbsp;
+								<a href="$termslink" title="$!lang.get('terms.title')">$!lang.get('terms.title')</a>&nbsp;&nbsp;
 								#if($scooldUtils.isApiEnabled())
 								<a href="$apidocslink" title="API docs">API</a>
 								#end
