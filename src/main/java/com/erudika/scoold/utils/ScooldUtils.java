@@ -702,7 +702,7 @@ public final class ScooldUtils {
 		return value
 				.replaceAll("'", "%27")
 				.replaceAll("\"", "%22")
-				.replaceAll("\\/", "");
+				.replaceAll("\\\\", "");
 	}
 
 	private String escapeHtml(String value) {
