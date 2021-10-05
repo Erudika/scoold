@@ -75,8 +75,10 @@
 				</div>
 			#end
 
+			#if($emailsAllowed)
 			<h4 class="ptl">$!lang.get('settings.notifications')</h4>
 			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>
+			#if($newpostEmailsAllowed)
 			<div class="mbm">
 				<div class="switch">
 					<label>
@@ -127,6 +129,8 @@
 
 				</div>
 			</div>
+			#end
+			#if($favtagsEmailsAllowed)
 			<div class="mbm">
 				<div class="switch">
 					<label>
@@ -142,6 +146,8 @@
 					<span class="mll mediumText">$!lang.get('settings.favtagsemails')</span>
 				</div>
 			</div>
+			#end
+			#if($replyEmailsAllowed)
 			<div class="mbm">
 				<div class="switch">
 					<label>
@@ -157,6 +163,8 @@
 					<span class="mll mediumText">$!lang.get('settings.replyemails')</span>
 				</div>
 			</div>
+			#end
+			#if($commentEmailsAllowed)
 			<div class="mbl">
 				<div class="switch">
 					<label>
@@ -172,6 +180,8 @@
 					<span class="mll mediumText">$!lang.get('settings.commentemails')</span>
 				</div>
 			</div>
+			#end
+			#end
 
 			#if($scooldUtils.isDarkModeEnabled())
 			<h4 class="ptl">$!lang.get('settings.darkmode')</h4>

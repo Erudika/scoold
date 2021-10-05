@@ -64,6 +64,11 @@ public class SettingsController {
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
 		model.addAttribute("newpostEmailsEnabled", utils.isSubscribedToNewPosts(req));
+		model.addAttribute("emailsAllowed", utils.isNotificationsAllowed());
+		model.addAttribute("newpostEmailsAllowed", utils.isNewPostNotificationAllowed());
+		model.addAttribute("favtagsEmailsAllowed", utils.isFavTagsNotificationAllowed());
+		model.addAttribute("replyEmailsAllowed", utils.isReplyNotificationAllowed());
+		model.addAttribute("commentEmailsAllowed", utils.isCommentNotificationAllowed());
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		return "base";
 	}
