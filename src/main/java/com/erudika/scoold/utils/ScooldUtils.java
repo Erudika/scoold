@@ -478,6 +478,8 @@ public final class ScooldUtils {
 	}
 
 	public Object isSubscribedToNewPosts(HttpServletRequest req) {
+		if(!isNewPostNotificationAllowed()) return false;
+
 		Profile authUser = getAuthUser(req);
 		if (authUser != null) {
 			User u = authUser.getUser();
@@ -560,6 +562,8 @@ public final class ScooldUtils {
 
 	@SuppressWarnings("unchecked")
 	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags) {
+		if(!isFavTagsNotificationAllowed()) return;
+
 		// sends a notification to subscibers of a tag if that tag was added to an existing question
 		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
@@ -591,6 +595,8 @@ public final class ScooldUtils {
 		// the current user - same as utils.getAuthUser(req)
 		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
 		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
+			if(!isNewPostNotificationAllowed()) return;
+
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
@@ -651,7 +657,7 @@ public final class ScooldUtils {
 				rep.create();
 			}
 
-			if (parentPost.hasFollowers()) {
+			if (isReplyNotificationAllowed() && parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
 						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'",
 						compileEmailTemplate(model));
@@ -676,16 +682,18 @@ public final class ScooldUtils {
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				Map<String, Object> model = new HashMap<String, Object>();
-				String name = commentAuthor.getName();
-				String body = Utils.markdownToHtml(comment.getComment());
-				String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
-				String postURL = getServerURL() + parentPost.getPostLink(false, false);
-				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
-				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
-						parentPost.getTitle() + "'", compileEmailTemplate(model));
+				if(isCommentNotificationAllowed()) {
+					Map<String, Object> model = new HashMap<String, Object>();
+					String name = commentAuthor.getName();
+					String body = Utils.markdownToHtml(comment.getComment());
+					String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
+					String postURL = getServerURL() + parentPost.getPostLink(false, false);
+					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+					model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
+					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
+					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
+							parentPost.getTitle() + "'", compileEmailTemplate(model));
+				}
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 				payload.put("parent", parentPost);
