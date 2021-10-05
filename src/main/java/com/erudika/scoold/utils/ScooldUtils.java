@@ -373,6 +373,7 @@ public final class ScooldUtils {
 				}
 			}
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
 			model.put("body", body1 + body2 + body3);
@@ -397,6 +398,7 @@ public final class ScooldUtils {
 				body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 			}
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body);
@@ -414,6 +416,7 @@ public final class ScooldUtils {
 			String body2 = Utils.formatMessage("<b><a href=\"{0}\">RESET PASSWORD</a></b><br><br>", url);
 			String body3 = "Best, <br>The " + Config.APP_NAME + " team<br><br>";
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body1 + body2 + body3);
@@ -572,6 +575,8 @@ public final class ScooldUtils {
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
+			String subject = name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'";
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage(
@@ -580,7 +585,7 @@ public final class ScooldUtils {
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
+					subject,
 					compileEmailTemplate(model));
 		}
 	}
@@ -601,6 +606,8 @@ public final class ScooldUtils {
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
+			String subject = name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'";
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage(
@@ -610,7 +617,7 @@ public final class ScooldUtils {
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
+					subject,
 					compileEmailTemplate(model));
 		} else if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
 			Report rep = new Report();
@@ -631,6 +638,8 @@ public final class ScooldUtils {
 			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
+			String subject = name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'";
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
@@ -656,7 +665,7 @@ public final class ScooldUtils {
 
 			if (parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'",
+						subject,
 						compileEmailTemplate(model));
 			}
 		}
@@ -684,11 +693,12 @@ public final class ScooldUtils {
 				String body = Utils.markdownToHtml(comment.getComment());
 				String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
 				String postURL = getServerURL() + parentPost.getPostLink(false, false);
+				String subject = name + " commented on '" + parentPost.getTitle() + "'";
+				model.put("subject", escapeHtml(subject));
 				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
 				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
-				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
-						parentPost.getTitle() + "'", compileEmailTemplate(model));
+				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 				payload.put("parent", parentPost);
