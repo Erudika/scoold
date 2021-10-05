@@ -412,9 +412,9 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String url = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
 			String subject = lang.get("iforgot.title");
-			String body1 = "Open the link below to change your password:<br><br>";
-			String body2 = Utils.formatMessage("<b><a href=\"{0}\">RESET PASSWORD</a></b><br><br>", url);
-			String body3 = "Best, <br>The " + Config.APP_NAME + " team<br><br>";
+			String body1 = lang.get("iforgot.body1") + "<br><br>";
+			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("iforgot.body2") + "</a></b><br><br>", url);
+			String body3 = Utils.formatMessage(lang.get("iforgot.body3") + "<br><br>", Config.APP_NAME);
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
