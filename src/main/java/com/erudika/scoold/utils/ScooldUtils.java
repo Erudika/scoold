@@ -563,11 +563,12 @@ public final class ScooldUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags) {
+	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags, HttpServletRequest req) {
 		// sends a notification to subscibers of a tag if that tag was added to an existing question
 		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
@@ -575,12 +576,11 @@ public final class ScooldUtils {
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
-			String subject = name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'";
+			String subject = Utils.formatMessage(lang.get("notification.favtags.subject"), name, Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, escapeHtml(name)));
-			model.put("body", Utils.formatMessage(
-					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+			model.put("heading", Utils.formatMessage(lang.get("notification.favtags.heading"), picture, escapeHtml(name)));
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
