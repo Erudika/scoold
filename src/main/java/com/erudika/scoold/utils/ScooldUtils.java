@@ -359,7 +359,7 @@ public final class ScooldUtils {
 			String body1 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text1",
 					lang.get("signin.welcome.body1") + "<br><br>"), Config.APP_NAME);
 			String body2 = Config.getConfigParam("emails.welcome_text2", lang.get("signin.welcome.body2") + "<br><br>");
-			String body3 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
+			String body3 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"),
 					Config.APP_NAME);
 
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
@@ -386,7 +386,7 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
-			String body = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
+			String body = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"),
 					Config.APP_NAME);
 
 			Sysprop s = pc.read(email);
