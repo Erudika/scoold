@@ -478,7 +478,9 @@ public final class ScooldUtils {
 	}
 
 	public Object isSubscribedToNewPosts(HttpServletRequest req) {
-		if(!isNewPostNotificationAllowed()) return false;
+		if (!isNewPostNotificationAllowed()) {
+			return false;
+		}
 
 		Profile authUser = getAuthUser(req);
 		if (authUser != null) {
@@ -562,7 +564,9 @@ public final class ScooldUtils {
 
 	@SuppressWarnings("unchecked")
 	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags) {
-		if(!isFavTagsNotificationAllowed()) return;
+		if (!isFavTagsNotificationAllowed()) {
+			return;
+		}
 
 		// sends a notification to subscibers of a tag if that tag was added to an existing question
 		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
@@ -595,7 +599,9 @@ public final class ScooldUtils {
 		// the current user - same as utils.getAuthUser(req)
 		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
 		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
-			if(!isNewPostNotificationAllowed()) return;
+			if (!isNewPostNotificationAllowed()) {
+				return;
+			}
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
@@ -682,7 +688,7 @@ public final class ScooldUtils {
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				if(isCommentNotificationAllowed()) {
+				if (isCommentNotificationAllowed()) {
 					Map<String, Object> model = new HashMap<String, Object>();
 					String name = commentAuthor.getName();
 					String body = Utils.markdownToHtml(comment.getComment());

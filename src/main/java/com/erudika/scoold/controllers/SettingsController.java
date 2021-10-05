@@ -88,18 +88,18 @@ public class SettingsController {
 			}
 			setAnonymity(authUser, req.getParameter("anon"));
 			setDarkMode(authUser, req.getParameter("dark"));
-			if(utils.isReplyNotificationAllowed()) {
+			if (utils.isReplyNotificationAllowed()) {
 				authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn));
 			}
-			if(utils.isCommentNotificationAllowed()) {
+			if (utils.isCommentNotificationAllowed()) {
 				authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn));
 			}
-			if(utils.isFavTagsNotificationAllowed()) {
+			if (utils.isFavTagsNotificationAllowed()) {
 				authUser.setFavtagsEmailsEnabled(Boolean.valueOf(favtagsEmailsOn));
 			}
 			authUser.update();
 
-			if(utils.isNewPostNotificationAllowed()) {
+			if (utils.isNewPostNotificationAllowed()) {
 				if (Boolean.valueOf(newpostEmailsOn)) {
 					utils.subscribeToNewPosts(authUser.getUser());
 				} else {
