@@ -629,19 +629,20 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendReplyNotifications(Post parentPost, Post reply) {
+	public void sendReplyNotifications(Post parentPost, Post reply, HttpServletRequest req) {
 		// send email notification to author of post except when the reply is by the same person
 		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
-			String subject = name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'";
+			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name, Utils.abbreviate(reply.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
+			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"), Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
