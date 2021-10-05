@@ -359,8 +359,7 @@ public final class ScooldUtils {
 			String body1 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text1",
 					lang.get("signin.welcome.body1") + "<br><br>"), Config.APP_NAME);
 			String body2 = Config.getConfigParam("emails.welcome_text2", lang.get("signin.welcome.body2") + "<br><br>");
-			String body3 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"),
-					Config.APP_NAME);
+			String body3 = getMailDefaultSignature(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"));
 
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
 				Sysprop s = pc.read(user.getIdentifier());
@@ -381,13 +380,17 @@ public final class ScooldUtils {
 		}
 	}
 
+	private String getMailDefaultSignature(String defaultText) {
+		String template = Config.getConfigParam("emails.default_signature", defaultText);
+		return Utils.formatMessage(template, Config.APP_NAME);
+	}
+
 	public void sendVerificationEmail(String email, HttpServletRequest req) {
 		if (!StringUtils.isBlank(email)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
-			String body = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"),
-					Config.APP_NAME);
+			String body = getMailDefaultSignature(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"));
 
 			Sysprop s = pc.read(email);
 			if (s != null) {
@@ -414,7 +417,7 @@ public final class ScooldUtils {
 			String subject = lang.get("iforgot.title");
 			String body1 = lang.get("iforgot.body1") + "<br><br>";
 			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("iforgot.body2") + "</a></b><br><br>", url);
-			String body3 = Utils.formatMessage(lang.get("iforgot.body3") + "<br><br>", Config.APP_NAME);
+			String body3 = getMailDefaultSignature(lang.get("iforgot.body3") + "<br><br>");
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
