@@ -574,8 +574,7 @@ public final class ScooldUtils {
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, escapeHtml(name)));
-			model.put("body", Utils.formatMessage(
-					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
@@ -603,8 +602,7 @@ public final class ScooldUtils {
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, escapeHtml(name)));
-			model.put("body", Utils.formatMessage(
-					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
