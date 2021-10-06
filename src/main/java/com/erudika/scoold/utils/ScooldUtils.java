@@ -95,6 +95,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -373,7 +374,7 @@ public final class ScooldUtils {
 			}
 
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
+			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject, compileEmailTemplate(model));
 		}
@@ -566,15 +567,16 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
+					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, name));
-			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
-					postURL, question.getTitle(), body, tagsString));
+			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, escapeHtml(name)));
+			model.put("body", Utils.formatMessage(
+					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
@@ -594,15 +596,16 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + t + "</span>").
+					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
-			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
-					postURL, question.getTitle(), body, tagsString));
+			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, escapeHtml(name)));
+			model.put("body", Utils.formatMessage(
+					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
@@ -626,11 +629,11 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, name, body));
+			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
+			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {
@@ -679,11 +682,11 @@ public final class ScooldUtils {
 				Map<String, Object> model = new HashMap<String, Object>();
 				String name = commentAuthor.getName();
 				String body = Utils.markdownToHtml(comment.getComment());
-				String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
+				String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
 				String postURL = getServerURL() + parentPost.getPostLink(false, false);
 				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
+				model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle())));
+				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
 						parentPost.getTitle() + "'", compileEmailTemplate(model));
 
@@ -693,6 +696,17 @@ public final class ScooldUtils {
 				triggerHookEvent("comment.create", payload);
 			});
 		}
+	}
+
+	private String escapeHtmlAttribute(String value) {
+		return value
+				.replaceAll("'", "%27")
+				.replaceAll("\"", "%22")
+				.replaceAll("\\\\", "");
+	}
+
+	private String escapeHtml(String value) {
+		return StringEscapeUtils.escapeHtml4(value);
 	}
 
 	public Profile readAuthUser(HttpServletRequest req) {
