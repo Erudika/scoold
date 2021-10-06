@@ -613,9 +613,9 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name, Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+
 			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
-			model.put("body", Utils.formatMessage(
-					"<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
@@ -646,8 +646,7 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name, Utils.abbreviate(reply.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage(
-					lang.get("notification.reply.heading"),
+			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
 					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
@@ -704,8 +703,7 @@ public final class ScooldUtils {
 				String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
 				model.put("subject", escapeHtml(subject));
 				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage(
-						lang.get("notification.comment.heading"),
+				model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
 						Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
@@ -1254,7 +1252,7 @@ public final class ScooldUtils {
 		String defaultQuery = "*";
 		String q = StringUtils.trimToEmpty(query);
 		if (qf.isEmpty() || qf.length() > 1) {
-			q = q.replaceAll("[\\?]", "").trim();
+			q = q.replaceAll("[\\?<>]", "").trim();
 			q = q.replaceAll("$[\\*]*", "");
 			q = RegExUtils.removeAll(q, "AND");
 			q = RegExUtils.removeAll(q, "OR");

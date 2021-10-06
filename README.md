@@ -980,6 +980,18 @@ para.security.ldap.user_search_filter = "userPrincipalName={0}"
 para.security.ldap.base_dn = "ou=dev,dc=domain,dc=com"
 ```
 
+### FreeIPA LDAP
+
+Scoold supports authentication with a FreeIPA server over LDAP. Here's a sample configuration for the free demo instance
+provided by FreeIPA - [ipa.demo1.freeipa.org](https://ipa.demo1.freeipa.org):
+
+```ini
+para.security.ldap.server_url = "ldap://ipa.demo1.freeipa.org:389"
+para.security.ldap.base_dn = "cn=users,cn=accounts,dc=demo1,dc=freeipa,dc=org"
+para.security.ldap.user_dn_pattern = "uid={0}"
+```
+To test this, try logging in with user `manager` and password `Secret123`.
+
 ### Local (internal) LDAP authentication
 
 **PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside

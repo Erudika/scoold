@@ -4,7 +4,7 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.45.0</version>
+	<version>1.46.3</version>
 	<packaging>${packaging.type}</packaging>
 
 	<parent>
@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.40.0</version>
+			<version>1.41.2</version>
 		</dependency>
 
 		<!-- VELOCITY -->
