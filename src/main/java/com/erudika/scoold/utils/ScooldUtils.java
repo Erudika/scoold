@@ -350,6 +350,11 @@ public final class ScooldUtils {
 				"1".equals(HttpUtils.getCookieValue(req, "dark-mode"));
 	}
 
+	public String translate(String key, HttpServletRequest req) {
+		Map<String, String> lang = getLang(req);
+		return lang.get(key);
+	}
+
 	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {
 		// send welcome email notification
 		if (user != null) {
