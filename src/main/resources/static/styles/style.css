@@ -91,20 +91,6 @@ h1, h2, h3, h4, h5, h6{font-weight: 300;}
 #sl-login-btn { background-color: white; color: #222; }
 #az-login-btn { background-color: #fad673; color: #222; }
 
-.signout-btn {
-	border: 0;
-	background-color: inherit;
-	width: 100%;
-	color: inherit;
-	display: block;
-	font-size: 16px;
-	height: 48px;
-	cursor: pointer;
-}
-.signout-btn:hover {
-	background-color: rgba(0,0,0,0.05);
-}
-
 .leaveblank {opacity: 0.0001;}
 
 .pan{padding:0}

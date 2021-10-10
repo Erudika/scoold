@@ -167,13 +167,7 @@
 									<li><a href="$settingslink" title="$!lang.get('settings.title')">$!lang.get('settings.title')</a></li>
 									#customnavbarmenulinks()
 									<li class="divider"></li>
-									<li>
-										<form action="$signoutlink" method="post">
-											<button type="submit" name="signout" title="$!lang.get('signout')" class="signout-btn light-blue-text lighten-1 pll left-align">
-												$!lang.get('signout')
-											</button>
-										</form>
-									</li>
+									<li><a href="$signoutlink" title="$!lang.get('signout')" class="post-refresh">$!lang.get('signout')</a></li>
 								</ul>
 							#end
 
@@ -273,13 +267,7 @@
 									#end
 
 									#navbarspacesmenu(false)
-									<li>
-										<form action="$signoutlink" method="post">
-											<button type="submit" name="signout" title="$!lang.get('signout')" class="signout-btn pll left-align">
-												<strong class="plm">$!lang.get('signout')</strong>
-											</button>
-										</form>
-									</li>
+									<li><a href="$signoutlink" title="$!lang.get('signout')" class="post-refresh">$!lang.get('signout')</a></li>
 								#end
 							</ul>
 						</div>

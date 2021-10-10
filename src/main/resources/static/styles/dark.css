@@ -26,7 +26,7 @@ body, footer.page-footer, .footer-copyright, .card-panel, .card, .tabs { backgro
 .chip, .dropdown-content, .collapsible-header, code, select, .modal, .editor-preview { background-color: #333; color: #efefef; }
 .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like { background-color: #333; }
 span.CodeMirror-selectedtext, li.CodeMirror-hint-active, .cm-comment.CodeMirror-selectedtext { background-color: #777; }
-input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label, .black-text, .signout-btn { color: #efefef !important; }
+input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label, .black-text { color: #efefef !important; }
 .tabs .tab a:focus, .tabs .tab a:focus.active { background-color: #333; }
 .hljs, .viewbox pre { background: #333; background-color: #333; color: #efefef; border-radius: 3px; }
 .hljs-tag, .hljs-name, .hljs-attribute { color: #9999ff; }
