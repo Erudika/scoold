@@ -488,6 +488,10 @@ public final class ScooldUtils {
 	}
 
 	public Object isSubscribedToNewPosts(HttpServletRequest req) {
+		if (!isNewPostNotificationAllowed()) {
+			return false;
+		}
+
 		Profile authUser = getAuthUser(req);
 		if (authUser != null) {
 			User u = authUser.getUser();
@@ -570,6 +574,9 @@ public final class ScooldUtils {
 
 	@SuppressWarnings("unchecked")
 	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags, HttpServletRequest req) {
+		if (!isFavTagsNotificationAllowed()) {
+			return;
+		}
 		// sends a notification to subscibers of a tag if that tag was added to an existing question
 		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
@@ -604,6 +611,10 @@ public final class ScooldUtils {
 		// the current user - same as utils.getAuthUser(req)
 		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
 		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
+			if (!isNewPostNotificationAllowed()) {
+				return;
+			}
+
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
@@ -671,7 +682,7 @@ public final class ScooldUtils {
 				rep.create();
 			}
 
-			if (parentPost.hasFollowers()) {
+			if (isReplyNotificationAllowed() && parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
 						subject,
 						compileEmailTemplate(model));
@@ -697,18 +708,20 @@ public final class ScooldUtils {
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				Map<String, Object> model = new HashMap<String, Object>();
-				String name = commentAuthor.getName();
-				String body = Utils.markdownToHtml(comment.getComment());
-				String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
-				String postURL = getServerURL() + parentPost.getPostLink(false, false);
-				String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
-				model.put("subject", escapeHtml(subject));
-				model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-				model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
-						Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
-				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
-				emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
+        if (isCommentNotificationAllowed()) {
+          Map<String, Object> model = new HashMap<String, Object>();
+          String name = commentAuthor.getName();
+          String body = Utils.markdownToHtml(comment.getComment());
+          String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
+          String postURL = getServerURL() + parentPost.getPostLink(false, false);
+          String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
+          model.put("subject", escapeHtml(subject));
+          model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+          model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
+              Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+          model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
+          emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
+        }
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 				payload.put("parent", parentPost);
@@ -772,6 +785,26 @@ public final class ScooldUtils {
 
 	public boolean isFooterLinksEnabled() {
 		return Config.getConfigBoolean("footer_links_enabled", true);
+	}
+
+	public boolean isNotificationsAllowed() {
+		return Config.getConfigBoolean("notification_emails_allowed", true);
+	}
+
+	public boolean isNewPostNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("newpost_emails_allowed", true);
+	}
+
+	public boolean isFavTagsNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("favtags_emails_allowed", true);
+	}
+
+	public boolean isReplyNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("reply_emails_allowed", true);
+	}
+
+	public boolean isCommentNotificationAllowed() {
+		return isNotificationsAllowed() && Config.getConfigBoolean("comment_emails_allowed", true);
 	}
 
 	public boolean isDarkModeEnabled() {
