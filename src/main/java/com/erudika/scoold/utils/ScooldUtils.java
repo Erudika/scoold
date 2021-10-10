@@ -350,6 +350,11 @@ public final class ScooldUtils {
 				"1".equals(HttpUtils.getCookieValue(req, "dark-mode"));
 	}
 
+	private String getDefaultEmailSignature(String defaultText) {
+		String template = Config.getConfigParam("emails.default_signature", defaultText);
+		return Utils.formatMessage(template, Config.APP_NAME);
+	}
+
 	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {
 		// send welcome email notification
 		if (user != null) {
@@ -359,7 +364,8 @@ public final class ScooldUtils {
 			String body1 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text1",
 					lang.get("signin.welcome.body1") + "<br><br>"), Config.APP_NAME);
 			String body2 = Config.getConfigParam("emails.welcome_text2", lang.get("signin.welcome.body2") + "<br><br>");
-			String body3 = getMailDefaultSignature(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"));
+			String body3 = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
+					lang.get("notification.signature") + "<br><br>"));
 
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
 				Sysprop s = pc.read(user.getIdentifier());
@@ -380,17 +386,13 @@ public final class ScooldUtils {
 		}
 	}
 
-	private String getMailDefaultSignature(String defaultText) {
-		String template = Config.getConfigParam("emails.default_signature", defaultText);
-		return Utils.formatMessage(template, Config.APP_NAME);
-	}
-
 	public void sendVerificationEmail(String email, HttpServletRequest req) {
 		if (!StringUtils.isBlank(email)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
-			String body = getMailDefaultSignature(Config.getConfigParam("emails.welcome_text3", lang.get("signin.welcome.body3") + "<br><br>"));
+			String body = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
+					lang.get("notification.signature") + "<br><br>"));
 
 			Sysprop s = pc.read(email);
 			if (s != null) {
@@ -415,9 +417,10 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String url = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
 			String subject = lang.get("iforgot.title");
-			String body1 = lang.get("iforgot.body1") + "<br><br>";
-			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("iforgot.body2") + "</a></b><br><br>", url);
-			String body3 = getMailDefaultSignature(lang.get("iforgot.body3") + "<br><br>");
+			String body1 = lang.get("notification.iforgot.body1") + "<br><br>";
+			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("notification.iforgot.body2") +
+					"</a></b><br><br>", url);
+			String body3 = getDefaultEmailSignature(lang.get("notification.signature") + "<br><br>");
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
@@ -577,9 +580,11 @@ public final class ScooldUtils {
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
+					map(t -> "<span class=\"tag\">" +
+							(addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
-			String subject = Utils.formatMessage(lang.get("notification.favtags.subject"), name, Utils.abbreviate(question.getTitle(), 255));
+			String subject = Utils.formatMessage(lang.get("notification.favtags.subject"), name,
+					Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("notification.favtags.heading"), picture, escapeHtml(name)));
@@ -587,9 +592,7 @@ public final class ScooldUtils {
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
-			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					subject,
-					compileEmailTemplate(model));
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -610,19 +613,17 @@ public final class ScooldUtils {
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
-			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name, Utils.abbreviate(question.getTitle(), 255));
+			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name,
+					Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-
 			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
-			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					subject,
-					compileEmailTemplate(model));
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		} else if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
 			Report rep = new Report();
 			rep.setDescription("New question awaiting approval");
@@ -643,7 +644,8 @@ public final class ScooldUtils {
 			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
-			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name, Utils.abbreviate(reply.getTitle(), 255));
+			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
+					Utils.abbreviate(reply.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
@@ -691,11 +693,11 @@ public final class ScooldUtils {
 				last5ids = new HashSet<>(last5ids);
 				last5ids.add(parentPost.getCreatorid());
 			}
+			Map<String, String> lang = getLang(req);
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
 				Map<String, Object> model = new HashMap<String, Object>();
-				Map<String, String> lang = getLang(req);
 				String name = commentAuthor.getName();
 				String body = Utils.markdownToHtml(comment.getComment());
 				String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
@@ -874,7 +876,8 @@ public final class ScooldUtils {
 	public String getLanguageCode(HttpServletRequest req) {
 		String langCodeFromConfig = Config.getConfigParam("default_language_code", "");
 		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
-		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
+		Locale fromReq = (req == null) ? Locale.getDefault() : req.getLocale();
+		Locale requestLocale = langutils.getProperLocale(fromReq.toString());
 		return (cookieLoc != null) ? cookieLoc : (StringUtils.isBlank(langCodeFromConfig) ?
 				requestLocale.getLanguage() : langutils.getProperLocale(langCodeFromConfig).getLanguage());
 	}
