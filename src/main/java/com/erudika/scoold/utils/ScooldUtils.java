@@ -708,20 +708,20 @@ public final class ScooldUtils {
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-        if (isCommentNotificationAllowed()) {
-          Map<String, Object> model = new HashMap<String, Object>();
-          String name = commentAuthor.getName();
-          String body = Utils.markdownToHtml(comment.getComment());
-          String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
-          String postURL = getServerURL() + parentPost.getPostLink(false, false);
-          String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
-          model.put("subject", escapeHtml(subject));
-          model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-          model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
-              Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
-          model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
-          emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
-        }
+				if (isCommentNotificationAllowed()) {
+					Map<String, Object> model = new HashMap<String, Object>();
+					String name = commentAuthor.getName();
+					String body = Utils.markdownToHtml(comment.getComment());
+					String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
+					String postURL = getServerURL() + parentPost.getPostLink(false, false);
+					String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
+					model.put("subject", escapeHtml(subject));
+					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+					model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
+							Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
+					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
+				}
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 				payload.put("parent", parentPost);

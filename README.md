@@ -674,6 +674,24 @@ para.mail.debug = true
 ```
 The email template is located in `src/main/resources/emails/notify.html`.
 
+Email notifications are enabled by default but can also be turned off completely by changing these settings:
+```ini
+# disable all notifications
+para.notification_emails_allowed = true
+# disable notifications for new posts
+para.newpost_emails_allowed = true
+# disable notifications for new posts that match favorite tags
+para.favtags_emails_allowed = true
+# disable notifications for replies
+para.reply_emails_allowed = true
+# disable notifications for comments
+para.comment_emails_allowed = true
+
+# additional options for Scoold Pro
+# disable notifications for mentions
+para.mentions_emails_allowed = true
+```
+
 For **Gmail** you have to turn on "Less secure app access" in your Google account settings. There's no need to configure
 `mail.tls` or `mail.ssl`, just set the `mail.host` to `smtp.gmail.com` and your Gmail email and password.
 
