@@ -95,6 +95,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -349,6 +350,11 @@ public final class ScooldUtils {
 				"1".equals(HttpUtils.getCookieValue(req, "dark-mode"));
 	}
 
+	private String getDefaultEmailSignature(String defaultText) {
+		String template = Config.getConfigParam("emails.default_signature", defaultText);
+		return Utils.formatMessage(template, Config.APP_NAME);
+	}
+
 	public void sendWelcomeEmail(User user, boolean verifyEmail, HttpServletRequest req) {
 		// send welcome email notification
 		if (user != null) {
@@ -358,8 +364,8 @@ public final class ScooldUtils {
 			String body1 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text1",
 					lang.get("signin.welcome.body1") + "<br><br>"), Config.APP_NAME);
 			String body2 = Config.getConfigParam("emails.welcome_text2", lang.get("signin.welcome.body2") + "<br><br>");
-			String body3 = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
-					Config.APP_NAME);
+			String body3 = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
+					lang.get("notification.signature") + "<br><br>"));
 
 			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
 				Sysprop s = pc.read(user.getIdentifier());
@@ -372,8 +378,9 @@ public final class ScooldUtils {
 				}
 			}
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), user.getName()));
+			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject, compileEmailTemplate(model));
 		}
@@ -384,8 +391,8 @@ public final class ScooldUtils {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
-			String body = Utils.formatMessage(Config.getConfigParam("emails.welcome_text3", "Best, <br>The {0} team<br><br>"),
-					Config.APP_NAME);
+			String body = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
+					lang.get("notification.signature") + "<br><br>"));
 
 			Sysprop s = pc.read(email);
 			if (s != null) {
@@ -396,6 +403,7 @@ public final class ScooldUtils {
 				body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 			}
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body);
@@ -409,10 +417,12 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String url = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
 			String subject = lang.get("iforgot.title");
-			String body1 = "Open the link below to change your password:<br><br>";
-			String body2 = Utils.formatMessage("<b><a href=\"{0}\">RESET PASSWORD</a></b><br><br>", url);
-			String body3 = "Best, <br>The " + Config.APP_NAME + " team<br><br>";
+			String body1 = lang.get("notification.iforgot.body1") + "<br><br>";
+			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("notification.iforgot.body2") +
+					"</a></b><br><br>", url);
+			String body3 = getDefaultEmailSignature(lang.get("notification.signature") + "<br><br>");
 
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body1 + body2 + body3);
@@ -563,36 +573,38 @@ public final class ScooldUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags) {
+	public void sendUpdatedFavTagsNotifications(Post question, List<String> addedTags, HttpServletRequest req) {
 		if (!isFavTagsNotificationAllowed()) {
 			return;
 		}
-
 		// sends a notification to subscibers of a tag if that tag was added to an existing question
 		if (question != null && !question.isReply() && addedTags != null && !addedTags.isEmpty()) {
 			Profile postAuthor = question.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + (addedTags.contains(t) ? "<b>" + t + "<b>" : t) + "</span>").
+					map(t -> "<span class=\"tag\">" +
+							(addedTags.contains(t) ? "<b>" + escapeHtml(t) + "<b>" : escapeHtml(t)) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
+			String subject = Utils.formatMessage(lang.get("notification.favtags.subject"), name,
+					Utils.abbreviate(question.getTitle(), 255));
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} edited:", picture, name));
+			model.put("heading", Utils.formatMessage(lang.get("notification.favtags.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
-					postURL, question.getTitle(), body, tagsString));
+					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = getFavTagsSubscribers(addedTags);
-			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					name + " edited question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-					compileEmailTemplate(model));
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendNewPostNotifications(Post question) {
+	public void sendNewPostNotifications(Post question, HttpServletRequest req) {
 		if (question == null) {
 			return;
 		}
@@ -604,23 +616,25 @@ public final class ScooldUtils {
 			}
 
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", postAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + t + "</span>").
+					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
 					collect(Collectors.joining("&nbsp;"));
+			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name,
+					Utils.abbreviate(question.getTitle(), 255));
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("{0} {1} posted:", picture, name));
+			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
-					postURL, question.getTitle(), body, tagsString));
+					postURL, escapeHtml(question.getTitle()), body, tagsString));
 
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
-			sendEmailsToSubscribersInSpace(emails, question.getSpace(),
-					name + " posted the question '" + Utils.abbreviate(question.getTitle(), 255) + "'",
-					compileEmailTemplate(model));
+			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		} else if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
 			Report rep = new Report();
 			rep.setDescription("New question awaiting approval");
@@ -631,18 +645,23 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendReplyNotifications(Post parentPost, Post reply) {
+	public void sendReplyNotifications(Post parentPost, Post reply, HttpServletRequest req) {
 		// send email notification to author of post except when the reply is by the same person
 		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", replyAuthor.getPicture());
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
+			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
+					Utils.abbreviate(reply.getTitle(), 255));
+			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-			model.put("heading", Utils.formatMessage("New reply to <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, name, body));
+			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
+					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {
@@ -665,13 +684,13 @@ public final class ScooldUtils {
 
 			if (isReplyNotificationAllowed() && parentPost.hasFollowers()) {
 				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						name + " replied to '" + Utils.abbreviate(reply.getTitle(), 255) + "'",
+						subject,
 						compileEmailTemplate(model));
 			}
 		}
 	}
 
-	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor) {
+	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
 		// send email notification to author of post except when the comment is by the same person
 		if (parentPost != null && comment != null) {
 			parentPost.setAuthor(pc.read(Profile.id(parentPost.getCreatorid()))); // parent author is not current user (authUser)
@@ -685,21 +704,24 @@ public final class ScooldUtils {
 				last5ids = new HashSet<>(last5ids);
 				last5ids.add(parentPost.getCreatorid());
 			}
+			Map<String, String> lang = getLang(req);
 			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
 			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
 			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				if (isCommentNotificationAllowed()) {
-					Map<String, Object> model = new HashMap<String, Object>();
-					String name = commentAuthor.getName();
-					String body = Utils.markdownToHtml(comment.getComment());
-					String pic = Utils.formatMessage("<img src='{0}' width='25'>", commentAuthor.getPicture());
-					String postURL = getServerURL() + parentPost.getPostLink(false, false);
-					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
-					model.put("heading", Utils.formatMessage("New comment on <a href='{0}'>{1}</a>", postURL, parentPost.getTitle()));
-					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, name, body));
-					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), name + " commented on '" +
-							parentPost.getTitle() + "'", compileEmailTemplate(model));
-				}
+        if (isCommentNotificationAllowed()) {
+          Map<String, Object> model = new HashMap<String, Object>();
+          String name = commentAuthor.getName();
+          String body = Utils.markdownToHtml(comment.getComment());
+          String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
+          String postURL = getServerURL() + parentPost.getPostLink(false, false);
+          String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
+          model.put("subject", escapeHtml(subject));
+          model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+          model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
+              Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+          model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
+          emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
+        }
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 				payload.put("parent", parentPost);
@@ -707,6 +729,17 @@ public final class ScooldUtils {
 				triggerHookEvent("comment.create", payload);
 			});
 		}
+	}
+
+	private String escapeHtmlAttribute(String value) {
+		return value
+				.replaceAll("'", "%27")
+				.replaceAll("\"", "%22")
+				.replaceAll("\\\\", "");
+	}
+
+	private String escapeHtml(String value) {
+		return StringEscapeUtils.escapeHtml4(value);
 	}
 
 	public Profile readAuthUser(HttpServletRequest req) {
@@ -876,7 +909,8 @@ public final class ScooldUtils {
 	public String getLanguageCode(HttpServletRequest req) {
 		String langCodeFromConfig = Config.getConfigParam("default_language_code", "");
 		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
-		Locale requestLocale = langutils.getProperLocale(req.getLocale().toString());
+		Locale fromReq = (req == null) ? Locale.getDefault() : req.getLocale();
+		Locale requestLocale = langutils.getProperLocale(fromReq.toString());
 		return (cookieLoc != null) ? cookieLoc : (StringUtils.isBlank(langCodeFromConfig) ?
 				requestLocale.getLanguage() : langutils.getProperLocale(langCodeFromConfig).getLanguage());
 	}

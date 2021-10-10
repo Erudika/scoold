@@ -142,14 +142,15 @@ public class SearchController {
 
 	@ResponseBody
 	@GetMapping("/opensearch.xml")
-	public ResponseEntity<String> openSearch() {
+	public ResponseEntity<String> openSearch(HttpServletRequest req) {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
 				+ "<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\" "
 				+ "  xmlns:moz=\"http://www.mozilla.org/2006/browser/search/\">\n"
 				+ "  <ShortName>" + Config.APP_NAME + "</ShortName>\n"
-				+ "  <Description>Search for questions and answers</Description>\n"
+				+ "  <Description>" + utils.getLang(req).get("search.description") + "</Description>\n"
 				+ "  <InputEncoding>UTF-8</InputEncoding>\n"
-				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">https://scoold.com/favicon.ico</Image>\n"
+				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">" +
+				ScooldServer.getServerURL() + CONTEXT_PATH + "/favicon.ico</Image>\n"
 				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + ScooldServer.getServerURL() + CONTEXT_PATH
 				+ "/search?q={searchTerms}\"></Url>\n"
 				+ "</OpenSearchDescription>";

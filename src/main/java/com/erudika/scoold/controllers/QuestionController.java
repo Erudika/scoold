@@ -178,7 +178,7 @@ public class QuestionController {
 			updatePost(showPost, authUser);
 			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
-			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags));
+			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
 		}
 		model.addAttribute("post", showPost);
 		if (utils.isAjaxRequest(req)) {
@@ -233,7 +233,7 @@ public class QuestionController {
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
-				utils.sendReplyNotifications(showPost, answer);
+				utils.sendReplyNotifications(showPost, answer, req);
 				model.addAttribute("newpost", getNewAnswerPayload(answer));
 			} else {
 				model.addAttribute("error", error);
@@ -260,7 +260,7 @@ public class QuestionController {
 			if (showPost instanceof UnapprovedQuestion) {
 				showPost.setType(Utils.type(Question.class));
 				pc.create(showPost);
-				utils.sendNewPostNotifications(showPost);
+				utils.sendNewPostNotifications(showPost, req);
 			} else if (showPost instanceof UnapprovedReply) {
 				showPost.setType(Utils.type(Reply.class));
 				pc.create(showPost);
