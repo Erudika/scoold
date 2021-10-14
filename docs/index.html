@@ -57,7 +57,9 @@
 				background-image: url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v6H0V0zm28 8h12v6H28V8zm14-8h12v6H42V0zm14 0h12v6H56V0zm0 8h12v6H56V8zM42 8h12v6H42V8zm0 16h12v6H42v-6zm14-8h12v6H56v-6zm14 0h12v6H70v-6zm0-16h12v6H70V0zM28 32h12v6H28v-6zM14 16h12v6H14v-6zM0 24h12v6H0v-6zm0 8h12v6H0v-6zm14 0h12v6H14v-6zm14 8h12v6H28v-6zm-14 0h12v6H14v-6zm28 0h12v6H42v-6zm14-8h12v6H56v-6zm0-8h12v6H56v-6zm14 8h12v6H70v-6zm0 8h12v6H70v-6zM14 24h12v6H14v-6zm14-8h12v6H28v-6zM14 8h12v6H14V8zM0 8h12v6H0V8z' fill='%230ea4f6' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
 				background-color: white;
 			}
-			#features, #contact {background-color: white;}
+			#features, #contact, #clients {background-color: white;}
+			#clients img {opacity: 0.5;}
+			#clients img:hover {opacity: 1;}
 			#splash {
 				margin: 15px 0px 40px 0px;
 				box-shadow: 0px 11px 28px -19px;
@@ -292,10 +294,18 @@
 				</div>
 			</section>
 
+			<section id="clients">
+				<div class="container pvl center-align">
+					<h6 class="grey-text">Scoold is used by teams in these companies</h6>
+					<img src="companies.png" class="responsive-img">
+				</div>
+			</section>
+
+
 			<section id="features">
 				<div class="row container center-align ptl">
 					<h3>Features</h3>
-					<p>These are the standard features in the free version of Scoold. Everything here is included in Scoold Pro.</p>
+					<p>These are the standard features in the free version of Scoold. Everything here is included in Scoold Pro as well.</p>
 					<div class="switch">
 						<label>
 							<span class="mediumText"><b>List</b></span>
@@ -321,15 +331,25 @@
 								<th>Features</th>
 								<th>Scoold</th>
 								<th>Scoold Pro</th>
-								<th>Scoold Pro + Source</th>
+								<th>Scoold Pro + Source Code</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>Price per instance (host)</td>
-								<td><b>Free</b></td>
-								<td>€299</td>
-								<td>contact us</td>
+								<td>
+									<h5>Free</h5>
+									<a href="https://github.com/Erudika/scoold/releases/download/1.46.3/scoold-1.46.3.jar"
+										 class="btn-small btn-flat light-blue white-text"><b>Download</b></a>
+								</td>
+								<td>
+									<h5>€299</h5>
+									<a href="https://paraio.com/scoold-pro" class="btn-small btn-flat light-blue white-text"><b>Buy &amp; Download</b></a>
+								</td>
+								<td>
+									<h5>€1999</h5>
+									<a href="https://paraio.com/scoold-pro?pid=2f8s4kt" class="btn-small btn-flat light-blue white-text"><b>Buy &amp; Download</b></a>
+								</td>
 							</tr>
 							<tr>
 								<td>License</td>
@@ -597,7 +617,7 @@
 					</table>
 				</div>
 				<div id="features-grid">
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Full featured Q&A platform</h5>
 							<hr style="width: 50%">
@@ -618,7 +638,7 @@
 								a powerful search engine.	You can search for users, questions and answers from the search bar on top.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Geolocation filtering of posts</h5>
 							<hr style="width: 50%">
@@ -639,7 +659,7 @@
 							It takes care of AJAX requests and toggles elements on the screen, nothing more.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Similar posts suggestions</h5>
 							<hr style="width: 50%">
@@ -661,7 +681,7 @@
 							settings page.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Modern and responsive layout</h5>
 							<hr style="width: 50%">
@@ -682,7 +702,7 @@
 							engines. Page URLs are pretty tidy, too. </p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>I18n with RTL support</h5>
 							<hr style="width: 50%">
@@ -702,7 +722,7 @@
 								tables, task lists and strikethrough. Oh, and you can use emojis too!</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Webhooks</h5>
 							<hr style="width: 50%">
@@ -722,7 +742,7 @@
 								executed through the API from any programming language.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Themes &amp; dark mode</h5>
 							<hr style="width: 50%">
@@ -732,7 +752,7 @@
 						<div class="col m4">
 							<h5>Full SSL and mTLS support</h5>
 							<hr style="width: 50%">
-							<p>Secure all connections to Scoold with HTTPS by using your own SSL certificate without the need for a proxy. Tighten security with mutual authentication 
+							<p>Secure all connections to Scoold with HTTPS by using your own SSL certificate without the need for a proxy. Tighten security with mutual authentication
 							between a proxy, Scoold and Para (mTLS).</p>
 						</div>
 						<div class="col m4">
@@ -741,7 +761,7 @@
 							<p>Migrating from Stack Overflow for Teams to Scoold is effortless and seamless. Simply download your data from Stack Overflow and import it into Scoold.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4 offset-m4">
 							<h5><a href="https://zapier.com/developer/public-invite/96144/23ee4c1c6f03dc964b479b0d8ed027bb/">Zapier integration</a></h5>
 							<hr style="width: 50%">
@@ -751,7 +771,7 @@
 						</div>
 					</div>
 					<!--PRO Features-->
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<h3>Premium Features</h3>
 						<p>These features are only available in Scoold Pro.</p>
 						<div class="col m4">
@@ -770,11 +790,11 @@
 						<div class="col m4">
 							<h5>File uploads</h5>
 							<hr style="width: 50%">
-							<p>Easily attach images and documents to posts. Files can either be uploaded to the local file system or 
+							<p>Easily attach images and documents to posts. Files can either be uploaded to the local file system or
 								to Microsoft Azure Blob Storage, AWS S3 or Imgur.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Unlimited spaces</h5>
 							<hr style="width: 50%">
@@ -794,14 +814,14 @@
 								users with emails only from those whitelisted domains.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Advanced highlighting</h5>
 							<hr style="width: 50%">
 							<p>The syntax highlighting of code snippets is enhanced and supports additional languages
 								like LaTeX, Velocity, WebAssembly, JSX/TSX and PL/SQL. MathJax integration is also available. </p>
 						</div>
-						
+
 						<div class="col m4">
 							<h5>Anonymous posts</h5>
 							<hr style="width: 50%">
@@ -815,7 +835,7 @@
 								receive an email report each time the Content Security Policy (CSP) gets violated.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Account suspension</h5>
 							<hr style="width: 50%">
@@ -835,7 +855,7 @@
 							allow everyone to contribute to the knowledge around a question, regardless of their reputation points.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4">
 							<h5>Email digest</h5>
 							<hr style="width: 50%">
@@ -856,7 +876,7 @@
 								external authentication provider can be made to work with Scoold in this way.</p>
 						</div>
 					</div>
-					<div class="row container center-align pvs">
+					<div class="row container center-align">
 						<div class="col m4 offset-m4">
 							<h5><a href="slack.html">Slack</a>, <a href="mattermost.html">Mattermost</a> &amp;
 								<a href="teams.html">Teams</a> integration</h5>
@@ -869,9 +889,6 @@
 				</div>
 
 				<div class="container pvl center-align">
-					<h6 class="grey-text">Scoold Pro is used by teams in these companies</h6>
-					<img src="companies.png" class="responsive-img">
-
 					<div class="mvl">
 						<a href="https://paraio.com/scoold-pro"
 							 class="btn-large light-blue"><b>Buy Scoold PRO</b></a>
@@ -909,7 +926,7 @@
 							<a href="https://live.scoold.com" class="mhl">Scoold Demo</a>
 							<a href="https://pro.scoold.com" class="mhl">Scoold Pro Demo</a>
 						</h4>
-						<p>Demos take a minute to load as they are running on Heroku's free dynos.</p>
+						<p>Only the Scoold Pro demo has a publicly available access to the admin account.</p>
 						<h3><span class="phl">Integrations</span></h3>
 						<div class="row">
 							<div class="col l3 m6  s12">
