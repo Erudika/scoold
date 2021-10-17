@@ -279,7 +279,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 
 		ScooldUtils.tryConnectToPara(() -> {
+			pc.throwExceptionOnHTTPError(true);
 			pc.setAppSettings(settings);
+			pc.throwExceptionOnHTTPError(false);
 			return true;
 		});
 		return pc;
