@@ -169,7 +169,7 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
 	}
 
-	private final Profile API_USER;
+	private final Profile apiUser;
 	private ParaClient pc;
 	private LanguageUtils langutils;
 	private static ScooldUtils instance;
@@ -180,12 +180,12 @@ public final class ScooldUtils {
 		this.pc = pc;
 		this.langutils = langutils;
 
-		API_USER = new Profile("1", "System");
-		API_USER.setVotes(1);
-		API_USER.setCreatorid("1");
-		API_USER.setTimestamp(Utils.timestamp());
-		API_USER.setPicture(getAnonymizedAvatarURL(Config.SUPPORT_EMAIL));
-		API_USER.setGroups(User.Groups.ADMINS.toString());
+		apiUser = new Profile("1", "System");
+		apiUser.setVotes(1);
+		apiUser.setCreatorid("1");
+		apiUser.setTimestamp(Utils.timestamp());
+		apiUser.setPicture(getAnonymizedAvatarURL(Config.SUPPORT_EMAIL));
+		apiUser.setGroups(User.Groups.ADMINS.toString());
 	}
 
 	public ParaClient getParaClient() {
@@ -283,13 +283,13 @@ public final class ScooldUtils {
 		}
 		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
 		if (req.getRequestURI().equals(CONTEXT_PATH + "/api/ping")) {
-			return API_USER;
+			return apiUser;
 		} else if (req.getRequestURI().equals(CONTEXT_PATH + "/api/stats") && isValidJWToken(apiKeyJWT)) {
-			return API_USER;
+			return apiUser;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new WebApplicationException(401);
 		}
-		return API_USER;
+		return apiUser;
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
@@ -961,7 +961,7 @@ public final class ScooldUtils {
 			authors.put(author.getId(), (Profile) author);
 		}
 		// add system profile
-		authors.put(API_USER.getId(), API_USER);
+		authors.put(apiUser.getId(), apiUser);
 		// set author object for each post
 		for (ParaObject obj : objects) {
 			if (obj instanceof Post) {
@@ -1679,7 +1679,7 @@ public final class ScooldUtils {
 	}
 
 	public Profile getSystemUser() {
-		return API_USER;
+		return apiUser;
 	}
 
 	public void triggerHookEvent(String eventName, Object payload) {
