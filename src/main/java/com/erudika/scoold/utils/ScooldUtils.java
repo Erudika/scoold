@@ -1455,14 +1455,6 @@ public final class ScooldUtils {
 		}
 	}
 
-	public String getFullAvatarURL(Profile profile) {
-		if (profile == null) {
-			return getGravatar("");
-		}
-		return isAvatarValidationEnabled() ? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(profile.getPicture()) :
-				profile.getPicture();
-	}
-
 	public String getFullAvatarURL(Profile profile, AvatarFormat format) {
 		if (profile == null || profile.getPicture() == null) {
 			return IMAGESLINK + "/anon.sgv";
@@ -1470,7 +1462,9 @@ public final class ScooldUtils {
 
 		String avatar = profile.getPicture();
 		if (avatar.matches("^(http:|https:).*")) {
-			return getFullAvatarURL(profile);
+			return isAvatarValidationEnabled()
+				? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(profile.getPicture())
+				: profile.getPicture();
 		}
 		if (avatar.matches("^(data:).*")) {
 			return profile.getPicture();
