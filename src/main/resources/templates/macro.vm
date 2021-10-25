@@ -1007,8 +1007,6 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
-#macro(profilepic $user)$scooldUtils.getFullAvatarURL($user, "Profile")#end
-#####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
 		#set($infoStripClass = "green white-text")
