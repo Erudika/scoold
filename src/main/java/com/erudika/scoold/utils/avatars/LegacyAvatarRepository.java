@@ -35,9 +35,17 @@ public class LegacyAvatarRepository implements AvatarRepository {
 		return IMAGESLINK + "/anon.sgv";
 	}
 
-	@Override
-	public String getAnonymizedLink(String data) {
-		return getGravatar(data);
+	private String getUserPicture(Profile user) {
+		String picture = user.getPicture();
+		if (StringUtils.contains(picture, "gravatar.com") && !gravatarAvatarGenerator.isEnabled()) {
+			String originalPicture = user.getOriginalPicture();
+			if (StringUtils.contains(originalPicture, "gravatar.com")) {
+				return gravatarAvatarGenerator.getLink(user); // returns default image, not gravatar
+			} else {
+				return StringUtils.isBlank(originalPicture) ? gravatarAvatarGenerator.getLink(user) : originalPicture;
+			}
+		}
+		return picture;
 	}
 
 	private String getGravatar(String email) {
@@ -48,6 +56,10 @@ public class LegacyAvatarRepository implements AvatarRepository {
 			return "https://www.gravatar.com/avatar?d=retro&size=400";
 		}
 		return "https://www.gravatar.com/avatar/" + Utils.md5(email.toLowerCase()) + "?size=400&d=retro";
+       }
+	@Override
+	public String getAnonymizedLink(String data) {
+		return gravatarAvatarGenerator.getLink(data);
 	}
 
 	public boolean isAvatarValidationEnabled() {
