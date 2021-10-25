@@ -49,6 +49,8 @@ import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
+
+import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -1459,6 +1461,21 @@ public final class ScooldUtils {
 		}
 		return isAvatarValidationEnabled() ? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(profile.getPicture()) :
 				profile.getPicture();
+	}
+
+	public String getFullAvatarURL(Profile profile, AvatarFormat format) {
+		if (profile == null || profile.getPicture() == null) {
+			return IMAGESLINK + "/anon.sgv";
+		}
+
+		String avatar = profile.getPicture();
+		if (avatar.matches("^(http:|https:).*")) {
+			return getFullAvatarURL(profile);
+		}
+		if (avatar.matches("^(data:).*")) {
+			return profile.getPicture();
+		}
+		return IMAGESLINK + "/anon.sgv";
 	}
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
