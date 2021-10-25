@@ -34,9 +34,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.erudika.scoold.utils.avatars.AvatarFormat;
-import com.erudika.scoold.utils.avatars.GravatarAvatarGenerator;
-import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
+import com.erudika.scoold.utils.avatars.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +59,7 @@ public class ProfileController {
 
 	private final ScooldUtils utils;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
-	private final LegacyAvatarRepository avatarRepository;
+	private final AvatarRepository avatarRepository;
 
 	@Inject
 	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, LegacyAvatarRepository avatarRepository) {
@@ -171,10 +169,8 @@ public class ProfileController {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
 			}
-			if (Config.getConfigBoolean("avatar_edits_enabled", true) ||
-					Config.getConfigBoolean("name_edits_enabled", true)) {
-				updateProfile = updateUserPictureAndName(showUser, picture, name);
-			}
+
+			updateProfile = updateUserPictureAndName(showUser, picture, name) || updateProfile;
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
 			if (updateProfile || utils.addBadgeOnce(showUser, Badge.NICEPROFILE, isComplete)) {
@@ -196,15 +192,14 @@ public class ProfileController {
 		boolean updateProfile = false;
 		boolean updateUser = false;
 		User u = showUser.getUser();
+
 		if (Config.getConfigBoolean("avatar_edits_enabled", true) &&
-				!StringUtils.isBlank(picture) && (Utils.isValidURL(picture) || picture.startsWith("data:"))) {
-			showUser.setPicture(picture);
-			if (!u.getPicture().equals(picture) && !gravatarAvatarGenerator.isLink(picture)) {
-				u.setPicture(picture);
-				updateUser = true;
-			}
-			updateProfile = true;
+				!StringUtils.isBlank(picture)) {
+			AvatarStorageResult result = avatarRepository.store(showUser, picture);
+			updateProfile = result.isProfileChanged();
+			updateUser = result.isUserChanged();
 		}
+
 		if (Config.getConfigBoolean("name_edits_enabled", true) && !StringUtils.isBlank(name)) {
 			showUser.setName(name);
 			if (StringUtils.isBlank(showUser.getOriginalName())) {
@@ -216,6 +211,7 @@ public class ProfileController {
 			}
 			updateProfile = true;
 		}
+
 		if (updateUser) {
 			utils.getParaClient().update(u);
 		}

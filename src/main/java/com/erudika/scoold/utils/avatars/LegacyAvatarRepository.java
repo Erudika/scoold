@@ -1,5 +1,6 @@
 package com.erudika.scoold.utils.avatars;
 
+import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Profile;
@@ -57,5 +58,23 @@ public class LegacyAvatarRepository implements AvatarRepository {
 
 	public boolean isAvatarValidationEnabled() {
 		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
+	}
+
+	@Override
+	public AvatarStorageResult store(Profile profile, String url) {
+		if (!Utils.isValidURL(url) && !url.startsWith("data:")) {
+			return AvatarStorageResult.failed();
+		}
+
+		profile.setPicture(url);
+
+		User user = profile.getUser();
+		if (!user.getPicture().equals(url) && !gravatarAvatarGenerator.isLink(url)) {
+			user.setPicture(url);
+
+			return AvatarStorageResult.userChanged();
+		}
+
+		return AvatarStorageResult.profileChanged();
 	}
 }

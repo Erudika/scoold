@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.erudika.scoold.utils.avatars.AvatarRepository;
 import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -52,7 +53,7 @@ import java.util.List;
 public class SettingsController {
 
 	private final ScooldUtils utils;
-	private final LegacyAvatarRepository avatarRepository;
+	private final AvatarRepository avatarRepository;
 
 	@Inject
 	public SettingsController(ScooldUtils utils, LegacyAvatarRepository avatarRepository) {
