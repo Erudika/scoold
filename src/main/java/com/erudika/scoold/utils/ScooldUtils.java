@@ -51,6 +51,8 @@ import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 import com.erudika.scoold.utils.avatars.AvatarFormat;
+import com.erudika.scoold.utils.avatars.AvatarRepository;
+import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -172,13 +174,15 @@ public final class ScooldUtils {
 	private final Profile apiUser;
 	private ParaClient pc;
 	private LanguageUtils langutils;
+	private final AvatarRepository avatarRepository;
 	private static ScooldUtils instance;
 	@Inject private Emailer emailer;
 
 	@Inject
-	public ScooldUtils(ParaClient pc, LanguageUtils langutils) {
+	public ScooldUtils(ParaClient pc, LanguageUtils langutils, LegacyAvatarRepository avatarRepository) {
 		this.pc = pc;
 		this.langutils = langutils;
+		this.avatarRepository = avatarRepository;
 
 		apiUser = new Profile("1", "System");
 		apiUser.setVotes(1);
@@ -1455,25 +1459,12 @@ public final class ScooldUtils {
 		}
 	}
 
-	public static String getAnonymizedAvatarURL(String data) {
-		return getGravatar(data);
+	public String getAnonymizedAvatarURL(String data) {
+		return avatarRepository.getAnonymizedLink(data);
 	}
 
 	public String getFullAvatarURL(Profile profile, AvatarFormat format) {
-		if (profile == null || profile.getPicture() == null) {
-			return IMAGESLINK + "/anon.sgv";
-		}
-
-		String avatar = profile.getPicture();
-		if (avatar.matches("^(http:|https:).*")) {
-			return isAvatarValidationEnabled()
-				? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(avatar)
-				: avatar;
-		}
-		if (avatar.matches("^(data:).*")) {
-			return avatar;
-		}
-		return IMAGESLINK + "/anon.sgv";
+		return avatarRepository.getLink(profile, format);
 	}
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
