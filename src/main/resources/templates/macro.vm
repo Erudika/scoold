@@ -1017,7 +1017,7 @@ $utils.formatDate($date, $format, $currentLocale)
 	#else
 		#set($infoStripClass = "")
 	#end
-
+	
 	#if ($badgelist && !$badgelist.isEmpty())
 		#if ($badgelist.size() > 1)
 			#set($infoStripMsg = $!lang.get("newbadges"))
