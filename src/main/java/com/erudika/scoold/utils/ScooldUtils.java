@@ -130,7 +130,7 @@ public final class ScooldUtils {
 		API_USER.setVotes(1);
 		API_USER.setCreatorid("1");
 		API_USER.setTimestamp(Utils.timestamp());
-		API_USER.setPicture(getGravatar(Config.SUPPORT_EMAIL));
+		API_USER.setPicture(getAnonymizedAvatarURL(Config.SUPPORT_EMAIL));
 		API_USER.setGroups(User.Groups.ADMINS.toString());
 
 		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
@@ -586,7 +586,7 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(getFullAvatarURL(postAuthor, AvatarFormat.Square25)));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" +
@@ -621,7 +621,7 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String name = postAuthor.getName();
 			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(postAuthor.getPicture()));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(getFullAvatarURL(postAuthor, AvatarFormat.Square25)));
 			String postURL = getServerURL() + question.getPostLink(false, false);
 			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
 					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
@@ -655,7 +655,7 @@ public final class ScooldUtils {
 			Map<String, String> lang = getLang(req);
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(replyAuthor.getPicture()));
+			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(getFullAvatarURL(replyAuthor, AvatarFormat.Square25)));
 			String postURL = getServerURL() + parentPost.getPostLink(false, false);
 			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
 					Utils.abbreviate(reply.getTitle(), 255));
@@ -714,7 +714,7 @@ public final class ScooldUtils {
 					Map<String, Object> model = new HashMap<String, Object>();
 					String name = commentAuthor.getName();
 					String body = Utils.markdownToHtml(comment.getComment());
-					String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(commentAuthor.getPicture()));
+					String pic = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(getFullAvatarURL(commentAuthor, AvatarFormat.Square25)));
 					String postURL = getServerURL() + parentPost.getPostLink(false, false);
 					String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
 					model.put("subject", escapeHtml(subject));
@@ -1434,7 +1434,7 @@ public final class ScooldUtils {
 		return error;
 	}
 
-	public static String getGravatar(String email) {
+	private static String getGravatar(String email) {
 		if (!isGravatarEnabled()) {
 			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
 		}
@@ -1444,7 +1444,7 @@ public final class ScooldUtils {
 		return "https://www.gravatar.com/avatar/" + Utils.md5(email.toLowerCase()) + "?size=400&d=retro";
 	}
 
-	public static String getGravatar(Profile profile) {
+	public static String getFullAvatarGravatarUrl(Profile profile) {
 		if (!isGravatarEnabled()) {
 			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
 		}
@@ -1455,6 +1455,10 @@ public final class ScooldUtils {
 		}
 	}
 
+	public static String getAnonymizedAvatarURL(String data) {
+		return getGravatar(data);
+	}
+
 	public String getFullAvatarURL(Profile profile, AvatarFormat format) {
 		if (profile == null || profile.getPicture() == null) {
 			return IMAGESLINK + "/anon.sgv";
@@ -1463,11 +1467,11 @@ public final class ScooldUtils {
 		String avatar = profile.getPicture();
 		if (avatar.matches("^(http:|https:).*")) {
 			return isAvatarValidationEnabled()
-				? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(profile.getPicture())
-				: profile.getPicture();
+				? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(avatar)
+				: avatar;
 		}
 		if (avatar.matches("^(data:).*")) {
-			return profile.getPicture();
+			return avatar;
 		}
 		return IMAGESLINK + "/anon.sgv";
 	}

@@ -99,14 +99,14 @@ public class ProfileController {
 		model.addAttribute("path", "profile.vm");
 		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
 		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
-		model.addAttribute("ogimage", showUser.getPicture());
+		model.addAttribute("ogimage", utils.getFullAvatarURL(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
-		model.addAttribute("gravatarPicture", utils.getGravatar(showUser));
+		model.addAttribute("gravatarPicture", utils.getFullAvatarGravatarUrl(showUser));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);

@@ -177,7 +177,7 @@ public class SettingsController {
 	private void anonymizeProfile(Profile authUser) {
 		authUser.setName("Anonymous");
 		authUser.setOriginalPicture(authUser.getPicture());
-		authUser.setPicture(utils.getGravatar(authUser.getId() + "@scooldemail.com"));
+		authUser.setPicture(utils.getAnonymizedAvatarURL(authUser.getId() + "@scooldemail.com"));
 		authUser.setAnonymityEnabled(true);
 	}
 
