@@ -117,7 +117,6 @@ public final class ScooldUtils {
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
-	private static final Profile API_USER;
 	private static final Set<String> CORE_TYPES;
 	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
@@ -126,13 +125,6 @@ public final class ScooldUtils {
 	private List<Sysprop> allSpaces;
 
 	static {
-		API_USER = new Profile("1", "System");
-		API_USER.setVotes(1);
-		API_USER.setCreatorid("1");
-		API_USER.setTimestamp(Utils.timestamp());
-		API_USER.setPicture(getAnonymizedAvatarURL(Config.SUPPORT_EMAIL));
-		API_USER.setGroups(User.Groups.ADMINS.toString());
-
 		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
 				Utils.type(Feedback.class),
 				Utils.type(Profile.class),
@@ -177,6 +169,7 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
 	}
 
+	private final Profile API_USER;
 	private ParaClient pc;
 	private LanguageUtils langutils;
 	private static ScooldUtils instance;
@@ -186,6 +179,13 @@ public final class ScooldUtils {
 	public ScooldUtils(ParaClient pc, LanguageUtils langutils) {
 		this.pc = pc;
 		this.langutils = langutils;
+
+		API_USER = new Profile("1", "System");
+		API_USER.setVotes(1);
+		API_USER.setCreatorid("1");
+		API_USER.setTimestamp(Utils.timestamp());
+		API_USER.setPicture(getAnonymizedAvatarURL(Config.SUPPORT_EMAIL));
+		API_USER.setGroups(User.Groups.ADMINS.toString());
 	}
 
 	public ParaClient getParaClient() {
