@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.GravatarAvatarGenerator;
+import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,11 +61,13 @@ public class ProfileController {
 
 	private final ScooldUtils utils;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
+	private final LegacyAvatarRepository avatarRepository;
 
 	@Inject
-	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator) {
+	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, LegacyAvatarRepository avatarRepository) {
 		this.utils = utils;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
+		this.avatarRepository = avatarRepository;
 	}
 
 	@GetMapping({"", "/{id}/**"})
@@ -104,7 +107,7 @@ public class ProfileController {
 		model.addAttribute("path", "profile.vm");
 		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
 		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
-		model.addAttribute("ogimage", utils.getFullAvatarURL(showUser, AvatarFormat.Profile));
+		model.addAttribute("ogimage", avatarRepository.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isGravatarEnabled", gravatarAvatarGenerator.isEnabled());

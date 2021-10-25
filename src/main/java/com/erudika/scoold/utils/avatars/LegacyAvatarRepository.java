@@ -3,7 +3,6 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
 import com.erudika.scoold.core.Profile;
-import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

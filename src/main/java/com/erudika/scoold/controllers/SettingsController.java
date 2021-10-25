@@ -30,6 +30,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,10 +52,12 @@ import java.util.List;
 public class SettingsController {
 
 	private final ScooldUtils utils;
+	private final LegacyAvatarRepository avatarRepository;
 
 	@Inject
-	public SettingsController(ScooldUtils utils) {
+	public SettingsController(ScooldUtils utils, LegacyAvatarRepository avatarRepository) {
 		this.utils = utils;
+		this.avatarRepository = avatarRepository;
 	}
 
 	@GetMapping
@@ -177,7 +181,7 @@ public class SettingsController {
 	private void anonymizeProfile(Profile authUser) {
 		authUser.setName("Anonymous");
 		authUser.setOriginalPicture(authUser.getPicture());
-		authUser.setPicture(utils.getAnonymizedAvatarURL(authUser.getId() + "@scooldemail.com"));
+		authUser.setPicture(avatarRepository.getAnonymizedLink(authUser.getId() + "@scooldemail.com"));
 		authUser.setAnonymityEnabled(true);
 	}
 
