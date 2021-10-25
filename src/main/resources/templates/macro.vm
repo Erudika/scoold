@@ -294,7 +294,7 @@
 	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-				<img src="#profilepic($!showu)" width="50" class="profile-pic responsive-img">
+				<img src="$scooldUtils.getFullAvatarURL($!showu, "Square50")" width="50" class="profile-pic responsive-img">
 			</a>
 		#else
 			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="Profile picture">
@@ -338,7 +338,7 @@
 <div>
 	#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-			<img src="#profilepic($!showu)" width="32" class="profile-pic responsive-img">
+			<img src="$scooldUtils.getFullAvatarURL($!showu, "Square32")" width="32" class="profile-pic responsive-img">
 		</a>
 	#else
 		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="Profile picture">
@@ -375,7 +375,7 @@
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
-						<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
+						<img src="$scooldUtils.getFullAvatarURL($showFriend, "Square127")" class="profile-pic responsive-img pts pls">
 					</a>
 				</div>
 				<div class="col s9 m8">
