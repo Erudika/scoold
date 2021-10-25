@@ -52,6 +52,7 @@ import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
+import com.erudika.scoold.utils.avatars.GravatarAvatarGenerator;
 import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -175,14 +176,16 @@ public final class ScooldUtils {
 	private ParaClient pc;
 	private LanguageUtils langutils;
 	private final AvatarRepository avatarRepository;
+	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private static ScooldUtils instance;
 	@Inject private Emailer emailer;
 
 	@Inject
-	public ScooldUtils(ParaClient pc, LanguageUtils langutils, LegacyAvatarRepository avatarRepository) {
+	public ScooldUtils(ParaClient pc, LanguageUtils langutils, LegacyAvatarRepository avatarRepository, GravatarAvatarGenerator gravatarAvatarGenerator) {
 		this.pc = pc;
 		this.langutils = langutils;
 		this.avatarRepository = avatarRepository;
+		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 
 		apiUser = new Profile("1", "System");
 		apiUser.setVotes(1);
@@ -334,7 +337,7 @@ public final class ScooldUtils {
 	private boolean updateProfilePictureAndName(Profile authUser, User u) {
 		boolean update = false;
 		if (!StringUtils.equals(u.getPicture(), authUser.getPicture())
-				&& !StringUtils.contains(authUser.getPicture(), "gravatar.com")
+				&& !gravatarAvatarGenerator.isLink(authUser.getPicture())
 				&& !Config.getConfigBoolean("avatar_edits_enabled", true)) {
 			authUser.setPicture(u.getPicture());
 			update = true;
@@ -819,10 +822,6 @@ public final class ScooldUtils {
 
 	public boolean isAvatarValidationEnabled() {
 		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
-	}
-
-	public static boolean isGravatarEnabled() {
-		return Config.getConfigBoolean("gravatars_enabled", true);
 	}
 
 	public String getFooterHTML() {
@@ -1436,27 +1435,6 @@ public final class ScooldUtils {
 			}
 		}
 		return error;
-	}
-
-	private static String getGravatar(String email) {
-		if (!isGravatarEnabled()) {
-			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
-		}
-		if (StringUtils.isBlank(email)) {
-			return "https://www.gravatar.com/avatar?d=retro&size=400";
-		}
-		return "https://www.gravatar.com/avatar/" + Utils.md5(email.toLowerCase()) + "?size=400&d=retro";
-	}
-
-	public static String getFullAvatarGravatarUrl(Profile profile) {
-		if (!isGravatarEnabled()) {
-			return getServerURL() + CONTEXT_PATH +  PEOPLELINK + "/avatar";
-		}
-		if (profile == null || profile.getUser() == null) {
-			return "https://www.gravatar.com/avatar?d=retro&size=400";
-		} else {
-			return getGravatar(profile.getUser().getEmail());
-		}
 	}
 
 	public String getAnonymizedAvatarURL(String data) {

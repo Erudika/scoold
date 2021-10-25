@@ -33,6 +33,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.erudika.scoold.utils.avatars.AvatarFormat;
+import com.erudika.scoold.utils.avatars.GravatarAvatarGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,10 +59,12 @@ import java.util.ArrayList;
 public class ProfileController {
 
 	private final ScooldUtils utils;
+	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 
 	@Inject
-	public ProfileController(ScooldUtils utils) {
+	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator) {
 		this.utils = utils;
+		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 	}
 
 	@GetMapping({"", "/{id}/**"})
@@ -102,11 +107,13 @@ public class ProfileController {
 		model.addAttribute("ogimage", utils.getFullAvatarURL(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
+		model.addAttribute("isGravatarEnabled", gravatarAvatarGenerator.isEnabled());
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
-		model.addAttribute("gravatarPicture", utils.getFullAvatarGravatarUrl(showUser));
+		model.addAttribute("gravatarPicture", gravatarAvatarGenerator.getLink(showUser));
+		model.addAttribute("isGravatarPicture", gravatarAvatarGenerator.isLink(showUser.getPicture()));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);
@@ -189,7 +196,7 @@ public class ProfileController {
 		if (Config.getConfigBoolean("avatar_edits_enabled", true) &&
 				!StringUtils.isBlank(picture) && (Utils.isValidURL(picture) || picture.startsWith("data:"))) {
 			showUser.setPicture(picture);
-			if (!u.getPicture().equals(picture) && !picture.contains("gravatar.com")) {
+			if (!u.getPicture().equals(picture) && !gravatarAvatarGenerator.isLink(picture)) {
 				u.setPicture(picture);
 				updateUser = true;
 			}
