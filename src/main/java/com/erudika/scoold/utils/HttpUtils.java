@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -313,10 +314,12 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(backtoFromCookie)) {
 			backtoFromCookie = req.getParameter("returnto");
 		}
-		if ((StringUtils.startsWithIgnoreCase(backtoFromCookie, "http://") ||
-				StringUtils.startsWithIgnoreCase(backtoFromCookie, "https://")) &&
-				!StringUtils.startsWithIgnoreCase(backtoFromCookie, ScooldServer.getServerURL() + "/")) {
+		String serverUrl = ScooldServer.getServerURL() + "/";
+		String resolved = URI.create(serverUrl).resolve(backtoFromCookie).toString();
+		if (!StringUtils.startsWithIgnoreCase(resolved, serverUrl)) {
 			backtoFromCookie = "";
+		} else {
+			backtoFromCookie = resolved;
 		}
 		return (StringUtils.isBlank(backtoFromCookie) ? HOMEPAGE : backtoFromCookie);
 	}
