@@ -60,12 +60,14 @@ public class ProfileController {
 	private final ScooldUtils utils;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private final AvatarRepository avatarRepository;
+	private final AvatarConfig avatarConfig;
 
 	@Inject
-	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepositoryProxy avatarRepository) {
+	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepositoryProxy avatarRepository, AvatarConfig avatarConfig) {
 		this.utils = utils;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 		this.avatarRepository = avatarRepository;
+		this.avatarConfig = avatarConfig;
 	}
 
 	@GetMapping({"", "/{id}/**"})
@@ -108,7 +110,7 @@ public class ProfileController {
 		model.addAttribute("ogimage", avatarRepository.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
-		model.addAttribute("isGravatarEnabled", gravatarAvatarGenerator.isEnabled());
+		model.addAttribute("isGravatarEnabled", avatarConfig.isGravatarEnabled());
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));

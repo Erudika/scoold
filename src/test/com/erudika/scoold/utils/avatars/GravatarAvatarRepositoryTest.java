@@ -19,7 +19,7 @@ public class GravatarAvatarRepositoryTest {
 		this.profile = new Profile();
 		this.profile.setUser(new User());
 		this.defaultRepository = new DefaultAvatarRepository();
-		this.gravatarGenerator = new GravatarAvatarGenerator();
+		this.gravatarGenerator = new GravatarAvatarGenerator(new AvatarConfig());
 		this.repository = new GravatarAvatarRepository(gravatarGenerator, defaultRepository);
 	}
 

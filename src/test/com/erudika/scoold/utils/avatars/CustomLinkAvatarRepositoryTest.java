@@ -21,7 +21,7 @@ public class CustomLinkAvatarRepositoryTest {
 		this.profile = new Profile();
 		this.profile.setUser(new User());
 		this.defaultRepository = new DefaultAvatarRepository();
-		this.gravatarGenerator = new GravatarAvatarGenerator();
+		this.gravatarGenerator = new GravatarAvatarGenerator(config);
 		this.repository = new CustomLinkAvatarRepository(gravatarGenerator, config, defaultRepository);
 	}
 

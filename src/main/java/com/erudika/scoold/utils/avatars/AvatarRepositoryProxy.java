@@ -11,11 +11,11 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
 	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		this.repository = addGravatarIfEnabled(addCustomLinkIfEnabled(getDefault(), gravatarAvatarGenerator, config), gravatarAvatarGenerator);
+		this.repository = addGravatarIfEnabled(addCustomLinkIfEnabled(getDefault(), gravatarAvatarGenerator, config), gravatarAvatarGenerator, config);
 	}
 
-	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator) {
-		return gravatarAvatarGenerator.isEnabled()
+	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
+		return config.isGravatarEnabled()
 			? new GravatarAvatarRepository(gravatarAvatarGenerator, repo)
 			: repo;
 	}

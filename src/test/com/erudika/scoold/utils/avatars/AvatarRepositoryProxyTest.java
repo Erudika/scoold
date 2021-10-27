@@ -22,8 +22,9 @@ public class AvatarRepositoryProxyTest {
 
 	@Test
 	public void should_use_gravatar_then_custom_link_then_default_if_gravatar_enable() {
-		when(gravatarAvatarGeneratorFake.isEnabled()).thenReturn(true);
-		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, new AvatarConfig());
+		AvatarConfig config = mock(AvatarConfig.class);
+		when(config.isGravatarEnabled()).thenReturn(true);
+		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
 		when(gravatarAvatarGeneratorFake.getLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
@@ -50,8 +51,9 @@ public class AvatarRepositoryProxyTest {
 
 	@Test
 	public void should_not_use_gravatar_if_gravatar_disable() {
-		when(gravatarAvatarGeneratorFake.isEnabled()).thenReturn(false);
-		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, new AvatarConfig());
+		AvatarConfig config = mock(AvatarConfig.class);
+		when(config.isGravatarEnabled()).thenReturn(false);
+		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
 		when(gravatarAvatarGeneratorFake.getLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
