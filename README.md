@@ -1047,6 +1047,16 @@ the private key must be in the **PKCS#8 format** (`---BEGIN PRIVATE KEY---`). To
 ```
 openssl pkcs8 -topk8 -inform pem -nocrypt -in sp.rsa_key -outform pem -out sp.pem
 ```
+For simplicity, you can generate the certificates for SAML by executing the Bash script `gencerts.sh`,
+located in this repository:
+```
+./gencerts.sh localhost secret
+```
+Then, simply Base64-encode the contents of the public key `localhost.pem` and private key `localhost.key`:
+```
+base64 localhost.key > localhost_saml_base64.key
+base64 localhost.pem > localhost_saml_base64.pem
+```
 
 There are lots of configuration options but Para needs only a few of those in order to successfully
 authenticate with your SAML IDP (listed in the first rows below).
