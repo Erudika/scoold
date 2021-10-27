@@ -23,7 +23,7 @@ public class GravatarAvatarGenerator {
 	}
 
 	public String getLink(String email, AvatarFormat format) {
-		return URL_BASE + computeToken(email) + "?size=400&d=retro";
+		return URL_BASE + computeToken(email) + "?s=" + format.getSize() + "&r=g&d=" + config.gravatarPattern();
 	}
 
 	private String computeToken(String email) {
