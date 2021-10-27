@@ -52,8 +52,8 @@ import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
+import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
 import com.erudika.scoold.utils.avatars.GravatarAvatarGenerator;
-import com.erudika.scoold.utils.avatars.LegacyAvatarRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -181,7 +181,7 @@ public final class ScooldUtils {
 	@Inject private Emailer emailer;
 
 	@Inject
-	public ScooldUtils(ParaClient pc, LanguageUtils langutils, LegacyAvatarRepository avatarRepository, GravatarAvatarGenerator gravatarAvatarGenerator) {
+	public ScooldUtils(ParaClient pc, LanguageUtils langutils, AvatarRepositoryProxy avatarRepository, GravatarAvatarGenerator gravatarAvatarGenerator) {
 		this.pc = pc;
 		this.langutils = langutils;
 		this.avatarRepository = avatarRepository;

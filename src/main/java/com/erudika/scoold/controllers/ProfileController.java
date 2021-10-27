@@ -62,7 +62,7 @@ public class ProfileController {
 	private final AvatarRepository avatarRepository;
 
 	@Inject
-	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, LegacyAvatarRepository avatarRepository) {
+	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepositoryProxy avatarRepository) {
 		this.utils = utils;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 		this.avatarRepository = avatarRepository;

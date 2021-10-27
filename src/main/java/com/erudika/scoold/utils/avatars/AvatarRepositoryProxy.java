@@ -1,7 +1,12 @@
 package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
+import org.springframework.stereotype.Component;
 
+import javax.inject.Singleton;
+
+@Component
+@Singleton
 public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
