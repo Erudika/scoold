@@ -1922,6 +1922,10 @@ para.small_logo_url = "https://scoold.com/logo.png"
 para.dark_mode_enabled = true
 # enabled/disable Gravatars
 para.gravatars_enabled = true
+# pattern of default image of Gravatars (https://fr.gravatar.com/site/implement/images/)
+para.gravatars_pattern = "retro"
+# accept user to choose url as avatar
+para.avatar_custom_link_accepted = true
 
 # custom navbar links
 para.navbar_link1_url = ""

@@ -15,4 +15,12 @@ public class AvatarConfig {
 	public boolean isGravatarEnabled() {
 		return Config.getConfigBoolean("gravatars_enabled", true);
 	}
+
+	public String gravatarPattern() {
+		return Config.getConfigParam("gravatars_pattern", "retro");
+	}
+
+	public boolean isCustomLinkEnabled() {
+		return Config.getConfigBoolean("avatar_custom_link_accepted", true);
+	}
 }
