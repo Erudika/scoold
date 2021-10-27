@@ -23,12 +23,12 @@ public class GravatarAvatarRepository implements AvatarRepository {
 			return nextRepository.getLink(profile, format);
 		}
 
-		return gravatarAvatarGenerator.getLink(profile.getUser().getEmail());
+		return gravatarAvatarGenerator.getLink(profile.getUser().getEmail(), format);
 	}
 
 	@Override
 	public String getAnonymizedLink(String data) {
-		return gravatarAvatarGenerator.getLink(data);
+		return gravatarAvatarGenerator.getLink(data, AvatarFormat.Profile);
 	}
 
 	@Override

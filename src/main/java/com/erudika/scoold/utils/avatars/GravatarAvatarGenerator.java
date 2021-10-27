@@ -17,12 +17,12 @@ public class GravatarAvatarGenerator {
 		this.config = config;
 	}
 
-	public String getLink(Profile profile) {
+	public String getLink(Profile profile, AvatarFormat format) {
 		String email = (profile == null || profile.getUser() == null) ? "" : profile.getUser().getEmail();
-		return getLink(email);
+		return getLink(email, format);
 	}
 
-	public String getLink(String email) {
+	public String getLink(String email, AvatarFormat format) {
 		return URL_BASE + computeToken(email) + "?size=400&d=retro";
 	}
 

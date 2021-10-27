@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +27,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isGravatarEnabled()).thenReturn(true);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink("A")).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getLink("A", any())).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertEquals("https://gravatarA", result);
 
@@ -55,7 +56,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isGravatarEnabled()).thenReturn(false);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink("A")).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getLink("A", any())).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertNotEquals("https://gravatarA", result);
 	}

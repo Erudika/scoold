@@ -34,9 +34,9 @@ public class GravatarAvatarRepositoryTest {
 	public void getLink_should_return_gravatar_link_with_email() {
 		profile.getUser().setEmail("toto@example.com");
 
-		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+		String avatar = repository.getLink(profile, AvatarFormat.Square32);
 
-		assertEquals(gravatarGenerator.getLink("toto@example.com"), avatar);
+		assertEquals(gravatarGenerator.getLink("toto@example.com", AvatarFormat.Square32), avatar);
 	}
 
 	@Test
@@ -50,26 +50,26 @@ public class GravatarAvatarRepositoryTest {
 	}
 
 	@Test
-	public void getLink_should_return_gravatar_if_picture_is_a_gravatat() {
+	public void getLink_should_return_gravatar_if_picture_is_a_gravatar() {
 		profile.getUser().setEmail("toto@example.com");
-		profile.setPicture(gravatarGenerator.getLink("titi@example.com"));
+		profile.setPicture(gravatarGenerator.getLink("titi@example.com", AvatarFormat.Profile));
 
-		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+		String avatar = repository.getLink(profile, AvatarFormat.Square32);
 
-		assertEquals(gravatarGenerator.getLink("toto@example.com"), avatar);
+		assertEquals(gravatarGenerator.getLink("toto@example.com", AvatarFormat.Square32), avatar);
 	}
 
 	@Test
 	public void getAnonymizedLink_should_return_gravatar_with_data() {
 		String avatar = repository.getAnonymizedLink("A");
 
-		assertEquals(gravatarGenerator.getLink("A"), avatar);
+		assertEquals(gravatarGenerator.getLink("A", AvatarFormat.Square32), avatar);
 	}
 
 	@Test
 	public void store_should_change_profile_picture() {
 		profile.getUser().setEmail("toto@example.com");
-		String avatar = gravatarGenerator.getLink("toto@example.com");
+		String avatar = gravatarGenerator.getLink("toto@example.com", AvatarFormat.Profile);
 
 		AvatarStorageResult result = repository.store(profile, avatar);
 
