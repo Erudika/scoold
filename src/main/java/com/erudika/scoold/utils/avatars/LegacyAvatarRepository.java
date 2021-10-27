@@ -21,12 +21,12 @@ public class LegacyAvatarRepository implements AvatarRepository {
 	}
 
 	@Override
-	public String getLink(Profile user, AvatarFormat format) {
-		if (user == null || user.getPicture() == null) {
+	public String getLink(Profile profile, AvatarFormat format) {
+		if (profile == null || profile.getPicture() == null) {
 			return IMAGESLINK + "/anon.sgv";
 		}
 
-		String avatar = user.getPicture();
+		String avatar = profile.getPicture();
 		if (avatar.matches("^(http:|https:).*")) {
 			return isAvatarValidationEnabled()
 				? PEOPLELINK + "/avatar?url=" + Utils.urlEncode(avatar)
