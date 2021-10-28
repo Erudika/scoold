@@ -117,6 +117,7 @@ public class ProfileController {
 		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
 		model.addAttribute("gravatarPicture", gravatarAvatarGenerator.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("isGravatarPicture", gravatarAvatarGenerator.isLink(showUser.getPicture()));
+		model.addAttribute("defaultAvatar", avatarConfig.getDefaultAvatar());
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);

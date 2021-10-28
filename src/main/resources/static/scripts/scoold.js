@@ -527,40 +527,52 @@ $(function () {
 	var profilePic = $("img.profile-pic.on-profile-page");
 	var navbarPic = $("img.profile-pic:first");
 	var pictureUrlInput = $("#picture_url");
+	var avatarCustomUrlBlock = $("#avatar_custom_url_block");
 	var pictureEditForm = pictureUrlInput.closest("form");
+	var defaultAvatar = $("#avatar_default_url").val();
 
 	function changeAvatars(newPicValue) {
+		pictureUrlInput.val(newPicValue);
+
 		if (navbarPic.attr("src") === profilePic.attr("src")) {
 			navbarPic.attr("src", newPicValue);
 		}
 		profilePic.attr("src", newPicValue);
 	}
 
-	$("#use-gravatar-switch").change(function () {
-		var dis = $(this);
-		var newPic = pictureUrlInput.next("input[type=hidden]");
-		var newPicValue = newPic.val();
-		changeAvatars(newPicValue);
-		$.post(dis.closest("form").attr("action"), {picture: newPicValue});
-		// swap
-		newPic.val(pictureUrlInput.val());
-		pictureUrlInput.val(newPicValue);
+	function changeAvatarAndSubmit(newValue) {
+		setTimeout(function () {
+			changeAvatars(newValue);
+			$.post(pictureEditForm.attr("action"), {picture: newValue});
+		}, 200);
+	}
+
+	$("#avatar_custom_url").on('focusout paste', function () {
+		$("#use-gravatar-switch").prop('checked', false).trigger("change");
 	});
 
-	pictureUrlInput.on('focusout paste', function () {
-		var dis = $(this);
-		setTimeout(function () {
-			changeAvatars(dis.val());
-			$.post(pictureEditForm.attr("action"), {picture: dis.val()});
-		}, 200);
+	function updateAvatarFormDisplay() {
+		if($("#use-gravatar-switch").prop('checked')) {
+			avatarCustomUrlBlock.css({display: 'none', visibility: 'collapse'});
+		} else {
+			avatarCustomUrlBlock.css({display: 'block', visibility: 'visible'});
+		}
+	}
+
+	$("#use-gravatar-switch").change(function () {
+		var rthis = $(this);
+		if(rthis.prop('checked')) {
+			changeAvatarAndSubmit($("#avatar_gravatar_url").val());
+		} else {
+			changeAvatarAndSubmit($("#avatar_custom_url").val() || defaultAvatar);
+		}
+
+		updateAvatarFormDisplay();
 	});
+	updateAvatarFormDisplay();
 
 	$("#clear-avatar-btn").click(function () {
-		var defaultAvatar = window.location.origin + CONTEXT_PATH + "/people/avatar";
-		changeAvatars(defaultAvatar);
-		pictureUrlInput.val(defaultAvatar);
-		$.post($(this).closest("form").attr("action"), {picture: defaultAvatar});
-		$("#use-gravatar-switch").removeAttr("checked");
+		changeAvatarAndSubmit(defaultAvatar);
 		return false;
 	});
 
