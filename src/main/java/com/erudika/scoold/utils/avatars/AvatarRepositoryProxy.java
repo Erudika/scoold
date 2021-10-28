@@ -11,7 +11,7 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
 	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		this.repository = addGravatarIfEnabled(addCustomLinkIfEnabled(getDefault(), gravatarAvatarGenerator, config), gravatarAvatarGenerator, config);
+		this.repository = addGravatarIfEnabled(addCustomLinkIfEnabled(getDefault(config), gravatarAvatarGenerator, config), gravatarAvatarGenerator, config);
 	}
 
 	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
@@ -24,8 +24,8 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 		return new CustomLinkAvatarRepository(gravatarAvatarGenerator, config, repo);
 	}
 
-	private AvatarRepository getDefault() {
-		return new DefaultAvatarRepository();
+	private AvatarRepository getDefault(AvatarConfig config) {
+		return new DefaultAvatarRepository(config);
 	}
 
 	@Override

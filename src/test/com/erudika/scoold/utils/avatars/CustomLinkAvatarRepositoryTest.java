@@ -20,7 +20,7 @@ public class CustomLinkAvatarRepositoryTest {
 		this.config = mock(AvatarConfig.class);
 		this.profile = new Profile();
 		this.profile.setUser(new User());
-		this.defaultRepository = new DefaultAvatarRepository();
+		this.defaultRepository = new DefaultAvatarRepository(this.config);
 		this.gravatarGenerator = new GravatarAvatarGenerator(config);
 		this.repository = new CustomLinkAvatarRepository(gravatarGenerator, config, defaultRepository);
 	}
@@ -142,11 +142,15 @@ public class CustomLinkAvatarRepositoryTest {
 	}
 
 	@Test
-	public void store_should_reject_if_bad_url() {
+	public void store_should_call_next_repository_if_bad_url() {
+		AvatarRepository defaultRepository = mock(AvatarRepository.class);
+		AvatarRepository repository = new CustomLinkAvatarRepository(gravatarGenerator, config, defaultRepository);
 		String avatar = "bad:avatar";
+		when(defaultRepository.store(profile, avatar)).thenReturn(AvatarStorageResult.failed());
 
 		AvatarStorageResult result = repository.store(profile, avatar);
 
+		verify(defaultRepository).store(profile, avatar);
 		assertEquals(AvatarStorageResult.failed(), result);
 		assertNotEquals(avatar, profile.getPicture());
 		assertNotEquals(avatar, profile.getUser().getPicture());

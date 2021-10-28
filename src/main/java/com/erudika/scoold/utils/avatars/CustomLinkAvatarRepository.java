@@ -66,7 +66,7 @@ public class CustomLinkAvatarRepository implements AvatarRepository {
 	@Override
 	public AvatarStorageResult store(Profile profile, String url) {
 		if (!Utils.isValidURL(url) && !url.startsWith("data:")) {
-			return AvatarStorageResult.failed();
+			return nextRepository.store(profile, url);
 		}
 
 		profile.setPicture(url);

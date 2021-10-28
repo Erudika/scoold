@@ -18,8 +18,9 @@ public class GravatarAvatarRepositoryTest {
 	public void setUp(){
 		this.profile = new Profile();
 		this.profile.setUser(new User());
-		this.defaultRepository = new DefaultAvatarRepository();
-		this.gravatarGenerator = new GravatarAvatarGenerator(new AvatarConfig());
+		AvatarConfig config = new AvatarConfig();
+		this.defaultRepository = new DefaultAvatarRepository(config);
+		this.gravatarGenerator = new GravatarAvatarGenerator(config);
 		this.repository = new GravatarAvatarRepository(gravatarGenerator, defaultRepository);
 	}
 
@@ -63,7 +64,7 @@ public class GravatarAvatarRepositoryTest {
 	public void getAnonymizedLink_should_return_gravatar_with_data() {
 		String avatar = repository.getAnonymizedLink("A");
 
-		assertEquals(gravatarGenerator.getLink("A", AvatarFormat.Square32), avatar);
+		assertEquals(gravatarGenerator.getLink("A", AvatarFormat.Profile), avatar);
 	}
 
 	@Test

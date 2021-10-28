@@ -9,21 +9,23 @@ import static org.junit.Assert.*;
 
 public class DefaultAvatarRepositoryTest {
 	private DefaultAvatarRepository repository;
+	private AvatarConfig config;
 
 	@Before
 	public void setUp(){
-		this.repository = new DefaultAvatarRepository();
+		this.config = new AvatarConfig();
+		this.repository = new DefaultAvatarRepository(config);
 	}
 
 	@Test
 	public void getLink_should_return_always_default_avatar() {
-		assertEquals(IMAGESLINK + "/anon.sgv", repository.getLink(new Profile(), AvatarFormat.Profile));
+		assertEquals(config.getDefaultAvatar(), repository.getLink(new Profile(), AvatarFormat.Profile));
 		assertEquals( repository.getLink(new Profile(), AvatarFormat.Square32), repository.getLink(new Profile(), AvatarFormat.Profile));
 	}
 
 	@Test
 	public void getAnonymizedLink_should_always_return_default_avatar() {
-		assertEquals(IMAGESLINK + "/anon.sgv", repository.getAnonymizedLink("A"));
+		assertEquals(config.getDefaultAvatar(), repository.getAnonymizedLink("A"));
 		assertEquals( repository.getAnonymizedLink("A"), repository.getAnonymizedLink("B"));
 	}
 

@@ -4,6 +4,7 @@ import com.erudika.para.core.User;
 import com.erudika.scoold.core.Profile;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,10 +25,11 @@ public class AvatarRepositoryProxyTest {
 	@Test
 	public void should_use_gravatar_then_custom_link_then_default_if_gravatar_enable() {
 		AvatarConfig config = mock(AvatarConfig.class);
+		when(config.getDefaultAvatar()).thenReturn("/default_avatar");
 		when(config.isGravatarEnabled()).thenReturn(true);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink("A", any())).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getLink(ArgumentMatchers.eq("A"), any())).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertEquals("https://gravatarA", result);
 
@@ -43,11 +45,12 @@ public class AvatarRepositoryProxyTest {
 		assertEquals(AvatarStorageResult.userChanged(), storageCustomLinkResult);
 
 		AvatarStorageResult storageDefaultResult = repository.store(profile, "bad:avatar");
-		assertEquals(AvatarStorageResult.failed(), storageDefaultResult);
+		assertEquals("", profile.getPicture());
+		assertEquals(AvatarStorageResult.profileChanged(), storageDefaultResult);
 
 		profile.setPicture("bad:avatar");
 		String defaultLink = repository.getLink(profile, AvatarFormat.Profile);
-		assertEquals(new DefaultAvatarRepository().getLink(profile, AvatarFormat.Profile), defaultLink);
+		assertEquals(new DefaultAvatarRepository(config).getLink(profile, AvatarFormat.Profile), defaultLink);
 	}
 
 	@Test
@@ -56,7 +59,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isGravatarEnabled()).thenReturn(false);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink("A", any())).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getLink(ArgumentMatchers.eq("A"), any())).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertNotEquals("https://gravatarA", result);
 	}
