@@ -524,26 +524,26 @@ $(function () {
      *                    PROFILE
      ****************************************************/
 
-	var profilePic = $("img.profile-pic.on-profile-page");
-	var navbarPic = $("img.profile-pic:first");
-	var pictureUrlInput = $("#picture_url");
+	var profileAvatar = $("img.profile-pic.on-profile-page");
+	var navbarAvatar = $("img.profile-pic:first");
+	var avatarUrlInput = $("#picture_url");
 	var avatarCustomUrlBlock = $("#avatar_custom_url_block");
-	var pictureEditForm = pictureUrlInput.closest("form");
+	var avatarEditForm = avatarUrlInput.closest("form");
 	var defaultAvatar = $("#avatar_default_url").val();
 
 	function changeAvatars(newPicValue) {
-		pictureUrlInput.val(newPicValue);
+		avatarUrlInput.val(newPicValue);
 
-		if (navbarPic.attr("src") === profilePic.attr("src")) {
-			navbarPic.attr("src", newPicValue);
+		if (navbarAvatar.attr("src") === profileAvatar.attr("src")) {
+			navbarAvatar.attr("src", newPicValue);
 		}
-		profilePic.attr("src", newPicValue);
+		profileAvatar.attr("src", newPicValue);
 	}
 
 	function changeAvatarAndSubmit(newValue) {
 		setTimeout(function () {
 			changeAvatars(newValue);
-			$.post(pictureEditForm.attr("action"), {picture: newValue});
+			$.post(avatarEditForm.attr("action"), {picture: newValue});
 		}, 200);
 	}
 
