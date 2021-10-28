@@ -21,7 +21,9 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	}
 
 	private AvatarRepository addCustomLinkIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		return new CustomLinkAvatarRepository(gravatarAvatarGenerator, config, repo);
+		return config.isCustomLinkEnabled()
+			? new CustomLinkAvatarRepository(gravatarAvatarGenerator, config, repo)
+			: repo;
 	}
 
 	private AvatarRepository getDefault(AvatarConfig config) {
