@@ -16,7 +16,7 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 
 	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
 		return config.isGravatarEnabled()
-			? new GravatarAvatarRepository(gravatarAvatarGenerator, repo)
+			? new GravatarAvatarRepository(gravatarAvatarGenerator, config, repo)
 			: repo;
 	}
 

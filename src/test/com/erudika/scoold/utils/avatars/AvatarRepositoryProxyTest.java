@@ -30,7 +30,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isCustomLinkEnabled()).thenReturn(true);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink(ArgumentMatchers.eq("A"), any())).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getRawLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertEquals("https://gravatarA", result);
 
@@ -61,7 +61,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isCustomLinkEnabled()).thenReturn(true);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink(ArgumentMatchers.eq("A"), any())).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getRawLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertNotEquals("https://gravatarA", result);
 	}
@@ -74,7 +74,7 @@ public class AvatarRepositoryProxyTest {
 		when(config.isCustomLinkEnabled()).thenReturn(false);
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake, config);
 
-		when(gravatarAvatarGeneratorFake.getLink(ArgumentMatchers.eq("A"), any())).thenReturn("https://gravatarA");
+		when(gravatarAvatarGeneratorFake.getRawLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertEquals("https://gravatarA", result);
 

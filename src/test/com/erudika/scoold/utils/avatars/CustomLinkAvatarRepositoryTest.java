@@ -90,7 +90,7 @@ public class CustomLinkAvatarRepositoryTest {
 	@Test
 	public void getLink_should_return_original_picture_if_picture_is_gravatar() {
 		profile.setOriginalPicture("https://avatar");
-		profile.setPicture(gravatarGenerator.getLink("toto@example.com", AvatarFormat.Profile));
+		profile.setPicture(gravatarGenerator.getRawLink("toto@example.com"));
 
 		String avatar = repository.getLink(profile, AvatarFormat.Profile);
 
@@ -99,8 +99,8 @@ public class CustomLinkAvatarRepositoryTest {
 
 	@Test
 	public void getLink_should_return_default_if_picture_and_original_picture_are_gravatar() {
-		profile.setOriginalPicture(gravatarGenerator.getLink("toto@example.com", AvatarFormat.Profile));
-		profile.setPicture(gravatarGenerator.getLink("toto@example.com", AvatarFormat.Profile));
+		profile.setOriginalPicture(gravatarGenerator.getRawLink("toto@example.com"));
+		profile.setPicture(gravatarGenerator.getRawLink("toto@example.com"));
 
 		String avatar = repository.getLink(profile, AvatarFormat.Profile);
 

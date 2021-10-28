@@ -18,12 +18,16 @@ public class GravatarAvatarGenerator {
 	}
 
 	public String getLink(Profile profile, AvatarFormat format) {
-		String email = (profile == null || profile.getUser() == null) ? "" : profile.getUser().getEmail();
-		return getLink(email, format);
+		return configureLink(getRawLink(profile), format);
 	}
 
-	public String getLink(String email, AvatarFormat format) {
-		return URL_BASE + computeToken(email) + "?s=" + format.getSize() + "&r=g&d=" + config.gravatarPattern();
+	public String getRawLink(Profile profile) {
+		String email = (profile == null || profile.getUser() == null) ? "" : profile.getUser().getEmail();
+		return getRawLink(email);
+	}
+
+	public String getRawLink(String email) {
+		return URL_BASE + computeToken(email);
 	}
 
 	private String computeToken(String email) {
@@ -32,6 +36,10 @@ public class GravatarAvatarGenerator {
 		}
 
 		return Utils.md5(email.toLowerCase());
+	}
+
+	public String configureLink(String url, AvatarFormat format) {
+		return url + (url.endsWith("?") ? "&" : "?") + "s=" + format.getSize() + "&r=g&d=" + config.gravatarPattern();
 	}
 
 	public boolean isLink(String link) {
