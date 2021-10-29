@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
@@ -315,7 +316,7 @@ public final class HttpUtils {
 			backtoFromCookie = req.getParameter("returnto");
 		}
 		String serverUrl = ScooldServer.getServerURL() + "/";
-		String resolved = URI.create(serverUrl).resolve(backtoFromCookie).toString();
+		String resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();
 		if (!StringUtils.startsWithIgnoreCase(resolved, serverUrl)) {
 			backtoFromCookie = "";
 		} else {
