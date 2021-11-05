@@ -1269,6 +1269,14 @@ like Zapier because it implements the [RESTHooks](https://resthooks.org/) best p
 
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
+## Session duration
+
+By default, user sessions in Scoold expire after 24h. To change the session duration period to 6h for example,
+set `para.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will
+expire but the JWT inside the cookie may still be valid. So make sure you also configure Para to issue JWTs with the same
+toke validity period using `para.jwt_expires_after = 21600` or by updating your Para app object to have a property
+`tokenValiditySec: 21600`.
+
 ## Domain-restricted user registrations
 
 You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
