@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +67,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 			if (e.getCause() instanceof ConnectException || e.getMessage().contains("Connection refused")) {
 				//response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()); // breaks site
 				logger.error("No connection to Para backend.", e.getMessage());
-			} else if (e instanceof WebApplicationException && isApiRequest) {
+			} else if (e instanceof UnauthorizedException && isApiRequest) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else {
 				logger.error("Auth check failed:", e);

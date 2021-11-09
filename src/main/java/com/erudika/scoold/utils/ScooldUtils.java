@@ -90,7 +90,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
-import javax.ws.rs.WebApplicationException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -285,7 +284,7 @@ public final class ScooldUtils {
 		} else if (req.getRequestURI().equals(CONTEXT_PATH + "/api/stats") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
-			throw new WebApplicationException(401);
+			throw new UnauthorizedException();
 		}
 		return API_USER;
 	}
