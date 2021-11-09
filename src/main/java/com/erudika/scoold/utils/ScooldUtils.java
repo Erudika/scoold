@@ -1554,8 +1554,13 @@ public final class ScooldUtils {
 	}
 
 	public boolean isValidJWToken(String jwt) {
+		String appSecretKey = Config.getConfigParam("app_secret_key", "");
+		String masterSecretKey = Config.getConfigParam("secret_key", "");
+		return isValidJWToken(appSecretKey, jwt) || isValidJWToken(masterSecretKey, jwt);
+	}
+
+	boolean isValidJWToken(String secret, String jwt) {
 		try {
-			String secret = Config.getConfigParam("app_secret_key", "");
 			if (secret != null && jwt != null) {
 				JWSVerifier verifier = new MACVerifier(secret);
 				SignedJWT sjwt = SignedJWT.parse(jwt);
