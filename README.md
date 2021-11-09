@@ -2049,6 +2049,9 @@ API keys can be generated from the "Administration" page and can be made to expi
 API keys can also be generated with any JWT library. The body of the key should contain the `iat`, `appid` and `exp`
 claims and must be signed with the secret `para.app_secret_key`.
 
+**Note:** The Scoold API also accepts Para "super" tokens (manually generated) or JWTs generated using the
+[Para CLI tool](https://github.com/Erudika/para-cli).
+
 You can use the public endpoint `http://localhost:8000/api` to check the health of the server. A `GET /api` will
 return `200` if the server is healthy and connected to Para, otherwise status code `500` is returned.
 The response body is similar to this:
