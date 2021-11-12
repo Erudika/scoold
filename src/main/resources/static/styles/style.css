@@ -369,6 +369,9 @@ img.profile-pic:before {
 .post-actions a {
 	display: inline-block;
 }
+.comment-text {
+	display: inline-block;
+}
 .comment-text * {
 	font-size: inherit;
 	display: inline;

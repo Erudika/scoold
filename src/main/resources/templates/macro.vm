@@ -45,7 +45,7 @@
 	<div class="mbs ${hidden}">
 		#votebox($showcomment "left mrm pbs")
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
-		<span class="comment-text">$!{_commentHtml}</span>
+		<div class="comment-text">$!{_commentHtml}</div>
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
@@ -75,7 +75,7 @@
 	<div class="card-panel mbs">
 		<span class="lightborder phm mrm">$!showcomment.votes</span>
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
-		<a href="$questionlink/$showcomment.parentid" title="View answer"><span class="comment-text">$!{_commentHtml}</span></a>
+		<a href="$questionlink/$showcomment.parentid" title="View answer"><div class="comment-text">$!{_commentHtml}</div></a>
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
@@ -294,7 +294,7 @@
 	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-				<img src="#profilepic($!showu)" width="50" class="profile-pic responsive-img">
+				<img src="#profilepic($!showu)" width="50" class="profile-pic responsive-img" alt="Profile picture">
 			</a>
 		#else
 			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="Profile picture">
@@ -338,7 +338,7 @@
 <div>
 	#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-			<img src="#profilepic($!showu)" width="32" class="profile-pic responsive-img">
+			<img src="#profilepic($!showu)" width="32" class="profile-pic responsive-img" alt="Profile picture">
 		</a>
 	#else
 		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="Profile picture">
@@ -375,7 +375,7 @@
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
-						<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls">
+						<img src="#profilepic($showFriend)" class="profile-pic responsive-img pts pls" alt="Profile picture">
 					</a>
 				</div>
 				<div class="col s9 m8">

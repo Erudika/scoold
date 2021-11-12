@@ -49,7 +49,7 @@
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
+		<script nonce="$cspNonce" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
 		#externalScripts(true)
 		#foreach($externalStyle in $externalStyles)
@@ -226,8 +226,8 @@
 										<div class="nav-wrapper">
 											<form action="$searchlink">
 												<div class="input-field">
-													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
-													<label class="label-icon" for="search"><i class="fa fa-search fa-2x"></i></label>
+													<input id="search-box-mobile" type="search" name="q" placeholder="$!lang.get('search.search')" required>
+													<label class="label-icon" for="search-box-mobile"><i class="fa fa-search fa-2x"></i></label>
 													#if($!langDirection == "LTR")
 														<i class="material-icons fa fa-close"></i>
 													#end
@@ -275,7 +275,7 @@
 
 					<nav id="search-drawer" class="white z-depth-1 hide hide-on-med-and-down">
 						<div class="nav-wrapper container">
-							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
+							<form class="hide-on-med-and-down" action="$searchlink">
 								<div class="input-field">
 									#if($!langDirection == "RTL")
 										<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
