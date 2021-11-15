@@ -52,6 +52,7 @@ import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Arrays;
@@ -70,7 +71,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -391,8 +391,7 @@ public class ApiController {
 				createdUser = created.iterator().next();
 				if (Utils.timestamp() - createdUser.getTimestamp() > TimeUnit.SECONDS.toMillis(20)) {
 					createdUser = null; // user existed previously
-				} else
-					if (newUser.getActive() && !createdUser.getActive()) {
+				} else if (newUser.getActive() && !createdUser.getActive()) {
 					createdUser.setActive(true);
 					pc.update(createdUser);
 				}
