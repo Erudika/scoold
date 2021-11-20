@@ -933,14 +933,6 @@
 	#end
 #end
 ###################################
-#macro(formvc $ctype)
-<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)">
-#end
-###################################
-#macro(formvj $ctype $fields)
-<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled">
-#end
-#####################################
 #macro(formatdate $date $format)
 #if ($date && !$format.trim().isEmpty())
 $utils.formatDate($date, $format, $currentLocale)
