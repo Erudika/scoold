@@ -37,7 +37,8 @@
 				#spaceselect()
 
 				#if($scooldUtils.isNearMeFeatureEnabled())
-					<a href="#" class="next-div-toggle mll pll click2hide">
+				<div class="mll pll">
+					<a href="#" class="next-div-toggle click2hide">
 						<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
 					</a>
 					<div class="input-field hide">
@@ -47,6 +48,7 @@
 						<input type="hidden" name="latlng" value="">
 						<input type="hidden" name="address" value="">
 					</div>
+				</div>
 				#end
 
 				<div>
