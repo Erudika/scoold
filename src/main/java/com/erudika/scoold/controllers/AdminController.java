@@ -51,8 +51,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -334,7 +337,10 @@ public class AdminController {
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".zip");
 		return new ResponseEntity<StreamingResponseBody>(out -> {
-			ObjectWriter writer = ParaObjectUtils.getJsonWriterNoIdent().without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+			// export all fields, even those which are JSON-ignored
+			ObjectWriter writer = JsonMapper.builder().disable(MapperFeature.USE_ANNOTATIONS).build().writer().
+					without(SerializationFeature.INDENT_OUTPUT).
+					without(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 			try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
 				long count = 0;
 				int partNum = 0;
