@@ -274,6 +274,10 @@ public class ScooldServer extends SpringBootServletInitializer {
 				Config.getConfigBoolean("security.allow_unverified_emails",
 						StringUtils.isBlank(Config.getConfigParam("mail.host", ""))));
 
+		// sessions
+		settings.put("security.one_session_per_user", Config.getConfigBoolean("security.one_session_per_user", true));
+		settings.put("session_timeout", Config.getConfigInt("session_timeout", Config.SESSION_TIMEOUT_SEC));
+
 		// URLs for success and failure
 		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");

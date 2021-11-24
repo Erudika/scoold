@@ -219,13 +219,15 @@ para.password_auth_enabled = true
 para.min_password_length = 8
 # min. password strength (1=Good, 2=Strong, 3=Very Strong)
 para.min_password_strength = 2
-# Session cookie name
-para.auth_cookie = "scoold-auth"
 # Facebook - create your own Facebook app first!
 para.fb_app_id = "123456789"
 # Google - create your own Google app first!
 para.gp_app_id = "123-abcd.apps.googleusercontent.com"
 para.gp_secret = ""
+# one session per user
+para.security.one_session_per_user = true
+# session expires in 24h
+para.session_timeout = 86400
 ###############################
 
 ### Misc. ###
@@ -1269,13 +1271,18 @@ like Zapier because it implements the [RESTHooks](https://resthooks.org/) best p
 
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
-## Session duration
+## Session management and duration
 
-By default, user sessions in Scoold expire after 24h. To change the session duration period to 6h for example,
-set `para.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will
-expire but the JWT inside the cookie may still be valid. So make sure you also configure Para to issue JWTs with the same
-toke validity period using `para.jwt_expires_after = 21600` or by updating your Para app object to have a property
-`tokenValiditySec: 21600`.
+By default, only one session is allowed per user/browser. When a user logs in from one device, they will automatically be
+logged out from every other device. This can be disabled to allow multiple simultaneous sessions with:
+
+```ini
+para.security.one_session_per_user = false
+```
+
+User session cookies in Scoold expire after 24h. To change the session duration period to 6h for example, set
+`para.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will expire and so
+will the access token (JWT) inside the cookie.
 
 ## Domain-restricted user registrations
 

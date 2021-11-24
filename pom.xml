@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.41.4</version>
+			<version>1.41.3</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -133,6 +133,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>9.15.2</version>
 		</dependency>
 
 		<!-- TESTING -->
