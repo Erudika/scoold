@@ -1709,6 +1709,10 @@ public final class ScooldUtils {
 		if (Config.getConfigBoolean("referrer_header_enabled", true)) {
 			response.setHeader("Referrer-Policy", "strict-origin");
 		}
+		// Permissions Policy Header
+		if (Config.getConfigBoolean("permissions_header_enabled", true)) {
+			response.setHeader("Permissions-Policy", "microphone 'self'; camera 'self'; autoplay 'self'; geolocation 'self'");
+		}
 	}
 
 	public boolean cookieConsentGiven(HttpServletRequest request) {
