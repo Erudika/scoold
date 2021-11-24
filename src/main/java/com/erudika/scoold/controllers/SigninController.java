@@ -23,6 +23,7 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.utils.Config;
 import com.erudika.para.utils.Utils;
+import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;
@@ -110,9 +111,12 @@ public class SigninController {
 	}
 
 	@GetMapping("/signin/success")
-	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
-		if (!StringUtils.isBlank(jwt)) {
+	public String signinSuccess(@RequestParam(required = false) String jwt,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (!StringUtils.isBlank(jwt) && !"?".equals(jwt)) {
 			setAuthCookie(jwt, req, res);
+		} else if (!StringUtils.isBlank(HttpUtils.getCookieValue(req, AUTH_COOKIE))) {
+			return "redirect:" + getBackToUrl(req);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
