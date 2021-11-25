@@ -279,7 +279,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		settings.put("session_timeout", Config.getConfigInt("session_timeout", Config.SESSION_TIMEOUT_SEC));
 
 		// URLs for success and failure
-		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt=?");
+		settings.put("signin_success", getServerURL() + CONTEXT_PATH + SIGNINLINK + "/success?jwt-cookie=" + AUTH_COOKIE);
 		settings.put("signin_failure", getServerURL() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
 
 		ScooldUtils.tryConnectToPara(() -> {
