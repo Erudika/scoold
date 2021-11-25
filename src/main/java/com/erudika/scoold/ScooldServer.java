@@ -18,6 +18,7 @@
 package com.erudika.scoold;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.App;
 import com.erudika.para.email.Emailer;
 import com.erudika.para.utils.Config;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
@@ -60,19 +61,19 @@ public class ScooldServer extends SpringBootServletInitializer {
 	static {
 		// tells ParaClient where to look for classes that implement ParaObject
 		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
-		System.setProperty("para.auth_cookie", Config.getRootAppIdentifier().concat("-auth"));
+		System.setProperty("para.auth_cookie", getAppId().concat("-auth"));
 		System.setProperty("server.port", String.valueOf(getServerPort()));
 		System.setProperty("server.servlet.context-path", getServerContextPath());
 		System.setProperty("server.use-forward-headers", String.valueOf(Config.IN_PRODUCTION));
 	}
 
-	public static final String LOCALE_COOKIE = Config.getRootAppIdentifier() + "-locale";
-	public static final String SPACE_COOKIE = Config.getRootAppIdentifier() + "-space";
+	public static final String LOCALE_COOKIE = getAppId() + "-locale";
+	public static final String SPACE_COOKIE = getAppId() + "-space";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
 	public static final String CONTEXT_PATH = StringUtils.stripEnd(getServerContextPath(), "/");
 	public static final String CDN_URL = StringUtils.stripEnd(Config.getConfigParam("cdn_url", CONTEXT_PATH), "/");
-	public static final String AUTH_COOKIE = Config.getConfigParam("auth_cookie", "scoold-auth");
+	public static final String AUTH_COOKIE = getAppId() + "-auth";
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
 	public static final String REST_ENTITY_ATTRIBUTE = "REST_ENTITY";
 	public static final String IMAGESLINK = (Config.IN_PRODUCTION ? CDN_URL : CONTEXT_PATH) + "/images";
@@ -352,5 +353,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 					+ "Change 'para.google_client_id' to 'para.gp_app_id' and also add the secret key for your OAuth2 "
 					+ "app as 'para.gp_secret' in your configuration. https://console.cloud.google.com/apis/credentials");
 		}
+	}
+
+	private static String getAppId() {
+		return App.identifier(Config.getConfigParam("access_key", Config.getConfigParam("app_key", "scoold")));
 	}
 }
