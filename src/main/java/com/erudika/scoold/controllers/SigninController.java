@@ -97,12 +97,6 @@ public class SigninController {
 		return "base";
 	}
 
-	@GetMapping(path = "/signin", params = {"access_token", "provider"})
-	public String signinGet(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
-			HttpServletRequest req, HttpServletResponse res) {
-		return getAuth(provider, accessToken, req, res);
-	}
-
 	@PostMapping(path = "/signin", params = {"access_token", "provider"})
 	public String signinPost(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
 			HttpServletRequest req, HttpServletResponse res) {
@@ -112,11 +106,7 @@ public class SigninController {
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt)) {
-			if ("true".equals(jwt)) {
-				setAuthCookie(jwt, req, res);
-			} else {
-				setAuthCookie(jwt, req, res);
-			}
+			loginWithIdToken(jwt, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
@@ -278,20 +268,32 @@ public class SigninController {
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 			User u = pc.signIn(provider, accessToken, false);
-			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
-				// the user password in this case is a Bearer token (JWT)
-				setAuthCookie(u.getPassword(), req, res);
-			} else {
-				if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
-					LoggerFactory.getLogger(SigninController.class).
-							warn("Signin denied for {} because that domain is not in the whitelist.", u.getEmail());
-				}
-				boolean isLocked = isAccountLocked(email);
-				return "redirect:" + SIGNINLINK + "?code=" + (isLocked ? "6" : "3") + "&error=true" +
-						(isLocked ? "&email=" + email : "");
+			if (u == null && isAccountLocked(email)) {
+				return "redirect:" + SIGNINLINK + "?code=6&error=true&email=" + email;
 			}
+			return onAuthSuccess(u, req, res);
 		}
 		return "redirect:" + getBackToUrl(req);
+	}
+
+	private void loginWithIdToken(String jwt, HttpServletRequest req, HttpServletResponse res) {
+		User u = pc.signIn("passwordless", jwt, false);
+		if (u != null) {
+			setAuthCookie(u.getPassword(), req, res);
+			onAuthSuccess(u, req, res);
+		}
+	}
+
+	private String onAuthSuccess(User u, HttpServletRequest req, HttpServletResponse res) {
+		if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
+			// the user password in this case is a Bearer token (JWT)
+			setAuthCookie(u.getPassword(), req, res);
+			return "redirect:" + getBackToUrl(req);
+		} else if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
+			LoggerFactory.getLogger(SigninController.class).
+					warn("Signin failed for {} because that domain is not in the whitelist.", u.getEmail());
+		}
+		return "redirect:" + SIGNINLINK + "?code=3&error=true";
 	}
 
 	private boolean activateWithEmailToken(User u, String token) {

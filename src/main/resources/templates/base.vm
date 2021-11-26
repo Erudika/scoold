@@ -431,9 +431,10 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 				$('#fb-login-btn').on('click', function () {
+					var that = $(this);
 					FB.login(function(response) {
 						if (response.authResponse) {
-							window.location = "${CONTEXT_PATH}/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
+							that.closest("form").find("input[type=hidden]").val(response.authResponse.accessToken).next().click();
 						} else {
 							window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
 						}
