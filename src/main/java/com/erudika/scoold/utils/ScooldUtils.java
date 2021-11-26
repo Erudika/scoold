@@ -1780,8 +1780,7 @@ public final class ScooldUtils {
 					FILE_CACHE.put("theme", themeName);
 				}
 			}
-			loadedTheme = StringUtils.replaceEachRepeatedly(loadedTheme,
-					new String[] {"<", "</", "<script", "<SCRIPT"}, new String[] {"", "", "", ""});
+			loadedTheme = StringEscapeUtils.escapeEcmaScript(loadedTheme);
 			return loadedTheme + "\n/*** END OF THEME CSS ***/\n" + inline;
 		} catch (Exception e) {
 			logger.debug("Failed to load inline CSS.");
