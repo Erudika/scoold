@@ -870,6 +870,10 @@ public final class ScooldUtils {
 		return Config.getConfigParam("navbar_menu_link2_text", "Menu Link2");
 	}
 
+	public boolean alwaysHideCommentForms() {
+		return Config.getConfigBoolean("always_hide_comment_forms", true);
+	}
+
 	public Set<String> getCoreScooldTypes() {
 		return Collections.unmodifiableSet(CORE_TYPES);
 	}

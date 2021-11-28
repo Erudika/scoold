@@ -8,15 +8,14 @@
 <div class="newcommentform mtm ${hide}">
 	<form method="post" action="$commentlink" class="new-comment-form">
 		##sectoken(false "ADD_COMMENT_$!parentid") ## BREAKS AJAX - NOT USED
-		<div>
-			<small class="grey-text mtnl"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
-				<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></small>
-		</div>
 		<div class="row mbn">
 			<div class="col s10">
-				<div class="input-field">
+				<div class="input-field mvn">
 					#set($maxplus1 = $!maxCommentLength + 1)
-					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')</label>
+					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')
+						<span class="grey-text mhs"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
+						<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></span>
+					</label>
 					<input id="new-comment-$!{parentid}" type="text" name="comment" value=""
 								 data-length="$!maxCommentLength" maxlength="$!maxplus1" class="validate charcounter" required>
 					<span class="helper-text" data-error="$!maxCommentLengthError"></span>
@@ -710,7 +709,7 @@
 					#end
 					#if ($showpost.lasteditby)
 						#if($showpost.revisionid)
-							<a href="$revisionslink/$!showpost.id" title="Revision history">
+							<a href="$revisionslink/$!showpost.id" title="Revision history" class="smallText">
 								$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
 							</a>
 						#else
@@ -743,7 +742,7 @@
 						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
-					#if ($canComment && !$showpost.isFeedback())
+					#if ($canComment && !$showpost.isFeedback() && $scooldUtils.alwaysHideCommentForms())
 						<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
 					#end
 
@@ -772,7 +771,7 @@
 					#end
 
 					#if ($canComment)
-						#newcommentform($showpost.id true "$questionlink/$showpost.id")
+						#newcommentform($showpost.id $scooldUtils.alwaysHideCommentForms() "$questionlink/$showpost.id")
 					#end
 				</div>
 			</div>

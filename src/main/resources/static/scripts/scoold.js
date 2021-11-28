@@ -860,6 +860,16 @@ $(function () {
 		} catch (exception) {}
 	}
 
+	$(".show-answer-question-form").click(function () {
+		$(this).closest("div").next("div").removeClass("hide").end().hide();
+	});
+
+	if (window.location.pathname.match("/write$")) {
+		$("html, body").animate({
+			scrollTop: $("#answer-question-form").first().offset().top
+		});
+	}
+
 	var answerForm = $("form#answer-question-form");
 	if (answerForm.length) {
 		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
