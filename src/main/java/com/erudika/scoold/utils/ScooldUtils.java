@@ -1711,7 +1711,7 @@ public final class ScooldUtils {
 		}
 		// Permissions Policy Header
 		if (Config.getConfigBoolean("permissions_header_enabled", true)) {
-			response.setHeader("Permissions-Policy", "microphone 'self'; camera 'self'; autoplay 'self'; geolocation 'self'");
+			response.setHeader("Permissions-Policy", "geolocation=()");
 		}
 	}
 
