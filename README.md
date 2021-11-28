@@ -1960,6 +1960,9 @@ para.navbar_menu_link2_text = "Menu Link2"
 para.favtags_emails_enabled = false
 para.reply_emails_enabled = false
 para.comment_emails_enabled = false
+
+# comment input box toggle
+para.always_hide_comment_forms = true
 ```
 
 ### Custom Logo
