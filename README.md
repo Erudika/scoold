@@ -255,7 +255,7 @@ para.webhooks_enabled = true
 para.wiki_answers_enabled = true
 # Comment limits
 para.max_comments_per_id = 1000
-para.max_comment_length = 255
+para.max_comment_length = 600
 # Post body limit (characters)
 para.max_post_length = 20000
 # Tags per post limit, must be < 100

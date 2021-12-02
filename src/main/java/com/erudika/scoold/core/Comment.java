@@ -35,7 +35,7 @@ public class Comment extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
 	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
-	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", 255);
+	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", 600);
 
 	@Stored private String comment;
 	@Stored private Boolean hidden;
