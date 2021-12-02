@@ -374,7 +374,10 @@ img.profile-pic:before {
 }
 .comment-text * {
 	font-size: inherit;
-	display: inline;
+	/*display: inline;*/
+}
+.comment-text p:first-child {
+	margin: 0;
 }
 .comment-timestamp {
 	display: inline-block;
