@@ -45,6 +45,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpStatus;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
@@ -54,6 +55,7 @@ import org.springframework.http.HttpHeaders;
  */
 public final class HttpUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 	private static CloseableHttpClient httpclient;
 	private static final String DEFAULT_AVATAR = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 			+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
@@ -316,7 +318,12 @@ public final class HttpUtils {
 			backtoFromCookie = req.getParameter("returnto");
 		}
 		String serverUrl = ScooldServer.getServerURL() + "/";
-		String resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();
+		String resolved = "";
+		try {
+			resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();
+		} catch (Exception e) {
+			logger.warn("Invalid return-to URI: {}", e.getMessage());
+		}
 		if (!StringUtils.startsWithIgnoreCase(resolved, serverUrl)) {
 			backtoFromCookie = "";
 		} else {

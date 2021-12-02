@@ -268,6 +268,8 @@ para.numeric_pagination_enabled = false
 para.default_language_code = ""
 # Enable/disable basic HTML tags in the text editor
 para.html_in_markdown_enabled = false
+# How line breaks in Markdown are interpreted - can be changed to "\n"
+para.markdown_soft_break = "<br>"
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
