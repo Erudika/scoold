@@ -1139,7 +1139,7 @@ public final class ScooldUtils {
 	}
 
 	public List<Sysprop> getAllSpaces() {
-		if (allSpaces == null || allSpaces.isEmpty()) {
+		if (allSpaces == null) {
 			allSpaces = new LinkedList<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
 		}
 		return allSpaces;
