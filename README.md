@@ -2123,6 +2123,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | :heavy_check_mark: Thanks Jan Halsema!
 **English** | [lang_en.properties](src/main/resources/lang_en.properties) | :heavy_check_mark:
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
+**Farsi** | [lang_fa.properties](src/main/resources/lang_fa.properties) | :heavy_check_mark: Thanks Sadegh G. Shohani!
 **Finnish** | [lang_fi.properties](src/main/resources/lang_fi.properties) | 0%
 **French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | :heavy_check_mark: Thanks Charles Maheu!
 **German** | [lang_de.properties](src/main/resources/lang_de.properties) | :heavy_check_mark: Thanks Patrick Gäckle!
