@@ -689,10 +689,14 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
+	public void sendCommentNotifications(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
 		// send email notification to author of post except when the comment is by the same person
 		if (parentPost != null && comment != null) {
 			parentPost.setAuthor(pc.read(Profile.id(parentPost.getCreatorid()))); // parent author is not current user (authUser)
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
+			payload.put("parent", parentPost);
+			payload.put("author", commentAuthor);
+			triggerHookEvent("comment.create", payload);
 			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
 			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
 			boolean isCommentatorThePostAuthor = StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid());
@@ -721,11 +725,6 @@ public final class ScooldUtils {
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
 				}
-
-				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
-				payload.put("parent", parentPost);
-				payload.put("author", commentAuthor);
-				triggerHookEvent("comment.create", payload);
 			});
 		}
 	}
