@@ -17,12 +17,12 @@
  */
 package com.erudika.scoold.controllers;
 
-import com.erudika.para.annotations.Email;
+import com.erudika.para.core.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;

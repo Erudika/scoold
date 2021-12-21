@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.Para;
+import com.erudika.para.core.utils.Para;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
@@ -27,11 +27,11 @@ import com.erudika.para.core.User;
 import com.erudika.para.core.Vote;
 import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.email.Emailer;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
-import com.erudika.para.validation.ValidationUtils;
+import com.erudika.para.core.email.Emailer;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
+import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
@@ -730,7 +730,7 @@ public final class ScooldUtils {
 	}
 
 	private String escapeHtmlAttribute(String value) {
-		return value
+		return StringUtils.trimToEmpty(value)
 				.replaceAll("'", "%27")
 				.replaceAll("\"", "%22")
 				.replaceAll("\\\\", "");

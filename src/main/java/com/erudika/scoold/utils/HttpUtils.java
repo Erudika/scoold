@@ -17,8 +17,8 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;

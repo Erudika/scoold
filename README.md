@@ -105,7 +105,7 @@ Here's an overview of the architecture:
 
 ### Quick Start with a managed Para backend (easier)
 
-[JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
+[JDK 11 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Create Scoold's configuration file named `application.conf` and add the following properties to it:

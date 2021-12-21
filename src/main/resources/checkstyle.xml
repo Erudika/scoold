@@ -14,6 +14,10 @@
 		<property name="max" value="4000"/>
 	</module>
 
+<!--	<module name="LineLength">
+		<property name="max" value="180"/>
+	</module>-->
+
 	<module name="TreeWalker">
 		<module name="RegexpSinglelineJava">
 			<property name="format" value="\s+$"/>
@@ -30,7 +34,8 @@
 <!--		<module name="JavadocType"/>
 		<module name="JavadocStyle"/>
 		<module name="JavadocMethod">
-			<property name="scope" value="public"/>
+			<property name="accessModifiers" value="public"/>
+			<property name="allowMissingParamTags" value="true"/>
 		</module>
 		<module name="JavadocVariable">
 			<property name="scope" value="public"/>
@@ -62,9 +67,6 @@
 		</module>
 
 		<!--Checks for Size Violations.-->
-		<module name="LineLength">
-			<property name="max" value="180"/>
-		</module>
 		<module name="MethodLength"/>
 		<module name="ParameterNumber">
 			<property name="max" value="20"/>

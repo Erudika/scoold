@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.api;
 
-import com.erudika.para.annotations.Locked;
+import com.erudika.para.core.annotations.Locked;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
@@ -25,10 +25,10 @@ import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
-import com.erudika.para.validation.ValidationUtils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
+import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_USER_ATTRIBUTE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
