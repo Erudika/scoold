@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.REPORTSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 
 /**
  *
@@ -61,8 +62,10 @@ public class ReportsController {
 	@GetMapping
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
-		if (!utils.isMod(utils.getAuthUser(req))) {
+		if (utils.isAuthenticated(req) && !utils.isMod(utils.getAuthUser(req))) {
 			return "redirect:" + REPORTSLINK;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + REPORTSLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
