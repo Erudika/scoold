@@ -1008,8 +1008,12 @@ public final class ScooldUtils {
 				clSize = post.getComments().size();
 			} else {
 				post.setComments(cl);
+				if (clSize == post.getItemcount().getLimit() && pc.getCount(Utils.type(Comment.class),
+						Collections.singletonMap("parentid", post.getId())) > clSize) {
+					clSize++; // hack to show the "more" button
+				}
 			}
-			post.getItemcount().setCount(clSize + 1L); // hack to show the "more" button
+			post.getItemcount().setCount(clSize);
 		}
 		if (!forUpdate.isEmpty()) {
 			pc.updateAll(allPosts);

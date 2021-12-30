@@ -228,7 +228,7 @@
 	<div class="page-content">#evaluate($scooldUtils.getMacroCode($macroCode))</div>
 	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
 	#if ($pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
-		<div class="pages center mtl">
+		<div class="pages center mvm">
 			#if($numericPaginationEnabled && $macroCode != "postcomments")
 				#set($maxPageLinks = 7)
 				#set($activeClass = "active light-blue")
@@ -687,7 +687,7 @@
 			$!{_bodyHtml}
 		</div>
 
-		<div class="row">
+		<div class="row mbn">
 			<div class="col s4 m4 l4">
 				<div class="left mtm mrl approve-answer-btn">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
@@ -723,6 +723,10 @@
 					#smallpersonbox($showpost.author)
 				</div>
 			</div>
+		</div>
+
+		<div class="comments post-comments pvs">
+			#paginate("postcomments" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
 		</div>
 
 		<div class="row">
@@ -856,10 +860,6 @@
 	</div>
 	#end
 	#end
-
-	<div class="comments post-comments">
-		#paginate("postcomments" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
-	</div>
 </div>
 #end
 ###################################
