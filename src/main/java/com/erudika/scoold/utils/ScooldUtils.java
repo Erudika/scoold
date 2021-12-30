@@ -177,6 +177,7 @@ public final class ScooldUtils {
 	private final ParaClient pc;
 	private final LanguageUtils langutils;
 	private static ScooldUtils instance;
+	private Sysprop customTheme;
 	@Inject private Emailer emailer;
 
 	@Inject
@@ -1787,7 +1788,7 @@ public final class ScooldUtils {
 				if (StringUtils.isBlank(loadedTheme)) {
 					FILE_CACHE.put("theme", "default");
 					custom.setName("default");
-					pc.update(custom);
+					customTheme = pc.update(custom);
 					return inline;
 				} else {
 					FILE_CACHE.put("theme", themeName);
@@ -1809,26 +1810,17 @@ public final class ScooldUtils {
 		Sysprop custom = new Sysprop(id);
 		custom.setName(StringUtils.isBlank(css) && isCustom ? "default" : themeName);
 		custom.addProperty("theme", css);
-		pc.create(custom);
+		customTheme = pc.create(custom);
 		FILE_CACHE.put("theme", themeName);
 		FILE_CACHE.put(getThemeKey(themeName), isCustom ? css : loadResource(getThemeKey(themeName)));
 	}
 
 	public Sysprop getCustomTheme() {
 		String id = "theme" + Config.SEPARATOR + "custom";
-		return (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(this::getDefaultThemeObject);
-		// !!!!!!!: make this more efficient by storing the selected theme in cookie, then get from cache.
-//		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
-//		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
-//			Sysprop s = new Sysprop(id);
-//			s.setName(selectedTheme);
-//			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
-//			return s;
-//		} else if ("custom".equalsIgnoreCase(selectedTheme)) {
-//			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
-//					orElseGet(() -> getDefaultThemeObject());
-//		}
-//		return getDefaultThemeObject();
+		if (customTheme == null) {
+			customTheme = (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(this::getDefaultThemeObject);
+		}
+		return customTheme;
 	}
 
 	private Sysprop getDefaultThemeObject() {
