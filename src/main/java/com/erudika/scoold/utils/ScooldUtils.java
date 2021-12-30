@@ -174,8 +174,8 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
 	}
 
-	private ParaClient pc;
-	private LanguageUtils langutils;
+	private final ParaClient pc;
+	private final LanguageUtils langutils;
 	private static ScooldUtils instance;
 	@Inject private Emailer emailer;
 
@@ -1465,7 +1465,17 @@ public final class ScooldUtils {
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
-			HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
+			String jwt = HttpUtils.getStateParam(AUTH_COOKIE, req);
+			if (!StringUtils.isBlank(jwt)) {
+				if (Config.getConfigBoolean("security.one_session_per_user", true)) {
+					synchronized (pc) {
+						pc.setAccessToken(jwt);
+						pc.revokeAllTokens();
+						pc.signOut();
+					}
+				}
+				HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
+			}
 			HttpUtils.removeStateParam("dark-mode", req, res);
 		}
 	}
