@@ -273,11 +273,11 @@ public class QuestionsController {
 			}
 		}
 		utils.storeSpaceIdInCookie(space, req, res);
-		String backTo = req.getParameter("returnto");
+		String backTo = HttpUtils.getBackToUrl(req);
 		if (StringUtils.isBlank(backTo)) {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
-			return "redirect:" + (StringUtils.isBlank(backTo) ? QUESTIONSLINK : backTo);
+			return "redirect:" + backTo;
 		}
 	}
 
