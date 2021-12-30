@@ -172,7 +172,7 @@ public class QuestionsController {
 			}
 			savePagerToCookie(req, res, p);
 			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
-					req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
+					req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		}
 		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby="
 				+ Optional.ofNullable(StringUtils.trimToNull(tab)).orElse(sortby));
@@ -403,7 +403,7 @@ public class QuestionsController {
 	private void savePagerToCookie(HttpServletRequest req, HttpServletResponse res, Pager p) {
 		try {
 			HttpUtils.setRawCookie("questions-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
-					writeValueAsBytes(p)), req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
+					writeValueAsBytes(p)), req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		} catch (JsonProcessingException ex) { }
 	}
 

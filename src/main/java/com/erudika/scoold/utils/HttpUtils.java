@@ -124,7 +124,7 @@ public final class HttpUtils {
 	 */
 	public static void setStateParam(String name, String value, HttpServletRequest req,
 			HttpServletResponse res, boolean httpOnly) {
-		setRawCookie(name, value, req, res, httpOnly, -1);
+		setRawCookie(name, value, req, res, httpOnly, null, -1);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public final class HttpUtils {
 	 */
 	public static void removeStateParam(String name, HttpServletRequest req,
 			HttpServletResponse res) {
-		setRawCookie(name, "", req, res, false, 0);
+		setRawCookie(name, "", req, res, false, null, 0);
 	}
 
 	/**
@@ -155,19 +155,32 @@ public final class HttpUtils {
 	 * @param req HTTP request
 	 * @param res HTTP response
 	 * @param httpOnly HTTP only flag
+	 * @param sameSite SameSite flag
 	 * @param maxAge max age
 	 */
 	public static void setRawCookie(String name, String value, HttpServletRequest req,
-			HttpServletResponse res, boolean httpOnly, int maxAge) {
+			HttpServletResponse res, boolean httpOnly, String sameSite, int maxAge) {
 		if (StringUtils.isBlank(name) || value == null || req == null || res == null) {
 			return;
 		}
-		Cookie cookie = new Cookie(name, value);
-		cookie.setHttpOnly(httpOnly);
-		cookie.setMaxAge(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge);
-		cookie.setPath(CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH);
-		cookie.setSecure(StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure());
-		res.addCookie(cookie);
+		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
+				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
+		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
+		StringBuilder sb = new StringBuilder();
+		sb.append(name).append("=").append(value).append(";");
+		sb.append("Path=").append(path).append(";");
+		sb.append("Expires=").append(expires).append(";");
+		sb.append("Max-Age=").append(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge).append(";");
+		if (httpOnly) {
+			sb.append("HttpOnly;");
+		}
+		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
+			sb.append("Secure;");
+		}
+		if (!StringUtils.isBlank(sameSite)) {
+			sb.append("SameSite=").append(sameSite);
+		}
+		res.addHeader(javax.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
 	}
 
 	/**
@@ -291,21 +304,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(jwt)) {
 			return;
 		}
-		int maxAge = Config.SESSION_TIMEOUT_SEC;
-		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
-				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
-		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
-		StringBuilder sb = new StringBuilder();
-		sb.append(AUTH_COOKIE).append("=").append(jwt).append(";");
-		sb.append("Path=").append(path).append(";");
-		sb.append("Expires=").append(expires).append(";");
-		sb.append("Max-Age=").append(maxAge).append(";");
-		sb.append("HttpOnly;");
-		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
-			sb.append("Secure;");
-		}
-		sb.append("SameSite=Lax");
-		res.addHeader(javax.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
+		setRawCookie(AUTH_COOKIE, jwt, req, res, true, "Lax", Config.SESSION_TIMEOUT_SEC);
 	}
 
 	/**
