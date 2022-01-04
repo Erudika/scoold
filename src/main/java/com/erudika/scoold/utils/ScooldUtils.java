@@ -386,28 +386,27 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendVerificationEmail(String email, HttpServletRequest req) {
-		if (!StringUtils.isBlank(email)) {
+	public void sendVerificationEmail(Sysprop identifier, HttpServletRequest req) {
+		if (identifier != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
 			String body = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
 					lang.get("notification.signature") + "<br><br>"));
 
-			Sysprop s = pc.read(email);
-			if (s != null) {
-				String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
-				s.addProperty(Config._EMAIL_TOKEN, token);
-				pc.update(s);
-				token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + s.getCreatorid() + "&token=" + token;
-				body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
-			}
+			String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+			identifier.addProperty(Config._EMAIL_TOKEN, token);
+			identifier.addProperty("confirmationTimestamp", Utils.timestamp());
+			pc.update(identifier);
+			token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" +
+					identifier.getCreatorid() + "&token=" + token;
+			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body);
-			emailer.sendEmail(Arrays.asList(email), subject, compileEmailTemplate(model));
+			emailer.sendEmail(Arrays.asList(identifier.getId()), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -1856,7 +1855,7 @@ public final class ScooldUtils {
 				+ "form-action 'self' " + Config.getConfigParam("signout_url", "") + "; "
 				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
 				+ " maps.googleapis.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
-				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
+				+ "frame-src 'self' *.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com " // unsafe-inline required by MathJax and Google Maps!
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +

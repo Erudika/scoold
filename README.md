@@ -706,6 +706,17 @@ You can enable or disable the email verification step by setting `para.security.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
 
+## reCAPTCHA support
+
+You can protect signups and password reset functionality with reCAPTCHA v3. First you will need to register a new domain
+at [Google reCAPTCHA](https://www.google.com/recaptcha/admin). Create a new reCAPTCHA v3, add your site to the whitelist
+and copy the two keys - a clientside key (site key) and a serverside key (secret). Then, protect the pages
+`/signin/register` and `/signin/iforgot` by adding these properties to your configuration:
+```ini
+para.signup_captcha_site_key = "site-key-from-google"
+para.signup_captcha_secret_key = "secret-from-google"
+```
+
 ## Welcome email customization
 
 To customize the message sent when a new user signs up with Scoold, modify these properties in your Scoold configuration

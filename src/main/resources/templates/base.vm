@@ -445,6 +445,11 @@
 			#end
 		#end
 
+		#if ($captchakey && !$captchakey.isBlank())
+		<script nonce="$cspNonce" src="https://www.google.com/recaptcha/api.js"></script>
+		<script nonce="$cspNonce">function onSubmit() {document.getElementById("captcha-form").submit();}</script>
+		#end
+
 		#externalScripts(false)
 	</body>
 </html>

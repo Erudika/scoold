@@ -153,6 +153,6 @@ public class PeopleController {
 		// prevents reflected XSS. see https://brutelogic.com.br/poc.svg
 		// for some reason the CSP header is not sent on these responses by the ScooldInterceptor
 		utils.setSecurityHeaders(utils.getCSPNonce(), req, res);
-		HttpUtils.getAvatar(url, req, res);
+		HttpUtils.getDefaultAvatarImage(res);
 	}
 }
