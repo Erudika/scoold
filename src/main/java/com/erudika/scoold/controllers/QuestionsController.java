@@ -175,7 +175,7 @@ public class QuestionsController {
 					req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		}
 		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby="
-				+ Optional.ofNullable(StringUtils.trimToNull(tab)).orElse(sortby));
+				+ Optional.ofNullable(StringUtils.trimToNull(sortby)).orElse(tab));
 	}
 
 	@GetMapping("/questions/ask")
