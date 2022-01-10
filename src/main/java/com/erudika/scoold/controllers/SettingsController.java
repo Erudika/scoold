@@ -19,8 +19,8 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;

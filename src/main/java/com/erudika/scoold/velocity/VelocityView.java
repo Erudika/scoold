@@ -15,7 +15,7 @@
  */
 package com.erudika.scoold.velocity;
 
-import com.erudika.para.utils.Config;
+import com.erudika.para.core.utils.Config;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;

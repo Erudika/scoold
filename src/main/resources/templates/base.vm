@@ -49,7 +49,7 @@
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-		<script nonce="$cspNonce" type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
+		<script nonce="$cspNonce" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
 		#externalScripts(true)
 		#foreach($externalStyle in $externalStyles)
@@ -196,7 +196,7 @@
 									#end
 									<li>
 										<a class="dropdown-trigger scoold-user-dropdown" href="#!" data-target="user-dropdown">
-											<img src="$scooldUtils.getFullAvatarURL($authUser, "Square50")" width="50" class="profile-pic responsive-img" alt="Avatar">
+											<img src="#profilepic($authUser, 'Square50')" width="50" class="profile-pic responsive-img" alt="Avatar">
 											<i class="fa fa-caret-down right"></i></a>
 									</li>
 									#if(($authUser.hasSpaces() || $isMod) && $!langDirection == "RTL")
@@ -226,8 +226,8 @@
 										<div class="nav-wrapper">
 											<form action="$searchlink">
 												<div class="input-field">
-													<input type="search" name="q" placeholder="$!lang.get('search.search')" required>
-													<label class="label-icon" for="search"><i class="fa fa-search fa-2x"></i></label>
+													<input id="search-box-mobile" type="search" name="q" placeholder="$!lang.get('search.search')" required>
+													<label class="label-icon" for="search-box-mobile"><i class="fa fa-search fa-2x"></i></label>
 													#if($!langDirection == "LTR")
 														<i class="material-icons fa fa-close"></i>
 													#end
@@ -238,7 +238,7 @@
 								</li>
 								#if ($authenticated)
 									<li>
-										<img src="$scooldUtils.getFullAvatarURL($authUser, "Square50")" width="50"  alt="Avatar" class="profile-pic responsive-img left mhl">
+										<img src="#profilepic($authUser, 'Square50')" width="50"  alt="Avatar" class="profile-pic responsive-img left mhl">
 										<a href="$profilelink" class="black-text mvl pll">$!authUser.name</a>
 									</li>
 									#if($isAdmin)
@@ -275,7 +275,7 @@
 
 					<nav id="search-drawer" class="white z-depth-1 hide hide-on-med-and-down">
 						<div class="nav-wrapper container">
-							<form id="search-drawer" class="hide-on-med-and-down" action="$searchlink">
+							<form class="hide-on-med-and-down" action="$searchlink">
 								<div class="input-field">
 									#if($!langDirection == "RTL")
 										<i class="material-icons fa fa-close grey-text toggle-drawer"></i>
@@ -431,9 +431,10 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 				$('#fb-login-btn').on('click', function () {
+					var that = $(this);
 					FB.login(function(response) {
 						if (response.authResponse) {
-							window.location = "${CONTEXT_PATH}/signin?provider=facebook&access_token=" + response.authResponse.accessToken;
+							that.closest("form").find("input[type=hidden]").val(response.authResponse.accessToken).next().click();
 						} else {
 							window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
 						}
@@ -442,6 +443,11 @@
 				});
 			</script>
 			#end
+		#end
+
+		#if ($captchakey && !$captchakey.isBlank())
+		<script nonce="$cspNonce" src="https://www.google.com/recaptcha/api.js"></script>
+		<script nonce="$cspNonce">function onSubmit() {document.getElementById("captcha-form").submit();}</script>
 		#end
 
 		#externalScripts(false)

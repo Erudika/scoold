@@ -22,7 +22,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Votable;
 import com.erudika.para.core.Vote;
-import com.erudika.para.utils.Config;
+import com.erudika.para.core.utils.Config;
 import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
 import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;

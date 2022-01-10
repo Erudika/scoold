@@ -52,9 +52,28 @@
 
 				#paginate("replies" $itemcount "" "page")
 
+				#if($request.servletPath.endsWith("/write"))
+					#set($answerBoxHideClass = "")
+					#set($showAnswerBoxClass = "hide")
+				#else
+					#set($answerBoxHideClass = "hide")
+					#set($showAnswerBoxClass = "")
+				#end
+				#if(!$authenticated)#set($showAnswerBoxClass = "")#end
+
+				<div class="mvl pvl center $!{showAnswerBoxClass}">
+					#if ($authenticated)
+						<a href="#write-post" class="btn-large show-answer-question-form"
+							 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+					#else
+						<a href="$signinlink?returnto=$!{returnto.replaceAll('/write', '')}/write" rel="nofollow" class="btn-large"
+							 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+					#end
+				</div>
+
 				#if(!$showPost.isClosed())
 					#if ($authenticated)
-						<div class="pvl mbm">
+						<div class="pvl mbm $!{answerBoxHideClass}">
 							<form method="post" id="answer-question-form">
 								#sectoken(false "CREATE_REPLY")
 								<a id="write-post"></a>
@@ -83,11 +102,6 @@
 									<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 								</button>
 							</form>
-						</div>
-					#else
-						<div class="mvl pvl center">
-								<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn-large"
-									 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
 						</div>
 					#end
 				#end

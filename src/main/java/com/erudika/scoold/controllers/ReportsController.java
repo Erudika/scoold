@@ -19,9 +19,9 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static com.erudika.scoold.ScooldServer.REPORTSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 
 /**
  *
@@ -61,8 +62,10 @@ public class ReportsController {
 	@GetMapping
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
-		if (!utils.isMod(utils.getAuthUser(req))) {
+		if (utils.isAuthenticated(req) && !utils.isMod(utils.getAuthUser(req))) {
 			return "redirect:" + REPORTSLINK;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + REPORTSLINK;
 		}
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);

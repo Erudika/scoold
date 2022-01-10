@@ -17,8 +17,8 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.email.Emailer;
-import com.erudika.para.utils.Config;
+import com.erudika.para.core.email.Emailer;
+import com.erudika.para.core.utils.Config;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

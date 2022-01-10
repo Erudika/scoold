@@ -18,7 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -8,15 +8,14 @@
 <div class="newcommentform mtm ${hide}">
 	<form method="post" action="$commentlink" class="new-comment-form">
 		##sectoken(false "ADD_COMMENT_$!parentid") ## BREAKS AJAX - NOT USED
-		<div>
-			<small class="grey-text mtnl"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
-				<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></small>
-		</div>
 		<div class="row mbn">
 			<div class="col s10">
-				<div class="input-field">
+				<div class="input-field mvn">
 					#set($maxplus1 = $!maxCommentLength + 1)
-					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')</label>
+					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')
+						<span class="grey-text mhs"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
+						<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></span>
+					</label>
 					<input id="new-comment-$!{parentid}" type="text" name="comment" value=""
 								 data-length="$!maxCommentLength" maxlength="$!maxplus1" class="validate charcounter" required>
 					<span class="helper-text" data-error="$!maxCommentLengthError"></span>
@@ -45,7 +44,7 @@
 	<div class="mbs ${hidden}">
 		#votebox($showcomment "left mrm pbs")
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
-		<span class="comment-text">$!{_commentHtml}</span>
+		<div class="comment-text">$!{_commentHtml}</div>
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
@@ -75,7 +74,7 @@
 	<div class="card-panel mbs">
 		<span class="lightborder phm mrm">$!showcomment.votes</span>
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
-		<a href="$questionlink/$showcomment.parentid" title="View answer"><span class="comment-text">$!{_commentHtml}</span></a>
+		<a href="$questionlink/$showcomment.parentid" title="View answer"><div class="comment-text">$!{_commentHtml}</div></a>
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
@@ -229,7 +228,7 @@
 	<div class="page-content">#evaluate($scooldUtils.getMacroCode($macroCode))</div>
 	#if ($_rpath.contains("?"))#set($paramseparator = "&")#else #set($paramseparator = "?")#end
 	#if ($pager.count > $pager.limit && $macroCode && !$macroCode.trim().isEmpty())
-		<div class="pages center mtl">
+		<div class="pages center mvm">
 			#if($numericPaginationEnabled && $macroCode != "postcomments")
 				#set($maxPageLinks = 7)
 				#set($activeClass = "active light-blue")
@@ -294,7 +293,7 @@
 	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-				<img src="$scooldUtils.getFullAvatarURL($!showu, "Square50")" width="50" class="profile-pic responsive-img">
+				<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img">
 			</a>
 		#else
 			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="Profile picture">
@@ -338,7 +337,7 @@
 <div>
 	#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-			<img src="$scooldUtils.getFullAvatarURL($!showu, "Square32")" width="32" class="profile-pic responsive-img">
+			<img src="#profilepic($!showu, 'Square32')" width="32" class="profile-pic responsive-img">
 		</a>
 	#else
 		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="Profile picture">
@@ -375,7 +374,7 @@
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
-						<img src="$scooldUtils.getFullAvatarURL($showFriend, "Square127")" class="profile-pic responsive-img pts pls">
+						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img pts pls">
 					</a>
 				</div>
 				<div class="col s9 m8">
@@ -688,7 +687,7 @@
 			$!{_bodyHtml}
 		</div>
 
-		<div class="row">
+		<div class="row mbn">
 			<div class="col s4 m4 l4">
 				<div class="left mtm mrl approve-answer-btn">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
@@ -710,7 +709,7 @@
 					#end
 					#if ($showpost.lasteditby)
 						#if($showpost.revisionid)
-							<a href="$revisionslink/$!showpost.id" title="Revision history">
+							<a href="$revisionslink/$!showpost.id" title="Revision history" class="smallText">
 								$!lang.get("posts.edited") #formatdate($showpost.lastedited "")
 							</a>
 						#else
@@ -724,6 +723,10 @@
 					#smallpersonbox($showpost.author)
 				</div>
 			</div>
+		</div>
+
+		<div class="comments post-comments pvs">
+			#paginate("postcomments" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
 		</div>
 
 		<div class="row">
@@ -743,7 +746,7 @@
 						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
-					#if ($canComment && !$showpost.isFeedback())
+					#if ($canComment && !$showpost.isFeedback() && $scooldUtils.alwaysHideCommentForms())
 						<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
 					#end
 
@@ -772,7 +775,7 @@
 					#end
 
 					#if ($canComment)
-						#newcommentform($showpost.id true "$questionlink/$showpost.id")
+						#newcommentform($showpost.id $scooldUtils.alwaysHideCommentForms() "$questionlink/$showpost.id")
 					#end
 				</div>
 			</div>
@@ -857,10 +860,6 @@
 	</div>
 	#end
 	#end
-
-	<div class="comments post-comments">
-		#paginate("postcomments" $showpost.itemcount "$commentlink?getcomments=true&parentid=$showpost.id" "page")
-	</div>
 </div>
 #end
 ###################################
@@ -933,14 +932,6 @@
 	#end
 #end
 ###################################
-#macro(formvc $ctype)
-<input type="hidden" name="vc" value="#$!{ctype}box(\$obj)">
-#end
-###################################
-#macro(formvj $ctype $fields)
-<input type="hidden" name="vj" value="$!{utils.getJSONValidationObject($ctype, $fields, $lang)}" disabled="disabled">
-#end
-#####################################
 #macro(formatdate $date $format)
 #if ($date && !$format.trim().isEmpty())
 $utils.formatDate($date, $format, $currentLocale)
@@ -1007,6 +998,8 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
+#macro(profilepic $user $format)#if($format && !$format.isEmpty())$scooldUtils.getFullAvatarURL($user, $format)#elseif($user && $user.picture && $user.picture.matches("^(http:|https:).*"))$scooldUtils.getFullAvatarURL($user)#elseif($user && $user.picture && $user.picture.matches("^(data:).*"))$user.picture #else $!imageslink/anon.svg #end#end
+#####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
 		#set($infoStripClass = "green white-text")
@@ -1015,7 +1008,7 @@ $utils.formatDate($date, $format, $currentLocale)
 	#else
 		#set($infoStripClass = "")
 	#end
-	
+
 	#if ($badgelist && !$badgelist.isEmpty())
 		#if ($badgelist.size() > 1)
 			#set($infoStripMsg = $!lang.get("newbadges"))

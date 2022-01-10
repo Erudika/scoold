@@ -27,7 +27,7 @@
 						#else
 							#set($action = "$signinlink/register" )
 						#end
-						<form method="post" action="$action">
+						<form method="post" action="$action" id="captcha-form">
 							#sectoken(false "REGISTER_USER")
 							#if(!$resend)
 							<div class="input-field mvm">
@@ -59,8 +59,13 @@
 								<input type="text" name="leaveblank" value="">
 								<input type="hidden" name="timestamp" value="$utils.timestamp()">
 							</div>
-
-							<button type="submit" class="btn">#if($resend)$!lang.get('send')#else$!lang.get('signup.title')#end</button>
+							#if($captchakey.isBlank())
+								<button type="submit" class="btn">
+							#else
+								<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn g-recaptcha">
+							#end
+									#if($resend)$!lang.get('send')#else$!lang.get('signup.title')#end
+								</button>
 						</form>
 					#end
 				</div>
@@ -86,7 +91,7 @@
 					<p>$!lang.get('done')</p>
 					<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
 					#else
-					<form method="post" action="$signinlink/iforgot">
+					<form method="post" action="$signinlink/iforgot" id="captcha-form">
 						#sectoken(false "FORGOTTEN_PASS")
 						<div class="mvm">
 							#getmessagebox("red white-text" $error.get("email"))
@@ -108,7 +113,13 @@
 							<button type="submit" class="btn">$!lang.get('change')</button>
 						#else
 							#if($nosmtp)#set($nosend = "disabled='disabled'")#else#set($nosend = "")#end
-							<button type="submit" class="btn" $nosend>$!lang.get('send')</button>
+							#if($captchakey.isBlank())
+								<button type="submit" class="btn" $nosend>
+							#else
+								<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn g-recaptcha" $nosend>
+							#end
+									$!lang.get('send')
+								</button>
 						#end
 					</form>
 					#end
@@ -198,9 +209,13 @@
 							<div class="col s12 m12 l8 offset-l2 center">
 								#if($fbLoginEnabled)
 								<div class="mvl pvs">
-									<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
-										<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
-									</a>
+									<form action="${CONTEXT_PATH}/signin?provider=facebook" method="POST">
+										<input type="hidden" name="access_token" value="">
+										<button type="submit" class="hide">submit</button>
+										<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
+											<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
+										</a>
+									</form>
 								</div>
 								#end
 

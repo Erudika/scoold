@@ -17,18 +17,20 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
@@ -37,15 +39,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 
 /**
  * Various utilities for HTTP stuff - cookies, AJAX, etc.
@@ -53,6 +58,7 @@ import org.springframework.http.HttpHeaders;
  */
 public final class HttpUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 	private static CloseableHttpClient httpclient;
 	private static final String DEFAULT_AVATAR = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 			+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
@@ -121,7 +127,7 @@ public final class HttpUtils {
 	 */
 	public static void setStateParam(String name, String value, HttpServletRequest req,
 			HttpServletResponse res, boolean httpOnly) {
-		setRawCookie(name, value, req, res, httpOnly, -1);
+		setRawCookie(name, value, req, res, httpOnly, null, -1);
 	}
 
 	/**
@@ -142,7 +148,7 @@ public final class HttpUtils {
 	 */
 	public static void removeStateParam(String name, HttpServletRequest req,
 			HttpServletResponse res) {
-		setRawCookie(name, "", req, res, false, 0);
+		setRawCookie(name, "", req, res, false, null, 0);
 	}
 
 	/**
@@ -152,19 +158,32 @@ public final class HttpUtils {
 	 * @param req HTTP request
 	 * @param res HTTP response
 	 * @param httpOnly HTTP only flag
+	 * @param sameSite SameSite flag
 	 * @param maxAge max age
 	 */
 	public static void setRawCookie(String name, String value, HttpServletRequest req,
-			HttpServletResponse res, boolean httpOnly, int maxAge) {
+			HttpServletResponse res, boolean httpOnly, String sameSite, int maxAge) {
 		if (StringUtils.isBlank(name) || value == null || req == null || res == null) {
 			return;
 		}
-		Cookie cookie = new Cookie(name, value);
-		cookie.setHttpOnly(httpOnly);
-		cookie.setMaxAge(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge);
-		cookie.setPath(CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH);
-		cookie.setSecure(StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure());
-		res.addCookie(cookie);
+		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
+				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
+		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
+		StringBuilder sb = new StringBuilder();
+		sb.append(name).append("=").append(value).append(";");
+		sb.append("Path=").append(path).append(";");
+		sb.append("Expires=").append(expires).append(";");
+		sb.append("Max-Age=").append(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge).append(";");
+		if (httpOnly) {
+			sb.append("HttpOnly;");
+		}
+		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
+			sb.append("Secure;");
+		}
+		if (!StringUtils.isBlank(sameSite)) {
+			sb.append("SameSite=").append(sameSite);
+		}
+		res.addHeader(javax.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
 	}
 
 	/**
@@ -191,82 +210,35 @@ public final class HttpUtils {
 	}
 
 	/**
-	 * Fetches an avatar at a given URL.
-	 *
-	 * /////////////////////////////////////
-	 * THIS CODE IS CAUSING MORE PROBLEMS
-	 * THAN IT SOLVES! CONSIDER DELETING!!!
-	 * ////////////////////////////////////
-	 *
-	 * @param url image URL
-	 * @param req request
-	 * @param res response
-	 * @return the content of the image or null
+	 * @param token CAPTCHA
+	 * @return boolean
 	 */
-	public static void getAvatar(String url, HttpServletRequest req, HttpServletResponse res) {
-		if (isLocalOrInsecureHost(url)) {
-			getDefaultAvatarImage(res);
-			return;
-		}
-		if (!ScooldUtils.getInstance().isAvatarValidationEnabled()) {
-			return;
-		}
-		HttpGet get = new HttpGet(url);
-		// attach auth cookie to requests for locally uploaded avatars - without this custom avatars will not be loaded!
-		if (StringUtils.startsWithIgnoreCase(url, ScooldServer.getServerURL())) {
-			get.setHeader("Cookie", AUTH_COOKIE + "=" + HttpUtils.getStateParam(AUTH_COOKIE, req));
-		}
-		get.setHeader(HttpHeaders.USER_AGENT, "Scoold Image Validator, https://scoold.com");
-		try (CloseableHttpResponse img = HttpUtils.getHttpClient().execute(get)) {
-			if (img.getCode() == HttpStatus.SC_OK && img.getEntity() != null) {
-				if (isImage(img, url)) {
-					for (Header header : img.getHeaders()) {
-						res.setHeader(header.getName(), header.getValue());
-					}
-					if (!res.containsHeader(HttpHeaders.CACHE_CONTROL)) {
-						res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
-					}
-					IOUtils.copy(img.getEntity().getContent(), res.getOutputStream());
-				}
-			} else {
-				LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}, status: {} {}", url,
-						img.getCode(), img.getReasonPhrase());
-				getDefaultAvatarImage(res);
-			}
-		} catch (Exception ex) {
-			getDefaultAvatarImage(res);
-			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to get user avatar from {}: {}", url, ex.getMessage());
-		}
-	}
-
-	private static boolean isImage(CloseableHttpResponse img, String url) throws MalformedURLException {
-		return img.getCode() == HttpStatus.SC_OK && img.getEntity() != null &&
-				(StringUtils.equalsAnyIgnoreCase(img.getEntity().getContentType(),
-						"image/gif", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/bmp", "image/svg+xml") ||
-				StringUtils.endsWithAny(new URL(url).getPath(), ".gif", ".jpeg", ".jpg", ".png", ".webp", ".svg", ".bmp"));
-	}
-
-	private static boolean isLocalOrInsecureHost(String url) {
-		if (StringUtils.isBlank(url)) {
+	public static boolean isValidCaptcha(String token) {
+		if (StringUtils.isBlank(Config.getConfigParam("signup_captcha_secret_key", ""))) {
 			return true;
 		}
-		if (Config.IN_DEVELOPMENT) {
+		if (StringUtils.isBlank(token)) {
 			return false;
 		}
-		if (!StringUtils.startsWithIgnoreCase(url, "https://")) {
-			return true;
+		List<NameValuePair> params = new ArrayList<>();
+		params.add(new BasicNameValuePair("secret", Config.getConfigParam("signup_captcha_secret_key", "")));
+		params.add(new BasicNameValuePair("response", token));
+		HttpPost post = new HttpPost("https://www.google.com/recaptcha/api/siteverify");
+		post.setEntity(new UrlEncodedFormEntity(params));
+		try (CloseableHttpResponse resp = HttpUtils.getHttpClient().execute(post)) {
+			if (resp.getCode() == HttpStatus.SC_OK && resp.getEntity() != null) {
+				Map<String, Object> data = ParaObjectUtils.getJsonReader(Map.class).readValue(resp.getEntity().getContent());
+				if (data != null && data.containsKey("success")) {
+					return (boolean) data.getOrDefault("success", false);
+				}
+			}
+		} catch (Exception ex) {
+			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to verify CAPTCHA: {}", ex.getMessage());
 		}
-		try {
-			InetAddress addr = InetAddress.getByName(StringUtils.substringBefore(StringUtils.substringAfter(url, "//"), "/"));
-			return StringUtils.containsAnyIgnoreCase(addr.getHostAddress(),
-					"localhost", "0177.0.0.1", "177.0.0.1", "0x7f.0.0.1", "0x7f000001", "2130706433", "017700000001") ||
-					StringUtils.startsWithAny(addr.getHostAddress(), "127.", "177.");
-		} catch (Exception e) {
-			return true;
-		}
+		return false;
 	}
 
-	private static void getDefaultAvatarImage(HttpServletResponse res) {
+	public static void getDefaultAvatarImage(HttpServletResponse res) {
 		try {
 			res.setContentType("image/svg+xml");
 			res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
@@ -288,21 +260,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(jwt)) {
 			return;
 		}
-		int maxAge = Config.SESSION_TIMEOUT_SEC;
-		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
-				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
-		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
-		StringBuilder sb = new StringBuilder();
-		sb.append(AUTH_COOKIE).append("=").append(jwt).append(";");
-		sb.append("Path=").append(path).append(";");
-		sb.append("Expires=").append(expires).append(";");
-		sb.append("Max-Age=").append(maxAge).append(";");
-		sb.append("HttpOnly;");
-		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
-			sb.append("Secure;");
-		}
-		sb.append("SameSite=Lax");
-		res.addHeader(javax.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
+		setRawCookie(AUTH_COOKIE, jwt, req, res, true, "Lax", Config.SESSION_TIMEOUT_SEC);
 	}
 
 	/**
@@ -315,7 +273,12 @@ public final class HttpUtils {
 			backtoFromCookie = req.getParameter("returnto");
 		}
 		String serverUrl = ScooldServer.getServerURL() + "/";
-		String resolved = URI.create(serverUrl).resolve(backtoFromCookie).toString();
+		String resolved = "";
+		try {
+			resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();
+		} catch (Exception e) {
+			logger.warn("Invalid return-to URI: {}", e.getMessage());
+		}
 		if (!StringUtils.startsWithIgnoreCase(resolved, serverUrl)) {
 			backtoFromCookie = "";
 		} else {

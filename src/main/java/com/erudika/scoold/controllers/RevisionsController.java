@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.controllers;
 
-import com.erudika.para.utils.Pager;
+import com.erudika.para.core.utils.Pager;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.utils.ScooldUtils;

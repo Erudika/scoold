@@ -17,12 +17,12 @@
  */
 package com.erudika.scoold.controllers;
 
-import com.erudika.para.annotations.Email;
+import com.erudika.para.core.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;
@@ -97,12 +97,6 @@ public class SigninController {
 		return "base";
 	}
 
-	@GetMapping(path = "/signin", params = {"access_token", "provider"})
-	public String signinGet(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
-			HttpServletRequest req, HttpServletResponse res) {
-		return getAuth(provider, accessToken, req, res);
-	}
-
 	@PostMapping(path = "/signin", params = {"access_token", "provider"})
 	public String signinPost(@RequestParam("access_token") String accessToken, @RequestParam("provider") String provider,
 			HttpServletRequest req, HttpServletResponse res) {
@@ -112,7 +106,7 @@ public class SigninController {
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt)) {
-			setAuthCookie(jwt, req, res);
+			loginWithIdToken(jwt, req, res);
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
@@ -137,6 +131,7 @@ public class SigninController {
 		model.addAttribute("resend", resend);
 		model.addAttribute("bademail", req.getParameter("email"));
 		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
+		model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
 		if (id != null && token != null) {
 			boolean verified = activateWithEmailToken((User) pc.read(id), token);
 			if (verified) {
@@ -152,7 +147,8 @@ public class SigninController {
 	public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
-		if (!utils.isAuthenticated(req) && approvedDomain) {
+		if (!utils.isAuthenticated(req) && approvedDomain &&
+				HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
 			boolean goodPass = isPasswordStrongEnough(passw);
 			if (!isEmailRegistered(email) && isSubmittedByHuman(req) && goodPass) {
 				User u = pc.signIn("password", email + ":" + name + ":" + passw, false);
@@ -183,7 +179,7 @@ public class SigninController {
 
 	@PostMapping("/signin/register/resend")
 	public String resend(@RequestParam String email, HttpServletRequest req, HttpServletResponse res, Model model) {
-		if (!utils.isAuthenticated(req)) {
+		if (!utils.isAuthenticated(req) && HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
 			Sysprop ident = pc.read(email);
 			// confirmation emails can be resent once every 6h
 			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN)) &&
@@ -191,9 +187,7 @@ public class SigninController {
 					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6)))) {
 				User u = pc.read(Utils.type(User.class), ident.getCreatorid());
 				if (u != null && !u.getActive()) {
-					utils.sendVerificationEmail(email, req);
-					ident.addProperty("confirmationTimestamp", Utils.timestamp());
-					pc.update(ident);
+					utils.sendVerificationEmail(ident, req);
 				}
 			}
 		}
@@ -214,6 +208,7 @@ public class SigninController {
 		model.addAttribute("iforgot", true);
 		model.addAttribute("verify", verify);
 		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
+		model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
 		if (email != null && token != null) {
 			model.addAttribute("email", email);
 			model.addAttribute("token", token);
@@ -227,7 +222,8 @@ public class SigninController {
 			@RequestParam(required = false) String token,
 			HttpServletRequest req, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
-		if (!utils.isAuthenticated(req) && approvedDomain) {
+		if (!utils.isAuthenticated(req) && approvedDomain &&
+				HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
 			if (StringUtils.isBlank(token)) {
 				generatePasswordResetToken(email, req);
 				return "redirect:" + SIGNINLINK + "/iforgot?verify=true";
@@ -274,20 +270,32 @@ public class SigninController {
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 			User u = pc.signIn(provider, accessToken, false);
-			if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
-				// the user password in this case is a Bearer token (JWT)
-				setAuthCookie(u.getPassword(), req, res);
-			} else {
-				if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
-					LoggerFactory.getLogger(SigninController.class).
-							warn("Signin denied for {} because that domain is not in the whitelist.", u.getEmail());
-				}
-				boolean isLocked = isAccountLocked(email);
-				return "redirect:" + SIGNINLINK + "?code=" + (isLocked ? "6" : "3") + "&error=true" +
-						(isLocked ? "&email=" + email : "");
+			if (u == null && isAccountLocked(email)) {
+				return "redirect:" + SIGNINLINK + "?code=6&error=true&email=" + email;
 			}
+			return onAuthSuccess(u, req, res);
 		}
 		return "redirect:" + getBackToUrl(req);
+	}
+
+	private void loginWithIdToken(String jwt, HttpServletRequest req, HttpServletResponse res) {
+		User u = pc.signIn("passwordless", jwt, false);
+		if (u != null) {
+			setAuthCookie(u.getPassword(), req, res);
+			onAuthSuccess(u, req, res);
+		}
+	}
+
+	private String onAuthSuccess(User u, HttpServletRequest req, HttpServletResponse res) {
+		if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
+			// the user password in this case is a Bearer token (JWT)
+			setAuthCookie(u.getPassword(), req, res);
+			return "redirect:" + getBackToUrl(req);
+		} else if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
+			LoggerFactory.getLogger(SigninController.class).
+					warn("Signin failed for {} because that domain is not in the whitelist.", u.getEmail());
+		}
+		return "redirect:" + SIGNINLINK + "?code=3&error=true";
 	}
 
 	private boolean activateWithEmailToken(User u, String token) {

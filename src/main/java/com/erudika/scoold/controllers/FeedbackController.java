@@ -18,9 +18,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
 
 import com.erudika.scoold.core.Feedback;
@@ -71,6 +71,9 @@ public class FeedbackController {
 		if (!utils.isFeedbackEnabled()) {
 			return "redirect:" + HOMEPAGE;
 		}
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + FEEDBACKLINK;
+		}
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		List<Post> feedbacklist = pc.findQuery(Utils.type(Feedback.class), "*", itemcount);
@@ -87,6 +90,9 @@ public class FeedbackController {
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!utils.isFeedbackEnabled()) {
 			return "redirect:" + HOMEPAGE;
+		}
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + FEEDBACKLINK;
 		}
 		Feedback showPost = pc.read(id);
 		if (showPost == null) {
@@ -130,6 +136,9 @@ public class FeedbackController {
 		if (!utils.isFeedbackEnabled()) {
 			return "redirect:" + HOMEPAGE;
 		}
+		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + FEEDBACKLINK;
+		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Post> feedbacklist = pc.findTagged(Utils.type(Feedback.class), new String[]{tag}, itemcount);
 		model.addAttribute("path", "feedback.vm");
@@ -150,7 +159,7 @@ public class FeedbackController {
 			Profile authUser = utils.getAuthUser(req);
 			Post post = utils.populate(req, new Feedback(), "title", "body", "tags|,");
 			Map<String, String> error = utils.validate(post);
-			if (error.isEmpty()) {
+			if (authUser != null && error.isEmpty()) {
 				post.setCreatorid(authUser.getId());
 				post.create();
 				authUser.setLastseen(System.currentTimeMillis());
@@ -172,7 +181,7 @@ public class FeedbackController {
 		}
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (showPost != null && !showPost.isClosed() && !showPost.isReply()) {
+		if (authUser != null && showPost != null && !showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);

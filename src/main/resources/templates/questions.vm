@@ -37,7 +37,8 @@
 				#spaceselect()
 
 				#if($scooldUtils.isNearMeFeatureEnabled())
-					<a href="#" class="next-div-toggle mll pll click2hide">
+				<div class="mll pll">
+					<a href="#" class="next-div-toggle click2hide">
 						<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
 					</a>
 					<div class="input-field hide">
@@ -47,6 +48,7 @@
 						<input type="hidden" name="latlng" value="">
 						<input type="hidden" name="address" value="">
 					</div>
+				</div>
 				#end
 
 				<div>
@@ -153,8 +155,8 @@
 							#if($itemcount.sortby == $prop)selected#end
 							#end
 							<select name="sortby">
-								<option value="timestamp" #sortselected("timestamp")>Creation date</option>
-								<option value="creatorid" #sortselected("creatorid")>Creator ID</option>
+								<option value="timestamp" #sortselected("timestamp")>$!lang.get('posts.creationdate')</option>
+								<option value="creatorid" #sortselected("creatorid")>$!lang.get('posts.creatorid')</option>
 								<option value="votes" #sortselected("votes")>$!lang.get('votes')</option>
 								<option value="properties.answercount" #sortselected("properties.answercount")>$!lang.get('answers.title')</option>
 								<option value="properties.viewcount" #sortselected("properties.viewcount")>$!lang.get('posts.views')</option>

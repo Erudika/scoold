@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.Para;
+import com.erudika.para.core.utils.Para;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
@@ -27,11 +27,11 @@ import com.erudika.para.core.User;
 import com.erudika.para.core.Vote;
 import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.email.Emailer;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
-import com.erudika.para.validation.ValidationUtils;
+import com.erudika.para.core.email.Emailer;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
+import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
@@ -49,7 +49,6 @@ import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
-
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
 import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
@@ -95,7 +94,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
-import javax.ws.rs.WebApplicationException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -120,6 +118,7 @@ public final class ScooldUtils {
 	private static final Set<String> ADMINS = new HashSet<>();
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Config.SEPARATOR;
 
+	private static final Profile API_USER;
 	private static final Set<String> CORE_TYPES;
 	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
@@ -128,6 +127,13 @@ public final class ScooldUtils {
 	private List<Sysprop> allSpaces;
 
 	static {
+		API_USER = new Profile("1", "System");
+		API_USER.setVotes(1);
+		API_USER.setCreatorid("1");
+		API_USER.setTimestamp(Utils.timestamp());
+		API_USER.setPicture(getGravatar(Config.SUPPORT_EMAIL));
+		API_USER.setGroups(User.Groups.ADMINS.toString());
+
 		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
 				Utils.type(Feedback.class),
 				Utils.type(Profile.class),
@@ -172,12 +178,12 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
 	}
 
-	private final Profile apiUser;
-	private ParaClient pc;
-	private LanguageUtils langutils;
+	private final ParaClient pc;
+	private final LanguageUtils langutils;
 	private final AvatarRepository avatarRepository;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private static ScooldUtils instance;
+	private Sysprop customTheme;
 	@Inject private Emailer emailer;
 
 	@Inject
@@ -186,13 +192,7 @@ public final class ScooldUtils {
 		this.langutils = langutils;
 		this.avatarRepository = avatarRepository;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
-
-		apiUser = new Profile("1", "System");
-		apiUser.setVotes(1);
-		apiUser.setCreatorid("1");
-		apiUser.setTimestamp(Utils.timestamp());
-		apiUser.setPicture(avatarRepository.getAnonymizedLink(Config.SUPPORT_EMAIL));
-		apiUser.setGroups(User.Groups.ADMINS.toString());
+		API_USER.setPicture(avatarRepository.getAnonymizedLink(Config.SUPPORT_EMAIL));
 	}
 
 	public ParaClient getParaClient() {
@@ -290,13 +290,13 @@ public final class ScooldUtils {
 		}
 		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
 		if (req.getRequestURI().equals(CONTEXT_PATH + "/api/ping")) {
-			return apiUser;
+			return API_USER;
 		} else if (req.getRequestURI().equals(CONTEXT_PATH + "/api/stats") && isValidJWToken(apiKeyJWT)) {
-			return apiUser;
+			return API_USER;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
-			throw new WebApplicationException(401);
+			throw new UnauthorizedException();
 		}
-		return apiUser;
+		return API_USER;
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
@@ -395,28 +395,27 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendVerificationEmail(String email, HttpServletRequest req) {
-		if (!StringUtils.isBlank(email)) {
+	public void sendVerificationEmail(Sysprop identifier, HttpServletRequest req) {
+		if (identifier != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
 			String subject = Utils.formatMessage(lang.get("signin.welcome"), Config.APP_NAME);
 			String body = getDefaultEmailSignature(Config.getConfigParam("emails.welcome_text3",
 					lang.get("notification.signature") + "<br><br>"));
 
-			Sysprop s = pc.read(email);
-			if (s != null) {
-				String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
-				s.addProperty(Config._EMAIL_TOKEN, token);
-				pc.update(s);
-				token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + s.getCreatorid() + "&token=" + token;
-				body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
-			}
+			String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+			identifier.addProperty(Config._EMAIL_TOKEN, token);
+			identifier.addProperty("confirmationTimestamp", Utils.timestamp());
+			pc.update(identifier);
+			token = getServerURL() + CONTEXT_PATH + SIGNINLINK + "/register?id=" +
+					identifier.getCreatorid() + "&token=" + token;
+			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
 			model.put("heading", lang.get("hello"));
 			model.put("body", body);
-			emailer.sendEmail(Arrays.asList(email), subject, compileEmailTemplate(model));
+			emailer.sendEmail(Arrays.asList(identifier.getId()), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -699,10 +698,14 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendCommentNotification(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
+	public void sendCommentNotifications(Post parentPost, Comment comment, Profile commentAuthor, HttpServletRequest req) {
 		// send email notification to author of post except when the comment is by the same person
 		if (parentPost != null && comment != null) {
 			parentPost.setAuthor(pc.read(Profile.id(parentPost.getCreatorid()))); // parent author is not current user (authUser)
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
+			payload.put("parent", parentPost);
+			payload.put("author", commentAuthor);
+			triggerHookEvent("comment.create", payload);
 			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
 			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
 			boolean isCommentatorThePostAuthor = StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid());
@@ -732,17 +735,12 @@ public final class ScooldUtils {
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
 					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
 				}
-
-				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
-				payload.put("parent", parentPost);
-				payload.put("author", commentAuthor);
-				triggerHookEvent("comment.create", payload);
 			});
 		}
 	}
 
 	private String escapeHtmlAttribute(String value) {
-		return value
+		return StringUtils.trimToEmpty(value)
 				.replaceAll("'", "%27")
 				.replaceAll("\"", "%22")
 				.replaceAll("\\\\", "");
@@ -825,6 +823,10 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
 	}
 
+	public static boolean isGravatarEnabled() {
+		return Config.getConfigBoolean("gravatars_enabled", true);
+	}
+
 	public String getFooterHTML() {
 		return Config.getConfigParam("footer_html", "");
 	}
@@ -875,6 +877,10 @@ public final class ScooldUtils {
 
 	public String getNavbarMenuLink2Text() {
 		return Config.getConfigParam("navbar_menu_link2_text", "Menu Link2");
+	}
+
+	public boolean alwaysHideCommentForms() {
+		return Config.getConfigBoolean("always_hide_comment_forms", true);
 	}
 
 	public Set<String> getCoreScooldTypes() {
@@ -965,7 +971,7 @@ public final class ScooldUtils {
 			authors.put(author.getId(), (Profile) author);
 		}
 		// add system profile
-		authors.put(apiUser.getId(), apiUser);
+		authors.put(API_USER.getId(), API_USER);
 		// set author object for each post
 		for (ParaObject obj : objects) {
 			if (obj instanceof Post) {
@@ -1011,8 +1017,12 @@ public final class ScooldUtils {
 				clSize = post.getComments().size();
 			} else {
 				post.setComments(cl);
+				if (clSize == post.getItemcount().getLimit() && pc.getCount(Utils.type(Comment.class),
+						Collections.singletonMap("parentid", post.getId())) > clSize) {
+					clSize++; // hack to show the "more" button
+				}
 			}
-			post.getItemcount().setCount(clSize + 1L); // hack to show the "more" button
+			post.getItemcount().setCount(clSize);
 		}
 		if (!forUpdate.isEmpty()) {
 			pc.updateAll(allPosts);
@@ -1142,7 +1152,7 @@ public final class ScooldUtils {
 	}
 
 	public List<Sysprop> getAllSpaces() {
-		if (allSpaces == null || allSpaces.isEmpty()) {
+		if (allSpaces == null) {
 			allSpaces = new LinkedList<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
 		}
 		return allSpaces;
@@ -1196,7 +1206,7 @@ public final class ScooldUtils {
 		// used for setting the space from a direct URL to a particular space
 		req.setAttribute(SPACE_COOKIE, space);
 		HttpUtils.setRawCookie(SPACE_COOKIE, Utils.base64encURL(space.getBytes()),
-				req, res, false, StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+				req, res, true, "Strict", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}
 
 	public String verifyExistingSpace(Profile authUser, String space) {
@@ -1444,7 +1454,17 @@ public final class ScooldUtils {
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
-			HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
+			String jwt = HttpUtils.getStateParam(AUTH_COOKIE, req);
+			if (!StringUtils.isBlank(jwt)) {
+				if (Config.getConfigBoolean("security.one_session_per_user", true)) {
+					synchronized (pc) {
+						pc.setAccessToken(jwt);
+						pc.revokeAllTokens();
+						pc.signOut();
+					}
+				}
+				HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
+			}
 			HttpUtils.removeStateParam("dark-mode", req, res);
 		}
 	}
@@ -1536,8 +1556,13 @@ public final class ScooldUtils {
 	}
 
 	public boolean isValidJWToken(String jwt) {
+		String appSecretKey = Config.getConfigParam("app_secret_key", "");
+		String masterSecretKey = Config.getConfigParam("secret_key", "");
+		return isValidJWToken(appSecretKey, jwt) || isValidJWToken(masterSecretKey, jwt);
+	}
+
+	boolean isValidJWToken(String secret, String jwt) {
 		try {
-			String secret = Config.getConfigParam("app_secret_key", "");
 			if (secret != null && jwt != null) {
 				JWSVerifier verifier = new MACVerifier(secret);
 				SignedJWT sjwt = SignedJWT.parse(jwt);
@@ -1645,7 +1670,7 @@ public final class ScooldUtils {
 	}
 
 	public Profile getSystemUser() {
-		return apiUser;
+		return API_USER;
 	}
 
 	public void triggerHookEvent(String eventName, Object payload) {
@@ -1685,6 +1710,10 @@ public final class ScooldUtils {
 		// Referrer Header
 		if (Config.getConfigBoolean("referrer_header_enabled", true)) {
 			response.setHeader("Referrer-Policy", "strict-origin");
+		}
+		// Permissions Policy Header
+		if (Config.getConfigBoolean("permissions_header_enabled", true)) {
+			response.setHeader("Permissions-Policy", "geolocation=()");
 		}
 	}
 
@@ -1747,7 +1776,7 @@ public final class ScooldUtils {
 				if (StringUtils.isBlank(loadedTheme)) {
 					FILE_CACHE.put("theme", "default");
 					custom.setName("default");
-					pc.update(custom);
+					customTheme = pc.update(custom);
 					return inline;
 				} else {
 					FILE_CACHE.put("theme", themeName);
@@ -1769,26 +1798,17 @@ public final class ScooldUtils {
 		Sysprop custom = new Sysprop(id);
 		custom.setName(StringUtils.isBlank(css) && isCustom ? "default" : themeName);
 		custom.addProperty("theme", css);
-		pc.create(custom);
+		customTheme = pc.create(custom);
 		FILE_CACHE.put("theme", themeName);
 		FILE_CACHE.put(getThemeKey(themeName), isCustom ? css : loadResource(getThemeKey(themeName)));
 	}
 
 	public Sysprop getCustomTheme() {
 		String id = "theme" + Config.SEPARATOR + "custom";
-		return (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(this::getDefaultThemeObject);
-		// !!!!!!!: make this more efficient by storing the selected theme in cookie, then get from cache.
-//		String selectedTheme = FILE_CACHE.getOrDefault("theme", "default");
-//		if (selectedTheme != null && FILE_CACHE.containsKey(getThemeKey(selectedTheme))) {
-//			Sysprop s = new Sysprop(id);
-//			s.setName(selectedTheme);
-//			s.addProperty("theme", FILE_CACHE.get(getThemeKey(selectedTheme)));
-//			return s;
-//		} else if ("custom".equalsIgnoreCase(selectedTheme)) {
-//			return (Sysprop) Optional.ofNullable(pc.read("theme" + Config.SEPARATOR + "custom")).
-//					orElseGet(() -> getDefaultThemeObject());
-//		}
-//		return getDefaultThemeObject();
+		if (customTheme == null) {
+			customTheme = (Sysprop) Optional.ofNullable(pc.read(id)).orElseGet(this::getDefaultThemeObject);
+		}
+		return customTheme;
 	}
 
 	private Sysprop getDefaultThemeObject() {
@@ -1819,8 +1839,8 @@ public final class ScooldUtils {
 				+ "base-uri 'self'; "
 				+ "form-action 'self' " + Config.getConfigParam("signout_url", "") + "; "
 				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
-				+ " scoold.com www.google-analytics.com www.googletagmanager.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
-				+ "frame-src 'self' accounts.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
+				+ " maps.googleapis.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
+				+ "frame-src 'self' *.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com " // unsafe-inline required by MathJax and Google Maps!
 				+ (CDN_URL.startsWith("/") ? "" : CDN_URL) + " " +

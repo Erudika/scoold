@@ -18,7 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Sysprop;
-import com.erudika.para.utils.Config;
+import com.erudika.para.core.utils.Config;
 import static com.erudika.scoold.ScooldServer.ABOUTLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;

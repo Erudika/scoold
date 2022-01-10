@@ -2,7 +2,7 @@
 	<div class="col s12 m6 l4">
 		<div class="card">
 			<div class="card-image">
-				<img src="$scooldUtils.getFullAvatarURL($showUser, "Profile")" id="profile_${showUser.creatorid}" class="profile-pic on-profile-page">
+				<img src="#profilepic($showUser, 'Profile')" id="profile_${showUser.creatorid}" class="profile-pic on-profile-page">
 				#if($canEdit)
 				<span class="card-title">
 					#if($showUser.user.identifier.startsWith("fb"))
@@ -223,7 +223,7 @@
 
 					<div class="input-field">
 						<label for="about_text">$!{lang.get("profile.about.aboutme")}</label>
-						<textarea id="about_text" name="aboutme" length="255" class="materialize-textarea">$!{showUser.aboutme}</textarea>
+						<textarea id="about_text" name="aboutme" maxlength="255" class="materialize-textarea">$!{showUser.aboutme}</textarea>
 					</div>
 
 					<div class="center mtl">
@@ -267,3 +267,6 @@
 	#end
 </div>
 #end
+
+
+

@@ -1,10 +1,10 @@
-FROM maven:3.6-jdk-11-slim AS build
+FROM maven:3.8-jdk-11-slim AS build
 
 RUN mkdir -p /scoold
 RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
 RUN cd /scoold/scoold-master && mvn -q -DskipTests=true clean package
 
-FROM openjdk:11-jre-slim
+FROM adoptopenjdk/openjdk11:ubi-minimal-jre
 
 ENV BOOT_SLEEP=0 \
     JAVA_OPTS=""

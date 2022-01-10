@@ -22,9 +22,9 @@ import com.erudika.para.core.Address;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
@@ -172,10 +172,10 @@ public class QuestionsController {
 			}
 			savePagerToCookie(req, res, p);
 			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
-					req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
+					req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		}
 		return "redirect:" + QUESTIONSLINK + (StringUtils.isBlank(sortby) ? "" : "?sortby="
-				+ Optional.ofNullable(StringUtils.trimToNull(tab)).orElse(sortby));
+				+ Optional.ofNullable(StringUtils.trimToNull(sortby)).orElse(tab));
 	}
 
 	@GetMapping("/questions/ask")
@@ -273,11 +273,11 @@ public class QuestionsController {
 			}
 		}
 		utils.storeSpaceIdInCookie(space, req, res);
-		String backTo = req.getParameter("returnto");
+		String backTo = HttpUtils.getBackToUrl(req);
 		if (StringUtils.isBlank(backTo)) {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
-			return "redirect:" + (StringUtils.isBlank(backTo) ? QUESTIONSLINK : backTo);
+			return "redirect:" + backTo;
 		}
 	}
 
@@ -403,7 +403,7 @@ public class QuestionsController {
 	private void savePagerToCookie(HttpServletRequest req, HttpServletResponse res, Pager p) {
 		try {
 			HttpUtils.setRawCookie("questions-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
-					writeValueAsBytes(p)), req, res, false, (int) TimeUnit.DAYS.toSeconds(365));
+					writeValueAsBytes(p)), req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		} catch (JsonProcessingException ex) { }
 	}
 

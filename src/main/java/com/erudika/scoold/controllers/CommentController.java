@@ -19,8 +19,8 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Utils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Comment;
@@ -127,7 +127,7 @@ public class CommentController {
 					if (parentPost != null && parentPost.addCommentId(showComment.getId())) {
 						pc.update(parentPost); // update without adding revisions
 					}
-					utils.sendCommentNotification(parentPost, showComment, authUser, req);
+					utils.sendCommentNotifications(parentPost, showComment, authUser, req);
 				}
 			}
 		}

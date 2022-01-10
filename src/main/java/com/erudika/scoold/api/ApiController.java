@@ -17,7 +17,7 @@
  */
 package com.erudika.scoold.api;
 
-import com.erudika.para.annotations.Locked;
+import com.erudika.para.core.annotations.Locked;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
@@ -25,10 +25,10 @@ import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.Webhook;
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.utils.Config;
-import com.erudika.para.utils.Pager;
-import com.erudika.para.utils.Utils;
-import com.erudika.para.validation.ValidationUtils;
+import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
+import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.AUTH_USER_ATTRIBUTE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
@@ -52,6 +52,7 @@ import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Arrays;
@@ -70,7 +71,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -391,8 +391,7 @@ public class ApiController {
 				createdUser = created.iterator().next();
 				if (Utils.timestamp() - createdUser.getTimestamp() > TimeUnit.SECONDS.toMillis(20)) {
 					createdUser = null; // user existed previously
-				} else
-					if (newUser.getActive() && !createdUser.getActive()) {
+				} else if (newUser.getActive() && !createdUser.getActive()) {
 					createdUser.setActive(true);
 					pc.update(createdUser);
 				}

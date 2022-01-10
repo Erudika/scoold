@@ -872,6 +872,16 @@ $(function () {
 		} catch (exception) {}
 	}
 
+	$(".show-answer-question-form").click(function () {
+		$(this).closest("div").next("div").removeClass("hide").end().hide();
+	});
+
+	if (window.location.pathname.match("/write$")) {
+		$("html, body").animate({
+			scrollTop: $("#answer-question-form").first().offset().top
+		});
+	}
+
 	var answerForm = $("form#answer-question-form");
 	if (answerForm.length) {
 		var answerBody = initPostEditor(answerForm.find("textarea[name=body]").get(0));
@@ -1252,30 +1262,24 @@ $(function () {
 
 	if (window.location.pathname.indexOf(CONTEXT_PATH + '/signin/') >= 0) {
 		var passwordInput = $('#passw, #newpassword');
-		console.log(passwordInput);
 		var scoreMessage = $('#pass-meter-message');
 		var messagesList = ['Too simple', 'Weak', 'Good', 'Strong', 'Very strong'];
 		passwordInput.on('keyup', function () {
 			var score = 0;
 			var val = passwordInput.val();
 			if (val.length >= (MIN_PASS_LENGTH || 8)) {
-				console.log("len");
 				++score;
 			}
 			if (val.match(/(?=.*[a-z])/)) {
-				console.log("lower");
 				++score;
 			}
 			if (val.match(/(?=.*[A-Z])/)) {
-				console.log("upper");
 				++score;
 			}
 			if (val.match(/(?=.*[0-9])/)) {
-				console.log("num");
 				++score;
 			}
 			if (val.match(/(?=.*[^\w\s\n\t])/)) {
-				console.log("sym");
 				++score;
 			}
 			if (val.length === 0) {

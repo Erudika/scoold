@@ -105,7 +105,7 @@ Here's an overview of the architecture:
 
 ### Quick Start with a managed Para backend (easier)
 
-[JDK 1.8 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
+[JDK 11 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
@@ -219,13 +219,15 @@ para.password_auth_enabled = true
 para.min_password_length = 8
 # min. password strength (1=Good, 2=Strong, 3=Very Strong)
 para.min_password_strength = 2
-# Session cookie name
-para.auth_cookie = "scoold-auth"
 # Facebook - create your own Facebook app first!
 para.fb_app_id = "123456789"
 # Google - create your own Google app first!
 para.gp_app_id = "123-abcd.apps.googleusercontent.com"
 para.gp_secret = ""
+# one session per user
+para.security.one_session_per_user = true
+# session expires in 24h
+para.session_timeout = 86400
 ###############################
 
 ### Misc. ###
@@ -253,7 +255,7 @@ para.webhooks_enabled = true
 para.wiki_answers_enabled = true
 # Comment limits
 para.max_comments_per_id = 1000
-para.max_comment_length = 255
+para.max_comment_length = 600
 # Post body limit (characters)
 para.max_post_length = 20000
 # Tags per post limit, must be < 100
@@ -266,13 +268,15 @@ para.numeric_pagination_enabled = false
 para.default_language_code = ""
 # Enable/disable basic HTML tags in the text editor
 para.html_in_markdown_enabled = false
+# How line breaks in Markdown are interpreted - can be changed to "\n"
+para.markdown_soft_break = "<br>"
 ```
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
 fail and the settings will not be persisted. If you set the maximum number of retries to `-1` there will be an infinite
 number of attempts to connect to Para. These parameters are controlled by:
 
-```
+```ini
 para.connection_retries_max = 10
 para.connection_retry_interval_sec = 10
 ```
@@ -701,6 +705,17 @@ You can enable or disable the email verification step by setting `para.security.
 (in Scoold's `application.conf`). By default, email verification is turned off when Scoold is running in development mode.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
+
+## reCAPTCHA support
+
+You can protect signups and password reset functionality with reCAPTCHA v3. First you will need to register a new domain
+at [Google reCAPTCHA](https://www.google.com/recaptcha/admin). Create a new reCAPTCHA v3, add your site to the whitelist
+and copy the two keys - a clientside key (site key) and a serverside key (secret). Then, protect the pages
+`/signin/register` and `/signin/iforgot` by adding these properties to your configuration:
+```ini
+para.signup_captcha_site_key = "site-key-from-google"
+para.signup_captcha_secret_key = "secret-from-google"
+```
 
 ## Welcome email customization
 
@@ -1269,6 +1284,19 @@ like Zapier because it implements the [RESTHooks](https://resthooks.org/) best p
 
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
+## Session management and duration
+
+By default, only one session is allowed per user/browser. When a user logs in from one device, they will automatically be
+logged out from every other device. This can be disabled to allow multiple simultaneous sessions with:
+
+```ini
+para.security.one_session_per_user = false
+```
+
+User session cookies in Scoold expire after 24h. To change the session duration period to 6h for example, set
+`para.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will expire and so
+will the access token (JWT) inside the cookie.
+
 ## Domain-restricted user registrations
 
 You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
@@ -1280,19 +1308,19 @@ Then a user with email `john@acme-corp.com` will be allowed to login (the identi
 `bob@gmail.com` will be denied access.
 
 **PRO** In Scoold PRO this setting can also contain a comma-separated list of identity domains:
-```
+```ini
 para.approved_domains_for_signups = "acme-corp.com,gmail.com"
 ```
 
 ## Admins
 
 You can specify the user with administrative privileges in your `application.conf` file:
-```
+```ini
 para.admins = "joe@example.com"
 ```
 **PRO** In Scoold PRO you can have multiple admin users by specifying a comma-separated list of user identifiers.
 This works both for new and existing users.
-```
+```ini
 para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
 ```
 
@@ -1309,7 +1337,7 @@ to sign in. This feature is disabled by default.
 ## Anonymous profiles
 
 People may wish to make their profile details anonymous from the Settings page. To allow this option set:
-```
+```ini
 para.profile_anonimity_enabled = true
 ```
 
@@ -1349,12 +1377,18 @@ para.allowed_upload_formats = "yml,py:text/plain,json:application/json"
 If the MIME type is not specified in the format `extension:mime_type`, the default `text/plain` is used when serving these
 files.
 
+Scoold Pro also allows users to capture and upload video and audio from their input devices (mic/webcam).
+This functionality is enabled by default:
+```ini
+para.media_recording_allowed = true
+```
+
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
 user's `/profile` page. For best results, use a square image here.
 
 ### Local storage
 Local file storage is used by default. To configure the directory on the server where files will be stored, set:
-```
+```ini
 para.file_uploads_dir = "uploads"
 ```
 
@@ -1410,7 +1444,7 @@ To enable the Slack integration you need to register for a Slack app first and s
 ### [Getting started guide for Scoold + Slack](https://scoold.com/slack.html).
 
 Here are the configuration properties for Slack:
-```
+```ini
 para.slack.app_id = "SHORT_APPID"
 para.slack.map_workspaces_to_spaces = true
 para.slack.map_channels_to_spaces = false
@@ -1492,7 +1526,7 @@ Console. Then set `para.mm_app_id` and `para.mm_secret`.
 ### [Getting started guide for Scoold + Mattermost](https://scoold.com/mattermost.html).
 
 Here are the configuration properties for Mattermost:
-```
+```ini
 para.mattermost.server_url = "http://localhost:8065"
 para.mattermost.bot_username = "scoold"
 para.mattermost.bot_icon_url = "http://localhost:8000/images/logowhite.png"
@@ -1545,7 +1579,7 @@ The action will create a new question from the first message of the thread and s
 ### [Getting started guide for Scoold + Teams](https://scoold.com/teams.html).
 
 Here are the configuration properties for MS Teams:
-```
+```ini
 para.teams.bot_id = ""
 para.teams.bot_secret = ""
 para.teams.map_workspaces_to_spaces = true
@@ -1843,7 +1877,7 @@ for everyone from the Settings page if `para.summary_email_controlled_by_admins 
 each person (by default) controls whether they want to receive summary emails or not.
 
 The period for which a summary report is generated is controlled by:
-```
+```ini
 para.summary_email_period_days = 2
 ```
 The values of this setting can range from `1` to `30` days, where `2` means "every other day", `7` means "every week".
@@ -1859,7 +1893,7 @@ if you want the mention to work. You can mention up to 10 people in a post.
 
 Users can opt-in to receive email notifications when they are mentioned or that can be switched on/off by admins.
 For the latter option set:
-```
+```ini
 para.mention_emails_controlled_by_admins = true
 ```
 
@@ -1868,7 +1902,7 @@ para.mention_emails_controlled_by_admins = true
 Scoold attaches several security headers to each response. These can be enabled or disabled with the following configuration
 properties:
 
-```
+```ini
 # Strict-Transport-Security
 para.hsts_header_enabled = true
 
@@ -1890,7 +1924,7 @@ para.referrer_header_enabled = true
 By default, votes expire after a certain period, meaning the same user can vote again on the same post
 (after 30 days by default). Votes can also be amended within a certain number of seconds (30s by default).
 There are two configurable parameters which allow you to modify the length of those periods:
-```
+```ini
 para.vote_locked_after_sec = 30
 para.vote_expires_after_sec = 2592000
 ```
@@ -1943,6 +1977,9 @@ para.navbar_menu_link2_text = "Menu Link2"
 para.favtags_emails_enabled = false
 para.reply_emails_enabled = false
 para.comment_emails_enabled = false
+
+# comment input box toggle
+para.always_hide_comment_forms = true
 ```
 
 ### Custom Logo
@@ -2045,6 +2082,9 @@ API keys can be generated from the "Administration" page and can be made to expi
 API keys can also be generated with any JWT library. The body of the key should contain the `iat`, `appid` and `exp`
 claims and must be signed with the secret `para.app_secret_key`.
 
+**Note:** The Scoold API also accepts Para "super" tokens (manually generated) or JWTs generated using the
+[Para CLI tool](https://github.com/Erudika/para-cli).
+
 You can use the public endpoint `http://localhost:8000/api` to check the health of the server. A `GET /api` will
 return `200` if the server is healthy and connected to Para, otherwise status code `500` is returned.
 The response body is similar to this:
@@ -2098,6 +2138,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Dutch** | [lang_nl.properties](src/main/resources/lang_nl.properties) | :heavy_check_mark: Thanks Jan Halsema!
 **English** | [lang_en.properties](src/main/resources/lang_en.properties) | :heavy_check_mark:
 **Estonian** | [lang_et.properties](src/main/resources/lang_et.properties) | 0%
+**Farsi** | [lang_fa.properties](src/main/resources/lang_fa.properties) | :heavy_check_mark: Thanks Sadegh G. Shohani!
 **Finnish** | [lang_fi.properties](src/main/resources/lang_fi.properties) | 0%
 **French** | [lang_fr.properties](src/main/resources/lang_fr.properties) | :heavy_check_mark: Thanks Charles Maheu!
 **German** | [lang_de.properties](src/main/resources/lang_de.properties) | :heavy_check_mark: Thanks Patrick Gäckle!
