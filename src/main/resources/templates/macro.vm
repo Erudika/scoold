@@ -127,7 +127,12 @@
 #end
 ####################################
 #macro(spacelabel $currentSpace)
-<p class="mediumText grey-text bookmark-spaceurl">$scooldUtils.getSpaceName($!currentSpace)
+<p class="mediumText grey-text bookmark-spaceurl">
+	#if($scooldUtils.isAllSpaces($currentSpace))
+		$!lang.get('allspaces')
+	#else
+		$scooldUtils.getSpaceName($!currentSpace)
+	#end
 	<a href="$questionslink/space/$scooldUtils.getSpaceId($!currentSpace)"
 		 class="hide tooltipped" data-tooltip="Copy link"><i class="fa fa-bookmark-o"></i></a>
 </p>
