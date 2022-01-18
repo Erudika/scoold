@@ -1229,7 +1229,7 @@ public final class ScooldUtils {
 		if (authUser == null) {
 			return DEFAULT_SPACE;
 		}
-		String defaultSpace = authUser.hasSpaces() ? authUser.getSpaces().iterator().next() : DEFAULT_SPACE;
+		String defaultSpace = authUser.hasSpaces() ? ALL_MY_SPACES : DEFAULT_SPACE;
 		String s = canAccessSpace(authUser, space) ? space : defaultSpace;
 		return StringUtils.isBlank(s) ? DEFAULT_SPACE : s;
 	}
