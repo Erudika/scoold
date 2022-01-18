@@ -141,7 +141,7 @@ public class GravatarAvatarRepositoryTest {
 		AvatarStorageResult result = repository.store(profile, config.getDefaultAvatar());
 
 		assertEquals(AvatarStorageResult.profileChanged(), result);
-		assertEquals(avatar, profile.getPicture());
+		assertEquals(config.getDefaultAvatar(), profile.getPicture());
 		assertNotEquals(avatar, profile.getUser().getPicture());
 	}
 }

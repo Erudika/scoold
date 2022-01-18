@@ -35,13 +35,13 @@ public class DefaultAvatarRepositoryTest {
 	@Test
 	public void getLink_should_return_always_default_avatar() {
 		assertEquals(config.getDefaultAvatar(), repository.getLink(new Profile(), AvatarFormat.Profile));
-		assertEquals( repository.getLink(new Profile(), AvatarFormat.Square32), repository.getLink(new Profile(), AvatarFormat.Profile));
+		assertEquals(repository.getLink(new Profile(), AvatarFormat.Square32), repository.getLink(new Profile(), AvatarFormat.Profile));
 	}
 
 	@Test
 	public void getAnonymizedLink_should_always_return_default_avatar() {
 		assertEquals(config.getDefaultAvatar(), repository.getAnonymizedLink("A"));
-		assertEquals( repository.getAnonymizedLink("A"), repository.getAnonymizedLink("B"));
+		assertEquals(repository.getAnonymizedLink("A"), repository.getAnonymizedLink("B"));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class DefaultAvatarRepositoryTest {
 		Profile profile = new Profile();
 
 		AvatarStorageResult result = repository.store(profile, "https://avatar");
-
-		assertEquals(AvatarStorageResult.failed(), result);
+		assertEquals(config.getDefaultAvatar(), profile.getPicture());
+		assertEquals(AvatarStorageResult.profileChanged(), result);
 	}
 }

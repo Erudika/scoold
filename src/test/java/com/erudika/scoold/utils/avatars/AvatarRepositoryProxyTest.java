@@ -60,7 +60,7 @@ public class AvatarRepositoryProxyTest {
 		assertEquals(AvatarStorageResult.userChanged(), storageCustomLinkResult);
 
 		AvatarStorageResult storageDefaultResult = repository.store(profile, "bad:avatar");
-		assertEquals("", profile.getPicture());
+		assertEquals(config.getDefaultAvatar(), profile.getPicture());
 		assertEquals(AvatarStorageResult.profileChanged(), storageDefaultResult);
 
 		profile.setPicture("bad:avatar");
@@ -100,7 +100,7 @@ public class AvatarRepositoryProxyTest {
 
 		String customLinkAvatar = "https://avatar";
 		AvatarStorageResult storageCustomLinkResult = repository.store(profile, customLinkAvatar);
-		assertEquals("", profile.getPicture());
+		assertEquals(config.getDefaultAvatar(), profile.getPicture());
 		assertEquals(AvatarStorageResult.profileChanged(), storageCustomLinkResult);
 	}
 }
