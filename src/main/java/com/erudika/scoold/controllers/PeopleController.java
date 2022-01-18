@@ -148,8 +148,7 @@ public class PeopleController {
 	}
 
 	@GetMapping("/avatar")
-	public void avatar(@RequestParam(required = false) String url,
-			HttpServletRequest req, HttpServletResponse res, Model model) {
+	public void avatar(HttpServletRequest req, HttpServletResponse res, Model model) {
 		// prevents reflected XSS. see https://brutelogic.com.br/poc.svg
 		// for some reason the CSP header is not sent on these responses by the ScooldInterceptor
 		utils.setSecurityHeaders(utils.getCSPNonce(), req, res);

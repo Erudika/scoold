@@ -131,7 +131,6 @@ public final class ScooldUtils {
 		API_USER.setVotes(1);
 		API_USER.setCreatorid("1");
 		API_USER.setTimestamp(Utils.timestamp());
-		API_USER.setPicture(getGravatar(Config.SUPPORT_EMAIL));
 		API_USER.setGroups(User.Groups.ADMINS.toString());
 
 		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
@@ -817,10 +816,6 @@ public final class ScooldUtils {
 
 	public boolean isDarkModeEnabled() {
 		return Config.getConfigBoolean("dark_mode_enabled", true);
-	}
-
-	public boolean isAvatarValidationEnabled() {
-		return Config.getConfigBoolean("avatar_validation_enabled", false); // this should be deleted in the future
 	}
 
 	public static boolean isGravatarEnabled() {

@@ -998,7 +998,7 @@ $utils.formatDate($date, $format, $currentLocale)
 <div class="progress ajaxwait $!{hidden}"><div class="indeterminate"></div></div>
 #end
 #####################################
-#macro(profilepic $user $format)#if($format && !$format.isEmpty())$scooldUtils.getFullAvatarURL($user, $format)#elseif($user && $user.picture && $user.picture.matches("^(http:|https:).*"))$scooldUtils.getFullAvatarURL($user)#elseif($user && $user.picture && $user.picture.matches("^(data:).*"))$user.picture #else $!imageslink/anon.svg #end#end
+#macro(profilepic $user $format)#if($format && !$format.isEmpty())$scooldUtils.getFullAvatarURL($user, $format)#elseif($user && $user.picture && $user.picture.matches("^(http:|https:).*"))$scooldUtils.getFullAvatarURL($user, 'Profile')#elseif($user && $user.picture && $user.picture.matches("^(data:).*"))$user.picture #else $!imageslink/anon.svg #end#end
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
