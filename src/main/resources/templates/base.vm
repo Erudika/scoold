@@ -123,6 +123,14 @@
 									#else
 										<li class="divider"></li>
 									#end
+										#if($authUser.hasSpaces() && !$isMod)
+											#if($scooldUtils.isAllSpaces($currentSpace))
+												#set($allSpacesSelectedClass = "navbtn-hover white-text")
+											#end
+											<li><a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces"
+														 class="${allSpacesSelectedClass}">$!lang.get('allspaces')</a></li>
+											<li class="divider"></li>
+										#end
 										#if($scooldUtils.canAccessSpace($authUser, "default"))
 											#if($!currentSpace.isEmpty() || $scooldUtils.isDefaultSpace($currentSpace))
 													#set($spaceSelectedClass = "navbtn-hover white-text")
@@ -130,14 +138,6 @@
 											<li><a href="$questionslink/space?returnto=$!returnto" class="${spaceSelectedClass}">
 													#if($isMod)$!lang.get('allspaces')#else$!lang.get('defaultspace')#end
 												</a></li>
-											<li class="divider"></li>
-										#end
-										#if($authUser.hasSpaces() && !$isMod)
-											#if($scooldUtils.isAllSpaces($currentSpace))
-												#set($allSpacesSelectedClass = "navbtn-hover white-text")
-											#end
-											<li><a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces"
-														 class="${allSpacesSelectedClass}">$!lang.get('allspaces')</a></li>
 											<li class="divider"></li>
 										#end
 										#foreach($space in $authUser.allSpaces)
