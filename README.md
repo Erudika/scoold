@@ -75,8 +75,6 @@ your company or team.
 
 For **admin** access, open the Scoold Pro demo and login with "Demo login".
 
-*Sometimes the demos might take a minute to load.*
-
 ## Scoold architecture intro (or 'what the heck is Para?')
 
 Scoold is a client application of the [Para](https://paraio.org) backend server. Almost every request to
