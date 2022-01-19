@@ -19,6 +19,7 @@ package com.erudika.scoold.utils.avatars;
 
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import javax.inject.Singleton;
@@ -27,10 +28,8 @@ import javax.inject.Singleton;
 @Singleton
 public class GravatarAvatarGenerator {
 	private static final String URL_BASE = "https://www.gravatar.com/avatar/";
-	private final AvatarConfig config;
 
-	public GravatarAvatarGenerator(AvatarConfig config) {
-		this.config = config;
+	public GravatarAvatarGenerator() {
 	}
 
 	public String getLink(Profile profile, AvatarFormat format) {
@@ -55,7 +54,7 @@ public class GravatarAvatarGenerator {
 	}
 
 	public String configureLink(String url, AvatarFormat format) {
-		return url + (url.endsWith("?") ? "&" : "?") + "s=" + format.getSize() + "&r=g&d=" + config.gravatarPattern();
+		return url + (url.endsWith("?") ? "&" : "?") + "s=" + format.getSize() + "&r=g&d=" + ScooldUtils.gravatarPattern();
 	}
 
 	public boolean isLink(String link) {

@@ -17,79 +17,46 @@
  */
 package com.erudika.scoold.utils.avatars;
 
-import com.erudika.para.core.User;
-import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class CustomLinkAvatarRepository implements AvatarRepository {
-	private final GravatarAvatarGenerator gravatarAvatarGenerator;
+public class ImgurAvatarRepository implements AvatarRepository {
+
 	private final AvatarRepository nextRepository;
 
-	public CustomLinkAvatarRepository(GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepository nextRepository) {
-		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
+	public ImgurAvatarRepository(AvatarRepository nextRepository) {
 		this.nextRepository = nextRepository;
 	}
 
 	@Override
 	public String getLink(Profile profile, AvatarFormat format) {
-		String avatar = extractPicture(profile);
-		if (StringUtils.isBlank(avatar)) {
+		if (profile == null || StringUtils.isBlank(profile.getPicture())) {
 			return nextRepository.getLink(profile, format);
 		}
-
-		if (avatar.matches("^(http:|https:).*")) {
-			return avatar;
-		}
-
-		if (avatar.matches("^(data:).*")) {
-			return avatar;
-		}
-
-		return nextRepository.getLink(profile, format);
-	}
-
-
-	private String extractPicture(Profile profile) {
-		if (profile == null) {
-			return "";
-		}
-
 		String picture = profile.getPicture();
-		if (!gravatarAvatarGenerator.isLink(picture)) {
+		if (isImgurLink(picture)) {
 			return picture;
 		}
+		return ScooldUtils.getDefaultAvatar();
+	}
 
-		String originalPicture = profile.getOriginalPicture();
-		if (!gravatarAvatarGenerator.isLink(originalPicture)) {
-			return originalPicture;
-		}
-
-		return "";
+	private boolean isImgurLink(String picture) {
+		return StringUtils.startsWithIgnoreCase(picture, "https://i.imgur.com/");
 	}
 
 	@Override
 	public String getAnonymizedLink(String data) {
-
 		return nextRepository.getAnonymizedLink(data);
 	}
 
 	@Override
-	public AvatarStorageResult store(Profile profile, String url) {
-		if (!Utils.isValidURL(url) && !url.startsWith("data:")) {
+	public boolean store(Profile profile, String url) {
+		if (!isImgurLink(url)) {
 			return nextRepository.store(profile, url);
 		}
-
 		profile.setPicture(url);
-
-		User user = profile.getUser();
-		if (!user.getPicture().equals(url)) {
-			user.setPicture(url);
-
-			return AvatarStorageResult.userChanged();
-		}
-
-		return AvatarStorageResult.profileChanged();
+		return true;
 	}
 }

@@ -53,7 +53,7 @@ public class GravatarAvatarRepository implements AvatarRepository {
 	}
 
 	@Override
-	public AvatarStorageResult store(Profile profile, String url) {
+	public boolean store(Profile profile, String url) {
 		if (StringUtils.isBlank(url)) {
 			String gravatarUrl = gravatarAvatarGenerator.getRawLink(profile);
 			return applyChange(profile, gravatarUrl);
@@ -66,8 +66,8 @@ public class GravatarAvatarRepository implements AvatarRepository {
 		return applyChange(profile, url);
 	}
 
-	private AvatarStorageResult applyChange(Profile profile, String url) {
+	private boolean applyChange(Profile profile, String url) {
 		profile.setPicture(url);
-		return AvatarStorageResult.profileChanged();
+		return true;
 	}
 }

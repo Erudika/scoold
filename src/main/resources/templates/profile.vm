@@ -35,9 +35,10 @@
 				<div class="editbox hide">
 					<form action="$profilelink/$!showUser.creatorid" method="post">
 						#sectoken(false)
-						<input id="avatar_gravatar_url" type="hidden" value="$!gravatarPicture">
-						<input id="avatar_default_url" type="hidden" value="$!defaultAvatar">
-						<input id="picture_url" type="hidden" name="picture" value="$!showUser.picture">
+						<input id="avatar-gravatar-url" type="hidden" value="$!gravatarPicture">
+						<input id="avatar-default-url" type="hidden" value="$!defaultAvatar">
+						<input id="avatar-custom-url" type="hidden" value="$!showUser.picture">
+						<input id="picture-url" type="hidden" name="picture" value="$!showUser.picture">
 						#if($isGravatarEnabled)
 						<div class="row">
 							<div class="col s6">
@@ -57,16 +58,6 @@
 									</label>
 								</div>
 							</div>
-						</div>
-						#end
-						#if($isCustomAvatarLinkEnabled)
-						<div id="avatar_custom_url_block" class="input-field">
-							<label for="avatar_custom_url">URL</label>
-							#if($isGravatarPicture)
-								<input id="avatar_custom_url" type="url" value="$!showUser.user.picture">
-							#else
-								<input id="avatar_custom_url" type="url" value="$!showUser.picture">
-							#end
 						</div>
 						#end
 						<div class="row mvn pts">

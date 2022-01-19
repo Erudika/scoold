@@ -22,18 +22,14 @@ import com.erudika.scoold.core.Profile;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class GravatarAvatarGeneratorTest {
-	private AvatarConfig config;
 	private GravatarAvatarGenerator generator;
 
 	@Before
 	public void setUp(){
-		this.config = mock(AvatarConfig.class);
-		when(config.gravatarPattern()).thenReturn("retro");
-		this.generator = new GravatarAvatarGenerator(config);
+		System.setProperty("para.gravatars_pattern", "retro");
+		this.generator = new GravatarAvatarGenerator();
 	}
 
 	@Test
@@ -82,19 +78,16 @@ public class GravatarAvatarGeneratorTest {
 	@Test
 	public void configureLink_should_return_url_for_specific_format_size_and_config_pattern_and_all_public() {
 		String rawLink = generator.getRawLink("toto@example.com");
-
-		when(config.gravatarPattern()).thenReturn("retro");
 		String link1 = generator.configureLink(rawLink, AvatarFormat.Square32);
 		assertEquals("https://www.gravatar.com/avatar/75a4c35602d5866368dd4c959e249aba?s=32&r=g&d=retro", link1);
 
-		when(config.gravatarPattern()).thenReturn("identicon");
+		System.setProperty("para.gravatars_pattern", "identicon");
 		String link2 = generator.configureLink(rawLink, AvatarFormat.Square50);
 		assertEquals("https://www.gravatar.com/avatar/75a4c35602d5866368dd4c959e249aba?s=50&r=g&d=identicon", link2);
 	}
 
 	@Test
 	public void getLink_should_compture_and_configure_link() {
-		when(config.gravatarPattern()).thenReturn("retro");
 		AvatarFormat format = AvatarFormat.Square32;
 		Profile profile = getProfileWithEmail("toto@example.com");
 

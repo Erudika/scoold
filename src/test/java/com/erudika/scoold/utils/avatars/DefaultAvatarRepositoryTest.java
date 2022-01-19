@@ -18,29 +18,29 @@
 package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class DefaultAvatarRepositoryTest {
 	private DefaultAvatarRepository repository;
-	private AvatarConfig config;
 
 	@Before
 	public void setUp(){
-		this.config = new AvatarConfig();
-		this.repository = new DefaultAvatarRepository(config);
+		this.repository = new DefaultAvatarRepository();
 	}
 
 	@Test
 	public void getLink_should_return_always_default_avatar() {
-		assertEquals(config.getDefaultAvatar(), repository.getLink(new Profile(), AvatarFormat.Profile));
+		Profile profile = new Profile();
+		assertEquals(ScooldUtils.getDefaultAvatar(), repository.getLink(profile, AvatarFormat.Profile));
 		assertEquals(repository.getLink(new Profile(), AvatarFormat.Square32), repository.getLink(new Profile(), AvatarFormat.Profile));
 	}
 
 	@Test
 	public void getAnonymizedLink_should_always_return_default_avatar() {
-		assertEquals(config.getDefaultAvatar(), repository.getAnonymizedLink("A"));
+		assertEquals(ScooldUtils.getDefaultAvatar(), repository.getAnonymizedLink("A"));
 		assertEquals(repository.getAnonymizedLink("A"), repository.getAnonymizedLink("B"));
 	}
 
@@ -48,8 +48,8 @@ public class DefaultAvatarRepositoryTest {
 	public void store_should_nothing() {
 		Profile profile = new Profile();
 
-		AvatarStorageResult result = repository.store(profile, "https://avatar");
-		assertEquals(config.getDefaultAvatar(), profile.getPicture());
-		assertEquals(AvatarStorageResult.profileChanged(), result);
+		boolean result = repository.store(profile, "https://avatar");
+		assertEquals(ScooldUtils.getDefaultAvatar(), profile.getPicture());
+		assertEquals(true, result);
 	}
 }

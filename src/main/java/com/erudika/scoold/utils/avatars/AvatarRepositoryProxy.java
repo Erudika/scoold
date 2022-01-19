@@ -18,29 +18,27 @@
 package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Singleton;
+import software.amazon.awssdk.utils.StringUtils;
 
 @Component
 @Singleton
 public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
-	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		this.repository = addGravatarIfEnabled(addCustomLinkIfEnabled(getDefault(config), gravatarAvatarGenerator, config), gravatarAvatarGenerator, config);
+	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator) {
+		this.repository = addGravatarIfEnabled(getDefault(), gravatarAvatarGenerator);
 	}
 
-	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		return config.isGravatarEnabled() ? new GravatarAvatarRepository(gravatarAvatarGenerator, repo) : repo;
+	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator) {
+		return ScooldUtils.isGravatarEnabled() ? new GravatarAvatarRepository(gravatarAvatarGenerator, repo) : repo;
 	}
 
-	private AvatarRepository addCustomLinkIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarConfig config) {
-		return config.isCustomLinkEnabled() ? new CustomLinkAvatarRepository(gravatarAvatarGenerator, repo) : repo;
-	}
-
-	private AvatarRepository getDefault(AvatarConfig config) {
-		return new DefaultAvatarRepository(config);
+	private AvatarRepository getDefault() {
+		return new DefaultAvatarRepository();
 	}
 
 	@Override
@@ -54,7 +52,10 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	}
 
 	@Override
-	public AvatarStorageResult store(Profile profile, String url) {
+	public boolean store(Profile profile, String url) {
+		if (profile != null && StringUtils.equals(profile.getPicture(), url)) {
+			return false;
+		}
 		return repository.store(profile, url);
 	}
 }

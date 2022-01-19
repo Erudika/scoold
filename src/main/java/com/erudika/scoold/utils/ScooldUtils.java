@@ -822,6 +822,14 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("gravatars_enabled", true);
 	}
 
+	public static String gravatarPattern() {
+		return Config.getConfigParam("gravatars_pattern", "retro");
+	}
+
+	public static String getDefaultAvatar() {
+		return IMAGESLINK + "/anon.svg";
+	}
+
 	public String getFooterHTML() {
 		return Config.getConfigParam("footer_html", "");
 	}

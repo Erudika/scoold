@@ -23,6 +23,6 @@ public interface AvatarRepository {
 	String getLink(Profile profile, AvatarFormat format);
 	String getAnonymizedLink(String data);
 
-	AvatarStorageResult store(Profile profile, String url);
+	boolean store(Profile profile, String url);
 }
 

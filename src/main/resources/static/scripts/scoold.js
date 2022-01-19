@@ -526,10 +526,9 @@ $(function () {
 
 	var profileAvatar = $("img.profile-pic.on-profile-page");
 	var navbarAvatar = $("img.profile-pic:first");
-	var avatarUrlInput = $("#picture_url");
-	var avatarCustomUrlBlock = $("#avatar_custom_url_block");
+	var avatarUrlInput = $("#picture-url");
 	var avatarEditForm = avatarUrlInput.closest("form");
-	var defaultAvatar = $("#avatar_default_url").val();
+	var defaultAvatar = $("#avatar-default-url").val();
 
 	function changeAvatars(newPicValue) {
 		avatarUrlInput.val(newPicValue);
@@ -547,29 +546,14 @@ $(function () {
 		}, 200);
 	}
 
-	$("#avatar_custom_url").on('focusout paste', function () {
-		$("#use-gravatar-switch").prop('checked', false).trigger("change");
-	});
-
-	function updateAvatarFormDisplay() {
-		if($("#use-gravatar-switch").prop('checked')) {
-			avatarCustomUrlBlock.css({display: 'none', visibility: 'collapse'});
-		} else {
-			avatarCustomUrlBlock.css({display: 'block', visibility: 'visible'});
-		}
-	}
-
 	$("#use-gravatar-switch").change(function () {
 		var rthis = $(this);
 		if(rthis.prop('checked')) {
-			changeAvatarAndSubmit($("#avatar_gravatar_url").val());
+			changeAvatarAndSubmit($("#avatar-gravatar-url").val());
 		} else {
-			changeAvatarAndSubmit($("#avatar_custom_url").val() || defaultAvatar);
+			changeAvatarAndSubmit($("#avatar-custom-url").val() || defaultAvatar);
 		}
-
-		updateAvatarFormDisplay();
 	});
-	updateAvatarFormDisplay();
 
 	$("#clear-avatar-btn").click(function () {
 		changeAvatarAndSubmit(defaultAvatar);

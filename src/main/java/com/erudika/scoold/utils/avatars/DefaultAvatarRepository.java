@@ -18,27 +18,27 @@
 package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
+import com.erudika.scoold.utils.ScooldUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DefaultAvatarRepository implements AvatarRepository {
-	private final AvatarConfig config;
 
-	public DefaultAvatarRepository(AvatarConfig config) {
-		this.config = config;
+	public DefaultAvatarRepository() {
 	}
 
 	@Override
 	public String getLink(Profile profile, AvatarFormat format) {
-		return config.getDefaultAvatar();
+		return (profile == null || StringUtils.isBlank(profile.getPicture())) ? ScooldUtils.getDefaultAvatar() : profile.getPicture();
 	}
 
 	@Override
 	public String getAnonymizedLink(String data) {
-		return config.getDefaultAvatar();
+		return ScooldUtils.getDefaultAvatar();
 	}
 
 	@Override
-	public AvatarStorageResult store(Profile profile, String url) {
-		profile.setPicture(config.getDefaultAvatar());
-		return AvatarStorageResult.profileChanged();
+	public boolean store(Profile profile, String url) {
+		profile.setPicture(ScooldUtils.getDefaultAvatar());
+		return true;
 	}
 }
