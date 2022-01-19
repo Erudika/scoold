@@ -1222,7 +1222,7 @@ public final class ScooldUtils {
 
 	public String getValidSpaceIdExcludingAll(Profile authUser, String space, HttpServletRequest req) {
 		String s = StringUtils.isBlank(space) ? getSpaceIdFromCookie(authUser, req) : space;
-		return isAllSpaces(s) ? getValidSpaceId(authUser, "x") : s;
+		return isAllSpaces(s) ? DEFAULT_SPACE : s;
 	}
 
 	private String getValidSpaceId(Profile authUser, String space) {
