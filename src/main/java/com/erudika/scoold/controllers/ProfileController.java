@@ -108,14 +108,12 @@ public class ProfileController {
 		model.addAttribute("ogimage", avatarRepository.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
-		model.addAttribute("isGravatarEnabled", utils.isGravatarEnabled());
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
 		model.addAttribute("gravatarPicture", gravatarAvatarGenerator.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("isGravatarPicture", gravatarAvatarGenerator.isLink(showUser.getPicture()));
-		model.addAttribute("defaultAvatar", ScooldUtils.getDefaultAvatar());
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);
@@ -194,8 +192,7 @@ public class ProfileController {
 		boolean updateUser = false;
 		User u = showUser.getUser();
 
-		if (Config.getConfigBoolean("avatar_edits_enabled", true) &&
-				!StringUtils.isBlank(picture)) {
+		if (Config.getConfigBoolean("avatar_edits_enabled", true) && !StringUtils.isBlank(picture)) {
 			updateProfile = avatarRepository.store(showUser, picture);
 		}
 

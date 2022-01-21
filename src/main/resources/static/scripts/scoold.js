@@ -557,6 +557,7 @@ $(function () {
 
 	$("#clear-avatar-btn").click(function () {
 		changeAvatarAndSubmit(defaultAvatar);
+		avatarEditForm.find(".canceledit").click();
 		return false;
 	});
 

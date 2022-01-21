@@ -43,6 +43,7 @@ your company or team.
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
 - Import data from Stack Overflow for Teams
 - Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
+- Support for uploading custom avatars (to Imgur, Cloudinary)
 - SEO friendly
 - Cookie consent (for GDPR, CCPA, etc.)
 
@@ -55,7 +56,7 @@ your company or team.
 - Custom authentication support
 - SCIM 2.0 for automatic user provisioning
 - Mentions with notifications
-- File uploads (local, AWS S3, Azure Blob, or Imgur)
+- File uploads (local, AWS S3, Azure Blob)
 - Account suspensions (permabans)
 - Anonymous posts
 - Unlimited spaces
@@ -1390,13 +1391,6 @@ Local file storage is used by default. To configure the directory on the server 
 para.file_uploads_dir = "uploads"
 ```
 
-### Imgur storage provider
-To use Imgur for storing images, specify your Imgur API client id:
-```
-para.imgur_client_id = "x23e8t0askdj"
-```
-Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
-
 ### AWS S3 storage provider
 To use S3 for file storage, specify the name of the S3 bucket where you want the files to be uploaded. AWS credentials
 and region settings are optional as they can be picked up from the environment automatically.
@@ -1425,6 +1419,19 @@ para.blob_storage_container = ""
 # path prefix within a container (subfolder)
 para.blob_storage_path = "uploads"
 ```
+
+## Uploading custom avatars
+
+### To Imgur
+To use Imgur for storing images, specify your Imgur API client id:
+```
+para.imgur_client_id = "x23e8t0askdj"
+para.avatar_repository = "imgur"
+```
+Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
+
+### To Cloudinary
+...soon
 
 ## Slack integration
 

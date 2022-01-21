@@ -16,7 +16,6 @@
  * For issues and patches go to: https://github.com/erudika
  */
 package com.erudika.scoold.core;
-
 import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;

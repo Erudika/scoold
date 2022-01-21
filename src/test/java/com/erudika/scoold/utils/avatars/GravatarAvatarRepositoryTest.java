@@ -91,7 +91,7 @@ public class GravatarAvatarRepositoryTest {
 
 		assertEquals(true, result);
 		assertEquals(avatar, profile.getPicture());
-		assertNotEquals(avatar, profile.getUser().getPicture());
+		assertNotEquals(avatar, profile.getOriginalPicture());
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class GravatarAvatarRepositoryTest {
 
 		assertEquals(false, result);
 		assertNotEquals(avatar, profile.getPicture());
-		assertNotEquals(avatar, profile.getUser().getPicture());
+		assertNotEquals(avatar, profile.getOriginalPicture());
 		verify(defaultRepository, times(1)).store(profile, avatar);
 	}
 
@@ -119,7 +119,7 @@ public class GravatarAvatarRepositoryTest {
 
 		assertEquals(true, result);
 		assertEquals(avatar, profile.getPicture());
-		assertNotEquals(avatar, profile.getUser().getPicture());
+		assertNotEquals(avatar, profile.getOriginalPicture());
 	}
 
 	@Test
@@ -131,6 +131,6 @@ public class GravatarAvatarRepositoryTest {
 
 		assertEquals(true, result);
 		assertEquals(ScooldUtils.getDefaultAvatar(), profile.getPicture());
-		assertNotEquals(avatar, profile.getUser().getPicture());
+		assertNotEquals(avatar, profile.getOriginalPicture());
 	}
 }

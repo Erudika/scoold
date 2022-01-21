@@ -80,13 +80,13 @@ public class ImgurAvatarRepositoryTest {
 	@Test
 	public void store_should_change_profile_picture_but_not_user_is_already_this_picture() {
 		String avatar = "https://i.imgur.com/123";
-		profile.getUser().setPicture(avatar);
+		profile.setOriginalPicture(avatar);
 
 		boolean result = repository.store(profile, avatar);
 
 		assertEquals(true, result);
 		assertEquals(avatar, profile.getPicture());
-		assertEquals(avatar, profile.getUser().getPicture());
+		assertEquals(avatar, profile.getOriginalPicture());
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class ImgurAvatarRepositoryTest {
 		verify(defaultRepository).store(profile, avatar);
 		assertEquals(false, result);
 		assertNotEquals(avatar, profile.getPicture());
-		assertNotEquals(avatar, profile.getUser().getPicture());
+		assertNotEquals(avatar, profile.getOriginalPicture());
 	}
 
 }

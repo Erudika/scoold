@@ -822,6 +822,15 @@ public final class ScooldUtils {
 		return Config.getConfigBoolean("gravatars_enabled", true);
 	}
 
+	public static boolean isAvatarUploadsEnabled() {
+		return isImgurAvatarRepositoryEnabled();
+	}
+
+	public static boolean isImgurAvatarRepositoryEnabled() {
+		return !StringUtils.isBlank(Config.getConfigParam("imgur_client_id", "")) &&
+				"imgur".equalsIgnoreCase(Config.getConfigParam("avatar_repository", ""));
+	}
+
 	public static String gravatarPattern() {
 		return Config.getConfigParam("gravatars_pattern", "retro");
 	}

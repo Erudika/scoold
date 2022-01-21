@@ -38,7 +38,11 @@ public class DefaultAvatarRepository implements AvatarRepository {
 
 	@Override
 	public boolean store(Profile profile, String url) {
-		profile.setPicture(ScooldUtils.getDefaultAvatar());
+		if (StringUtils.isBlank(url) || !url.equalsIgnoreCase(profile.getOriginalPicture())) {
+			profile.setPicture(ScooldUtils.getDefaultAvatar());
+		} else {
+			profile.setPicture(profile.getOriginalPicture());
+		}
 		return true;
 	}
 }

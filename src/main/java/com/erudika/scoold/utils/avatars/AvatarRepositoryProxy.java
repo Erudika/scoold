@@ -20,7 +20,6 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import org.springframework.stereotype.Component;
-
 import javax.inject.Singleton;
 import software.amazon.awssdk.utils.StringUtils;
 
@@ -30,11 +29,15 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
 	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator) {
-		this.repository = addGravatarIfEnabled(getDefault(), gravatarAvatarGenerator);
+		this.repository = addGravatarIfEnabled(addImgurIfEnabled(getDefault()), gravatarAvatarGenerator);
 	}
 
 	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator) {
 		return ScooldUtils.isGravatarEnabled() ? new GravatarAvatarRepository(gravatarAvatarGenerator, repo) : repo;
+	}
+
+	private AvatarRepository addImgurIfEnabled(AvatarRepository repo) {
+		return ScooldUtils.isImgurAvatarRepositoryEnabled() ? new ImgurAvatarRepository(repo) : repo;
 	}
 
 	private AvatarRepository getDefault() {
