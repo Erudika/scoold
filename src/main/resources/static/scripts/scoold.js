@@ -15,13 +15,15 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
 	var locationbox = $("input.locationbox");
 	var rusuremsg = CONFIRM_MSG;
 	var hostURL = window.location.protocol + "//" + window.location.host;
+	var imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+		'image/svg+xml', 'image/webp', 'image/bmp', 'image/tiff'];
 
 	// Materialize CSS init
 
@@ -575,6 +577,68 @@ $(function () {
 		$(".moderator-icon").toggleClass("hide");
 		return false;
 	});
+
+	if (AVATAR_UPLOADS_ENABLED) {
+		var uploadOpts = {
+			remoteFilename: function (file) {
+				return (profileAvatar.attr("id") || "profile_" + Date.now()) + "_" + file.name;
+			},
+			onFileUploadResponse: function (xhr) {
+				var result = JSON.parse(xhr.responseText);
+				if (result && result.data && result.data.link) {
+					changeAvatarAndSubmit(result.data.link);
+				}
+			},
+			allowedTypes: imageTypes
+		};
+		if (IMGUR_ENABLED) {
+			uploadOpts.uploadUrl = "https://api.imgur.com/3/image";
+			uploadOpts.uploadMethod = "POST";
+			uploadOpts.jsonFieldName = "link";
+			uploadOpts.uploadFieldName = "image";
+			uploadOpts.extraHeaders = {
+				"Authorization": "Client-ID " + IMGUR_CLIENT_ID
+			};
+		}
+
+		var dropPicHandler = new inlineAttachment(uploadOpts, {});
+
+		dropPicHandler.editor = {
+			insertValue: $.noop,
+			getValue: $.noop,
+			setValue: $.noop
+		};
+
+		profileAvatar.on({
+			dragleave: function () {
+				$(this).removeClass('droptarget');
+			},
+			dragover: function (e) {
+				$(this).addClass('droptarget');
+				e.preventDefault();
+			},
+			drop: function (e) {
+				$(this).removeClass('droptarget');
+				e.preventDefault();
+				dropPicHandler.onDrop(e.originalEvent);
+			}
+		});
+
+		$("#change-avatar-btn").on('click', function () {
+			$(this).next("[type=file]").click();
+			return false;
+		});
+
+		$('input[type=file]').on('change', function (e) {
+			var file = event.target.files.length ? event.target.files[0] : null;
+			if (file) {
+				var formData = new FormData();
+				formData.append("file", file, Date.now() + "_" + file.name);
+				dropPicHandler.onFileInserted(file);
+				dropPicHandler.uploadFile(file);
+			}
+		});
+	}
 
 	/****************************************************
      *                      SETTINGS

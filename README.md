@@ -1422,6 +1422,11 @@ para.blob_storage_path = "uploads"
 
 ## Uploading custom avatars
 
+This feature is available in both Scoold and Scoold Pro. You can configure Scoold to upload custom profile pictures to a
+cloud-based image hosting service like Imgur or Cloudinary. In Scoold Pro, avatars are uploaded to the configured storage
+provider, but by configuring Imgur or Cloudinary for avatars, you will essentially change where avatars are stored and
+served from.
+
 ### To Imgur
 To use Imgur for storing images, specify your Imgur API client id:
 ```

@@ -1851,7 +1851,7 @@ public final class ScooldUtils {
 				+ "base-uri 'self'; "
 				+ "form-action 'self' " + Config.getConfigParam("signout_url", "") + "; "
 				+ "connect-src 'self' " + (Config.IN_PRODUCTION ? getServerURL() : "")
-				+ " maps.googleapis.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
+				+ " maps.googleapis.com api.imgur.com accounts.google.com " + Config.getConfigParam("csp_connect_sources", "") + "; "
 				+ "frame-src 'self' *.google.com staticxx.facebook.com " + Config.getConfigParam("csp_frame_sources", "") + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + Config.getConfigParam("csp_font_sources", "") + "; "
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com " // unsafe-inline required by MathJax and Google Maps!
