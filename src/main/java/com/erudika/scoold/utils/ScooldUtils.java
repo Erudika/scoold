@@ -1406,6 +1406,24 @@ public final class ScooldUtils {
 		return authUser != null ? (authUser.hasBadge(TEACHER) || isMod(authUser) || isMine(showPost, authUser)) : false;
 	}
 
+	public boolean canDelete(Post showPost, Profile authUser) {
+		return canDelete(showPost, authUser, null);
+	}
+
+	public boolean canDelete(Post showPost, Profile authUser, String approvedAnswerId) {
+		if (authUser == null) {
+			return false;
+		}
+		if (Config.getConfigBoolean("delete_protection_enabled", true)) {
+			if (showPost.isReply()) {
+				return isMine(showPost, authUser) && !StringUtils.equals(approvedAnswerId, showPost.getId());
+			} else {
+				return isMine(showPost, authUser) && showPost.getAnswercount() == 0;
+			}
+		}
+		return isMine(showPost, authUser);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <P extends ParaObject> P populate(HttpServletRequest req, P pobj, String... paramName) {
 		if (pobj == null || paramName == null) {

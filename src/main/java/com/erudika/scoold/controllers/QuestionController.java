@@ -354,15 +354,17 @@ public class QuestionController {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (!showPost.isReply()) {
-			if ((utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser)) || utils.isMod(authUser)) {
 				showPost.delete();
 				model.addAttribute("deleted", true);
 				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
 		} else if (showPost.isReply()) {
-			if (utils.isMine(showPost, authUser) || utils.isMod(authUser)) {
-				Post parent = pc.read(showPost.getParentid());
+			Post parent = pc.read(showPost.getParentid());
+			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser, parent.getAnswerid())) ||
+					utils.isMod(authUser)) {
 				parent.setAnswercount(parent.getAnswercount() - 1);
+				parent.setAnswerid(showPost.getId().equals(parent.getAnswerid()) ? "" : parent.getAnswerid());
 				parent.update();
 				showPost.delete();
 				model.addAttribute("deleted", true);

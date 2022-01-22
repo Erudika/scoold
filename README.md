@@ -716,6 +716,15 @@ para.signup_captcha_site_key = "site-key-from-google"
 para.signup_captcha_secret_key = "secret-from-google"
 ```
 
+## Delete protection for valuable content
+
+By default, Scoold will protect valuable questions and answers from accidental deletion. If a question has at least one
+answer, the author of that question will not be able to delete it. Or, if an answer is accepted by the author of the
+question, the person who wrote the answer won't be able to delete it. You can turn this off with:
+```ini
+para.delete_protection_enabled = false
+```
+
 ## Welcome email customization
 
 To customize the message sent when a new user signs up with Scoold, modify these properties in your Scoold configuration

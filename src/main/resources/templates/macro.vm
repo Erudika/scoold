@@ -747,7 +747,7 @@
 						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
 					#end
 
-					#if (($authenticated && $showpost.creatorid == $authUser.id) || $scooldUtils.isMod($authUser))
+					#if ($scooldUtils.canDelete($showpost, $authUser, $parentpost.answerid) || $scooldUtils.isMod($authUser))
 						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
 					#end
 
