@@ -387,7 +387,7 @@ public final class ScooldUtils {
 			}
 
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(user.getEmail()), subject, compileEmailTemplate(model));
@@ -411,7 +411,7 @@ public final class ScooldUtils {
 			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", lang.get("hello"));
 			model.put("body", body);
 			emailer.sendEmail(Arrays.asList(identifier.getId()), subject, compileEmailTemplate(model));
@@ -430,7 +430,7 @@ public final class ScooldUtils {
 			String body3 = getDefaultEmailSignature(lang.get("notification.signature") + "<br><br>");
 
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", lang.get("hello"));
 			model.put("body", body1 + body2 + body3);
 			emailer.sendEmail(Arrays.asList(email), subject, compileEmailTemplate(model));
@@ -600,7 +600,7 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.favtags.subject"), name,
 					Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("notification.favtags.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
@@ -634,7 +634,7 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name,
 					Utils.abbreviate(question.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
 			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 					postURL, escapeHtml(question.getTitle()), body, tagsString));
@@ -665,7 +665,7 @@ public final class ScooldUtils {
 			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
 					Utils.abbreviate(reply.getTitle(), 255));
 			model.put("subject", escapeHtml(subject));
-			model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
 					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
@@ -728,7 +728,7 @@ public final class ScooldUtils {
 					String postURL = getServerURL() + parentPost.getPostLink(false, false);
 					String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
 					model.put("subject", escapeHtml(subject));
-					model.put("logourl", Config.getConfigParam("small_logo_url", "https://scoold.com/logo.png"));
+					model.put("logourl", getSmallLogoUrl());
 					model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
 							Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
@@ -1857,6 +1857,19 @@ public final class ScooldUtils {
 
 	public String getDefaultTheme() {
 		return loadResource("themes/default.css");
+	}
+
+	public String getSmallLogoUrl() {
+		String defaultLogo = getServerURL() + IMAGESLINK + "/logowhite.png";
+		String logoUrl = Config.getConfigParam("small_logo_url", defaultLogo);
+		String defaultMainLogoUrl = IMAGESLINK + "/logo.svg";
+		String mainLogoUrl = Config.getConfigParam("logo_url", defaultMainLogoUrl);
+		if (!defaultLogo.equals(logoUrl)) {
+			return logoUrl;
+		} else if (!mainLogoUrl.equals(defaultMainLogoUrl)) {
+			return mainLogoUrl;
+		}
+		return logoUrl;
 	}
 
 	public String getCSPNonce() {
