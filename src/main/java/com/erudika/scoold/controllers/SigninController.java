@@ -43,10 +43,13 @@ import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
 public class SigninController {
+
+	private static final Logger logger = LoggerFactory.getLogger(SigninController.class);
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -133,9 +136,11 @@ public class SigninController {
 		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
 		model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
 		if (id != null && token != null) {
-			boolean verified = activateWithEmailToken((User) pc.read(id), token);
+			User u = (User) pc.read(id);
+			boolean verified = activateWithEmailToken(u, token);
 			if (verified) {
 				model.addAttribute("verified", verified);
+				model.addAttribute("verifiedEmail", u.getEmail());
 			} else {
 				return "redirect:" + SIGNINLINK;
 			}
@@ -182,13 +187,18 @@ public class SigninController {
 		if (!utils.isAuthenticated(req) && HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
 			Sysprop ident = pc.read(email);
 			// confirmation emails can be resent once every 6h
-			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN)) &&
-					(!ident.hasProperty("confirmationTimestamp") || Utils.timestamp() >
-					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6)))) {
-				User u = pc.read(Utils.type(User.class), ident.getCreatorid());
-				if (u != null && !u.getActive()) {
-					utils.sendVerificationEmail(ident, req);
+			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
+				if (!ident.hasProperty("confirmationTimestamp") || Utils.timestamp() >
+					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6))) {
+					User u = pc.read(Utils.type(User.class), ident.getCreatorid());
+					if (u != null && !u.getActive()) {
+						utils.sendVerificationEmail(ident, req);
+					}
+				} else {
+					logger.warn("Failed to send email confirmation to '{}' - this can only be done once every 6h.", email);
 				}
+			} else {
+				logger.warn("Failed to send email confirmation to '{}' - user has not signed in with that email yet.", email);
 			}
 		}
 		return "redirect:" + SIGNINLINK + "/register?verify=true";
@@ -292,8 +302,7 @@ public class SigninController {
 			setAuthCookie(u.getPassword(), req, res);
 			return "redirect:" + getBackToUrl(req);
 		} else if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
-			LoggerFactory.getLogger(SigninController.class).
-					warn("Signin failed for {} because that domain is not in the whitelist.", u.getEmail());
+			logger.warn("Signin failed for {} because that domain is not in the whitelist.", u.getEmail());
 		}
 		return "redirect:" + SIGNINLINK + "?code=3&error=true";
 	}
@@ -308,6 +317,7 @@ public class SigninController {
 				pc.update(u);
 				return true;
 			}
+			logger.warn("Failed to verify user with email '{}' - invalid verification token.", u.getEmail());
 		}
 		return false;
 	}
@@ -381,14 +391,22 @@ public class SigninController {
 		}
 		Sysprop s = pc.read(email);
 		// pass reset emails can be sent once every 12h
-		if (s != null && (s.getUpdated() == null || Utils.timestamp() > (s.getUpdated() + TimeUnit.HOURS.toNanos(12)))) {
-			String token = Utils.generateSecurityToken(42, true);
-			s.addProperty(Config._RESET_TOKEN, token);
-			s.setUpdated(Utils.timestamp());
-			if (pc.update(s) != null) {
-				utils.sendPasswordResetEmail(email, token, req);
+		if (s != null) {
+			if (!s.hasProperty("iforgotTimestamp") || Utils.timestamp() >
+						((long) s.getProperty("iforgotTimestamp") + TimeUnit.HOURS.toMillis(12))) {
+				String token = Utils.generateSecurityToken(42, true);
+				s.addProperty(Config._RESET_TOKEN, token);
+				s.addProperty("iforgotTimestamp", Utils.timestamp());
+				s.setUpdated(Utils.timestamp());
+				if (pc.update(s) != null) {
+					utils.sendPasswordResetEmail(email, token, req);
+				}
+				return token;
+			} else {
+				logger.warn("Failed to send password reset email to '{}' - this can only be done once every 12h.", email);
 			}
-			return token;
+		} else {
+			logger.warn("Failed to send password reset email to '{}' - user has not signed in with that email and passowrd.", email);
 		}
 		return "";
 	}

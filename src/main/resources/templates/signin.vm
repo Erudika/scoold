@@ -20,7 +20,7 @@
 					#elseif($verified)
 						<h1><i class="fa fa-check-circle fa-2x green-text"></i></h1>
 						<p>$!lang.get('signin.verify.done')</p>
-						<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
+						<a href="$signinlink?email=$!verifiedEmail" class="btn">$!lang.get("signin.title")</a>
 					#else
 						#if($resend)
 							#set($action = "$signinlink/register/resend" )
