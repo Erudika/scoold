@@ -1042,7 +1042,7 @@ To test this, try logging in with user `manager` and password `Secret123`.
 **PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside
 of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
 accessible LDAP server. To enable this feature, add this to your configuration:
-```
+```ini
 para.security.ldap.is_local = true
 # required for passwordless authentication with Para
 para.app_secret_key = "change_to_long_random_string"
@@ -1156,7 +1156,7 @@ Note that the secret key above is **not** the same as your Para secret key! You 
 Para supports custom authentication providers through its "passwordless" filter. This means that you can send any
 user info to Para and it will authenticate that user automatically without passwords. The only verification done here is
 on this secret key value which you provide in your Scoold Pro configuration file:
-```
+```ini
 para.app_secret_key = "change_to_long_random_string"
 ```
 This key is used to protect requests to the passwordless filter and it's different from the Para secret key for your app.
@@ -1313,7 +1313,7 @@ will the access token (JWT) inside the cookie.
 
 You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
 following configuration property:
-```
+```ini
 para.approved_domains_for_signups = "acme-corp.com"
 ```
 Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
@@ -2115,7 +2115,7 @@ The response body is similar to this:
 {
   "healthy": true,
   "message": "Scoold API, see docs at http://localhost:8000/apidocs",
-	"pro": false
+  "pro": false
 }
 ```
 
