@@ -322,6 +322,7 @@ Example for `para-application.conf`:
 ```ini
 para.env = "production"
 para.dao = "H2DAO"
+para.search = "LuceneSearch"
 ```
 
 Example for `scoold-application.conf`:
@@ -331,11 +332,14 @@ para.app_name = "Scoold"
 para.endpoint = "http://para:8080"
 para.access_key = "app:scoold"
 para.secret_key = "..."
+# specify the actual public hostname for Para
+para.security.redirect_uri = "http://localhost:8080"
 ```
-Docker Compose automatically creates DNS names for each of the services.
-This is why the exemplary `scoold-application.conf` contains
-`http://para:8080` as the value for `para.endpoint`. The internal IP
-of Para will be resolved by Docker automatically.
+**Important:** Scoold will connect to Para on `http://para:8080`, inside the Docker container environment.
+That hostname may not be accessible from your local machine or the Internet, which will break authentication redirects.
+For example, when signing in with Google, you will be redirected to Google and then back to Para, on the address
+specified in `para.security.redirect_uri`. Para must be a publicly accessible on that address or the authentication
+requests will fail.
 
 Then you can start both Scoold and Para with Docker Compose like so:
 ```

@@ -11,7 +11,9 @@ ENV BOOT_SLEEP=0 \
 
 COPY --from=build /scoold/scoold-master/target/scoold-*.jar /scoold/scoold.jar
 
+WORKDIR /scoold
+
 EXPOSE 8000
 
 CMD sleep $BOOT_SLEEP && \
-	java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /scoold/scoold.jar
+	java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar scoold.jar
