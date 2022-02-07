@@ -288,7 +288,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 			pc.throwExceptionOnHTTPError(true);
 			pc.setAppSettings(settings);
 			pc.throwExceptionOnHTTPError(false);
-			return true;
+			return pc.getTimestamp() > 0; // finally, check if app actually exists
 		});
 		return pc;
 	}
