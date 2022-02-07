@@ -13,10 +13,8 @@ git add -A && git commit -m "Release v$ver."
 git tag "$ver"
 git push origin master
 git push --tags
-echo "v$ver" > changelog.txt && \
+git log $OLDVER..HEAD --oneline > changelog.txt && \
 echo "" >> changelog.txt && \
-git log $OLDVER..HEAD --oneline >> changelog.txt && \
-echo "" >> changelog.txt && \
-hub release create -F changelog.txt $ver && \
+hub release create -F changelog.txt -t "$ver" $ver && \
 rm changelog.txt
 echo "--done--"
