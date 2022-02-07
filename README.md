@@ -842,16 +842,65 @@ para.security.oauth.users_equivalent_claim_value = ""
 para.security.oauth.download_avatars = false
 ```
 
-**Note:** When assigning roles from OAuth2 claims, you can explicitly specify a subset of allowed users who can access
-Scoold by setting `para.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
-to `"scoold_user"`, and a user having the claim of `"roles": ["sales_rep"]` tries to login, they will be denied access.
-By default, all OAuth2 users are allowed to log into Scoold.
-
-**Access token delegation** is an additional security feature, where the access token from the identity provider (IDP)
+#### Access token delegation
+**PRO** This is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
 revokes a delegated access token, then that user would automatically be logged out from Scoold Pro and denied access
 immediately.
 
+#### Advanced attribute mapping
+The basic profile data attributes (name, email, etc.) can be extracted from a complex response payload which is returned
+from the identity provider's `userinfo` endpoint. You can use JSON pointer syntax to locate attribute values within a
+more complex JSON payload like this one:
+```
+{
+    "sub": "gfreeman",
+    "attributes": {
+        "DisplayName": "Gordon Freeman",
+        "DN": "uid=gordon,CN=Users,O=BlackMesa",
+        "Email": "gordon.freeman@blackmesa.gov"
+    }
+}
+```
+The corresponding configuration to extract the name and email address would be:
+```ini
+para.security.oauth.parameters.email = "/attributes/Email"
+para.security.oauth.parameters.name = "/attributes/DisplayName"
+```
+
+#### Advanced roles mapping
+**PRO** This feature requires token delegation to be enabled with `para.security.oauth.token_delegation_enabled = true`.
+When working with complex user profile payloads coming from the ID provider, you can specify the exact property
+name where the roles data is contained. For example, having a JSON user profile response like this:
+```
+{
+    "sub": "gfreeman",
+    "DisplayName": "Gordon Freeman",
+    "Roles": "Staff,Admins,TopSecret",
+    "attributes": {
+        "MemberOf": [
+            "CN=Admins,CN=Lab,O=BlackMesa"
+        ]
+    }
+}
+```
+we can map that user to the Scoold admins group with this configuration:
+```ini
+para.security.oauth.groups_attribute_name = "Roles"
+para.security.oauth.admins_equivalent_claim_value = ".*?Admins.*"
+```
+Regular expressions are supported for searching within the roles attribute value. JSON pointers can also be used here
+like so:
+```ini
+para.security.oauth.groups_attribute_name = "/attributes/MemberOf"
+para.security.oauth.admins_equivalent_claim_value = "^CN=Admins.*"
+```
+Additionally, when assigning roles from OAuth2 claims, you can explicitly specify a subset of allowed users who can access
+Scoold by setting `para.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
+to `"scoold_user"`, and a user having the claim of `"roles": ["sales_rep"]` tries to login, they will be denied access.
+By default, all OAuth2 users are allowed to log into Scoold.
+
+#### Additional custom OAuth 2.0 providers
 You can add two additional custom OAuth 2.0/OpenID connect providers called "second" and "third". Here's what the settings
 look like for the "second" provider:
 
