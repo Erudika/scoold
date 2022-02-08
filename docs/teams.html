@@ -345,9 +345,11 @@
 							<li class="mvm mediumText">
 								<p class="plm">You'll need a copy of Scoold Pro before continuing.</p>
 								<span class="pam">
-									<b>1.</b> Visit the Azure Poral and create an OAuth 2.0 web application client. Skip this step if you
-									have already configured Microsoft authentication in Scoold. Get the client ID and
-									secret key and add them to your Scoold configuration file <tt>application.conf</tt>:
+									<b>1.</b> Visit the <a href="">Azure Poral</a>, navigate to "App registrations" and create a new app
+									registration called "Scoold" with the "Web" type selected under "Redirect URI".
+									In the "Certificates and Secrets" tab, create a new client secret and take note of the secret key.
+									Then go to the "Overview" tab and take note of the "Application (client) ID". Add these two values to
+									your Scoold configuration file <tt>application.conf</tt>:
 								</span>
 
 								<code><pre>
@@ -374,8 +376,9 @@
 								</pre></code>
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>4.</b> Whitelist the following redirect (callback) URLs in your OAuth 2.0 application settings
-								(Azure Portal > App registrations > Authentication): </span>
+								<b>4.</b> In Azure, open up the "Authentication" tab and add a new platform "Web", under
+								"Platform configurations". Whitelist the following redirect (callback) URLs in your OAuth 2.0
+								application settings (Azure Portal > App registrations > Authentication): </span>
 
 								<code><pre>
   https://para_host/microsoft_auth
