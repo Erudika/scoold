@@ -357,7 +357,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	}
 
 	private void printRootAppConnectionNotice(String accessKey) {
-		if (App.isRoot(accessKey)) {
+		if (App.id(Config.PARA).equalsIgnoreCase(App.id(accessKey))) {
 			logger.warn("You are connected to the root Para app - this is not recommended and can be problematic. "
 					+ "Please create a separate Para app for Scoold to connect to.");
 		}
