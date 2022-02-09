@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.utils.avatars;
 
+import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +40,11 @@ public class DefaultAvatarRepository implements AvatarRepository {
 	@Override
 	public boolean store(Profile profile, String url) {
 		if (StringUtils.isBlank(url) || !url.equalsIgnoreCase(profile.getOriginalPicture())) {
-			profile.setPicture(ScooldUtils.getDefaultAvatar());
+			if (StringUtils.startsWithIgnoreCase(url, ScooldServer.getServerURL())) {
+				profile.setPicture(url);
+			} else {
+				profile.setPicture(ScooldUtils.getDefaultAvatar());
+			}
 		} else {
 			profile.setPicture(profile.getOriginalPicture());
 		}

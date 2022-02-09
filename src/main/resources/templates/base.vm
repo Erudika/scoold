@@ -412,7 +412,7 @@
 		#end
 
 		#set($ctxPathJS = "CONTEXT_PATH = '$CONTEXT_PATH'")
-		#set($imgurJS = "IMGUR_CLIENT_ID = '$IMGUR_CLIENT_ID';IMGUR_ENABLED = '$IMGUR_ENABLED';")
+		#set($imgurJS = "IMGUR_CLIENT_ID = '$IMGUR_CLIENT_ID';IMGUR_ENABLED = $IMGUR_ENABLED")
 		#set($isRTLJS = "RTL_ENABLED = $RTL_ENABLED")
 		#set($isAdminJS = "IS_ADMIN = $isAdmin")
 		#set($maxTagsJS = "MAX_TAGS_PER_POST = $MAX_TAGS_PER_POST")
