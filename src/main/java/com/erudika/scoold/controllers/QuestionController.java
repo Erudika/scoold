@@ -193,7 +193,7 @@ public class QuestionController {
 		}
 	}
 
-	@PostMapping({"/{id}", "/{id}/{title}"})
+	@PostMapping({"/{id}", "/{id}/{title}", "/{id}/{title}/write"})
 	public String reply(@PathVariable String id, @PathVariable(required = false) String title,
 			@RequestParam(required = false) Boolean emailme, HttpServletRequest req,
 			HttpServletResponse res, Model model) {
