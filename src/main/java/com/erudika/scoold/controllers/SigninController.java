@@ -232,8 +232,8 @@ public class SigninController {
 			@RequestParam(required = false) String token,
 			HttpServletRequest req, Model model) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
-		if (!utils.isAuthenticated(req) && approvedDomain &&
-				HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
+		boolean validCaptcha = HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"));
+		if (!utils.isAuthenticated(req) && approvedDomain && validCaptcha) {
 			if (StringUtils.isBlank(token)) {
 				generatePasswordResetToken(email, req);
 				return "redirect:" + SIGNINLINK + "/iforgot?verify=true";
@@ -244,8 +244,9 @@ public class SigninController {
 				model.addAttribute("signinSelected", "navbtn-hover");
 				model.addAttribute("iforgot", true);
 				model.addAttribute("email", email);
-				model.addAttribute("token", "");
+				model.addAttribute("token", token);
 				model.addAttribute("verified", !error);
+				model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
 				if (error) {
 					if (!isPasswordStrongEnough(newpassword)) {
 						model.addAttribute("error", Collections.singletonMap("newpassword", utils.getLang(req).get("msgcode.8")));
@@ -256,6 +257,8 @@ public class SigninController {
 				return "base";
 			}
 		}
+		logger.info("Password reset failed for {} - authenticated={}, approvedDomain={}, validCaptcha={}",
+				email, utils.isAuthenticated(req), approvedDomain, validCaptcha);
 		return "redirect:" + SIGNINLINK + "/iforgot";
 	}
 
@@ -393,7 +396,7 @@ public class SigninController {
 		// pass reset emails can be sent once every 12h
 		if (s != null) {
 			if (!s.hasProperty("iforgotTimestamp") || Utils.timestamp() >
-						((long) s.getProperty("iforgotTimestamp") + TimeUnit.HOURS.toMillis(12))) {
+						(Long.valueOf(s.getProperty("iforgotTimestamp").toString()) + TimeUnit.HOURS.toMillis(12))) {
 				String token = Utils.generateSecurityToken(42, true);
 				s.addProperty(Config._RESET_TOKEN, token);
 				s.addProperty("iforgotTimestamp", Utils.timestamp());
@@ -418,9 +421,8 @@ public class SigninController {
 		Sysprop s = pc.read(email);
 		if (isValidResetToken(s, Config._RESET_TOKEN, token)) {
 			s.addProperty(Config._RESET_TOKEN, ""); // avoid removeProperty method because it won't be seen by server
-			String hashed = Utils.bcrypt(newpass);
-			s.addProperty(Config._PASSWORD, hashed);
-			//setPassword(hashed);
+			s.addProperty("iforgotTimestamp", 0);
+			s.addProperty(Config._PASSWORD, Utils.bcrypt(newpass));
 			pc.update(s);
 			return true;
 		}
@@ -437,6 +439,8 @@ public class SigninController {
 			long timeout = (long) Config.PASSRESET_TIMEOUT_SEC * 1000L;
 			if (StringUtils.equals(storedToken, token) && (s.getUpdated() + timeout) > Utils.timestamp()) {
 				return true;
+			} else {
+				logger.info("User {} tried to reset password with an expired reset token.", s.getId());
 			}
 		}
 		return false;

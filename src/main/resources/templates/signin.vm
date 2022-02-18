@@ -109,18 +109,14 @@
 								#getmessagebox("red white-text" $error.get("newpassword"))
 							</div>
 						#end
-						#if($token)
-							<button type="submit" class="btn">$!lang.get('change')</button>
+						#if($nosmtp)#set($nosend = "disabled='disabled'")#else#set($nosend = "")#end
+						#if($captchakey.isBlank())
+							<button type="submit" class="btn" $nosend>
 						#else
-							#if($nosmtp)#set($nosend = "disabled='disabled'")#else#set($nosend = "")#end
-							#if($captchakey.isBlank())
-								<button type="submit" class="btn" $nosend>
-							#else
-								<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn g-recaptcha" $nosend>
-							#end
-									$!lang.get('send')
-								</button>
+							<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn g-recaptcha" $nosend>
 						#end
+							#if($token)$!lang.get('change')#else$!lang.get('send')#end
+							</button>
 					</form>
 					#end
 				</div>
