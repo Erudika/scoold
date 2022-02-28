@@ -1340,8 +1340,41 @@ disabled automatically when the target URL doesn't respond to requests from Para
 Para will notify your target URL with a `POST` request containing the payload and a `X-Webhook-Signature` header. This
 header should be verified by the receiving party by computing `Base64(HmacSHA256(payload, secret))`.
 
-You can subscribe to custom events in Scoold using the REST API. This makes it easy to integrate Scoold with services
-like Zapier because it implements the [RESTHooks](https://resthooks.org/) best practices.
+The standard events emitted by Scoold are:
+
+- `question.create` - whenever a new question is created
+- `question.close` - whenever a question is closed
+- `answer.create` - whenever a new answer is created
+- `answer.accept` - whenever an answer is accepted
+- `report.create` - whenever a new report is created
+- `comment.create` - whenever a new comment is created
+- `user.signup` - whenever a new user is created
+- `revision.restore` - whenever a revision is restored
+- `user.ban` -  <kbd>Pro</kbd> whenever a user is banned
+- `user.mention` -  <kbd>Pro</kbd> whenever a user is mentioned
+- `question.like` - <kbd>Pro</kbd> whenever a question is favorited
+
+In addition to the standard event, Para also sends webhooks to the following core (CRUD) events, for all object types:
+`create`, `update`, `delete`, `createAll`, `updateAll`, `deleteAll`.
+
+You can subscribe to any of these custom events in Scoold using the REST API like so:
+```POST /api/webhooks
+{
+  "targetUrl": "https://myurl",
+  "typeFilter": "revision",
+  "urlEncoded": false,
+  "create": true,
+  "update": false,
+  "delete": false,
+  "createAll": true,
+  "updateAll": false,
+  "deleteAll": false,
+  "customEvents": ["revision.create"]
+}
+```
+This will create a new custom event `revision.create` which will fire whenever a new revision is created.
+This makes it easy to integrate Scoold with services like Zapier because it implements the
+[RESTHooks](https://resthooks.org/) best practices.
 
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
