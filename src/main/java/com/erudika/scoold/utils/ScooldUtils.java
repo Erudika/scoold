@@ -17,7 +17,6 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.core.utils.Para;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
@@ -26,10 +25,11 @@ import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.Vote;
 import com.erudika.para.core.Webhook;
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldServer;
@@ -96,8 +96,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,7 +217,7 @@ public final class ScooldUtils {
 			APPROVED_DOMAINS.add(approvedDomains);
 		}
 		// multiple admins are now allowed only in Scoold PRO
-		String admins = Config.getConfigParam("admins", "");
+		String admins = StringUtils.substringBefore(Config.getConfigParam("admins", ""), ",");
 		if (!StringUtils.isBlank(admins)) {
 			ADMINS.add(admins);
 		}
