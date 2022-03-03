@@ -209,67 +209,419 @@ para.access_key = "app:scoold"
 para.secret_key = ""
 # the email or identifier of the admin user - check Para user object
 para.admins = "admin@domain.com"
-##############################
-
-####### Authentication #######
-# enable or disable email and password authentication
-para.password_auth_enabled = true
-# min. password length
-para.min_password_length = 8
-# min. password strength (1=Good, 2=Strong, 3=Very Strong)
-para.min_password_strength = 2
-# Facebook - create your own Facebook app first!
-para.fb_app_id = "123456789"
-# Google - create your own Google app first!
-para.gp_app_id = "123-abcd.apps.googleusercontent.com"
-para.gp_secret = ""
-# one session per user
-para.security.one_session_per_user = true
-# session expires in 24h
-para.session_timeout = 86400
-###############################
-
-### Misc. ###
-# if false, commenting is allowed after 100+ reputation
-para.new_users_can_comment = true
-# if true, posts by new users require approval from moderator
-para.posts_need_approval = false
-# reputation needed for posts to be auto-approved
-para.posts_rep_threshold = 100
-# needed for geolocation filtering of posts
-para.gmaps_api_key = ""
-# Enable/disable near me feature (geolocation)
-para.nearme_feature_enabled = false
-# enables syntax highlighting in posts
-para.code_highlighting_enabled = true
-# If true, the default space will be accessible by everyone
-para.is_default_space_public = true
-# If true, users can change their profile pictures
-para.avatar_edits_enabled = true
-# If true, users can change their names
-para.name_edits_enabled = true
-# Enable/disable webhooks support
-para.webhooks_enabled = true
-# Enable/disable wiki style answers
-para.wiki_answers_enabled = true
-# Comment limits
-para.max_comments_per_id = 1000
-para.max_comment_length = 600
-# Post body limit (characters)
-para.max_post_length = 20000
-# Tags per post limit, must be < 100
-para.max_tags_per_post = 5
-# Sets the default tag for new questions
-para.default_question_tag = "question"
-# Enable/disable numeric pagination (< 1 2 3...N >)
-para.numeric_pagination_enabled = false
-# Selects the default language to load on startup, defaults to 'en'
-para.default_language_code = ""
-# Enable/disable basic HTML tags in the text editor
-para.html_in_markdown_enabled = false
-# How line breaks in Markdown are interpreted - can be changed to "\n"
-para.markdown_soft_break = "<br>"
 ```
+<details><summary><b>View ALL configuration options available in Scoold</b></summary>
+
+## Core
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.app_name`<br>The formal name of the web application. | `Scoold` | `String`|
+|`scoold.para_access_key` <kbd>requires restart</kbd><br>App identifier (access key) of the Para app used by Scoold. | `app:scoold` | `String`|
+|`scoold.para_secret_key` <kbd>requires restart</kbd><br>Secret key of the Para app used by Scoold. | `x` | `String`|
+|`scoold.para_endpoint` <kbd>requires restart</kbd><br>The URL of the Para server for Scoold to connects to. For hosted Para, use `https://paraio.com` | `http://localhost:8080` | `String`|
+|`scoold.host_url`<br>The internet-facing (public) URL of this Scoold server. | `http://localhost:8000` | `String`|
+|`scoold.port` <kbd>requires restart</kbd><br>The network port of this Scoold server. Port number should be a number above `1024`. | `8000` | `Integer`|
+|`scoold.env` <kbd>requires restart</kbd><br>The environment profile to be used - possible values are `production` or `development` | `development` | `String`|
+|`scoold.app_secret_key`<br>A random secret string, min. 32 chars long. *Must be different from the secret key of the Para app*. Used for generating JWTs and passwordless authentication tokens. | ` ` | `String`|
+|`scoold.admins`<br>A comma-separated list of emails of people who will be promoted to administrators with full rights over the content on the site. This can also contain Para user identifiers. | ` ` | `String`|
+|`scoold.is_default_space_public`<br>When enabled, all content in the default space will be publicly visible, without authentication, incl. users and tags. Disable to make the site private. | `true` | `Boolean`|
+|`scoold.context_path` <kbd>requires restart</kbd><br>The context path (subpath) of the web application, defaults to the root path `/`. | ` ` | `String`|
+|`scoold.webhooks_enabled`<br>Enable/disable webhooks support for events like `question.create`, `user.signup`, etc. | `true` | `Boolean`|
+|`scoold.api_enabled`<br>Enable/disable the Scoold RESTful API. Disabled by default. | `false` | `Boolean`|
+|`scoold.feedback_enabled`<br>Enable/disable the feedback page on the site. It is intended for internal discussion about the website itself. | `false` | `Boolean`|
+
+## Emails
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.support_email`<br>The email address to use for sending transactional emails, like welcome/password reset emails. | `contact@scoold.com` | `String`|
+|`scoold.mail.host`<br>The SMTP server host to use for sending emails. | ` ` | `String`|
+|`scoold.mail.port`<br>The SMTP server port to use for sending emails. | `587` | `Integer`|
+|`scoold.mail.username`<br>The SMTP server username. | ` ` | `String`|
+|`scoold.mail.password`<br>The SMTP server password. | ` ` | `String`|
+|`scoold.mail.tls`<br>Enable/disable TLS for the SMTP connection. | `true` | `Boolean`|
+|`scoold.mail.ssl`<br>Enable/disable SSL for the SMTP connection. | `false` | `Boolean`|
+|`scoold.mail.debug`<br>Enable/disable debug information when sending emails through SMTP. | `false` | `Boolean`|
+|`scoold.favtags_emails_enabled`<br>Set the default toggle value for all users for receiving emails for new content with their favorite tags. | `false` | `Boolean`|
+|`scoold.reply_emails_enabled`<br>Set the default toggle value for all users for receiving emails for answers to their questions. | `false` | `Boolean`|
+|`scoold.comment_emails_enabled`<br>Set the default toggle value for all users for receiving emails for comments on their posts. | `false` | `Boolean`|
+|`scoold.summary_email_period_days` <kbd>Pro</kbd><br>The time period between each content digest email, in days. | `7` | `Integer`|
+|`scoold.summary_email_items`<br>The number of posts to include in the digest email (a summary of new posts). | `25` | `Integer`|
+|`scoold.notification_emails_allowed`<br>Enable/disable *all* notification emails. | `true` | `Boolean`|
+|`scoold.newpost_emails_allowed`<br>Enable/disable *all* email notifications for every new question that is posted on the site. | `true` | `Boolean`|
+|`scoold.favtags_emails_allowed`<br>Enable/disable *all* email notifications for every new question tagged with a favorite tag. | `true` | `Boolean`|
+|`scoold.reply_emails_allowed`<br>Enable/disable *all* email notifications for every new answer that is posted on the site. | `true` | `Boolean`|
+|`scoold.comment_emails_allowed`<br>Enable/disable *all* email notifications for every new comment that is posted on the site. | `true` | `Boolean`|
+|`scoold.mentions_emails_allowed` <kbd>Pro</kbd><br>Enable/disable *all* email notifications every time a user is mentioned. | `true` | `Boolean`|
+|`scoold.summary_email_controlled_by_admins` <kbd>Pro</kbd><br>Controls whether admins can enable/disable summary emails for everyone from the 'Settings' page | `false` | `Boolean`|
+|`scoold.mention_emails_controlled_by_admins` <kbd>Pro</kbd><br>Controls whether admins can enable/disable mention emails for everyone from the 'Settings' page | `false` | `Boolean`|
+|`scoold.emails.welcome_text1`<br>Allows for changing the default text (first paragraph) in the welcome email message. | `You are now part of {0} - a friendly Q&A community...` | `String`|
+|`scoold.emails.welcome_text2`<br>Allows for changing the default text (second paragraph) in the welcome email message. | `To get started, simply navigate to the "Ask question" page and ask a question...` | `String`|
+|`scoold.emails.welcome_text3`<br>Allows for changing the default text (signature at the end) in the welcome email message. | `Best, <br>The {0} team` | `String`|
+|`scoold.emails.default_signature`<br>The default email signature for all transactional emails sent from Scoold. | `Best, <br>The {0} team` | `String`|
+
+## Security
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.approved_domains_for_signups`<br>A comma-separated list of domain names, which will be used to restrict the people who are allowed to sign up on the site. | ` ` | `String`|
+|`scoold.security.allow_unverified_emails`<br>Enable/disable email verification after the initial user registration. Users with unverified emails won't be able to sign in, unless they use a social login provider. | `false` | `Boolean`|
+|`scoold.session_timeout`<br>The validity period of the authentication cookie, in seconds. Default is 24h. | `86400` | `Integer`|
+|`scoold.jwt_expires_after`<br>The validity period of the session token (JWT), in seconds. Default is 24h. | `86400` | `Integer`|
+|`scoold.security.one_session_per_user`<br>If disabled, users can sign in from multiple locations and devices, keeping a few open sessions at once. Otherwise, only one session will be kept open, others will be closed. | `true` | `Boolean`|
+|`scoold.min_password_length`<br>The minimum length of passwords. | `8` | `Integer`|
+|`scoold.min_password_strength`<br>The minimum password strength - one of 3 levels: `1` good enough, `2` strong, `3` very strong. | `2` | `Integer`|
+|`scoold.pass_reset_timeout`<br>The validity period of the password reset token sent via email for resetting users' passwords. Default is 30 min. | `1800` | `Integer`|
+|`scoold.profile_anonimity_enabled`<br>Enable/disable the option for users to anonimize their profiles on the site, hiding their name and picture. | `false` | `Boolean`|
+|`scoold.signup_captcha_site_key`<br>The reCAPTCHA v3 site key for protecting the signup and password reset pages. | ` ` | `String`|
+|`scoold.signup_captcha_secret_key`<br>The reCAPTCHA v3 secret. | ` ` | `String`|
+|`scoold.csp_reports_enabled`<br>Enable/disable automatic reports each time the Content Security Policy is violated. | `false` | `Boolean`|
+|`scoold.csp_header_enabled`<br>Enable/disable the Content Security Policy (CSP) header. | `true` | `Boolean`|
+|`scoold.csp_header`<br>The CSP header value which will overwrite the default one. This can contain one or more `{{nonce}}` placeholders, which will be replaced with an actual nonce on each request. | `Dynamically generated, with nonces` | `String`|
+|`scoold.hsts_header_enabled`<br>Enable/disable the `Strict-Transport-Security` security header. | `true` | `Boolean`|
+|`scoold.framing_header_enabled`<br>Enable/disable the `X-Frame-Options` security header. | `true` | `Boolean`|
+|`scoold.xss_header_enabled`<br>Enable/disable the `X-XSS-Protection` security header. | `true` | `Boolean`|
+|`scoold.contenttype_header_enabled`<br>Enable/disable the `X-Content-Type-Options` security header. | `true` | `Boolean`|
+|`scoold.referrer_header_enabled`<br>Enable/disable the `Referrer-Policy` security header. | `true` | `Boolean`|
+|`scoold.permissions_header_enabled`<br>Enable/disable the `Permissions-Policy` security header. | `true` | `Boolean`|
+|`scoold.csp_connect_sources`<br>Additional sources to add to the `connect-src` CSP directive. Used when adding external scripts to the site. | ` ` | `String`|
+|`scoold.csp_frame_sources`<br>Additional sources to add to the `frame-src` CSP directive. Used when adding external scripts to the site. | ` ` | `String`|
+|`scoold.csp_font_sources`<br>Additional sources to add to the `font-src` CSP directive. Used when adding external fonts to the site. | ` ` | `String`|
+|`scoold.csp_style_sources`<br>Additional sources to add to the `style-src` CSP directive. Used when adding external fonts to the site. | ` ` | `String`|
+
+## Basic Authentication
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.password_auth_enabled`<br>Enabled/disable the ability for users to sign in with an email and password. | `true` | `Boolean`|
+|`scoold.fb_app_id`<br>Facebook OAuth2 app ID. | ` ` | `String`|
+|`scoold.fb_secret`<br>Facebook app secret key. | ` ` | `String`|
+|`scoold.gp_app_id`<br>Google OAuth2 app ID. | ` ` | `String`|
+|`scoold.gp_secret`<br>Google app secret key. | ` ` | `String`|
+|`scoold.in_app_id`<br>LinkedIn OAuth2 app ID. | ` ` | `String`|
+|`scoold.in_secret`<br>LinkedIn app secret key. | ` ` | `String`|
+|`scoold.tw_app_id`<br>Twitter OAuth app ID. | ` ` | `String`|
+|`scoold.tw_secret`<br>Twitter app secret key. | ` ` | `String`|
+|`scoold.gh_app_id`<br>GitHub OAuth2 app ID. | ` ` | `String`|
+|`scoold.gh_secret`<br>GitHub app secret key. | ` ` | `String`|
+|`scoold.ms_app_id`<br>Microsoft OAuth2 app ID. | ` ` | `String`|
+|`scoold.ms_secret`<br>Microsoft app secret key. | ` ` | `String`|
+|`scoold.ms_tenant_id`<br>Microsoft OAuth2 tenant ID | `common` | `String`|
+|`scoold.az_app_id`<br>Amazon OAuth2 app ID. | ` ` | `String`|
+|`scoold.az_secret`<br>Amazon app secret key. | ` ` | `String`|
+|`scoold.sl_app_id` <kbd>Pro</kbd><br>Slack OAuth2 app ID. | ` ` | `String`|
+|`scoold.sl_secret` <kbd>Pro</kbd><br>Slack app secret key. | ` ` | `String`|
+|`scoold.mm_app_id` <kbd>Pro</kbd><br>Mattermost OAuth2 app ID. | ` ` | `String`|
+|`scoold.mm_secret` <kbd>Pro</kbd><br>Mattermost app secret key. | ` ` | `String`|
+|`scoold.security.custom.provider` <kbd>Pro</kbd><br>The text on the button for signing in with the custom authentication scheme. | `Continue with Acme Co.` | `String`|
+|`scoold.security.custom.login_url` <kbd>Pro</kbd><br>The URL address of an externally hosted, custom login page. | ` ` | `String`|
+
+## LDAP Authentication
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.security.ldap.server_url`<br>LDAP server URL. LDAP will be disabled if this is blank. | ` ` | `String`|
+|`scoold.security.ldap.base_dn`<br>LDAP base DN. | ` ` | `String`|
+|`scoold.security.ldap.user_search_base`<br>LDAP search base, which will be used only if a direct bind is unsuccessfull. | ` ` | `String`|
+|`scoold.security.ldap.user_search_filter`<br>LDAP search filter, for finding users if a direct bind is unsuccessful. | `(cn={0})` | `String`|
+|`scoold.security.ldap.user_dn_pattern`<br>LDAP user DN pattern, which will be comined with the base DN to form the full path to theuser object, for a direct binding attempt. | `uid={0}` | `String`|
+|`scoold.security.ldap.active_directory_domain`<br>AD domain name. Add this *only* if you are connecting to an Active Directory server. | ` ` | `String`|
+|`scoold.security.ldap.password_attribute`<br>LDAP password attribute name. | `userPassword` | `String`|
+|`scoold.security.ldap.bind_dn`<br>LDAP bind DN | ` ` | `String`|
+|`scoold.security.ldap.bind_pass`<br>LDAP bind password. | ` ` | `String`|
+|`scoold.security.ldap.username_as_name`<br>Enable/disable the use of usernames for names on Scoold. | `false` | `Boolean`|
+|`scoold.security.ldap.provider` <kbd>Pro</kbd><br>The text on the LDAP sign in button. | `Continue with LDAP` | `String`|
+|`scoold.security.ldap.mods_group_node`<br>Moderators group mapping, mapping LDAP users with this node, to moderators on Scoold. | ` ` | `String`|
+|`scoold.security.ldap.admins_group_node`<br>Administrators group mapping, mapping LDAP users with this node, to administrators on Scoold. | ` ` | `String`|
+|`scoold.security.ldap.compare_passwords`<br>LDAP compare passwords. | ` ` | `String`|
+|`scoold.security.ldap.password_param`<br>LDAP password parameter name. | `password` | `String`|
+|`scoold.security.ldap.username_param`<br>LDAP username parameter name. | `username` | `String`|
+|`scoold.security.ldap.is_local` <kbd>Pro</kbd><br>Enable/disable local handling of LDAP requests, instead of sending those to Para. | `false` | `Boolean`|
+
+## SAML Authentication
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.security.saml.idp.metadata_url` <kbd>Pro</kbd><br>SAML metadata URL. Scoold will fetch most of the necessary information for the authentication request from that XML document. This will overwrite all other IDP settings. | ` ` | `String`|
+|`scoold.security.saml.sp.entityid` <kbd>Pro</kbd><br>SAML SP endpoint address - e.g. `https://paraio.com/saml_auth/scoold`. The IDP will call this address for authentication. | ` ` | `String`|
+|`scoold.security.saml.sp.x509cert` <kbd>Pro</kbd><br>SAML client x509 certificate for the SP (public key). **Value must be Base64-encoded**. | ` ` | `String`|
+|`scoold.security.saml.sp.privatekey` <kbd>Pro</kbd><br>SAML client private key in PKCS#8 format for the SP. **Value must be Base64-encoded**. | ` ` | `String`|
+|`scoold.security.saml.attributes.id` <kbd>Pro</kbd><br>SAML attribute name of the user `id`. | `UserID` | `String`|
+|`scoold.security.saml.attributes.picture` <kbd>Pro</kbd><br>SAML attribute name of the user `picture`. | `Picture` | `String`|
+|`scoold.security.saml.attributes.email` <kbd>Pro</kbd><br>SAML attribute name of the user `email`. | `EmailAddress` | `String`|
+|`scoold.security.saml.attributes.name` <kbd>Pro</kbd><br>SAML attribute name of the user `name`. | `GivenName` | `String`|
+|`scoold.security.saml.attributes.firstname` <kbd>Pro</kbd><br>SAML attribute name of the user `firstname`. | `FirstName` | `String`|
+|`scoold.security.saml.attributes.lastname` <kbd>Pro</kbd><br>SAML attribute name of the user `lastname`. | `LastName` | `String`|
+|`scoold.security.saml.provider` <kbd>Pro</kbd><br>The text on the button for signing in with SAML. | `Continue with SAML` | `Boolean`|
+|`scoold.security.saml.sp.assertion_consumer_service.url` <kbd>Pro</kbd><br>SAML ACS URL. | ` ` | `String`|
+|`scoold.security.saml.sp.nameidformat` <kbd>Pro</kbd><br>SAML name id format. | `urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified` | `String`|
+|`scoold.security.saml.idp.entityid` <kbd>Pro</kbd><br>SAML IDP entity id for manually setting the endpoint address of the IDP, instead of getting it from the provided metadata URL. | ` ` | `String`|
+|`scoold.security.saml.idp.single_sign_on_service.url` <kbd>Pro</kbd><br>SAML SSO service URL of the IDP. | ` ` | `String`|
+|`scoold.security.saml.idp.x509cert` <kbd>Pro</kbd><br>SAML server x509 certificate for the IDP (public key). **Value must be Base64-encoded**. | ` ` | `String`|
+|`scoold.security.saml.security.authnrequest_signed` <kbd>Pro</kbd><br>Enable/disable SAML authentication request signing. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_messages_signed` <kbd>Pro</kbd><br>Enable/disable SAML message signing. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_assertions_signed` <kbd>Pro</kbd><br>Enable/disable SAML assertion signing. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_assertions_encrypted` <kbd>Pro</kbd><br>Enable/disable SAML assertion encryption. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_nameid_encrypted` <kbd>Pro</kbd><br>Enable/disable SAML name id encryption. | `false` | `Boolean`|
+|`scoold.security.saml.security.sign_metadata` <kbd>Pro</kbd><br>Enable/disable SAML metadata signing. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_xml_validation` <kbd>Pro</kbd><br>Enable/disable SAML XML validation. | `true` | `Boolean`|
+|`scoold.security.saml.security.signature_algorithm` <kbd>Pro</kbd><br>SAML signature algorithm. | ` ` | `String`|
+|`scoold.security.saml.domain` <kbd>Pro</kbd><br>SAML domain name. | `paraio.com` | `String`|
+|`scoold.security.saml.is_local` <kbd>Pro</kbd><br>Enable/disable local handling of SAML requests, instead of sending those to Para. | `false` | `Boolean`|
+
+## OAuth 2.0 Authentication
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.oa2_app_id`<br>OAauth 2.0 client app identifier. Alternatives: `oa2second_app_id`, `oa2third_app_id` | ` ` | `String`|
+|`scoold.oa2_secret`<br>OAauth 2.0 client app secret key. Alternatives: `oa2second_secret`, `oa2third_secret` | ` ` | `String`|
+|`scoold.security.oauth.authz_url`<br>OAauth 2.0 client app authorization URL (login page). Alternatives: `security.oauthsecond.authz_url`, `security.oauththird.authz_url` | ` ` | `String`|
+|`scoold.security.oauth.token_url`<br>OAauth 2.0 client app token endpoint URL. Alternatives: `security.oauthsecond.token_url`, `security.oauththird.token_url` | ` ` | `String`|
+|`scoold.security.oauth.profile_url`<br>OAauth 2.0 client app user info endpoint URL. Alternatives: `security.oauthsecond.profile_url`, `security.oauththird.profile_url` | ` ` | `String`|
+|`scoold.security.oauth.scope`<br>OAauth 2.0 client app scope. Alternatives: `security.oauthsecond.scope`, `security.oauththird.scope` | `openid email profile` | `String`|
+|`scoold.security.oauth.accept_header`<br>OAauth 2.0 `Accept` header customization. Alternatives: `security.oauthsecond.accept_header`, `security.oauththird.accept_header` | ` ` | `String`|
+|`scoold.security.oauth.parameters.id`<br>OAauth 2.0 attribute mapping for `id`. Alternatives: `security.oauthsecond.parameters.id`, `security.oauththird.parameters.id` | `sub` | `String`|
+|`scoold.security.oauth.parameters.name`<br>OAauth 2.0 attribute mapping for `name`. Alternatives: `security.oauthsecond.parameters.name`, `security.oauththird.parameters.name` | `name` | `String`|
+|`scoold.security.oauth.parameters.given_name`<br>OAauth 2.0 attribute mapping for `given_name`. Alternatives: `security.oauthsecond.parameters.given_name`, `security.oauththird.parameters.given_name` | `given_name` | `String`|
+|`scoold.security.oauth.parameters.family_name`<br>OAauth 2.0 attribute mapping for `family_name`. Alternatives: `security.oauthsecond.parameters.family_name`, `security.oauththird.parameters.family_name` | `family_name` | `String`|
+|`scoold.security.oauth.parameters.email`<br>OAauth 2.0 attribute mapping for `email`. Alternatives: `security.oauthsecond.parameters.email`, `security.oauththird.parameters.email` | `email` | `String`|
+|`scoold.security.oauth.parameters.picture`<br>OAauth 2.0 attribute mapping for `picture`. Alternatives: `security.oauthsecond.parameters.picture`, `security.oauththird.parameters.picture` | `picture` | `String`|
+|`scoold.security.oauth.download_avatars`<br>Enable/disable OAauth 2.0 avatar downloading to local disk. Used when avatars are large in size. Alternatives: `security.oauthsecond.download_avatars`, `security.oauththird.download_avatars` | `false` | `Boolean`|
+|`scoold.security.oauth.token_delegation_enabled` <kbd>Pro</kbd><br>Enable/disable OAauth 2.0 token delegation. The ID and access tokens will be saved and delegated to Scoold from Para. Alternatives: `security.oauthsecond.token_delegation_enabled`, `security.oauththird.token_delegation_enabled` | `false` | `Boolean`|
+|`scoold.security.oauth.spaces_attribute_name` <kbd>Pro</kbd><br>OAauth 2.0 attribute mapping for users' `spaces`. The spaces can be comma-separated. Alternatives: `security.oauthsecond.spaces_attribute_name`, `security.oauththird.spaces_attribute_name` | `spaces` | `String`|
+|`scoold.security.oauth.groups_attribute_name` <kbd>Pro</kbd><br>OAauth 2.0 attribute mapping for users' `groups`. Alternatives: `security.oauthsecond.groups_attribute_name`, `security.oauththird.groups_attribute_name` | `roles` | `String`|
+|`scoold.security.oauth.mods_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for mapping OAuth2 users having it, to moderators on Scoold. Alternatives: `security.oauthsecond.mods_equivalent_claim_value`, `security.oauththird.mods_equivalent_claim_value` | `mod` | `String`|
+|`scoold.security.oauth.admins_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for mapping OAuth2 users having it, to administrators on Scoold. Alternatives: `security.oauthsecond.admins_equivalent_claim_value`, `security.oauththird.admins_equivalent_claim_value` | `admin` | `String`|
+|`scoold.security.oauth.users_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it. Alternatives: `security.oauthsecond.users_equivalent_claim_value`, `security.oauththird.users_equivalent_claim_value` | ` ` | `String`|
+|`scoold.security.oauth.domain`<br>OAauth 2.0 domain name for constructing user email addresses in case they are missing. Alternatives: `security.oauthsecond.domain`, `security.oauththird.domain` | ` ` | `String`|
+|`scoold.security.oauth.provider`<br>The text on the button for signing in with OAuth2 or OIDC. | `Continue with OpenID Connect` | `String`|
+
+## Posts
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.new_users_can_comment`<br>Enable/disable the ability for users with reputation below 100 to comments on posts. | `true` | `Boolean`|
+|`scoold.posts_need_approval`<br>Enable/disable the need for approval of new posts by a moderator.  | `false` | `Boolean`|
+|`scoold.wiki_answers_enabled` <kbd>Pro</kbd><br>Enable/disable the ability for users to create wiki-style answers, editable by everyone. | `true` | `Boolean`|
+|`scoold.media_recording_allowed` <kbd>Pro</kbd><br>Enable/disable support for attaching recorded videos and voice messages to posts. | `true` | `Boolean`|
+|`scoold.delete_protection_enabled`<br>Enable/disable the ability for authors to delete their own question, when it already has answers and activity. | `true` | `Boolean`|
+|`scoold.max_text_length`<br>The maximum text length of each post (question or answer). Longer content will be truncated. | `20000` | `Integer`|
+|`scoold.max_tags_per_post`<br>The maximum number of tags a question can have. The minimum is 0 - then the default tag is used. | `5` | `Integer`|
+|`scoold.max_replies_per_post`<br>The maximum number of answers a question can have. | `500` | `Integer`|
+|`scoold.max_comments_per_id`<br>The maximum number of comments a post can have. | `1000` | `Integer`|
+|`scoold.max_comment_length`<br>The maximum length of each comment. | `600` | `Integer`|
+|`scoold.max_mentions_in_posts` <kbd>Pro</kbd><br>The maximum number of mentioned users a post can have. | `10` | `Integer`|
+|`scoold.anonymous_posts_enabled` <kbd>Pro</kbd><br>Enable/disable the ability for unathenticated users to create new questions. | `false` | `Boolean`|
+|`scoold.nearme_feature_enabled`<br>Enable/disable the ability for users to attach geolocation data to questions and location-based filtering of questions. | `false` | `Boolean`|
+|`scoold.merge_question_bodies`<br>Enable/disable the merging of question bodies when two questions are merged into one. | `true` | `Boolean`|
+|`scoold.max_similar_posts`<br>The maximum number of similar posts which will be displayed on the side. | `7` | `Integer`|
+|`scoold.default_question_tag`<br>The default question tag, used when no other tags are provided by its author. | `question` | `String`|
+|`scoold.posts_rep_threshold`<br>The minimum reputation an author needs to create a post without approval by moderators. This is only required if new posts need apporval. | `100` | `Integer`|
+
+## Spaces
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.auto_assign_spaces`<br>A comma-separated list of spaces to assign to all new users. | ` ` | `String`|
+|`scoold.reset_spaces_on_new_assignment`<br>Spaces delegated from identity providers will overwrite the existing ones for users. | `true` | `Boolean`|
+
+## Reputation and Rewards
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.answer_voteup_reward_author`<br>Reputation points given to author of answer as reward when a user upvotes it. | `10` | `Integer`|
+|`scoold.question_voteup_reward_author`<br>Reputation points given to author of question as reward when a user upvotes it. | `5` | `Integer`|
+|`scoold.voteup_reward_author`<br>Reputation points given to author of comment or other post as reward when a user upvotes it. | `2` | `Integer`|
+|`scoold.answer_approve_reward_author`<br>Reputation points given to author of answer as reward when the question's author accepts it. | `10` | `Integer`|
+|`scoold.answer_approve_reward_voter`<br>Reputation points given to author of question who accepted an answer. | `3` | `Integer`|
+|`scoold.post_votedown_penalty_author`<br>Reputation points taken from author of post as penalty when their post was downvoted. | `3` | `Integer`|
+|`scoold.post_votedown_penalty_voter`<br>Reputation points taken from the user who downvotes any content. Discourages downvoting slightly. | `1` | `Integer`|
+|`scoold.voter_ifhas`<br>Number of votes (up or down) needed from a user for earning the `voter` badge. | `100` | `Integer`|
+|`scoold.commentator_ifhas`<br>Number of comments a user needs to have posted for earning the `commentator` badge. | `100` | `Integer`|
+|`scoold.critic_ifhas`<br>Number of cast downvotes needed from a user for earning the `critic` badge. | `10` | `Integer`|
+|`scoold.supporter_ifhas`<br>Number of cast upvotes needed from a user for earning the `supporter` badge`. | `50` | `Integer`|
+|`scoold.goodquestion_ifhas`<br>Votes needed on a question before its author gets to earn the `good question` badge. | `20` | `Integer`|
+|`scoold.goodanswer_ifhas`<br>Votes needed on an answer before its author gets to earn the `good answer` badge. | `10` | `Integer`|
+|`scoold.enthusiast_ifhas`<br>Reputation points needed for earning the `enthusiast` badge. | `100` | `Integer`|
+|`scoold.freshman_ifhas`<br>Reputation points needed for earning the `freshman` badge. | `300` | `Integer`|
+|`scoold.scholar_ifhas`<br>Reputation points needed for earning the `scholar` badge. | `500` | `Boolean`|
+|`scoold.teacher_ifhas`<br>Reputation points needed for earning the `teacher` badge. | `1000` | `Integer`|
+|`scoold.geek_ifhas`<br>Reputation points needed for earning the `geek` badge. | `9000` | `Integer`|
+
+## File Storage
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.uploads_enabled` <kbd>Pro</kbd><br>Enable/disable file uploads. | `true` | `Boolean`|
+|`scoold.file_uploads_dir` <kbd>Pro</kbd><br>The directory (local or in the cloud) where files will be stored. | `uploads` | `String`|
+|`scoold.uploads_require_auth` <kbd>Pro</kbd><br>Enable/disable the requirement that uploaded files can only be accessed by authenticated users. | `false` | `Boolean`|
+|`scoold.allowed_upload_formats` <kbd>Pro</kbd><br>A comma-separated list of allowed MIME types in the format `extension:mime_type`, e.g.`py:text/plain` or just the extensions `py,yml` | ` ` | `String`|
+|`scoold.s3_bucket` <kbd>Pro</kbd><br>AWS S3 bucket name as target for storing files. | ` ` | `String`|
+|`scoold.s3_path` <kbd>Pro</kbd><br>AWS S3 object prefix (directory) inside the bucket. | ` ` | `String`|
+|`scoold.s3_region` <kbd>Pro</kbd><br>AWS S3 region. | ` ` | `String`|
+|`scoold.s3_access_key` <kbd>Pro</kbd><br>AWS S3 access key. | ` ` | `String`|
+|`scoold.s3_secret_key` <kbd>Pro</kbd><br>AWS S3 secret key. | ` ` | `String`|
+|`scoold.blob_storage_account` <kbd>Pro</kbd><br>Azure Blob Storage account ID. | ` ` | `String`|
+|`scoold.blob_storage_token` <kbd>Pro</kbd><br>Azure Blob Storage token. | ` ` | `String`|
+|`scoold.blob_storage_container` <kbd>Pro</kbd><br>Azure Blob Storage container. | ` ` | `String`|
+|`scoold.blob_storage_path` <kbd>Pro</kbd><br>Azure Blob Storage path prefix (subfolder) within a container. | ` ` | `String`|
+
+## Customization
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.default_language_code`<br>The default language code to use for the site. Set this to make the site load a different language from English. | ` ` | `String`|
+|`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see. | ` ` | `String`|
+|`scoold.welcome_message_onlogin`<br>Adds a brief intro text inside a banner at the top of the 'Sign in' page only. | ` ` | `String`|
+|`scoold.dark_mode_enabled`<br>Enable/disable the option for users to switch to the dark theme. | `true` | `Boolean`|
+|`scoold.meta_description`<br>The content inside the description `<meta>` tag. | ` ` | `String`|
+|`scoold.meta_keywords`<br>The content inside the keywords `<meta>` tag. | ` ` | `String`|
+|`scoold.show_branding`<br>Enable/disable the 'Powered by Scoold' branding in the footer. | `true` | `Boolean`|
+|`scoold.mathjax_enabled` <kbd>Pro</kbd><br>Enable/disable support for MathJax and LaTeX for scientific expressions in Markdown. | `false` | `Boolean`|
+|`scoold.gravatars_enabled`<br>Enable/disable support for Gravatars. | `true` | `Boolean`|
+|`scoold.gravatars_pattern`<br>The pattern to use when displaying empty/anonymous gravatar pictures. | `retro` | `String`|
+|`scoold.avatar_repository` <kbd>preview</kbd><br>The avatar repository - one of `imgur`, `cloudinary`. | ` ` | `String`|
+|`scoold.footer_html`<br>Some custom HTML content to be added to the website footer. | ` ` | `String`|
+|`scoold.navbar_link1_url`<br>The URL of an extra custom link which will be added to the top navbar. | ` ` | `String`|
+|`scoold.navbar_link1_text`<br>The title of an extra custom link which will be added to the top navbar. | `Link1` | `String`|
+|`scoold.navbar_link2_url`<br>The URL of an extra custom link which will be added to the top navbar. | ` ` | `String`|
+|`scoold.navbar_link2_text`<br>The title of an extra custom link which will be added to the top navbar. | `Link2` | `String`|
+|`scoold.navbar_menu_link1_url`<br>The URL of an extra custom link which will be added to user's dropdown menu. Only shown to authenticated users. | ` ` | `String`|
+|`scoold.navbar_menu_link1_text`<br>The title of an extra custom link which will be added to the user's dropdown menu. | `Menu Link1` | `String`|
+|`scoold.navbar_menu_link2_url`<br>The URL of an extra custom link which will be added to user's dropdown menu. Only shown to authenticated users. | ` ` | `String`|
+|`scoold.navbar_menu_link2_text`<br>The title of an extra custom link which will be added to the user's dropdown menu. | `Menu Link2` | `String`|
+|`scoold.always_hide_comment_forms`<br>Enable/disable a visual tweak which keeps all comment text editors closed at all times. | `true` | `Boolean`|
+|`scoold.footer_links_enabled`<br>Enable/disable all links in the website footer. | `true` | `Boolean`|
+|`scoold.emails_footer_html`<br>The HTML code snippet to embed at the end of each transactional email message. | `<a href="{host_url}">{app_name}</a> &bull; <a href="https://scoold.com">Powered by Scoold</a>` | `String`|
+|`scoold.cookie_consent_required`<br>Enable/disable the cookie consent popup box and blocks all external JS scripts from loading. Used for compliance with GDPR/CCPA. | `false` | `Boolean`|
+|`scoold.fixed_nav`<br>Enable/disable a fixed navigation bar. | `false` | `Boolean`|
+|`scoold.logo_width`<br>The width of the logo image in the nav bar, in pixels. Used for fine adjustments to the logo size. | `100` | `Integer`|
+|`scoold.code_highlighting_enabled`<br>Enable/disable support for syntax highlighting in code blocks. | `true` | `Boolean`|
+|`scoold.max_pages`<br>Maximum number of pages to return as results. | `1000` | `Integer`|
+|`scoold.numeric_pagination_enabled`<br>Enable/disable the numeric pagination style `(< 1 2 3...N >)`. | `false` | `Boolean`|
+|`scoold.html_in_markdown_enabled`<br>Enable/disable the ability for users to insert basic HTML tags inside Markdown content. | `false` | `Boolean`|
+|`scoold.max_items_per_page`<br>Maximum number of results to return in a single page of results. | `30` | `Integer`|
+|`scoold.avatar_edits_enabled`<br>Enable/disable the ability for users to edit their profile pictures. | `true` | `Boolean`|
+|`scoold.name_edits_enabled`<br>Enable/disable the ability for users to edit their name. | `true` | `Boolean`|
+
+## Frontend Assets
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.logo_url`<br>The URL of the logo in the nav bar. | `/images/logo.svg` | `String`|
+|`scoold.small_logo_url`<br>The URL of a smaller logo. Mainly used in transactional emails. | `/images/logowhite.png` | `String`|
+
+## Miscellaneous
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.cdn_url`<br>A CDN URL where all static assets might be stored. | ` ` | `String`|
+
+## Frontend Assets
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.stylesheet_url`<br>A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite all existing CSS styles!* | `/styles/style.css` | `String`|
+|`scoold.external_styles`<br>A comma-separated list of external CSS files. These will be loaded *after* the main stylesheet. | ` ` | `String`|
+|`scoold.external_scripts.{script_id}`<br>A comma-separated list of external JS scripts. These will be loaded after the main JS script. | ` ` | `Map`|
+|`scoold.inline_css`<br>Some short, custom CSS snippet to embed inside the `<head>` element. | ` ` | `String`|
+|`scoold.favicon_url`<br>The URL of the favicon image. | `/images/favicon.ico` | `String`|
+|`scoold.meta_app_icon`<br>The URL of the app icon image in the `<meta property='og:image'>` tag. | `/images/logowhite.png` | `String`|
+
+## Mattermost Integration
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.mattermost.server_url` <kbd>Pro</kbd><br>Mattermost server URL. | ` ` | `String`|
+|`scoold.mattermost.bot_username` <kbd>Pro</kbd><br>Mattermost bot username. | `scoold` | `String`|
+|`scoold.mattermost.bot_icon_url` <kbd>Pro</kbd><br>Mattermost bot avatar URL. | `/images/logowhite.png` | `String`|
+|`scoold.mattermost.post_to_space` <kbd>Pro</kbd><br>Default space on Scoold where questions created on Mattermost will be published. Set it to `workspace` for using the team's name. | ` ` | `String`|
+|`scoold.mattermost.map_channels_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Mattermost channels to Scoold spaces. When enabled, will create a Scoold space for each Mattermost channel. | `false` | `Boolean`|
+|`scoold.mattermost.map_workspaces_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Mattermost teams to Scoold spaces. When enabled, will create a Scoold space for each Mattermost team. | `true` | `Boolean`|
+|`scoold.mattermost.max_notification_webhooks` <kbd>Pro</kbd><br>The maximum number of incoming webhooks which can be created on Scoold. Each webhook links a Mattermost channel to Scoold. | `10` | `Integer`|
+|`scoold.mattermost.notify_on_new_answer` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Mattermost for new answers. | `true` | `Boolean`|
+|`scoold.mattermost.notify_on_new_question` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Mattermost for new questions. | `true` | `Boolean`|
+|`scoold.mattermost.notify_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Mattermost for new comments. | `true` | `Boolean`|
+|`scoold.mattermost.dm_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send direct messages to Mattermost users for new comments. | `false` | `Boolean`|
+|`scoold.mattermost.default_question_tags` <kbd>Pro</kbd><br>Default question tags for questions created on Mattermost (comma-separated list). | `via-mattermost` | `String`|
+
+## Slack Integration
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.slack.auth_enabled` <kbd>Pro</kbd><br>Enable/disable authentication with Slack. | `false` | `Boolean`|
+|`scoold.slack.app_id` <kbd>Pro</kbd><br>The Slack app ID (first ID from the app's credentials, not the OAuth2 Client ID). | ` ` | `String`|
+|`scoold.slack.signing_secret` <kbd>Pro</kbd><br>Slack signing secret key for verifying request signatures. | `x` | `String`|
+|`scoold.slack.max_notification_webhooks` <kbd>Pro</kbd><br>The maximum number of incoming webhooks which can be created on Scoold. Each webhook links a Slack channel to Scoold. | `10` | `Integer`|
+|`scoold.slack.map_channels_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Slack channels to Scoold spaces. When enabled, will create a Scoold space for each Slack channel. | `false` | `Boolean`|
+|`scoold.slack.map_workspaces_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Slack teams to Scoold spaces. When enabled, will create a Scoold space for each Slack team. | `true` | `Boolean`|
+|`scoold.slack.post_to_space` <kbd>Pro</kbd><br>Default space on Scoold where questions created on Slack will be published. Set it to `workspace` for using the team's name. | ` ` | `String`|
+|`scoold.slack.default_title` <kbd>Pro</kbd><br>Default question title for questions created on Slack. | `A question from Slack` | `String`|
+|`scoold.slack.notify_on_new_answer` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Slack for new answers. | `true` | `Boolean`|
+|`scoold.slack.notify_on_new_question` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Slack for new questions. | `true` | `Boolean`|
+|`scoold.slack.notify_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Slack for new comments. | `true` | `Boolean`|
+|`scoold.slack.dm_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send direct messages to Slack users for new comments. | `false` | `Boolean`|
+|`scoold.slack.default_question_tags` <kbd>Pro</kbd><br>Default question tags for questions created on Slack (comma-separated list). | `via-slack` | `String`|
+
+## Microsoft Teams Integration
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.teams.bot_id` <kbd>Pro</kbd><br>Teams bot ID. | ` ` | `String`|
+|`scoold.teams.bot_secret` <kbd>Pro</kbd><br>Teams bot secret key. | ` ` | `String`|
+|`scoold.teams.bot_service_url` <kbd>Pro</kbd><br>Teams bot service URL. | `https://smba.trafficmanager.net/emea/` | `String`|
+|`scoold.teams.notify_on_new_answer` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Teams for new answers. | `true` | `Boolean`|
+|`scoold.teams.notify_on_new_question` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Teams for new questions. | `true` | `Boolean`|
+|`scoold.teams.notify_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send notifications to Teams for new comments. | `true` | `Boolean`|
+|`scoold.teams.dm_on_new_comment` <kbd>Pro</kbd><br>Enable/disable the ability for Scoold to send direct messages to Teams users for new comments. | `false` | `Boolean`|
+|`scoold.teams.post_to_space` <kbd>Pro</kbd><br>Default space on Scoold where questions created on Teams will be published. Set it to `workspace` for using the team's name. | ` ` | `String`|
+|`scoold.teams.map_channels_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Teams channels to Scoold spaces. When enabled, will create a Scoold space for each Teams channel. | `false` | `Boolean`|
+|`scoold.teams.map_workspaces_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Teams teams to Scoold spaces. When enabled, will create a Scoold space for each Teams team. | `true` | `Boolean`|
+|`scoold.teams.max_notification_webhooks` <kbd>Pro</kbd><br>The maximum number of incoming webhooks which can be created on Scoold. Each webhook links a Teams channel to Scoold. | `10` | `Integer`|
+|`scoold.teams.default_title` <kbd>Pro</kbd><br>Default question title for questions created on Teams. | `A question from Microsoft Teams` | `String`|
+|`scoold.teams.default_question_tags` <kbd>Pro</kbd><br>Default question tags for questions created on Teams (comma-separated list). | `via-teams` | `String`|
+
+## SCIM
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.scim_enabled` <kbd>Pro</kbd> <kbd>preview</kbd><br>Enable/disable support for SCIM user provisioning. | `false` | `Boolean`|
+|`scoold.scim_secret_token` <kbd>Pro</kbd> <kbd>preview</kbd><br>SCIM secret token. | ` ` | `String`|
+|`scoold.scim_allow_provisioned_users_only` <kbd>Pro</kbd> <kbd>preview</kbd><br>Enable/disable the restriction that only SCIM-provisioned users can sign in. | `false` | `Boolean`|
+|`scoold.scim_map_groups_to_spaces` <kbd>Pro</kbd> <kbd>preview</kbd><br>Enable/disable mapping of SCIM groups to Scoold spaces. | `true` | `Boolean`|
+|`scoold.security.scim.admins_group_equivalent_to` <kbd>Pro</kbd> <kbd>preview</kbd><br>SCIM group whose members will be promoted to administrators on Scoold. | `admins` | `String`|
+|`scoold.security.scim.mods_group_equivalent_to` <kbd>Pro</kbd> <kbd>preview</kbd><br>SCIM group whose members will be promoted to moderators on Scoold. | `mods` | `String`|
+
+## Miscellaneous
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.security.redirect_uri`<br>Publicly accessible, internet-facing URL of the Para endpoint where authenticated users will be redirected to, from the identity provider. Used when Para is hosted behind a proxy. | `http://localhost:8080` | `String`|
+|`scoold.redirect_signin_to_idp`<br>Enable/disable the redirection of users from the signin page, directly to the IDP login page. | `false` | `Boolean`|
+|`scoold.gmaps_api_key`<br>The Google Maps API key. Used for geolocation functionality, (e.g. 'posts near me', location). | ` ` | `String`|
+|`scoold.imgur_client_id` <kbd>preview</kbd><br>Imgur API client id. Used for uploading avatars to Imgur. **Note:** Imgur have some breaking restrictions going on in their API and this might not work. | ` ` | `String`|
+
+## Posts
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.max_fav_tags`<br>Maximum number of favorite tags. | `50` | `Integer`|
+
+## Miscellaneous
+
+| Property key & Description | Default Value | Type |
+|  ---                       | ---           | ---  |
+|`scoold.batch_request_size`<br>Maximum batch size for the Para client pagination requests. | `0` | `Integer`|
+|`scoold.signout_url`<br>The URL which users will be redirected to after they click 'Sign out'. Can be a page hosted externally. | `/signin?code=5&success=true` | `String`|
+|`scoold.vote_expires_after_sec`<br>Vote expiration timeout, in seconds. Users can vote again on the same content after this period has elapsed. Default is 30 days. | `2592000` | `Integer`|
+|`scoold.vote_locked_after_sec`<br>Vote locking period, in seconds. Vote cannot be changed after this period has elapsed. Default is 30 sec. | `30` | `Integer`|
+|`scoold.import_batch_size`<br>Maximum number objects to read and send to Para when importing data from a backup. | `100` | `Integer`|
+|`scoold.connection_retries_max`<br>Maximum number of connection retries to Para. | `10` | `Integer`|
+|`scoold.connection_retry_interval_sec`<br>Para connection retry interval, in seconds. | `10` | `Integer`|
+|`scoold.rewrite_inbound_links_with_fqdn`<br>If set, links to Scoold in emails will be replaced with a public-facing FQDN. | ` ` | `String`|
+
+</details>
 
 On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
 fail and the settings will not be persisted. If you set the maximum number of retries to `-1` there will be an infinite
@@ -2063,8 +2415,6 @@ para.dark_mode_enabled = true
 para.gravatars_enabled = true
 # pattern of default image of Gravatars (https://fr.gravatar.com/site/implement/images/)
 para.gravatars_pattern = "retro"
-# accept user to choose url as avatar
-para.avatar_custom_link_accepted = true
 
 # custom navbar links
 para.navbar_link1_url = ""
