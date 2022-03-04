@@ -955,8 +955,6 @@ public class ApiController {
 		String groupby = req.getParameter("groupby");
 		if ("markdown".equalsIgnoreCase(format)) {
 			res.setContentType("text/markdown");
-		} else if ("html".equalsIgnoreCase(format)) {
-			res.setContentType("text/html");
 		} else if ("hocon".equalsIgnoreCase(format)) {
 			res.setContentType("application/hocon");
 		} else if (StringUtils.isBlank(format) || "json".equalsIgnoreCase(format)) {
