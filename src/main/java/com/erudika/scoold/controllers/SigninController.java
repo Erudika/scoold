@@ -17,39 +17,41 @@
  */
 package com.erudika.scoold.controllers;
 
-import com.erudika.para.core.annotations.Email;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
+import com.erudika.para.core.annotations.Email;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
 import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.utils.HttpUtils;
+import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
+import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
-import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class SigninController {
 
 	private static final Logger logger = LoggerFactory.getLogger(SigninController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -71,32 +73,29 @@ public class SigninController {
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
 		}
-		if (Config.getConfigBoolean("redirect_signin_to_idp", false) && !"5".equals(req.getParameter("code"))) {
+		if (CONF.redirectSigninToIdp() && !"5".equals(req.getParameter("code"))) {
 			return "redirect:" + utils.getFirstConfiguredLoginURL();
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signin.title"));
 		model.addAttribute("signinSelected", "navbtn-hover");
-		model.addAttribute("fbLoginEnabled", !Config.FB_APP_ID.isEmpty());
-		model.addAttribute("gpLoginEnabled", !Config.GPLUS_APP_ID.isEmpty());
-		model.addAttribute("ghLoginEnabled", !Config.GITHUB_APP_ID.isEmpty());
-		model.addAttribute("inLoginEnabled", !Config.LINKEDIN_APP_ID.isEmpty());
-		model.addAttribute("twLoginEnabled", !Config.TWITTER_APP_ID.isEmpty());
-		model.addAttribute("msLoginEnabled", !Config.MICROSOFT_APP_ID.isEmpty());
-		model.addAttribute("slLoginEnabled", !Config.SLACK_APP_ID.isEmpty());
-		model.addAttribute("azLoginEnabled", !Config.AMAZON_APP_ID.isEmpty());
-		model.addAttribute("oa2LoginEnabled", !Config.getConfigParam("oa2_app_id", "").isEmpty());
-		model.addAttribute("oa2secondLoginEnabled", !Config.getConfigParam("oa2second_app_id", "").isEmpty());
-		model.addAttribute("oa2thirdLoginEnabled", !Config.getConfigParam("oa2third_app_id", "").isEmpty());
-		model.addAttribute("ldapLoginEnabled", !Config.getConfigParam("security.ldap.server_url", "").isEmpty());
-		model.addAttribute("passwordLoginEnabled", Config.getConfigBoolean("password_auth_enabled", true));
-		model.addAttribute("oa2LoginProvider", Config.getConfigParam("security.oauth.provider",
-				"Continue with OpenID Connect"));
-		model.addAttribute("oa2secondLoginProvider", Config.getConfigParam("security.oauthsecond.provider",
-				"Continue with OpenID Connect 2"));
-		model.addAttribute("oa2thirdLoginProvider", Config.getConfigParam("security.oauththird.provider",
-				"Continue with OpenID Connect 3"));
-		model.addAttribute("ldapLoginProvider", Config.getConfigParam("security.ldap.provider", "Continue with LDAP"));
+		model.addAttribute("fbLoginEnabled", !CONF.facebookAppId().isEmpty());
+		model.addAttribute("gpLoginEnabled", !CONF.googleAppId().isEmpty());
+		model.addAttribute("ghLoginEnabled", !CONF.githubAppId().isEmpty());
+		model.addAttribute("inLoginEnabled", !CONF.linkedinAppId().isEmpty());
+		model.addAttribute("twLoginEnabled", !CONF.twitterAppId().isEmpty());
+		model.addAttribute("msLoginEnabled", !CONF.microsoftAppId().isEmpty());
+		model.addAttribute("slLoginEnabled", utils.isSlackAuthEnabled());
+		model.addAttribute("azLoginEnabled", !CONF.amazonAppId().isEmpty());
+		model.addAttribute("oa2LoginEnabled", !CONF.oauthAppId("").isEmpty());
+		model.addAttribute("oa2secondLoginEnabled", !CONF.oauthAppId("second").isEmpty());
+		model.addAttribute("oa2thirdLoginEnabled", !CONF.oauthAppId("third").isEmpty());
+		model.addAttribute("ldapLoginEnabled", !CONF.ldapServerUrl().isEmpty());
+		model.addAttribute("passwordLoginEnabled", CONF.passwordAuthEnabled());
+		model.addAttribute("oa2LoginProvider", CONF.oauthProvider(""));
+		model.addAttribute("oa2secondLoginProvider", CONF.oauthProvider("second"));
+		model.addAttribute("oa2thirdLoginProvider", CONF.oauthProvider("third"));
+		model.addAttribute("ldapLoginProvider", CONF.ldapProvider());
 		return "base";
 	}
 
@@ -133,8 +132,8 @@ public class SigninController {
 		model.addAttribute("verify", verify);
 		model.addAttribute("resend", resend);
 		model.addAttribute("bademail", req.getParameter("email"));
-		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
-		model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
+		model.addAttribute("nosmtp", StringUtils.isBlank(CONF.mailHost()));
+		model.addAttribute("captchakey", CONF.captchaSiteKey());
 		if (id != null && token != null) {
 			User u = (User) pc.read(id);
 			boolean verified = activateWithEmailToken(u, token);
@@ -217,8 +216,8 @@ public class SigninController {
 		model.addAttribute("signinSelected", "navbtn-hover");
 		model.addAttribute("iforgot", true);
 		model.addAttribute("verify", verify);
-		model.addAttribute("nosmtp", StringUtils.isBlank(Config.getConfigParam("mail.host", "")));
-		model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
+		model.addAttribute("nosmtp", StringUtils.isBlank(CONF.mailHost()));
+		model.addAttribute("captchakey", CONF.captchaSiteKey());
 		if (email != null && token != null) {
 			model.addAttribute("email", email);
 			model.addAttribute("token", token);
@@ -246,7 +245,7 @@ public class SigninController {
 				model.addAttribute("email", email);
 				model.addAttribute("token", token);
 				model.addAttribute("verified", !error);
-				model.addAttribute("captchakey", Config.getConfigParam("signup_captcha_site_key", ""));
+				model.addAttribute("captchakey", CONF.captchaSiteKey());
 				if (error) {
 					if (!isPasswordStrongEnough(newpassword)) {
 						model.addAttribute("error", Collections.singletonMap("newpassword", utils.getLang(req).get("msgcode.8")));
@@ -266,7 +265,7 @@ public class SigninController {
 	public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			utils.clearSession(req, res);
-			return "redirect:" + Config.getConfigParam("signout_url", SIGNINLINK + "?code=5&success=true");
+			return "redirect:" + CONF.signoutUrl();
 		}
 		return "redirect:" + HOMEPAGE;
 	}
@@ -436,7 +435,7 @@ public class SigninController {
 		if (s != null && s.hasProperty(key)) {
 			String storedToken = (String) s.getProperty(key);
 			// tokens expire afer a reasonably short period ~ 30 mins
-			long timeout = (long) Config.PASSRESET_TIMEOUT_SEC * 1000L;
+			long timeout = (long) CONF.passwordResetTimeoutSec() * 1000L;
 			if (StringUtils.equals(storedToken, token) && (s.getUpdated() + timeout) > Utils.timestamp()) {
 				return true;
 			} else {

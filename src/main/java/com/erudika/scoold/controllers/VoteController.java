@@ -22,7 +22,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Votable;
 import com.erudika.para.core.Vote;
-import com.erudika.para.core.utils.Config;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
 import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;
@@ -48,7 +48,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -64,11 +63,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class VoteController {
 
 	private static final Logger logger = LoggerFactory.getLogger(VoteController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
-	private final String expiresAfter;
-	private final String lockedAfter;
 	private final Integer expiresAfterSec;
 	private final Integer lockedAfterSec;
 
@@ -76,10 +74,8 @@ public class VoteController {
 	public VoteController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		expiresAfter = Config.getConfigParam("vote_expires_after_sec", null);
-		lockedAfter = Config.getConfigParam("vote_locked_after_sec", null);
-		expiresAfterSec = NumberUtils.toInt(expiresAfter, Config.VOTE_EXPIRES_AFTER_SEC);
-		lockedAfterSec = NumberUtils.toInt(lockedAfter, Config.VOTE_LOCKED_AFTER_SEC);
+		expiresAfterSec = CONF.voteExpiresAfterSec();
+		lockedAfterSec = CONF.voteLockedAfterSec();
 	}
 
 	@ResponseBody
@@ -207,16 +203,10 @@ public class VoteController {
 	}
 
 	private boolean voteUp(ParaObject votable, String userid) {
-		if (StringUtils.isBlank(expiresAfter) && StringUtils.isBlank(lockedAfter)) {
-			return pc.voteUp(votable, userid);
-		}
 		return pc.voteUp(votable, userid, expiresAfterSec, lockedAfterSec);
 	}
 
 	private boolean voteDown(ParaObject votable, String userid) {
-		if (StringUtils.isBlank(expiresAfter) && StringUtils.isBlank(lockedAfter)) {
-			return pc.voteDown(votable, userid);
-		}
 		return pc.voteDown(votable, userid, expiresAfterSec, lockedAfterSec);
 	}
 }

@@ -107,7 +107,7 @@ public class PeopleController {
 		String selection = req.getParameter("selection");
 		if (isAdmin && ("all".equals(selection) || selectedUsers != null)) {
 			// find all user objects even if there are more than 10000 users in the system
-			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+			Pager pager = new Pager(1, "_docid", false, ScooldUtils.getConfig().maxItemsPerPage());
 			List<Profile> profiles;
 			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
 			List<String> spaces = (selectedSpaces == null || selectedSpaces.length == 0) ?

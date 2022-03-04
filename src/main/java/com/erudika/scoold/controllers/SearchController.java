@@ -18,10 +18,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.SEARCHLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
@@ -69,6 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SearchController {
 
 	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -146,12 +146,12 @@ public class SearchController {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
 				+ "<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\" "
 				+ "  xmlns:moz=\"http://www.mozilla.org/2006/browser/search/\">\n"
-				+ "  <ShortName>" + Config.APP_NAME + "</ShortName>\n"
+				+ "  <ShortName>" + CONF.appName() + "</ShortName>\n"
 				+ "  <Description>" + utils.getLang(req).get("search.description") + "</Description>\n"
 				+ "  <InputEncoding>UTF-8</InputEncoding>\n"
 				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">" +
-				ScooldServer.getServerURL() + CONTEXT_PATH + "/favicon.ico</Image>\n"
-				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + ScooldServer.getServerURL() + CONTEXT_PATH
+				CONF.serverUrl() + CONTEXT_PATH + "/favicon.ico</Image>\n"
+				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + CONF.serverUrl() + CONTEXT_PATH
 				+ "/search?q={searchTerms}\"></Url>\n"
 				+ "</OpenSearchDescription>";
 		return ResponseEntity.ok().
@@ -180,14 +180,14 @@ public class SearchController {
 	private SyndFeed getFeed() throws IOException, FeedException {
 		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
-		String baseurl = ScooldServer.getServerURL();
+		String baseurl = CONF.serverUrl();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("atom_1.0");
-		feed.setTitle(Config.APP_NAME + " - Recent questions");
+		feed.setTitle(CONF.appName() + " - Recent questions");
 		feed.setLink(baseurl);
-		feed.setDescription("A summary of the most recent questions on " + Config.APP_NAME);
+		feed.setDescription("A summary of the most recent questions on " + CONF.appName());
 
 		for (Post post : questions) {
 			SyndEntry entry;

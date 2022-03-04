@@ -17,19 +17,20 @@
  */
 package com.erudika.scoold.api;
 
-import com.erudika.para.core.annotations.Locked;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.Webhook;
-import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.core.annotations.Locked;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.para.core.validation.ValidationUtils;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.AUTH_USER_ATTRIBUTE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.REST_ENTITY_ATTRIBUTE;
@@ -54,6 +55,7 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.typesafe.config.ConfigFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -107,6 +109,7 @@ public class ApiController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	@Inject
 	private QuestionsController questionsController;
@@ -142,7 +145,7 @@ public class ApiController {
 			return null;
 		}
 		Map<String, Object> intro = new HashMap<>();
-		intro.put("message", Config.APP_NAME + " API, see docs at " + ScooldServer.getServerURL()
+		intro.put("message", CONF.appName() + " API, see docs at " + CONF.serverUrl()
 				+ CONTEXT_PATH + "/apidocs");
 		boolean healthy;
 		try {
@@ -383,8 +386,8 @@ public class ApiController {
 		if (errors.length == 0) {
 			// generic and password providers are identical but this was fixed in Para 1.37.1 (backwards compatibility)
 			String provider = "generic".equals(newUser.getIdentityProvider()) ? "password" : newUser.getIdentityProvider();
-			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Config.SEPARATOR +
-					newUser.getName() + Config.SEPARATOR + newUser.getPassword(), false);
+			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Para.getConfig().separator() +
+					newUser.getName() + Para.getConfig().separator() + newUser.getPassword(), false);
 			// user is probably active:false so activate them
 			List<User> created = pc.findQuery(newUser.getType(), Config._EMAIL + ":" + newUser.getEmail());
 			if (createdUser == null && !created.isEmpty()) {
@@ -429,7 +432,7 @@ public class ApiController {
 
 	@GetMapping("/users/{id}")
 	public Map<String, Object> getUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		List<?> usrProfile = pc.readAll(Arrays.asList(StringUtils.substringBefore(id, Config.SEPARATOR), Profile.id(id)));
+		List<?> usrProfile = pc.readAll(Arrays.asList(StringUtils.substringBefore(id, Para.getConfig().separator()), Profile.id(id)));
 		Iterator<?> it = usrProfile.iterator();
 		User u = it.hasNext() ? (User) it.next() : null;
 		Profile p = it.hasNext() ? (Profile) it.next() : null;
@@ -896,6 +899,73 @@ public class ApiController {
 		adminController.restore(file, isso, req, res);
 	}
 
+	@GetMapping("/config")
+	public String config(HttpServletRequest req, HttpServletResponse res) {
+		String format = req.getParameter("format");
+		if ("hocon".equalsIgnoreCase(format)) {
+			res.setContentType("application/hocon");
+			return CONF.render(false);
+		} else {
+			res.setContentType("application/json");
+			return CONF.render(true);
+		}
+	}
+
+	@PutMapping("/config")
+	public String configSet(HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(req);
+		if (entity.isEmpty()) {
+			badReq("Missing request body.");
+		}
+		for (Map.Entry<String, Object> entry : entity.entrySet()) {
+			System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
+		}
+		ConfigFactory.invalidateCaches();
+		CONF.store();
+		pc.setAppSettings(CONF.getParaAppSettings());
+		return config(req, res);
+	}
+
+	@GetMapping("/config/get/{key}")
+	public Map<String, Object> configGet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
+		return Collections.singletonMap("value", CONF.getConfigParam(key, null,
+				CONF.getConfig().getValue(key).valueType()));
+	}
+
+	@PutMapping("/config/set/{key}")
+	public void configSet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(req);
+		if (entity.isEmpty()) {
+			badReq("Missing request body.");
+		}
+		Object value = entity.getOrDefault("value", null);
+		if (value != null && !StringUtils.isBlank(value.toString())) {
+			System.setProperty(CONF.getConfigRootPrefix() + "." + key, value.toString());
+			ConfigFactory.invalidateCaches();
+			CONF.store();
+			if (CONF.getParaAppSettings().containsKey(key)) {
+				pc.addAppSetting(key, value);
+			}
+		}
+	}
+
+	@GetMapping("/config/options")
+	public ResponseEntity<Object> configOptions(HttpServletRequest req, HttpServletResponse res) {
+		String format = req.getParameter("format");
+		String groupby = req.getParameter("groupby");
+		if ("markdown".equalsIgnoreCase(format)) {
+			res.setContentType("text/markdown");
+		} else if ("html".equalsIgnoreCase(format)) {
+			res.setContentType("text/html");
+		} else if ("hocon".equalsIgnoreCase(format)) {
+			res.setContentType("application/hocon");
+		} else if (StringUtils.isBlank(format) || "json".equalsIgnoreCase(format)) {
+			res.setContentType("application/json");
+		}
+		return ResponseEntity.ok(CONF.renderConfigDocumentation(format,
+				StringUtils.isBlank(groupby) || "category".equalsIgnoreCase(groupby)));
+	}
+
 	private boolean voteRequest(boolean isUpvote, String id, String userid, HttpServletRequest req) {
 		if (!StringUtils.isBlank(userid)) {
 			Profile authUser = pc.read(Profile.id(userid));
@@ -913,7 +983,7 @@ public class ApiController {
 		List<String> ids = spaces.stream().map(s -> utils.getSpaceId(s)).
 				filter(s -> !s.isEmpty() && !utils.isDefaultSpace(s)).distinct().collect(Collectors.toList());
 		List<Sysprop> existing = pc.readAll(ids);
-		return existing.stream().map(s -> s.getId() + Config.SEPARATOR + s.getName()).collect(Collectors.toList());
+		return existing.stream().map(s -> s.getId() + Para.getConfig().separator() + s.getName()).collect(Collectors.toList());
 	}
 
 	private List<String> readSpaces(String... spaces) {

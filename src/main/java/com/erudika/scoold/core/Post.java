@@ -17,12 +17,12 @@
  */
 package com.erudika.scoold.core;
 
-import com.erudika.para.core.Tag;
-import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
+import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
@@ -40,10 +40,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -272,7 +272,7 @@ public abstract class Post extends Sysprop {
 
 	public String create() {
 		updateTags(null, getTags());
-		this.body = Utils.abbreviate(this.body, Config.getConfigInt("max_post_length", 20000));
+		this.body = Utils.abbreviate(this.body, ScooldUtils.getConfig().maxPostLength());
 		Post p = client().create(this);
 		if (p != null) {
 			Revision.createRevisionFromPost(p, true);

@@ -18,7 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Sysprop;
-import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.PRIVACYLINK;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
@@ -50,7 +50,7 @@ public class PrivacyController {
 	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "privacy.vm");
 		model.addAttribute("title", utils.getLang(req).get("privacy.title"));
-		model.addAttribute("privacyhtml", utils.getParaClient().read("template" + Config.SEPARATOR + "privacy"));
+		model.addAttribute("privacyhtml", utils.getParaClient().read("template" + Para.getConfig().separator() + "privacy"));
 		return "base";
 	}
 
@@ -59,7 +59,7 @@ public class PrivacyController {
 		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
 			return "redirect:" + PRIVACYLINK;
 		}
-		Sysprop privacy = new Sysprop("template" + Config.SEPARATOR + "privacy");
+		Sysprop privacy = new Sysprop("template" + Para.getConfig().separator() + "privacy");
 		if (StringUtils.isBlank(privacyhtml)) {
 			utils.getParaClient().delete(privacy);
 		} else {

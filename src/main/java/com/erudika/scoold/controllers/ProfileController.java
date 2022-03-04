@@ -20,21 +20,25 @@ package com.erudika.scoold.controllers;
 import com.erudika.para.core.User;
 import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
-import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
+import static com.erudika.scoold.ScooldServer.PROFILELINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
+import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.avatars.*;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.erudika.scoold.utils.avatars.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,11 +47,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.PROFILELINK;
-import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import com.erudika.scoold.core.Question;
-import com.erudika.scoold.core.Reply;
-import java.util.ArrayList;
 
 /**
  *
@@ -57,6 +56,7 @@ import java.util.ArrayList;
 @RequestMapping("/profile")
 public class ProfileController {
 
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private final AvatarRepository avatarRepository;
@@ -111,14 +111,14 @@ public class ProfileController {
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
-		model.addAttribute("canEditAvatar", Config.getConfigBoolean("avatar_edits_enabled", true));
+		model.addAttribute("canEditAvatar", CONF.avatarEditsEnabled());
 		model.addAttribute("gravatarPicture", gravatarAvatarGenerator.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("isGravatarPicture", gravatarAvatarGenerator.isLink(showUser.getPicture()));
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("itemcount2", itemcount2);
 		model.addAttribute("questionslist", questionslist);
 		model.addAttribute("answerslist", answerslist);
-		model.addAttribute("nameEditsAllowed", Config.getConfigBoolean("name_edits_enabled", true));
+		model.addAttribute("nameEditsAllowed", CONF.nameEditsEnabled());
 		return "base";
 	}
 
@@ -192,11 +192,11 @@ public class ProfileController {
 		boolean updateUser = false;
 		User u = showUser.getUser();
 
-		if (Config.getConfigBoolean("avatar_edits_enabled", true) && !StringUtils.isBlank(picture)) {
+		if (CONF.avatarEditsEnabled() && !StringUtils.isBlank(picture)) {
 			updateProfile = avatarRepository.store(showUser, picture);
 		}
 
-		if (Config.getConfigBoolean("name_edits_enabled", true) && !StringUtils.isBlank(name)) {
+		if (CONF.nameEditsEnabled() && !StringUtils.isBlank(name)) {
 			showUser.setName(name);
 			if (StringUtils.isBlank(showUser.getOriginalName())) {
 				showUser.setOriginalName(name);

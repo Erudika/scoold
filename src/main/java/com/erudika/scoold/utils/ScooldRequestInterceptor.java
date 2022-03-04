@@ -18,8 +18,8 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import com.erudika.scoold.ScooldServer;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
@@ -47,6 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ScooldRequestInterceptor implements HandlerInterceptor {
 
 	public static final Logger logger = LoggerFactory.getLogger(ScooldRequestInterceptor.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 
 	@Inject
@@ -95,28 +96,28 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 
 		// Misc
 		modelAndView.addObject("HOMEPAGE", HOMEPAGE);
-		modelAndView.addObject("APPNAME", Config.APP_NAME);
+		modelAndView.addObject("APPNAME", CONF.appName());
 		modelAndView.addObject("CDN_URL", CDN_URL);
-		modelAndView.addObject("DESCRIPTION", Config.getConfigParam("meta_description", ""));
-		modelAndView.addObject("KEYWORDS", Config.getConfigParam("meta_keywords", ""));
-		modelAndView.addObject("IN_PRODUCTION", Config.IN_PRODUCTION);
-		modelAndView.addObject("IN_DEVELOPMENT", !Config.IN_PRODUCTION);
-		modelAndView.addObject("MAX_ITEMS_PER_PAGE", Config.MAX_ITEMS_PER_PAGE);
-		modelAndView.addObject("SESSION_TIMEOUT_SEC", Config.SESSION_TIMEOUT_SEC);
+		modelAndView.addObject("DESCRIPTION", CONF.metaDescription());
+		modelAndView.addObject("KEYWORDS", CONF.metaKeywords());
+		modelAndView.addObject("IN_PRODUCTION", CONF.inProduction());
+		modelAndView.addObject("IN_DEVELOPMENT", !CONF.inProduction());
+		modelAndView.addObject("MAX_ITEMS_PER_PAGE", CONF.maxItemsPerPage());
+		modelAndView.addObject("SESSION_TIMEOUT_SEC", CONF.sessionTimeoutSec());
 		modelAndView.addObject("TOKEN_PREFIX", TOKEN_PREFIX);
 		modelAndView.addObject("CONTEXT_PATH", CONTEXT_PATH);
-		modelAndView.addObject("FB_APP_ID", Config.FB_APP_ID);
-		modelAndView.addObject("GMAPS_API_KEY", Config.getConfigParam("gmaps_api_key", ""));
-		modelAndView.addObject("IMGUR_CLIENT_ID", Config.getConfigParam("imgur_client_id", ""));
+		modelAndView.addObject("FB_APP_ID", CONF.facebookAppId());
+		modelAndView.addObject("GMAPS_API_KEY", CONF.googleMapsApiKey());
+		modelAndView.addObject("IMGUR_CLIENT_ID", CONF.imgurClientId());
 		modelAndView.addObject("IMGUR_ENABLED", ScooldUtils.isImgurAvatarRepositoryEnabled());
 		modelAndView.addObject("RTL_ENABLED", utils.isLanguageRTL(utils.getCurrentLocale(utils.getLanguageCode(request)).getLanguage()));
 		modelAndView.addObject("MAX_TAGS_PER_POST", ScooldServer.MAX_TAGS_PER_POST);
-		modelAndView.addObject("includeHighlightJS", Config.getConfigBoolean("code_highlighting_enabled", true));
+		modelAndView.addObject("includeHighlightJS", CONF.codeHighlightingEnabled());
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONTEXT_PATH));
 		// Configurable constants
-		modelAndView.addObject("MAX_PAGES", Config.MAX_PAGES);
+		modelAndView.addObject("MAX_PAGES", CONF.maxPages());
 		modelAndView.addObject("MAX_TEXT_LENGTH", MAX_TEXT_LENGTH);
 		modelAndView.addObject("MAX_TAGS_PER_POST", MAX_TAGS_PER_POST);
 		modelAndView.addObject("MAX_REPLIES_PER_POST", MAX_REPLIES_PER_POST);
@@ -170,12 +171,12 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("languageslink", CONTEXT_PATH + LANGUAGESLINK);
 		modelAndView.addObject("apidocslink", CONTEXT_PATH + APIDOCSLINK);
 		// Visual customization
-		modelAndView.addObject("navbarFixedClass", Config.getConfigBoolean("fixed_nav", false) ? "navbar-fixed" : "none");
-		modelAndView.addObject("showBranding", Config.getConfigBoolean("show_branding", true));
-		modelAndView.addObject("logoUrl", Config.getConfigParam("logo_url", IMAGESLINK + "/logo.svg"));
-		modelAndView.addObject("logoWidth", Config.getConfigInt("logo_width", 100));
-		modelAndView.addObject("stylesheetUrl", Config.getConfigParam("stylesheet_url", STYLESLINK + "/style.css"));
-		modelAndView.addObject("faviconUrl", Config.getConfigParam("favicon_url", IMAGESLINK + "/favicon.ico"));
+		modelAndView.addObject("navbarFixedClass", CONF.fixedNavEnabled() ? "navbar-fixed" : "none");
+		modelAndView.addObject("showBranding", CONF.scooldBrandingEnabled());
+		modelAndView.addObject("logoUrl", CONF.logoUrl());
+		modelAndView.addObject("logoWidth", CONF.logoWidth());
+		modelAndView.addObject("stylesheetUrl", CONF.stylesheetUrl());
+		modelAndView.addObject("faviconUrl", CONF.faviconUrl());
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
 		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
@@ -199,9 +200,9 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("lang", utils.getLang(currentLocale));
 		modelAndView.addObject("langDirection", utils.isLanguageRTL(currentLocale.getLanguage()) ? "RTL" : "LTR");
 		// Pagination
-		modelAndView.addObject("numericPaginationEnabled", Config.getConfigBoolean("numeric_pagination_enabled", false));
+		modelAndView.addObject("numericPaginationEnabled", CONF.numericPaginationEnabled());
 		// Markdown with HTML
-		modelAndView.addObject("htmlInMarkdownEnabled", Config.getConfigBoolean("html_in_markdown_enabled", false));
+		modelAndView.addObject("htmlInMarkdownEnabled", CONF.htmlInMarkdownEnabled());
 		// check for AJAX pagination requests
 		if (utils.isAjaxRequest(request) && (utils.param(request, "page") || utils.param(request, "page1") ||
 				utils.param(request, "page2") || utils.param(request, "page3"))) {
@@ -220,13 +221,13 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		utils.setSecurityHeaders(cspNonce, request, response);
 		// default metadata for social meta tags
 		if (!modelAndView.getModel().containsKey("title")) {
-			modelAndView.addObject("title", Config.APP_NAME);
+			modelAndView.addObject("title", CONF.appName());
 		}
 		if (!modelAndView.getModel().containsKey("description")) {
-			modelAndView.addObject("description", Config.getConfigParam("meta_description", ""));
+			modelAndView.addObject("description", CONF.metaDescription());
 		}
 		if (!modelAndView.getModel().containsKey("ogimage")) {
-			modelAndView.addObject("ogimage", Config.getConfigParam("meta_app_icon", IMAGESLINK + "/logowhite.png"));
+			modelAndView.addObject("ogimage", CONF.metaAppIconUrl());
 		}
 	}
 }

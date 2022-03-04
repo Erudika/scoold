@@ -18,11 +18,9 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.core.email.Emailer;
-import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Para;
+import com.erudika.scoold.ScooldConfig;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +35,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 public class ScooldEmailer implements Emailer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldEmailer.class);
-	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Config.EXECUTOR_THREADS);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private JavaMailSender mailSender;
 
 	public ScooldEmailer(JavaMailSender mailSender) {
@@ -49,14 +47,14 @@ public class ScooldEmailer implements Emailer {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
-		asyncExecute(() -> {
+		Para.asyncExecute(() -> {
 			emails.forEach(email -> {
 				try {
 					mailSender.send((MimeMessage mimeMessage) -> {
 						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 						msg.setTo(email);
 						msg.setSubject(subject);
-						msg.setFrom(Config.SUPPORT_EMAIL, Config.APP_NAME);
+						msg.setFrom(CONF.supportEmail(), CONF.appName());
 						msg.setText(body, true); // body is assumed to be HTML
 					});
 					logger.debug("Email sent to {}, {}", email, subject);
@@ -67,20 +65,4 @@ public class ScooldEmailer implements Emailer {
 		});
 		return true;
 	}
-
-	private void asyncExecute(Runnable runnable) {
-		if (runnable != null) {
-			try {
-				EXECUTOR.execute(runnable);
-			} catch (RejectedExecutionException ex) {
-				logger.warn(ex.getMessage());
-				try {
-					runnable.run();
-				} catch (Exception e) {
-					logger.error(null, e);
-				}
-			}
-		}
-	}
-
 }

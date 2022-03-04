@@ -15,7 +15,7 @@
  */
 package com.erudika.scoold.velocity;
 
-import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Para;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -388,7 +388,7 @@ public class VelocityView extends AbstractTemplateView {
 	 * @see org.apache.velocity.app.VelocityEngine#getTemplate
 	 */
 	protected Template getTemplate(String name) throws Exception {
-		return getVelocityEngine().getTemplate(name, Config.DEFAULT_ENCODING);
+		return getVelocityEngine().getTemplate(name, Para.getConfig().defaultEncoding());
 	}
 
 	/**
@@ -404,7 +404,7 @@ public class VelocityView extends AbstractTemplateView {
 			Template template, Context context, HttpServletResponse response) throws Exception {
 
 		try {
-			response.setCharacterEncoding(Config.DEFAULT_ENCODING);
+			response.setCharacterEncoding(Para.getConfig().defaultEncoding());
 			template.merge(context, response.getWriter());
 		} catch (MethodInvocationException ex) {
 			Throwable cause = ex.getCause();

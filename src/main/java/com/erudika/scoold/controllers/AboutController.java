@@ -18,7 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.Sysprop;
-import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.ABOUTLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -51,7 +51,7 @@ public class AboutController {
 	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "about.vm");
 		model.addAttribute("title", utils.getLang(req).get("about.title"));
-		model.addAttribute("abouthtml", utils.getParaClient().read("template" + Config.SEPARATOR + "about"));
+		model.addAttribute("abouthtml", utils.getParaClient().read("template" + Para.getConfig().separator() + "about"));
 
 		model.addAttribute("NICEPROFILE_BONUS", Profile.Badge.NICEPROFILE.getReward());
 		model.addAttribute("SUPPORTER_BONUS", Profile.Badge.SUPPORTER.getReward());
@@ -66,7 +66,7 @@ public class AboutController {
 		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
 			return "redirect:" + ABOUTLINK;
 		}
-		Sysprop about = new Sysprop("template" + Config.SEPARATOR + "about");
+		Sysprop about = new Sysprop("template" + Para.getConfig().separator() + "about");
 		if (StringUtils.isBlank(abouthtml)) {
 			utils.getParaClient().delete(about);
 		} else {

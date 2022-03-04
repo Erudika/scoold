@@ -18,9 +18,9 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.Translation;
 import com.erudika.para.core.Sysprop;
-import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.Translation;
+import com.erudika.para.core.utils.Para;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,9 +32,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.slf4j.Logger;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +68,7 @@ public class LanguageUtils {
 
 	private static final Map<String, Integer> LANG_PROGRESS_CACHE = new HashMap<String, Integer>(ALL_LOCALES.size());
 
-	private final String keyPrefix = "language".concat(Config.SEPARATOR);
+	private final String keyPrefix = "language".concat(Para.getConfig().separator());
 	private final ParaClient pc;
 
 	/**

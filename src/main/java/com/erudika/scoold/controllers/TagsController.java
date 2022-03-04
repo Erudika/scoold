@@ -22,6 +22,7 @@ import com.erudika.para.core.Tag;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.TAGSLINK;
 import com.erudika.scoold.core.Profile;
@@ -56,6 +57,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class TagsController {
 
 	private static final Logger logger = LoggerFactory.getLogger(TagsController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -112,7 +114,7 @@ public class TagsController {
 
 					t.setCount(pc.getCount(Utils.type(Question.class),
 							Collections.singletonMap(Config._TAGS, newTag.getTag())).intValue());
-					Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+					Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 					List<Question> questionslist;
 					do {
 						questionslist = pc.findTagged(Utils.type(Question.class), new String[]{oldTag.getTag()}, pager);
@@ -161,7 +163,7 @@ public class TagsController {
 				logger.info("User {} ({}) deleted tag '{}'.",
 						authUser.getName(), authUser.getCreatorid(), t.getTag());
 
-				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 				List<Question> questionslist;
 				do {
 					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{t.getTag()}, pager);

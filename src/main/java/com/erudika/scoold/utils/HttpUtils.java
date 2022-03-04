@@ -17,10 +17,9 @@
  */
 package com.erudika.scoold.utils;
 
-import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
-import com.erudika.scoold.ScooldServer;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
 import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
@@ -59,6 +58,7 @@ import org.slf4j.LoggerFactory;
 public final class HttpUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private static CloseableHttpClient httpclient;
 	private static final String DEFAULT_AVATAR = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 			+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
@@ -173,11 +173,11 @@ public final class HttpUtils {
 		sb.append(name).append("=").append(value).append(";");
 		sb.append("Path=").append(path).append(";");
 		sb.append("Expires=").append(expires).append(";");
-		sb.append("Max-Age=").append(maxAge < 0 ? Config.SESSION_TIMEOUT_SEC : maxAge).append(";");
+		sb.append("Max-Age=").append(maxAge < 0 ? CONF.sessionTimeoutSec() : maxAge).append(";");
 		if (httpOnly) {
 			sb.append("HttpOnly;");
 		}
-		if (StringUtils.startsWithIgnoreCase(ScooldServer.getServerURL(), "https://") || req.isSecure()) {
+		if (StringUtils.startsWithIgnoreCase(CONF.serverUrl(), "https://") || req.isSecure()) {
 			sb.append("Secure;");
 		}
 		if (!StringUtils.isBlank(sameSite)) {
@@ -214,14 +214,14 @@ public final class HttpUtils {
 	 * @return boolean
 	 */
 	public static boolean isValidCaptcha(String token) {
-		if (StringUtils.isBlank(Config.getConfigParam("signup_captcha_secret_key", ""))) {
+		if (StringUtils.isBlank(CONF.captchaSecretKey())) {
 			return true;
 		}
 		if (StringUtils.isBlank(token)) {
 			return false;
 		}
 		List<NameValuePair> params = new ArrayList<>();
-		params.add(new BasicNameValuePair("secret", Config.getConfigParam("signup_captcha_secret_key", "")));
+		params.add(new BasicNameValuePair("secret", CONF.captchaSecretKey()));
 		params.add(new BasicNameValuePair("response", token));
 		HttpPost post = new HttpPost("https://www.google.com/recaptcha/api/siteverify");
 		post.setEntity(new UrlEncodedFormEntity(params));
@@ -260,7 +260,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(jwt)) {
 			return;
 		}
-		setRawCookie(AUTH_COOKIE, jwt, req, res, true, "Lax", Config.SESSION_TIMEOUT_SEC);
+		setRawCookie(AUTH_COOKIE, jwt, req, res, true, "Lax", CONF.sessionTimeoutSec());
 	}
 
 	/**
@@ -272,7 +272,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(backtoFromCookie)) {
 			backtoFromCookie = req.getParameter("returnto");
 		}
-		String serverUrl = ScooldServer.getServerURL() + "/";
+		String serverUrl = CONF.serverUrl() + "/";
 		String resolved = "";
 		try {
 			resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();

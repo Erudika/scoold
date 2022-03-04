@@ -17,9 +17,9 @@
  */
 package com.erudika.scoold.core;
 
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.annotations.Stored;
-import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -34,8 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 public class Comment extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
-	public static final int MAX_COMMENTS_PER_ID = Config.getConfigInt("max_comments_per_id", 1000);
-	public static final int MAX_COMMENT_LENGTH = Config.getConfigInt("max_comment_length", 600);
 
 	@Stored private String comment;
 	@Stored private Boolean hidden;
@@ -85,10 +83,10 @@ public class Comment extends Sysprop {
 			return null;
 		}
 		int count = client().getCount(getType(), Collections.singletonMap(Config._PARENTID, getParentid())).intValue();
-		if (count > MAX_COMMENTS_PER_ID) {
+		if (count > ScooldUtils.getConfig().maxCommentsPerPost()) {
 			return null;
 		}
-		this.comment = Utils.abbreviate(this.comment, MAX_COMMENT_LENGTH);
+		this.comment = Utils.abbreviate(this.comment, ScooldUtils.getConfig().maxCommentLength());
 		Comment c = client().create(this);
 		if (c != null) {
 			setId(c.getId());

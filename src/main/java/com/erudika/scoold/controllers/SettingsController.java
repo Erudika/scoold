@@ -22,17 +22,19 @@ import com.erudika.para.core.User;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
 import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
+import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.avatars.AvatarRepository;
+import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.erudika.scoold.utils.avatars.AvatarRepository;
-import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,9 +42,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
-import java.util.List;
 
 /**
  *
@@ -118,7 +117,7 @@ public class SettingsController {
 			utils.getAuthUser(req).delete();
 			utils.clearSession(req, res);
 		}
-		return "redirect:" + Config.getConfigParam("signout_url", SIGNINLINK + "?code=4&success=true");
+		return "redirect:" + ScooldUtils.getConfig().signoutUrl(4);
 	}
 
 	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {

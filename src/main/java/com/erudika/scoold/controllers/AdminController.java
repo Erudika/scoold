@@ -24,10 +24,12 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.Webhook;
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.ADMINLINK;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
@@ -37,18 +39,6 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
-import com.typesafe.config.ConfigValue;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -57,6 +47,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
+import com.typesafe.config.ConfigValue;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +61,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -78,12 +70,22 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -97,6 +99,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final String scooldVersion = getClass().getPackage().getImplementationVersion();
 	private static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
 	private final String soDateFormat1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -118,7 +121,7 @@ public class AdminController {
 			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
 		Map<String, Object> configMap = new LinkedHashMap<String, Object>();
-		for (Map.Entry<String, ConfigValue> entry : Config.getConfig().entrySet()) {
+		for (Map.Entry<String, ConfigValue> entry : CONF.getConfig().entrySet()) {
 			ConfigValue value = entry.getValue();
 			configMap.put(entry.getKey(), value != null ? value.unwrapped() : "-");
 		}
@@ -130,8 +133,8 @@ public class AdminController {
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
 		model.addAttribute("configMap", configMap);
 		model.addAttribute("version", pc.getServerVersion());
-		model.addAttribute("endpoint", Config.getConfigParam("security.redirect_uri", pc.getEndpoint()));
-		model.addAttribute("paraapp", Config.getConfigParam("access_key", "x"));
+		model.addAttribute("endpoint", CONF.redirectUri());
+		model.addAttribute("paraapp", CONF.paraAccessKey());
 		model.addAttribute("spaces", pc.findQuery("scooldspace", "*", itemcount));
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
 		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
@@ -174,7 +177,7 @@ public class AdminController {
 				}
 			} else {
 				if (pc.create(spaceObj) != null) {
-					authUser.getSpaces().add(spaceObj.getId() + Config.SEPARATOR + spaceObj.getName());
+					authUser.getSpaces().add(spaceObj.getId() + Para.getConfig().separator() + spaceObj.getName());
 					authUser.update();
 					model.addAttribute("space", spaceObj);
 					utils.getAllSpaces().add(spaceObj);
@@ -217,14 +220,14 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		Sysprop s = pc.read(utils.getSpaceId(space));
 		if (s != null && utils.isAdmin(authUser)) {
-			String origSpace = s.getId() + Config.SEPARATOR + s.getName();
+			String origSpace = s.getId() + Para.getConfig().separator() + s.getName();
 			int index = utils.getAllSpaces().indexOf(s);
 			s.setName(newspace);
 			pc.update(s);
 			if (index >= 0) {
 				utils.getAllSpaces().get(index).setName(newspace);
 			}
-			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
 			List<Profile> profiles;
 			do {
@@ -232,7 +235,7 @@ public class AdminController {
 				profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
 				profiles.stream().forEach(p -> {
 					p.getSpaces().remove(origSpace);
-					p.getSpaces().add(s.getId() + Config.SEPARATOR + s.getName());
+					p.getSpaces().add(s.getId() + Para.getConfig().separator() + s.getName());
 					Map<String, Object> profile = new HashMap<>();
 					profile.put(Config._ID, p.getId());
 					profile.put("spaces", p.getSpaces());
@@ -332,8 +335,7 @@ public class AdminController {
 		if (!utils.isAdmin(authUser)) {
 			return new ResponseEntity<StreamingResponseBody>(HttpStatus.UNAUTHORIZED);
 		}
-		String fileName = App.identifier(Config.getConfigParam("access_key", "scoold")) + "_" +
-					Utils.formatDate("YYYYMMdd_HHmmss", Locale.US);
+		String fileName = App.identifier(CONF.paraAccessKey()) + "_" + Utils.formatDate("YYYYMMdd_HHmmss", Locale.US);
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".zip");
 		return new ResponseEntity<StreamingResponseBody>(out -> {
@@ -345,7 +347,7 @@ public class AdminController {
 				long count = 0;
 				int partNum = 0;
 				// find all objects even if there are more than 10000 users in the system
-				Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 				List<ParaObject> objects;
 				do {
 					objects = pc.findQuery("", "*", pager);
@@ -374,7 +376,7 @@ public class AdminController {
 		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
 		Map<String, String> comments2authors = new LinkedHashMap<>();
 		int	count = 0;
-		int importBatchSize = Config.getConfigInt("import_batch_size", 100);
+		int importBatchSize = CONF.importBatchSize();
 		String filename = file.getOriginalFilename();
 		Sysprop s = new Sysprop();
 		s.setType("scooldimport");
@@ -421,7 +423,7 @@ public class AdminController {
 			s.addProperty("count", count);
 			s.addProperty("file", filename);
 			logger.info("Imported {} objects to {}. Executed by {}", count,
-					Config.getConfigParam("access_key", "scoold"), authUser.getCreatorid() + " " + authUser.getName());
+					CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
 
 			if (count > 0) {
 				pc.create(s);
@@ -614,7 +616,7 @@ public class AdminController {
 		Map<String, String> accounts = objs.stream().collect(Collectors.
 				toMap(k -> ((Integer) k.get("accountId")).toString(), v -> (String) v.get("verifiedEmail")));
 		// find all user objects even if there are more than 10000 users in the system
-		Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+		Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 		List<User> users;
 		do {
 			users = pc.findQuery(Utils.type(User.class), "*", pager);

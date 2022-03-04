@@ -21,40 +21,42 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
-import com.erudika.scoold.core.UnapprovedQuestion;
-import com.erudika.scoold.utils.HttpUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.springframework.web.util.HtmlUtils;
 
 /**
@@ -63,6 +65,8 @@ import org.springframework.web.util.HtmlUtils;
  */
 @Controller
 public class QuestionsController {
+
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -123,7 +127,7 @@ public class QuestionsController {
 			res.setStatus(401);
 			return;
 		}
-		Pager pager = new Pager(1, "votes", true, Config.getConfigInt("max_similar_posts", 7));
+		Pager pager = new Pager(1, "votes", true, CONF.maxSimilarPosts());
 		Profile authUser = utils.getAuthUser(req);
 		StringBuilder sb = new StringBuilder();
 		Question q = new Question();
@@ -185,7 +189,7 @@ public class QuestionsController {
 		}
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("askSelected", "navbtn-hover");
-		model.addAttribute("defaultTag", Config.getConfigParam("default_question_tag", ""));
+		model.addAttribute("defaultTag", CONF.defaultQuestionTag());
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - "
 				+ utils.getLang(req).get("posts.ask"));
@@ -205,7 +209,7 @@ public class QuestionsController {
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);
 			if (StringUtils.isBlank(q.getTagsString())) {
-				q.setTags(Arrays.asList(Config.getConfigParam("default_question_tag", "question")));
+				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "question" : CONF.defaultQuestionTag()));
 			}
 			Map<String, String> error = utils.validate(q);
 			if (error.isEmpty()) {
@@ -214,7 +218,7 @@ public class QuestionsController {
 				String qid = q.create();
 				utils.sendNewPostNotifications(q, req);
 				if (!StringUtils.isBlank(latlng)) {
-					Address addr = new Address(qid + Config.SEPARATOR + Utils.type(Address.class));
+					Address addr = new Address(qid + Para.getConfig().separator() + Utils.type(Address.class));
 					addr.setAddress(address);
 					addr.setCountry(location);
 					addr.setLatlng(latlng);
@@ -267,7 +271,7 @@ public class QuestionsController {
 				}
 			}
 			if (spaceObj != null) {
-				space = spaceObj.getId().concat(Config.SEPARATOR).concat(spaceObj.getName());
+				space = spaceObj.getId().concat(Para.getConfig().separator()).concat(spaceObj.getName());
 			} else {
 				space = Post.DEFAULT_SPACE;
 			}
@@ -392,7 +396,7 @@ public class QuestionsController {
 			pager.setCount(0);
 			return pager;
 		} catch (JsonProcessingException ex) {
-			return Optional.ofNullable(defaultPager).orElse(new Pager() {
+			return Optional.ofNullable(defaultPager).orElse(new Pager(CONF.maxItemsPerPage()) {
 				public String getName() {
 					return "default_pager";
 				}

@@ -21,32 +21,45 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
-import com.erudika.para.core.utils.ParaObjectUtils;
-import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
 import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
 import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
-import com.erudika.scoold.core.Comment;
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
+import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.core.Revision;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,19 +67,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
-import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import com.erudika.scoold.core.Question;
-import com.erudika.scoold.core.Revision;
-import com.erudika.scoold.core.UnapprovedQuestion;
-import com.erudika.scoold.core.UnapprovedReply;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Optional;
-import java.util.Set;
-import javax.ws.rs.Produces;
-import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -77,6 +77,7 @@ import org.springframework.http.ResponseEntity;
 public class QuestionController {
 
 	public static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -125,10 +126,10 @@ public class QuestionController {
 		model.addAttribute("showPost", allPosts.removeFirst());
 		model.addAttribute("answerslist", allPosts);
 		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
-		model.addAttribute("maxCommentLength", Comment.MAX_COMMENT_LENGTH);
+		model.addAttribute("maxCommentLength", CONF.maxCommentLength());
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
-				Comment.MAX_COMMENT_LENGTH));
+				CONF.maxCommentLength()));
 		return "base";
 	}
 
@@ -397,7 +398,7 @@ public class QuestionController {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser) && utils.canEdit(targetPost, authUser)) {
-			if (Config.getConfigBoolean("merge_question_bodies", true)) {
+			if (CONF.mergeQuestionBodies()) {
 				targetPost.setBody(targetPost.getBody() + "\n\n" + showPost.getBody());
 			}
 			targetPost.setAnswercount(targetPost.getAnswercount() + showPost.getAnswercount());
@@ -409,7 +410,7 @@ public class QuestionController {
 					targetPost.addFollower(u);
 				}
 			}
-			Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 			List<Reply> answers;
 			do {
 				answers = pc.getChildren(showPost, Utils.type(Reply.class), pager);
@@ -441,7 +442,7 @@ public class QuestionController {
 		if (showPost == null || showPost.isReply()) {
 			return;
 		}
-		Pager pager = new Pager(1, "_docid", false, Config.MAX_ITEMS_PER_PAGE);
+		Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
 		List<Reply> answerslist;
 		try {
 			do {
@@ -495,7 +496,7 @@ public class QuestionController {
 
 	private void updateLocation(Post showPost, Profile authUser, String location, String latlng) {
 		if (!showPost.isReply() && !StringUtils.isBlank(latlng)) {
-			Address addr = new Address(showPost.getId() + Config.SEPARATOR + Utils.type(Address.class));
+			Address addr = new Address(showPost.getId() + Para.getConfig().separator() + Utils.type(Address.class));
 			addr.setAddress(location);
 			addr.setCountry(location);
 			addr.setLatlng(latlng);
