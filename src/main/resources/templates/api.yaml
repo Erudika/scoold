@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.1.1"
+  version: "1.2.0"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
@@ -17,6 +17,7 @@ tags:
 - name: "search"
 - name: "stats"
 - name: "backups"
+- name: "config"
 paths:
   /api:
     get:
@@ -1354,6 +1355,119 @@ paths:
       responses:
         '200':
           description: restore was successful
+  /api/config:
+    get:
+      summary: Returns the current Scoold configuration as a list of properties in the HOCON or JSON formats.
+      tags:
+        - config
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: format
+          in: query
+          required: false
+          description: The format of the response - either `hocon` or `json`. Default format is `json`.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: either a JSON object or a HOCON string
+    put:
+      summary: Overrides multiple configuration properties at once, with a values supplied in the request body. This **will update and overwrite** the `appication.conf` file on disk.
+      tags:
+        - config
+      security:
+      - scoold_auth: []
+      requestBody:
+        description: All configuration properties and values inside a JSON object. Property keys **must not start with** the `scoold.` prefix.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Returns the whole updated Scoold configuration as a JSON object
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: missing request body
+  /api/config/get/{key}:
+    get:
+      summary: Returns the value of a single configuration property, or its default value if not configured.
+      tags:
+        - config
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: The configuration property key **without** the `scoold.` prefix.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The new configuration value inside an envelope object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  value:
+                    description: any value
+  /api/config/set/{key}:
+    put:
+      summary: Overrides a single configuration property with a new value supplied in the request body. This **will update and overwrite** the `appication.conf` file on disk.
+      tags:
+        - config
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: The configuration property key **without** the `scoold.` prefix.
+          schema:
+            type: string
+      requestBody:
+        description: A new configuration value
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                value:
+                  description: any value
+      responses:
+        '200':
+          description: empty response body
+        '400':
+          description: missing request body
+  /api/config/options:
+    get:
+      summary: Returns the current Scoold configuration as a list of properties in the HOCON or JSON formats.
+      tags:
+        - config
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: format
+          in: query
+          required: false
+          description: The format of the response - one of `markdown`, `hocon` or `json`. Default is `json`.
+          schema:
+            type: string
+        - name: groupby
+          in: query
+          required: false
+          description: The way to group properties - either by `category` or by `key`. Default is by `key`.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: either a JSON object or a Markdown/HOCON string
 components:
   schemas:
     Post:
