@@ -109,16 +109,16 @@ Here's an overview of the architecture:
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
 ```ini
-para.env = "development"
-para.app_name = "Scoold"
-para.access_key = "app:scoold"
-para.secret_key = "scoold_secret_key_from_para"
+scoold.env = "development"
+scoold.app_name = "Scoold"
+scoold.para_access_key = "app:scoold"
+scoold.para_secret_key = "scoold_secret_key_from_para"
 # change to http://localhost:8080 if Para is running locally
-para.endpoint = "https://paraio.com"
+scoold.para_endpoint = "https://paraio.com"
 # add your email here
-para.admins = "my@email.com"
-# (optional) require login to view content
-para.is_default_space_public = false
+scoold.admins = "my@email.com"
+# (optional) require authentication for viewing content
+scoold.is_default_space_public = false
 ```
 3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
 4. Open `http://localhost:8000/signin/register` in your browser
@@ -153,12 +153,12 @@ $ para-cli new-app "scoold" --name "Scoold"
 ```
 5. Save the keys inside Scoold's `application.conf`. The contents of this file should look like this:
 ```ini
-para.env = "development"
-para.app_name = "Scoold"
-para.access_key = "app:scoold"
-para.secret_key = "scoold_secret_key"
-para.endpoint = "http://localhost:8080"
-para.admins = "my@email.com"
+scoold.env = "development"
+scoold.app_name = "Scoold"
+scoold.para_access_key = "app:scoold"
+scoold.para_secret_key = "scoold_secret_key"
+scoold.para_endpoint = "http://localhost:8080"
+scoold.admins = "my@email.com"
 ```
 6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar` and keep an eye on the log for any error messages
 7. Open `http://localhost:8000` in your browser and register an account with the same email you put in the configuration
@@ -187,28 +187,28 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 ## Configuration
 
-The most important settings are `para.endpoint` - the URL of the Para server, as well as,
-`para.access_key` and `para.secret_key`. Connection to a Para server *is required* for Scoold to run.
+The most important settings are `scoold.para_endpoint` - the URL of the Para server, as well as,
+`scoold.para_access_key` and `scoold.para_secret_key`. Connection to a Para server *is required* for Scoold to run.
 
 Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
 ### Minimal configuration ###
 # the name of the application
-para.app_name = "Scoold"
+scoold.app_name = "Scoold"
 # the port for Scoold
-para.port = 8000
+scoold.port = 8000
 # change this to "production" later
-para.env = "development"
+scoold.env = "development"
 # the public-facing URL where Scoold is hosted
-para.host_url = "http://localhost:8000"
+scoold.host_url = "http://localhost:8000"
 # the URL of Para - can also be "https://paraio.com"
-para.endpoint = "http://localhost:8080"
+scoold.para_endpoint = "http://localhost:8080"
 # access key for your Para app
-para.access_key = "app:scoold"
+scoold.para_access_key = "app:scoold"
 # secret key for your Para app
-para.secret_key = ""
+scoold.para_secret_key = ""
 # the email or identifier of the admin user - check Para user object
-para.admins = "admin@domain.com"
+scoold.admins = "admin@domain.com"
 ```
 <details><summary><b>View ALL configuration options available in Scoold</b></summary>
 
@@ -628,8 +628,8 @@ fail and the settings will not be persisted. If you set the maximum number of re
 number of attempts to connect to Para. These parameters are controlled by:
 
 ```ini
-para.connection_retries_max = 10
-para.connection_retry_interval_sec = 10
+scoold.connection_retries_max = 10
+scoold.connection_retry_interval_sec = 10
 ```
 
 ## Docker
@@ -657,7 +657,7 @@ after starting the Para and Scoold containers.**
 
 **Environment variables**
 
-`JAVA_OPTS` - Java system properties, e.g. `-Dpara.port=8000`
+`JAVA_OPTS` - Java system properties, e.g. `-Dscoold.port=8000`
 `BOOT_SLEEP` - Startup delay, in seconds
 
 **Docker Compose**
@@ -679,18 +679,18 @@ para.search = "LuceneSearch"
 
 Example for `scoold-application.conf`:
 ```ini
-para.env = "production"
-para.app_name = "Scoold"
-para.endpoint = "http://para:8080"
-para.access_key = "app:scoold"
-para.secret_key = "..."
+scoold.env = "production"
+scoold.app_name = "Scoold"
+scoold.para_endpoint = "http://para:8080"
+scoold.para_access_key = "app:scoold"
+scoold.para_secret_key = "..."
 # specify the actual public hostname for Para
-para.security.redirect_uri = "http://localhost:8080"
+scoold.security.redirect_uri = "http://localhost:8080"
 ```
 **Important:** Scoold will connect to Para on `http://para:8080`, inside the Docker container environment.
 That hostname may not be accessible from your local machine or the Internet, which will break authentication redirects.
 For example, when signing in with Google, you will be redirected to Google and then back to Para, on the address
-specified in `para.security.redirect_uri`. Para must be a publicly accessible on that address or the authentication
+specified in `scoold.security.redirect_uri`. Para must be a publicly accessible on that address or the authentication
 requests will fail.
 
 Then you can start both Scoold and Para with Docker Compose like so:
@@ -759,7 +759,7 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 1. First, clone this repository and create a new Heroku app
 2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
 3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown
-above but **replace all dots in the variable names with underscores**, e.g. `para.endpoint` -> `para_endpoint`.
+above but **replace all dots in the variable names with underscores**, e.g. `scoold.para_endpoint` -> `para_endpoint`.
 4. Open the app in your browser at `https://{appname}.herokuapp.com`.
 
 ### Manual deployment - option 2 (JAR push)
@@ -784,7 +784,7 @@ deployed through the "one-click" Heroku button, and you want to upgrade it to Sc
 
 On Heroku you don't have a configuration file, instead you use Heroku's environment variables to configure Scoold.
 You can add each Scoold configuration property as an environment variable on the Settings page of your Heroku admin page.
-Click "Reveal Config Vars". Configuration variables (config vars) **must not** contain dots ".", for example `para.endpoint`
+Click "Reveal Config Vars". Configuration variables (config vars) **must not** contain dots ".", for example `scoold.para_endpoint`
 becomes `para_endpoint`. You **must** replace every dot with an underscore in order to convert a Scoold configuration
 property to a Heroku environment variable.
 
@@ -839,12 +839,12 @@ configure Scoold to work with Amazon Cognito:
 3. Create a Cognito login subdomain for your app client like this: `https://scoold.auth.eu-west-1.amazoncognito.com`
 4. Edit the Scoold configuration file `application.conf` and add a new OAuth 2.0 authentication provider:
 ```ini
-para.oa2_app_id = "cognito_app_client_id"
-para.oa2_secret = "cognito_app_client_secret"
-para.security.oauth.authz_url = "https://scoold.auth.eu-west-1.amazoncognito.com/login"
-para.security.oauth.token_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/token"
-para.security.oauth.profile_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/userInfo"
-para.security.oauth.provider = "Continue with Cognito"
+scoold.oa2_app_id = "cognito_app_client_id"
+scoold.oa2_secret = "cognito_app_client_secret"
+scoold.security.oauth.authz_url = "https://scoold.auth.eu-west-1.amazoncognito.com/login"
+scoold.security.oauth.token_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/token"
+scoold.security.oauth.profile_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/userInfo"
+scoold.security.oauth.provider = "Continue with Cognito"
 ```
 5. Restart Scoold and login with a user from your Cognito user pool
 
@@ -885,7 +885,7 @@ Scoold is compatible with Tomcat 9+.
 
 ## Deploying Scoold under a specific context path
 
-To deploy Scoold at a different path instead of the root path, set `para.context_path = "/newpath`. The default value
+To deploy Scoold at a different path instead of the root path, set `scoold.context_path = "/newpath`. The default value
 for this setting is blank, meaning Scoold will be deployed at the root directory.
 
 ## Migrating from one Para deployment to another
@@ -930,8 +930,8 @@ infrastructure. The process is very simple:
 
 ## Content-Security-Policy header
 
-This header is enabled by default for enhanced security. It can be disabled with `para.csp_header_enabled = false`.
-The default value is modified through `para.csp_header = "new_value"`. The default CSP header is:
+This header is enabled by default for enhanced security. It can be disabled with `scoold.csp_header_enabled = false`.
+The default value is modified through `scoold.csp_header = "new_value"`. The default CSP header is:
 ```ini
 default-src 'self';
 base-uri 'self';
@@ -947,61 +947,61 @@ script-src 'unsafe-inline' https: 'nonce-{{nonce}}' 'strict-dynamic';
 
 The placeholder `{{nonce}}` will get replaced by the CSP nonce value used for whitelisting scripts.
 
-**Note:** If you get CSP violation errors, check your `para.host_url` and `para.cdn_url` configuration,
-or edit the value of `para.csp_header`.
+**Note:** If you get CSP violation errors, check your `scoold.host_url` and `scoold.cdn_url` configuration,
+or edit the value of `scoold.csp_header`.
 
 Additionally, there are 4 options to extend the values of `connect-src`, `frame-src`, `font-src` and `style-src`
 respectively:
 ```ini
-para.csp_connect_sources = "connect-domain1.com connect-domain2.com"
-para.csp_frame_sources = "frame-domain1.com frame-domain2.com"
-para.csp_font_sources = "font-domain1.com font-domain2.com"
-para.csp_style_sources = "style-domain1.com style-domain2.com"
+scoold.csp_connect_sources = "connect-domain1.com connect-domain2.com"
+scoold.csp_frame_sources = "frame-domain1.com frame-domain2.com"
+scoold.csp_font_sources = "font-domain1.com font-domain2.com"
+scoold.csp_style_sources = "style-domain1.com style-domain2.com"
 ```
 
-You can also enable or disable CSP violation reports (visible only to admins) by setting `para.csp_reports_enabled = true`.
+You can also enable or disable CSP violation reports (visible only to admins) by setting `scoold.csp_reports_enabled = true`.
 Keep in mind that if your website has a lot of traffic, this will result in hundreds of new reports being created each hour.
 
 ## External scripts and JS snippets
 
-You can append external scripts and JS snippets to the end of the page by setting the `para.external_scripts` property.
+You can append external scripts and JS snippets to the end of the page by setting the `scoold.external_scripts` property.
 Scripts are loaded in alphabetical order based on their key.
 ```ini
 # URL
-para.external_scripts.myscript1 = "https://mydomain.com/script.js"
+scoold.external_scripts.myscript1 = "https://mydomain.com/script.js"
 # Base64 encoded long JavaScript snippet
-para.external_scripts.myscript2 = "J2Y2M3VlcH .... enZ2OScpOw=="
+scoold.external_scripts.myscript2 = "J2Y2M3VlcH .... enZ2OScpOw=="
 # Short raw JS snippet
-para.external_scripts.myscript3 = "var x = 5; console.log('x is', x);"
+scoold.external_scripts.myscript3 = "var x = 5; console.log('x is', x);"
 ```
 
 **Important:** Watch out for console errors in the browser after you add external scripts. In such cases you might have to
 modify the `frame-src` or `connect-src` portions of the CSP header (see the 4 options above).
 
 If 3rd party cookie consent is enabled (for GDPR, CCPA), all external scripts will be disabled until the user gives their
-consent. You can bypass that by prefixing its key with "bypassconsent", e.g. `para.external_scripts.bypassconsent_myscript2`.
+consent. You can bypass that by prefixing its key with "bypassconsent", e.g. `scoold.external_scripts.bypassconsent_myscript2`.
 
 Additionally, you can put scripts in the `<head>` element by prefixing their name with "head", for example:
-`para.external_scripts.head_script`.
+`scoold.external_scripts.head_script`.
 
 ## External CSS stylesheets
 
-You can inline short snippets of CSS using `para.inline_css`. Keep in mind that any inlined CSS rules **will
+You can inline short snippets of CSS using `scoold.inline_css`. Keep in mind that any inlined CSS rules **will
 override** any of the previously declared stylesheets, including the main stylesheet rules.
 
 ```ini
-para.inline_css = "body { color: #abcdef; }"
+scoold.inline_css = "body { color: #abcdef; }"
 ```
 Another option is to add external stylesheets to the website:
 ```ini
-para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
+scoold.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 ```
 The last option is to completely replace the main stylesheet with a custom one. It's a good idea to copy the default
 CSS rules from [`/styles/style.css`](https://live.scoold.com/styles/style.css) and modify those, then upload the new
 custom stylesheet file to a public location and set:
 
 ```ini
-para.stylesheet_url = "https://public.cdn.com/custom.css"
+scoold.stylesheet_url = "https://public.cdn.com/custom.css"
 ```
 
 The order in which CSS rules are loaded is this (each overrides the previous ones):
@@ -1010,7 +1010,7 @@ The order in which CSS rules are loaded is this (each overrides the previous one
 ## Serving static files from a CDN
 
 Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
-`para.cdn_url` to enable serving those files from a CDN. The value of the CDN URL *must not* end in "/".
+`scoold.cdn_url` to enable serving those files from a CDN. The value of the CDN URL *must not* end in "/".
 
 ## SMTP configuration
 
@@ -1019,36 +1019,36 @@ following SMTP settings to your config file:
 
 ```ini
 # system email address
-para.support_email = "support@scoold.com"
+scoold.support_email = "support@scoold.com"
 
-para.mail.host = "smtp.example.com"
-para.mail.port = 587
-para.mail.username = "user@example.com"
-para.mail.password = "password"
-para.mail.tls = true
-para.mail.ssl = false
+scoold.mail.host = "smtp.example.com"
+scoold.mail.port = 587
+scoold.mail.username = "user@example.com"
+scoold.mail.password = "password"
+scoold.mail.tls = true
+scoold.mail.ssl = false
 
 # enable SMTP debug logging
-para.mail.debug = true
+scoold.mail.debug = true
 ```
 The email template is located in `src/main/resources/emails/notify.html`.
 
 Email notifications are enabled by default but can also be turned off completely by changing these settings:
 ```ini
 # disable all notifications
-para.notification_emails_allowed = true
+scoold.notification_emails_allowed = true
 # disable notifications for new posts
-para.newpost_emails_allowed = true
+scoold.newpost_emails_allowed = true
 # disable notifications for new posts that match favorite tags
-para.favtags_emails_allowed = true
+scoold.favtags_emails_allowed = true
 # disable notifications for replies
-para.reply_emails_allowed = true
+scoold.reply_emails_allowed = true
 # disable notifications for comments
-para.comment_emails_allowed = true
+scoold.comment_emails_allowed = true
 
 # additional options for Scoold Pro
 # disable notifications for mentions
-para.mentions_emails_allowed = true
+scoold.mentions_emails_allowed = true
 ```
 
 For **Gmail** you have to turn on "Less secure app access" in your Google account settings. There's no need to configure
@@ -1056,7 +1056,7 @@ For **Gmail** you have to turn on "Less secure app access" in your Google accoun
 
 ## Email verification
 
-You can enable or disable the email verification step by setting `para.security.allow_unverified_emails = true`
+You can enable or disable the email verification step by setting `scoold.security.allow_unverified_emails = true`
 (in Scoold's `application.conf`). By default, email verification is turned off when Scoold is running in development mode.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
@@ -1068,8 +1068,8 @@ at [Google reCAPTCHA](https://www.google.com/recaptcha/admin). Create a new reCA
 and copy the two keys - a clientside key (site key) and a serverside key (secret). Then, protect the pages
 `/signin/register` and `/signin/iforgot` by adding these properties to your configuration:
 ```ini
-para.signup_captcha_site_key = "site-key-from-google"
-para.signup_captcha_secret_key = "secret-from-google"
+scoold.signup_captcha_site_key = "site-key-from-google"
+scoold.signup_captcha_secret_key = "secret-from-google"
 ```
 
 ## Delete protection for valuable content
@@ -1078,7 +1078,7 @@ By default, Scoold will protect valuable questions and answers from accidental d
 answer, the author of that question will not be able to delete it. Or, if an answer is accepted by the author of the
 question, the person who wrote the answer won't be able to delete it. You can turn this off with:
 ```ini
-para.delete_protection_enabled = false
+scoold.delete_protection_enabled = false
 ```
 
 ## Welcome email customization
@@ -1086,9 +1086,9 @@ para.delete_protection_enabled = false
 To customize the message sent when a new user signs up with Scoold, modify these properties in your Scoold configuration
 file:
 ```ini
-para.emails.welcome_text1 = "You are now part of {0} - a friendly Q&A community..."
-para.emails.welcome_text2 = "To get started, simply navigate to the "Ask question" page and ask a question..."
-para.emails.welcome_text3 = "Best, <br>The {0} team<br><br>"
+scoold.emails.welcome_text1 = "You are now part of {0} - a friendly Q&A community..."
+scoold.emails.welcome_text2 = "To get started, simply navigate to the "Ask question" page and ask a question..."
+scoold.emails.welcome_text3 = "Best, <br>The {0} team<br><br>"
 ```
 
 ## Social login
@@ -1100,33 +1100,33 @@ and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
 ```ini
 # Facebook
-para.fb_app_id = ""
+scoold.fb_app_id = ""
 # Google
-para.gp_app_id = ""
-para.gp_secret = ""
+scoold.gp_app_id = ""
+scoold.gp_secret = ""
 # GitHub
-para.gh_app_id = ""
-para.gh_secret = ""
+scoold.gh_app_id = ""
+scoold.gh_secret = ""
 # LinkedIn
-para.in_app_id = ""
-para.in_secret = ""
+scoold.in_app_id = ""
+scoold.in_secret = ""
 # Twitter
-para.tw_app_id = ""
-para.tw_secret = ""
+scoold.tw_app_id = ""
+scoold.tw_secret = ""
 # Microsoft
-para.ms_app_id = ""
-para.ms_secret = ""
-para.ms_tenant_id = ""
+scoold.ms_app_id = ""
+scoold.ms_secret = ""
+scoold.ms_tenant_id = ""
 # Slack
-para.sl_app_id = ""
-para.sl_secret = ""
+scoold.sl_app_id = ""
+scoold.sl_secret = ""
 # Amazon
-para.az_app_id = ""
-para.az_secret = ""
+scoold.az_app_id = ""
+scoold.az_secret = ""
 ```
 You also need to set your host URL when running Scoold in production:
 ```ini
-para.host_url = "https://your.scoold.url"
+scoold.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
@@ -1146,8 +1146,8 @@ pointing to the URL of your Scoold server.
 In some cases ([see related issue](https://github.com/Erudika/scoold/issues/199)) you want to have Scoold connect to
 Para which is hosted somewhere on your local network and logging in with some authentication providers, like Microsoft,
 doesn't work. In such cases you would see an error "redirect_uri mismatch" or "invalid redirect_uri - must start with
-https:// or http://localhost". To make it work you can set `para.security.redirect_uri = "https://public-para.host"`
-while still keeping `para.endpoint = "http://local-ip:8080"`.
+https:// or http://localhost". To make it work you can set `scoold.security.redirect_uri = "https://public-para.host"`
+while still keeping `scoold.para_endpoint = "http://local-ip:8080"`.
 
 ## OAuth 2.0 login
 
@@ -1157,41 +1157,41 @@ Make sure you **whitelist** your Para authentication endpoint `https://para_url/
 Here are all the options which you can set in the Scoold configuration file:
 ```ini
 # minimal setup
-para.oa2_app_id = ""
-para.oa2_secret = ""
-para.security.oauth.authz_url = "https://your-idp.com/login"
-para.security.oauth.token_url = "https://your-idp.com/token"
-para.security.oauth.profile_url = "https://your-idp.com/userinfo"
-para.security.oauth.scope = "openid email profile"
+scoold.oa2_app_id = ""
+scoold.oa2_secret = ""
+scoold.security.oauth.authz_url = "https://your-idp.com/login"
+scoold.security.oauth.token_url = "https://your-idp.com/token"
+scoold.security.oauth.profile_url = "https://your-idp.com/userinfo"
+scoold.security.oauth.scope = "openid email profile"
 
 # extra options
-para.security.oauth.accept_header = ""
-para.security.oauth.domain = "paraio.com"
-para.security.oauth.parameters.id = "sub"
-para.security.oauth.parameters.picture = "picture"
-para.security.oauth.parameters.email = "email"
-para.security.oauth.parameters.name = "name"
-para.security.oauth.parameters.given_name = "given_name"
-para.security.oauth.parameters.family_name = "family_name"
+scoold.security.oauth.accept_header = ""
+scoold.security.oauth.domain = "paraio.com"
+scoold.security.oauth.parameters.id = "sub"
+scoold.security.oauth.parameters.picture = "picture"
+scoold.security.oauth.parameters.email = "email"
+scoold.security.oauth.parameters.name = "name"
+scoold.security.oauth.parameters.given_name = "given_name"
+scoold.security.oauth.parameters.family_name = "family_name"
 
 # Sets the string on the login button
-para.security.oauth.provider = "Continue with OpenID Connect"
+scoold.security.oauth.provider = "Continue with OpenID Connect"
 
 # [PRO] Enable/disable access token delegation
-para.security.oauth.token_delegation_enabled = false
+scoold.security.oauth.token_delegation_enabled = false
 
 # [PRO] Assigns spaces to each user from the OAuth2 claim 'spaces'
-para.security.oauth.spaces_attribute_name = "spaces"
+scoold.security.oauth.spaces_attribute_name = "spaces"
 
 # [PRO] Assigns moderator/admin roles from the OAuth2 claim 'roles'
-para.security.oauth.groups_attribute_name = "roles"
-para.security.oauth.mods_equivalent_claim_value = "mod"
-para.security.oauth.admins_equivalent_claim_value = "admin"
+scoold.security.oauth.groups_attribute_name = "roles"
+scoold.security.oauth.mods_equivalent_claim_value = "mod"
+scoold.security.oauth.admins_equivalent_claim_value = "admin"
 # if specified, users will be denied access when not members of group
-para.security.oauth.users_equivalent_claim_value = ""
+scoold.security.oauth.users_equivalent_claim_value = ""
 
 # Enable/disable avatar fetching from IDP
-para.security.oauth.download_avatars = false
+scoold.security.oauth.download_avatars = false
 ```
 
 #### Access token delegation
@@ -1216,12 +1216,12 @@ more complex JSON payload like this one:
 ```
 The corresponding configuration to extract the name and email address would be:
 ```ini
-para.security.oauth.parameters.email = "/attributes/Email"
-para.security.oauth.parameters.name = "/attributes/DisplayName"
+scoold.security.oauth.parameters.email = "/attributes/Email"
+scoold.security.oauth.parameters.name = "/attributes/DisplayName"
 ```
 
 #### Advanced roles mapping
-**PRO** This feature requires token delegation to be enabled with `para.security.oauth.token_delegation_enabled = true`.
+**PRO** This feature requires token delegation to be enabled with `scoold.security.oauth.token_delegation_enabled = true`.
 When working with complex user profile payloads coming from the ID provider, you can specify the exact property
 name where the roles data is contained. For example, having a JSON user profile response like this:
 ```
@@ -1238,17 +1238,17 @@ name where the roles data is contained. For example, having a JSON user profile 
 ```
 we can map that user to the Scoold admins group with this configuration:
 ```ini
-para.security.oauth.groups_attribute_name = "Roles"
-para.security.oauth.admins_equivalent_claim_value = ".*?Admins.*"
+scoold.security.oauth.groups_attribute_name = "Roles"
+scoold.security.oauth.admins_equivalent_claim_value = ".*?Admins.*"
 ```
 Regular expressions are supported for searching within the roles attribute value. JSON pointers can also be used here
 like so:
 ```ini
-para.security.oauth.groups_attribute_name = "/attributes/MemberOf"
-para.security.oauth.admins_equivalent_claim_value = "^CN=Admins.*"
+scoold.security.oauth.groups_attribute_name = "/attributes/MemberOf"
+scoold.security.oauth.admins_equivalent_claim_value = "^CN=Admins.*"
 ```
 Additionally, when assigning roles from OAuth2 claims, you can explicitly specify a subset of allowed users who can access
-Scoold by setting `para.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
+Scoold by setting `scoold.security.oauth.users_equivalent_claim_value`. For example, if the value of that is set
 to `"scoold_user"`, and a user having the claim of `"roles": ["sales_rep"]` tries to login, they will be denied access.
 By default, all OAuth2 users are allowed to log into Scoold.
 
@@ -1258,28 +1258,28 @@ look like for the "second" provider:
 
 ```ini
 # minimal setup (second provider)
-para.oa2second_app_id = ""
-para.oa2second_secret = ""
-para.security.oauthsecond.authz_url = "https://your-idp.com/login"
-para.security.oauthsecond.token_url = "https://your-idp.com/token"
-para.security.oauthsecond.profile_url = "https://your-idp.com/userinfo"
-para.security.oauthsecond.scope = "openid email profile"
+scoold.oa2second_app_id = ""
+scoold.oa2second_secret = ""
+scoold.security.oauthsecond.authz_url = "https://your-idp.com/login"
+scoold.security.oauthsecond.token_url = "https://your-idp.com/token"
+scoold.security.oauthsecond.profile_url = "https://your-idp.com/userinfo"
+scoold.security.oauthsecond.scope = "openid email profile"
 
 # extra options (second provider)
-para.security.oauthsecond.accept_header = ""
-para.security.oauthsecond.domain = "paraio.com"
-para.security.oauthsecond.parameters.id = "sub"
-para.security.oauthsecond.parameters.picture = "picture"
-para.security.oauthsecond.parameters.email = "email"
-para.security.oauthsecond.parameters.name = "name"
-para.security.oauthsecond.parameters.given_name = "given_name"
-para.security.oauthsecond.parameters.family_name = "family_name"
+scoold.security.oauthsecond.accept_header = ""
+scoold.security.oauthsecond.domain = "paraio.com"
+scoold.security.oauthsecond.parameters.id = "sub"
+scoold.security.oauthsecond.parameters.picture = "picture"
+scoold.security.oauthsecond.parameters.email = "email"
+scoold.security.oauthsecond.parameters.name = "name"
+scoold.security.oauthsecond.parameters.given_name = "given_name"
+scoold.security.oauthsecond.parameters.family_name = "family_name"
 
 # Sets the string on the login button (second provider)
-para.security.oauthsecond.provider = "Continue with Second OAuth 2.0 provider"
+scoold.security.oauthsecond.provider = "Continue with Second OAuth 2.0 provider"
 
 # Enable/disable access token delegation (second provider)
-para.security.oauthsecond.token_delegation_enabled = false
+scoold.security.oauthsecond.token_delegation_enabled = false
 ```
 
 For the "third" OAuth 2.0 provider it's the same configuration but replace "second" with "third".
@@ -1299,13 +1299,13 @@ for other providers, such as Auth0.
    - Select	that you want **client credentials**
 2. Copy the client credentials (client id, secret) to your Scoold `application.conf` file:
 ```ini
-para.oa2_app_id = "0oa123...."
-para.oa2_secret = "secret"
-para.security.oauth.authz_url = "https://${yourOktaDomain}/oauth2/v1/authorize"
-para.security.oauth.token_url = "https://${yourOktaDomain}/oauth2/v1/token"
-para.security.oauth.profile_url = "https://${yourOktaDomain}/oauth2/v1/userinfo"
-para.security.oauth.scope = "openid email profile"
-para.security.oauth.provider = "Continue with Okta"
+scoold.oa2_app_id = "0oa123...."
+scoold.oa2_secret = "secret"
+scoold.security.oauth.authz_url = "https://${yourOktaDomain}/oauth2/v1/authorize"
+scoold.security.oauth.token_url = "https://${yourOktaDomain}/oauth2/v1/token"
+scoold.security.oauth.profile_url = "https://${yourOktaDomain}/oauth2/v1/userinfo"
+scoold.security.oauth.scope = "openid email profile"
+scoold.security.oauth.provider = "Continue with Okta"
 ```
 Make sure to replace `${yourOktaDomain}` with your actual Okta domain name.
 
@@ -1325,22 +1325,22 @@ as its authentication provider. The steps are similar to other OAuth2.0 identity
    this URL is accessible from your users' devices). For development purposes `http://localhost:8080/oauth2_auth`
    is probably sufficient.
 7. Click *Register*.
-8. Copy the *Application (client) ID* that you should be seeing now at the top - it is the value for `para.oa2_app_id`
+8. Copy the *Application (client) ID* that you should be seeing now at the top - it is the value for `scoold.oa2_app_id`
    setting in your configuration.
 9. Navigate to *Certificates and Secrets* in the sidebar on the left.
 10. Create a new secret by clicking on *New client secret*.
 11. Copy the generated secret (you will not be able to see that secret anymore on Azure Portal) - it is the value
-    for `para.oa2_secret` setting in your configuration.
+    for `scoold.oa2_secret` setting in your configuration.
 12. Fill in the configuration of Scoold:
 
 ```ini
-para.oa2_app_id = "e538..."
-para.oa2_secret = "secret"
-para.security.oauth.authz_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/authorize"
-para.security.oauth.token_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/token"
-para.security.oauth.profile_url = "https://graph.microsoft.com/oidc/userinfo"
-para.security.oauth.scope = "openid email profile"
-para.security.oauth.provider = "Continue with AAD"
+scoold.oa2_app_id = "e538..."
+scoold.oa2_secret = "secret"
+scoold.security.oauth.authz_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/authorize"
+scoold.security.oauth.token_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/token"
+scoold.security.oauth.profile_url = "https://graph.microsoft.com/oidc/userinfo"
+scoold.security.oauth.scope = "openid email profile"
+scoold.security.oauth.provider = "Continue with AAD"
 ```
 
 Make sure to replace `${yourAADTenantId}` with your actual AAD tenant ID.
@@ -1354,32 +1354,32 @@ There are several configuration options which Para needs in order to connect to 
 
 ```ini
 # minimal setup
-para.security.ldap.server_url = "ldap://localhost:8389/"
-para.security.ldap.base_dn = "dc=springframework,dc=org"
-para.security.ldap.user_dn_pattern = "uid={0}"
+scoold.security.ldap.server_url = "ldap://localhost:8389/"
+scoold.security.ldap.base_dn = "dc=springframework,dc=org"
+scoold.security.ldap.user_dn_pattern = "uid={0}"
 # add this ONLY if you are connecting to Active Directory
-para.security.ldap.active_directory_domain = ""
+scoold.security.ldap.active_directory_domain = ""
 
 # extra options - change only if necessary
-para.security.ldap.user_search_base = ""
-para.security.ldap.user_search_filter = "(cn={0})"
-para.security.ldap.password_attribute = "userPassword"
-para.security.ldap.username_as_name = false
+scoold.security.ldap.user_search_base = ""
+scoold.security.ldap.user_search_filter = "(cn={0})"
+scoold.security.ldap.password_attribute = "userPassword"
+scoold.security.ldap.username_as_name = false
 
 # Sets the string on the login button (PRO)
-para.security.ldap.provider = "Continue with LDAP"
+scoold.security.ldap.provider = "Continue with LDAP"
 
 # automatic groups mapping
-para.security.ldap.mods_group_node = ""
-para.security.ldap.admins_group_node = ""
+scoold.security.ldap.mods_group_node = ""
+scoold.security.ldap.admins_group_node = ""
 ```
 
 The search filter syntax allows you to use the placeholder `{0}` which gets replaced with the person's username.
 
 You can also map LDAP DN nodes to Para user groups. For example, with the following configuration:
 ```
-para.security.ldap.mods_group_node = "ou=Moderators"
-para.security.ldap.admins_group_node = "cn=Admins"
+scoold.security.ldap.mods_group_node = "ou=Moderators"
+scoold.security.ldap.admins_group_node = "cn=Admins"
 ```
 LDAP users with a DN `uid=Gordon,ou=Moderators,dc=domain,dc=org` will automatically become part of the `mods` group,
 i.e. `groups: "mods"`. Similarly, if their DN contains `cn=Admins` they will become administrators, i.e. `groups: "admins"`.
@@ -1398,10 +1398,10 @@ it in the config file at all!
 
 Here's a working LDAP configuration for AD:
 ```ini
-para.security.ldap.user_search_filter = "(&(objectClass=user)(sAMAccountName={1}))"
-para.security.ldap.base_dn = "ou=dev,dc=scoold,dc=com"
-para.security.ldap.server_url = "ldap://192.168.123.70:389"
-para.security.ldap.active_directory_domain = "scoold.com"
+scoold.security.ldap.user_search_filter = "(&(objectClass=user)(sAMAccountName={1}))"
+scoold.security.ldap.base_dn = "ou=dev,dc=scoold,dc=com"
+scoold.security.ldap.server_url = "ldap://192.168.123.70:389"
+scoold.security.ldap.active_directory_domain = "scoold.com"
 ```
 
 For the above configuration the following logins should work, given that a user `joe` exists:
@@ -1420,10 +1420,10 @@ The syntax for the search filter allows you to use the placeholders `{0}` (repla
 
 Here's an example **Active Directory** configuration (note that any other settings than the ones below will be ignored):
 ```ini
-para.security.ldap.server_url = "ldap://server:389"
-para.security.ldap.active_directory_domain = "domain.com"
-para.security.ldap.user_search_filter = "userPrincipalName={0}"
-para.security.ldap.base_dn = "ou=dev,dc=domain,dc=com"
+scoold.security.ldap.server_url = "ldap://server:389"
+scoold.security.ldap.active_directory_domain = "domain.com"
+scoold.security.ldap.user_search_filter = "userPrincipalName={0}"
+scoold.security.ldap.base_dn = "ou=dev,dc=domain,dc=com"
 ```
 
 ### FreeIPA LDAP
@@ -1432,9 +1432,9 @@ Scoold supports authentication with a FreeIPA server over LDAP. Here's a sample 
 provided by FreeIPA - [ipa.demo1.freeipa.org](https://ipa.demo1.freeipa.org):
 
 ```ini
-para.security.ldap.server_url = "ldap://ipa.demo1.freeipa.org:389"
-para.security.ldap.base_dn = "cn=users,cn=accounts,dc=demo1,dc=freeipa,dc=org"
-para.security.ldap.user_dn_pattern = "uid={0}"
+scoold.security.ldap.server_url = "ldap://ipa.demo1.freeipa.org:389"
+scoold.security.ldap.base_dn = "cn=users,cn=accounts,dc=demo1,dc=freeipa,dc=org"
+scoold.security.ldap.user_dn_pattern = "uid={0}"
 ```
 To test this, try logging in with user `manager` and password `Secret123`.
 
@@ -1444,9 +1444,9 @@ To test this, try logging in with user `manager` and password `Secret123`.
 of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
 accessible LDAP server. To enable this feature, add this to your configuration:
 ```ini
-para.security.ldap.is_local = true
+scoold.security.ldap.is_local = true
 # required for passwordless authentication with Para
-para.app_secret_key = "change_to_long_random_string"
+scoold.app_secret_key = "change_to_long_random_string"
 ```
 Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
 (min. 32 chars).
@@ -1492,61 +1492,61 @@ authenticate with your SAML IDP (listed in the first rows below).
 ```ini
 # minimal setup
 # IDP metadata URL, e.g. https://idphost/idp/shibboleth
-para.security.saml.idp.metadata_url = ""
+scoold.security.saml.idp.metadata_url = ""
 
 # SP endpoint, e.g. https://paraio.com/saml_auth/scoold
-para.security.saml.sp.entityid = ""
+scoold.security.saml.sp.entityid = ""
 
 # SP public key as Base64(x509 certificate)
-para.security.saml.sp.x509cert = ""
+scoold.security.saml.sp.x509cert = ""
 
 # SP private key as Base64(PKCS#8 key)
-para.security.saml.sp.privatekey = ""
+scoold.security.saml.sp.privatekey = ""
 
 # attribute mappings (usually required)
 # e.g. urn:oid:0.9.2342.19200300.100.1.1
-para.security.saml.attributes.id = ""
+scoold.security.saml.attributes.id = ""
 # e.g. urn:oid:0.9.2342.19200300.100.1.3
-para.security.saml.attributes.email = ""
+scoold.security.saml.attributes.email = ""
 # e.g. urn:oid:2.5.4.3
-para.security.saml.attributes.name = ""
+scoold.security.saml.attributes.name = ""
 
 
 # extra options (optional)
 # this is usually the same as the "EntityId"
-para.security.saml.sp.assertion_consumer_service.url = ""
-para.security.saml.sp.nameidformat = ""
+scoold.security.saml.sp.assertion_consumer_service.url = ""
+scoold.security.saml.sp.nameidformat = ""
 
 # IDP metadata is usually automatically fetched
-para.security.saml.idp.entityid = ""
-para.security.saml.idp.single_sign_on_service.url = ""
-para.security.saml.idp.x509cert = ""
+scoold.security.saml.idp.entityid = ""
+scoold.security.saml.idp.single_sign_on_service.url = ""
+scoold.security.saml.idp.x509cert = ""
 
-para.security.saml.security.authnrequest_signed = false
-para.security.saml.security.want_messages_signed = false
-para.security.saml.security.want_assertions_signed = false
-para.security.saml.security.want_assertions_encrypted = false
-para.security.saml.security.want_nameid_encrypted = false
-para.security.saml.security.sign_metadata = false
-para.security.saml.security.want_xml_validation = true
-para.security.saml.security.signature_algorithm = ""
+scoold.security.saml.security.authnrequest_signed = false
+scoold.security.saml.security.want_messages_signed = false
+scoold.security.saml.security.want_assertions_signed = false
+scoold.security.saml.security.want_assertions_encrypted = false
+scoold.security.saml.security.want_nameid_encrypted = false
+scoold.security.saml.security.sign_metadata = false
+scoold.security.saml.security.want_xml_validation = true
+scoold.security.saml.security.signature_algorithm = ""
 
-para.security.saml.attributes.firstname = ""
-para.security.saml.attributes.picture = ""
-para.security.saml.attributes.lastname = ""
-para.security.saml.domain = "paraio.com"
+scoold.security.saml.attributes.firstname = ""
+scoold.security.saml.attributes.picture = ""
+scoold.security.saml.attributes.lastname = ""
+scoold.security.saml.domain = "paraio.com"
 
 # Sets the string on the login button
-para.security.saml.provider = "Continue with SAML"
+scoold.security.saml.provider = "Continue with SAML"
 ```
 
 Scoold Pro can authenticate users with an internal (local) SAML provider, even if your Para backend is hosted outside of
 your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require your SAML
 endpoints to be publicly accessible. To enable this feature, add this to your configuration:
 ```ini
-para.security.saml.is_local = true
+scoold.security.saml.is_local = true
 # required for passwordless authentication with Para
-para.app_secret_key = "change_to_long_random_string"
+scoold.app_secret_key = "change_to_long_random_string"
 ```
 Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
 (min. 32 chars).
@@ -1558,7 +1558,7 @@ Para supports custom authentication providers through its "passwordless" filter.
 user info to Para and it will authenticate that user automatically without passwords. The only verification done here is
 on this secret key value which you provide in your Scoold Pro configuration file:
 ```ini
-para.app_secret_key = "change_to_long_random_string"
+scoold.app_secret_key = "change_to_long_random_string"
 ```
 This key is used to protect requests to the passwordless filter and it's different from the Para secret key for your app.
 Here's the basic authentication flow:
@@ -1576,7 +1576,7 @@ The JWT must contain the following claims:
 - `identifier` - a unique user id in the format `custom:123`
 - `appid` - the app id (optional)
 
-The JWT is signed with the value of `para.app_secret_key` and should have a short validity period (e.g. 10 min).
+The JWT is signed with the value of `scoold.app_secret_key` and should have a short validity period (e.g. 10 min).
 The JWT should also contain the claims `iat` and `exp` and, optionally, `nbf`. Supported signature algorithms for the JWT
 are `HS256`, `HS384` or `HS512`.
 Once you generate the JWT on your backend (step 4 above), redirect the successful login request back to Scoold:
@@ -1586,9 +1586,9 @@ GET https://scoold-host/signin/success?jwt=eyJhbGciOiJIUzI1NiI..&passwordless=tr
 
 The UI button initiating the authentication flow above can be customized like this:
 ```ini
-para.security.custom.provider = "Continue with Acme Co."
+scoold.security.custom.provider = "Continue with Acme Co."
 # location of your company's login page
-para.security.custom.login_url = ""
+scoold.security.custom.login_url = ""
 ```
 
 There's an [example login page](https://albogdano.github.io/scoold-login-page/) implementing this sort of authentication.
@@ -1598,15 +1598,15 @@ There's an [example login page](https://albogdano.github.io/scoold-login-page/) 
 You can configure Scoold to redirect users straight to the identity provider when they click the "Sign in" button.
 This feature is disabled by default:
 ```ini
-para.redirect_signin_to_idp = false
+scoold.redirect_signin_to_idp = false
 ```
 This works only for social login identity providers (except Facebook) and SAML. It won't work for LDAP or
-basic password authentication. When enabled and combined with `para.is_default_space_public = false`,
+basic password authentication. When enabled and combined with `scoold.is_default_space_public = false`,
 unauthenticated users will be sent directly to the IDP without seeing the "Sign in" page or any other page on Scoold.
 
 You can also configure users to be redirected to an external location when they log out:
 ```ini
-para.signout_url = "https://homepage.com"
+scoold.signout_url = "https://homepage.com"
 ```
 
 ## SCIM 2.0 support
@@ -1617,15 +1617,15 @@ This allows you to manage Scoold Pro users externally, on an identity management
 Here's an example configuration for enabling SCIM in Scoold:
 
 ```ini
-para.scim_enabled = true
-para.scim_secret_token = "secret"
-para.scim_map_groups_to_spaces = true
-para.scim_allow_provisioned_users_only = false
+scoold.scim_enabled = true
+scoold.scim_secret_token = "secret"
+scoold.scim_map_groups_to_spaces = true
+scoold.scim_allow_provisioned_users_only = false
 ```
 By default, Scoold Pro will create a space for each SCIM `Group` it receives from your identity platform and assign the
 members of that group to the corresponding space. Just make sure that groups are pushed from your IdM platform to Scoold.
 
-If `para.scim_allow_provisioned_users_only = true`, user accounts which have not been SCIM-provisioned will be blocked
+If `scoold.scim_allow_provisioned_users_only = true`, user accounts which have not been SCIM-provisioned will be blocked
 even if those users are members of your identity pool. This allows system administrators to provision a subset of the
 user pool in Scoold.
 
@@ -1635,8 +1635,8 @@ the user will be matched based on their `userName`.
 
 You can also map groups from your identity pool to Para user groups. For example:
 ```ini
-para.security.scim.mods_group_equivalent_to = "Moderators"
-para.security.scim.admins_group_equivalent_to = "Administrators"
+scoold.security.scim.mods_group_equivalent_to = "Moderators"
+scoold.security.scim.admins_group_equivalent_to = "Administrators"
 ```
 
 ## Spaces (a.k.a. Teams)
@@ -1648,7 +1648,7 @@ different space.
 
 By default there's a public "default" space where all questions go. When you create a new space and assign users to it
 they will still see all the other questions when they switch to the "default" space. To make the default space private
-set `para.is_default_space_public = false`.
+set `scoold.is_default_space_public = false`.
 
 **PRO** In Scoold PRO you can create as many space as you need. The open source version is limited to 10 spaces. Also
 in PRO you can automatically assign multiple spaces to new users, whereas in the OSS version you can only assign one.
@@ -1656,35 +1656,35 @@ in PRO you can automatically assign multiple spaces to new users, whereas in the
 If you want to assign space(s) to new users automatically, add this to your configuration:
 ```ini
 # put space ids here, the "scooldspace:" prefix is optional
-para.auto_assign_spaces = "my-space-one,my-other-space"
+scoold.auto_assign_spaces = "my-space-one,my-other-space"
 ```
 You can assign both the default space and a custom space to new users (values can contain spaces):
 ```ini
-para.auto_assign_spaces = "default,My Custom Space"
+scoold.auto_assign_spaces = "default,My Custom Space"
 ```
 When using the option above, new spaces are added to existing spaces for each user. You can configure auto-assigned
 spaces to overwrite the existing user spaces (like the "default" space, assigned to everyone) by setting:
 ```ini
-para.reset_spaces_on_new_assignment = true
+scoold.reset_spaces_on_new_assignment = true
 ```
 So when you have that set to `false` and you have configured Scoold to assign custom spaces to new users
 (e.g. "my-space-1" and "my-space-2"), those users will become members of  "my-space-1", "my-space-2" **and** the
 default space. If the value is `true`, the default space gets overwritten by the custom spaces you have specified in
-`para.auto_assign_spaces` and new users will only be members of "my-space-1" and "my-space-2".
+`scoold.auto_assign_spaces` and new users will only be members of "my-space-1" and "my-space-2".
 
 This is turned on for all users authenticated with LDAP, SAML or OAuth 2.0.
 
 Alternatively, Scoold Pro can have spaces and roles delegated to users from an OpenID Connect/OAuth 2.0 identity provider.
-You have to enable access token delegation with `para.security.oauth.token_delegation_enabled = true` and Scoold Pro will
+You have to enable access token delegation with `scoold.security.oauth.token_delegation_enabled = true` and Scoold Pro will
 try to obtain spaces from a custom attribute like `spaces`. Such custom attributes can be configured in the IDP and
 pushed to clients (Scoold Pro) embedded in access tokens. If you want to change the name of the custom attribute supplied
-by your IDP, set `para.security.oauth.spaces_attribute_name`, which by default is equal to `spaces`. The value of that
+by your IDP, set `scoold.security.oauth.spaces_attribute_name`, which by default is equal to `spaces`. The value of that
 attribute should contain comma-separated list of spaces. If the spaces pushed from the IDP do not exist, Scoold will
 create them for you.
 
 ## Webhooks
 
-Webhooks are enabled by default in Scoold. To disable this functionality set `para.webhooks_enabled = false`. If you
+Webhooks are enabled by default in Scoold. To disable this functionality set `scoold.webhooks_enabled = false`. If you
 are self-hosting Para, you need to also enable webhooks there using the same configuration option.
 You can add or remove webhooks in the "Administration" page. Webhooks can also be disabled and they will be
 disabled automatically when the target URL doesn't respond to requests from Para.
@@ -1736,11 +1736,11 @@ By default, only one session is allowed per user/browser. When a user logs in fr
 logged out from every other device. This can be disabled to allow multiple simultaneous sessions with:
 
 ```ini
-para.security.one_session_per_user = false
+scoold.security.one_session_per_user = false
 ```
 
 User session cookies in Scoold expire after 24h. To change the session duration period to 6h for example, set
-`para.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will expire and so
+`scoold.session_timeout = 21600` (6h in seconds) and restart. In 6h the Scoold authentication cookie will expire and so
 will the access token (JWT) inside the cookie.
 
 ## Domain-restricted user registrations
@@ -1748,35 +1748,35 @@ will the access token (JWT) inside the cookie.
 You can restrict signups only to users from a particular identity domain, say `acme-corp.com`. To do so, set the
 following configuration property:
 ```ini
-para.approved_domains_for_signups = "acme-corp.com"
+scoold.approved_domains_for_signups = "acme-corp.com"
 ```
 Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
 `bob@gmail.com` will be denied access.
 
 **PRO** In Scoold PRO this setting can also contain a comma-separated list of identity domains:
 ```ini
-para.approved_domains_for_signups = "acme-corp.com,gmail.com"
+scoold.approved_domains_for_signups = "acme-corp.com,gmail.com"
 ```
 
 ## Admins
 
 You can specify the user with administrative privileges in your `application.conf` file:
 ```ini
-para.admins = "joe@example.com"
+scoold.admins = "joe@example.com"
 ```
 **PRO** In Scoold PRO you can have multiple admin users by specifying a comma-separated list of user identifiers.
 This works both for new and existing users.
 ```ini
-para.admins = "joe@example.com,fb:1023405345366,gh:1234124"
+scoold.admins = "joe@example.com,fb:1023405345366,gh:1234124"
 ```
 
-If you remove users who are already admins from the list of admins `para.admins`, they will be *demoted* to regular
+If you remove users who are already admins from the list of admins `scoold.admins`, they will be *demoted* to regular
 users. Similarly, existing regular users will be *promoted* to admins if they appear in the list above.
 
 ## Anonymous posts
 
 **PRO**
-This feature is enabled with `para.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
+This feature is enabled with `scoold.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
 replies, without having a Scoold account. Posting to the "Feedback" section will also be open without requiring users
 to sign in. This feature is disabled by default.
 
@@ -1784,18 +1784,18 @@ to sign in. This feature is disabled by default.
 
 People may wish to make their profile details anonymous from the Settings page. To allow this option set:
 ```ini
-para.profile_anonimity_enabled = true
+scoold.profile_anonimity_enabled = true
 ```
 
 ## Enabling the "Feedback" section
 
 You can enable or disable the "Feedback" page where people can discuss topics about the website itself or submit general
-feedback. This section is disabled by default and can be activated with `para.feedback_enabled = true`.
+feedback. This section is disabled by default and can be activated with `scoold.feedback_enabled = true`.
 
 ## LaTeX/MathML support and advanced highlighting
 
 **PRO**
-You can enable this feature by setting `para.mathjax_enabled = true`. Then you can use MathML expressions by surrounding
+You can enable this feature by setting `scoold.mathjax_enabled = true`. Then you can use MathML expressions by surrounding
 them with `$$` signs, e.g. `$$ \frac {1}{2} $$` By default, MathJax is disabled.
 
 The Prism syntax highlighter is included and it supports many different languages. You need to specify the language for
@@ -1810,15 +1810,15 @@ For example:
 
 **PRO**
 Files can be uploaded to the local file system or to cloud storage. File uploads are enabled by default in Scoold Pro.
-To disable file uploads altogether set `para.uploads_enabled = false`. To protect uploaded files from unauthenticated
-access, set `para.uploads_require_auth = true`.
+To disable file uploads altogether set `scoold.uploads_enabled = false`. To protect uploaded files from unauthenticated
+access, set `scoold.uploads_require_auth = true`.
 
 To upload a file just **drag & drop** the file onto the post editor area. A link will automatically appear
 when the upload is finished. Uploads can fail either because their size is too large or because their format is not in
 the white list of permitted formats (documents, images, archives, audio or video). You can extend the list of permitted
 file types by configuring:
 ```ini
-para.allowed_upload_formats = "yml,py:text/plain,json:application/json"
+scoold.allowed_upload_formats = "yml,py:text/plain,json:application/json"
 ```
 If the MIME type is not specified in the format `extension:mime_type`, the default `text/plain` is used when serving these
 files.
@@ -1826,7 +1826,7 @@ files.
 Scoold Pro also allows users to capture and upload video and audio from their input devices (mic/webcam).
 This functionality is enabled by default:
 ```ini
-para.media_recording_allowed = true
+scoold.media_recording_allowed = true
 ```
 
 Profile pictures (avatars) can also be changed by dragging a new image on top of the existing profile picture on a
@@ -1835,7 +1835,7 @@ user's `/profile` page. For best results, use a square image here.
 ### Local storage
 Local file storage is used by default. To configure the directory on the server where files will be stored, set:
 ```ini
-para.file_uploads_dir = "uploads"
+scoold.file_uploads_dir = "uploads"
 ```
 
 ### AWS S3 storage provider
@@ -1843,13 +1843,13 @@ To use S3 for file storage, specify the name of the S3 bucket where you want the
 and region settings are optional as they can be picked up from the environment automatically.
 ```ini
 # required
-para.s3_bucket = ""
+scoold.s3_bucket = ""
 # path within the bucket (object prefix)
-para.s3_path = "uploads"
+scoold.s3_path = "uploads"
 # these are optional
-para.s3_region = ""
-para.s3_access_key = ""
-para.s3_secret_key = ""
+scoold.s3_region = ""
+scoold.s3_access_key = ""
+scoold.s3_secret_key = ""
 ```
 
 ### Azure Blob storage provider
@@ -1859,12 +1859,12 @@ just for Scoold files.
 
 ```ini
 # required
-para.blob_storage_account = ""
-para.blob_storage_token = ""
+scoold.blob_storage_account = ""
+scoold.blob_storage_token = ""
 # name of the container
-para.blob_storage_container = ""
+scoold.blob_storage_container = ""
 # path prefix within a container (subfolder)
-para.blob_storage_path = "uploads"
+scoold.blob_storage_path = "uploads"
 ```
 
 ## Uploading custom avatars
@@ -1877,8 +1877,8 @@ served from.
 ### To Imgur
 To use Imgur for storing images, specify your Imgur API client id:
 ```
-para.imgur_client_id = "x23e8t0askdj"
-para.avatar_repository = "imgur"
+scoold.imgur_client_id = "x23e8t0askdj"
+scoold.avatar_repository = "imgur"
 ```
 Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
 
@@ -1896,34 +1896,34 @@ mapped to a single Scoold space when people sign in with Slack.
 Slack users to Scoold accounts and vice versa. Slack IDs are set automatically when a Scoold user signs in with Slack.
 
 The integration endpoint for Slack is `/slack` - this is where Scoold will accept and process requests from Slack.
-To enable the Slack integration you need to register for a Slack app first and set `para.sl_app_id` and `para.sl_secret`.
+To enable the Slack integration you need to register for a Slack app first and set `scoold.sl_app_id` and `scoold.sl_secret`.
 
 ### [Getting started guide for Scoold + Slack](https://scoold.com/slack.html).
 
 Here are the configuration properties for Slack:
 ```ini
-para.slack.app_id = "SHORT_APPID"
-para.slack.map_workspaces_to_spaces = true
-para.slack.map_channels_to_spaces = false
-para.slack.post_to_space = "workspace|scooldspace:myspace|default"
+scoold.slack.app_id = "SHORT_APPID"
+scoold.slack.map_workspaces_to_spaces = true
+scoold.slack.map_channels_to_spaces = false
+scoold.slack.post_to_space = "workspace|scooldspace:myspace|default"
 
-para.slack.notify_on_new_question = true
-para.slack.notify_on_new_answer = true
-para.slack.notify_on_new_comment = true
-para.slack.dm_on_new_comment = false
-para.slack.default_question_tags = "via-slack"
-para.slack.auth_enabled = true
+scoold.slack.notify_on_new_question = true
+scoold.slack.notify_on_new_answer = true
+scoold.slack.notify_on_new_comment = true
+scoold.slack.dm_on_new_comment = false
+scoold.slack.default_question_tags = "via-slack"
+scoold.slack.auth_enabled = true
 ```
 
-Setting `para.slack.map_channels_to_spaces` will ask for additional permissions, namely `channels:read` and `groups:read`.
+Setting `scoold.slack.map_channels_to_spaces` will ask for additional permissions, namely `channels:read` and `groups:read`.
 On sign in, Scoold will read all your channels and create spaces from them. The workspace space is always created if
-`para.slack.map_workspaces_to_spaces = true`, which is the default setting.
+`scoold.slack.map_workspaces_to_spaces = true`, which is the default setting.
 
 When creating questions from Slack they are posted to the channel workspace by default, if
-`para.slack.map_channels_to_spaces` is enabled. For example, in this case, for a team "My Team" and channel "chan",
-your space will become "My Team #chan". This is controlled by `para.slack.post_to_space` which is blank by default.
+`scoold.slack.map_channels_to_spaces` is enabled. For example, in this case, for a team "My Team" and channel "chan",
+your space will become "My Team #chan". This is controlled by `scoold.slack.post_to_space` which is blank by default.
 If you set it to `workspace`, then questions will be posted to the "My Team" space. Or you could set a specific Scoold
-space to post to with `para.slack.post_to_space = "scooldspace:myspace"`. If the value is `default` then all questions
+space to post to with `scoold.slack.post_to_space = "scooldspace:myspace"`. If the value is `default` then all questions
 posted from Slack will go to the default space.
 
 You can also create answers to questions from Slack, either from the message action button or by typing in the
@@ -1932,10 +1932,10 @@ You can also create answers to questions from Slack, either from the message act
 Clicking the "Ask on Scoold" message action will also save the full message thread on Scoold. The action will create a new
 question from the first message of the thread and save each reply as an answer on Scoold.
 
-When `para.slack.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+When `scoold.slack.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
-Slack authentication can be disabled with `para.slack.auth_enabled = false` and the "Continue with Slack" button
+Slack authentication can be disabled with `scoold.slack.auth_enabled = false` and the "Continue with Slack" button
 will be hidden away.
 
 ### Slash commands in Slack
@@ -1978,24 +1978,24 @@ signs in with Mattermost.
 
 The integration endpoint for Mattermost is `/mattermost` - this is where Scoold will accept and process requests from
 Mattermost. To enable the Mattermost integration you need to enable OAuth 2.0 apps and create one in Mattermost's System
-Console. Then set `para.mm_app_id` and `para.mm_secret`.
+Console. Then set `scoold.mm_app_id` and `scoold.mm_secret`.
 
 ### [Getting started guide for Scoold + Mattermost](https://scoold.com/mattermost.html).
 
 Here are the configuration properties for Mattermost:
 ```ini
-para.mattermost.server_url = "http://localhost:8065"
-para.mattermost.bot_username = "scoold"
-para.mattermost.bot_icon_url = "http://localhost:8000/images/logowhite.png"
-para.mattermost.map_workspaces_to_spaces = true
-para.mattermost.map_channels_to_spaces = false
-para.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
+scoold.mattermost.server_url = "http://localhost:8065"
+scoold.mattermost.bot_username = "scoold"
+scoold.mattermost.bot_icon_url = "http://localhost:8000/images/logowhite.png"
+scoold.mattermost.map_workspaces_to_spaces = true
+scoold.mattermost.map_channels_to_spaces = false
+scoold.mattermost.post_to_space = "workspace|scooldspace:myspace|default"
 
-para.mattermost.notify_on_new_question = true
-para.mattermost.notify_on_new_answer = true
-para.mattermost.notify_on_new_comment = true
-para.mattermost.dm_on_new_comment = false
-para.mattermost.default_question_tags = "via-mattermost"
+scoold.mattermost.notify_on_new_question = true
+scoold.mattermost.notify_on_new_answer = true
+scoold.mattermost.notify_on_new_comment = true
+scoold.mattermost.dm_on_new_comment = false
+scoold.mattermost.default_question_tags = "via-mattermost"
 ```
 
 **Note:** Mattermost does not support message actions like in Slack. This means that you can't create a question from
@@ -2006,7 +2006,7 @@ The dialog box for new questions is opened via the new slash command `/scoold as
 All the other slash commands and notifications work just like with Slack and are described above. The Mattermost
 integration will automatically create a slash command for each channel linked to Scoold on the admin page.
 
-When `para.mattermost.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+When `scoold.mattermost.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
 You can also save a full message thread on Scoold with the command `/scoold save {thread_link}` - this will create a new
@@ -2028,7 +2028,7 @@ MS Teams. To enable the Teams integration you first need to create a new bot for
 After creating the bot, take note of its ID and client secret and add those to your Scoold configuration file.
 Then sideload (upload) the `Scoold.zip` app package in the [Teams Developer Portal](https://dev.teams.microsoft.com).
 The app package can be downloaded from the Administration page after your bot has been created.
-Also set `para.ms_app_id` and `para.ms_secret` as you normally would for an OAuth2 authentication with Microsoft.
+Also set `scoold.ms_app_id` and `scoold.ms_secret` as you normally would for an OAuth2 authentication with Microsoft.
 
 **Note:** Clicking the "Ask on Scoold" message extension button will also save the full message thread on Scoold.
 The action will create a new question from the first message of the thread and save each reply as an answer on Scoold.
@@ -2037,24 +2037,24 @@ The action will create a new question from the first message of the thread and s
 
 Here are the configuration properties for MS Teams:
 ```ini
-para.teams.bot_id = ""
-para.teams.bot_secret = ""
-para.teams.map_workspaces_to_spaces = true
-para.teams.map_channels_to_spaces = false
-para.teams.post_to_space = "workspace|scooldspace:myspace|default"
+scoold.teams.bot_id = ""
+scoold.teams.bot_secret = ""
+scoold.teams.map_workspaces_to_spaces = true
+scoold.teams.map_channels_to_spaces = false
+scoold.teams.post_to_space = "workspace|scooldspace:myspace|default"
 
-para.teams.notify_on_new_question = true
-para.teams.notify_on_new_answer = true
-para.teams.notify_on_new_comment = true
-para.teams.dm_on_new_comment = false
-para.teams.default_question_tags = "via-teams"
+scoold.teams.notify_on_new_question = true
+scoold.teams.notify_on_new_answer = true
+scoold.teams.notify_on_new_comment = true
+scoold.teams.dm_on_new_comment = false
+scoold.teams.default_question_tags = "via-teams"
 ```
 
 You can type `@Scoold help` to get a list of all supported actions. All the other bot commands and notifications work
 just like with Slack and Mattermost, described above. A bot registration is required for the Teams integration
 and it has to be created manually from the [Teams Developer Portal](https://dev.teams.microsoft.com/bots).
 
-When `para.teams.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
+When `scoold.teams.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
 
 ## Notifications in Slack/Mattermost/Teams
@@ -2063,14 +2063,14 @@ Scoold will notify the channels where you have it installed, whenever a new ques
 whenever a user is mentioned. To install the application on multiple channels go to the Administration page and click
 one of the "Add to Slack/Mattermost/Teams" buttons for each channel where you wish to get notifications. You can receive
 notification on up to 10 channels simultaneously. Notifications for new posts will go to the channel associated with the
-space in which the post was created. For example, when using Slack, if `para.slack.map_workspaces_to_spaces` is `true`,
+space in which the post was created. For example, when using Slack, if `scoold.slack.map_workspaces_to_spaces` is `true`,
 and a question is created in space "Team1 #general", Scoold will search for webhook registrations matching that
 team/channel combination and only send a notification there. Direct message webhooks will be used only if there's no
 space-matching channel found.
 
 ## Approving new posts from Slack/Mattermost/Teams
 
-This works if you have enabled `para.posts_need_approval`. When a new question or answer is created by a user with less
+This works if you have enabled `scoold.posts_need_approval`. When a new question or answer is created by a user with less
 reputation than the threshold, a notification message will be sent to Slack/Mattermost/Teams, giving you the option to
 either approve or delete that post. The action can only be performed by moderators.
 
@@ -2315,13 +2315,13 @@ For end-to-end encryption of traffic, you can enable mTLS between your TLS-termi
 In some rare cases, your Scoold server may be behind more than one proxy server. In these cases you have configuration like
 this:
 ```ini
-para.host_url = "http://192.168.3.4:8000"
-para.host_url = "http://192.168.3.4:8080"
+scoold.host_url = "http://192.168.3.4:8000"
+scoold.host_url = "http://192.168.3.4:8080"
 ```
 This would work except for transactional emails where inbound links point to the wrong address. The solution is to add this
 to your configuration:
 ```ini
-para.rewrite_inbound_links_with_fqdn = "https://public-scoold-domain.com"
+scoold.rewrite_inbound_links_with_fqdn = "https://public-scoold-domain.com"
 ```
 
 ## Periodic summary emails (email digest)
@@ -2330,15 +2330,15 @@ para.rewrite_inbound_links_with_fqdn = "https://public-scoold-domain.com"
 You can choose to enable periodic summary emails for all users in Scoold or allow them to opt-in for these messages.
 By default summary emails are disabled and users can unsubscribe if they are enabled by admins.
 A summary email contains all new questions for a past period of time (daily, weekly). Admins can enable summary emails
-for everyone from the Settings page if `para.summary_email_controlled_by_admins = true`. If that parameter is `false`
+for everyone from the Settings page if `scoold.summary_email_controlled_by_admins = true`. If that parameter is `false`
 each person (by default) controls whether they want to receive summary emails or not.
 
 The period for which a summary report is generated is controlled by:
 ```ini
-para.summary_email_period_days = 2
+scoold.summary_email_period_days = 2
 ```
 The values of this setting can range from `1` to `30` days, where `2` means "every other day", `7` means "every week".
-The summary email contains a list of the top 25 recent questions. For more questions set `para.summary_email_items = 30`.
+The summary email contains a list of the top 25 recent questions. For more questions set `scoold.summary_email_items = 30`.
 
 ## Mentions
 
@@ -2351,7 +2351,7 @@ if you want the mention to work. You can mention up to 10 people in a post.
 Users can opt-in to receive email notifications when they are mentioned or that can be switched on/off by admins.
 For the latter option set:
 ```ini
-para.mention_emails_controlled_by_admins = true
+scoold.mention_emails_controlled_by_admins = true
 ```
 
 ## Security headers
@@ -2361,19 +2361,19 @@ properties:
 
 ```ini
 # Strict-Transport-Security
-para.hsts_header_enabled = true
+scoold.hsts_header_enabled = true
 
 # X-Frame-Options
-para.framing_header_enabled = true
+scoold.framing_header_enabled = true
 
 # X-XSS-Protection
-para.xss_header_enabled = true
+scoold.xss_header_enabled = true
 
 # X-Content-Type-Options
-para.contenttype_header_enabled = true
+scoold.contenttype_header_enabled = true
 
 # Referrer-Policy
-para.referrer_header_enabled = true
+scoold.referrer_header_enabled = true
 ```
 
 ## Voting
@@ -2382,59 +2382,59 @@ By default, votes expire after a certain period, meaning the same user can vote 
 (after 30 days by default). Votes can also be amended within a certain number of seconds (30s by default).
 There are two configurable parameters which allow you to modify the length of those periods:
 ```ini
-para.vote_locked_after_sec = 30
-para.vote_expires_after_sec = 2592000
+scoold.vote_locked_after_sec = 30
+scoold.vote_expires_after_sec = 2592000
 ```
 
 ## Customizing the UI
 
 There are a number of settings that let you customize the appearance of the website without changing the code.
 ```ini
-para.fixed_nav = false
-para.show_branding = true
-para.logo_url = "https://static.scoold.com/logo.svg"
-para.logo_width = 90
+scoold.fixed_nav = false
+scoold.show_branding = true
+scoold.logo_url = "https://static.scoold.com/logo.svg"
+scoold.logo_width = 90
 
 # footer HTML - add your own links, etc., escape double quotes with \"
-para.footer_html = "<a href=\"https://my.link\">My Link</a>"
+scoold.footer_html = "<a href=\"https://my.link\">My Link</a>"
 # show standard footer links
-para.footer_links_enabled = true
+scoold.footer_links_enabled = true
 # favicon image location
-para.favicon_url = "/favicon.ico"
+scoold.favicon_url = "/favicon.ico"
 # add your own external stylesheets
-para.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
+scoold.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 # appends extra CSS rules to the main stylesheet
-para.inline_css = ""
+scoold.inline_css = ""
 # edit the links in the footer of transactional emails
-para.emails_footer_html = ""
+scoold.emails_footer_html = ""
 # change the logo in transactional emails
-para.small_logo_url = "https://scoold.com/logo.png"
+scoold.small_logo_url = "https://scoold.com/logo.png"
 # enable/disable dark mode
-para.dark_mode_enabled = true
+scoold.dark_mode_enabled = true
 # enabled/disable Gravatars
-para.gravatars_enabled = true
+scoold.gravatars_enabled = true
 # pattern of default image of Gravatars (https://fr.gravatar.com/site/implement/images/)
-para.gravatars_pattern = "retro"
+scoold.gravatars_pattern = "retro"
 
 # custom navbar links
-para.navbar_link1_url = ""
-para.navbar_link2_url = ""
-para.navbar_link1_text = "Link1"
-para.navbar_link2_text = "Link2"
+scoold.navbar_link1_url = ""
+scoold.navbar_link2_url = ""
+scoold.navbar_link1_text = "Link1"
+scoold.navbar_link2_text = "Link2"
 
 # custom navbar menu links (shown to logged in users)
-para.navbar_menu_link1_url = ""
-para.navbar_menu_link2_url = ""
-para.navbar_menu_link1_text = "Menu Link1"
-para.navbar_menu_link2_text = "Menu Link2"
+scoold.navbar_menu_link1_url = ""
+scoold.navbar_menu_link2_url = ""
+scoold.navbar_menu_link1_text = "Menu Link1"
+scoold.navbar_menu_link2_text = "Menu Link2"
 
 # default email notification toggles for all users
-para.favtags_emails_enabled = false
-para.reply_emails_enabled = false
-para.comment_emails_enabled = false
+scoold.favtags_emails_enabled = false
+scoold.reply_emails_enabled = false
+scoold.comment_emails_enabled = false
 
 # comment input box toggle
-para.always_hide_comment_forms = true
+scoold.always_hide_comment_forms = true
 ```
 
 ### Custom Logo
@@ -2443,18 +2443,18 @@ In Scoold Pro you can change the logo of the website just by dragging and droppi
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
 simply add them as inline CSS:
 ```ini
-para.inline_css = ".scoold-logo { width: 100px; }"
+scoold.inline_css = ".scoold-logo { width: 100px; }"
 ```
 
 ### Custom welcome message (banner)
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
 can also contain HTML (**use only single quotes or escape double quotes `\\\"`**):
 ```ini
-para.welcome_message = "Hello and welcome to <a href='https://scoold.com'>Scoold</a>!"
+scoold.welcome_message = "Hello and welcome to <a href='https://scoold.com'>Scoold</a>!"
 ```
 You can also set a custom message for users who are already logged in:
 ```ini
-para.welcome_message_onlogin = "<h2>Welcome back <img src=\\\"{{user.picture}}\\\" width=30> <b>{{user.name}}</b>!</h2>"
+scoold.welcome_message_onlogin = "<h2>Welcome back <img src=\\\"{{user.picture}}\\\" width=30> <b>{{user.name}}</b>!</h2>"
 ```
 Here you can use HTML tags and Mustache placeholders to show data from the `Profile` object of the logged in user.
 For a list of available user properties, take a look at the
@@ -2468,8 +2468,8 @@ There are a total of 4 slots for external links in the navbar area - two links p
 another two links can go in the navbar menu, shown only to logged in users. Here's how to set a private link in the
 navbar menu:
 ```ini
-para.navbar_menu_link1_url = "https://homepage.com"
-para.navbar_menu_link1_text = "Visit my page"
+scoold.navbar_menu_link1_url = "https://homepage.com"
+scoold.navbar_menu_link1_text = "Visit my page"
 ```
 
 ### Expert-level customization
@@ -2493,10 +2493,10 @@ Some countries have laws that require explicit cookie consent (e.g. GDPR, CCPA).
 cookie consent script to enable the consent popup for compliance with those laws. Here's the configuration which enables
 cookie consent:
 ```ini
-para.cookie_consent_required = true
-para.external_styles = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"
-para.external_scripts.bypassconsent1 = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
-para.external_scripts.bypassconsent2 = "d2luZG93LmNvb2tpZWNvbnNlbnQuaW5pdGlhbGlzZSh7CiAgInBhbGV0dGUiOiB7CiAgICAicG9wdXAiOiB7CiAgICAgICJiYWNrZ3JvdW5kIjogIiM0NDQ0NDQiCiAgICB9LAogICAgImJ1dHRvbiI6IHsKICAgICAgImJhY2tncm91bmQiOiAiIzc3Nzc3NyIKICAgIH0KICB9LAogICJ0aGVtZSI6ICJjbGFzc2ljIiwKICAicG9zaXRpb24iOiAiYm90dG9tLWxlZnQiLAogICJ0eXBlIjogIm9wdC1pbiIsCiAgIm9uU3RhdHVzQ2hhbmdlIjogZnVuY3Rpb24ocyl7bG9jYXRpb24ucmVsb2FkKCk7fQp9KTs="
+scoold.cookie_consent_required = true
+scoold.external_styles = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"
+scoold.external_scripts.bypassconsent1 = "https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
+scoold.external_scripts.bypassconsent2 = "d2luZG93LmNvb2tpZWNvbnNlbnQuaW5pdGlhbGlzZSh7CiAgInBhbGV0dGUiOiB7CiAgICAicG9wdXAiOiB7CiAgICAgICJiYWNrZ3JvdW5kIjogIiM0NDQ0NDQiCiAgICB9LAogICAgImJ1dHRvbiI6IHsKICAgICAgImJhY2tncm91bmQiOiAiIzc3Nzc3NyIKICAgIH0KICB9LAogICJ0aGVtZSI6ICJjbGFzc2ljIiwKICAicG9zaXRpb24iOiAiYm90dG9tLWxlZnQiLAogICJ0eXBlIjogIm9wdC1pbiIsCiAgIm9uU3RhdHVzQ2hhbmdlIjogZnVuY3Rpb24ocyl7bG9jYXRpb24ucmVsb2FkKCk7fQp9KTs="
 ```
 That last snippet of code is the Base64-encoded initialization of the cookie consent script:
 ```js
@@ -2527,15 +2527,15 @@ Note: Any other script can be used instead, as long as it set a cookie `cookieco
 
 The REST API can be enabled with the following configuration:
 ```ini
-para.api_enabled = true
+scoold.api_enabled = true
 # A random string min. 32 chars long
-para.app_secret_key = "change_to_long_random_string"
+scoold.app_secret_key = "change_to_long_random_string"
 ```
 The API can be accessed from `/api/*` and the OpenAPI documentation and console are located at `/apidocs`.
 API keys can be generated from the "Administration" page and can be made to expire after a number of hours or never
-(validity period = 0). Keys are in the JWT format and signed with the secret defined in `para.app_secret_key`.
+(validity period = 0). Keys are in the JWT format and signed with the secret defined in `scoold.app_secret_key`.
 API keys can also be generated with any JWT library. The body of the key should contain the `iat`, `appid` and `exp`
-claims and must be signed with the secret `para.app_secret_key`.
+claims and must be signed with the secret `scoold.app_secret_key`.
 
 **Note:** The Scoold API also accepts Para "super" tokens (manually generated) or JWTs generated using the
 [Para CLI tool](https://github.com/Erudika/para-cli).
@@ -2627,7 +2627,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Ukrainian** | [lang_uk.properties](src/main/resources/lang_uk.properties) | 0%
 **Vietnamese** | [lang_vi.properties](src/main/resources/lang_vi.properties) | 0%
 
-You can also change the default language of Scoold for all users by setting `para.default_language_code = "en"`, where
+You can also change the default language of Scoold for all users by setting `scoold.default_language_code = "en"`, where
 instead of "en" you enter the 2-letter code of the language of your choice.
 
 ## Building Scoold
