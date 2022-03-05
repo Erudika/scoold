@@ -20,9 +20,9 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.para.core.User;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,13 +67,13 @@ public class AvatarRepositoryProxyTest {
 
 	@Test
 	public void should_not_use_gravatar_if_gravatar_disable() {
-		System.setProperty("para.gravatars_enabled", "false");
+		System.setProperty("scoold.gravatars_enabled", "false");
 		AvatarRepository repository = new AvatarRepositoryProxy(gravatarAvatarGeneratorFake);
 
 		when(gravatarAvatarGeneratorFake.getRawLink("A")).thenReturn("https://gravatarA");
 		String result = repository.getAnonymizedLink("A");
 		assertNotEquals("https://gravatarA", result);
-		System.setProperty("para.gravatars_enabled", "true");
+		System.setProperty("scoold.gravatars_enabled", "true");
 	}
 
 	@Test

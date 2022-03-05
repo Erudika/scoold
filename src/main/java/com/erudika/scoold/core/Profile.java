@@ -24,7 +24,6 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.Utils;
-import com.erudika.scoold.ScooldConfig;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
@@ -49,7 +48,6 @@ import org.hibernate.validator.constraints.URL;
 public class Profile extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
-	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	@Stored private String originalName;
 	@Stored private String originalPicture;
@@ -146,9 +144,9 @@ public class Profile extends Sysprop {
 		this.weeklyVotes = 0;
 		this.anonymityEnabled = false;
 		this.darkmodeEnabled = false;
-		this.favtagsEmailsEnabled = CONF.favoriteTagsEmailsEnabled();
-		this.replyEmailsEnabled = CONF.replyEmailsEnabled();
-		this.commentEmailsEnabled = CONF.commentEmailsEnabled();
+		this.favtagsEmailsEnabled = ScooldUtils.getConfig().favoriteTagsEmailsEnabled();
+		this.replyEmailsEnabled = ScooldUtils.getConfig().replyEmailsEnabled();
+		this.commentEmailsEnabled = ScooldUtils.getConfig().commentEmailsEnabled();
 	}
 
 	public static final String id(String userid) {
@@ -170,14 +168,14 @@ public class Profile extends Sysprop {
 		p.setGroups(ScooldUtils.getInstance().isRecognizedAsAdmin(u)
 				? User.Groups.ADMINS.toString() : u.getGroups());
 		// auto-assign spaces to new users
-		String space = StringUtils.substringBefore(CONF.autoAssignSpaces(), ",");
+		String space = StringUtils.substringBefore(ScooldUtils.getConfig().autoAssignSpaces(), ",");
 		if (!StringUtils.isBlank(space) && !ScooldUtils.getInstance().isDefaultSpace(space)) {
 			Sysprop s = client().read(ScooldUtils.getInstance().getSpaceId(space));
 			if (s == null) {
 				s = ScooldUtils.getInstance().buildSpaceObject(space);
 				client().create(s); // create the space it it's missing
 			}
-			if (CONF.resetSpacesOnNewAssignment(u.isOAuth2User() || u.isLDAPUser() || u.isSAMLUser())) {
+			if (ScooldUtils.getConfig().resetSpacesOnNewAssignment(u.isOAuth2User() || u.isLDAPUser() || u.isSAMLUser())) {
 				p.setSpaces(Collections.singleton(s.getId() + Para.getConfig().separator() + s.getName()));
 			} else {
 				p.getSpaces().add(s.getId() + Para.getConfig().separator() + s.getName());

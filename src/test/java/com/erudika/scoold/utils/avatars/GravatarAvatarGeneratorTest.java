@@ -19,16 +19,16 @@ package com.erudika.scoold.utils.avatars;
 
 import com.erudika.para.core.User;
 import com.erudika.scoold.core.Profile;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class GravatarAvatarGeneratorTest {
 	private GravatarAvatarGenerator generator;
 
 	@Before
 	public void setUp(){
-		System.setProperty("para.gravatars_pattern", "retro");
+		System.setProperty("scoold.gravatars_pattern", "retro");
 		this.generator = new GravatarAvatarGenerator();
 	}
 
@@ -81,7 +81,7 @@ public class GravatarAvatarGeneratorTest {
 		String link1 = generator.configureLink(rawLink, AvatarFormat.Square32);
 		assertEquals("https://www.gravatar.com/avatar/75a4c35602d5866368dd4c959e249aba?s=32&r=g&d=retro", link1);
 
-		System.setProperty("para.gravatars_pattern", "identicon");
+		System.setProperty("scoold.gravatars_pattern", "identicon");
 		String link2 = generator.configureLink(rawLink, AvatarFormat.Square50);
 		assertEquals("https://www.gravatar.com/avatar/75a4c35602d5866368dd4c959e249aba?s=50&r=g&d=identicon", link2);
 	}
