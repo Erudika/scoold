@@ -746,12 +746,12 @@ public class ApiController {
 			badReq("Missing request body.");
 			return null;
 		}
-		String targetUrl = (String) entity.get("targetUrl");
-		if (!Utils.isValidURL(targetUrl)) {
+		Webhook w = ParaObjectUtils.setAnnotatedFields(new Webhook(), entity, null);
+		if (StringUtils.isBlank(w.getTriggeredEvent()) && !Utils.isValidURL(w.getTargetUrl())) {
 			badReq("Property 'targetUrl' must be a valid URL.");
 			return null;
 		}
-		Webhook webhook = pc.create(ParaObjectUtils.setAnnotatedFields(new Webhook(), entity, null));
+		Webhook webhook = pc.create(w);
 		if (webhook == null) {
 			badReq("Failed to create webhook.");
 			return null;
