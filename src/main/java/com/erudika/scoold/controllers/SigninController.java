@@ -25,8 +25,6 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
-import static com.erudika.scoold.ScooldServer.MIN_PASS_LENGTH;
-import static com.erudika.scoold.ScooldServer.MIN_PASS_STRENGTH;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
@@ -361,7 +359,7 @@ public class SigninController {
 	}
 
 	private boolean isPasswordStrongEnough(String password) {
-		if (StringUtils.length(password) >= MIN_PASS_LENGTH) {
+		if (StringUtils.length(password) >= CONF.minPasswordLength()) {
 			int score = 0;
 			if (password.matches(".*[a-z].*")) {
 				score++;
@@ -376,9 +374,9 @@ public class SigninController {
 				score++;
 			}
 			// 1 = good strength, 2 = medium strength, 3 = high strength
-			if (MIN_PASS_STRENGTH <= 1) {
+			if (CONF.minPasswordStrength() <= 1) {
 				return score >= 2;
-			} else if (MIN_PASS_STRENGTH == 2) {
+			} else if (CONF.minPasswordStrength() == 2) {
 				return score >= 3;
 			} else {
 				return score >= 4;

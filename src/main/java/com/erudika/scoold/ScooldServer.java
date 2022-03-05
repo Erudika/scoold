@@ -71,47 +71,10 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("server.use-forward-headers", String.valueOf(CONF.inProduction()));
 	}
 
-	public static final String LOCALE_COOKIE = getAppId() + "-locale";
-	public static final String SPACE_COOKIE = getAppId() + "-space";
-	public static final String AUTH_COOKIE = getAppId() + "-auth";
 	public static final String TOKEN_PREFIX = "ST_";
 	public static final String HOMEPAGE = "/";
-	public static final String CONTEXT_PATH = CONF.serverContextPath();
-	public static final String CDN_URL = StringUtils.stripEnd(CONF.cdnUrl(), "/");
 	public static final String AUTH_USER_ATTRIBUTE = TOKEN_PREFIX + "AUTH_USER";
 	public static final String REST_ENTITY_ATTRIBUTE = "REST_ENTITY";
-	public static final String IMAGESLINK = (CONF.inProduction() ? CDN_URL : CONTEXT_PATH) + "/images";
-	public static final String SCRIPTSLINK = (CONF.inProduction() ? CDN_URL : CONTEXT_PATH) + "/scripts";
-	public static final String STYLESLINK = (CONF.inProduction() ? CDN_URL : CONTEXT_PATH) + "/styles";
-
-	public static final int MAX_TEXT_LENGTH = CONF.maxPostLength();
-	public static final int MAX_TAGS_PER_POST = CONF.maxTagsPerPost();
-	public static final int MAX_REPLIES_PER_POST = CONF.maxRepliesPerPost();
-	public static final int MAX_FAV_TAGS = CONF.maxFavoriteTags();
-	public static final int MIN_PASS_LENGTH = CONF.maxPasswordLength();
-	public static final int MIN_PASS_STRENGTH = CONF.minPasswordStrength();
-
-	public static final int ANSWER_VOTEUP_REWARD_AUTHOR = CONF.answerVoteupRewardAuthor();
-	public static final int QUESTION_VOTEUP_REWARD_AUTHOR = CONF.questionVoteupRewardAuthor();
-	public static final int VOTEUP_REWARD_AUTHOR = CONF.voteupRewardAuthor();
-	public static final int ANSWER_APPROVE_REWARD_AUTHOR = CONF.answerApprovedRewardAuthor();
-	public static final int ANSWER_APPROVE_REWARD_VOTER = CONF.answerApprovedRewardVoter();
-	public static final int POST_VOTEDOWN_PENALTY_AUTHOR = CONF.postVotedownPenaltyAuthor();
-	public static final int POST_VOTEDOWN_PENALTY_VOTER = CONF.postVotedownPenaltyVoter();
-
-	public static final int VOTER_IFHAS = CONF.voterIfHasRep();
-	public static final int COMMENTATOR_IFHAS = CONF.commentatorIfHasRep();
-	public static final int CRITIC_IFHAS = CONF.criticIfHasRep();
-	public static final int SUPPORTER_IFHAS = CONF.supporterIfHasRep();
-	public static final int GOODQUESTION_IFHAS = CONF.goodQuestionIfHasRep();
-	public static final int GOODANSWER_IFHAS = CONF.goodAnswerIfHasRep();
-	public static final int ENTHUSIAST_IFHAS = CONF.enthusiastIfHasRep();
-	public static final int FRESHMAN_IFHAS = CONF.freshmanIfHasRep();
-	public static final int SCHOLAR_IFHAS = CONF.scholarIfHasRep();
-	public static final int TEACHER_IFHAS = CONF.teacherIfHasRep();
-	public static final int PROFESSOR_IFHAS = CONF.professorIfHasRep();
-	public static final int GEEK_IFHAS = CONF.geekIfHasRep();
-
 	public static final String PEOPLELINK = HOMEPAGE + "people";
 	public static final String PROFILELINK = HOMEPAGE + "profile";
 	public static final String SEARCHLINK = HOMEPAGE + "search";
@@ -284,7 +247,4 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 	}
 
-	private static String getAppId() {
-		return App.identifier(CONF.paraAccessKey());
-	}
 }

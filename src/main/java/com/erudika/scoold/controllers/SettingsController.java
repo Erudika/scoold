@@ -21,7 +21,6 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
-import static com.erudika.scoold.ScooldServer.MAX_FAV_TAGS;
 import static com.erudika.scoold.ScooldServer.SETTINGSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
@@ -139,7 +138,7 @@ public class SettingsController {
 		if (!StringUtils.isBlank(tags)) {
 			Set<String> ts = new LinkedHashSet<String>();
 			for (String tag : tags.split(",")) {
-				if (!StringUtils.isBlank(tag) && ts.size() <= MAX_FAV_TAGS) {
+				if (!StringUtils.isBlank(tag) && ts.size() <= ScooldUtils.getConfig().maxFavoriteTags()) {
 					ts.add(tag);
 				}
 			}

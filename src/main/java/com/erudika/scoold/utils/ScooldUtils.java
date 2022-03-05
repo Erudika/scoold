@@ -263,7 +263,7 @@ public final class ScooldUtils {
 
 	public ParaObject checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Profile authUser = null;
-		String jwt = HttpUtils.getStateParam(AUTH_COOKIE, req);
+		String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
 		if (isApiRequest(req)) {
 			return checkApiAuth(req);
 		} else if (jwt != null && !StringUtils.endsWithAny(req.getRequestURI(),
@@ -280,8 +280,8 @@ public final class ScooldUtils {
 				}
 			} else {
 				clearSession(req, res);
-				logger.info("Invalid JWT found in cookie {}.", AUTH_COOKIE);
-				res.sendRedirect(CONF.serverUrl() + CONTEXT_PATH + SIGNINLINK + "?code=3&error=true");
+				logger.info("Invalid JWT found in cookie {}.", CONF.authCookie());
+				res.sendRedirect(CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "?code=3&error=true");
 				return null;
 			}
 		}
@@ -289,13 +289,13 @@ public final class ScooldUtils {
 	}
 
 	private ParaObject checkApiAuth(HttpServletRequest req) {
-		if (req.getRequestURI().equals(CONTEXT_PATH + "/api")) {
+		if (req.getRequestURI().equals(CONF.serverContextPath() + "/api")) {
 			return null;
 		}
 		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
-		if (req.getRequestURI().equals(CONTEXT_PATH + "/api/ping")) {
+		if (req.getRequestURI().equals(CONF.serverContextPath() + "/api/ping")) {
 			return API_USER;
-		} else if (req.getRequestURI().equals(CONTEXT_PATH + "/api/stats") && isValidJWToken(apiKeyJWT)) {
+		} else if (req.getRequestURI().equals(CONF.serverContextPath() + "/api/stats") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new UnauthorizedException();
@@ -383,7 +383,7 @@ public final class ScooldUtils {
 					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 					s.addProperty(Config._EMAIL_TOKEN, token);
 					pc.update(s);
-					token = CONF.serverUrl() + CONTEXT_PATH + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
+					token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
 					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body3;
 				}
 			}
@@ -407,7 +407,7 @@ public final class ScooldUtils {
 			identifier.addProperty(Config._EMAIL_TOKEN, token);
 			identifier.addProperty("confirmationTimestamp", Utils.timestamp());
 			pc.update(identifier);
-			token = CONF.serverUrl() + CONTEXT_PATH + SIGNINLINK + "/register?id=" +
+			token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" +
 					identifier.getCreatorid() + "&token=" + token;
 			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 
@@ -423,7 +423,7 @@ public final class ScooldUtils {
 		if (email != null && token != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
-			String url = CONF.serverUrl() + CONTEXT_PATH + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
+			String url = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
 			String subject = lang.get("iforgot.title");
 			String body1 = lang.get("notification.iforgot.body1") + "<br><br>";
 			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("notification.iforgot.body2") +
@@ -755,7 +755,7 @@ public final class ScooldUtils {
 
 	public Profile readAuthUser(HttpServletRequest req) {
 		Profile authUser = null;
-		User u = pc.me(HttpUtils.getStateParam(AUTH_COOKIE, req));
+		User u = pc.me(HttpUtils.getStateParam(CONF.authCookie(), req));
 		if (u != null && isEmailDomainApproved(u.getEmail())) {
 			return getOrCreateProfile(u, req);
 		}
@@ -835,7 +835,7 @@ public final class ScooldUtils {
 	}
 
 	public static String getDefaultAvatar() {
-		return IMAGESLINK + "/anon.svg";
+		return CONF.imagesLink() + "/anon.svg";
 	}
 
 	public static boolean isAvatarUploadsEnabled() {
@@ -939,7 +939,7 @@ public final class ScooldUtils {
 
 	public String getLanguageCode(HttpServletRequest req) {
 		String langCodeFromConfig = CONF.defaultLanguageCode();
-		String cookieLoc = getCookieValue(req, LOCALE_COOKIE);
+		String cookieLoc = getCookieValue(req, CONF.localeCookie());
 		Locale fromReq = (req == null) ? Locale.getDefault() : req.getLocale();
 		Locale requestLocale = langutils.getProperLocale(fromReq.toString());
 		return (cookieLoc != null) ? cookieLoc : (StringUtils.isBlank(langCodeFromConfig) ?
@@ -1110,7 +1110,7 @@ public final class ScooldUtils {
 	}
 
 	public boolean isApiRequest(HttpServletRequest req) {
-		return req.getRequestURI().startsWith(CONTEXT_PATH + "/api/") || req.getRequestURI().equals(CONTEXT_PATH + "/api");
+		return req.getRequestURI().startsWith(CONF.serverContextPath() + "/api/") || req.getRequestURI().equals(CONF.serverContextPath() + "/api");
 	}
 
 	public boolean isAdmin(Profile authUser) {
@@ -1210,8 +1210,8 @@ public final class ScooldUtils {
 				return s.getId() + Para.getConfig().separator() + s.getName();
 			}
 		}
-		String spaceAttr = (String) req.getAttribute(SPACE_COOKIE);
-		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, SPACE_COOKIE)) : spaceAttr;
+		String spaceAttr = (String) req.getAttribute(CONF.spaceCookie());
+		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, CONF.spaceCookie())) : spaceAttr;
 		String space = getValidSpaceId(authUser, spaceValue);
 		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : verifyExistingSpace(authUser, space);
 	}
@@ -1219,8 +1219,8 @@ public final class ScooldUtils {
 	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
 		// directly set the space on the requests, overriding the cookie value
 		// used for setting the space from a direct URL to a particular space
-		req.setAttribute(SPACE_COOKIE, space);
-		HttpUtils.setRawCookie(SPACE_COOKIE, Utils.base64encURL(space.getBytes()),
+		req.setAttribute(CONF.spaceCookie(), space);
+		HttpUtils.setRawCookie(CONF.spaceCookie(), Utils.base64encURL(space.getBytes()),
 				req, res, true, "Strict", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}
 
@@ -1487,7 +1487,7 @@ public final class ScooldUtils {
 
 	public void clearSession(HttpServletRequest req, HttpServletResponse res) {
 		if (req != null) {
-			String jwt = HttpUtils.getStateParam(AUTH_COOKIE, req);
+			String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
 			if (!StringUtils.isBlank(jwt)) {
 				if (CONF.oneSessionPerUser()) {
 					synchronized (pc) {
@@ -1496,7 +1496,7 @@ public final class ScooldUtils {
 						pc.signOut();
 					}
 				}
-				HttpUtils.removeStateParam(AUTH_COOKIE, req, res);
+				HttpUtils.removeStateParam(CONF.authCookie(), req, res);
 			}
 			HttpUtils.removeStateParam("dark-mode", req, res);
 		}
@@ -1533,12 +1533,12 @@ public final class ScooldUtils {
 		List<String> badgelist = new ArrayList<String>();
 		if (authUser != null && !isAjaxRequest(req)) {
 			long oneYear = authUser.getTimestamp() + (365 * 24 * 60 * 60 * 1000);
-			addBadgeOnce(authUser, Profile.Badge.ENTHUSIAST, authUser.getVotes() >= ENTHUSIAST_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.FRESHMAN, authUser.getVotes() >= FRESHMAN_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.SCHOLAR, authUser.getVotes() >= SCHOLAR_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.TEACHER, authUser.getVotes() >= TEACHER_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.PROFESSOR, authUser.getVotes() >= PROFESSOR_IFHAS);
-			addBadgeOnce(authUser, Profile.Badge.GEEK, authUser.getVotes() >= GEEK_IFHAS);
+			addBadgeOnce(authUser, Profile.Badge.ENTHUSIAST, authUser.getVotes() >= CONF.enthusiastIfHasRep());
+			addBadgeOnce(authUser, Profile.Badge.FRESHMAN, authUser.getVotes() >= CONF.freshmanIfHasRep());
+			addBadgeOnce(authUser, Profile.Badge.SCHOLAR, authUser.getVotes() >= CONF.scholarIfHasRep());
+			addBadgeOnce(authUser, Profile.Badge.TEACHER, authUser.getVotes() >= CONF.teacherIfHasRep());
+			addBadgeOnce(authUser, Profile.Badge.PROFESSOR, authUser.getVotes() >= CONF.professorIfHasRep());
+			addBadgeOnce(authUser, Profile.Badge.GEEK, authUser.getVotes() >= CONF.geekIfHasRep());
 			addBadgeOnce(authUser, Profile.Badge.SENIOR, (System.currentTimeMillis() - authUser.getTimestamp()) >= oneYear);
 
 			if (!StringUtils.isBlank(authUser.getNewbadges())) {
@@ -1853,9 +1853,9 @@ public final class ScooldUtils {
 	}
 
 	public String getSmallLogoUrl() {
-		String defaultLogo = CONF.serverUrl() + IMAGESLINK + "/logowhite.png";
+		String defaultLogo = CONF.serverUrl() + CONF.imagesLink() + "/logowhite.png";
 		String logoUrl = CONF.logoSmallUrl();
-		String defaultMainLogoUrl = IMAGESLINK + "/logo.svg";
+		String defaultMainLogoUrl = CONF.imagesLink() + "/logo.svg";
 		String mainLogoUrl = CONF.logoUrl();
 		if (!defaultLogo.equals(logoUrl)) {
 			return logoUrl;

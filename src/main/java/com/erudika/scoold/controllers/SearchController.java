@@ -21,7 +21,6 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
-import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.SEARCHLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Comment;
@@ -150,8 +149,8 @@ public class SearchController {
 				+ "  <Description>" + utils.getLang(req).get("search.description") + "</Description>\n"
 				+ "  <InputEncoding>UTF-8</InputEncoding>\n"
 				+ "  <Image width=\"16\" height=\"16\" type=\"image/x-icon\">" +
-				CONF.serverUrl() + CONTEXT_PATH + "/favicon.ico</Image>\n"
-				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + CONF.serverUrl() + CONTEXT_PATH
+				CONF.serverUrl() + CONF.serverContextPath() + "/favicon.ico</Image>\n"
+				+ "  <Url type=\"text/html\" method=\"get\" template=\"" + CONF.serverUrl() + CONF.serverContextPath()
 				+ "/search?q={searchTerms}\"></Url>\n"
 				+ "</OpenSearchDescription>";
 		return ResponseEntity.ok().

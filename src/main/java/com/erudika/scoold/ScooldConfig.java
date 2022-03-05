@@ -1,7 +1,11 @@
 /*
  * Copyright 2013-2022 Erudika. https://erudika.com
  *
- * Licensed under the EULA - use is subject to license terms.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -9,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * For issues and patches go to: https://github.com/erudika/scoold-pro
+ * For issues and patches go to: https://github.com/erudika
  */
 package com.erudika.scoold;
 
+import com.erudika.para.core.App;
 import com.erudika.para.core.annotations.Documented;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Para;
-import static com.erudika.scoold.ScooldServer.IMAGESLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.STYLESLINK;
 import com.typesafe.config.ConfigObject;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -510,7 +513,7 @@ public class ScooldConfig extends Config {
 			type = Integer.class,
 			category = "Security",
 			description = "The minimum length of passwords.")
-	public int maxPasswordLength() {
+	public int minPasswordLength() {
 		return getConfigInt("min_password_length", Para.getConfig().minPasswordLength());
 	}
 
@@ -2374,7 +2377,7 @@ public class ScooldConfig extends Config {
 			category = "Frontend Assets",
 			description = "The URL of the logo in the nav bar.")
 	public String logoUrl() {
-		return getConfigParam("logo_url", IMAGESLINK + "/logo.svg");
+		return getConfigParam("logo_url", imagesLink() + "/logo.svg");
 	}
 
 	@Documented(position = 2360,
@@ -2383,7 +2386,7 @@ public class ScooldConfig extends Config {
 			category = "Frontend Assets",
 			description = "The URL of a smaller logo. Mainly used in transactional emails.")
 	public String logoSmallUrl() {
-		return getConfigParam("small_logo_url", serverUrl() + IMAGESLINK + "/logowhite.png");
+		return getConfigParam("small_logo_url", serverUrl() + imagesLink() + "/logowhite.png");
 	}
 
 	@Documented(position = 2370,
@@ -2401,7 +2404,7 @@ public class ScooldConfig extends Config {
 			description = "A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite"
 					+ " all existing CSS styles!*")
 	public String stylesheetUrl() {
-		return getConfigParam("stylesheet_url", STYLESLINK + "/style.css");
+		return getConfigParam("stylesheet_url", stylesLink() + "/style.css");
 	}
 
 	@Documented(position = 2390,
@@ -2441,7 +2444,7 @@ public class ScooldConfig extends Config {
 			category = "Frontend Assets",
 			description = "The URL of the favicon image.")
 	public String faviconUrl() {
-		return getConfigParam("favicon_url", IMAGESLINK + "/favicon.ico");
+		return getConfigParam("favicon_url", imagesLink() + "/favicon.ico");
 	}
 
 	@Documented(position = 2430,
@@ -2450,7 +2453,7 @@ public class ScooldConfig extends Config {
 			category = "Frontend Assets",
 			description = "The URL of the app icon image in the `<meta property='og:image'>` tag.")
 	public String metaAppIconUrl() {
-		return getConfigParam("meta_app_icon", IMAGESLINK + "/logowhite.png");
+		return getConfigParam("meta_app_icon", imagesLink() + "/logowhite.png");
 	}
 
 	/* **************************************************************************************************************
@@ -2483,7 +2486,7 @@ public class ScooldConfig extends Config {
 			tags = {"Pro"},
 			description = "Mattermost bot avatar URL.")
 	public String mattermostBotIconUrl() {
-		return getConfigParam("mattermost.bot_icon_url", serverUrl() + IMAGESLINK + "/logowhite.png");
+		return getConfigParam("mattermost.bot_icon_url", serverUrl() + imagesLink() + "/logowhite.png");
 	}
 
 	@Documented(position = 2470,
@@ -3085,6 +3088,34 @@ public class ScooldConfig extends Config {
 
 	public boolean hasValue(String key) {
 		return !StringUtils.isBlank(getConfigParam(key, ""));
+	}
+
+	private String getAppId() {
+		return App.identifier(paraAccessKey());
+	}
+
+	public String localeCookie() {
+		return getAppId() + "-locale";
+	}
+
+	public String spaceCookie() {
+		return getAppId() + "-space";
+	}
+
+	public String authCookie() {
+		return getAppId() + "-auth";
+	}
+
+	public String imagesLink() {
+		return (inProduction() ? cdnUrl() : serverContextPath()) + "/images";
+	}
+
+	public String scriptsLink() {
+		return (inProduction() ? cdnUrl() : serverContextPath()) + "/scripts";
+	}
+
+	public String stylesLink() {
+		return (inProduction() ? cdnUrl() : serverContextPath()) + "/styles";
 	}
 
 	public Map<String, Object> oauthSettings(String alias) {

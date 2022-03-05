@@ -26,9 +26,6 @@ import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
-import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_AUTHOR;
-import static com.erudika.scoold.ScooldServer.ANSWER_APPROVE_REWARD_VOTER;
-import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Post;
@@ -224,7 +221,7 @@ public class QuestionController {
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
 				showPost.setLastactivity(System.currentTimeMillis());
-				if (showPost.getAnswercount() >= MAX_REPLIES_PER_POST) {
+				if (showPost.getAnswercount() >= CONF.maxRepliesPerPost()) {
 					showPost.setCloserid("0");
 				}
 				// update without adding revisions
@@ -290,16 +287,16 @@ public class QuestionController {
 						// Answer approved award - UNDO
 						showPost.setAnswerid("");
 						if (!samePerson) {
-							author.removeRep(ANSWER_APPROVE_REWARD_AUTHOR);
-							authUser.removeRep(ANSWER_APPROVE_REWARD_VOTER);
+							author.removeRep(CONF.answerApprovedRewardAuthor());
+							authUser.removeRep(CONF.answerApprovedRewardVoter());
 							pc.updateAll(Arrays.asList(author, authUser));
 						}
 					} else {
 						// Answer approved award - GIVE
 						showPost.setAnswerid(answerid);
 						if (!samePerson) {
-							author.addRep(ANSWER_APPROVE_REWARD_AUTHOR);
-							authUser.addRep(ANSWER_APPROVE_REWARD_VOTER);
+							author.addRep(CONF.answerApprovedRewardAuthor());
+							authUser.addRep(CONF.answerApprovedRewardVoter());
 							utils.addBadgeOnce(authUser, Badge.NOOB, true);
 							pc.updateAll(Arrays.asList(author, authUser));
 						}

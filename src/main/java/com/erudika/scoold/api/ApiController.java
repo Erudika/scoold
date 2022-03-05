@@ -32,7 +32,6 @@ import com.erudika.para.core.utils.Utils;
 import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.AUTH_USER_ATTRIBUTE;
-import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.REST_ENTITY_ATTRIBUTE;
 import com.erudika.scoold.controllers.AdminController;
 import com.erudika.scoold.controllers.CommentController;
@@ -146,7 +145,7 @@ public class ApiController {
 		}
 		Map<String, Object> intro = new HashMap<>();
 		intro.put("message", CONF.appName() + " API, see docs at " + CONF.serverUrl()
-				+ CONTEXT_PATH + "/apidocs");
+				+ CONF.serverContextPath() + "/apidocs");
 		boolean healthy;
 		try {
 			healthy = pc != null && pc.getTimestamp() > 0;

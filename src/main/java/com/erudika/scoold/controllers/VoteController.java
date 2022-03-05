@@ -23,16 +23,6 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Votable;
 import com.erudika.para.core.Vote;
 import com.erudika.scoold.ScooldConfig;
-import static com.erudika.scoold.ScooldServer.ANSWER_VOTEUP_REWARD_AUTHOR;
-import static com.erudika.scoold.ScooldServer.CRITIC_IFHAS;
-import static com.erudika.scoold.ScooldServer.GOODANSWER_IFHAS;
-import static com.erudika.scoold.ScooldServer.GOODQUESTION_IFHAS;
-import static com.erudika.scoold.ScooldServer.POST_VOTEDOWN_PENALTY_AUTHOR;
-import static com.erudika.scoold.ScooldServer.POST_VOTEDOWN_PENALTY_VOTER;
-import static com.erudika.scoold.ScooldServer.QUESTION_VOTEUP_REWARD_AUTHOR;
-import static com.erudika.scoold.ScooldServer.SUPPORTER_IFHAS;
-import static com.erudika.scoold.ScooldServer.VOTER_IFHAS;
-import static com.erudika.scoold.ScooldServer.VOTEUP_REWARD_AUTHOR;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -128,9 +118,9 @@ public class VoteController {
 			logger.error(null, ex);
 			result = false;
 		}
-		utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= SUPPORTER_IFHAS);
-		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CRITIC_IFHAS);
-		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= VOTER_IFHAS);
+		utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= CONF.supporterIfHasRep());
+		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CONF.criticIfHasRep());
+		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= CONF.voterIfHasRep());
 
 		if (update) {
 			pc.updateAll(Arrays.asList(author, authUser));
@@ -158,9 +148,9 @@ public class VoteController {
 			} else {
 				authUser.incrementDownvotes();
 			}
-			author.removeRep(POST_VOTEDOWN_PENALTY_AUTHOR);
+			author.removeRep(CONF.postVotedownPenaltyAuthor());
 			//small penalty to voter
-			authUser.removeRep(POST_VOTEDOWN_PENALTY_VOTER);
+			authUser.removeRep(CONF.postVotedownPenaltyVoter());
 			return true;
 		}
 		return false;
@@ -171,16 +161,16 @@ public class VoteController {
 		if (votable instanceof Post) {
 			Post p = (Post) votable;
 			if (p.isReply()) {
-				utils.addBadge(author, GOODANSWER, votes >= GOODANSWER_IFHAS, false);
-				reward = ANSWER_VOTEUP_REWARD_AUTHOR;
+				utils.addBadge(author, GOODANSWER, votes >= CONF.goodAnswerIfHasRep(), false);
+				reward = CONF.answerVoteupRewardAuthor();
 			} else if (p.isQuestion()) {
-				utils.addBadge(author, GOODQUESTION, votes >= GOODQUESTION_IFHAS, false);
-				reward = QUESTION_VOTEUP_REWARD_AUTHOR;
+				utils.addBadge(author, GOODQUESTION, votes >= CONF.goodQuestionIfHasRep(), false);
+				reward = CONF.questionVoteupRewardAuthor();
 			} else {
-				reward = VOTEUP_REWARD_AUTHOR;
+				reward = CONF.voteupRewardAuthor();
 			}
 		} else {
-			reward = VOTEUP_REWARD_AUTHOR;
+			reward = CONF.voteupRewardAuthor();
 		}
 		return reward;
 	}

@@ -20,8 +20,6 @@ package com.erudika.scoold.utils;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
-import static com.erudika.scoold.ScooldServer.AUTH_COOKIE;
-import static com.erudika.scoold.ScooldServer.CONTEXT_PATH;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -168,7 +166,7 @@ public final class HttpUtils {
 		}
 		String expires = DateFormatUtils.format(System.currentTimeMillis() + (maxAge * 1000),
 				"EEE, dd-MMM-yyyy HH:mm:ss z", TimeZone.getTimeZone("GMT"));
-		String path = CONTEXT_PATH.isEmpty() ? "/" : CONTEXT_PATH;
+		String path = CONF.serverContextPath().isEmpty() ? "/" : CONF.serverContextPath();
 		StringBuilder sb = new StringBuilder();
 		sb.append(name).append("=").append(value).append(";");
 		sb.append("Path=").append(path).append(";");
@@ -260,7 +258,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(jwt)) {
 			return;
 		}
-		setRawCookie(AUTH_COOKIE, jwt, req, res, true, "Lax", CONF.sessionTimeoutSec());
+		setRawCookie(CONF.authCookie(), jwt, req, res, true, "Lax", CONF.sessionTimeoutSec());
 	}
 
 	/**

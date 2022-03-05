@@ -18,10 +18,9 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
-import static com.erudika.scoold.ScooldServer.COMMENTATOR_IFHAS;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
@@ -118,7 +117,7 @@ public class CommentController {
 
 				if (showComment.create() != null) {
 					long commentCount = authUser.getComments();
-					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= COMMENTATOR_IFHAS);
+					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= ScooldUtils.getConfig().commentatorIfHasRep());
 					authUser.setComments(commentCount + 1);
 					authUser.update();
 					model.addAttribute("showComment", showComment);

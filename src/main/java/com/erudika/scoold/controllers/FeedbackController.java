@@ -21,8 +21,9 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
-import static com.erudika.scoold.ScooldServer.MAX_REPLIES_PER_POST;
-
+import static com.erudika.scoold.ScooldServer.FEEDBACKLINK;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
@@ -36,7 +37,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,9 +44,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static com.erudika.scoold.ScooldServer.SIGNINLINK;
-import static com.erudika.scoold.ScooldServer.FEEDBACKLINK;
-import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 
 /**
  *
@@ -192,7 +189,7 @@ public class FeedbackController {
 				answer.create();
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
-				if (showPost.getAnswercount() >= MAX_REPLIES_PER_POST) {
+				if (showPost.getAnswercount() >= ScooldUtils.getConfig().maxRepliesPerPost()) {
 					showPost.setCloserid("0");
 				}
 				// update without adding revisions

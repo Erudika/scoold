@@ -26,6 +26,7 @@ import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,6 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class Post extends Sysprop {
 
 	private static final long serialVersionUID = 1L;
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	public static final String DEFAULT_SPACE = "scooldspace:default";
 	public static final String ALL_MY_SPACES = "scooldspace:*";
@@ -358,7 +360,7 @@ public abstract class Post extends Sysprop {
 		});
 		client().updateAll(updateUs);
 		client().deleteAll(deleteUs);
-		int tagsLimit = Math.min(ScooldServer.MAX_TAGS_PER_POST, 100);
+		int tagsLimit = Math.min(CONF.maxTagsPerPost(), 100);
 		setTags(newTagz.values().stream().limit(tagsLimit).map(t -> t.getTag()).collect(Collectors.toList()));
 	}
 
@@ -487,7 +489,7 @@ public abstract class Post extends Sysprop {
 		Post p = this;
 		String ptitle = Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-");
 		String pid = (noid ? "" : "/" + p.getId() + "/" + ptitle);
-		String ctx = ScooldServer.CONTEXT_PATH;
+		String ctx = CONF.serverContextPath();
 		if (p.isQuestion()) {
 			return ctx + (plural ? ScooldServer.QUESTIONSLINK : ScooldServer.QUESTIONLINK + pid);
 		} else if (p.isFeedback()) {
