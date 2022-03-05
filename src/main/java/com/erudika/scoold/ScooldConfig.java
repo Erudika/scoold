@@ -3076,6 +3076,14 @@ public class ScooldConfig extends Config {
 		return getConfigParam("rewrite_inbound_links_with_fqdn", "");
 	}
 
+	@Documented(position = 3010,
+			identifier = "cluster_nodes",
+			category = "Miscellaneous",
+			description = "Total number of nodes present in the cluster when Scoold is deployed behind a reverse proxy.")
+	public int clusterNodes() {
+		return getConfigInt("cluster_nodes", 1);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

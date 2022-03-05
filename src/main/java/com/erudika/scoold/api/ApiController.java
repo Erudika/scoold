@@ -922,6 +922,7 @@ public class ApiController {
 		ConfigFactory.invalidateCaches();
 		CONF.store();
 		pc.setAppSettings(CONF.getParaAppSettings());
+		triggerConfigUpdateEvent(CONF.getConfigMap());
 		return config(req, res);
 	}
 
@@ -945,6 +946,7 @@ public class ApiController {
 			if (CONF.getParaAppSettings().containsKey(key)) {
 				pc.addAppSetting(key, value);
 			}
+			triggerConfigUpdateEvent(Collections.singletonMap(CONF.getConfigRootPrefix() + "." + key, value));
 		}
 	}
 
@@ -985,6 +987,28 @@ public class ApiController {
 
 	private List<String> readSpaces(String... spaces) {
 		return readSpaces(Arrays.asList(spaces));
+	}
+
+	private void triggerConfigUpdateEvent(Map<String, Object> payload) {
+		int nodes = CONF.clusterNodes();
+		if (nodes > 1) {
+			Para.asyncExecute(() -> {
+				Webhook trigger = new Webhook();
+				trigger.setId(Utils.getNewId());
+				trigger.setUpdate(true);
+				trigger.setUpdateAll(true);
+				trigger.setSecret("{{secretKey}}");
+				trigger.setActive(true);
+				trigger.setUrlEncoded(false);
+				trigger.setTargetUrl(CONF.serverUrl() + "/webhooks/config");
+				trigger.setTriggeredEvent("config.update");
+				trigger.setCustomPayload(payload);
+				// the goal is to saturate the load balancer and hopefully the payload reaches all nodes behind it
+				trigger.setRepeatedDeliveryAttempts(nodes * 2);
+				Para.getCache().put("lastConfigUpdate", trigger.getId());
+				pc.create(trigger);
+			});
+		}
 	}
 
 	@ExceptionHandler({Exception.class})
