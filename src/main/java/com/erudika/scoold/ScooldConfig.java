@@ -51,7 +51,8 @@ public class ScooldConfig extends Config {
 
 	@Override
 	public Set<String> getKeysExcludedFromRendering() {
-		return Set.of("scoold", "security.ignored", "security.protected.admin");
+		return Set.of("scoold", "security.ignored", "security.protected.admin",
+				"autoinit.root_app_secret_key", "autoinit.para_config_file");
 	}
 
 	@Override
@@ -2394,7 +2395,7 @@ public class ScooldConfig extends Config {
 			category = "miscellaneous",
 			description = "A CDN URL where all static assets might be stored.")
 	public String cdnUrl() {
-		return getConfigParam("cdn_url", serverContextPath());
+		return StringUtils.stripEnd(getConfigParam("cdn_url", serverContextPath()), "/");
 	}
 
 	@Documented(position = 2380,
@@ -2416,10 +2417,11 @@ public class ScooldConfig extends Config {
 	}
 
 	@Documented(position = 2400,
-			identifier = "external_scripts.{script_id}",
+			identifier = "external_scripts._id_",
 			type = Map.class,
 			category = "Frontend Assets",
-			description = "A comma-separated list of external JS scripts. These will be loaded after the main JS script.")
+			description = "A map of external JS scripts. These will be loaded after the main JS script. For example: "
+					+ "`scoold.external_scripts.script1 = \"alert('Hi')\"`")
 	public Map<String, Object> externalScripts() {
 		if (getConfig().hasPath("external_scripts")) {
 			ConfigObject extScripts = getConfig().getObject("external_scripts");
@@ -3078,10 +3080,30 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 3010,
 			identifier = "cluster_nodes",
+			value = "1",
+			type = Integer.class,
 			category = "Miscellaneous",
 			description = "Total number of nodes present in the cluster when Scoold is deployed behind a reverse proxy.")
 	public int clusterNodes() {
 		return getConfigInt("cluster_nodes", 1);
+	}
+
+	@Documented(position = 3020,
+			identifier = "autoinit.root_app_secret_key",
+			category = "Miscellaneous",
+			description = "If configured, Scoold will try to automatically initialize itself with Para and create its "
+					+ "own Para app, called `app:scoold`. The keys for that new app will be saved in the configuration file.")
+	public String autoInitWithRootAppSecretKey() {
+		return getConfigParam("autoinit.root_app_secret_key", "");
+	}
+
+	@Documented(position = 3030,
+			identifier = "autoinit.para_config_file",
+			category = "Miscellaneous",
+			description = "Does the same as `scoold.autoinit.root_app_secret_key` but tries to read the secret key for"
+					+ " the root Para app from the Para configuration file, wherever that may be.")
+	public String autoInitWithParaConfigFile() {
+		return getConfigParam("autoinit.para_config_file", "");
 	}
 
 	/* **********************************************************************************************************/

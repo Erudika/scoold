@@ -26,7 +26,6 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.api.ApiController.logger;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.typesafe.config.ConfigFactory;
 import java.util.Collections;
 import java.util.Map;
 import javax.inject.Inject;
@@ -69,7 +68,6 @@ public class WebhooksController {
 				configMap.entrySet().forEach((entry) -> {
 					System.setProperty(entry.getKey(), entry.getValue().toString());
 				});
-				ConfigFactory.invalidateCaches();
 				CONF.store();
 			}
 		}

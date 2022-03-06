@@ -54,7 +54,6 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
-import com.typesafe.config.ConfigFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -919,7 +918,6 @@ public class ApiController {
 		for (Map.Entry<String, Object> entry : entity.entrySet()) {
 			System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
 		}
-		ConfigFactory.invalidateCaches();
 		CONF.store();
 		pc.setAppSettings(CONF.getParaAppSettings());
 		triggerConfigUpdateEvent(CONF.getConfigMap());
@@ -928,8 +926,11 @@ public class ApiController {
 
 	@GetMapping("/config/get/{key}")
 	public Map<String, Object> configGet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
-		return Collections.singletonMap("value", CONF.getConfigParam(key, null,
-				CONF.getConfig().getValue(key).valueType()));
+		Object value = null;
+		try {
+			value = CONF.getConfigValue(key, null);
+		} catch (Exception e) {	}
+		return Collections.singletonMap("value", value);
 	}
 
 	@PutMapping("/config/set/{key}")
@@ -941,7 +942,6 @@ public class ApiController {
 		Object value = entity.getOrDefault("value", null);
 		if (value != null && !StringUtils.isBlank(value.toString())) {
 			System.setProperty(CONF.getConfigRootPrefix() + "." + key, value.toString());
-			ConfigFactory.invalidateCaches();
 			CONF.store();
 			if (CONF.getParaAppSettings().containsKey(key)) {
 				pc.addAppSetting(key, value);

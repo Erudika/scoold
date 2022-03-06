@@ -22,12 +22,16 @@ import com.erudika.para.core.App;
 import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Para;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.utils.ScooldEmailer;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
+import com.typesafe.config.ConfigFactory;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
@@ -126,6 +130,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("spring.mail.properties.mail.smtp.starttls.enable", Boolean.toString(CONF.mailTLSEnabled()));
 		System.setProperty("spring.mail.properties.mail.smtp.ssl.enable", Boolean.toString(CONF.mailSSLEnabled()));
 		System.setProperty("spring.mail.properties.mail.debug", Boolean.toString(CONF.mailDebugEnabled()));
+		tryAutoInitParaApp();
 	}
 
 	@Bean
@@ -247,4 +252,32 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 	}
 
+	private static void tryAutoInitParaApp() {
+		String rootSecret = null;
+		if (!CONF.autoInitWithRootAppSecretKey().isBlank()) {
+			rootSecret = CONF.autoInitWithRootAppSecretKey().trim();
+		} else if (!CONF.autoInitWithParaConfigFile().isBlank()) {
+			com.typesafe.config.Config paraConfig = ConfigFactory.parseFile(new File(CONF.autoInitWithParaConfigFile()));
+			if (paraConfig.hasPath("para.root_secret_key")) {
+				rootSecret = paraConfig.getString("para.root_secret_key");
+			}
+		}
+		if (rootSecret != null) {
+			ParaClient pcRoot = new ParaClient(App.id(Config.PARA), rootSecret);
+			pcRoot.setEndpoint(CONF.paraEndpoint());
+			String childApp = CONF.paraAccessKey();
+			boolean connectionOk = pcRoot.getTimestamp() > 0;
+			if (connectionOk && (pcRoot.getCount("app") == 1 || pcRoot.read(childApp) == null)) {
+				Map<String, Object> credentials = pcRoot.invokeGet("_setup/" +
+						Utils.urlEncode(App.identifier(childApp)), null, Map.class);
+				if (credentials.containsKey("accessKey") && credentials.containsKey("secretKey")) {
+					System.setProperty("scoold.para_access_key", (String) credentials.get("accessKey"));
+					System.setProperty("scoold.para_secret_key", (String) credentials.get("secretKey"));
+					CONF.store();
+				}
+			} else if (!connectionOk) {
+				logger.error("Failed to auto-initialize {} - try updating your app's credentials manually.", childApp);
+			}
+		}
+	}
 }
