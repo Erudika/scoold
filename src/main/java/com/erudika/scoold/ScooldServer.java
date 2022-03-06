@@ -30,6 +30,8 @@ import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
 import com.typesafe.config.ConfigFactory;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -130,7 +132,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("spring.mail.properties.mail.smtp.starttls.enable", Boolean.toString(CONF.mailTLSEnabled()));
 		System.setProperty("spring.mail.properties.mail.smtp.ssl.enable", Boolean.toString(CONF.mailSSLEnabled()));
 		System.setProperty("spring.mail.properties.mail.debug", Boolean.toString(CONF.mailDebugEnabled()));
-		tryAutoInitParaApp();
 	}
 
 	@Bean
@@ -144,13 +145,13 @@ public class ScooldServer extends SpringBootServletInitializer {
 
 	@Bean
 	public ParaClient paraClientBean() {
-		logger.info("Listening on port {}...", CONF.serverPort());
+		tryAutoInitParaApp();
+		logger.info("Scoold server is listening on {}", CONF.serverUrl());
 		String accessKey = CONF.paraAccessKey();
 		ParaClient pc = new ParaClient(accessKey, CONF.paraSecretKey());
 		pc.setEndpoint(CONF.paraEndpoint());
 		pc.setChunkSize(CONF.batchRequestSize()); // unlimited batch size
 
-		logger.info("Initialized ParaClient with endpoint {} and access key '{}'.", pc.getEndpoint(), accessKey);
 		printRootAppConnectionNotice();
 		printGoogleMigrationNotice();
 		printParaConfigChangeNotice();
@@ -160,7 +161,11 @@ public class ScooldServer extends SpringBootServletInitializer {
 			// update the Scoold App settings through the Para App settings API.
 			pc.setAppSettings(CONF.getParaAppSettings());
 			pc.throwExceptionOnHTTPError(false);
-			return pc.getTimestamp() > 0; // finally, check if app actually exists
+			boolean connected = pc.getTimestamp() > 0; // finally, check if app actually exists
+			if (connected) {
+				logger.info("Connected to Para on {} with credentials for '{}'.", pc.getEndpoint(), accessKey);
+			}
+			return connected;
 		});
 		return pc;
 	}
@@ -252,8 +257,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 	}
 
-	private static void tryAutoInitParaApp() {
+	private void tryAutoInitParaApp() {
 		String rootSecret = null;
+		String confFile = System.getProperty("config.file", "application.conf");
 		if (!CONF.autoInitWithRootAppSecretKey().isBlank()) {
 			rootSecret = CONF.autoInitWithRootAppSecretKey().trim();
 		} else if (!CONF.autoInitWithParaConfigFile().isBlank()) {
@@ -271,13 +277,20 @@ public class ScooldServer extends SpringBootServletInitializer {
 				Map<String, Object> credentials = pcRoot.invokeGet("_setup/" +
 						Utils.urlEncode(App.identifier(childApp)), null, Map.class);
 				if (credentials.containsKey("accessKey") && credentials.containsKey("secretKey")) {
-					System.setProperty("scoold.para_access_key", (String) credentials.get("accessKey"));
+					String acceessKey = (String) credentials.get("accessKey");
+					System.setProperty("scoold.para_access_key", acceessKey);
 					System.setProperty("scoold.para_secret_key", (String) credentials.get("secretKey"));
+					logger.info("Auto-init succeeded - created new app '{}' and saved keys to {}.", acceessKey, confFile);
 					CONF.store();
 				}
 			} else if (!connectionOk) {
 				logger.error("Failed to auto-initialize {} - try updating your app's credentials manually.", childApp);
 			}
+		}
+		if (!Files.exists(Paths.get(confFile).toAbsolutePath())) {
+			System.setProperty("scoold.app_name", CONF.appName());
+			logger.info("No configuration file found - configuration saved in {}.", confFile);
+			CONF.store();
 		}
 	}
 }
