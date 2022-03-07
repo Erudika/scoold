@@ -423,31 +423,6 @@
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
 
-		#if ($request.getServletPath() == $signinlink)
-			#if($FB_APP_ID && !$FB_APP_ID.isEmpty())
-			<script nonce="$cspNonce">
-				(function(d, s, id) {
-					var js, fjs = d.getElementsByTagName(s)[0];
-					if (d.getElementById(id)) return;
-					js = d.createElement(s); js.id = id;
-					js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0&appId=$!FB_APP_ID";
-					fjs.parentNode.insertBefore(js, fjs);
-				}(document, 'script', 'facebook-jssdk'));
-				$('#fb-login-btn').on('click', function () {
-					var that = $(this);
-					FB.login(function(response) {
-						if (response.authResponse) {
-							that.closest("form").find("input[type=hidden]").val(response.authResponse.accessToken).next().click();
-						} else {
-							window.location = "${CONTEXT_PATH}/signin?code=3&error=true";
-						}
-					}, {scope: 'public_profile,email'});
-					return false;
-				});
-			</script>
-			#end
-		#end
-
 		#if ($captchakey && !$captchakey.isBlank())
 		<script nonce="$cspNonce" src="https://www.google.com/recaptcha/api.js"></script>
 		<script nonce="$cspNonce">function onSubmit() {document.getElementById("captcha-form").submit();}</script>

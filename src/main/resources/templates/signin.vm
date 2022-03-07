@@ -204,19 +204,15 @@
 						<div class="row">
 							<div class="col s12 m12 l8 offset-l2 center">
 								#if($fbLoginEnabled)
-								<div class="mvl pvs">
-									<form action="${CONTEXT_PATH}/signin?provider=facebook" method="POST">
-										<input type="hidden" name="access_token" value="">
-										<button type="submit" class="hide">submit</button>
-										<a id="fb-login-btn" href="#" class="btn-large indigo lighten-1 truncate">
+									<div class="mvl pvs">
+										<a id="fb-login-btn" href="$!scooldUtils.facebookLoginURL" class="btn-large indigo lighten-1 truncate">
 											<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
 										</a>
-									</form>
-								</div>
+									</div>
 								#end
 
 								#if($gpLoginEnabled)
-								<div class="mvl pvs">
+									<div class="mvl pvs">
 										<a id="gp-login-btn" href="$!scooldUtils.googleLoginURL" class="btn-large white grey-text text-darken-1 truncate pls prl">
 											<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
 											$!lang.get("signin.google")

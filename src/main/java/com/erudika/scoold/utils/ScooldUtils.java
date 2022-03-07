@@ -1869,6 +1869,12 @@ public final class ScooldUtils {
 		return Utils.generateSecurityToken(16);
 	}
 
+	public String getFacebookLoginURL() {
+		return "https://www.facebook.com/dialog/oauth?client_id=" + CONF.facebookAppId() +
+				"&response_type=code&scope=email&redirect_uri=" + getParaEndpoint() +
+				"/facebook_auth&state=" + getParaAppId();
+	}
+
 	public String getGoogleLoginURL() {
 		return "https://accounts.google.com/o/oauth2/v2/auth?" +
 				"client_id=" + CONF.googleAppId() + "&response_type=code&scope=openid%20profile%20email&redirect_uri="
@@ -1940,6 +1946,9 @@ public final class ScooldUtils {
 	}
 
 	public String getFirstConfiguredLoginURL() {
+		if (!CONF.facebookAppId().isEmpty()) {
+			return getFacebookLoginURL();
+		}
 		if (!CONF.googleAppId().isEmpty()) {
 			return getGoogleLoginURL();
 		}
