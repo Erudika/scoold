@@ -994,18 +994,18 @@ public class ApiController {
 		if (nodes > 1) {
 			Para.asyncExecute(() -> {
 				Webhook trigger = new Webhook();
-				trigger.setId(Utils.getNewId());
+				trigger.setTimestamp(Utils.timestamp());
 				trigger.setUpdate(true);
 				trigger.setUpdateAll(true);
 				trigger.setSecret("{{secretKey}}");
 				trigger.setActive(true);
 				trigger.setUrlEncoded(false);
-				trigger.setTargetUrl(CONF.serverUrl() + "/webhooks/config");
 				trigger.setTriggeredEvent("config.update");
 				trigger.setCustomPayload(payload);
+				trigger.setTargetUrl(CONF.serverUrl() + "/webhooks/config");
 				// the goal is to saturate the load balancer and hopefully the payload reaches all nodes behind it
 				trigger.setRepeatedDeliveryAttempts(nodes * 2);
-				Para.getCache().put("lastConfigUpdate", trigger.getId());
+				WebhooksController.setLastConfigUpdate(trigger.getTimestamp().toString());
 				pc.create(trigger);
 			});
 		}

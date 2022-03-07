@@ -51,8 +51,7 @@ public class ScooldConfig extends Config {
 
 	@Override
 	public Set<String> getKeysExcludedFromRendering() {
-		return Set.of("scoold", "security.ignored", "security.protected.admin",
-				"autoinit.root_app_secret_key", "autoinit.para_config_file");
+		return Set.of("scoold", "security.ignored", "security.protected.admin");
 	}
 
 	@Override

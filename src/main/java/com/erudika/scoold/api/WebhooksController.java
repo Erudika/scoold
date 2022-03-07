@@ -19,7 +19,6 @@ package com.erudika.scoold.api;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Config;
-import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
@@ -47,6 +46,7 @@ public class WebhooksController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
+	private static String lastConfigUpdate = null;
 
 	@Inject
 	public WebhooksController(ScooldUtils utils) {
@@ -62,13 +62,14 @@ public class WebhooksController {
 			String payload = (String) entity.get("payload");
 			String signature = (String) entity.get("signature");
 			String id = (String) entity.get(Config._ID);
-			boolean alreadyUpdated = id.equals(Para.getCache().get("lastConfigUpdate"));
+			boolean alreadyUpdated = id.equals(lastConfigUpdate);
 			if (StringUtils.equals(signature, Utils.hmacSHA256(payload, CONF.paraSecretKey())) && !alreadyUpdated) {
 				Map<String, Object> configMap = ParaObjectUtils.getJsonReader(Map.class).readValue(payload);
 				configMap.entrySet().forEach((entry) -> {
 					System.setProperty(entry.getKey(), entry.getValue().toString());
 				});
 				CONF.store();
+				lastConfigUpdate = id;
 			}
 		}
 	}
@@ -80,5 +81,9 @@ public class WebhooksController {
 			logger.error(null, ex);
 		}
 		return Collections.emptyMap();
+	}
+
+	public static void setLastConfigUpdate(String id) {
+		lastConfigUpdate = id;
 	}
 }
