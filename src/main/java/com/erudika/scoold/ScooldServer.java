@@ -154,6 +154,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 
 		printRootAppConnectionNotice();
 		printGoogleMigrationNotice();
+		printFacebookMigrationNotice();
 		printParaConfigChangeNotice();
 
 		ScooldUtils.tryConnectToPara(() -> {
@@ -227,9 +228,20 @@ public class ScooldServer extends SpringBootServletInitializer {
 
 	private void printGoogleMigrationNotice() {
 		if (CONF.hasValue("google_client_id") && StringUtils.isBlank(CONF.googleAppId())) {
-			logger.warn("Please migrate to the standard OAuth2 authentication method for signin in with Google. "
-					+ "Change 'para.google_client_id' to 'para.gp_app_id' and also add the secret key for your OAuth2 "
-					+ "app as 'para.gp_secret' in your configuration. https://console.cloud.google.com/apis/credentials");
+			logger.warn("Please migrate to the standard OAuth2 method for authenticating with Google. "
+					+ "Change '{}.google_client_id' to '{}.gp_app_id' and also add the secret key for your OAuth2 "
+					+ "app as '{}.gp_secret' in your configuration. https://console.cloud.google.com/apis/credentials",
+					CONF.getConfigRootPrefix(), CONF.getConfigRootPrefix(), CONF.getConfigRootPrefix());
+		}
+	}
+
+	private void printFacebookMigrationNotice() {
+		if (!StringUtils.isBlank(CONF.facebookAppId()) && StringUtils.isBlank(CONF.facebookSecret())) {
+			logger.warn("Please migrate to the standard OAuth2 method for authenticating with Facebook. "
+					+ "Secret key is missing - add the secret key for your OAuth2 "
+					+ "app as '{}.fb_secret' in your configuration. "
+					+ "https://developers.facebook.com/apps/896508060362903/settings/basic/",
+					CONF.getConfigRootPrefix(), CONF.facebookAppId());
 		}
 	}
 
