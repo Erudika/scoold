@@ -76,9 +76,10 @@
 		<hr>
 		<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
 		#if ($itemcount.count == 0)
-			<div class="card-panel hugeText center-align grey-text">
+			<div class="largeText center-align grey-text">
 				<div class="em5v">
-					$!lang.get("search.notfound")
+					<div class="hugeText mvl"><i class="fa fa-check-circle-o"></i></div>
+					$!lang.get("about.reports.2")
 				</div>
 			</div>
 		#else
