@@ -130,8 +130,7 @@ If you want to login with a social account, first you *need* to create a develop
 This isn't necessary if you're planning to login with LDAP, SAML or with email and password.
 Save the obtained API keys in `application.conf`, as shown below.
 
-> **Important:** Authorized redirect URLs for Facebook should look like this: `https://{your_scoold_host}`,
-`https://{your_scoold_host}/signin`. For all the other identity providers you must whitelist the Para host with the
+> For all identity providers you must whitelist the Para host with the
 appropriate authentication endpoint. For example, for GitHub, the redirect URL would be: `https://paraio.com/github_auth`,
 for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/docs/#029-passwordless).
 
@@ -1096,14 +1095,12 @@ scoold.emails.welcome_text3 = "Best, <br>The {0} team<br><br>"
 
 ## Social login
 
-For authenticating with Facebook or Google, you only need your Google client id
-(e.g. `123-abcd.apps.googleusercontent.com`), or Facebook app id (only digits).
-For all the other providers, GitHub, LinkedIn, Twitter, Slack, Amazon and Microsoft, you need to set both the app id
-and secret key.
+For all social identity providers, you need to obtain both the OAuth2 client ID (app `id`) and secret key.
 **Note:** if the credentials are blank, the sign in button is hidden for that provider.
 ```ini
 # Facebook
 scoold.fb_app_id = ""
+scoold.fb_secret = ""
 # Google
 scoold.gp_app_id = ""
 scoold.gp_secret = ""
@@ -1135,8 +1132,8 @@ This is required for authentication requests to be redirected back to the origin
 
 **Important:** You must to whitelist the [Para endpoints](https://paraio.org/docs/#031-github) in the admin consoles of
 each authentication provider. For example, for GitHub you need to whitelist `https://parahost.com/github_auth` as a
-callback URL (redirect URL). Same thing applies for the other providers, **except Facebook**.
-For these two providers you need to whitelist these two URLs, containing the public address of Scoold:
+callback URL (redirect URL). Same thing applies for the other providers. For these two providers you need to whitelist
+these two URLs, containing the public address of Scoold:
 ```
 https://myscoold.com
 https://myscoold.com/signin
@@ -1603,7 +1600,7 @@ This feature is disabled by default:
 ```ini
 scoold.redirect_signin_to_idp = false
 ```
-This works only for social login identity providers (except Facebook) and SAML. It won't work for LDAP or
+This works only for social login identity providers and SAML. It won't work for LDAP or
 basic password authentication. When enabled and combined with `scoold.is_default_space_public = false`,
 unauthenticated users will be sent directly to the IDP without seeing the "Sign in" page or any other page on Scoold.
 
