@@ -942,12 +942,14 @@ public class ApiController {
 		Object value = entity.getOrDefault("value", null);
 		if (value != null && !StringUtils.isBlank(value.toString())) {
 			System.setProperty(CONF.getConfigRootPrefix() + "." + key, value.toString());
-			CONF.store();
-			if (CONF.getParaAppSettings().containsKey(key)) {
-				pc.addAppSetting(key, value);
-			}
-			triggerConfigUpdateEvent(Collections.singletonMap(CONF.getConfigRootPrefix() + "." + key, value));
+		} else {
+			System.clearProperty(CONF.getConfigRootPrefix() + "." + key);
 		}
+		CONF.store();
+		if (CONF.getParaAppSettings().containsKey(key)) {
+			pc.addAppSetting(key, value);
+		}
+		triggerConfigUpdateEvent(Collections.singletonMap(CONF.getConfigRootPrefix() + "." + key, value));
 	}
 
 	@GetMapping("/config/options")
