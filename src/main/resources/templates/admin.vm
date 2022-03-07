@@ -303,6 +303,11 @@
 					<h5>Para app: <tt class="grey-text text-darken-2">$!paraapp</tt></h5>
 					<h5>Para version: <tt class="grey-text text-darken-2">$!version</tt></h5>
 					<h5>Para endpoint: <tt class="grey-text text-darken-2">$!endpoint</tt></h5>
+					<div>
+						<form method="post" action="$adminlink/reindex">
+							<input type="submit" class="btn btn-flat waves-effect waves-light orange rusure" value="Rebuild search index">
+						</form>
+					</div>
 				</div>
 			</li>
 			<li>

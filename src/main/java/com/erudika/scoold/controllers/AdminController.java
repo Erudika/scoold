@@ -478,6 +478,15 @@ public class AdminController {
 		return ResponseEntity.status(403).build();
 	}
 
+	@PostMapping("/reindex")
+	public String reindex(HttpServletRequest req, Model model) {
+		if (utils.isAdmin(utils.getAuthUser(req))) {
+			Para.asyncExecute(() -> pc.rebuildIndex());
+			logger.info("Started rebuilding the search index for '{}'...", CONF.paraAccessKey());
+		}
+		return "redirect:" + ADMINLINK;
+	}
+
 	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry,
 			ObjectReader mapReader, Map<String, String> comments2authors) throws IOException, ParseException {
 		if (zipEntry.getName().endsWith(".json")) {
