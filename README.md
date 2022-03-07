@@ -524,7 +524,7 @@ scoold.admins = "admin@domain.com"
 |  ---                       | ---           | ---  |
 |`scoold.stylesheet_url`<br>A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite all existing CSS styles!* | `/styles/style.css` | `String`|
 |`scoold.external_styles`<br>A comma-separated list of external CSS files. These will be loaded *after* the main stylesheet. | ` ` | `String`|
-|`scoold.external_scripts.{script_id}`<br>A comma-separated list of external JS scripts. These will be loaded after the main JS script. | ` ` | `Map`|
+|`scoold.external_scripts._id_`<br>A map of external JS scripts. These will be loaded after the main JS script. For example: `scoold.external_scripts.script1 = "alert('Hi')"` | ` ` | `Map`|
 |`scoold.inline_css`<br>Some short, custom CSS snippet to embed inside the `<head>` element. | ` ` | `String`|
 |`scoold.favicon_url`<br>The URL of the favicon image. | `/images/favicon.ico` | `String`|
 |`scoold.meta_app_icon`<br>The URL of the app icon image in the `<meta property='og:image'>` tag. | `/images/logowhite.png` | `String`|
@@ -620,6 +620,9 @@ scoold.admins = "admin@domain.com"
 |`scoold.connection_retries_max`<br>Maximum number of connection retries to Para. | `10` | `Integer`|
 |`scoold.connection_retry_interval_sec`<br>Para connection retry interval, in seconds. | `10` | `Integer`|
 |`scoold.rewrite_inbound_links_with_fqdn`<br>If set, links to Scoold in emails will be replaced with a public-facing FQDN. | ` ` | `String`|
+|`scoold.cluster_nodes`<br>Total number of nodes present in the cluster when Scoold is deployed behind a reverse proxy. | `1` | `Integer`|
+|`scoold.autoinit.root_app_secret_key`<br>If configured, Scoold will try to automatically initialize itself with Para and create its own Para app, called `app:scoold`. The keys for that new app will be saved in the configuration file. | ` ` | `String`|
+|`scoold.autoinit.para_config_file`<br>Does the same as `scoold.autoinit.root_app_secret_key` but tries to read the secret key for the root Para app from the Para configuration file, wherever that may be. | ` ` | `String`|
 
 </details>
 
@@ -1822,6 +1825,13 @@ scoold.allowed_upload_formats = "yml,py:text/plain,json:application/json"
 ```
 If the MIME type is not specified in the format `extension:mime_type`, the default `text/plain` is used when serving these
 files.
+
+By default, the size of uploaded files is unrestricted. To limit the maximum size of uploads, set the following Spring
+Boot system properties:
+```ini
+spring.servlet.multipart.max-file-size = "2MB"
+spring.servlet.multipart.max-request-size = "10MB"
+```
 
 Scoold Pro also allows users to capture and upload video and audio from their input devices (mic/webcam).
 This functionality is enabled by default:
