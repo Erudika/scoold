@@ -109,11 +109,10 @@ Here's an overview of the architecture:
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
 ```ini
-scoold.env = "development"
+scoold.env = "production"
 scoold.app_name = "Scoold"
 scoold.para_access_key = "app:scoold"
-scoold.para_secret_key = "scoold_secret_key_from_para"
-# change to http://localhost:8080 if Para is running locally
+scoold.para_secret_key = "_secret_key_from_para_"
 scoold.para_endpoint = "https://paraio.com"
 # add your email here
 scoold.admins = "my@email.com"
@@ -121,8 +120,8 @@ scoold.admins = "my@email.com"
 scoold.is_default_space_public = false
 ```
 3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
-4. Open `http://localhost:8000/signin/register` in your browser
-5. Register a new account with your email address (same as above - my@email.com)
+4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
+register a new account with same email you put in the configuration
 
 If you want to login with a social account, first you *need* to create a developer app with
 [Facebook](https://developers.facebook.com),
@@ -138,35 +137,24 @@ for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/doc
 
 **Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
-1. [run Para locally on port 8080](https://paraio.org/docs/#001-intro) and initialize it with `GET localhost:8080/v1/_setup`
-2. Save the access keys for the root Para app somewhere safe, you'll need them to configure Para CLI tool below
-3. Create a new directory for Scoold containing a file called `application.conf` and paste in the example configuration below.
-4. Create a **new Para app** called `scoold` using [Para CLI](https://github.com/Erudika/para-cli) tool:
-```sh
-# You will need to have Node.js and NPM installed beforehand.
-$ npm install -g para-cli
-# run setup and enter the keys for the root app and endpoint 'http://localhost:8080'
-$ para-cli setup
-$ para-cli ping
-$ para-cli new-app "scoold" --name "Scoold"
+1. [Follow this guide to run the Para backend server locally on port 8080](https://paraio.org/docs/#001-intro)
+2. Create a separate folder `scoold` and inside, a new configuration file named `scoold-application.conf` (see example above)
+3. Start Scoold with the following command, pointing it to the location of the Para configuration file:
 ```
-5. Save the keys inside Scoold's `application.conf`. The contents of this file should look like this:
-```ini
-scoold.env = "development"
-scoold.app_name = "Scoold"
-scoold.para_access_key = "app:scoold"
-scoold.para_secret_key = "scoold_secret_key"
-scoold.para_endpoint = "http://localhost:8080"
-scoold.admins = "my@email.com"
+java -jar -Dconfig.file=./scoold-application.conf \
+  -Dscoold.autoinit.para_config_file=../para-application.conf scoold-*.jar`
 ```
-6. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar` and keep an eye on the log for any error messages
-7. Open `http://localhost:8000` in your browser and register an account with the same email you put in the configuration
+4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
+register a new account with same email you put in the configuration
 
+Optionally, you can also install the [Para CLI](https://github.com/Erudika/para-cli) tool for browsing and managing
+data in your Scoold app.
 
-> **Important: Do not use the same `application.conf` file for both Para and Scoold!**
-Keep the two applications in separate directories, each with its own configuration file.
-All settings shown below are meant to be kept in the Scoold config file.
-If you want to sign up with an email and password, SMTP settings must be configured before deploying Scoold to production.
+**Important:**
+- Do not use the same `application.conf` file for both Para and Scoold!
+- Run Para and Scoold in separate directories, each with its own configuration file.
+- All settings shown here are meant to be kept inside the Scoold configuration file.
+- SMTP settings must be configured before deploying Scoold to production.
 
 [Read the Para docs](https://paraio.org/docs) for details on how to run and configure your Scoold backend.
 
@@ -186,8 +174,12 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 ## Configuration
 
-The most important settings are `scoold.para_endpoint` - the URL of the Para server, as well as,
-`scoold.para_access_key` and `scoold.para_secret_key`. Connection to a Para server *is required* for Scoold to run.
+**Scoold requires a persistent and direct connection to a Para server to function properly.**
+
+The most important configuration properties are:
+- `scoold.para_endpoint` - the URL of the Para server
+- `scoold.para_access_key` - the application identifier of your Para app
+- `scoold.para_secret_key` - the secret key for your Para app
 
 Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
@@ -196,8 +188,8 @@ Copy the Scoold example configuration below to your **`application.conf`** and e
 scoold.app_name = "Scoold"
 # the port for Scoold
 scoold.port = 8000
-# change this to "production" later
-scoold.env = "development"
+# environment - "production" or "development"
+scoold.env = "production"
 # the public-facing URL where Scoold is hosted
 scoold.host_url = "http://localhost:8000"
 # the URL of Para - can also be "https://paraio.com"
@@ -637,8 +629,29 @@ scoold.connection_retry_interval_sec = 10
 ## Docker
 
 Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub. **It's highly recommended that you
-pull only release images like `:1.42.0` or `:latest_stable` because the `:latest` tag can be broken or unstable.**
+pull only release images like `:1.49.0` or `:latest_stable` because the `:latest` tag can be broken or unstable.**
 The `:latest_stable` tag always points to the latest release version.
+
+The *easiest way* to create the Scoold stack is to run `docker compose up`.
+
+1. First, create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro**
+[`docker-compose.yml` is here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml))
+to it from this repository.
+2. Create the two configuration files in the same directory (both files can be left blank for now):
+```
+$ touch para-application.conf scoold-application.conf
+```
+3. `$ docker compose up`
+
+To stop the containers use <kbd>Ctrl</kbd> + <kbd>C</kbd>.
+
+**Important:** Scoold will connect to Para on `http://para:8080`, inside the Docker container environment.
+That hostname may not be accessible from your local machine or the Internet, which will break authentication redirects.
+For example, when signing in with Google, you will be redirected to Google and then back to Para, on the address
+specified in `scoold.security.redirect_uri`. Para must be a publicly accessible on that address or the authentication
+requests will fail.
+
+If you prefer, you can run the Scoold container outside of Docker Compose.
 First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
 
 ```
@@ -661,53 +674,6 @@ after starting the Para and Scoold containers.**
 
 `JAVA_OPTS` - Java system properties, e.g. `-Dscoold.port=8000`
 `BOOT_SLEEP` - Startup delay, in seconds
-
-**Docker Compose**
-
-You can start the whole stack, Para + Scoold, with a single command using `docker-compose`.
-First, create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro** the
-[`docker-compose.yml` is here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml))
-to it from this repository. Also create these files in the same directory:
-
-1. `para-application.conf` - containing the Para configuration
-2. `scoold-application.conf` - containing the Scoold configuration
-
-Example for `para-application.conf`:
-```ini
-para.env = "production"
-para.dao = "H2DAO"
-para.search = "LuceneSearch"
-```
-
-Example for `scoold-application.conf`:
-```ini
-scoold.env = "production"
-scoold.app_name = "Scoold"
-scoold.para_endpoint = "http://para:8080"
-scoold.para_access_key = "app:scoold"
-scoold.para_secret_key = "..."
-# specify the actual public hostname for Para
-scoold.security.redirect_uri = "http://localhost:8080"
-```
-**Important:** Scoold will connect to Para on `http://para:8080`, inside the Docker container environment.
-That hostname may not be accessible from your local machine or the Internet, which will break authentication redirects.
-For example, when signing in with Google, you will be redirected to Google and then back to Para, on the address
-specified in `scoold.security.redirect_uri`. Para must be a publicly accessible on that address or the authentication
-requests will fail.
-
-Then you can start both Scoold and Para with Docker Compose like so:
-```
-$ docker-compose up
-```
-**Follow the [quick start guide](#quick-start-with-a-self-hosted-para-backend-harder) above** to initialize Para and
-create a new app for Scoold. Once you have the access keys for that app, update `scoold-application.conf`
-with those and restart the Para + Scoold Docker stack:
-
-1. Stop the containers using <kbd>Ctrl</kbd> + <kbd>C</kbd>
-2. Rerun `docker-compose up`
-
-The same pair of containers will be run, but this time Scoold has the proper
-configuration, allowing it to communicate with Para successfully.
 
 ## Kubernetes
 
