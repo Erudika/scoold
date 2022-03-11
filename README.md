@@ -975,6 +975,17 @@ scoold.stylesheet_url = "https://public.cdn.com/custom.css"
 The order in which CSS rules are loaded is this (each overrides the previous ones):
 1. main stylesheet, 2. external stylesheets, 3. inline CSS or custom theme
 
+## Serving static files from local disk
+
+By default, Scoold will only serve static files from the `/static` folder on the classpath (inside the JAR).
+If you want to configure it to serve additional resources from a local directory, set this system property:
+```ini
+spring.web.resources.static-locations = "classpath:/static/, file:/home/scoold/static-folder/"
+```
+Then, for example, a file located at `/home/scoold/static-folder/file.png` will be served from `localhost:8000/file.png`.
+For more information, check the
+[Spring Boot documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web.servlet.spring-mvc.static-content).
+
 ## Serving static files from a CDN
 
 Scoold will serve static files (JS, CSS, fonts) from the same domain where it is deployed. You can configure the
