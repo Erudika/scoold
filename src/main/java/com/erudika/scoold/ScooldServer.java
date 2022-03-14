@@ -292,6 +292,9 @@ public class ScooldServer extends SpringBootServletInitializer {
 					String acceessKey = (String) credentials.get("accessKey");
 					System.setProperty("scoold.para_access_key", acceessKey);
 					System.setProperty("scoold.para_secret_key", (String) credentials.get("secretKey"));
+					if (StringUtils.isBlank(CONF.appSecretKey())) {
+						System.setProperty("scoold.app_secret_key", Utils.generateSecurityToken(32));
+					}
 					logger.info("Auto-init succeeded - created new app '{}' and saved keys to {}.", acceessKey, confFile);
 					CONF.store();
 				}
