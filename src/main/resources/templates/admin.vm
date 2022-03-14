@@ -155,14 +155,14 @@
 			<div class="row">
 				<div class="col s12">
 					<div class="input-field">
-						<button type="submit" class="btn waves-effect waves-light rusure">
+						#if(!$scooldimports.isEmpty() && $scooldimports.get(0).getProperty("status") == "pending")
+							#set($disabledImportBtn = 'disabled="disabled"')
+						#end
+						<button type="submit" class="btn waves-effect waves-light rusure" $!disabledImportBtn>
 							<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
 						</button>
 					</div>
 				</div>
-			</div>
-			<div class="progress mvl hide">
-				<div class="indeterminate"></div>
 			</div>
 		</form>
 
@@ -185,7 +185,17 @@
 								<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
 								<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
 								<td>$!import.getProperty("file")</td>
-								<td>$!import.getProperty("count")</td>
+								<td>
+									$!import.getProperty("count")
+									#if($!import.getProperty("status") == "pending")
+										<strong>(in progress)</strong>
+										<div class="progress">
+											<div class="indeterminate"></div>
+										</div>
+									#elseif($!import.getProperty("status") == "failed")
+										<strong class="red-text">(with errors)</strong>
+									#end
+								</td>
 							</tr>
 						#end
 					</tbody>

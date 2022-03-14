@@ -458,11 +458,6 @@ $(function () {
 		}
 	});
 
-	importForm.on("submit", function () {
-		$(this).find(".row:lt(2)").addClass("hide").end().find(".progress").removeClass("hide");
-		return true;
-	});
-
 	$("#select-theme-form").on("click", "input", function() {
 		if (this.value === "custom") {
 			$(this).closest("form").find("textarea").parent("div").removeClass("hide");

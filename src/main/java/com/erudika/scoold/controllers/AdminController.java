@@ -149,10 +149,9 @@ public class AdminController {
 		String importedCount = req.getParameter("imported");
 		if (importedCount != null) {
 			if (req.getParameter("success") != null) {
-				model.addAttribute("infoStripMsg", "Successfully imported " + importedCount + " objects from archive.");
+				model.addAttribute("infoStripMsg", "Started a new data import task. ");
 			} else {
-				model.addAttribute("infoStripMsg", "Imported operation failed!" +
-						("0".equals(importedCount) ? "" : " Partially imported " + importedCount + " objects from archive."));
+				model.addAttribute("infoStripMsg", "Data import task failed! The archive was partially imported.");
 			}
 		}
 		Sysprop theme = utils.getCustomTheme();
@@ -374,65 +373,74 @@ public class AdminController {
 			return null;
 		}
 		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
-		Map<String, String> comments2authors = new LinkedHashMap<>();
-		int	count = 0;
-		int importBatchSize = CONF.importBatchSize();
 		String filename = file.getOriginalFilename();
 		Sysprop s = new Sysprop();
 		s.setType("scooldimport");
-		try (InputStream inputStream = file.getInputStream()) {
-			if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
-				try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
-					ZipEntry zipEntry;
-					List<ParaObject> toCreate = new LinkedList<ParaObject>();
-					while ((zipEntry = zipIn.getNextEntry()) != null) {
-						if (isso) {
-							count += importFromSOArchive(zipIn, zipEntry, reader, comments2authors).size();
-						} else if (zipEntry.getName().endsWith(".json")) {
-							List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
-								public void close() throws IOException {
-									zipIn.closeEntry();
+		s.setCreatorid(authUser.getCreatorid());
+		s.setName(authUser.getName());
+		s.addProperty("status", "pending");
+		s.addProperty("count", 0);
+		s.addProperty("file", filename);
+		Sysprop si = pc.create(s);
+
+		Para.asyncExecute(() -> {
+			Map<String, String> comments2authors = new LinkedHashMap<>();
+			try (InputStream inputStream = file.getInputStream()) {
+				if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
+					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
+						ZipEntry zipEntry;
+						List<ParaObject> toCreate = new LinkedList<ParaObject>();
+						long countUpdated = Utils.timestamp();
+						while ((zipEntry = zipIn.getNextEntry()) != null) {
+							if (isso) {
+								int imported = importFromSOArchive(zipIn, zipEntry, reader, comments2authors).size();
+								si.addProperty("count", ((int) si.getProperty("count")) + imported);
+							} else if (zipEntry.getName().endsWith(".json")) {
+								List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
+									public void close() throws IOException {
+										zipIn.closeEntry();
+									}
+								});
+								objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
+								if (toCreate.size() >= CONF.importBatchSize()) {
+									pc.createAll(toCreate);
+									toCreate.clear();
 								}
-							});
-							objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
-							if (toCreate.size() >= importBatchSize) {
-								pc.createAll(toCreate);
-								toCreate.clear();
+								si.addProperty("count", ((int) si.getProperty("count")) + objects.size());
+							} else {
+								logger.error("Expected JSON but found unknown file type to import: {}", zipEntry.getName());
 							}
-							count += objects.size();
-						} else {
-							logger.error("Expected JSON but found unknown file type to import: {}", zipEntry.getName());
+							if (Utils.timestamp() > countUpdated + TimeUnit.SECONDS.toMillis(5)) {
+								pc.update(si);
+								countUpdated = Utils.timestamp();
+							}
+						}
+						if (!toCreate.isEmpty()) {
+							pc.createAll(toCreate);
+						}
+						if (isso) {
+							updateSOCommentAuthors(comments2authors);
 						}
 					}
-					if (!toCreate.isEmpty()) {
-						pc.createAll(toCreate);
-					}
-					if (isso) {
-						updateSOCommentAuthors(comments2authors);
-					}
+				} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
+					List<Map<String, Object>> objects = reader.readValue(inputStream);
+					List<ParaObject> toCreate = new LinkedList<ParaObject>();
+					objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
+					si.addProperty("count", objects.size());
+					pc.createAll(toCreate);
 				}
-			} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
-				List<Map<String, Object>> objects = reader.readValue(inputStream);
-				List<ParaObject> toCreate = new LinkedList<ParaObject>();
-				objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
-				count = objects.size();
-				pc.createAll(toCreate);
+				logger.info("Imported {} objects to {}. Executed by {}", si.getProperty("count"),
+						CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
+				si.addProperty("status", "done");
+			} catch (Exception e) {
+				logger.error("Failed to import " + filename, e);
+				si.addProperty("status", "failed");
+			} finally {
+				pc.update(si);
 			}
-			s.setCreatorid(authUser.getCreatorid());
-			s.setName(authUser.getName());
-			s.addProperty("count", count);
-			s.addProperty("file", filename);
-			logger.info("Imported {} objects to {}. Executed by {}", count,
-					CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
-
-			if (count > 0) {
-				pc.create(s);
-			}
-		} catch (Exception e) {
-			logger.error("Failed to import " + filename, e);
-			return "redirect:" + ADMINLINK + "?error=true&imported=" + count;
-		}
-		return "redirect:" + ADMINLINK + "?success=true&imported=" + count;
+		});
+		//return "redirect:" + ADMINLINK + "?error=true&imported=" + count;
+		return "redirect:" + ADMINLINK + "?success=true&imported=1";
 	}
 
 	@PostMapping("/set-theme")
