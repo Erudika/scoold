@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OLDVER=$(grep -Po '<version>\K[^<]+' pom.xml | head -n1)
+ECR_REPO="709825985650.dkr.ecr.us-east-1.amazonaws.com/erudica/scoold"
 echo "Last version tag was ${OLDVER}"
 read -e -p "New version tag: " ver
 
@@ -17,4 +18,10 @@ git log $OLDVER..HEAD --oneline > changelog.txt && \
 echo "" >> changelog.txt && \
 hub release create -F changelog.txt -t "$ver" $ver && \
 rm changelog.txt
+
+docker build .
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO
+docker tag erudikaltd/scoold:latest_stable $ECR_REPO:latest_stable
+docker push $ECR_REPO:latest_stable
+
 echo "--done--"
