@@ -212,16 +212,16 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		// CSP, HSTS, etc, headers. See https://securityheaders.com
 		utils.setSecurityHeaders(cspNonce, request, response);
 		// default metadata for social meta tags
-		if (!modelAndView.getModel().containsKey("title")) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("title", "").toString())) {
 			modelAndView.addObject("title", CONF.appName());
 		}
-		if (!modelAndView.getModel().containsKey("description")) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("description", "").toString())) {
 			modelAndView.addObject("description", CONF.metaDescription());
 		}
-		if (!modelAndView.getModel().containsKey("keywords")) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("keywords", "").toString())) {
 			modelAndView.addObject("keywords", CONF.metaKeywords());
 		}
-		if (!modelAndView.getModel().containsKey("ogimage")) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("ogimage", "").toString())) {
 			modelAndView.addObject("ogimage", CONF.metaAppIconUrl());
 		}
 	}
