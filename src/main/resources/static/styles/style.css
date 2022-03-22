@@ -680,6 +680,9 @@ table.striped>tbody>tr:nth-child(odd) {
 		height: 20px;
 		line-height: 22px;
 	}
+	.chip .close {
+		line-height: 18px;
+	}
 }
 
 /**** FEEL FREE TO MODIFY THIS THEME ****/
