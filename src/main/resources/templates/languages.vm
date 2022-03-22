@@ -1,6 +1,6 @@
 <div class="page-wrapper">
 	<h2>$!lang.get("translate.select")</h2>
-	<hr>
+
 	<div class="row">
 		#foreach($entry in $allLocales.entrySet())
 		<div class="col s12 m6 l3">

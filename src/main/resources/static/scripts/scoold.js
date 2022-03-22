@@ -495,6 +495,10 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
+	$(".adminpage .tab").on("click", function () {
+		history.pushState("", document.title, window.location.pathname + window.location.search);
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/
@@ -570,6 +574,7 @@ $(function () {
 		$.post(dis.attr("href"));
 		dis.find("span").toggleClass("hide");
 		$(".moderator-icon").toggleClass("hide");
+		$(".moderator-icon").parent("div").toggleClass("hide");
 		return false;
 	});
 

@@ -1,6 +1,6 @@
 /**** MONO THEME ****/
 /* buttons, headings and links */
-h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #424242; }
+.dropdown-content li>a, .dropdown-content li>span { color: #424242; }
 a { color: #039be5; }
 .btn, .btn-large { background-color: #424242; }
 .navbtn-hover { background-color: #6d6d6d; }

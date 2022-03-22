@@ -191,8 +191,7 @@ public class QuestionsController {
 		model.addAttribute("askSelected", "navbtn-hover");
 		model.addAttribute("defaultTag", CONF.defaultQuestionTag());
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
-		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - "
-				+ utils.getLang(req).get("posts.ask"));
+		model.addAttribute("title", utils.getLang(req).get("posts.ask"));
 		return "base";
 	}
 

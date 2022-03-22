@@ -78,7 +78,7 @@
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
+		<span class="comment-timestamp mrs grey-text right"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
 	</div>
 </div>
 #end
@@ -91,8 +91,8 @@
 ####################################
 #macro(spacebox $space )
 <div class="col s12 m6 l3 spacebox">
-	<div class="card-panel">
-		<div class="row mbn viewbox">
+	<div class="card-panel z-depth-0 lightborder">
+		<div class="row mbn viewbox valign-wrapper">
 			<div class="col s12 m8 columns">
 				<a href="$questionslink/space/$!space.id" class="mediumText space-name-box" title="$!{spaceName}">$!space.name</a>
 			</div>
@@ -104,13 +104,13 @@
 			<form method="post" action="$adminlink/rename-space" class="space-rename-form">
 				<div class="">
 					<div class="input-field">
-						<label for="new-space-${space.name}">$!lang.get('name')</label>
-						<input type="text" id="new-space-${space.name}" name="newspace" class="validate" value="$!space.name" required>
+						<label for="new-space-${space.id}">$!lang.get('name')</label>
+						<input type="text" id="new-space-${space.id}" name="newspace" class="validate" value="$!space.name" required>
 						<input type="hidden" name="space" class="validate" value="$!space.id">
 					</div>
 				</div>
 				<div class="">
-					<a href="$adminlink/remove-space?space=$!space.id:$space.name"
+					<a href="$adminlink/remove-space?space=$!space.id"
 						 class="red-text right mts delete-space">$!lang.get('delete')</a>
 					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
 				</div>
@@ -150,35 +150,35 @@
 			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showInactiveWebhook}" data-tooltip="Activate"><i class="fa fa-circle red-text"></i></a>
 			<span class="mrm">$!webhook.targetUrl</span>
 			#if($webhook.create)
-				<span class="chip"><tt>create</tt></span>
+				<span class="chip"><code>create</code></span>
 			#end
 			#if($webhook.update)
-				<span class="chip"><tt>update</tt></span>
+				<span class="chip"><code>update</code></span>
 			#end
 			#if($webhook.delete)
-				<span class="chip"><tt>delete</tt></span>
+				<span class="chip"><code>delete</code></span>
 			#end
 			#if($webhook.createAll)
-				<span class="chip"><tt>createAll</tt></span>
+				<span class="chip"><code>createAll</code></span>
 			#end
 			#if($webhook.updateAll)
-				<span class="chip"><tt>updateAll</tt></span>
+				<span class="chip"><code>updateAll</code></span>
 			#end
 			#if($webhook.deleteAll)
-				<span class="chip"><tt>deleteAll</tt></span>
+				<span class="chip"><code>deleteAll</code></span>
 			#end
 			#if($webhook.typeFilter)
-				<span class="chip"><tt><i class="fa fa-filter gray"></i> $!webhook.typeFilter</tt></span>
+				<span class="chip"><code><i class="fa fa-filter gray"></i> $!webhook.typeFilter</code></span>
 			#end
 			#foreach($event in $webhook.customEvents)
-				<span class="chip"><tt>$!event</tt></span>
+				<span class="chip"><code>$!event</code></span>
 			#end
 			#if(!$webhook.urlEncoded)
-				<span class="chip" title="application/json"><tt>{JSON}</tt></span>
+				<span class="chip" title="application/json"><code>{JSON}</code></span>
 			#end
 			<span class="chip">
 				<a href="#" class="next-span-toggle click2hide"><i class="fa fa-key"></i></a>
-				<span class="hide"><i class="fa fa-key"></i> <tt>$!webhook.secret</tt></span>
+				<span class="hide"><i class="fa fa-key"></i> <code>$!webhook.secret</code></span>
 			</span>
 			#if($webhook.tooManyFailures)
 				<div class="red-text">
@@ -196,17 +196,19 @@
 	#end
 #end
 ################# QUESTIONS MACROS #####################
-#macro(tagsbox $tags $link)
+#macro(tagsbox $post $link)
+	#set($tags = $post.tags)
+	#if($post.answerid)
+	<a href="$questionslink?sortby=properties.answerid" title="Posts with approved answer" class="chip mrs light-green white-text">
+		<i class="fa fa-check-circle"></i> $!lang.get('posts.answered')
+	</a>
+	#end
 	#foreach($showtag in $tags)
 		#if ($showtag && $showtag.trim() != "")
 			#if (!$link || $link.isEmpty())
-			<span class="chip mrs">
-				<i class="fa fa-tag grey-text"></i> $!showtag
-			</span>
+			<span class="chip mrs">$!showtag</span>
 			#else
-			<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="chip mrs">
-				<i class="fa fa-tag grey-text"></i> $!showtag
-			</a>
+			<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="chip mrs">$!showtag</a>
 			#end
 		#end
 	#end
@@ -298,10 +300,10 @@
 	<div class="col s4 m5 l3">
 		#if ($showu)
 			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
-				<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="Profile picture">
+				<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="pic">
 			</a>
 		#else
-			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="Profile picture">
+			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="pic">
 		#end
 	</div>
 	<div class="col s8 m7 l9">
@@ -316,21 +318,21 @@
 		</div>
 		<div class="userbox-body">
 			#if ($showu)
-				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="smallText">$showu.name</a>
+				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="userbox-name">$showu.name</a>
 			#else
 				<span class="grey-text">$!lang.get("profile.deleted")</span>
 			#end
 			#if ($showu)
 				<br>
-				<span class="chip">$!utils.abbreviateInt($!showu.votes, 0)</span>
+				<strong class="">$!utils.abbreviateInt($!showu.votes, 0)</strong>
 				#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
-					$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
+					<i class="fa fa-star yellow-text text-darken-3"></i> <small>&times; $showu.badgesMap.size()</small>
 				#end
 				#if ($showu.groups == "admins")
-					<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
+					<small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small>
 				#end
 				#if ($showu.groups == "mods")
-					<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+					<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
 				#end
 			#end
 		</div>
@@ -342,32 +344,33 @@
 <div>
 	#if ($showu)
 		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
-			<img src="#profilepic($!showu, 'Square32')" width="32" class="profile-pic responsive-img" alt="Profile picture">
+			<img src="#profilepic($!showu, 'Square32')" width="32" class="profile-pic responsive-img" alt="pic">
 		</a>
 	#else
-		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="Profile picture">
+		<img src="$!imageslink/anon.svg" width="32" class="responsive-img" alt="pic">
 	#end
 </div>
 #end
 ####################################
 #macro(personlink $showu)
 <span>
-	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
-		#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
-			$showu.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
-		#end
-		#if ($showu.groups == "admins")
-			<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
-		#end
-		#if ($showu.groups == "mods")
-			<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
-		#end
-	#end
 	#if ($showu)
 		#if ($showu.name)#set($seopsuffix = "/#stripstr($!showu.name)" )#else#set($seopsuffix = "" )#end
 		<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.name</a>
 	#else
 		$!lang.get("profile.deleted")
+	#end
+	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
+		#if ($showu.groups == "admins")
+		<small class="chip badgebox">
+			<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-tooltip="$!lang.get('admin')"></i>
+		</small>
+		#end
+		#if ($showu.groups == "mods")
+		<small class="chip badgebox">
+			<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-tooltip="$!lang.get('mod')"></i>
+		</small>
+		#end
 	#end
 </span>
 #end
@@ -375,11 +378,11 @@
 #macro(peoplepage $people)
 	#foreach($showFriend in $people)
 	<div class="col s12 m6 l4">
-		<div class="card personbox">
+		<div class="card personbox #if($scooldUtils.isBanned($showFriend) && $isMod)yellow lighten-5 #end">
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
-						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img pts pls" alt="Profile picture">
+						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img pts pls" alt="pic">
 					</a>
 				</div>
 				<div class="col s9 m8">
@@ -392,7 +395,7 @@
 						</ul>
 					</div>
 					#end
-					<div class="person-name pts">
+					<div class="person-name ptm">
 						#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
 							<span class="grey-text l">
 								<label for="$!showFriend.id">
@@ -421,7 +424,7 @@
 							#end
 						</div>
 					#end
-					<span class="chip mts" title="$!lang.get('reputation')">
+					<strong class="mts" title="$!lang.get('reputation')">
 						#if($request.getParameter("sortby") == "properties.yearlyVotes")
 							$utils.abbreviateInt($!showFriend.yearlyVotes, 0)
 						#elseif($request.getParameter("sortby") == "properties.quarterlyVotes")
@@ -433,16 +436,18 @@
 						#else
 							$utils.abbreviateInt($!showFriend.votes, 0)
 						#end
-					</span>
+					</strong>
 					#if($showFriend.badges && $showFriend.badgesMap && $showFriend.badgesMap.size() > 0)
-						$showFriend.badgesMap.size() <i class="fa fa-star yellow-text text-darken-3"></i>
+						<i class="fa fa-star yellow-text text-darken-3"></i> <small>&times; $showFriend.badgesMap.size()</small>
 					#end
-					#if ($showFriend.groups == "admins")
-					<i class="fa fa-asterisk orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('admin')"></i>
-					#end
-					#if ($showFriend.groups == "mods")
-					<i class="fa fa-dot-circle-o orange-text mhs tooltipped" data-delay="0" data-tooltip="$!lang.get('mod')"></i>
-					#end
+					<div>
+						#if ($showFriend.groups == "admins")
+						<small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small>
+						#end
+						#if ($showFriend.groups == "mods")
+						<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
+						#end
+					</div>
 					#if($showFriend.lastseen)
 					<div class="grey-text r prm tooltipped lastseen" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
 						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
@@ -560,7 +565,7 @@
 						#foreach($showtag in $showpost.tags)
 							#if ($showtag && $showtag.trim() != "")
 								<a href="$questionslink/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="mrm">
-									<tt class="grey-text">#</tt>$!showtag
+									<strong class="grey-text">#</strong>$!showtag
 								</a>
 							#end
 						#end
@@ -578,21 +583,21 @@
 
 			#else
 
-			<div class="col m2 l1 center-align hide-on-med-and-down">
+			<div class="col m2 l1 hide-on-med-and-down">
 				<div class="qstatsbox">
-					<div class="largeText lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</div>
-					<div class="mvs lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</div>
-					<div class="mvs lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
-						<small class="hide-on-med-and-down">$!lang.get('posts.views')</small>
+					<div class="lightborder $!{bgclass1}"><strong>$!utils.abbreviateInt($!votes, 0) <small>$!lang.get('votes')</small></strong></div>
+					<div class="mvs lightborder $!{bgclass}"><strong>$utils.abbreviateInt($!answercount, 0) <small>$!lang.get('answers.title')</small></strong></div>
+					<div class="mvs lightborder"><strong>$utils.abbreviateInt($!viewcount, 0)
+						<small class="hide-on-med-and-down">$!lang.get('posts.views')</small></strong>
 					</div>
 				</div>
 			</div>
-			<div class="col s12 l11">
+			<div class="col s12 m10 l11">
 				<div class="qstatsbox hide-on-large-only">
-					<span class="lightborder phm tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
-					<span class="mvs phm lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
-					<span class="mvs phm lightborder tooltipped" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)
-						<small>$!lang.get('posts.views')</small>
+					<span class="lightborder phm $!{bgclass1}"><strong>$!utils.abbreviateInt($!votes, 0) <small>$!lang.get('votes')</small></strong></span>
+					<span class="mvs phm lightborder $!{bgclass}"><strong>$utils.abbreviateInt($!answercount, 0) <small>$!lang.get('answers.title')</small></strong></span>
+					<span class="mvs phm lightborder"><strong>$utils.abbreviateInt($!viewcount, 0)
+						<small>$!lang.get('posts.views')</small></strong>
 					</span>
 				</div>
 				<div class="row mbn">
@@ -625,11 +630,11 @@
 						#end
 					</div>
 				</div>
-				<div class="row mbn">
+				<div class="row mbn valign-wrapper">
 					<div class="col m10 s12">
-						<div>#tagsbox($showpost.tags $actionlink2)</div>
+						<div>#tagsbox($showpost $actionlink2)</div>
 					</div>
-					<div class="col m2 s12 mlm grey-text r">
+					<div class="col m2 s12 grey-text r">
 						<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
 					</div>
 				</div>
@@ -654,11 +659,10 @@
 						#end
 						<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">$!answer.title</a>
 					</span>
-					#if(!$request.requestURI.startsWith("/profile"))
-						<div>
-								$!utils.abbreviate($answer.body, 200).replaceAll('\s', ' ')
-						</div>
-					#end
+					<div class="mhl">
+						#set($_answerBody = $utils.markdownToHtml($!utils.abbreviate($answer.body, 500)))
+						$_answerBody
+					</div>
 				</div>
 				<div class="col s12 m2 l3 columns">
 					#if(!$request.requestURI.startsWith("/profile"))
@@ -707,7 +711,7 @@
 				#votebox($showpost "hugeText mtm")
 			</div>
 			<div class="col s8 m3 l4">
-				<div class="ptl center-align">
+				<div class="mtm right-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion")
 					<div><small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small></div>
@@ -873,7 +877,7 @@
 		<div class="input-field">
 			<i class="fa fa-th-large fa-2x prefix grey-text"></i>
 			<div class="mll pll">
-				<select name="space" class="browser-default pll">
+				<select name="space" class="pll">
 					#if($post)
 						#set($selectedPostSpace = $!scooldUtils.getSpaceId($!post.space))
 					#else
@@ -898,7 +902,7 @@
 #set($badgeinfo = $!lang.get("about.badges.$showbadge") )
 <span class="chip" title="$!badgeinfo">
 	<span class="fa fa-star yellow-text text-darken-3"></span>
-	#if ($num && $num > 1) $!lang.get("$showbadge") <sup>$num</sup> #else $!lang.get("$showbadge") #end
+	#if ($num && $num > 1)<b>$num</b> &times; $!lang.get("$showbadge") #else $!lang.get("$showbadge") #end
 </span>
 #end
 ###################################

@@ -22,6 +22,7 @@ import com.erudika.para.core.annotations.Documented;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import static com.erudika.scoold.ScooldServer.SIGNOUTLINK;
 import com.typesafe.config.ConfigObject;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -688,7 +689,8 @@ public class ScooldConfig extends Config {
 			description = "Additional sources to add to the `style-src` CSP directive. "
 					+ "Used when adding external fonts to the site.")
 	public String cspStyleSources() {
-		return getConfigParam("csp_style_sources", stylesheetUrl() + " " + externalStyles().replaceAll(",", ""));
+		return getConfigParam("csp_style_sources", serverUrl() + serverContextPath() + stylesheetUrl() + " " +
+				externalStyles().replaceAll(",", ""));
 	}
 
 	/* **************************************************************************************************************
@@ -2095,18 +2097,23 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 2060,
 			identifier = "meta_description",
+			value = "Scoold is friendly place for knowledge sharing and collaboration...",
 			category = "Customization",
 			description = "The content inside the description `<meta>` tag.")
 	public String metaDescription() {
-		return getConfigParam("meta_description", "");
+		return getConfigParam("meta_description", appName() + " is friendly place for knowledge sharing and collaboration. "
+				+ "Ask questions, post answers and comments, earn reputation points.");
 	}
 
 	@Documented(position = 2070,
 			identifier = "meta_keywords",
+			value = "knowledge base, knowledge sharing, collaboration, wiki...",
 			category = "Customization",
 			description = "The content inside the keywords `<meta>` tag.")
 	public String metaKeywords() {
-		return getConfigParam("meta_keywords", "");
+		return getConfigParam("meta_keywords", "knowledge base, knowledge sharing, collaboration, wiki, "
+				+ "forum, Q&A, questions and answers, internal communication, project management, issue tracker, "
+				+ "bug tracker, support tool");
 	}
 
 	@Documented(position = 2080,
@@ -2375,7 +2382,7 @@ public class ScooldConfig extends Config {
 			identifier = "logo_url",
 			value = "/images/logo.svg",
 			category = "Frontend Assets",
-			description = "The URL of the logo in the nav bar.")
+			description = "The URL of the logo in the nav bar. Use a PNG, SVG, JPG or WebP format.")
 	public String logoUrl() {
 		return getConfigParam("logo_url", imagesLink() + "/logo.svg");
 	}
@@ -2384,7 +2391,7 @@ public class ScooldConfig extends Config {
 			identifier = "small_logo_url",
 			value = "/images/logowhite.png",
 			category = "Frontend Assets",
-			description = "The URL of a smaller logo. Mainly used in transactional emails.")
+			description = "The URL of a smaller logo (only use PNG/JPG!). Used in transactional emails and the meta `og:image`.")
 	public String logoSmallUrl() {
 		return getConfigParam("small_logo_url", serverUrl() + imagesLink() + "/logowhite.png");
 	}
@@ -2454,7 +2461,7 @@ public class ScooldConfig extends Config {
 			category = "Frontend Assets",
 			description = "The URL of the app icon image in the `<meta property='og:image'>` tag.")
 	public String metaAppIconUrl() {
-		return getConfigParam("meta_app_icon", imagesLink() + "/logowhite.png");
+		return getConfigParam("meta_app_icon", logoSmallUrl());
 	}
 
 	/* **************************************************************************************************************
@@ -3266,14 +3273,14 @@ public class ScooldConfig extends Config {
 		return "default-src 'self'; "
 				+ "base-uri 'self'; "
 				+ "media-src 'self' blob:; "
-				+ "form-action 'self' " + signoutUrl() + "; "
+				+ "form-action 'self' " + serverUrl() + serverContextPath() + SIGNOUTLINK + "; "
 				+ "connect-src 'self' " + (inProduction() ? serverUrl() : "")
 				+ " maps.googleapis.com api.imgur.com accounts.google.com " + cspConnectSources() + "; "
 				+ "frame-src 'self' *.google.com staticxx.facebook.com " + cspFrameSources() + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
 				// unsafe-inline required by MathJax and Google Maps!
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com "
-				+ (cdnUrl().startsWith("/") ? "" : cdnUrl()) + " " + cspStyleSources() + "; "
+				+ (cdnUrl().startsWith("/") ? "" : cdnUrl() + " ") + cspStyleSources() + "; "
 				+ "img-src 'self' https: data:; "
 				+ "object-src 'none'; "
 				+ "report-uri /reports/cspv; "

@@ -1,6 +1,6 @@
 /**** GREEN THEME ****/
 /* buttons, headings and links */
-a, h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #2e7d32; }
+a, .dropdown-content li>a, .dropdown-content li>span { color: #2e7d32; }
 .btn, .btn-large, .navbtn-hover { background-color: #4e342e; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #4e342e; opacity: 0.7; }
 .filter-active { background-color: #2e7d32; color: white; }

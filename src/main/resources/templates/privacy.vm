@@ -3,7 +3,7 @@
 	<button class="btn waves-effect waves-light editlink right mtl"><i class="fa fa-pencil-square-o mrs"></i>$!lang.get('edit')</button>
 	#end
 	<h1>$!lang.get("privacy.title")</h1>
-	<hr>
+
 	#macro(privacypage )
 	<p>
 		This privacy notice discloses the privacy practices for Scoold.com. This privacy notice applies solely to information collected by this web site. It will notify you of the following:

@@ -1,6 +1,6 @@
 /**** BLUE THEME ****/
 /* buttons, headings and links */
-a, h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #1565c0; }
+a, .dropdown-content li>a, .dropdown-content li>span { color: #1565c0; }
 .btn, .btn-large, .navbtn-hover { background-color: #4fc3f7; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #4fc3f7; }
 .filter-active { background-color: #1565c0; color: white; }

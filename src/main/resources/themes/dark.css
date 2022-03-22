@@ -1,4 +1,4 @@
-h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #efefef; }
+.dropdown-content li>a, .dropdown-content li>span { color: #efefef; }
 .btn, .btn-large { background-color: #424242; }
 .navbtn-hover { background-color: #6d6d6d; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #424242; }

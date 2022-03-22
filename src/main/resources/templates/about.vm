@@ -3,7 +3,7 @@
 	<button class="btn waves-effect waves-light editlink right mtl"><i class="fa fa-pencil-square-o mrs"></i>$!lang.get('edit')</button>
 	#end
 	<h1>$!lang.get("about.title")</h1>
-	<hr>
+
 	#macro(aboutpage )
 	<p>$!lang.get("about.scoold.1")</p>
 	<p>$!lang.get("about.scoold.2")</p>

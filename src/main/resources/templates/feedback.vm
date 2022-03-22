@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 	#if ($write)
 		<h2><a href="$feedbacklink">$!lang.get("feedback.title")</a></h2>
-		<hr>
+
 		<div class="ptl">
 			<form method="post" action="$feedbacklink" id="write-feedback-form">
 				#sectoken(false "CREATE_FEEDBACK")
@@ -75,7 +75,7 @@
 				</div>
 				#else
 					<div class="mvl pvl center">
-						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn-large"
+						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn waves-effect waves-light"
 									 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
 					</div>
 				#end
@@ -99,7 +99,7 @@
 					#end
 					#if ($showPost.tags && !$showPost.tags.isEmpty())
 						<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
-						<div class="mtm">#tagsbox($showPost.tags $questionslink)</div>
+						<div class="mtm">#tagsbox($showPost $questionslink)</div>
 					#end
 				</div>
 
@@ -137,7 +137,6 @@
 		</div>
 
 		<h2 class="hide-on-med-and-down">#feedbackTitle()</h2>
-		<hr>
 
 		#if($feedbacklist.isEmpty())
 			<div class="card-panel hugeText center-align grey-text">
@@ -150,7 +149,7 @@
 		#end
 
 		<div class="center-align mvl">
-			<a href="$feedbacklink/write" class="btn btn-large waves-effect waves-light"><b>$!{lang.get('feedback.write')}</b></a>
+			<a href="$feedbacklink/write" class="btn waves-effect waves-light"><b>$!{lang.get('feedback.write')}</b></a>
 		</div>
 	#end
 </div>

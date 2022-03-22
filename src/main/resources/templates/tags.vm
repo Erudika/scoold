@@ -9,7 +9,7 @@
 	</div>
 
 	<h2 class="hide-on-med-and-down">$!lang.get("tags.title") #showcount($itemcount.count)</h2>
-	<hr>
+
 	#if($tagslist.isEmpty())
 		<div class="card-panel hugeText center-align grey-text">
 			<div class="em5v">

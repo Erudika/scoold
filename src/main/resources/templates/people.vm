@@ -71,7 +71,6 @@
 			</div>
 		</div>
 	#end
-	<hr>
 
 	#if(!$userlist || $userlist.isEmpty())
 		<div class="card-panel hugeText center-align grey-text">

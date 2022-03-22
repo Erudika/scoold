@@ -277,7 +277,7 @@ public class AdminController {
 			model.addAttribute("error", Collections.singletonMap("targetUrl", utils.getLang(req).get("requiredfield")));
 			return "base";
 		}
-		return "redirect:" + ADMINLINK;
+		return "redirect:" + ADMINLINK + "#webhooks-tab";
 	}
 
 	@PostMapping("/toggle-webhook")
@@ -294,7 +294,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK;
+			return "redirect:" + ADMINLINK + "#webhooks-tab";
 		}
 	}
 
@@ -310,7 +310,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK;
+			return "redirect:" + ADMINLINK + "#webhooks-tab";
 		}
 	}
 
@@ -440,7 +440,7 @@ public class AdminController {
 			}
 		});
 		//return "redirect:" + ADMINLINK + "?error=true&imported=" + count;
-		return "redirect:" + ADMINLINK + "?success=true&imported=1";
+		return "redirect:" + ADMINLINK + "?success=true&imported=1#backup-tab";
 	}
 
 	@PostMapping("/set-theme")
@@ -449,7 +449,7 @@ public class AdminController {
 		if (utils.isAdmin(authUser)) {
 			utils.setCustomTheme(Utils.stripAndTrim(theme, "", true), css);
 		}
-		return "redirect:" + ADMINLINK;
+		return "redirect:" + ADMINLINK + "#themes-tab";
 	}
 
 	@ResponseBody

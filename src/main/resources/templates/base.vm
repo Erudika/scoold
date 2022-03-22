@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <!--                       __    __
-    ______________  ____  / /___/ /
+     ____ ____ ___   ___  / /___/ /
    / ___/ ___/ __ \/ __ \/ / __  /
   (__  ) /__/ /_/ / /_/ / / /_/ /
- /____/\___/\____/\____/_/\__,_/
-
- https://scoold.com
+ /____/\___/\____/\____/_/\__,_/  https://scoold.com
 -->
 <html lang="$!currentLocale.language" dir="$!langDirection">
 	<head>
 		<title>$!APPNAME | $!title</title>
 		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 		<meta name="description" content="$!DESCRIPTION">
 		<meta name="keywords" content="$!KEYWORDS">
 		<meta name="generator" content="Scoold">
 		<meta property="fb:app_id" content="$!FB_APP_ID">
-		<meta property="og:title" content="$!APPNAME | $!title">
+		<meta property="og:title" content="$!title">
 		<meta property="og:type" content="article">
 		<meta property="og:url" content="$!request.getRequestURL()">
 		<meta property="og:image" content="$!ogimage">
 		<meta property="og:description" content="$!DESCRIPTION">
 		<meta name="twitter:card" content="summary">
 		<meta name="twitter:site" content="@getscoold">
-		<meta name="twitter:title" content="$!APPNAME | $!title">
+		<meta name="twitter:title" content="$!title">
 		<meta name="twitter:description" content="$!DESCRIPTION">
 		<meta name="twitter:image" content="$!ogimage">
 		<link href="$!request.contextPath/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
 		<link href="$!request.contextPath/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
 		<link href="$!ogimage" rel="image_src">
 		<link href="$!ogimage" rel="apple-touch-icon">
-		<link href="$!faviconUrl" rel="shortcut icon">
+		<link href="$!faviconUrl" rel="icon" sizes="any">
 		<link href="$!styleslink/materialize.min.css" rel="stylesheet">
 		<link href="$!styleslink/font-awesome.min.css" rel="stylesheet">
 		<link href="$!styleslink/easymde.min.css" rel="stylesheet">

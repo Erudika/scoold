@@ -14,319 +14,336 @@
 		</form>
 	</div>
 #else
-	<h2>$!lang.get('administration.title')</h2>
-	<hr>
-
-	<h4>
-		$!lang.get('spaces.title') #showcount($itemcount.count)
-	</h4>
-
-	<div class="mbl">
-		<form method="post" id="create-space-form" action="$adminlink/add-space">
-			##sectoken(false "CREATE_SPACE") ## BREAKS AJAX - NOT USED
-			<div class="row">
-				<div class="col s12 m6">
-					<div class="input-field">
-						<label for="name_text">$!lang.get('name')</label>
-						<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
-						<span class="helper-text" data-error="Space is invalid or already exists!"></span>
-					</div>
-				</div>
-				<div class="col s12 m6">
-					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('add')</button>
-				</div>
-			</div>
-		</form>
-	</div>
-
-	<div class="row spaces-wrapper">
-		<div class="col s12 m6 l3 spacebox">
-			<div class="card-panel grey-text">
-				<span class="mediumText">
-					#if($isDefaultSpacePublic)
-						<i class="fa fa-unlock grey-text" title="Public"></i>
-					#else
-						<i class="fa fa-lock red-text" title="Private"></i>
-					#end
-					<a href="$questionslink/space" title="Default space">$!lang.get('defaultspace')</a>
-				</span>
-			</div>
-		</div>
-		#paginate("spaces" $itemcount "" "page" )
-	</div>
-
-	#if($scooldUtils.isWebhooksEnabled())
-	<h4>
-		Webhooks #showcount($itemcount1.count)
-	</h4>
-
-	<div class="mbl">
-		<form method="post" id="create-webhook-form" action="$adminlink/create-webhook">
-			#sectoken(false "CREATE_WEBHOOK")
-			<div class="row">
-				<div class="col s12 m4">
-					<div class="input-field">
-						<label for="targetUrl">Destination URL</label>
-						<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" placeholder="https://" required>
-						<span class="helper-text" data-error="Please enter a valid URL"></span>
-					</div>
-				</div>
-				<div class="col s12 m2">
-					<div class="input-field">
-						<select id="webhook-events" multiple name="events" required>
-							<option value="create" selected="selected">create</option>
-							<option value="update">update</option>
-							<option value="delete">delete</option>
-							<option value="createAll">createAll</option>
-							<option value="updateAll">updateAll</option>
-							<option value="deleteAll">deleteAll</option>
-							#foreach($event in $customHookEvents)
-							<option value="$!event">$!event</option>
-							#end
-						</select>
-						<label for="webhook-events">Event triggers</label>
-					</div>
-				</div>
-				<div class="col s12 m2">
-					<div class="input-field">
-						<select id="webhook-types" name="type">
-							<option value=""></option>
-							#foreach($type in $coreScooldTypes)
-							<option value="$!type">$!type</option>
-							#end
-						</select>
-						<label for="webhook-types">Type filter</label>
-					</div>
-				</div>
-				<div class="col s12 m2">
-					<div class="input-field">
-						<select id="webhook-json" name="json" required>
-							<option value="true" selected="selected">json</option>
-							<option value="false">x-www-form-urlencoded</option>
-						</select>
-						<label for="webhook-json">Payload format</label>
-					</div>
-				</div>
-
-				<div class="col s12 m2">
-					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('create')</button>
-				</div>
-			</div>
-		</form>
-	</div>
-
-	<div class="row webhooks-wrapper">
-		#paginate("webhooks" $itemcount1 "" "page1" )
-	</div>
-	#end
-
-	<h4>$!lang.get('backups.title')</h4>
-
-	<div class="row mvn">
-		<div class="col s12 input-field">
-			<a href="$adminlink/export" class="btn waves-effect waves-light">
-				<i class="fa fa-download"></i> &nbsp;$!lang.get('admin.export')
-			</a>
+	<div class="row">
+		<div class="col s12">
+			<h2>$!lang.get('administration.title')</h2>
 		</div>
 	</div>
-	<div class="row mbl">
-		<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
-			<div class="import-text mlm">$!lang.get('admin.import.text')</div>
-			<div class="row">
-				<div class="col m6 s6">
-					<div class="file-field input-field">
-						<div class="btn">
-							<span>
-								<i class="fa fa-file-zip-o"></i>
-							</span>
-							<input type="file" name="file" accept=".json,.zip">
-						</div>
-						<div class="file-path-wrapper">
-							<input class="file-path validate" type="text" required>
-						</div>
-						<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
-					</div>
-					<label>
-						<input type="checkbox" name="isso" class="filled-in">
-						<span>This is an archive exported from Stack Overflow for Teams</span>
-					</label>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col s12">
-					<div class="input-field">
-						#if(!$scooldimports.isEmpty() && $scooldimports.get(0).getProperty("status") == "pending")
-							#set($disabledImportBtn = 'disabled="disabled"')
-						#end
-						<button type="submit" class="btn waves-effect waves-light rusure" $!disabledImportBtn>
-							<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
-						</button>
-					</div>
-				</div>
-			</div>
-		</form>
+	<div class="row">
+		<div class="col s12 mbl">
+			<ul class="tabs adminpage">
+				<li class="tab col s2"><a href="#spaces-tab">$!{lang.get("spaces.title")} #showcount($itemcount.count)</a></li>
+				<li class="tab col s2"><a href="#webhooks-tab">Webhooks #showcount($itemcount1.count)</a></li>
+				<li class="tab col s2"><a href="#backup-tab">$!{lang.get("backups.title")} </a></li>
+				<li class="tab col s2"><a href="#themes-tab">$!{lang.get("admin.themes")} </a></li>
+				<li class="tab col s2"><a href="#api-tab">API keys </a></li>
+			</ul>
+		</div>
 
-		#if($scooldimports && !$scooldimports.isEmpty())
-		<div class="row">
-			<div class="col s12">
-				<h5>$!lang.get('admin.importlog')</h5>
-				<table class="responsive-table">
-					<thead>
-						<tr>
-							<th class="capitalize">$!lang.get('date')</th>
-							<th>$!lang.get('admin.importlog.user')</th>
-							<th>$!lang.get('admin.importlog.file')</th>
-							<th>$!lang.get('admin.importlog.count')</th>
-						</tr>
-					</thead>
-					<tbody>
-						#foreach($import in $scooldimports)
-							<tr>
-								<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
-								<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
-								<td>$!import.getProperty("file")</td>
-								<td>
-									$!import.getProperty("count")
-									#if($!import.getProperty("status") == "pending")
-										<strong>(in progress)</strong>
-										<div class="progress">
-											<div class="indeterminate"></div>
-										</div>
-									#elseif($!import.getProperty("status") == "failed")
-										<strong class="red-text">(with errors)</strong>
+		<div id="spaces-tab" class="col s12">
+			<div class="mbl">
+				<form method="post" id="create-space-form" action="$adminlink/add-space">
+					##sectoken(false "CREATE_SPACE") ## BREAKS AJAX - NOT USED
+					<div class="row">
+						<div class="col s12 m6">
+							<div class="input-field">
+								<label for="name_text">$!lang.get('name')</label>
+								<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
+								<span class="helper-text" data-error="Space is invalid or already exists!"></span>
+							</div>
+						</div>
+						<div class="col s12 m6">
+							<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('add')</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="row spaces-wrapper">
+				<div class="col s12 m6 l3 spacebox">
+					<div class="card-panel z-depth-0 lightborder grey-text">
+						<span class="mediumText">
+							#if($isDefaultSpacePublic)
+								<i class="fa fa-unlock grey-text" title="Public"></i>
+							#else
+								<i class="fa fa-lock red-text" title="Private"></i>
+							#end
+							<a href="$questionslink/space" title="Default space">$!lang.get('defaultspace')</a>
+						</span>
+					</div>
+				</div>
+				#paginate("spaces" $itemcount "" "page" )
+			</div>
+		</div>
+
+		<div id="webhooks-tab" class="col s12">
+			#if($scooldUtils.isWebhooksEnabled())
+			<div class="mbl">
+				<form method="post" id="create-webhook-form" action="$adminlink/create-webhook">
+					#sectoken(false "CREATE_WEBHOOK")
+					<div class="row mvn">
+						<div class="col s12 m9">
+							<div class="input-field">
+								<select id="webhook-events" multiple name="events" required>
+									<option value="create" selected="selected">create</option>
+									<option value="update">update</option>
+									<option value="delete">delete</option>
+									<option value="createAll">createAll</option>
+									<option value="updateAll">updateAll</option>
+									<option value="deleteAll">deleteAll</option>
+									#foreach($event in $customHookEvents)
+									<option value="$!event">$!event</option>
 									#end
+								</select>
+								<label for="webhook-events">Event triggers</label>
+							</div>
+						</div>
+						<div class="col s12 m3">
+							<div class="input-field">
+								<select id="webhook-types" name="type">
+									<option value=""></option>
+									#foreach($type in $coreScooldTypes)
+									<option value="$!type">$!type</option>
+									#end
+								</select>
+								<label for="webhook-types">Type filter</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="row mvn">
+						<div class="col s12 m9">
+							<div class="input-field">
+								<label for="targetUrl">Destination URL</label>
+								<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" placeholder="https://" required>
+								<span class="helper-text" data-error="Please enter a valid URL"></span>
+							</div>
+						</div>
+						<div class="col s12 m3">
+							<div class="input-field">
+								<select id="webhook-json" name="json" required>
+									<option value="true" selected="selected">json</option>
+									<option value="false">x-www-form-urlencoded</option>
+								</select>
+								<label for="webhook-json">Payload format</label>
+							</div>
+						</div>
+					</div>
+
+					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('create')</button>
+				</form>
+			</div>
+
+			<div class="row webhooks-wrapper">
+				#paginate("webhooks" $itemcount1 "" "page1" )
+			</div>
+			#else
+			<h4 class="em3v card-panel center-align">Webhooks are disabled.</h4>
+			#end
+		</div>
+
+		<div id="backup-tab" class="col s12">
+			<div class="row mvn">
+				<div class="col s12 input-field">
+					<a href="$adminlink/export" class="btn waves-effect waves-light">
+						<i class="fa fa-download"></i> &nbsp;$!lang.get('admin.export')
+					</a>
+				</div>
+			</div>
+			<div class="row mbl">
+				<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
+					<div class="import-text mlm">$!lang.get('admin.import.text')</div>
+					<div class="row">
+						<div class="col m6 s6">
+							<div class="file-field input-field">
+								<div class="btn">
+									<span>
+										<i class="fa fa-file-zip-o"></i>
+									</span>
+									<input type="file" name="file" accept=".json,.zip">
+								</div>
+								<div class="file-path-wrapper">
+									<input class="file-path validate" type="text" required>
+								</div>
+								<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
+							</div>
+							<label>
+								<input type="checkbox" name="isso" class="filled-in">
+								<span>This is an archive exported from Stack Overflow for Teams</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12">
+							<div class="input-field">
+								#if(!$scooldimports.isEmpty() && $scooldimports.get(0).getProperty("status") == "pending")
+									#set($disabledImportBtn = 'disabled="disabled"')
+								#end
+								<button type="submit" class="btn waves-effect waves-light rusure" $!disabledImportBtn>
+									<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				#if($scooldimports && !$scooldimports.isEmpty())
+				<div class="row">
+					<div class="col s12">
+						<h4>$!lang.get('admin.importlog')</h4>
+						<table class="responsive-table">
+							<thead>
+								<tr>
+									<th class="capitalize">$!lang.get('date')</th>
+									<th>$!lang.get('admin.importlog.user')</th>
+									<th>$!lang.get('admin.importlog.file')</th>
+									<th>$!lang.get('admin.importlog.count')</th>
+								</tr>
+							</thead>
+							<tbody>
+								#foreach($import in $scooldimports)
+									<tr>
+										<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
+										<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
+										<td>$!import.getProperty("file")</td>
+										<td>
+											$!import.getProperty("count")
+											#if($!import.getProperty("status") == "pending")
+												<strong>(in progress)</strong>
+												<div class="progress">
+													<div class="indeterminate"></div>
+												</div>
+											#elseif($!import.getProperty("status") == "failed")
+												<strong class="red-text">(with errors)</strong>
+											#end
+										</td>
+									</tr>
+								#end
+							</tbody>
+						</table>
+					</div>
+				</div>
+				#end
+			</div>
+		</div>
+
+		<div id="themes-tab" class="col s12">
+			<form action="$adminlink/set-theme" method="post" id="select-theme-form">
+				<div>
+				#set($themesMap = {	'default': ['light-blue', 'pink lighten-1'],
+														'red': ['red darken-3', 'blue-grey darken-3'],
+														'green': ['green darken-3', 'brown darken-3'],
+														'blue': ['blue darken-3', 'light-blue lighten-2'],
+														'orange': ['orange', 'deep-orange darken-3'],
+														'mono': ['grey darken-3', 'grey lighten-1'],
+														'dark': ['black', 'grey darken-3'],
+														'custom': []})
+				#foreach($theme in $themesMap.keySet())
+					<label class="mrl">
+						#if($selectedTheme == $theme)
+						<input name="theme" type="radio" value="$theme" checked>
+						#else
+						<input name="theme" type="radio" value="$theme">
+						#end
+						<span class="capitalize mrm">$theme</span>
+						#if($themesMap.get($theme) && $themesMap.get($theme).size() > 1)
+							<span class="$themesMap.get($theme).get(0) phm">&nbsp;</span><span
+								class="$themesMap.get($theme).get(1) phm">&nbsp;</span>
+						#end
+					</label>
+				#end
+				</div>
+				#if($selectedTheme == "custom")#set($hideCSSbox = "")#else#set($hideCSSbox = "hide")#end
+				<div class="input-field ${hideCSSbox}">
+					<label>CSS</label>
+					<textarea name="css" class="materialize-textarea monotext">$!customTheme</textarea>
+				</div>
+				<div class="mvl">
+					<button type="submit" class="btn waves-effect waves-light">$!lang.get('apply')</button>
+				</div>
+			</form>
+		</div>
+
+		<div id="api-tab" class="col s12">
+			#if($scooldUtils.isApiEnabled())
+			<form action="$adminlink/generate-api-key" method="post" id="api-key-form">
+				<p>API keys are in the JSON Web Token format. Changing <code>app_secret_key</code> would revoke all keys at once.
+					Validity period of 0 hours means the key never expires.</p>
+				<div class="row mbn">
+					<div class="col s6 m2">
+						<div class="input-field">
+							<label>Validity period (hours)</label>
+							<input type="number" name="validityHours" value="0" min="0">
+						</div>
+					</div>
+					<div class="col s4 m2">
+						<div class="input-field">
+							<button type="submit" class="btn waves-effect waves-light">Generate</button>
+						</div>
+					</div>
+				</div>
+				<div>
+					#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
+					<table class="striped api-key-table ${hideTable}">
+						#macro(apikeyrow $apiKey)
+							#if(!$apiKey)#set($hideRow = "hide")#else#set($hideRow = "")#end
+							<tr class="api-key-row ${hideRow}">
+								<td>
+									<a href="$adminlink/revoke-api-key?jti=$!apiKey.key" class="api-key-revoke red-text right">
+										<i class="fa fa-times"></i> Revoke
+									</a>
+									<div>
+										<strong>Expires:</strong>
+										<span class="api-key-expires">
+											#if($apiKey && $apiKey.key)
+												#if($apiKeysExpirations.get($apiKey.key) == 0)
+													never
+												#elseif($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
+													<span class="red">expired</span>
+												#else
+													#formatdate($apiKeysExpirations.get($apiKey.key), "YYYY-MM-dd HH:mm")
+												#end
+											#end
+										</span>
+										<a href="#" class="api-key-show next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
+										<div class="hide">
+											<input type="text" value="$!apiKey.value" class="api-key">
+											<span class="green-text"></span><span>&nbsp;</span>
+										</div>
+									</div>
 								</td>
 							</tr>
 						#end
-					</tbody>
-				</table>
-			</div>
+
+						#apikeyrow("")
+						#foreach($apiKey in $apiKeys.entrySet())
+							#apikeyrow($apiKey)
+						#end
+					</table>
+				</div>
+			</form>
+			#else
+			<h4 class="em3v card-panel center-align">The Scoold API is disabled.</h4>
+			#end
 		</div>
-		#end
 	</div>
 
-	<h4>$!lang.get('admin.themes')</h4>
-
-	<form action="$adminlink/set-theme" method="post" id="select-theme-form">
-		<div>
-		#set($themesMap = {	'default': ['light-blue', 'pink lighten-1'],
-												'red': ['red darken-3', 'blue-grey darken-3'],
-												'green': ['green darken-3', 'brown darken-3'],
-												'blue': ['blue darken-3', 'light-blue lighten-2'],
-												'orange': ['orange', 'deep-orange darken-3'],
-												'mono': ['grey darken-3', 'grey lighten-1'],
-												'dark': ['black', 'grey darken-3'],
-												'custom': []})
-		#foreach($theme in $themesMap.keySet())
-			<label class="mrl">
-				#if($selectedTheme == $theme)
-				<input name="theme" type="radio" value="$theme" checked>
-				#else
-				<input name="theme" type="radio" value="$theme">
-				#end
-				<span class="capitalize mrm">$theme</span>
-				#if($themesMap.get($theme) && $themesMap.get($theme).size() > 1)
-					<span class="$themesMap.get($theme).get(0) phm">&nbsp;</span><span
-						class="$themesMap.get($theme).get(1) phm">&nbsp;</span>
-				#end
-			</label>
-		#end
-		</div>
-		#if($selectedTheme == "custom")#set($hideCSSbox = "")#else#set($hideCSSbox = "hide")#end
-		<div class="input-field ${hideCSSbox}">
-			<label>CSS</label>
-			<textarea name="css" class="materialize-textarea monotext">$!customTheme</textarea>
-		</div>
-		<div class="mvl">
-			<button type="submit" class="btn waves-effect waves-light">$!lang.get('apply')</button>
-		</div>
-	</form>
-
-	#if($scooldUtils.isApiEnabled())
-	<h4>API keys</h4>
-	<form action="$adminlink/generate-api-key" method="post" id="api-key-form">
-		<p>API keys are in the JSON Web Token format. Changing <code>app_secret_key</code> would revoke all keys at once.
-			Validity period of 0 hours means the key never expires.</p>
-		<div class="row mbn">
-			<div class="col s6 m2">
-				<div class="input-field">
-					<label>Validity period (hours)</label>
-					<input type="number" name="validityHours" value="0" min="0">
-				</div>
-			</div>
-			<div class="col s4 m2">
-				<div class="input-field">
-					<button type="submit" class="btn waves-effect waves-light">Generate</button>
-				</div>
-			</div>
-		</div>
-		<div>
-			#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
-			<table class="striped api-key-table ${hideTable}">
-				#macro(apikeyrow $apiKey)
-					#if(!$apiKey)#set($hideRow = "hide")#else#set($hideRow = "")#end
-					<tr class="api-key-row ${hideRow}">
-						<td>
-							<a href="$adminlink/revoke-api-key?jti=$!apiKey.key" class="api-key-revoke red-text right">
-								<i class="fa fa-times"></i> Revoke
-							</a>
-							<div>
-								<strong>Expires:</strong>
-								<span class="api-key-expires">
-									#if($apiKey && $apiKey.key)
-										#if($apiKeysExpirations.get($apiKey.key) == 0)
-											never
-										#elseif($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
-											<span class="red">expired</span>
-										#else
-											#formatdate($apiKeysExpirations.get($apiKey.key), "YYYY-MM-dd HH:mm")
-										#end
-									#end
-								</span>
-								<a href="#" class="api-key-show next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
-								<div class="hide">
-									<input type="text" value="$!apiKey.value" class="api-key">
-									<span class="green-text"></span><span>&nbsp;</span>
-								</div>
-							</div>
-						</td>
-					</tr>
-				#end
-
-				#apikeyrow("")
-				#foreach($apiKey in $apiKeys.entrySet())
-					#apikeyrow($apiKey)
-				#end
-			</table>
-		</div>
-	</form>
-	#end
-
-	<hr>
 	<div class="ptl">
 		<ul class="collapsible" data-collapsible="expandable">
 			<li>
-				<div class="collapsible-header"><i class="fa fa-info-circle"></i>$!lang.get('admin.environment')</div>
+				<div class="collapsible-header"><i class="fa fa-info-circle grey-text"></i>$!lang.get('admin.environment')</div>
 				<div class="collapsible-body">
-					<h5>Scoold version: <tt class="grey-text text-darken-2">$!scooldVersion</tt></h5>
-					<h5>Production mode: <tt class="grey-text text-darken-2">$!IN_PRODUCTION</tt></h5>
-					<h5>Para app: <tt class="grey-text text-darken-2">$!paraapp</tt></h5>
-					<h5>Para version: <tt class="grey-text text-darken-2">$!version</tt></h5>
-					<h5>Para endpoint: <tt class="grey-text text-darken-2">$!endpoint</tt></h5>
-					<div>
+					<table class="highlight">
+						<tr><td><h4>Scoold</h4></td> <td><code>version $!scooldVersion</code></td></tr>
+						<tr><td><h4>Production mode</h4></td> <td><code>$!IN_PRODUCTION</code></td></tr>
+						<tr><td><h4>Para app</h4></td> <td><code>$!paraapp</code></td></tr>
+						<tr><td><h4>Para version</h4></td> <td><code>$!version</code></td></tr>
+						<tr><td><h4>Para endpoint</h4></td> <td><code>$!endpoint</code></td></tr>
+					</table>
+					<div class="mvl">
 						<form method="post" action="$adminlink/reindex">
-							<input type="submit" class="btn btn-flat waves-effect waves-light orange rusure" value="Rebuild search index">
+							<input type="submit" class="btn waves-effect waves-light darken-2 white-text orange rusure" value="Rebuild search index">
 						</form>
 					</div>
 				</div>
 			</li>
 			<li>
-				<div class="collapsible-header"><i class="fa fa-wrench"></i>$!lang.get('admin.configuration')</div>
+				<div class="collapsible-header"><i class="fa fa-wrench grey-text"></i>$!lang.get('admin.configuration')</div>
 				<div class="collapsible-body">
-					<table class="striped">
+					<table class="highlight">
 						#foreach($conf in $configMap.entrySet())
 							<tr>
-								<td><code>$conf.key</code>:</td>
+								<td><code>$conf.key</code></td>
 								<td><code class="">
 										#if(($conf.key.contains("secret") || $conf.key.contains("password") || $conf.key.contains("privatekey")) ||
 											$conf.key.contains("pass") && $conf.value && !$conf.value.isEmpty())
@@ -341,12 +358,12 @@
 				</div>
 			</li>
 			<li>
-				<div class="collapsible-header"><i class="fa fa-cog"></i>$!lang.get('admin.system')</div>
+				<div class="collapsible-header"><i class="fa fa-cog grey-text"></i>$!lang.get('admin.system')</div>
 				<div class="collapsible-body">
-					<table class="striped">
+					<table class="highlight">
 							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "user.timezone", "os.name", "os.arch", "os.version", "file.encoding"])
 								<tr>
-									<td><code>$key:</code></td>
+									<td><code>$key</code></td>
 									<td><code class="">$!utils.getSystemProperty($key)</code></td>
 								</tr>
 							#end

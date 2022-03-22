@@ -117,7 +117,7 @@ public class QuestionController {
 		utils.updateViewCount(showPost, req, res);
 
 		model.addAttribute("path", "question.vm");
-		model.addAttribute("title", utils.getLang(req).get("questions.title") + " - " + showPost.getTitle());
+		model.addAttribute("title", showPost.getTitle());
 		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("showPost", allPosts.removeFirst());

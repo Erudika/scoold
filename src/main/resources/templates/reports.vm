@@ -45,12 +45,12 @@
 				</div>
 				#if($showreport.properties.size() > 0)
 					#foreach($entry in $showreport.properties.entrySet())
-						<div><tt><b>$entry.key</b>: $entry.value</tt></div>
+						<div><code><b>$entry.key</b>: $entry.value</code></div>
 					#end
 				#end
 			</div>
-			<div class="col m2 r">
-				<span class="right"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
+			<div class="col m2 r mtl">
+				<span class="right grey-text"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
 			</div>
 		</div>
 
@@ -73,7 +73,7 @@
 #else
 	<div class="page-wrapper">
 		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
-		<hr>
+
 		<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
 		#if ($itemcount.count == 0)
 			<div class="largeText center-align grey-text">

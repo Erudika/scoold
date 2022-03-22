@@ -47,7 +47,7 @@
 						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
 							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
-					<h4 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h4>
+					<h3 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h3>
 				</div>
 
 				#paginate("replies" $itemcount "" "page")
@@ -64,10 +64,10 @@
 
 					<div class="mvl pvl center $!{showAnswerBoxClass}">
 						#if ($authenticated)
-							<a href="#write-post" class="btn-large show-answer-question-form"
+							<a href="#write-post" class="btn waves-effect waves-light show-answer-question-form"
 								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
 						#else
-							<a href="$signinlink?returnto=$!{returnto.replaceAll('/write', '')}/write" rel="nofollow" class="btn-large"
+							<a href="$signinlink?returnto=$!{returnto.replaceAll('/write', '')}/write" rel="nofollow" class="btn waves-effect waves-light"
 								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
 						#end
 					</div>
@@ -142,7 +142,7 @@
 				#end
 				#if ($showPost.tags && !$showPost.tags.isEmpty())
 					<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
-					<div class="mtm tags-aside">#tagsbox($showPost.tags $questionslink)</div>
+					<div class="mtm tags-aside">#tagsbox($showPost $questionslink)</div>
 				#end
 			</div>
 

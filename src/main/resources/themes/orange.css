@@ -1,6 +1,6 @@
 /**** ORANGE THEME ****/
 /* buttons, headings and links */
-a, h1, h2, .dropdown-content li>a, .dropdown-content li>span { color: #ff9800;}
+a, .dropdown-content li>a, .dropdown-content li>span { color: #ff9800;}
 a, button { font-weight: 400; }
 .btn, .btn-large, .navbtn-hover { background-color: #d84315; }
 .btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #d84315; }

@@ -20,7 +20,6 @@
 		#end
 		<span class="grey-text text-darken-1 smallText">$!searchQuery</span>
 	</h2>
-	<hr>
 
 	#if ($showParam)
 		#if ($itemcount.count == 0)
@@ -57,16 +56,16 @@
 		#if (!$questionslist.isEmpty())
 			<div class="largeText pvl">$!lang.get("questions.title")</div>
 			#questionspage($questionslist)
-			<div class="mvl">
-				<a href="$searchlink/questions/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			<div class="mvl center-align">
+				<a href="$searchlink/questions/$!searchQuery" class="pagelink chip">$!lang.get("more")</a>
 			</div>
 		#end
 
 		#if (!$answerslist.isEmpty())
 			<div class="largeText pvl">$!lang.get("answers.title")</div>
 			#compactanswerspage($answerslist)
-			<div class="mvl">
-				<a href="$searchlink/answers/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			<div class="mvl center-align">
+				<a href="$searchlink/answers/$!searchQuery" class="pagelink chip">$!lang.get("more")</a>
 			</div>
 		#end
 
@@ -75,24 +74,24 @@
 			<div class="row">
 				#peoplepage($userlist)
 			</div>
-			<div class="mvl">
-				<a href="$searchlink/people/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			<div class="mvl center-align">
+				<a href="$searchlink/people/$!searchQuery" class="pagelink chip">$!lang.get("more")</a>
 			</div>
 		#end
 
 		#if (!$commentslist.isEmpty())
 			<div class="largeText pvl">$!lang.get("comments.title")</div>
 			#simplecommentspage($commentslist)
-			<div class="mvl">
-				<a href="$searchlink/comments/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			<div class="mvl center-align">
+				<a href="$searchlink/comments/$!searchQuery" class="pagelink chip">$!lang.get("more")</a>
 			</div>
 		#end
 
 		#if (!$feedbacklist.isEmpty())
 			<div class="largeText pvl">$!lang.get("feedback.title")</div>
 			#questionspage($feedbacklist)
-			<div class="mvl">
-				<a href="$searchlink/feedback/$!searchQuery" class="btn waves-effect waves-light">$!lang.get("more")</a>
+			<div class="mvl center-align">
+				<a href="$searchlink/feedback/$!searchQuery" class="pagelink chip">$!lang.get("more")</a>
 			</div>
 		#end
 

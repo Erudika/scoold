@@ -2,7 +2,8 @@
 	<div class="col s12 m6 l4">
 		<div class="card">
 			<div class="card-image">
-				<img src="#profilepic($showUser, 'Profile')" id="profile_${showUser.creatorid}" class="profile-pic on-profile-page">
+				<img src="#profilepic($showUser, 'Profile')" id="profile_${showUser.creatorid}"
+						 class="profile-pic on-profile-page" alt="Profile picture">
 				#if($canEdit)
 				<span class="card-title">
 					#if($showUser.user.identifier.startsWith("fb"))
@@ -86,60 +87,65 @@
 					#if ($isAdmin && $showUser.originalName)
 						<div class="tooltipped" data-tooltip="Original name">$!{showUser.originalName}</div>
 					#end
+					#if ($showUser.location && !$showUser.location.isEmpty() && !$showUser.anonymityEnabled)
 					<div>
-						<span class="chip largeText phl tooltipped" data-tooltip="$!lang.get('reputation')">$!showUser.votes</span> &nbsp;&nbsp;
-						#if($badgesCount > 0)
-							<span class="largeText tooltipped" data-tooltip="$!lang.get('badges.title')">
-								$!badgesCount <i class="fa fa-star yellow-text text-darken-3"></i>
-							</span>
-						#end
-						#if ($showUser.groups == "admins")
-							<i class="fa fa-asterisk fa-2x orange-text mhs tooltipped"
-								 data-delay="0" data-tooltip="$!lang.get('admin')"></i>
-						#end
-						#if ($showUser.groups == "mods")#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
-						<i class="fa fa-dot-circle-o fa-2x orange-text mhs tooltipped moderator-icon ${hideModIcon}"
-							 data-delay="0" data-tooltip="$!lang.get('mod')"></i>
+						<i class="fa fa-map-marker grey-text text-darken-1"></i>&nbsp;
+						<span class="black-text">$!{showUser.location}</span>
 					</div>
+					#end
 				</div>
 			</div>
-			#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled)
-				<div class="card-action card-website center-align truncate">
-					<a href="$!showUser.website" class="blue-text">$!showUser.website.substring($!showUser.website.indexOf("/") + 2)</a>
-				</div>
+			#if($scooldUtils.isMod($showUser) || $scooldUtils.isAdmin($showUser))
+				#set($hideBadgePanel = "")
+			#else
+				#set($hideBadgePanel = "hide")
 			#end
-		</div>
-		#if (!$isMyProfile && $authenticated)
-		<div class="mvm center-align">
-			#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
-			#if ($isAdmin)
-				#if(!$scooldUtils.isAdmin($showUser))
-					<a href="$profilelink/$showUser.creatorid/make-mod" class="chip make-mod-btn">
-						#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
-							<span class="$!{unhidemakemod}"><i class="fa fa-chevron-down"></i> Unmake mod</span>
-							<span class="$!{hidemakemod}"><i class="fa fa-chevron-up "></i> Make mod</span>
-					</a>
+			<div class="card-action card-website center-align truncate ${hideBadgePanel}">
+				#if ($showUser.groups == "admins")
+				<span class="chip badgebox black-text">
+					<i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')
+				</span>
 				#end
-				<a href="${adminlink}?delete=profile&id=$showUser.id&returnto=$peoplelink" title="Delete user account" class="red chip white-text">
-					<i class="fa fa-close"></i> $!lang.get("delete")
-				</a>
-			#end
+				#if ($showUser.groups == "mods")#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
+				<span class="chip badgebox black-text moderator-icon ${hideModIcon}">
+					<i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')
+				</span>
+			</div>
 		</div>
-		#end
 	</div>
 
 	<div class="col s12 m6 l8">
 		<div class="aboutme">
-			<div class="row valign-wrapper">
-				<div class="col s8">
-					<h3>$!{lang.get("profile.about.title")}</h3>
+			<div class="row valign-wrapper mvn">
+				<div class="col s9">
+					<div class="mts">
+						<i class="fa fa-comments-o grey-text"></i>
+						<strong>$itemcount1.count</strong>
+						#if($itemcount1.count == 1)$!lang.get('posts.question')#else$!lang.get('questions.title')#end,
+						<strong>$itemcount2.count</strong>
+						#if($itemcount2.count == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end
+					</div>
+					<div class="row">
+						<div class="col m12 l6">
+							#if ($showUser.timestamp)
+							<span class="pvs mrm"><i class="fa fa-birthday-cake grey-text"></i>&nbsp;
+								$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</span>
+							#end
+						</div>
+						<div class="col m12 l6">
+							#if ($showUser.lastseen)
+							<span class="pvs"><i class="fa fa-clock-o grey-text"></i>&nbsp;
+								$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</span>
+							#end
+						</div>
+					</div>
 				</div>
-				<div class="col s4 r">
-						#if ($canEdit)
-							<a href="$profilelink/$showUser.creatorid/edit" class="editlink btn">
-								<i class="fa fa-pencil"></i><span class="plm hide-on-small-only">$!{lang.get("edit")}</span>
-							</a>
-						#end
+				<div class="col s3 r">
+					#if ($canEdit)
+						<a href="$profilelink/$showUser.creatorid/edit" class="editlink btn">
+							<i class="fa fa-pencil"></i><span class="plm hide-on-med-and-down">$!{lang.get("edit")}</span>
+						</a>
+					#end
 				</div>
 			</div>
 			#if ($request.requestURI.endsWith("/edit") && $authenticated)
@@ -152,48 +158,82 @@
 
 			<div class="viewbox ${hideview1}">
 				#if ($showUser.aboutme && !$showUser.aboutme.isEmpty() && !$showUser.anonymityEnabled)
-					<h4 class="black-text pbs">$!{showUser.aboutme}</h4>
-				#end
-				#if ($showUser.location && !$showUser.location.isEmpty() && !$showUser.anonymityEnabled)
-					<h4 class="pvs"><i class="fa fa-map-marker grey-text text-darken-1"></i>&nbsp;
-						<span class="black-text">$!{showUser.location}</span></h4>
-				#end
-					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-list grey-text text-darken-1"></i> &nbsp;
-						$itemcount1.count
-						#if($itemcount1.count == 1)$!lang.get('posts.question')#else$!lang.get('questions.title')#end,
-						$itemcount2.count
-						#if($itemcount2.count == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</h5>
-				#if ($showUser.timestamp)
-					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-birthday-cake"></i> &nbsp;
-						$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</h5>
-				#end
-				#if ($showUser.lastseen)
-					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-clock-o"></i> &nbsp;
-						$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</h5>
-				#end
-				#if ($showUser.hasSpaces() && $canEdit)
-					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-th-large"></i> &nbsp;
-						#if(!$showUser.hasSpaces() || $showUser.getSpaces().contains($scooldUtils.getDefaultSpace()))$!lang.get('defaultspace')#end
-						#set($userSpaces = $showUser.allSpaces)
-						#foreach($space in $userSpaces)
-							#set($spaceString = $scooldUtils.getSpaceName($space))
-							${spaceString}#if($foreach.count < $userSpaces.size()),#end
-						#end
-					</h5>
+					<p class="black-text mvs">$!{showUser.aboutme}</p>
 				#end
 
-				#if(!$showUser.user && $isMod)
-					<h5 class="grey-text text-darken-1 pvs"><i class="fa fa-warning"></i> &nbsp; $!lang.get("profile.deleted")</h5>
+				#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled)
+					<a href="$!showUser.website" class="blue-text" rel="nofollow">
+						$!showUser.website.substring($!showUser.website.indexOf("/") + 2)
+					</a>
 				#end
+
+				<h4 class="grey-text text-darken-1">$!{lang.get("reputation")}</h4>
+				<div>
+					<span class="chip mediumText phl">$!showUser.votes</span>
+
+					#if($showUser.monthlyVotes != 0)
+					<span class="mediumText">
+						<strong >
+							#if($showUser.monthlyVotes < 0)
+								<span class="red-text">-</span>
+							#else
+								<span class="green-text">+</span>
+							#end
+							$showUser.monthlyVotes
+						</strong> this $utils.formatDate("MMMM", $currentLocale)
+					</span>
+					#end
+
+					#if($showUser.upvotes > 0 || $showUser.downvotes > 0)
+					<span class="mediumText">
+						<strong class="tooltipped mhm" data-tooltip="Votes down">$!showUser.upvotes <i class="fa fa-chevron-down red-text text-darken-3"></i></strong>
+						<strong class="tooltipped" data-tooltip="Votes up">$!showUser.downvotes <i class="fa fa-chevron-up green-text text-darken-3"></i></strong>
+					</span>
+					#end
+				</div>
 
 				#set($badges = $showUser.badgesMap)
 				#if (!$badges.isEmpty())
-					<span class="largeText grey-text text-darken-1" title=" $!lang.get('badges.title')"><i class="fa fa-star"></i>&nbsp;</span>
+					<h4 class="grey-text text-darken-1 pvs">
+						$!lang.get('badges.title') #if($badgesCount > 0) <strong>$!badgesCount</strong>#end
+					</h4>
 					#foreach($entry in $badges.entrySet())
-					#set($badge = $entry.key)
-					#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
-					#badgebox($badge $entry.value)
+						#set($badge = $entry.key)
+						#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
+						#badgebox($badge $entry.value)
 					#end
+				#end
+
+				#if ($showUser.hasSpaces() && $canEdit)
+					#set($userSpaces = $showUser.allSpaces)
+					<h4 class="grey-text text-darken-1 pvs">
+						$!lang.get('spaces.title') <strong>$!userSpaces.size()</strong>
+					</h4>
+					<div class="#if($userSpaces.size() > 5)row#end">
+						#if(!$showUser.hasSpaces() || $showUser.getSpaces().contains($scooldUtils.getDefaultSpace()))
+							<span class="chip smallspacebox">
+								<i class="fa fa-th-large grey-text"></i>
+								<span class="mhm">$!lang.get('defaultspace')</span>
+							</span>
+						#end
+						#foreach($space in $userSpaces)
+							#set($spaceString = $scooldUtils.getSpaceName($space))
+							#if($userSpaces.size() > 5)
+							<div class="col m6 l4">
+							#end
+								<span class="chip smallspacebox">
+									<i class="fa fa-th-large grey-text"></i>
+									<span class="mhm">${spaceString}</span>
+								</span>
+							#if($userSpaces.size() > 5)
+							</div>
+							#end
+						#end
+					</div>
+				#end
+
+				#if(!$showUser.user && $isMod)
+					<h4 class="grey-text text-darken-1 pvs"><i class="fa fa-warning"></i> &nbsp; $!lang.get("profile.deleted")</h4>
 				#end
 			</div>
 
@@ -201,38 +241,70 @@
 			<div id="about-edit" class="editbox lightgraybg ${hideedit1}">
 				<form method="post" id="about-edit-form" action="$profilelink/$!showUser.creatorid">
 					#sectoken(false)
-					#if($nameEditsAllowed)
-						<div class="input-field">
-							<i class="fa fa-user-circle prefix"></i>
-							<label for="name_text">$!{lang.get("profile.name")}</label>
-							<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}">
+
+					<div class="row">
+						<div class="col s12 m6">
+							<div class="input-field">
+								<i class="fa fa-user-circle prefix grey-text"></i>
+								<label for="name_text">$!{lang.get("profile.name")}</label>
+								<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}"
+											 #if(!$nameEditsAllowed)disabled="disabled"#end>
+							</div>
 						</div>
-					#end
-
-					<div class="input-field">
-						<i class="fa fa-map-marker prefix"></i>
-						<input type="hidden" name="latlng" value="$!{authUser.latlng}">
-						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"
-									 placeholder="$!{lang.get('profile.about.location')}">
+						<div class="col s12 m6">
+							<div class="input-field">
+								<i class="fa fa-map-marker prefix grey-text mhm"></i>
+								<input type="hidden" name="latlng" value="$!{authUser.latlng}">
+								<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"
+											 placeholder="$!{lang.get('profile.about.location')}">
+							</div>
+						</div>
 					</div>
 
 					<div class="input-field">
-						<i class="fa fa-globe prefix"></i>
-						<label for="website_text">$!lang.get("website")</label>
-						<input id="website_text" name="website" type="url" value="$!{showUser.website}">
-					</div>
-
-					<div class="input-field">
+						<i class="fa fa-vcard-o prefix grey-text"></i>
 						<label for="about_text">$!{lang.get("profile.about.aboutme")}</label>
 						<textarea id="about_text" name="aboutme" maxlength="255" class="materialize-textarea">$!{showUser.aboutme}</textarea>
 					</div>
 
+					<div class="input-field">
+						<i class="fa fa-globe prefix grey-text"></i>
+						<label for="website_text">$!lang.get("website")</label>
+						<input id="website_text" name="website" type="url" value="$!{showUser.website}">
+					</div>
+
 					<div class="center mtl">
-						<button type="submit" class="btn waves-effect waves-light">$!lang.get('save')</button>
+						<button type="submit" class="btn waves-effect waves-light mhl">$!lang.get('save')</button>
 						<button type="button" class="btn waves-effect waves-light canceledit ${hideview1}">$!{lang.get('close')}</button>
 						<a href="$profilelink/$showUser.creatorid" class="btn waves-effect waves-light ${hideedit1}">$!{lang.get('close')}</a>
 					</div>
 				</form>
+			</div>
+			#end
+
+			#if (!$isMyProfile && $authenticated)
+			<div class="mvl">
+				<div class="row">
+					<div class="col m6">
+						#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
+						#if ($isAdmin)
+							#if(!$scooldUtils.isAdmin($showUser))
+								<a href="$profilelink/$showUser.creatorid/make-mod" class="chip make-mod-btn">
+									#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
+									<span class="$!{unhidemakemod}"><i class="fa fa-chevron-down"></i> Unmake mod</span>
+									<span class="$!{hidemakemod}"><i class="fa fa-chevron-up "></i> Make mod</span>
+								</a>
+							#end
+						#end
+					</div>
+					<div class="col m6 right-align">
+						#if ($isAdmin)
+							<a href="${adminlink}?delete=profile&id=$showUser.id&returnto=$peoplelink" title="Delete user account" class="red chip white-text">
+								<i class="fa fa-close"></i> $!lang.get("delete")
+							</a>
+						#end
+					</div>
+				</div>
 			</div>
 			#end
 		</div>

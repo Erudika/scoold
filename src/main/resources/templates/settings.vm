@@ -18,10 +18,10 @@
 		</div>
 	#else
 		<h2>$!lang.get("settings.title")</h2>
-		<hr>
+
 		<form method="post">
 			#if($scooldUtils.isNearMeFeatureEnabled())
-				<h4>$!lang.get('posts.locationfilter')</h4>
+				<h3>$!lang.get('posts.locationfilter')</h3>
 				<div class="mbm">
 					<p>$!lang.get('settings.location')</p>
 					<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
@@ -30,7 +30,7 @@
 			#end
 
 			<div class="mbm">
-				<h4 class="ptl">$!lang.get('posts.tagfilter')</h4>
+				<h3 class="ptl">$!lang.get('posts.tagfilter')</h3>
 				<p>$!lang.get("settings.tagfilter.text")</p>
 				#sectoken(false)
 				<div class="input-field">
@@ -41,11 +41,11 @@
 			</div>
 
 			#if($authUser.user.identityProvider == "generic")
-				<h4>$!lang.get('password')
+				<h3>$!lang.get('password')
 					#if($request.getParameter("passChanged"))
 						<small class="green-text"><i class="fa fa-check"></i></small>
 					#end
-				</h4>
+				</h3>
 				<div class="row">
 					<div class="col m3">
 						<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')">
@@ -57,7 +57,7 @@
 			#end
 
 			#if($scooldUtils.isAnonymityEnabled())
-				<h4 class="ptl">$!lang.get('settings.anonymity')</h4>
+				<h3 class="ptl">$!lang.get('settings.anonymity')</h3>
 				<div class="mbm">
 					<div class="switch">
 						<label>
@@ -76,8 +76,8 @@
 			#end
 
 			#if($emailsAllowed)
-			<h4 class="ptl">$!lang.get('settings.notifications')</h4>
-			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <tt>$!authUser.user.email</tt></p>
+			<h3 class="ptl">$!lang.get('settings.notifications')</h3>
+			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <code>$!authUser.user.email</code></p>
 			#if($newpostEmailsAllowed)
 			<div class="mbm">
 				<div class="switch">
@@ -184,7 +184,7 @@
 			#end
 
 			#if($scooldUtils.isDarkModeEnabled())
-			<h4 class="ptl">$!lang.get('settings.darkmode')</h4>
+			<h3 class="ptl">$!lang.get('settings.darkmode')</h3>
 			<div class="mbm">
 				<div class="switch">
 					<label>
