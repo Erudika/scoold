@@ -103,7 +103,7 @@ public class ProfileController {
 		List<? extends Post> answerslist = getAnswers(authUser, showUser, isMyProfile, itemcount2);
 
 		model.addAttribute("path", "profile.vm");
-		model.addAttribute("title", utils.getLang(req).get("profile.title") + " - " + showUser.getName());
+		model.addAttribute("title", showUser.getName());
 		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
 		model.addAttribute("ogimage", avatarRepository.getLink(showUser, AvatarFormat.Profile));
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());

@@ -88,17 +88,10 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		if (modelAndView == null || StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
 			return; // skip if redirect
 		}
-
-		/*============================*
-		 * COMMON MODEL FOR ALL PAGES *
-		 *============================*/
-
 		// Misc
 		modelAndView.addObject("HOMEPAGE", HOMEPAGE);
 		modelAndView.addObject("APPNAME", CONF.appName());
 		modelAndView.addObject("CDN_URL", CONF.cdnUrl());
-		modelAndView.addObject("DESCRIPTION", CONF.metaDescription());
-		modelAndView.addObject("KEYWORDS", CONF.metaKeywords());
 		modelAndView.addObject("IN_PRODUCTION", CONF.inProduction());
 		modelAndView.addObject("IN_DEVELOPMENT", !CONF.inProduction());
 		modelAndView.addObject("MAX_ITEMS_PER_PAGE", CONF.maxItemsPerPage());
@@ -224,6 +217,9 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		}
 		if (!modelAndView.getModel().containsKey("description")) {
 			modelAndView.addObject("description", CONF.metaDescription());
+		}
+		if (!modelAndView.getModel().containsKey("keywords")) {
+			modelAndView.addObject("keywords", CONF.metaKeywords());
 		}
 		if (!modelAndView.getModel().containsKey("ogimage")) {
 			modelAndView.addObject("ogimage", CONF.metaAppIconUrl());

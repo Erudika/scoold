@@ -119,6 +119,7 @@ public class QuestionController {
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", showPost.getTitle());
 		model.addAttribute("description", Utils.abbreviate(Utils.stripAndTrim(showPost.getBody(), " "), 195));
+		model.addAttribute("keywords", showPost.getTagsString());
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("showPost", allPosts.removeFirst());
 		model.addAttribute("answerslist", allPosts);
@@ -127,6 +128,9 @@ public class QuestionController {
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
 				CONF.maxCommentLength()));
+		if (showPost.getAuthor() != null) {
+			model.addAttribute("ogimage", showPost.getAuthor().getPicture());
+		}
 		return "base";
 	}
 
