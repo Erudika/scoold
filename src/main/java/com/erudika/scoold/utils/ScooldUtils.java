@@ -246,16 +246,14 @@ public final class ScooldUtils {
 			logger.error("No connection to Para backend. Retrying connection in {}s (attempt {} of {})...",
 					retryInterval, count, maxRetries);
 			if (maxRetries < 0 || retryCount < maxRetries) {
-				Para.asyncExecute(new Runnable() {
-					public void run() {
-						try {
-							Thread.sleep(retryInterval * 1000L);
-						} catch (InterruptedException ex) {
-							logger.error(null, ex);
-							Thread.currentThread().interrupt();
-						}
-						retryConnection(callable, count);
+				Para.asyncExecute(() -> {
+					try {
+						Thread.sleep(retryInterval * 1000L);
+					} catch (InterruptedException ex) {
+						logger.error(null, ex);
+						Thread.currentThread().interrupt();
 					}
+					retryConnection(callable, count);
 				});
 			}
 		}

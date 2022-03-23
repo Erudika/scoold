@@ -80,7 +80,7 @@ public class ScooldConfig extends Config {
 			tags = {"requires restart"},
 			description = "App identifier (access key) of the Para app used by Scoold.")
 	public String paraAccessKey() {
-		return getConfigParam("para_access_key", getConfigParam("access_key", "app:scoold"));
+		return App.id(getConfigParam("para_access_key", getConfigParam("access_key", "app:scoold")));
 	}
 
 	@Documented(position = 30,
