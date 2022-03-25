@@ -3112,6 +3112,15 @@ public class ScooldConfig extends Config {
 		return getConfigParam("autoinit.para_config_file", "");
 	}
 
+	@Documented(position = 3040,
+		identifier = "cloudinary_url",
+		category = "Miscellaneous",
+		tags = {"preview"},
+		description = "Cloudinary URL. Used for uploading avatars to Cloudinary.")
+	public String cloudinaryUrl() {
+		return getConfigParam("cloudinary_url", "");
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

@@ -844,6 +844,10 @@ public final class ScooldUtils {
 		return !StringUtils.isBlank(CONF.imgurClientId()) && "imgur".equalsIgnoreCase(CONF.avatarRepository());
 	}
 
+	public static boolean isCloudinaryAvatarRepositoryEnabled() {
+		return !StringUtils.isBlank(CONF.cloudinaryUrl()) && "cloudinary".equalsIgnoreCase(CONF.avatarRepository());
+	}
+
 	public String getFooterHTML() {
 		return CONF.footerHtml();
 	}
