@@ -52,6 +52,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
+
+import com.erudika.scoold.utils.avatars.AvatarFormat;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -129,7 +131,7 @@ public class QuestionController {
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
 				CONF.maxCommentLength()));
 		if (showPost.getAuthor() != null) {
-			model.addAttribute("ogimage", showPost.getAuthor().getPicture());
+			model.addAttribute("ogimage", utils.getFullAvatarURL(showPost.getAuthor(), AvatarFormat.Profile));
 		}
 		return "base";
 	}
