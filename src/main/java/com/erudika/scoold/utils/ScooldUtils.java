@@ -837,7 +837,7 @@ public final class ScooldUtils {
 	}
 
 	public static boolean isAvatarUploadsEnabled() {
-		return isImgurAvatarRepositoryEnabled();
+		return isImgurAvatarRepositoryEnabled() || isCloudinaryAvatarRepositoryEnabled();
 	}
 
 	public static boolean isImgurAvatarRepositoryEnabled() {
