@@ -29,7 +29,7 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 	private final AvatarRepository repository;
 
 	public AvatarRepositoryProxy(GravatarAvatarGenerator gravatarAvatarGenerator) {
-		this.repository = addGravatarIfEnabled(addImgurIfEnabled(getDefault()), gravatarAvatarGenerator);
+		this.repository = addGravatarIfEnabled(addCloudinaryIfEnabled(addImgurIfEnabled(getDefault())), gravatarAvatarGenerator);
 	}
 
 	private AvatarRepository addGravatarIfEnabled(AvatarRepository repo, GravatarAvatarGenerator gravatarAvatarGenerator) {
@@ -38,6 +38,10 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 
 	private AvatarRepository addImgurIfEnabled(AvatarRepository repo) {
 		return ScooldUtils.isImgurAvatarRepositoryEnabled() ? new ImgurAvatarRepository(repo) : repo;
+	}
+
+	private AvatarRepository addCloudinaryIfEnabled(AvatarRepository repo) {
+		return ScooldUtils.isCloudinaryAvatarRepositoryEnabled() ? new CloudinaryAvatarRepository(repo) : repo;
 	}
 
 	private AvatarRepository getDefault() {
