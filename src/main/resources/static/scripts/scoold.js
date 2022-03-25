@@ -534,9 +534,7 @@ $(function () {
 	function changeAvatars(newPicValue) {
 		avatarUrlInput.val(newPicValue);
 
-		if (navbarAvatar.attr("src") === profileAvatar.attr("src")) {
-			navbarAvatar.attr("src", newPicValue);
-		}
+		navbarAvatar.attr("src", newPicValue);
 		profileAvatar.attr("src", newPicValue);
 	}
 
