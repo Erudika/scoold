@@ -577,6 +577,17 @@ $(function () {
 	});
 
 	if (AVATAR_UPLOADS_ENABLED) {
+		var enableAvatarUploadLoading = function() {
+			document.getElementById('change-avatar-btn').classList.add('hide');
+			document.getElementById('avatar_loading').classList.add('active');
+			document.getElementById('avatar_loading').classList.remove('hide');
+		}
+		var disableAvatarUploadLoading = function() {
+			document.getElementById('change-avatar-btn').classList.remove('hide');
+			document.getElementById('avatar_loading').classList.remove('active');
+			document.getElementById('avatar_loading').classList.add('hide');
+		}
+
 		var beforeSendFile = function(file, next) { return next(file); }
 		var uploadOpts = {
 			remoteFilename: function (file) {
@@ -584,13 +595,15 @@ $(function () {
 			},
 			onFileUploadResponse: function (xhr) {
 				var result = JSON.parse(xhr.responseText);
-				if(!result) return;
-
-				if (result.data && result.data.link) {
-					changeAvatarAndSubmit(result.data.link);
-				} else if(result.secure_url) {
-					changeAvatarAndSubmit(result.secure_url);
+				if (result) {
+					if (result.data && result.data.link) {
+						changeAvatarAndSubmit(result.data.link);
+					} else if (result.secure_url) {
+						changeAvatarAndSubmit(result.secure_url);
+					}
 				}
+
+				disableAvatarUploadLoading();
 			},
 			allowedTypes: imageTypes
 		};
@@ -657,11 +670,14 @@ $(function () {
 			var file = e.target.files.length ? e.target.files[0] : null;
 			if (!file) return;
 
+			enableAvatarUploadLoading();
+
 			beforeSendFile(file, function(file) {
 				dropPicHandler.onFileInserted(file);
 				dropPicHandler.uploadFile(file);
 			}, function(error) {
 				console.error(error);
+				disableAvatarUploadLoading();
 			});
 		});
 	}
