@@ -3284,7 +3284,7 @@ public class ScooldConfig extends Config {
 				+ "media-src 'self' blob:; "
 				+ "form-action 'self' " + serverUrl() + serverContextPath() + SIGNOUTLINK + "; "
 				+ "connect-src 'self' " + (inProduction() ? serverUrl() : "")
-				+ " maps.googleapis.com api.imgur.com accounts.google.com " + cspConnectSources() + "; "
+				+ " maps.googleapis.com api.imgur.com api.cloudinary.com accounts.google.com " + cspConnectSources() + "; "
 				+ "frame-src 'self' *.google.com staticxx.facebook.com " + cspFrameSources() + "; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
 				// unsafe-inline required by MathJax and Google Maps!
