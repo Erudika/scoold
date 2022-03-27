@@ -159,10 +159,10 @@ public class SearchController {
 
 	@ResponseBody
 	@GetMapping("/feed.xml")
-	public ResponseEntity<String> feed() {
+	public ResponseEntity<String> feed(HttpServletRequest req) {
 		String feed = "";
 		try {
-			feed = new SyndFeedOutput().outputString(getFeed());
+			feed = new SyndFeedOutput().outputString(getFeed(req));
 		} catch (Exception ex) {
 			logger.error("Could not generate feed", ex);
 		}
@@ -173,13 +173,13 @@ public class SearchController {
 				body(feed);
 	}
 
-	private SyndFeed getFeed() throws IOException, FeedException {
+	private SyndFeed getFeed(HttpServletRequest req) throws IOException, FeedException {
 		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		String baseurl = CONF.serverUrl();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
-		Map<String, String> lang = utils.getLangutils().readLanguage(CONF.defaultLanguageCode());
+		Map<String, String> lang = utils.getLang(req);
 
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("atom_1.0");
