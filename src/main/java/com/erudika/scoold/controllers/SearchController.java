@@ -39,10 +39,7 @@ import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -182,11 +179,13 @@ public class SearchController {
 		String baseurl = CONF.serverUrl();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
+		Map<String, String> lang = utils.getLangutils().readLanguage(CONF.defaultLanguageCode());
+
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("atom_1.0");
-		feed.setTitle(CONF.appName() + " - Recent questions");
+		feed.setTitle(Utils.formatMessage(lang.get("feed.title"), CONF.appName()));
 		feed.setLink(baseurl);
-		feed.setDescription("A summary of the most recent questions on " + CONF.appName());
+		feed.setDescription(Utils.formatMessage(lang.get("feed.description"), CONF.appName()));
 
 		for (Post post : questions) {
 			SyndEntry entry;
