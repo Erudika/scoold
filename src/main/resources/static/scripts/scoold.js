@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -534,9 +534,7 @@ $(function () {
 	function changeAvatars(newPicValue) {
 		avatarUrlInput.val(newPicValue);
 
-		if (navbarAvatar.attr("src") === profileAvatar.attr("src")) {
-			navbarAvatar.attr("src", newPicValue);
-		}
+		navbarAvatar.attr("src", newPicValue);
 		profileAvatar.attr("src", newPicValue);
 	}
 
@@ -579,15 +577,33 @@ $(function () {
 	});
 
 	if (AVATAR_UPLOADS_ENABLED) {
+		var enableAvatarUploadLoading = function() {
+			document.getElementById('change-avatar-btn').classList.add('hide');
+			document.getElementById('avatar_loading').classList.add('active');
+			document.getElementById('avatar_loading').classList.remove('hide');
+		}
+		var disableAvatarUploadLoading = function() {
+			document.getElementById('change-avatar-btn').classList.remove('hide');
+			document.getElementById('avatar_loading').classList.remove('active');
+			document.getElementById('avatar_loading').classList.add('hide');
+		}
+
+		var beforeSendFile = function(file, next) { return next(file); }
 		var uploadOpts = {
 			remoteFilename: function (file) {
 				return (profileAvatar.attr("id") || "profile_" + Date.now()) + "_" + file.name;
 			},
 			onFileUploadResponse: function (xhr) {
 				var result = JSON.parse(xhr.responseText);
-				if (result && result.data && result.data.link) {
-					changeAvatarAndSubmit(result.data.link);
+				if (result) {
+					if (result.data && result.data.link) {
+						changeAvatarAndSubmit(result.data.link);
+					} else if (result.secure_url) {
+						changeAvatarAndSubmit(result.secure_url);
+					}
 				}
+
+				disableAvatarUploadLoading();
 			},
 			allowedTypes: imageTypes
 		};
@@ -599,6 +615,27 @@ $(function () {
 			uploadOpts.extraHeaders = {
 				"Authorization": "Client-ID " + IMGUR_CLIENT_ID
 			};
+		}
+		if (CLOUDINARY_ENABLED) {
+			beforeSendFile = function(file, onSuccess, onError) {
+				var timestamp = Math.round(new Date().getTime() / 1000);
+				$.ajax({
+					type: "POST",
+					url: avatarEditForm.attr("action") + '/cloudinary_upload_link',
+					data: {
+						filename: file.name,
+						timestamp: timestamp,
+					},
+					success: function (signedRequest) {
+						dropPicHandler.settings.uploadUrl = signedRequest.url;
+						dropPicHandler.settings.extraParams = signedRequest.data;
+						onSuccess(file)
+					},
+					error: function (e) {
+						onError(e)
+					}
+				})
+			}
 		}
 
 		var dropPicHandler = new inlineAttachment(uploadOpts, {});
@@ -630,13 +667,18 @@ $(function () {
 		});
 
 		$('input[type=file]').on('change', function (e) {
-			var file = event.target.files.length ? event.target.files[0] : null;
-			if (file) {
-				var formData = new FormData();
-				formData.append("file", file, Date.now() + "_" + file.name);
+			var file = e.target.files.length ? e.target.files[0] : null;
+			if (!file) return;
+
+			enableAvatarUploadLoading();
+
+			beforeSendFile(file, function(file) {
 				dropPicHandler.onFileInserted(file);
 				dropPicHandler.uploadFile(file);
-			}
+			}, function(error) {
+				console.error(error);
+				disableAvatarUploadLoading();
+			});
 		});
 	}
 

@@ -17,6 +17,8 @@
  */
 package com.erudika.scoold.controllers;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.erudika.para.core.User;
 import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
@@ -34,12 +36,13 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -178,6 +182,45 @@ public class ProfileController {
 			model.addAttribute("user", showUser);
 		}
 		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
+	}
+
+	@ResponseBody
+	@PostMapping(value = "/{id}/cloudinary_upload_link", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> generateCloudinaryUploadLink(@PathVariable String id, @RequestParam String filename,
+			@RequestParam String timestamp, HttpServletRequest req) {
+		if (!ScooldUtils.isCloudinaryAvatarRepositoryEnabled()) {
+			return ResponseEntity.status(404).build();
+		}
+
+		Profile authUser = utils.getAuthUser(req);
+		Profile showUser = getProfileForEditing(id, authUser);
+		if (showUser == null) {
+			return ResponseEntity.status(403).build();
+		}
+
+		String preset = "avatar";
+		String publicId = "avatars/" + id;
+
+		Cloudinary cloudinary = new Cloudinary(CONF.cloudinaryUrl());
+		String signature = cloudinary.apiSignRequest(ObjectUtils.asMap(
+			"public_id", publicId,
+			"timestamp", timestamp,
+			"upload_preset", preset
+		), cloudinary.config.apiSecret);
+
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("url", "https://api.cloudinary.com/v1_1/" + cloudinary.config.cloudName + "/image/upload");
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("resource_type", "image");
+		data.put("public_id", publicId);
+		data.put("upload_preset", preset);
+		data.put("filename", filename);
+		data.put("timestamp", timestamp);
+		data.put("api_key", cloudinary.config.apiKey);
+		data.put("signature", signature);
+		response.put("data", data);
+
+		return ResponseEntity.ok().body(response);
 	}
 
 	private Profile getProfileForEditing(String id, Profile authUser) {

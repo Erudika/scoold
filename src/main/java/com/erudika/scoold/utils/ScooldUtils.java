@@ -837,11 +837,15 @@ public final class ScooldUtils {
 	}
 
 	public static boolean isAvatarUploadsEnabled() {
-		return isImgurAvatarRepositoryEnabled();
+		return isImgurAvatarRepositoryEnabled() || isCloudinaryAvatarRepositoryEnabled();
 	}
 
 	public static boolean isImgurAvatarRepositoryEnabled() {
 		return !StringUtils.isBlank(CONF.imgurClientId()) && "imgur".equalsIgnoreCase(CONF.avatarRepository());
+	}
+
+	public static boolean isCloudinaryAvatarRepositoryEnabled() {
+		return !StringUtils.isBlank(CONF.cloudinaryUrl()) && "cloudinary".equalsIgnoreCase(CONF.avatarRepository());
 	}
 
 	public String getFooterHTML() {

@@ -102,6 +102,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("GMAPS_API_KEY", CONF.googleMapsApiKey());
 		modelAndView.addObject("IMGUR_CLIENT_ID", CONF.imgurClientId());
 		modelAndView.addObject("IMGUR_ENABLED", ScooldUtils.isImgurAvatarRepositoryEnabled());
+		modelAndView.addObject("CLOUDINARY_ENABLED", ScooldUtils.isCloudinaryAvatarRepositoryEnabled());
 		modelAndView.addObject("RTL_ENABLED", utils.isLanguageRTL(utils.getCurrentLocale(utils.getLanguageCode(request)).getLanguage()));
 		modelAndView.addObject("MAX_TAGS_PER_POST", CONF.maxTagsPerPost());
 		modelAndView.addObject("includeHighlightJS", CONF.codeHighlightingEnabled());

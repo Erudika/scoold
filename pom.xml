@@ -139,6 +139,11 @@
 			<artifactId>nimbus-jose-jwt</artifactId>
 			<version>9.21</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http45</artifactId>
+			<version>1.29.0</version>
+		</dependency>
 
 		<!-- TESTING -->
 		<dependency>
@@ -154,6 +159,7 @@
 	</dependencies>
 
 	<build>
+		<testSourceDirectory>src/test</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

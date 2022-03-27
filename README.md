@@ -592,6 +592,7 @@ scoold.admins = "admin@domain.com"
 |`scoold.redirect_signin_to_idp`<br>Enable/disable the redirection of users from the signin page, directly to the IDP login page. | `false` | `Boolean`|
 |`scoold.gmaps_api_key`<br>The Google Maps API key. Used for geolocation functionality, (e.g. 'posts near me', location). | ` ` | `String`|
 |`scoold.imgur_client_id` <kbd>preview</kbd><br>Imgur API client id. Used for uploading avatars to Imgur. **Note:** Imgur have some breaking restrictions going on in their API and this might not work. | ` ` | `String`|
+| `scoold.cloudinary_url` <kbd>preview</kbd><br>Cloudinary URL. Used for uploading avatars to Cloudinary. | ` ` | `String`|
 
 ## Posts
 
@@ -1867,7 +1868,20 @@ scoold.avatar_repository = "imgur"
 Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
 
 ### To Cloudinary
-...soon
+To use Cloudinary for storing images, specify your Cloudinary API client id:
+```
+scoold.cloudinary_url = "cloudinary://123456:abcdefaddd@scoold"
+scoold.avatar_repository = "cloudinary"
+```
+Keep in mind that *only images* can be uploaded to Cloudinary and other restrictions may apply.  
+
+You must create several presets on your cloudinary account:
+- `avatar` (upload preset): for processing when receiving a file (example: `c_thumb,g_face,h_404,q_auto:good,w_404,z_0.4`)
+- `square25`: for the display in 25x25 format (example: `c_scale,h_25,q_auto:eco,w_25`)
+- `square32`: for displaying in 32x32 format (example: `c_scale,h_32,q_auto:eco,w_32`)
+- `square50`: for displaying in 50x50 format (example: `c_scale,h_50,q_auto:good,w_50`)
+- `square127`: for displaying in 127x127 format (example: `c_scale,h_127,q_auto:good,w_127`)
+- `profile`: for displaying in 404x404 format (example: `c_scale,h_404,q_auto:good,w_404`)
 
 ## Slack integration
 
