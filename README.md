@@ -431,7 +431,7 @@ scoold.admins = "admin@domain.com"
 |`scoold.voter_ifhas`<br>Number of votes (up or down) needed from a user for earning the `voter` badge. | `100` | `Integer`|
 |`scoold.commentator_ifhas`<br>Number of comments a user needs to have posted for earning the `commentator` badge. | `100` | `Integer`|
 |`scoold.critic_ifhas`<br>Number of cast downvotes needed from a user for earning the `critic` badge. | `10` | `Integer`|
-|`scoold.supporter_ifhas`<br>Number of cast upvotes needed from a user for earning the `supporter` badge`. | `50` | `Integer`|
+|`scoold.supporter_ifhas`<br>Number of cast upvotes needed from a user for earning the `supporter` badge. | `50` | `Integer`|
 |`scoold.goodquestion_ifhas`<br>Votes needed on a question before its author gets to earn the `good question` badge. | `20` | `Integer`|
 |`scoold.goodanswer_ifhas`<br>Votes needed on an answer before its author gets to earn the `good answer` badge. | `10` | `Integer`|
 |`scoold.enthusiast_ifhas`<br>Reputation points needed for earning the `enthusiast` badge. | `100` | `Integer`|
@@ -466,8 +466,8 @@ scoold.admins = "admin@domain.com"
 |`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see. | ` ` | `String`|
 |`scoold.welcome_message_onlogin`<br>Adds a brief intro text inside a banner at the top of the 'Sign in' page only. | ` ` | `String`|
 |`scoold.dark_mode_enabled`<br>Enable/disable the option for users to switch to the dark theme. | `true` | `Boolean`|
-|`scoold.meta_description`<br>The content inside the description `<meta>` tag. | ` ` | `String`|
-|`scoold.meta_keywords`<br>The content inside the keywords `<meta>` tag. | ` ` | `String`|
+|`scoold.meta_description`<br>The content inside the description `<meta>` tag. | `Scoold is friendly place for knowledge sharing and collaboration...` | `String`|
+|`scoold.meta_keywords`<br>The content inside the keywords `<meta>` tag. | `knowledge base, knowledge sharing, collaboration, wiki...` | `String`|
 |`scoold.show_branding`<br>Enable/disable the 'Powered by Scoold' branding in the footer. | `true` | `Boolean`|
 |`scoold.mathjax_enabled` <kbd>Pro</kbd><br>Enable/disable support for MathJax and LaTeX for scientific expressions in Markdown. | `false` | `Boolean`|
 |`scoold.gravatars_enabled`<br>Enable/disable support for Gravatars. | `true` | `Boolean`|
@@ -500,19 +500,9 @@ scoold.admins = "admin@domain.com"
 
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
-|`scoold.logo_url`<br>The URL of the logo in the nav bar. | `/images/logo.svg` | `String`|
-|`scoold.small_logo_url`<br>The URL of a smaller logo. Mainly used in transactional emails. | `/images/logowhite.png` | `String`|
-
-## Miscellaneous
-
-| Property key & Description | Default Value | Type |
-|  ---                       | ---           | ---  |
+|`scoold.logo_url`<br>The URL of the logo in the nav bar. Use a PNG, SVG, JPG or WebP format. | `/images/logo.svg` | `String`|
+|`scoold.small_logo_url`<br>The URL of a smaller logo (only use PNG/JPG!). Used in transactional emails and the meta `og:image`. | `/images/logowhite.png` | `String`|
 |`scoold.cdn_url`<br>A CDN URL where all static assets might be stored. | ` ` | `String`|
-
-## Frontend Assets
-
-| Property key & Description | Default Value | Type |
-|  ---                       | ---           | ---  |
 |`scoold.stylesheet_url`<br>A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite all existing CSS styles!* | `/styles/style.css` | `String`|
 |`scoold.external_styles`<br>A comma-separated list of external CSS files. These will be loaded *after* the main stylesheet. | ` ` | `String`|
 |`scoold.external_scripts._id_`<br>A map of external JS scripts. These will be loaded after the main JS script. For example: `scoold.external_scripts.script1 = "alert('Hi')"` | ` ` | `Map`|
@@ -592,18 +582,8 @@ scoold.admins = "admin@domain.com"
 |`scoold.redirect_signin_to_idp`<br>Enable/disable the redirection of users from the signin page, directly to the IDP login page. | `false` | `Boolean`|
 |`scoold.gmaps_api_key`<br>The Google Maps API key. Used for geolocation functionality, (e.g. 'posts near me', location). | ` ` | `String`|
 |`scoold.imgur_client_id` <kbd>preview</kbd><br>Imgur API client id. Used for uploading avatars to Imgur. **Note:** Imgur have some breaking restrictions going on in their API and this might not work. | ` ` | `String`|
-| `scoold.cloudinary_url` <kbd>preview</kbd><br>Cloudinary URL. Used for uploading avatars to Cloudinary. | ` ` | `String`|
-
-## Posts
-
-| Property key & Description | Default Value | Type |
-|  ---                       | ---           | ---  |
+|`scoold.cloudinary_url` <kbd>preview</kbd><br>Cloudinary URL. Used for uploading avatars to Cloudinary. | ` ` | `String`|
 |`scoold.max_fav_tags`<br>Maximum number of favorite tags. | `50` | `Integer`|
-
-## Miscellaneous
-
-| Property key & Description | Default Value | Type |
-|  ---                       | ---           | ---  |
 |`scoold.batch_request_size`<br>Maximum batch size for the Para client pagination requests. | `0` | `Integer`|
 |`scoold.signout_url`<br>The URL which users will be redirected to after they click 'Sign out'. Can be a page hosted externally. | `/signin?code=5&success=true` | `String`|
 |`scoold.vote_expires_after_sec`<br>Vote expiration timeout, in seconds. Users can vote again on the same content after this period has elapsed. Default is 30 days. | `2592000` | `Integer`|
@@ -1861,7 +1841,7 @@ served from.
 
 ### To Imgur
 To use Imgur for storing images, specify your Imgur API client id:
-```
+```ini
 scoold.imgur_client_id = "x23e8t0askdj"
 scoold.avatar_repository = "imgur"
 ```
@@ -1869,11 +1849,11 @@ Keep in mind that *only images* can be uploaded to Imgur and other restrictions 
 
 ### To Cloudinary
 To use Cloudinary for storing images, specify your Cloudinary API client id:
-```
+```ini
 scoold.cloudinary_url = "cloudinary://123456:abcdefaddd@scoold"
 scoold.avatar_repository = "cloudinary"
 ```
-Keep in mind that *only images* can be uploaded to Cloudinary and other restrictions may apply.  
+Keep in mind that *only images* can be uploaded to Cloudinary and other restrictions may apply.
 
 You must create several presets on your cloudinary account:
 - `avatar` (upload preset): for processing when receiving a file (example: `c_thumb,g_face,h_404,q_auto:good,w_404,z_0.4`)
