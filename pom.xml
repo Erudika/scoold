@@ -142,7 +142,7 @@
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http45</artifactId>
-			<version>1.29.0</version>
+			<version>1.31.0</version>
 		</dependency>
 
 		<!-- TESTING -->
@@ -159,7 +159,6 @@
 	</dependencies>
 
 	<build>
-		<testSourceDirectory>src/test</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
