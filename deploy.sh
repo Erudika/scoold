@@ -19,9 +19,9 @@ echo "" >> changelog.txt && \
 hub release create -F changelog.txt -t "$ver" $ver && \
 rm changelog.txt
 
-docker build .
+docker build --rm -t scoold:aws .
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO
-docker tag erudikaltd/scoold:latest_stable $ECR_REPO:latest_stable
-docker push $ECR_REPO:latest_stable
+docker tag scoold:aws $ECR_REPO:$ver
+docker push $ECR_REPO:$ver
 
 echo "--done--"
