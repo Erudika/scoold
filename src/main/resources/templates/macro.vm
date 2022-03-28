@@ -199,7 +199,7 @@
 #macro(tagsbox $post $link)
 	#set($tags = $post.tags)
 	#if($post.answerid)
-	<a href="$questionslink?sortby=properties.answerid" title="Posts with approved answer" class="chip mrs light-green white-text">
+	<a href="$questionslink?sortby=answered" title="Posts with approved answer" class="chip mrs light-green white-text">
 		<i class="fa fa-check-circle"></i> $!lang.get('posts.answered')
 	</a>
 	#end

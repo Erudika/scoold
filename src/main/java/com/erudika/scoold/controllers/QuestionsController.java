@@ -349,6 +349,11 @@ public class QuestionsController {
 			p.setSortby("properties.lastactivity");
 		} else if ("votes".equals(sortby)) {
 			p.setSortby("votes");
+		} else if ("answered".equals(sortby)) {
+			p.setSortby("timestamp");
+			String q = "properties.answerid:[* TO *]";
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
+					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
 		} else if ("unanswered".equals(sortby)) {
 			p.setSortby("timestamp");
 			if ("default_pager".equals(p.getName()) && p.isDesc()) {
