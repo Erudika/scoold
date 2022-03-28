@@ -62,6 +62,9 @@
 							</div>
 						</div>
 						#end
+						<div id="avatar_loading" class="hide">
+							<div class="progress"><div class="indeterminate"></div></div>
+						</div>
 						<div class="row mvn pts">
 							#if($scooldUtils.isAvatarUploadsEnabled())#set($colsize = "s4")#else#set($colsize = "s6")#end
 							#if($scooldUtils.isAvatarUploadsEnabled())
@@ -70,19 +73,6 @@
 									$!lang.get('add')
 								</button>
 								<input type="file" name="file" class="hide"/>
-								<div id="avatar_loading" class="preloader-wrapper hide">
-									<div class="spinner-layer spinner-red-only">
-										<div class="circle-clipper left">
-											<div class="circle"></div>
-										</div>
-										<div class="gap-patch">
-											<div class="circle"></div>
-										</div>
-										<div class="circle-clipper right">
-											<div class="circle"></div>
-										</div>
-									</div>
-								</div>
 							</div>
 							#end
 							<div class="col ${colsize}">

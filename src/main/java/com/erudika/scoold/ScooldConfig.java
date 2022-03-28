@@ -1844,7 +1844,7 @@ public class ScooldConfig extends Config {
 			value = "50",
 			type = Integer.class,
 			category = "Reputation and Rewards",
-			description = "Number of cast upvotes needed from a user for earning the `supporter` badge`.")
+			description = "Number of cast upvotes needed from a user for earning the `supporter` badge.")
 	public int supporterIfHasRep() {
 		return getConfigInt("supporter_ifhas", 50);
 	}
@@ -2398,7 +2398,7 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 2370,
 			identifier = "cdn_url",
-			category = "miscellaneous",
+			category = "Frontend Assets",
 			description = "A CDN URL where all static assets might be stored.")
 	public String cdnUrl() {
 		return StringUtils.stripEnd(getConfigParam("cdn_url", serverContextPath()), "/");
@@ -2991,11 +2991,20 @@ public class ScooldConfig extends Config {
 		return getConfigParam("imgur_client_id", "");
 	}
 
+	@Documented(position = 2911,
+		identifier = "cloudinary_url",
+		category = "Miscellaneous",
+		tags = {"preview"},
+		description = "Cloudinary URL. Used for uploading avatars to Cloudinary.")
+	public String cloudinaryUrl() {
+		return getConfigParam("cloudinary_url", "");
+	}
+
 	@Documented(position = 2920,
 			identifier = "max_fav_tags",
 			value = "50",
 			type = Integer.class,
-			category = "Posts",
+			category = "Miscellaneous",
 			description = "Maximum number of favorite tags.")
 	public int maxFavoriteTags() {
 		return getConfigInt("max_fav_tags", 50);
@@ -3110,15 +3119,6 @@ public class ScooldConfig extends Config {
 					+ " the root Para app from the Para configuration file, wherever that may be.")
 	public String autoInitWithParaConfigFile() {
 		return getConfigParam("autoinit.para_config_file", "");
-	}
-
-	@Documented(position = 3040,
-		identifier = "cloudinary_url",
-		category = "Miscellaneous",
-		tags = {"preview"},
-		description = "Cloudinary URL. Used for uploading avatars to Cloudinary.")
-	public String cloudinaryUrl() {
-		return getConfigParam("cloudinary_url", "");
 	}
 
 	/* **********************************************************************************************************/

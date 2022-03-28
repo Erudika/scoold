@@ -184,10 +184,10 @@ public class ProfileController {
 		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
 	}
 
+	@SuppressWarnings("unchecked")
 	@ResponseBody
-	@PostMapping(value = "/{id}/cloudinary_upload_link", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Object>> generateCloudinaryUploadLink(@PathVariable String id, @RequestParam String filename,
-			@RequestParam String timestamp, HttpServletRequest req) {
+	@PostMapping(value = "/{id}/cloudinary-upload-link", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> generateCloudinaryUploadLink(@PathVariable String id, HttpServletRequest req) {
 		if (!ScooldUtils.isCloudinaryAvatarRepositoryEnabled()) {
 			return ResponseEntity.status(404).build();
 		}
@@ -200,11 +200,11 @@ public class ProfileController {
 
 		String preset = "avatar";
 		String publicId = "avatars/" + id;
-
+		long timestamp = Utils.timestamp() / 1000;
 		Cloudinary cloudinary = new Cloudinary(CONF.cloudinaryUrl());
 		String signature = cloudinary.apiSignRequest(ObjectUtils.asMap(
 			"public_id", publicId,
-			"timestamp", timestamp,
+			"timestamp", String.valueOf(timestamp),
 			"upload_preset", preset
 		), cloudinary.config.apiSecret);
 
@@ -214,7 +214,7 @@ public class ProfileController {
 		data.put("resource_type", "image");
 		data.put("public_id", publicId);
 		data.put("upload_preset", preset);
-		data.put("filename", filename);
+		data.put("filename", id);
 		data.put("timestamp", timestamp);
 		data.put("api_key", cloudinary.config.apiKey);
 		data.put("signature", signature);

@@ -533,7 +533,6 @@ $(function () {
 
 	function changeAvatars(newPicValue) {
 		avatarUrlInput.val(newPicValue);
-
 		navbarAvatar.attr("src", newPicValue);
 		profileAvatar.attr("src", newPicValue);
 	}
@@ -577,32 +576,27 @@ $(function () {
 	});
 
 	if (AVATAR_UPLOADS_ENABLED) {
-		var enableAvatarUploadLoading = function() {
-			document.getElementById('change-avatar-btn').classList.add('hide');
-			document.getElementById('avatar_loading').classList.add('active');
-			document.getElementById('avatar_loading').classList.remove('hide');
-		}
-		var disableAvatarUploadLoading = function() {
-			document.getElementById('change-avatar-btn').classList.remove('hide');
-			document.getElementById('avatar_loading').classList.remove('active');
-			document.getElementById('avatar_loading').classList.add('hide');
-		}
+		var jsonFieldName = CLOUDINARY_ENABLED ? "secure_url" : "link";
+		var enableAvatarUploadLoading = function () {
+			$("#change-avatar-btn").attr("disabled", "disabled");
+			$("#avatar_loading").removeClass("hide");
+		};
+		var disableAvatarUploadLoading = function () {
+			$("#change-avatar-btn").removeAttr("disabled");
+			$("#avatar_loading").addClass("hide");
+		};
 
-		var beforeSendFile = function(file, next) { return next(file); }
+		var beforeSendFile = function(file, next) { return next(file); };
 		var uploadOpts = {
 			remoteFilename: function (file) {
 				return (profileAvatar.attr("id") || "profile_" + Date.now()) + "_" + file.name;
 			},
 			onFileUploadResponse: function (xhr) {
 				var result = JSON.parse(xhr.responseText);
-				if (result) {
-					if (result.data && result.data.link) {
-						changeAvatarAndSubmit(result.data.link);
-					} else if (result.secure_url) {
-						changeAvatarAndSubmit(result.secure_url);
-					}
-				}
-
+				changeAvatarAndSubmit(result && result.data ? result.data[jsonFieldName] : result[jsonFieldName]);
+				disableAvatarUploadLoading();
+			},
+			onFileUploadError: function () {
 				disableAvatarUploadLoading();
 			},
 			allowedTypes: imageTypes
@@ -610,39 +604,33 @@ $(function () {
 		if (IMGUR_ENABLED) {
 			uploadOpts.uploadUrl = "https://api.imgur.com/3/image";
 			uploadOpts.uploadMethod = "POST";
-			uploadOpts.jsonFieldName = "link";
+			uploadOpts.jsonFieldName = jsonFieldName;
 			uploadOpts.uploadFieldName = "image";
 			uploadOpts.extraHeaders = {
 				"Authorization": "Client-ID " + IMGUR_CLIENT_ID
 			};
-		}
-		if (CLOUDINARY_ENABLED) {
-			beforeSendFile = function(file, onSuccess, onError) {
-				var timestamp = Math.round(new Date().getTime() / 1000);
+		} else if (CLOUDINARY_ENABLED) {
+			beforeSendFile = function (file, onSuccess, onError) {
 				$.ajax({
 					type: "POST",
-					url: avatarEditForm.attr("action") + '/cloudinary_upload_link',
-					data: {
-						filename: file.name,
-						timestamp: timestamp,
-					},
+					async: false,
+					url: avatarEditForm.attr("action") + '/cloudinary-upload-link',
 					success: function (signedRequest) {
 						dropPicHandler.settings.uploadUrl = signedRequest.url;
 						dropPicHandler.settings.extraParams = signedRequest.data;
-						onSuccess(file)
+						dropPicHandler.settings.jsonFieldName = jsonFieldName;
+						onSuccess(file);
 					},
-					error: function (e) {
-						onError(e)
-					}
-				})
-			}
+					error: onError
+				});
+			};
 		}
 
-		var dropPicHandler = new inlineAttachment(uploadOpts, {});
+		var dropPicHandler = new inlineAttachment(uploadOpts);
 
 		dropPicHandler.editor = {
 			insertValue: $.noop,
-			getValue: $.noop,
+			getValue: function () { return ""; },
 			setValue: $.noop
 		};
 
@@ -675,6 +663,7 @@ $(function () {
 			beforeSendFile(file, function(file) {
 				dropPicHandler.onFileInserted(file);
 				dropPicHandler.uploadFile(file);
+				avatarEditForm.find(".canceledit").click();
 			}, function(error) {
 				console.error(error);
 				disableAvatarUploadLoading();
