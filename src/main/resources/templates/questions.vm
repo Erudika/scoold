@@ -102,7 +102,7 @@
 				#set($filterActiveTooltip = $!lang.get('posts.filtered'))
 			#end
 			<a href="#" id="question-filter-btn" class="next-div-toggle chip tooltipped ${filterActiveClass}"
-				 data-tooltip="${filterActiveTooltip}"><i class="fa fa-filter"></i></a>
+				 data-tooltip="${filterActiveTooltip}"><i class="fa fa-filter"></i><span class="hide">Filter</span></a>
 		</div>
 
 		<h2 class="hide-on-med-and-down">#questionsTitle()</h2>

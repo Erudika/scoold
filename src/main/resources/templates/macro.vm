@@ -310,7 +310,8 @@
 		<div class="right prm">
 			#if($showu && $showu.id)
 				#set($contextboxid = $utils.generateSecurityToken(10, true))
-				<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+				<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid" title="More">
+					<i class="fa fa-ellipsis-v"></i><span class="hide">More</span></a>
 				<ul id="${contextboxid}" class="dropdown-content">
 					<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
 				</ul>
@@ -389,7 +390,8 @@
 					#if(!$isAdmin)
 					<div class="right prm ptm">
 						#set($contextboxid = $utils.generateSecurityToken(10, true))
-						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid"><i class="fa fa-ellipsis-v"></i></a>
+						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid" title="More">
+							<i class="fa fa-ellipsis-v"></i><span class="hide">More</span></a>
 						<ul id="${contextboxid}" class="dropdown-content">
 							<li>#getreportlink($showFriend "$profilelink/$!showFriend.id" "")</li>
 						</ul>

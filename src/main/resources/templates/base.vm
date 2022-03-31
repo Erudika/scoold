@@ -29,19 +29,19 @@
 		<link href="$!ogimage" rel="image_src">
 		<link href="$!ogimage" rel="apple-touch-icon">
 		<link href="$!faviconUrl" rel="icon" sizes="any">
-		<link href="$!styleslink/materialize.min.css" rel="stylesheet">
-		<link href="$!styleslink/font-awesome.min.css" rel="stylesheet">
-		<link href="$!styleslink/easymde.min.css" rel="stylesheet">
+		<link href="$!styleslink/materialize.min.css?r=$!rev" rel="stylesheet">
+		<link href="$!styleslink/font-awesome.min.css?r=$!rev" rel="stylesheet">
+		<link href="$!styleslink/easymde.min.css?r=$!rev" rel="stylesheet">
 		#if ($includeHighlightJS)
-		<link href="$!styleslink/highlighting.css" rel="stylesheet">
+		<link href="$!styleslink/highlighting.css?r=$!rev" rel="stylesheet">
 		#end
 		#if($scooldUtils.isApiEnabled() && $request.getServletPath() == "/apidocs")
-		<link rel="stylesheet" type="text/css" href="$!styleslink/swagger-ui.css">
-		<link rel="stylesheet" href="$!styleslink/api.css">
+		<link rel="stylesheet" type="text/css" href="$!styleslink/swagger-ui.css?r=$!rev">
+		<link rel="stylesheet" href="$!styleslink/api.css?r=$!rev">
 		#end
-		<link href="$!stylesheetUrl" rel="stylesheet" media="screen">
+		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet" media="screen">
 		#if($!langDirection == "RTL")
-		<link href="$!styleslink/rtl.css" rel="stylesheet">
+		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet">
 		#end
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
@@ -59,7 +59,7 @@
 		</style>
 		#end
 		#if($darkModeEnabled)
-		<link href="$!styleslink/dark.css" rel="stylesheet">
+		<link href="$!styleslink/dark.css?r=$!rev" rel="stylesheet">
 		#end
 	</head>
 	<body>
@@ -178,7 +178,7 @@
 								#if($!langDirection == "LTR")
 									<li>
 										<a href="#" class="toggle-drawer $!{searchSelected}" title="$!lang.get('search.search')">
-											<i class="fa fa-search fa"></i>
+											<i class="fa fa-search fa"></i><span class="hide">Search</span>
 										</a>
 									</li>
 								#end
@@ -211,7 +211,7 @@
 								#if($!langDirection == "RTL")
 									<li>
 										<a href="#" class="toggle-drawer $!{searchSelected}" title="$!lang.get('search.search')">
-											<i class="fa fa-search fa"></i>
+											<i class="fa fa-search fa"></i><span class="hide">Search</span>
 										</a>
 									</li>
 								#end
@@ -392,15 +392,15 @@
 			</div>
 		</div>
 
-		<script nonce="$cspNonce" src="$!scriptslink/jquery.min.js"></script>
-		<script nonce="$cspNonce" src="$!scriptslink/diff_match_patch.js"></script>
-		<script nonce="$cspNonce" src="$!scriptslink/materialize.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/jquery.min.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/diff_match_patch.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/materialize.min.js?r=$!rev"></script>
 		#if ($includeHighlightJS)
-		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js?r=$!rev"></script>
 		#end
-		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev"></script>
 		#if($scooldUtils.isAvatarUploadsEnabled() && $request.getServletPath() == $profilelink)
-			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js"></script>
+			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev"></script>
 		#end
 
 		#set($ctxPathJS = "CONTEXT_PATH = '$CONTEXT_PATH'")
@@ -420,7 +420,7 @@
 			$avatarUploadsEnabledJS;$imgurJS;$cloudinaryJS;
 			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;
 		</script>
-		<script nonce="$cspNonce" src="$!scriptslink/scoold.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
 
 		#if ($captchakey && !$captchakey.isBlank())
 		<script nonce="$cspNonce" src="https://www.google.com/recaptcha/api.js"></script>

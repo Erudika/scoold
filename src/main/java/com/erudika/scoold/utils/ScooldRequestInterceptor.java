@@ -109,6 +109,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONF.serverContextPath()));
+		modelAndView.addObject("rev", StringUtils.substring(Version.getRevision(), 0, 12));
 		// Configurable constants
 		modelAndView.addObject("MAX_PAGES", CONF.maxPages());
 		modelAndView.addObject("MAX_TEXT_LENGTH", CONF.maxPostLength());
