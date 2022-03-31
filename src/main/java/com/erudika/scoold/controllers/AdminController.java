@@ -39,6 +39,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.Version;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -100,7 +101,6 @@ public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
-	private final String scooldVersion = getClass().getPackage().getImplementationVersion();
 	private static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
 	private final String soDateFormat1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 	private final String soDateFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -145,7 +145,8 @@ public class AdminController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
-		model.addAttribute("scooldVersion", Optional.ofNullable(scooldVersion).orElse("unknown"));
+		model.addAttribute("scooldVersion", Version.getVersion());
+		model.addAttribute("scooldRevision", Version.getRevision());
 		String importedCount = req.getParameter("imported");
 		if (importedCount != null) {
 			if (req.getParameter("success") != null) {
