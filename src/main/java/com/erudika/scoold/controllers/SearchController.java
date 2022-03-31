@@ -158,6 +158,32 @@ public class SearchController {
 	}
 
 	@ResponseBody
+	@GetMapping("/manifest.webmanifest")
+	public ResponseEntity<String> webmanifest(HttpServletRequest req) {
+		String json = "{\n"
+				+ "    \"theme_color\": \"#03a9f4\",\n"
+				+ "    \"background_color\": \"#FFFFFF\",\n"
+				+ "    \"display\": \"browser\",\n"
+				+ "    \"scope\": \"/\",\n"
+				+ "    \"start_url\": \"" + CONF.serverContextPath() + "\",\n"
+				+ "    \"name\": \"" + CONF.appName() + "\",\n"
+				+ "    \"short_name\": \"" + CONF.appName() + "\",\n"
+				+ "    \"icons\": [\n"
+				+ "        {\n"
+				+ "            \"src\": \"" + CONF.logoUrl() + "\",\n"
+				+ "            \"sizes\": \"550x550\",\n"
+				+ "            \"type\": \"image/svg-xml\"\n"
+				+ "        }\n"
+				+ "    ]\n"
+				+ "}";
+		return ResponseEntity.ok().
+				contentType(MediaType.APPLICATION_JSON).
+				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+				eTag(Utils.md5(json)).
+				body(json);
+	}
+
+	@ResponseBody
 	@GetMapping("/feed.xml")
 	public ResponseEntity<String> feed(HttpServletRequest req) {
 		String feed = "";
