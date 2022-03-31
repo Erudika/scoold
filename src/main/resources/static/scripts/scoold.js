@@ -559,7 +559,7 @@ $(function () {
 		return false;
 	});
 
-	$("img.profile-pic, #edit-picture-link").on("mouseenter touchstart", function () {
+	$("img.profile-pic, #edit-picture-link").on("mouseenter", function () {
 		$("#edit-picture-link").show();
 	});
 	$("img.profile-pic").on("mouseleave", function () {
