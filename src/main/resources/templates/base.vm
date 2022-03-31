@@ -10,6 +10,8 @@
 		<title>$!APPNAME | $!title</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black">
 		<meta name="description" content="$!description">
 		<meta name="keywords" content="$!keywords">
 		<meta name="generator" content="Scoold">
@@ -24,8 +26,9 @@
 		<meta name="twitter:title" content="$!title">
 		<meta name="twitter:description" content="$!description">
 		<meta name="twitter:image" content="$!ogimage">
-		<link href="$!request.contextPath/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
-		<link href="$!request.contextPath/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
+		<link rel="manifest" href="$!{CONTEXT_PATH}/manifest.webmanifest">
+		<link href="$!{CONTEXT_PATH}/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
+		<link href="$!{CONTEXT_PATH}/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
 		<link href="$!ogimage" rel="image_src">
 		<link href="$!ogimage" rel="apple-touch-icon">
 		<link href="$!faviconUrl" rel="icon" sizes="any">
@@ -169,7 +172,7 @@
 							#end
 
 							<div class="brand-logo">
-								<a href="$!request.contextPath/">
+								<a href="$!{CONTEXT_PATH}/">
 									<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo">
 								</a>
 							</div>
@@ -419,6 +422,7 @@
 		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$minPassLen;
 			$avatarUploadsEnabledJS;$imgurJS;$cloudinaryJS;
 			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;
+			if ('serviceWorker' in navigator) {navigator.serviceWorker.register(CONTEXT_PATH + '/service-worker.js');}
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
 
