@@ -708,7 +708,7 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 1. First, clone this repository and create a new Heroku app
 2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
 3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown
-above but **replace all dots in the variable names with underscores**, e.g. `scoold.para_endpoint` -> `para_endpoint`.
+above but **replace all dots in the variable names with underscores**, e.g. `scoold.para_endpoint` -> `scoold_para_endpoint`.
 4. Open the app in your browser at `https://{appname}.herokuapp.com`.
 
 ### Manual deployment - option 2 (JAR push)
