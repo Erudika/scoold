@@ -21,11 +21,12 @@ service:
 # Scoold configuration
 ######################
 applicationConf: |
-  para.env = production
-  #para.endpoint = "https://paraio.com"
-  #para.access_key = "app:scoold"
-  #para.secret_key = "secret"
-  #para.password_auth_enabled = true
+  scoold.env = production
+  scoold.para_endpoint = "https://paraio.com"
+  scoold.para_access_key = "app:scoold"
+  scoold.para_secret_key = "secret"
+  #scoold.password_auth_enabled = true
+  #scoold.is_default_space_public = true
   ####################################
   # Add more config properties here...
   ####################################
