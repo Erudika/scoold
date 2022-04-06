@@ -31,8 +31,6 @@ import java.util.Set;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,11 +41,13 @@ import org.springframework.stereotype.Component;
 @Named
 public class ScooldConfig extends Config {
 
-	private static final Logger logger = LoggerFactory.getLogger(ScooldConfig.class);
-
 	@Override
 	public com.typesafe.config.Config getFallbackConfig() {
-		return Para.getConfig().getConfig(); // fall back to para.* config
+		if (StringUtils.isBlank(System.getProperty("scoold.autoinit.para_config_file")) &&
+				StringUtils.isBlank(System.getenv("scoold.autoinit.para_config_file"))) {
+			return Para.getConfig().getConfig(); // fall back to para.* config
+		}
+		return com.typesafe.config.ConfigFactory.empty();
 	}
 
 	@Override

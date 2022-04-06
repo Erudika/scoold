@@ -151,8 +151,7 @@ Optionally, you can also install the [Para CLI](https://github.com/Erudika/para-
 data in your Scoold app.
 
 **Important:**
-- Do not use the same `application.conf` file for both Para and Scoold!
-- Run Para and Scoold in separate directories, each with its own configuration file.
+- The convention is to use `para-application.conf` and `scoold-application.conf` for Para and Scoold respectively.
 - All settings shown here are meant to be kept inside the Scoold configuration file.
 - SMTP settings must be configured before deploying Scoold to production.
 

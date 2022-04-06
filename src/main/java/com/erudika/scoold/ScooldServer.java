@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -107,19 +106,21 @@ public class ScooldServer extends SpringBootServletInitializer {
 	private static final Logger logger = LoggerFactory.getLogger(ScooldServer.class);
 
 	public static void main(String[] args) {
-		SpringApplication app = new SpringApplication(ScooldServer.class);
-		initConfig();
-		app.setAdditionalProfiles(CONF.environment());
-		app.setWebApplicationType(WebApplicationType.SERVLET);
-		app.run(args);
+		builder(new SpringApplicationBuilder(), false).run(args);
 	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder app) {
+		return builder(app, true);
+	}
+
+	static SpringApplicationBuilder builder(SpringApplicationBuilder b, boolean isWar, Class<?>... sources) {
 		initConfig();
-		app.profiles(CONF.environment());
-		app.web(WebApplicationType.SERVLET);
-		return app.sources(ScooldServer.class);
+		b.sources(ScooldServer.class);
+		b.sources(sources);
+		b.profiles(CONF.environment());
+		b.web(WebApplicationType.SERVLET);
+		return b;
 	}
 
 	private static void initConfig() {
@@ -271,7 +272,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 
 	private void tryAutoInitParaApp() {
 		String rootSecret = null;
-		String confFile = System.getProperty("config.file", "application.conf");
+		String confFile = CONF.getConfigFilePath();
 		if (!CONF.autoInitWithRootAppSecretKey().isBlank()) {
 			rootSecret = CONF.autoInitWithRootAppSecretKey().trim();
 		} else if (!CONF.autoInitWithParaConfigFile().isBlank()) {
