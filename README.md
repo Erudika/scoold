@@ -1144,7 +1144,7 @@ scoold.security.oauth.spaces_attribute_name = "spaces"
 scoold.security.oauth.groups_attribute_name = "roles"
 scoold.security.oauth.mods_equivalent_claim_value = "mod"
 scoold.security.oauth.admins_equivalent_claim_value = "admin"
-# if specified, users will be denied access when not members of group
+# if specified, users who are not admin/mod will be denied access when not members of group
 scoold.security.oauth.users_equivalent_claim_value = ""
 
 # Enable/disable avatar fetching from IDP

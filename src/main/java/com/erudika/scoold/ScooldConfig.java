@@ -1474,6 +1474,7 @@ public class ScooldConfig extends Config {
 			category = "OAuth 2.0 Authentication",
 			tags = {"Pro"},
 			description = "OAauth 2.0 attribute mapping for users' `groups`. "
+					+ "Use this for mapping `admin`, `mod` and `user` roles to Scoold users."
 					+ "Alternatives: `security.oauthsecond.groups_attribute_name`, "
 					+ "`security.oauththird.groups_attribute_name`")
 	public String oauthGroupsAttributeName(String a) {
@@ -1508,7 +1509,8 @@ public class ScooldConfig extends Config {
 			identifier = "security.oauth.users_equivalent_claim_value",
 			category = "OAuth 2.0 Authentication",
 			tags = {"Pro"},
-			description = "OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it. "
+			description = "OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it, *unless*"
+					+ "they already have the admin or moderator roles assigned. "
 					+ "Alternatives: `security.oauthsecond.users_equivalent_claim_value`, "
 					+ "`security.oauththird.users_equivalent_claim_value`")
 	public String oauthUsersEquivalentClaim(String a) {
