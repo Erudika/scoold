@@ -30,6 +30,8 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.redfin.sitemapgenerator.WebSitemapGenerator;
+import com.redfin.sitemapgenerator.WebSitemapUrl;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -245,5 +247,37 @@ public class SearchController {
 		}
 		feed.setEntries(entries);
 		return feed;
+	}
+
+	@ResponseBody
+	@GetMapping("/sitemap.xml")
+	public ResponseEntity<String> sitemap(HttpServletRequest req) {
+		String sitemap = "";
+		try {
+			sitemap = getSitemap(req);
+		} catch (Exception ex) {
+			logger.error("Could not generate sitemap", ex);
+		}
+		return ResponseEntity.ok().
+			contentType(MediaType.APPLICATION_XML).
+			cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+			eTag(Utils.md5(sitemap)).
+			body(sitemap);
+	}
+
+	private String getSitemap(HttpServletRequest req) throws IOException, FeedException {
+		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
+		String baseurl = CONF.serverUrl();
+		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
+
+		WebSitemapGenerator generator = new WebSitemapGenerator(baseurl);
+
+		for (Post post : questions) {
+			String baselink = baseurl.concat("question/").concat(post.getId());
+
+			generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
+		}
+
+		return generator.writeAsStrings().get(0);
 	}
 }
