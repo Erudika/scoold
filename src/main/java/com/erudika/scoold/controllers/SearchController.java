@@ -252,6 +252,9 @@ public class SearchController {
 	@ResponseBody
 	@GetMapping("/sitemap.xml")
 	public ResponseEntity<String> sitemap(HttpServletRequest req) {
+		if (!CONF.sitemapEnabled()) {
+			return ResponseEntity.notFound().build();
+		}
 		String sitemap = "";
 		try {
 			sitemap = getSitemap(req);
@@ -259,25 +262,19 @@ public class SearchController {
 			logger.error("Could not generate sitemap", ex);
 		}
 		return ResponseEntity.ok().
-			contentType(MediaType.APPLICATION_XML).
-			cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
-			eTag(Utils.md5(sitemap)).
-			body(sitemap);
+				contentType(MediaType.APPLICATION_XML).
+				cacheControl(CacheControl.maxAge(3, TimeUnit.HOURS)).
+				eTag(Utils.md5(sitemap)).
+				body(sitemap);
 	}
 
 	private String getSitemap(HttpServletRequest req) throws IOException, FeedException {
 		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
-		String baseurl = CONF.serverUrl();
-		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
-
-		WebSitemapGenerator generator = new WebSitemapGenerator(baseurl);
-
+		WebSitemapGenerator generator = new WebSitemapGenerator(CONF.serverUrl());
 		for (Post post : questions) {
-			String baselink = baseurl.concat("question/").concat(post.getId());
-
+			String baselink = CONF.serverUrl().concat(post.getPostLink(false, false));
 			generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
 		}
-
 		return generator.writeAsStrings().get(0);
 	}
 }

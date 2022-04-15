@@ -3123,6 +3123,16 @@ public class ScooldConfig extends Config {
 		return getConfigParam("autoinit.para_config_file", "");
 	}
 
+	@Documented(position = 3040,
+			identifier = "sitemap_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable the generation of `/sitemap.xml`.")
+	public boolean sitemapEnabled() {
+		return getConfigBoolean("sitemap_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

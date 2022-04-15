@@ -144,6 +144,11 @@
 			<artifactId>cloudinary-http45</artifactId>
 			<version>1.31.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.dfabulich</groupId>
+			<artifactId>sitemapgen4j</artifactId>
+			<version>1.1.2</version>
+		</dependency>
 
 		<!-- TESTING -->
 		<dependency>
@@ -155,11 +160,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dfabulich</groupId>
-			<artifactId>sitemapgen4j</artifactId>
-			<version>1.1.2</version>
 		</dependency>
 	</dependencies>
 
