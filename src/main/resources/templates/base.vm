@@ -402,7 +402,8 @@
 		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js?r=$!rev"></script>
 		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev"></script>
-		#if($scooldUtils.isAvatarUploadsEnabled() && $request.getServletPath() == $profilelink)
+		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath().startsWith($profilelink))
+		#if($avatarUploadsEnabledBool)
 			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev"></script>
 		#end
 
@@ -413,7 +414,6 @@
 		#set($isAdminJS = "IS_ADMIN = $isAdmin")
 		#set($maxTagsJS = "MAX_TAGS_PER_POST = $MAX_TAGS_PER_POST")
 		#set($minPassLen = "MIN_PASS_LENGTH = $MIN_PASS_LENGTH")
-		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath() == $profilelink)
 		#set($avatarUploadsEnabledJS = "AVATAR_UPLOADS_ENABLED = $avatarUploadsEnabledBool")
 		#set($_welcomeMsg = $scooldUtils.getWelcomeMessage($authUser))
 		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
