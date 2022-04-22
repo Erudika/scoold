@@ -27,7 +27,6 @@ import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
-import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
@@ -212,7 +211,8 @@ public class SearchController {
 	}
 
 	private SyndFeed getFeed(HttpServletRequest req) throws IOException, FeedException {
-		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
+		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
+		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		String baseurl = CONF.serverUrl();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
@@ -269,12 +269,16 @@ public class SearchController {
 	}
 
 	private String getSitemap(HttpServletRequest req) throws IOException, FeedException {
-		List<Post> questions = pc.findQuery(Utils.type(Question.class), "*");
-		WebSitemapGenerator generator = new WebSitemapGenerator(CONF.serverUrl());
-		for (Post post : questions) {
-			String baselink = CONF.serverUrl().concat(post.getPostLink(false, false));
-			generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
+		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
+		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
+		if (!questions.isEmpty()) {
+			WebSitemapGenerator generator = new WebSitemapGenerator(CONF.serverUrl());
+			for (Post post : questions) {
+				String baselink = CONF.serverUrl().concat(post.getPostLink(false, false));
+				generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
+			}
+			return generator.writeAsStrings().get(0);
 		}
-		return generator.writeAsStrings().get(0);
+		return "<_/>";
 	}
 }
