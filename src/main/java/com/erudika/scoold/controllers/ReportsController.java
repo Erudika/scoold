@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,6 +105,9 @@ public class ReportsController {
 			} else {
 				//allow anonymous reports
 				rep.setAuthorName(utils.getLang(req).get("anonymous"));
+			}
+			if (StringUtils.startsWith(rep.getLink(), "/")) {
+				rep.setLink(CONF.serverUrl() + CONF.serverContextPath() + rep.getLink());
 			}
 			rep.create();
 			model.addAttribute("newreport", rep);
