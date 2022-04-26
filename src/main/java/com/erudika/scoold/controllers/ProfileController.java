@@ -240,7 +240,7 @@ public class ProfileController {
 		}
 
 		if (CONF.nameEditsEnabled() && !StringUtils.isBlank(name)) {
-			showUser.setName(name);
+			showUser.setName(StringUtils.abbreviate(name, 256));
 			if (StringUtils.isBlank(showUser.getOriginalName())) {
 				showUser.setOriginalName(name);
 			}

@@ -443,7 +443,7 @@ public class Profile extends Sysprop {
 	}
 
 	public void setOriginalName(String originalName) {
-		this.originalName = originalName;
+		this.originalName = StringUtils.abbreviate(originalName, 256);
 	}
 
 	public String getOriginalPicture() {

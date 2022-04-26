@@ -345,7 +345,7 @@ public final class ScooldUtils {
 			update = true;
 		}
 		if (!CONF.nameEditsEnabled() &&	!StringUtils.equals(u.getName(), authUser.getName())) {
-			authUser.setName(u.getName());
+			authUser.setName(StringUtils.abbreviate(u.getName(), 256));
 			update = true;
 		}
 		if (!StringUtils.equals(u.getName(), authUser.getOriginalName())) {
