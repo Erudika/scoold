@@ -1470,7 +1470,6 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 1450,
 			identifier = "security.oauth.groups_attribute_name",
-			value = "roles",
 			category = "OAuth 2.0 Authentication",
 			tags = {"Pro"},
 			description = "OAauth 2.0 attribute mapping for users' `groups`. "
@@ -1478,7 +1477,7 @@ public class ScooldConfig extends Config {
 					+ "Alternatives: `security.oauthsecond.groups_attribute_name`, "
 					+ "`security.oauththird.groups_attribute_name`")
 	public String oauthGroupsAttributeName(String a) {
-		return getConfigParam("security.oauth" + a + ".groups_attribute_name", "roles");
+		return getConfigParam("security.oauth" + a + ".groups_attribute_name", "");
 	}
 
 	@Documented(position = 1460,
