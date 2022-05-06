@@ -5,7 +5,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.erudika%3Ascoold&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.erudika%3Ascoold)
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Scoold** is a Q&A/knowledge base platform written in Java. The project was created back in 2008, released in 2012 as
+**Scoold** is a Q&A and a knowledge sharing platform for teams. The project was created back in 2008, released in 2012 as
 social network for schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
 Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~7000 LOC),
@@ -182,7 +182,6 @@ The most important configuration properties are:
 
 Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
 ```ini
-### Minimal configuration ###
 # the name of the application
 scoold.app_name = "Scoold"
 # the port for Scoold
@@ -199,6 +198,8 @@ scoold.para_access_key = "app:scoold"
 scoold.para_secret_key = ""
 # the email or identifier of the admin user - check Para user object
 scoold.admins = "admin@domain.com"
+# Enable/disable password authentication
+scoold.password_auth_enabled = true
 ```
 <details><summary><b>View ALL configuration options available in Scoold</b></summary>
 

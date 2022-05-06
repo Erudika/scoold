@@ -52,7 +52,7 @@
 		},
 		"scoold_meta_description": {
 			"description": "Description meta tag value.",
-			"value": "Scoold is an open source Q&A platform written in Java."
+			"value": "Scoold is an open source Q&A platform for teams."
 		},
 		"scoold_support_email": {
 			"description": "System email address.",
