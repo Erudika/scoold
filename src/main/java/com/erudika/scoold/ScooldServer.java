@@ -303,7 +303,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 				logger.error("Failed to auto-initialize {} - try updating your app's credentials manually.", childApp);
 			}
 		}
-		if (!Files.exists(Paths.get(confFile).toAbsolutePath())) {
+		if (StringUtils.isBlank(System.getProperty("config.url")) && !Files.exists(Paths.get(confFile).toAbsolutePath())) {
 			System.setProperty("scoold.app_name", CONF.appName());
 			logger.info("No configuration file found - configuration saved in {}.", confFile);
 			CONF.store();
