@@ -979,6 +979,7 @@ $(function () {
 				var allPosts = answerForm.closest(".row").find(".postbox");
 				if (allPosts.length > 1) {
 					allPosts.last().after(data);
+					updateMentionsWithLinks();
 				} else {
 					$(".answers-head").removeClass("hide").after(data);
 				}
