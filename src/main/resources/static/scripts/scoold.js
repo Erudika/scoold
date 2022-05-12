@@ -826,13 +826,13 @@ $(function () {
 	});
 
 	function replaceMentionsWithMarkdownLinks(text) {
-		return text.replace(/@<(\d+)\|(.*?)>/igm, function (m, group1, group2) {
+		return text.replace(/@<(.+?)\|(.*?)>/igm, function (m, group1, group2) {
 			return "[" + (group2 || "NoName") + "](" + hostURL + "/profile/" + group1 + ")";
 		});
 	}
 
 	function replaceMentionsWithHtmlLinks(text) {
-		return text.replace(/@(&lt;|<)(\d+)\|(.*?)(&gt;|>)/igm, function (m, group1, group2, group3) {
+		return text.replace(/@(&lt;|<)(.+?)\|(.*?)(&gt;|>)/igm, function (m, group1, group2, group3) {
 			return "<a href=\"" + hostURL + "/profile/" + group2 + "\">" + (group3 || "NoName") + "</a>";
 		});
 	}
