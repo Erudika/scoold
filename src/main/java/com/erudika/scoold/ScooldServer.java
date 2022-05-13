@@ -74,6 +74,13 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("server.port", String.valueOf(CONF.serverPort()));
 		System.setProperty("server.servlet.context-path", CONF.serverContextPath());
 		System.setProperty("server.use-forward-headers", String.valueOf(CONF.inProduction()));
+		System.setProperty("para.logs_name", CONF.getConfigRootPrefix());
+		if (CONF.accessLogEnabled()) {
+			System.setProperty("server.jetty.accesslog.append", "true");
+			System.setProperty("server.jetty.accesslog.enabled", "true");
+			System.setProperty("server.jetty.accesslog.filename", System.getProperty("para.logs_dir", ".")
+					+ File.separator + CONF.getConfigRootPrefix() + "-access.log");
+		}
 	}
 
 	public static final String TOKEN_PREFIX = "ST_";

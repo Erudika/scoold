@@ -3132,6 +3132,16 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("sitemap_enabled", true);
 	}
 
+	@Documented(position = 3050,
+			identifier = "access_log_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable the Scoold access log.")
+	public boolean accessLogEnabled() {
+		return getConfigBoolean("access_log_enabled", false);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {
