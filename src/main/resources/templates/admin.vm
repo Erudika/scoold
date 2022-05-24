@@ -140,7 +140,7 @@
 					</a>
 				</div>
 			</div>
-			<div class="row mbl">
+			<div class="mbl">
 				<form method="post" action="$adminlink/import" enctype="multipart/form-data" id="import-form">
 					<div class="import-text mlm">$!lang.get('admin.import.text')</div>
 					<div class="row">
