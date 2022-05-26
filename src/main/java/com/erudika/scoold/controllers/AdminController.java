@@ -386,6 +386,7 @@ public class AdminController {
 
 		Para.asyncExecute(() -> {
 			Map<String, String> comments2authors = new LinkedHashMap<>();
+			Map<String, String> accounts2emails = new LinkedHashMap<>();
 			try (InputStream inputStream = file.getInputStream()) {
 				if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
 					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
@@ -394,8 +395,7 @@ public class AdminController {
 						long countUpdated = Utils.timestamp();
 						while ((zipEntry = zipIn.getNextEntry()) != null) {
 							if (isso) {
-								int imported = importFromSOArchive(zipIn, zipEntry, reader, comments2authors).size();
-								si.addProperty("count", ((int) si.getProperty("count")) + imported);
+								importFromSOArchive(zipIn, zipEntry, reader, comments2authors, accounts2emails, si);
 							} else if (zipEntry.getName().endsWith(".json")) {
 								List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
 									public void close() throws IOException {
@@ -420,7 +420,9 @@ public class AdminController {
 							pc.createAll(toCreate);
 						}
 						if (isso) {
+							// apply additional fixes to data
 							updateSOCommentAuthors(comments2authors);
+							updateSOUserAccounts(accounts2emails);
 						}
 					}
 				} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
@@ -496,8 +498,9 @@ public class AdminController {
 		return "redirect:" + ADMINLINK;
 	}
 
-	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry,
-			ObjectReader mapReader, Map<String, String> comments2authors) throws IOException, ParseException {
+	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry, ObjectReader mapReader,
+			Map<String, String> comments2authors, Map<String, String> accounts2emails, Sysprop si)
+			throws IOException, ParseException {
 		if (zipEntry.getName().endsWith(".json")) {
 			List<Map<String, Object>> objs = mapReader.readValue(new FilterInputStream(zipIn) {
 				public void close() throws IOException {
@@ -507,22 +510,22 @@ public class AdminController {
 			List<ParaObject> toImport = new LinkedList<>();
 			switch (zipEntry.getName()) {
 				case "posts.json":
-					importPostsFromSO(objs, toImport);
+					importPostsFromSO(objs, toImport, si);
 					break;
 				case "tags.json":
-					importTagsFromSO(objs, toImport);
+					importTagsFromSO(objs, toImport, si);
 					break;
 				case "comments.json":
-					importCommentsFromSO(objs, toImport, comments2authors);
+					importCommentsFromSO(objs, toImport, comments2authors, si);
 					break;
 				case "users.json":
-					importUsersFromSO(objs, toImport);
+					importUsersFromSO(objs, toImport, si);
 					break;
 				case "users2badges.json":
 					// nice to have...
 					break;
 				case "accounts.json":
-					importAccountsFromSO(objs);
+					importAccountsFromSO(objs, accounts2emails);
 					break;
 				default:
 					break;
@@ -535,12 +538,13 @@ public class AdminController {
 		}
 	}
 
-	private void importPostsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport)
+	private void importPostsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si)
 			throws ParseException {
 		logger.info("Importing {} posts...", objs.size());
+		int imported = 0;
 		for (Map<String, Object> obj : objs) {
 			Post p;
-			if ("question".equalsIgnoreCase((String) obj.get("postType"))) {
+			if (StringUtils.equalsAnyIgnoreCase((String) obj.get("postType"), "question", "article")) {
 				p = new Question();
 				p.setTitle((String) obj.get("title"));
 				String t = StringUtils.stripStart(StringUtils.stripEnd((String) obj.
@@ -549,10 +553,12 @@ public class AdminController {
 				p.setAnswercount(((Integer) obj.getOrDefault("answerCount", 0)).longValue());
 				Integer answerId = (Integer) obj.getOrDefault("acceptedAnswerId", null);
 				p.setAnswerid(answerId != null ? "post_" + answerId : null);
-			} else {
+			} else if ("answer".equalsIgnoreCase((String) obj.get("postType"))) {
 				p = new Reply();
 				Integer parentId = (Integer) obj.getOrDefault("parentId", null);
 				p.setParentid(parentId != null ? "post_" + parentId : null);
+			} else {
+				continue;
 			}
 			p.setId("post_" + (Integer) obj.getOrDefault("id", Utils.getNewId()));
 			p.setBody((String) obj.get("bodyMarkdown"));
@@ -565,23 +571,43 @@ public class AdminController {
 				p.setCreatorid(Profile.id("user_" + creatorId)); // add prefix to avoid conflicts
 			}
 			toImport.add(p);
+			imported++;
+			if (toImport.size() >= CONF.importBatchSize()) {
+				pc.createAll(toImport);
+				toImport.clear();
+			}
 		}
-		pc.createAll(toImport);
+		if (!toImport.isEmpty()) {
+			pc.createAll(toImport);
+			toImport.clear();
+		}
+		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
-	private void importTagsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport) {
+	private void importTagsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si) {
 		logger.info("Importing {} tags...", objs.size());
+		int imported = 0;
 		for (Map<String, Object> obj : objs) {
 			Tag t = new Tag((String) obj.get("name"));
 			t.setCount((Integer) obj.getOrDefault("count", 0));
 			toImport.add(t);
+			imported++;
+			if (toImport.size() >= CONF.importBatchSize()) {
+				pc.createAll(toImport);
+				toImport.clear();
+			}
 		}
-		pc.createAll(toImport);
+		if (!toImport.isEmpty()) {
+			pc.createAll(toImport);
+			toImport.clear();
+		}
+		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
 	private void importCommentsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport,
-			Map<String, String> comments2authors) throws ParseException {
+			Map<String, String> comments2authors, Sysprop si) throws ParseException {
 		logger.info("Importing {} comments...", objs.size());
+		int imported = 0;
 		for (Map<String, Object> obj : objs) {
 			Comment c = new Comment();
 			c.setId("comment_" + (Integer) obj.get("id"));
@@ -594,13 +620,23 @@ public class AdminController {
 			c.setCreatorid(creatorId != null ? Profile.id(userid) : utils.getSystemUser().getId());
 			comments2authors.put(c.getId(), userid);
 			toImport.add(c);
+			imported++;
+			if (toImport.size() >= CONF.importBatchSize()) {
+				pc.createAll(toImport);
+				toImport.clear();
+			}
 		}
-		pc.createAll(toImport);
+		if (!toImport.isEmpty()) {
+			pc.createAll(toImport);
+			toImport.clear();
+		}
+		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
-	private void importUsersFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport)
+	private void importUsersFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si)
 			throws ParseException {
 		logger.info("Importing {} users...", objs.size());
+		int imported = 0;
 		for (Map<String, Object> obj : objs) {
 			User u = new User();
 			u.setId("user_" + (Integer) obj.get("id"));
@@ -624,35 +660,24 @@ public class AdminController {
 			p.setLastseen(u.getUpdated());
 			toImport.add(u);
 			toImport.add(p);
+			imported += 2;
+			if (toImport.size() >= CONF.importBatchSize()) {
+				pc.createAll(toImport);
+				toImport.clear();
+			}
 		}
-		pc.createAll(toImport);
+		if (!toImport.isEmpty()) {
+			pc.createAll(toImport);
+			toImport.clear();
+		}
+		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
-	private void importAccountsFromSO(List<Map<String, Object>> objs) {
+	private void importAccountsFromSO(List<Map<String, Object>> objs, Map<String, String> accounts2emails) {
 		logger.info("Importing {} accounts...", objs.size());
-		List<Map<String, String>> toPatch = new LinkedList<>();
-		Map<String, String> accounts = objs.stream().collect(Collectors.
-				toMap(k -> ((Integer) k.get("accountId")).toString(), v -> (String) v.get("verifiedEmail")));
-		// find all user objects even if there are more than 10000 users in the system
-		Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-		List<User> users;
-		do {
-			users = pc.findQuery(Utils.type(User.class), "*", pager);
-			if (!users.isEmpty()) {
-				users.stream().forEach(u -> {
-					if (accounts.containsKey(u.getCreatorid())) {
-						u.setEmail(accounts.get(u.getCreatorid()));
-						Map<String, String> user = new HashMap<>();
-						user.put(Config._ID, u.getId());
-						user.put(Config._EMAIL, u.getEmail());
-						user.put(Config._IDENTIFIER, u.getEmail());
-						toPatch.add(user);
-					}
-				});
-			}
-			pc.invokePatch("_batch", toPatch, Map.class);
-			toPatch.clear();
-		} while (!users.isEmpty());
+		for (Map<String, Object> obj : objs) {
+			accounts2emails.put(((Integer) obj.get("accountId")).toString(), (String) obj.get("verifiedEmail"));
+		}
 	}
 
 	private void updateSOCommentAuthors(Map<String, String> comments2authors) {
@@ -668,8 +693,39 @@ public class AdminController {
 					user.put("authorName", authors.get(entry.getValue()).getName());
 				}
 				toPatch.add(user);
+				if (toPatch.size() >= CONF.importBatchSize()) {
+					pc.invokePatch("_batch", toPatch, Map.class);
+					toPatch.clear();
+				}
+			}
+			if (!toPatch.isEmpty()) {
+				pc.invokePatch("_batch", toPatch, Map.class);
+				toPatch.clear();
+			}
+		}
+	}
+
+	private void updateSOUserAccounts(Map<String, String> accounts2emails) {
+		List<Map<String, String>> toPatch = new LinkedList<>();
+		// find all user objects even if there are more than 10000 users in the system
+		Pager pager = new Pager(1, "_docid", false, CONF.importBatchSize());
+		List<User> users;
+		do {
+			users = pc.findQuery(Utils.type(User.class), "*", pager);
+			if (!users.isEmpty()) {
+				users.stream().forEach(u -> {
+					if (accounts2emails.containsKey(u.getCreatorid())) {
+						u.setEmail(accounts2emails.get(u.getCreatorid()));
+						Map<String, String> user = new HashMap<>();
+						user.put(Config._ID, u.getId());
+						user.put(Config._EMAIL, u.getEmail());
+						user.put(Config._IDENTIFIER, u.getEmail());
+						toPatch.add(user);
+					}
+				});
 			}
 			pc.invokePatch("_batch", toPatch, Map.class);
-		}
+			toPatch.clear();
+		} while (!users.isEmpty());
 	}
 }
