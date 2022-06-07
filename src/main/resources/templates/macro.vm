@@ -576,7 +576,9 @@
 						<i class="fa fa-link grey-text"></i> <a href="$!firstLink">$firstLink</a>
 						#end
 						<span class="right">
-							#personlink($showpost.author)
+							#if(!$request.requestURI.startsWith("/profile"))
+								#personlink($showpost.author)
+							#end
 							<span class="grey-text"><i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")</span>
 						</span>
 					</div>
