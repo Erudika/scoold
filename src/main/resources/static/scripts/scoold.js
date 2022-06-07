@@ -322,18 +322,17 @@ $(function () {
 		var dis = $(this);
 		var up = dis.hasClass("upvote");
 		var votes = dis.closest("div.votebox").find(".votecount").filter(':visible');
-		var newvotes = parseInt(votes.text(), 10) || 0;
 		if (!dis.data("disabled")) {
 			dis.data("disabled", true);
 			$.post(this.href, function(data) {
 				if (data === true) {
+					var newvotes = parseInt(votes.text(), 10) || 0;
 					if (up) {
-						newvotes++;
+						votes.text(++newvotes).removeClass("hide");
 					} else {
-						newvotes--;
+						votes.text(--newvotes).removeClass("hide");
 					}
 				}
-				votes.text(newvotes).removeClass("hide");
 				dis.removeData("disabled");
 			}, "json");
 		}
