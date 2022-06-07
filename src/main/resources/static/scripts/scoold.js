@@ -1117,6 +1117,12 @@ $(function () {
 			localStorage.removeItem("questionFilterOpen");
 			$(this).removeClass("grey darken-2 white-text").blur().children("i").removeClass("fa-times").addClass("fa-filter");
 		} else {
+			var checked = $(".compact-view-checkbox").parent("label").attr("data-compactViewEnabled");
+			if (checked === "true") {
+				$(".compact-view-checkbox").prop("checked", true);
+			} else {
+				$(".compact-view-checkbox").prop("checked", false);
+			}
 			localStorage.setItem("questionFilterOpen", true);
 			$(this).addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
 		}

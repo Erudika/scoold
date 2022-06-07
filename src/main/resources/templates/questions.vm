@@ -193,11 +193,11 @@
 							<input type="number" name="limit" min="10" max="100" value="$!itemcount.limit">
 							<span>$!lang.get('perpage')</span>
 						</div>
-						<label>
+						<label data-compactViewEnabled="$compactViewEnabled">
 							#if($compactViewEnabled)
-							<input name="compactViewEnabled" type="checkbox" value="true" checked="checked" class="filled-in">
+							<input name="compactViewEnabled" type="checkbox" value="true" checked="checked" class="filled-in compact-view-checkbox">
 							#else
-							<input name="compactViewEnabled" type="checkbox" value="true" class="filled-in">
+							<input name="compactViewEnabled" type="checkbox" value="true" class="filled-in compact-view-checkbox">
 							#end
 							<span>$!lang.get('posts.compactview')</span>
 						</label>
