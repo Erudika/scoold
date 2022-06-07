@@ -375,6 +375,7 @@ $(function () {
 
 	$(document).on("click", ".toggle-drawer",  function() {
 		$('#search-drawer').toggleClass('hide');
+		$('#search-info-drawer').addClass('hide');
 		$('#search-box').focus();
 		return false;
 	});
