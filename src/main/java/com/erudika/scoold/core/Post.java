@@ -22,6 +22,7 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
+import com.erudika.para.core.Vote;
 import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
@@ -86,6 +87,7 @@ public abstract class Post extends Sysprop {
 	private transient Profile lastEditor;
 	private transient List<Comment> comments;
 	private transient Pager itemcount;
+	private transient Vote vote;
 
 	public Post() {
 		this.answercount = 0L;
@@ -140,6 +142,14 @@ public abstract class Post extends Sysprop {
 
 	public void setItemcount(Pager itemcount) {
 		this.itemcount = itemcount;
+	}
+
+	public Vote getVote() {
+		return vote;
+	}
+
+	public void setVote(Vote vote) {
+		this.vote = vote;
 	}
 
 	public Map<String, String> getFollowers() {

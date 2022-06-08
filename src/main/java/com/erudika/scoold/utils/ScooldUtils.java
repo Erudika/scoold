@@ -23,6 +23,7 @@ import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
+import com.erudika.para.core.Votable;
 import com.erudika.para.core.Vote;
 import com.erudika.para.core.Webhook;
 import com.erudika.para.core.email.Emailer;
@@ -1047,6 +1048,25 @@ public final class ScooldUtils {
 		}
 		if (!forUpdate.isEmpty()) {
 			pc.updateAll(allPosts);
+		}
+	}
+
+	public void getVotes(List<Post> allPosts, Profile authUser) {
+		if (authUser == null) {
+			return;
+		}
+		Map<String, Vote> allVotes = new HashMap<>();
+		List<String> allVoteIds = new ArrayList<String>();
+		for (Post post : allPosts) {
+			allVoteIds.add(new Vote(authUser.getId(), post.getId(), Votable.VoteValue.UP).getId());
+		}
+		if (!allVoteIds.isEmpty()) {
+			for (ParaObject vote : pc.readAll(allVoteIds)) {
+				allVotes.put(((Vote) vote).getParentid(), (Vote) vote);
+			}
+		}
+		for (Post post : allPosts) {
+			post.setVote(allVotes.get(post.getId()));
 		}
 	}
 

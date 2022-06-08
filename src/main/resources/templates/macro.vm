@@ -919,6 +919,16 @@
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
 		<div class="votebox ${sizeClass}">
+			#set($upvoteCastClass = "")
+			#set($downvoteCastClass = "")
+			#if($votable.vote)
+				#if($votable.vote.isUpvote())
+					#set($upvoteCastClass = "cast")
+				#end
+				#if($votable.vote.isDownvote())
+					#set($downvoteCastClass = "cast")
+				#end
+			#end
 			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
@@ -934,11 +944,11 @@
 				<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
-					<i class="fa fa-chevron-up upvote mrs" title="$!lang.get('voteup.tooltip')"></i>
+					<i class="fa fa-chevron-up upvote mrs ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
 				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="$!lang.get('votedown.tooltip')">
-					<i class="fa fa-chevron-down downvote mrs" title="$!lang.get('votedown.tooltip')"></i>
+					<i class="fa fa-chevron-down downvote mrs ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#end
 			<span class="votecount hide-on-small-only tooltipped" data-tooltip="$votable.votes">$!_vvotes</span>
