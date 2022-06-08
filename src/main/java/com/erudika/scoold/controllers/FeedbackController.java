@@ -74,7 +74,7 @@ public class FeedbackController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby(sortby);
 		List<Post> feedbacklist = pc.findQuery(Utils.type(Feedback.class), "*", itemcount);
-		utils.fetchProfiles(feedbacklist);
+		utils.getProfiles(feedbacklist);
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title"));
 		model.addAttribute("itemcount", itemcount);
@@ -100,7 +100,7 @@ public class FeedbackController {
 		LinkedList<Post> allPosts = new LinkedList<Post>();
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
-		utils.fetchProfiles(allPosts);
+		utils.getProfiles(allPosts);
 		utils.getComments(allPosts);
 		utils.updateViewCount(showPost, req, res);
 

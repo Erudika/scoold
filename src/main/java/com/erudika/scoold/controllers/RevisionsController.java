@@ -63,7 +63,7 @@ public class RevisionsController {
 		List<Revision> revisionslist = showPost.getRevisions(itemcount);
 		// we need the first revision on the next page for diffing
 		List<Revision> nextPage = showPost.getRevisions(new Pager(itemcount.getPage() + 1, itemcount.getLimit()));
-		utils.fetchProfiles(revisionslist);
+		utils.getProfiles(revisionslist);
 		model.addAttribute("path", "revisions.vm");
 		model.addAttribute("title", utils.getLang(req).get("revisions.title"));
 		model.addAttribute("showPost", showPost);

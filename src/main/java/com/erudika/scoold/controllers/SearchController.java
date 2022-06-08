@@ -115,7 +115,7 @@ public class SearchController {
 		list.addAll(questionslist);
 		list.addAll(answerslist);
 		list.addAll(feedbacklist);
-		utils.fetchProfiles(list);
+		utils.getProfiles(list);
 
 		model.addAttribute("path", "search.vm");
 		model.addAttribute("title", utils.getLang(req).get("search.title"));

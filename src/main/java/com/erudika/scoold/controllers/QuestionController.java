@@ -113,7 +113,7 @@ public class QuestionController {
 		LinkedList<Post> allPosts = new LinkedList<Post>();
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
-		utils.fetchProfiles(allPosts);
+		utils.getProfiles(allPosts);
 		utils.getComments(allPosts);
 		utils.updateViewCount(showPost, req, res);
 

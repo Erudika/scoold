@@ -111,7 +111,7 @@ public class QuestionsController {
 			t.setCount(c);
 			pc.update(t);
 		}
-		utils.fetchProfiles(questionslist);
+		utils.getProfiles(questionslist);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("posts.tagged") + " - " + tag);
 		model.addAttribute("questionsSelected", "navbtn-hover");
@@ -327,7 +327,7 @@ public class QuestionsController {
 			questionslist = qlist;
 		}
 
-		utils.fetchProfiles(questionslist);
+		utils.getProfiles(questionslist);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("questionslist", questionslist);
 		return questionslist;
