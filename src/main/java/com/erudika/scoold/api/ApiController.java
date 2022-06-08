@@ -387,7 +387,7 @@ public class ApiController {
 			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Para.getConfig().separator() +
 					newUser.getName() + Para.getConfig().separator() + newUser.getPassword(), false);
 			// user is probably active:false so activate them
-			List<User> created = pc.findQuery(newUser.getType(), Config._EMAIL + ":" + newUser.getEmail());
+			List<User> created = pc.findTerms(newUser.getType(), Collections.singletonMap(Config._EMAIL, newUser.getEmail()), true);
 			if (createdUser == null && !created.isEmpty()) {
 				createdUser = created.iterator().next();
 				if (Utils.timestamp() - createdUser.getTimestamp() > TimeUnit.SECONDS.toMillis(20)) {
