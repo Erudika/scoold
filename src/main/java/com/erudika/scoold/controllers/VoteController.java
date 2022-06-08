@@ -131,11 +131,15 @@ public class VoteController {
 	private boolean updateReputationOnUpvote(ParaObject votable, Integer votes,
 			Profile authUser, Profile author, boolean isVoteCorrection) {
 		if (author != null) {
-			if (!isVoteCorrection) {
+			if (isVoteCorrection) {
+				author.addRep(CONF.postVotedownPenaltyAuthor()); // revert penalty to author
+				authUser.addRep(CONF.postVotedownPenaltyVoter()); // revert penalty to voter
+				authUser.decrementDownvotes();
+			} else {
 				author.addRep(addReward(votable, author, votes));
 				authUser.incrementUpvotes();
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -145,12 +149,12 @@ public class VoteController {
 		if (author != null) {
 			if (isVoteCorrection) {
 				author.removeRep(addReward(votable, author, votes));
+				authUser.decrementUpvotes();
 			} else {
+				author.removeRep(CONF.postVotedownPenaltyAuthor()); // small penalty to author
+				authUser.removeRep(CONF.postVotedownPenaltyVoter()); // small penalty to voter
 				authUser.incrementDownvotes();
 			}
-			author.removeRep(CONF.postVotedownPenaltyAuthor());
-			//small penalty to voter
-			authUser.removeRep(CONF.postVotedownPenaltyVoter());
 			return true;
 		}
 		return false;

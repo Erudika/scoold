@@ -562,6 +562,28 @@ public class Profile extends Sysprop {
 		}
 	}
 
+	public void decrementUpvotes() {
+		if (this.upvotes == null) {
+			this.upvotes = 1L;
+		} else {
+			this.upvotes = this.upvotes - 1L;
+			if (upvotes < 0) {
+				upvotes = 0L;
+			}
+		}
+	}
+
+	public void decrementDownvotes() {
+		if (this.downvotes == null) {
+			this.downvotes = 1L;
+		} else {
+			this.downvotes = this.downvotes - 1L;
+			if (downvotes < 0) {
+				downvotes = 0L;
+			}
+		}
+	}
+
 	private void updateVoteGains(int rep) {
 		Long updated = Optional.ofNullable(getUpdated()).orElse(getTimestamp());
 		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZoneId.systemDefault());
