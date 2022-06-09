@@ -323,6 +323,10 @@ $(function () {
 		var up = dis.hasClass("upvote");
 		var votes = dis.closest("div.votebox").find(".votecount").filter(':visible');
 		if (!dis.data("disabled")) {
+			var selectedVote = dis.closest(".votebox").find(".cast").removeClass("cast");
+			if (!selectedVote.length) {
+				dis.find(".downvote,.upvote").addClass("cast");
+			}
 			dis.data("disabled", true);
 			$.post(this.href, function(data) {
 				if (data === true) {
