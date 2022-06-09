@@ -360,7 +360,6 @@ public class ApiController {
 		}).collect(Collectors.toList());
 	}
 
-
 	@PostMapping("/users")
 	public Map<String, Object> createUser(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
@@ -377,7 +376,7 @@ public class ApiController {
 		userEntity.put("picture", entity.get("picture"));
 
 		User newUser = ParaObjectUtils.setAnnotatedFields(new User(), userEntity, null);
-		newUser.setPassword((String) entity.get(Config._PASSWORD));
+		newUser.setPassword((String) entity.getOrDefault(Config._PASSWORD, Utils.generateSecurityToken(10)));
 		newUser.setIdentifier(StringUtils.isBlank(newUser.getIdentifier()) ? newUser.getEmail() : newUser.getIdentifier());
 		String[] errors = ValidationUtils.validateObject(newUser);
 
