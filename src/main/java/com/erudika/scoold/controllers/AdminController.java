@@ -386,7 +386,7 @@ public class AdminController {
 
 		Para.asyncExecute(() -> {
 			Map<String, String> comments2authors = new LinkedHashMap<>();
-			Map<String, String> accounts2emails = new LinkedHashMap<>();
+			Map<String, User> accounts2emails = new LinkedHashMap<>();
 			try (InputStream inputStream = file.getInputStream()) {
 				if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
 					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
@@ -499,7 +499,7 @@ public class AdminController {
 	}
 
 	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry, ObjectReader mapReader,
-			Map<String, String> comments2authors, Map<String, String> accounts2emails, Sysprop si)
+			Map<String, String> comments2authors, Map<String, User> accounts2emails, Sysprop si)
 			throws IOException, ParseException {
 		if (zipEntry.getName().endsWith(".json")) {
 			List<Map<String, Object>> objs = mapReader.readValue(new FilterInputStream(zipIn) {
@@ -519,7 +519,7 @@ public class AdminController {
 					importCommentsFromSO(objs, toImport, comments2authors, si);
 					break;
 				case "users.json":
-					importUsersFromSO(objs, toImport, si);
+					importUsersFromSO(objs, toImport, accounts2emails, si);
 					break;
 				case "users2badges.json":
 					// nice to have...
@@ -633,8 +633,8 @@ public class AdminController {
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
-	private void importUsersFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si)
-			throws ParseException {
+	private void importUsersFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport,
+			Map<String, User> accounts2emails, Sysprop si) throws ParseException {
 		logger.info("Importing {} users...", objs.size());
 		int imported = 0;
 		for (Map<String, Object> obj : objs) {
@@ -661,6 +661,15 @@ public class AdminController {
 			toImport.add(u);
 			toImport.add(p);
 			imported += 2;
+
+			User cachedUser = accounts2emails.get(u.getCreatorid());
+			if (cachedUser == null) {
+				User cu = new User(u.getId());
+				accounts2emails.put(u.getCreatorid(), cu);
+			} else {
+				cachedUser.setId(u.getId());
+			}
+
 			if (toImport.size() >= CONF.importBatchSize()) {
 				pc.createAll(toImport);
 				toImport.clear();
@@ -673,10 +682,21 @@ public class AdminController {
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
-	private void importAccountsFromSO(List<Map<String, Object>> objs, Map<String, String> accounts2emails) {
+	private void importAccountsFromSO(List<Map<String, Object>> objs, Map<String, User> accounts2emails) {
 		logger.info("Importing {} accounts...", objs.size());
 		for (Map<String, Object> obj : objs) {
-			accounts2emails.put(((Integer) obj.get("accountId")).toString(), (String) obj.get("verifiedEmail"));
+			String accountId = ((Integer) obj.get("accountId")).toString();
+			String email = (String) obj.get("verifiedEmail");
+			User cachedUser = accounts2emails.get(accountId);
+			if (cachedUser == null) {
+				User cu = new User();
+				cu.setEmail(email);
+				cu.setIdentifier(email);
+				accounts2emails.put(accountId, cu);
+			} else {
+				cachedUser.setEmail(email);
+				cachedUser.setIdentifier(email);
+			}
 		}
 	}
 
@@ -705,27 +725,23 @@ public class AdminController {
 		}
 	}
 
-	private void updateSOUserAccounts(Map<String, String> accounts2emails) {
+	private void updateSOUserAccounts(Map<String, User> accounts2emails) {
 		List<Map<String, String>> toPatch = new LinkedList<>();
-		// find all user objects even if there are more than 10000 users in the system
-		Pager pager = new Pager(1, "_docid", false, CONF.importBatchSize());
-		List<User> users;
-		do {
-			users = pc.findQuery(Utils.type(User.class), "*", pager);
-			if (!users.isEmpty()) {
-				users.stream().forEach(u -> {
-					if (accounts2emails.containsKey(u.getCreatorid())) {
-						u.setEmail(accounts2emails.get(u.getCreatorid()));
-						Map<String, String> user = new HashMap<>();
-						user.put(Config._ID, u.getId());
-						user.put(Config._EMAIL, u.getEmail());
-						user.put(Config._IDENTIFIER, u.getEmail());
-						toPatch.add(user);
-					}
-				});
+		for (Map.Entry<String, User> entry : accounts2emails.entrySet()) {
+			User u = entry.getValue();
+			Map<String, String> user = new HashMap<>();
+			user.put(Config._ID, u.getId());
+			user.put(Config._EMAIL, u.getEmail());
+			user.put(Config._IDENTIFIER, u.getEmail());
+			toPatch.add(user);
+			if (toPatch.size() >= CONF.importBatchSize()) {
+				pc.invokePatch("_batch", toPatch, Map.class);
+				toPatch.clear();
 			}
+		}
+		if (!toPatch.isEmpty()) {
 			pc.invokePatch("_batch", toPatch, Map.class);
 			toPatch.clear();
-		} while (!users.isEmpty());
+		}
 	}
 }
