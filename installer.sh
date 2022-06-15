@@ -16,16 +16,16 @@ chmod +x ${WORKDIR}/scoold.jar
 touch ${WORKDIR}/application.conf && \
 chown ubuntu:ubuntu ${WORKDIR}/application.conf
 
-# Feel free to paste your Scoold configuration here
+# Feel free to modify the Scoold configuration here
 cat << EOF > ${WORKDIR}/application.conf
-para.app_name = "Scoold"
-para.port = 8000
-para.env = "production"
-para.host_url = "http://localhost:8000"
-para.endpoint = "https://paraio.com"
-para.access_key = "app:myapp"
-para.secret_key = ""
-para.admins = "admin@domain.com"
+scoold.app_name = "Scoold"
+scoold.port = 8000
+scoold.env = "production"
+scoold.host_url = "http://localhost:8000"
+scoold.para_endpoint = "https://paraio.com"
+scoold.para_access_key = "app:myapp"
+scoold.para_secret_key = ""
+scoold.admins = "admin@domain.com"
 EOF
 
 touch $sfile
