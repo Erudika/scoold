@@ -1369,8 +1369,8 @@ public final class ScooldUtils {
 		if (!StringUtils.isBlank(qs)) {
 			String wildcardLower = qs.matches("[\\p{IsAlphabetic}]*") ? qs + "*" : qs;
 			String wildcardUpper = StringUtils.capitalize(wildcardLower);
-			String template = "(name:({1}) OR name:({2} OR {3}) OR properties.location:({0}) OR "
-					+ "properties.aboutme:({0}) OR properties.groups:({0}))";
+			String template = "(name:({1}) OR name:({2} OR properties.originalName:{1} OR properties.originalName:{2} OR {3}) "
+					+ "OR properties.location:({0}) OR properties.aboutme:({0}) OR properties.groups:({0}))";
 			qs = (StringUtils.isBlank(spaceFilter) ? "" : spaceFilter + " AND ") +
 					Utils.formatMessage(template, qs, StringUtils.capitalize(qs), wildcardLower, wildcardUpper);
 		} else {
