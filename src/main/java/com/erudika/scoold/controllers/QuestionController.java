@@ -128,6 +128,7 @@ public class QuestionController {
 		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
 		model.addAttribute("maxCommentLength", CONF.maxCommentLength());
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
+		model.addAttribute("includeEmojiPicker", true);
 		model.addAttribute("maxCommentLengthError", Utils.formatMessage(utils.getLang(req).get("maxlength"),
 				CONF.maxCommentLength()));
 		if (showPost.getAuthor() != null) {

@@ -811,7 +811,7 @@
 			#end
 
 			<i class="fa fa-pencil fa-2x left grey-text"></i>
-			<div class="pll mll">
+			<div class="pll mll emoji-picker-container">
 				<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"
 									id="edit-$!{showpost.id}-body">$!showpost.body</textarea>
 				#getmessagebox("red white-text" $error.get("body"))

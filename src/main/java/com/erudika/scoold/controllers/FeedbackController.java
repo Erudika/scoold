@@ -110,6 +110,7 @@ public class FeedbackController {
 		model.addAttribute("showPost", allPosts.removeFirst());
 		model.addAttribute("answerslist", allPosts);
 		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("includeEmojiPicker", true);
 		return "base";
 	}
 
@@ -125,6 +126,7 @@ public class FeedbackController {
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title") + " - "
 				+ utils.getLang(req).get("feedback.write"));
+		model.addAttribute("includeEmojiPicker", true);
 		return "base";
 	}
 

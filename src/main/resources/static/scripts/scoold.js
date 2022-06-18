@@ -858,12 +858,31 @@ $(function () {
 		updateMentionsWithLinks();
 	});
 
+	$(".emoji-picker-container").on("emoji:select", function(e, data) {
+		var textbox = $(this).find("textarea");
+		if (textbox.data("codemirror")) {
+			var cm = textbox.data("codemirror");
+			cm.setValue(cm.getValue() + data.emoji);
+		} else {
+			var target = $(this).find(".emoji-picker-target");
+			target.text(target.text() + data.emoji);
+			target.val(target.val() + data.emoji);
+		}
+	});
+
 	function initPostEditor(elem) {
 		var mde = new EasyMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
 			showIcons: ["code", "table", "strikethrough"],
 			spellChecker: false,
+			promptURLs: true,
+			toolbar: ["bold", "italic", "strikethrough", "heading", "|",
+				"code", "quote", "unordered-list", "ordered-list", "|", "link", "image", "table", {
+				name: "attach-emoji",
+				className: "fa fa-smile-o emoji-button empty",
+				title: "Insert emoji"
+			},  "|", "preview", "side-by-side", "fullscreen", "|", "guide"],
 			previewRender: function (plainText) {
 				return this.parent.markdown(replaceMentionsWithMarkdownLinks(plainText));
 			},

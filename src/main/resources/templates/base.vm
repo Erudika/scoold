@@ -431,6 +431,12 @@
 		<script nonce="$cspNonce">function onSubmit() {document.getElementById("captcha-form").submit();}</script>
 		#end
 
+		#if($includeEmojiPicker)
+		<script nonce="$cspNonce" src="$!scriptslink/picmo.min.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/picmo-popup.min.js?r=$!rev"></script>
+		<script nonce="$cspNonce" type="module" src="$!scriptslink/emoji-picker.js"></script>
+		#end
+
 		#externalScripts(false)
 	</body>
 </html>

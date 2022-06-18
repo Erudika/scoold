@@ -81,8 +81,10 @@
 									#if ($showPost.isQuestion()) $!lang.get("posts.youranswer")#else$!lang.get("feedback.writereply")#end
 								</h4>
 
-								<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
-								#getmessagebox("red white-text" $error.get("body"))
+								<div class="emoji-picker-container">
+									<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
+									#getmessagebox("red white-text" $error.get("body"))
+								</div>
 
 								<input type="hidden" name="answer" value="true">
 								<div>
