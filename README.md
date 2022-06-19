@@ -595,6 +595,9 @@ scoold.password_auth_enabled = true
 |`scoold.cluster_nodes`<br>Total number of nodes present in the cluster when Scoold is deployed behind a reverse proxy. | `1` | `Integer`|
 |`scoold.autoinit.root_app_secret_key`<br>If configured, Scoold will try to automatically initialize itself with Para and create its own Para app, called `app:scoold`. The keys for that new app will be saved in the configuration file. | ` ` | `String`|
 |`scoold.autoinit.para_config_file`<br>Does the same as `scoold.autoinit.root_app_secret_key` but tries to read the secret key for the root Para app from the Para configuration file, wherever that may be. | ` ` | `String`|
+|`scoold.sitemap_enabled`<br>Enable/disable the generation of `/sitemap.xml`. | `true` | `Boolean`|
+|`scoold.access_log_enabled`<br>Enable/disable the Scoold access log. | `false` | `Boolean`|
+|`scoold.user_autocomplete_details_enabled`<br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
 
 </details>
 

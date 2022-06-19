@@ -3142,6 +3142,16 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("access_log_enabled", false);
 	}
 
+	@Documented(position = 3060,
+			identifier = "user_autocomplete_details_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable extra details when displaying user results in autocomplete.")
+	public boolean userAutocompleteDetailsEnabled() {
+		return getConfigBoolean("user_autocomplete_details_enabled", false);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {
