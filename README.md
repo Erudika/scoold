@@ -597,7 +597,7 @@ scoold.password_auth_enabled = true
 |`scoold.autoinit.para_config_file`<br>Does the same as `scoold.autoinit.root_app_secret_key` but tries to read the secret key for the root Para app from the Para configuration file, wherever that may be. | ` ` | `String`|
 |`scoold.sitemap_enabled`<br>Enable/disable the generation of `/sitemap.xml`. | `true` | `Boolean`|
 |`scoold.access_log_enabled`<br>Enable/disable the Scoold access log. | `false` | `Boolean`|
-|`scoold.user_autocomplete_details_enabled`<br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
+|`scoold.user_autocomplete_details_enabled`<kbd>Pro</kbd><br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
 
 </details>
 
@@ -2333,6 +2333,14 @@ Users can opt-in to receive email notifications when they are mentioned or that 
 For the latter option set:
 ```ini
 scoold.mention_emails_controlled_by_admins = true
+```
+
+In certain cases, there may be lots of people with identical or similar names within a team which could make it difficult
+to tell them apart when trying to mention them. For such scenarios, there is an option to show additional details for
+each user, like username and tags. This is enabled like so:
+
+```ini
+scoold.user_autocomplete_details_enabled = true
 ```
 
 ## Security headers

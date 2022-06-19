@@ -3147,6 +3147,7 @@ public class ScooldConfig extends Config {
 			value = "false",
 			type = Boolean.class,
 			category = "Miscellaneous",
+			tags = {"pro"},
 			description = "Enable/disable extra details when displaying user results in autocomplete.")
 	public boolean userAutocompleteDetailsEnabled() {
 		return getConfigBoolean("user_autocomplete_details_enabled", false);
