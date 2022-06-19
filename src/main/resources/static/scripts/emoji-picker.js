@@ -1,7 +1,7 @@
 /* global picmoPopup */
 
-import emojiData from "./emojibase/data.json" assert { type: "json" };
-import messages from "./emojibase/messages.json" assert { type: "json" };
+const emojiData = await (await fetch(CONTEXT_PATH + "/scripts/emojibase/data.json")).json();
+const messages = await (await fetch(CONTEXT_PATH + "/scripts/emojibase/messages.json")).json();
 
 $(document).on("click", ".emoji-button", function () {
 	var cont = $(this).closest(".emoji-picker-container");

@@ -343,6 +343,7 @@ img.profile-pic:before {
 	background-attachment: initial;
 	background-position: center;
 	background-size: cover;
+	color: transparent;
 }
 .personbox img.profile-pic:before {
   height: 89%;

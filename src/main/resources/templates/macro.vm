@@ -383,7 +383,7 @@
 			<div class="row user-card">
 				<div class="col s3 m4" title="$!showFriend.name">
 					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
-						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img pts pls" alt="pic">
+						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img" alt="pic">
 					</a>
 				</div>
 				<div class="col s9 m8">
