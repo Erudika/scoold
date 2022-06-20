@@ -2191,6 +2191,13 @@ public class ScooldConfig extends Config {
 		return getConfigParam("navbar_link1_text", "Link1");
 	}
 
+	@Documented(position = 2151,
+		identifier = "navbar_link1_target",
+		category = "Customization",
+		description = "The target attribute of an extra custom link which will be added to the top navbar.")
+	public String navbarCustomLink1Target() {
+		return getConfigParam("navbar_link1_target", "");
+	}
 	@Documented(position = 2160,
 			identifier = "navbar_link2_url",
 			category = "Customization",
@@ -2206,6 +2213,14 @@ public class ScooldConfig extends Config {
 			description = "The title of an extra custom link which will be added to the top navbar.")
 	public String navbarCustomLink2Text() {
 		return getConfigParam("navbar_link2_text", "Link2");
+	}
+
+	@Documented(position = 2171,
+		identifier = "navbar_link2_target",
+		category = "Customization",
+		description = "The target attribute of an extra custom link which will be added to the top navbar.")
+	public String navbarCustomLink2Target() {
+		return getConfigParam("navbar_link2_target", "");
 	}
 
 	@Documented(position = 2180,
@@ -2226,6 +2241,14 @@ public class ScooldConfig extends Config {
 		return getConfigParam("navbar_menu_link1_text", "Menu Link1");
 	}
 
+	@Documented(position = 2181,
+		identifier = "navbar_menu_link1_target",
+		category = "Customization",
+		description = "The target attribute of an extra custom link which will be added to user's dropdown menu.")
+	public String navbarCustomMenuLink1Target() {
+		return getConfigParam("navbar_menu_link1_url", "");
+	}
+
 	@Documented(position = 2200,
 			identifier = "navbar_menu_link2_url",
 			category = "Customization",
@@ -2242,6 +2265,14 @@ public class ScooldConfig extends Config {
 			description = "The title of an extra custom link which will be added to the user's dropdown menu.")
 	public String navbarCustomMenuLink2Text() {
 		return getConfigParam("navbar_menu_link2_text", "Menu Link2");
+	}
+
+	@Documented(position = 2211,
+		identifier = "navbar_menu_link2_target",
+		category = "Customization",
+		description = "The target attribute of an extra custom link which will be added to the user's dropdown menu.")
+	public String navbarCustomMenuLink2Target() {
+		return getConfigParam("navbar_menu_link2_target", "");
 	}
 
 	@Documented(position = 2220,

@@ -865,6 +865,14 @@ public final class ScooldUtils {
 		return CONF.navbarCustomLink1Text();
 	}
 
+	public boolean isNavbarLink1TargetEnabled() {
+		return !StringUtils.isBlank(getNavbarLink1Target());
+	}
+
+	public String getNavbarLink1Target() {
+		return CONF.navbarCustomLink1Target();
+	}
+
 	public boolean isNavbarLink2Enabled() {
 		return !StringUtils.isBlank(getNavbarLink2URL());
 	}
@@ -875,6 +883,14 @@ public final class ScooldUtils {
 
 	public String getNavbarLink2Text() {
 		return CONF.navbarCustomLink2Text();
+	}
+
+	public boolean isNavbarLink2TargetEnabled() {
+		return !StringUtils.isBlank(getNavbarLink2Target());
+	}
+
+	public String getNavbarLink2Target() {
+		return CONF.navbarCustomLink2Target();
 	}
 
 	public boolean isNavbarMenuLink1Enabled() {
@@ -889,8 +905,24 @@ public final class ScooldUtils {
 		return CONF.navbarCustomMenuLink1Text();
 	}
 
+	public boolean isNavbarMenuLink1TargetEnabled() {
+		return !StringUtils.isBlank(getNavbarMenuLink1Target());
+	}
+
+	public String getNavbarMenuLink1Target() {
+		return CONF.navbarCustomMenuLink1Target();
+	}
+
 	public boolean isNavbarMenuLink2Enabled() {
 		return !StringUtils.isBlank(getNavbarMenuLink2URL());
+	}
+
+	public boolean isNavbarMenuLink2TargetEnabled() {
+		return !StringUtils.isBlank(getNavbarMenuLink2Target());
+	}
+
+	public String getNavbarMenuLink2Target() {
+		return CONF.navbarCustomMenuLink2Target();
 	}
 
 	public String getNavbarMenuLink2URL() {
