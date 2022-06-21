@@ -335,6 +335,9 @@
 				#if ($showu.groups == "mods")
 					<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
 				#end
+				#foreach($badge in $showu.customBadges)
+					#custombadgebox($badge "small")
+				#end
 			#end
 		</div>
 	</div>
@@ -371,6 +374,9 @@
 		<small class="chip badgebox">
 			<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-tooltip="$!lang.get('mod')"></i>
 		</small>
+		#end
+		#foreach($badge in $showu.customBadges)
+			#custombadgebox($badge "small")
 		#end
 	#end
 </span>
@@ -448,6 +454,9 @@
 						#end
 						#if ($showFriend.groups == "mods")
 						<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
+						#end
+						#foreach($badge in $showFriend.customBadges)
+							#custombadgebox($badge "small")
 						#end
 					</div>
 					#if($showFriend.lastseen)
@@ -908,6 +917,23 @@
 	<span class="fa fa-star yellow-text text-darken-3"></span>
 	#if ($num && $num > 1)<b>$num</b> &times; $!lang.get("$showbadge") #else $!lang.get("$showbadge") #end
 </span>
+#end
+###################################
+#macro(custombadgebox $badge $clazz)
+#if($badge)
+	#set($style = "$badge.style" )
+	#if(!$isMod) #set($clazz = "" )	#end
+	<span class="chip custom-badge $!{clazz}" title="$!badge.description" style="$style"
+				data-url="$profilelink/$!showUser.creatorid/toggle-badge/$!badge.tag">
+		<i class="fa fa-minus hide tooltipped" data-tooltip="$!lang.get('removebadge')"></i>
+		<i class="fa fa-plus hide tooltipped" data-tooltip="$!lang.get('addbadge')"></i>
+		#if($badge.icon)<span class="badge-icon">$!badge.icon</span>#end
+		<b>$!badge.name</b>
+		<a href="$profilelink/delete-badge/$!badge.tag" class="hide post-refresh-ask" style="$style">
+			<i class="fa fa-close tooltipped mhs" data-tooltip="$!lang.get('deletebadge')"></i>
+		</a>
+	</span>
+#end
 #end
 ###################################
 #macro(showcount $param )

@@ -517,14 +517,27 @@ h5 {
 	border-radius: 3px;
 }
 
-small.badgebox {
+small.badgebox, .custom-badge.small {
 	line-height: inherit;
-	height: 1.6em;
+	height: 1.5em;
 	padding: 0px 5px;
+	margin: 0;
+}
+
+.custom-badge.small {
+	padding: 0px 8px;
 }
 
 .userbox small.badgebox {
 	font-size: 10px;
+}
+
+.custom-badge.add:hover, .custom-badge.remove:hover {
+	cursor: pointer;
+}
+
+#badge-preview-icon {
+	color: black;
 }
 
 .smallspacebox {

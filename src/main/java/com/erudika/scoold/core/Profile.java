@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -75,6 +76,7 @@ public class Profile extends Sysprop {
 	@Stored private Integer quarterlyVotes;
 	@Stored private Integer monthlyVotes;
 	@Stored private Integer weeklyVotes;
+	@Stored private List<Map<String, String>> customBadges;
 
 	private transient String newbadges;
 	private transient Integer newreports;
@@ -147,6 +149,8 @@ public class Profile extends Sysprop {
 		this.favtagsEmailsEnabled = ScooldUtils.getConfig().favoriteTagsEmailsEnabled();
 		this.replyEmailsEnabled = ScooldUtils.getConfig().replyEmailsEnabled();
 		this.commentEmailsEnabled = ScooldUtils.getConfig().commentEmailsEnabled();
+		this.customBadges = new LinkedList<>();
+		setTags(new LinkedList<>());
 	}
 
 	public static final String id(String userid) {
@@ -315,6 +319,14 @@ public class Profile extends Sysprop {
 
 	public void setNewbadges(String newbadges) {
 		this.newbadges = newbadges;
+	}
+
+	public List<Map<String, String>> getCustomBadges() {
+		return customBadges;
+	}
+
+	public void setCustomBadges(List<Map<String, String>> customBadges) {
+		this.customBadges = customBadges;
 	}
 
 	public List<String> getFavtags() {
@@ -661,6 +673,30 @@ public class Profile extends Sysprop {
 
 		badgeMap.remove("");
 		return badgeMap;
+	}
+
+	public void addCustomBadge(com.erudika.scoold.core.Badge b) {
+		if (b != null) {
+			if (getTags().size() < 2) {
+				Map<String, String> badge = new HashMap<>();
+				badge.put("tag", b.getTag());
+				badge.put("name", b.getName());
+				badge.put("description", b.getDescription());
+				badge.put("style", b.getStyle());
+				badge.put("icon", b.getIcon());
+				customBadges.add(badge);
+			}
+			getTags().add(b.getTag());
+		}
+	}
+
+	public boolean removeCustomBadge(String tag) {
+		if (!StringUtils.isBlank(tag)) {
+			if (getTags().size() <= 2) {
+				setCustomBadges(customBadges.stream().filter(b -> !tag.equals(b.get("tag"))).collect(Collectors.toList()));
+			}
+		}
+		return getTags().remove(tag);
 	}
 
 	public boolean isComplete() {

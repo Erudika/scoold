@@ -196,10 +196,80 @@
 				</div>
 
 				#set($badges = $showUser.badgesMap)
-				#if (!$badges.isEmpty())
+				#if (!$badges.isEmpty() || $tagsSet || $isMod)
+					#if($isMod)
+						<a href="#" class="next-div-toggle right ptm">$!lang.get('addbadge')</a>
+					#end
 					<h4 class="grey-text text-darken-1 pvs">
 						$!lang.get('badges.title') #if($badgesCount > 0) <strong>$!badgesCount</strong>#end
 					</h4>
+					#if($isMod)
+
+					<div class="hide ">
+						<span class="pvm" id="available-badges">
+							#foreach($badge in $customBadgesMap.values())
+								#if(!$tagsSet.contains($badge.tag))
+									#custombadgebox($badge "add")
+								#end
+							#end
+						</span>
+						<a href="#" class="next-div-toggle click2hide pvm"><i class="fa fa-plus-square"></i>
+							<strong>$!lang.get('createbadge')</strong>
+						</a>
+						<div class="card pam hide">
+							<form action="$profilelink/$showUser.creatorid/create-badge" method="post">
+								<div class="row mvn">
+									<div class="input-field col m5 s12">
+										<label for="badge-tag">$!lang.get('badgename')</label>
+										<input id="badge-tag" type="text" name="tag" value="" required>
+										#getmessagebox("red white-text" $error.get("tag"))
+									</div>
+									<div class="input-field col m7 s12">
+										<label for="badge-description">$!lang.get('description')</label>
+										<input id="badge-description" type="text" name="description" value="">
+										#getmessagebox("red white-text" $error.get("tag"))
+									</div>
+								</div>
+								<div class="row mvn">
+									<div class="col m3 s12">
+										<div>$!lang.get('badgefg')</div>
+										<input id="badge-color" type="color" name="color" value="#000000" required>
+										#getmessagebox("red white-text" $error.get("color"))
+									</div>
+									<div class="col m3 s12">
+										<div>$!lang.get('badgebg')</div>
+										<input id="badge-background" type="color" name="background" value="#AAAAAA" required>
+										#getmessagebox("red white-text" $error.get("background"))
+									</div>
+									<div class="emoji-picker-container col m3 s12 mvl">
+										<button type="button" class="emoji-button empty btn btn-flat btn-small white">
+											<span class="emoji-picker-target single"></span> $!lang.get('badgeicon')
+											<input type="hidden" id="badge-icon" name="icon" value="" class="emoji-picker-target single">
+										</button>
+									</div>
+									<div class="col m3 s12 mvl right-align">
+										<button type="submit" class="btn btn-small">$!lang.get('create')</button>
+									</div>
+								</div>
+
+								<div class="center">
+									<span class="chip" title="Cool badge!" id="badge-preview">
+										<span id="badge-preview-icon" class="hide"></span>
+										<b><span id="badge-preview-tag">Badge preview</span></b>
+									</span>
+								</div>
+							</form>
+						</div>
+						<hr>
+					</div>
+					#end
+					<span id="user-badges">
+						#if(!$tagsSet.isEmpty())
+							#foreach($tag in $tagsSet)
+								#custombadgebox($customBadgesMap.get($tag) "remove")
+							#end
+						#end
+					</span>
 					#foreach($entry in $badges.entrySet())
 						#set($badge = $entry.key)
 						#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end

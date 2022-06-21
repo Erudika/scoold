@@ -19,9 +19,11 @@ package com.erudika.scoold.controllers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.User;
 import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
+import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
@@ -29,14 +31,15 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import static com.erudika.scoold.ScooldServer.PROFILELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Badge;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
-import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,12 +65,14 @@ public class ProfileController {
 
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
+	private final ParaClient pc;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private final AvatarRepository avatarRepository;
 
 	@Inject
 	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepositoryProxy avatarRepository) {
 		this.utils = utils;
+		this.pc = utils.getParaClient();
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 		this.avatarRepository = avatarRepository;
 	}
@@ -86,7 +91,7 @@ public class ProfileController {
 			showUser = authUser;
 			isMyProfile = true;
 		} else {
-			showUser = utils.getParaClient().read(Profile.id(id));
+			showUser = pc.read(Profile.id(id));
 			isMyProfile = isMyid(authUser, Profile.id(id));
 		}
 
@@ -113,7 +118,10 @@ public class ProfileController {
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
-		model.addAttribute("badgesCount", showUser.getBadgesMap().size());
+		model.addAttribute("badgesCount", showUser.getBadgesMap().size() + showUser.getTags().size());
+		model.addAttribute("tagsSet", new HashSet<>(showUser.getTags()));
+		model.addAttribute("customBadgesMap", pc.findQuery(Utils.type(Badge.class), "*", new Pager(100)).stream().
+				collect(Collectors.toMap(k -> ((Badge) k).getTag(), v -> v)));
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("canEditAvatar", CONF.avatarEditsEnabled());
 		model.addAttribute("gravatarPicture", gravatarAvatarGenerator.getLink(showUser, AvatarFormat.Profile));
@@ -131,7 +139,7 @@ public class ProfileController {
 	public String makeMod(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {
-			Profile showUser = utils.getParaClient().read(Profile.id(id));
+			Profile showUser = pc.read(Profile.id(id));
 			if (showUser != null) {
 				if (utils.isAdmin(authUser) && !utils.isAdmin(showUser)) {
 					showUser.setGroups(utils.isMod(showUser) ? USERS.toString() : MODS.toString());
@@ -156,10 +164,7 @@ public class ProfileController {
 		Profile showUser = getProfileForEditing(id, authUser);
 		if (showUser != null) {
 			boolean updateProfile = false;
-			if (!isMyid(authUser, id)) {
-				showUser = utils.getParaClient().read(Profile.id(id));
-			}
-			if (!StringUtils.equals(showUser.getLocation(), location)) {
+				if (!StringUtils.equals(showUser.getLocation(), location)) {
 				showUser.setLatlng(latlng);
 				showUser.setLocation(location);
 				updateProfile = true;
@@ -177,7 +182,7 @@ public class ProfileController {
 			updateProfile = updateUserPictureAndName(showUser, picture, name) || updateProfile;
 
 			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
-			if (updateProfile || utils.addBadgeOnce(showUser, Badge.NICEPROFILE, isComplete)) {
+			if (updateProfile || utils.addBadgeOnce(showUser, Profile.Badge.NICEPROFILE, isComplete)) {
 				showUser.update();
 			}
 			model.addAttribute("user", showUser);
@@ -224,11 +229,77 @@ public class ProfileController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@PostMapping("/{id}/create-badge")
+	public String createBadge(@PathVariable String id, @RequestParam String tag,
+			@RequestParam(required = false, defaultValue = "") String description,
+			@RequestParam(required = false, defaultValue = "#FFFFFF") String color,
+			@RequestParam(required = false, defaultValue = "#555555") String background,
+			@RequestParam(required = false, defaultValue = "") String icon,
+			HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		Profile showUser = getProfileForEditing(id, authUser);
+		if (showUser != null && utils.isMod(authUser)) {
+			Badge b = new Badge(tag);
+			b.setIcon(icon);
+			b.setStyle(Utils.formatMessage("background-color: {0}; color: {1};", background, color));
+			b.setDescription(StringUtils.isBlank(description) ? tag : description);
+			b.setCreatorid(authUser.getCreatorid());
+			pc.create(b);
+			showUser.addCustomBadge(b);
+			showUser.update();
+		}
+		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
+	}
+
+	@PostMapping("/delete-badge/{id}")
+	public String deleteBadge(@PathVariable String id, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (id != null && utils.isMod(authUser)) {
+			Badge b = pc.read(new Badge(id).getId());
+			if (b != null) {
+				pc.delete(b);
+				LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
+				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
+				List<Profile> profiles;
+				do {
+					profiles = pc.findTagged(Utils.type(Profile.class), new String[]{id}, pager);
+					for (Profile p : profiles) {
+						p.removeCustomBadge(b.getTag());
+						Map<String, Object> profile = new HashMap<>();
+						profile.put(Config._ID, p.getId());
+						profile.put(Config._TAGS, p.getTags().stream().
+								filter(t -> !t.equals(id)).distinct().collect(Collectors.toList()));
+						profile.put("customBadges", p.getCustomBadges());
+						toUpdate.add(profile);
+					}
+					if (!profiles.isEmpty()) {
+						pc.invokePatch("_batch", toUpdate, Map.class);
+					}
+				} while (!profiles.isEmpty());
+			}
+		}
+		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
+	}
+
+	@PostMapping("/{id}/toggle-badge/{tag}")
+	public ResponseEntity<?> toggleBadge(@PathVariable String id, @PathVariable String tag, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		Profile showUser = getProfileForEditing(id, authUser);
+		if (showUser != null && utils.isMod(authUser)) {
+			Badge b = new Badge(tag);
+			if (!showUser.removeCustomBadge(b.getTag())) {
+				showUser.addCustomBadge(pc.read(b.getId()));
+			}
+			showUser.update();
+		}
+		return ResponseEntity.ok().build();
+	}
+
 	private Profile getProfileForEditing(String id, Profile authUser) {
 		if (!canEditProfile(authUser, id)) {
 			return null;
 		}
-		return isMyid(authUser, id) ? authUser : (Profile) utils.getParaClient().read(Profile.id(id));
+		return isMyid(authUser, id) ? authUser : (Profile) pc.read(Profile.id(id));
 	}
 
 	private boolean updateUserPictureAndName(Profile showUser, String picture, String name) {
@@ -253,7 +324,7 @@ public class ProfileController {
 		}
 
 		if (updateUser) {
-			utils.getParaClient().update(u);
+			pc.update(u);
 		}
 		return updateProfile;
 	}
