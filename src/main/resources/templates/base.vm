@@ -82,10 +82,10 @@
 							#end
 							#macro(customnavbarmenulinks)
 								#if($scooldUtils.isNavbarMenuLink1Enabled())
-								<li><a href="$scooldUtils.navbarMenuLink1URL" title="$scooldUtils.navbarMenuLink1Text" #if($scooldUtils.isNavbarLink1TargetEnabled()) target="$scooldUtils.navbarMenuLink1Target" #end>$scooldUtils.navbarMenuLink1Text</a></li>
+								<li><a href="$scooldUtils.navbarMenuLink1URL" title="$scooldUtils.navbarMenuLink1Text" #if($scooldUtils.isNavbarMenuLink1TargetEnabled()) target="$scooldUtils.navbarMenuLink1Target" #end>$scooldUtils.navbarMenuLink1Text</a></li>
 								#end
 								#if($scooldUtils.isNavbarMenuLink2Enabled())
-								<li><a href="$scooldUtils.navbarMenuLink2URL" title="$scooldUtils.navbarMenuLink2Text" #if($scooldUtils.isNavbarLink2TargetEnabled()) target="$scooldUtils.navbarMenuLink2Target" #end>$scooldUtils.navbarMenuLink2Text</a></li>
+								<li><a href="$scooldUtils.navbarMenuLink2URL" title="$scooldUtils.navbarMenuLink2Text" #if($scooldUtils.isNavbarMenuLink2TargetEnabled()) target="$scooldUtils.navbarMenuLink2Target" #end>$scooldUtils.navbarMenuLink2Text</a></li>
 								#end
 							#end
 
