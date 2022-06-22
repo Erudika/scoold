@@ -2246,7 +2246,7 @@ public class ScooldConfig extends Config {
 		category = "Customization",
 		description = "The target attribute of an extra custom link which will be added to user's dropdown menu.")
 	public String navbarCustomMenuLink1Target() {
-		return getConfigParam("navbar_menu_link1_url", "");
+		return getConfigParam("navbar_menu_link1_target", "");
 	}
 
 	@Documented(position = 2200,
