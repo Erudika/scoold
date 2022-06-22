@@ -574,6 +574,15 @@ table.striped>tbody>tr:nth-child(odd) {
 	z-index: 10;
 }
 
+.lang-button {
+	height: 5em;
+	width: 100%;
+}
+
+.lang-button:hover {
+	border: 1px solid #88AF12;
+}
+
 @media (max-width: 1400px) {
 	.container {width: 90%;}
 }
