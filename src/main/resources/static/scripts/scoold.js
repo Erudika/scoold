@@ -675,6 +675,53 @@ $(function () {
 		});
 	}
 
+	var badgePreview = $("#badge-preview");
+	var badgeName = $("#badge-preview-tag");
+	var badgeIcon = $("#badge-preview-icon");
+
+	$("#badge-tag").on("keyup", function () {
+		badgeName.text($(this).val());
+	});
+	$("#badge-description").on("keyup", function () {
+		badgePreview.attr("title", $(this).val());
+	});
+	$("#badge-icon").on("change", function () {
+		badgeIcon.removeClass("hide").text($(this).val());
+	});
+	$("#badge-color").on("change", function () {
+		badgeName.css("color", $(this).val());
+	});
+	$("#badge-background").on("change", function () {
+		badgePreview.css("background-color", $(this).val());
+	});
+
+	$(document).on("mouseenter", ".custom-badge", function () {
+		var dis = $(this);
+		if (dis.hasClass("add")) {
+			dis.find(".fa-plus, a").removeClass("hide");
+		} else if ($(this).hasClass("remove")) {
+			dis.find(".fa-minus").removeClass("hide");
+		}
+	});
+	$(document).on("mouseleave", ".custom-badge", function () {
+		var dis = $(this);
+		if (dis.hasClass("add")) {
+			dis.find(".fa-plus").addClass("hide");
+		} else if ($(this).hasClass("remove")) {
+			dis.find(".fa-minus, a").addClass("hide");
+		}
+	});
+
+	$(document).on("click", ".custom-badge.add", function () {
+		$.post($(this).hide().children("i").addClass("hide").end().
+				removeClass("add").addClass("remove").show().appendTo("#user-badges").attr("data-url"));
+	});
+
+	$(document).on("click", ".custom-badge.remove", function () {
+		$.post($(this).hide().children("i").addClass("hide").end().
+				removeClass("remove").addClass("add").show().appendTo("#available-badges").attr("data-url"));
+	});
+
 	/****************************************************
      *                      SETTINGS
      ****************************************************/
@@ -865,8 +912,9 @@ $(function () {
 			cm.setValue(cm.getValue() + data.emoji);
 		} else {
 			var target = $(this).find(".emoji-picker-target");
-			target.text(target.text() + data.emoji);
-			target.val(target.val() + data.emoji);
+			target.text((target.hasClass("single") ? "" : target.text()) + data.emoji);
+			target.val((target.hasClass("single") ? "" : target.val()) + data.emoji);
+			target.trigger("change");
 		}
 	});
 

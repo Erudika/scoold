@@ -21,7 +21,9 @@ import static com.erudika.scoold.ScooldServer.LANGUAGESLINK;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,8 +53,11 @@ public class LanguagesController {
 	public String get(HttpServletRequest req, Model model) {
 		model.addAttribute("path", "languages.vm");
 		model.addAttribute("title", utils.getLang(req).get("translate.select"));
-		model.addAttribute("allLocales", new TreeMap<String, Locale>(utils.getLangutils().getAllLocales()));
-		model.addAttribute("langProgressMap", utils.getLangutils().getTranslationProgressMap());
+		Map<String, Integer> langProgressMap = utils.getLangutils().getTranslationProgressMap();
+		model.addAttribute("langProgressMap", langProgressMap);
+		model.addAttribute("allLocales", new TreeMap<>(utils.getLangutils().getAllLocales().entrySet().stream().
+				filter(e -> langProgressMap.getOrDefault(e.getKey(), 0) > 70).
+				collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue()))));
 		return "base";
 	}
 

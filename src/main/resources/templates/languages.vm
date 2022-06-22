@@ -9,25 +9,21 @@
 			#set($progress = $!langProgressMap.getOrDefault($!entry.key, 0))
 
 			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green white-text") #else #set($selclass = "") #end
-			<div class="card-panel $!{selclass}">
 				<div class="center-align">
-					#if ($selclass == "")
 					<form action="$languageslink/$!showLangKey" method="post">
 						#sectoken(false)
-						<button type="submit" class="btn-flat waves-effect waves-light"><span class="capitalize">$!showLangName</span></button>
+						<button type="submit" class="btn-flat waves-effect waves-light card lang-button $!{selclass}">
+							<span class="capitalize">$!showLangName</span>
+						</button>
 					</form>
-					#else
-					<a class="btn-flat disabled"><span class="white-text capitalize">$!showLangName</span></a>
-					#end
 				</div>
-				<div class="center-align">
+<!--				<div class="center-align">
 					#if ($progress >= 90)
 						<span class="chip green white-text" title="$!{progress}% translated">$!{progress}%</span>
 					#else
 						<span class="chip" title="$!{progress}% translated">$!{progress}%</span>
 					#end
-				</div>
-			</div>
+				</div>-->
 		</div>
 		#end
 	</div>
