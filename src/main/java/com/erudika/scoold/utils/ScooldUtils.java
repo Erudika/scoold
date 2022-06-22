@@ -901,6 +901,22 @@ public final class ScooldUtils {
 		return CONF.navbarCustomMenuLink2Text();
 	}
 
+	public String getNavbarLink1Target() {
+		return CONF.navbarCustomLink1Target();
+	}
+
+	public String getNavbarLink2Target() {
+		return CONF.navbarCustomLink2Target();
+	}
+
+	public String getNavbarMenuLink1Target() {
+		return CONF.navbarCustomMenuLink1Target();
+	}
+
+	public String getNavbarMenuLink2Target() {
+		return CONF.navbarCustomMenuLink2Target();
+	}
+
 	public boolean alwaysHideCommentForms() {
 		return CONF.alwaysHideCommentForms();
 	}
