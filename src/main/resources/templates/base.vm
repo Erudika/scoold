@@ -74,18 +74,22 @@
 							<a href="#" data-target="mobile-drawer" class="sidenav-trigger"><i class="fa fa-bars fa-2x"></i></a>
 							#macro(customnavbarlinks)
 								#if($scooldUtils.isNavbarLink1Enabled())
-								<li><a href="$scooldUtils.navbarLink1URL" title="$scooldUtils.navbarLink1Text"  #if($scooldUtils.isNavbarLink1TargetEnabled()) target="$scooldUtils.navbarLink1Target" #end>$scooldUtils.navbarLink1Text</a></li>
+								<li><a href="$scooldUtils.navbarLink1URL" title="$scooldUtils.navbarLink1Text"
+									#if($scooldUtils.isNavbarLink1TargetEnabled()) target="$scooldUtils.navbarLink1Target" #end>$scooldUtils.navbarLink1Text</a></li>
 								#end
 								#if($scooldUtils.isNavbarLink2Enabled())
-								<li><a href="$scooldUtils.navbarLink2URL" title="$scooldUtils.navbarLink2Text" #if($scooldUtils.isNavbarLink2TargetEnabled()) target="$scooldUtils.navbarLink2Target" #end>$scooldUtils.navbarLink2Text</a></li>
+								<li><a href="$scooldUtils.navbarLink2URL" title="$scooldUtils.navbarLink2Text"
+									#if($scooldUtils.isNavbarLink2TargetEnabled()) target="$scooldUtils.navbarLink2Target" #end>$scooldUtils.navbarLink2Text</a></li>
 								#end
 							#end
 							#macro(customnavbarmenulinks)
 								#if($scooldUtils.isNavbarMenuLink1Enabled())
-								<li><a href="$scooldUtils.navbarMenuLink1URL" title="$scooldUtils.navbarMenuLink1Text" #if($scooldUtils.isNavbarMenuLink1TargetEnabled()) target="$scooldUtils.navbarMenuLink1Target" #end>$scooldUtils.navbarMenuLink1Text</a></li>
+								<li><a href="$scooldUtils.navbarMenuLink1URL" title="$scooldUtils.navbarMenuLink1Text"
+									#if($scooldUtils.isNavbarMenuLink1TargetEnabled()) target="$scooldUtils.navbarMenuLink1Target" #end>$scooldUtils.navbarMenuLink1Text</a></li>
 								#end
 								#if($scooldUtils.isNavbarMenuLink2Enabled())
-								<li><a href="$scooldUtils.navbarMenuLink2URL" title="$scooldUtils.navbarMenuLink2Text" #if($scooldUtils.isNavbarMenuLink2TargetEnabled()) target="$scooldUtils.navbarMenuLink2Target" #end>$scooldUtils.navbarMenuLink2Text</a></li>
+								<li><a href="$scooldUtils.navbarMenuLink2URL" title="$scooldUtils.navbarMenuLink2Text"
+									#if($scooldUtils.isNavbarMenuLink2TargetEnabled()) target="$scooldUtils.navbarMenuLink2Target" #end>$scooldUtils.navbarMenuLink2Text</a></li>
 								#end
 							#end
 
