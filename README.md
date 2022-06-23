@@ -2410,12 +2410,16 @@ scoold.navbar_link1_url = ""
 scoold.navbar_link2_url = ""
 scoold.navbar_link1_text = "Link1"
 scoold.navbar_link2_text = "Link2"
-
+scoold.navbar_link1_target = "target1"
+scoold.navbar_link2_target = "target2"
+	
 # custom navbar menu links (shown to logged in users)
 scoold.navbar_menu_link1_url = ""
 scoold.navbar_menu_link2_url = ""
 scoold.navbar_menu_link1_text = "Menu Link1"
 scoold.navbar_menu_link2_text = "Menu Link2"
+scoold.navbar_menu_link1_target = "Menu target1"
+scoold.navbar_menu_link2_target = "Menu target2"
 
 # default email notification toggles for all users
 scoold.favtags_emails_enabled = false
