@@ -27,6 +27,7 @@ your company or team.
 - Location-based search and "near me" filtering of posts
 - I18n with RTL language support
 - Reputation and voting system with badges
+- Custom badges - add your own text, icon and color
 - Spaces (Teams) - groups of isolated questions and users
 - Webhooks with signature signing
 - [Zapier integration](https://zapier.com/developer/public-invite/96144/23ee4c1c6f03dc964b479b0d8ed027bb/)
@@ -42,7 +43,7 @@ your company or team.
 - Social login (Facebook, Google, GitHub, LinkedIn, Microsoft, Slack, Amazon, Twitter) with Gravatar support
 - Syntax highlighting for code in posts, GFM markdown support with tables, task lists and strikethrough
 - Import data from Stack Overflow for Teams
-- Emoji support - [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
+- Emojis! - using this [cheat sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet/) or inline Unicode
 - Support for uploading custom avatars (to Imgur, Cloudinary)
 - SEO friendly
 - Cookie consent (for GDPR, CCPA, etc.)
@@ -2410,16 +2411,16 @@ scoold.navbar_link1_url = ""
 scoold.navbar_link2_url = ""
 scoold.navbar_link1_text = "Link1"
 scoold.navbar_link2_text = "Link2"
-scoold.navbar_link1_target = "target1"
-scoold.navbar_link2_target = "target2"
-	
+scoold.navbar_link1_target = "_self"
+scoold.navbar_link2_target = "_self"
+
 # custom navbar menu links (shown to logged in users)
 scoold.navbar_menu_link1_url = ""
 scoold.navbar_menu_link2_url = ""
 scoold.navbar_menu_link1_text = "Menu Link1"
 scoold.navbar_menu_link2_text = "Menu Link2"
-scoold.navbar_menu_link1_target = "Menu target1"
-scoold.navbar_menu_link2_target = "Menu target2"
+scoold.navbar_menu_link1_target = "_self"
+scoold.navbar_menu_link2_target = "_self"
 
 # default email notification toggles for all users
 scoold.favtags_emails_enabled = false
