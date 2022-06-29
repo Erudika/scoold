@@ -952,6 +952,9 @@ $(function () {
 			mde.codemirror.options.direction = "rtl";
 			//mde.codemirror.options.rtlMoveVisually = false;
 		}
+
+		$(elem).data('codemirror', mde.codemirror)
+
 		return mde;
 	}
 

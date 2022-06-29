@@ -570,10 +570,6 @@ table.striped>tbody>tr:nth-child(odd) {
 	margin-top: 10px;
 }
 
-.emoji-picker-container * {
-	z-index: 10;
-}
-
 .lang-button {
 	height: 5em;
 	width: 100%;
