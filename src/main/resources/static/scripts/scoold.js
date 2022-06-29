@@ -884,7 +884,8 @@ $(function () {
 
 	function replaceMentionsWithHtmlLinks(text) {
 		return text.replace(/@(&lt;|<)(.+?)\|(.*?)(&gt;|>)/igm, function (m, group1, group2, group3) {
-			return "<a href=\"" + hostURL + "/profile/" + group2 + "\">" + (group3 || "NoName") + "</a>";
+			return "<a href=\"" + hostURL + "/profile/" + encodeURIComponent(group2) + "\">" +
+					(new Option(group3 || "NoName").innerHTML) + "</a>";
 		});
 	}
 
