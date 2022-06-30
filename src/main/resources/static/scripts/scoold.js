@@ -954,8 +954,7 @@ $(function () {
 			//mde.codemirror.options.rtlMoveVisually = false;
 		}
 
-		$(elem).data('codemirror', mde.codemirror)
-
+		$(elem).data("codemirror", mde.codemirror);
 		return mde;
 	}
 
