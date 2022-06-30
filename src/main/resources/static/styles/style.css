@@ -569,6 +569,9 @@ table.striped>tbody>tr:nth-child(odd) {
 .emoji-picker-container header svg {
 	margin-top: 10px;
 }
+.emoji-picker-container [class*="popupPicker"] {
+	z-index: 10;
+}
 
 .lang-button {
 	height: 5em;
