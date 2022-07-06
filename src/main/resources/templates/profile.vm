@@ -189,8 +189,8 @@
 
 					#if($showUser.upvotes > 0 || $showUser.downvotes > 0)
 					<span class="mediumText">
-						<strong class="tooltipped mhm" data-tooltip="Votes down">$!showUser.upvotes <i class="fa fa-chevron-down red-text text-darken-3"></i></strong>
-						<strong class="tooltipped" data-tooltip="Votes up">$!showUser.downvotes <i class="fa fa-chevron-up green-text text-darken-3"></i></strong>
+						<strong class="tooltipped mhm" data-tooltip="Votes down">$!showUser.downvotes <i class="fa fa-chevron-down red-text text-darken-3"></i></strong>
+						<strong class="tooltipped" data-tooltip="Votes up">$!showUser.upvotes <i class="fa fa-chevron-up green-text text-darken-3"></i></strong>
 					</span>
 					#end
 				</div>
