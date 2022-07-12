@@ -599,6 +599,7 @@ scoold.password_auth_enabled = true
 |`scoold.sitemap_enabled`<br>Enable/disable the generation of `/sitemap.xml`. | `true` | `Boolean`|
 |`scoold.access_log_enabled`<br>Enable/disable the Scoold access log. | `false` | `Boolean`|
 |`scoold.user_autocomplete_details_enabled`<kbd>Pro</kbd><br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
+|`scoold.user_autocomplete_max_results`<kbd>Pro</kbd><br>Controls the maximum number of search results in users' autocomplete. | `10` | `Integer`|
 
 </details>
 
