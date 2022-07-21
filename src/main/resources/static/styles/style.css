@@ -290,6 +290,8 @@ i.close:before {
 .downvote:hover, .downvote.cast {color: #F44336;}
 
 blockquote { border-left: 5px solid #888888; }
+pre { overflow: auto; }
+
 .editor-preview ul>li {
 	list-style-type: disc;
 }
