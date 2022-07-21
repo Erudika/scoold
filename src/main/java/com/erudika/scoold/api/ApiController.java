@@ -884,7 +884,7 @@ public class ApiController {
 		pc.delete(new Sysprop(utils.getSpaceId(id)));
 	}
 
-	@GetMapping("/backup")
+	@GetMapping(value = "/backup", produces = "application/zip")
 	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse res) {
 		return adminController.backup(req, res);
 	}
