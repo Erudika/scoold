@@ -318,9 +318,8 @@ scoold.password_auth_enabled = true
 |`scoold.security.ldap.user_search_base`<br>LDAP search base, which will be used only if a direct bind is unsuccessfull. | ` ` | `String`|
 |`scoold.security.ldap.user_search_filter`<br>LDAP search filter, for finding users if a direct bind is unsuccessful. | `(cn={0})` | `String`|
 |`scoold.security.ldap.user_dn_pattern`<br>LDAP user DN pattern, which will be comined with the base DN to form the full path to theuser object, for a direct binding attempt. | `uid={0}` | `String`|
-|`scoold.security.ldap.active_directory_domain`<br>AD domain name. Add this *only* if you are connecting to an Active Directory server. | ` ` | `String`|
-|`scoold.security.ldap.password_attribute`<br>LDAP password attribute name. | `userPassword` | `String`|
-|`scoold.security.ldap.bind_dn`<br>LDAP bind DN | ` ` | `String`|
+|`scoold.security.ldap.ad_mode_enabled`<br>Enable/disable support for authenticating with Active Directory. If `true` AD is enabled. | `false` | `Boolean`|
+|`scoold.security.ldap.active_directory_domain`<br>AD domain name. Add this *only* if you are connecting to an Active Directory server. | ` ` | `String`||`scoold.security.ldap.bind_dn`<br>LDAP bind DN | ` ` | `String`|
 |`scoold.security.ldap.bind_pass`<br>LDAP bind password. | ` ` | `String`|
 |`scoold.security.ldap.username_as_name`<br>Enable/disable the use of usernames for names on Scoold. | `false` | `Boolean`|
 |`scoold.security.ldap.provider` <kbd>Pro</kbd><br>The text on the LDAP sign in button. | `Continue with LDAP` | `String`|
@@ -345,7 +344,7 @@ scoold.password_auth_enabled = true
 |`scoold.security.saml.attributes.name` <kbd>Pro</kbd><br>SAML attribute name of the user `name`. | `GivenName` | `String`|
 |`scoold.security.saml.attributes.firstname` <kbd>Pro</kbd><br>SAML attribute name of the user `firstname`. | `FirstName` | `String`|
 |`scoold.security.saml.attributes.lastname` <kbd>Pro</kbd><br>SAML attribute name of the user `lastname`. | `LastName` | `String`|
-|`scoold.security.saml.provider` <kbd>Pro</kbd><br>The text on the button for signing in with SAML. | `Continue with SAML` | `Boolean`|
+|`scoold.security.saml.provider` <kbd>Pro</kbd><br>The text on the button for signing in with SAML. | `Continue with SAML` | `String`|
 |`scoold.security.saml.sp.assertion_consumer_service.url` <kbd>Pro</kbd><br>SAML ACS URL. | ` ` | `String`|
 |`scoold.security.saml.sp.nameidformat` <kbd>Pro</kbd><br>SAML name id format. | `urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified` | `String`|
 |`scoold.security.saml.idp.entityid` <kbd>Pro</kbd><br>SAML IDP entity id for manually setting the endpoint address of the IDP, instead of getting it from the provided metadata URL. | ` ` | `String`|
@@ -1349,8 +1348,9 @@ i.e. `groups: "mods"`. Similarly, if their DN contains `cn=Admins` they will bec
 
 ### Active Directory LDAP
 
-For **Active Directory** LDAP, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`.
-A good alternative search filter would be `(&(objectClass=user)(sAMAccountName={1}))`. Keep in mind that the domain you
+To enable authentication with an **Active Directory** LDAP server, set `scoold.security.ldap.ad_mode_enabled = true`.
+In this mode, the search filter defaults to `(&(objectClass=user)(userPrincipalName={0}))`.
+An alternative search filter would be `(&(objectClass=user)(sAMAccountName={1}))`. Keep in mind that the domain you
 put in the configuration is actually the UPN suffix which gets appended to the username as `username@domain.com` if
 the supplied login username doesn't end with a domain. The domain has nothing to do with the AD domain or the location
 of the AD server.
@@ -1361,6 +1361,7 @@ it in the config file at all!
 
 Here's a working LDAP configuration for AD:
 ```ini
+scoold.security.ldap.ad_mode_enabled = true
 scoold.security.ldap.user_search_filter = "(&(objectClass=user)(sAMAccountName={1}))"
 scoold.security.ldap.base_dn = "ou=dev,dc=scoold,dc=com"
 scoold.security.ldap.server_url = "ldap://192.168.123.70:389"

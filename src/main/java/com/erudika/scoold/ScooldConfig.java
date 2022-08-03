@@ -1152,7 +1152,6 @@ public class ScooldConfig extends Config {
 	@Documented(position = 1130,
 			identifier = "security.saml.provider",
 			value = "Continue with SAML",
-			type = Boolean.class,
 			category = "SAML Authentication",
 			tags = {"Pro"},
 			description = "The text on the button for signing in with SAML.")
