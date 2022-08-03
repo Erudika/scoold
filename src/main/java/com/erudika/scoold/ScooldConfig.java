@@ -930,12 +930,14 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.ldap.user_dn_pattern", "uid={0}");
 	}
 
-	@Documented(position = 905,
+	@Documented(position = 901,
 			identifier = "security.ldap.ad_mode_enabled",
+			value = "false",
+			type = Boolean.class,
 			category = "LDAP Authentication",
-			description = "Explicitly enables support for authenticating with Active Directory. If `true` AD is enabled.")
-	public String ldapActiveDirectoryEnabled() {
-		return getConfigParam("security.ldap.ad_mode_enabled", "");
+			description = "Enable/disable support for authenticating with Active Directory. If `true`, AD is enabled.")
+	public Boolean ldapActiveDirectoryEnabled() {
+		return getConfigBoolean("security.ldap.ad_mode_enabled", false);
 	}
 
 	@Documented(position = 910,
