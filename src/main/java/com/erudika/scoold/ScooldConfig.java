@@ -930,6 +930,14 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.ldap.user_dn_pattern", "uid={0}");
 	}
 
+	@Documented(position = 905,
+			identifier = "security.ldap.ad_mode_enabled",
+			category = "LDAP Authentication",
+			description = "Explicitly enables support for authenticating with Active Directory. If `true` AD is enabled.")
+	public String ldapActiveDirectoryEnabled() {
+		return getConfigParam("security.ldap.ad_mode_enabled", "");
+	}
+
 	@Documented(position = 910,
 			identifier = "security.ldap.active_directory_domain",
 			category = "LDAP Authentication",
@@ -3258,6 +3266,7 @@ public class ScooldConfig extends Config {
 		settings.put("security.ldap.user_dn_pattern", ldapUserDNPattern());
 		settings.put("security.ldap.password_attribute", ldapPasswordAttributeName());
 		settings.put("security.ldap.username_as_name", ldapUsernameAsName());
+		settings.put("security.ldap.ad_mode_enabled", ldapActiveDirectoryEnabled());
 		settings.put("security.ldap.active_directory_domain", ldapActiveDirectoryDomain());
 		settings.put("security.ldap.mods_group_node", ldapModeratorsGroupNode());
 		settings.put("security.ldap.admins_group_node", ldapAdministratorsGroupNode());
