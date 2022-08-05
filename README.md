@@ -109,17 +109,17 @@ Here's an overview of the architecture:
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
 2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
-```ini
-scoold.env = "production"
-scoold.app_name = "Scoold"
-scoold.para_access_key = "app:scoold"
-scoold.para_secret_key = "_secret_key_from_para_"
-scoold.para_endpoint = "https://paraio.com"
-# add your email here
-scoold.admins = "my@email.com"
-# (optional) require authentication for viewing content
-scoold.is_default_space_public = false
-```
+	```ini
+	scoold.env = "production"
+	scoold.app_name = "Scoold"
+	scoold.para_access_key = "app:scoold"
+	scoold.para_secret_key = "_secret_key_from_para_"
+	scoold.para_endpoint = "https://paraio.com"
+	# add your email here
+	scoold.admins = "my@email.com"
+	# (optional) require authentication for viewing content
+	scoold.is_default_space_public = false
+	```
 3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
 4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
 register a new account with same email you put in the configuration
@@ -141,10 +141,10 @@ for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/doc
 1. [Follow this guide to run the Para backend server locally on port 8080](https://paraio.org/docs/#001-intro)
 2. Create a separate folder `scoold` and inside, a new configuration file named `scoold-application.conf` (see example above)
 3. Start Scoold with the following command, pointing it to the location of the Para configuration file:
-```
-java -jar -Dconfig.file=./scoold-application.conf \
-  -Dscoold.autoinit.para_config_file=../para-application.conf scoold-*.jar`
-```
+	```
+	java -jar -Dconfig.file=./scoold-application.conf \
+	  -Dscoold.autoinit.para_config_file=../para-application.conf scoold-*.jar`
+	```
 4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
 register a new account with same email you put in the configuration
 
@@ -160,7 +160,9 @@ data in your Scoold app.
 
 ### Hardware requirements
 
-Scoold and Para can both be hosted on the same machine, provided it has at least 3 GB of RAM. Scoold requires:
+Scoold and Para can both be hosted on the same machine, provided it has at least 3 GB of RAM. 
+
+Scoold requires:
 - at least 500 MB RAM
 - 1 vCPU or more
 - 10 GB disk space or more (primarily for logs and storing images)
@@ -619,13 +621,13 @@ The `:latest_stable` tag always points to the latest release version.
 
 The *easiest way* to create the Scoold stack is to run `docker compose up`.
 
-1. First, create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro**
+1. Create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro**
 [`docker-compose.yml` is here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml))
 to it from this repository.
 2. Create the two configuration files in the same directory (both files can be left blank for now):
-```
-$ touch para-application.conf scoold-application.conf
-```
+	```
+	$ touch para-application.conf scoold-application.conf
+	```
 3. `$ docker compose up`
 
 To stop the containers use <kbd>Ctrl</kbd> + <kbd>C</kbd>.
@@ -678,19 +680,19 @@ Access to the private registry is not given automatically upon purchase - you ha
 a special access key and secret for AWS ECR. Then execute the following BASH commands (these require
 [AWS CLI v2.x](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)):
 1. Configure AWS CLI to use the new credentials:
-```
-aws configure
-```
+	```
+	aws configure
+	```
 2. Authenticate Docker with ECR using the temporary access token:
-```
-aws ecr get-login-password --region eu-west-1 | \
-	docker login --username AWS --password-stdin 374874639893.dkr.ecr.eu-west-1.amazonaws.com
-```
+	```
+	aws ecr get-login-password --region eu-west-1 | \
+		docker login --username AWS --password-stdin 374874639893.dkr.ecr.eu-west-1.amazonaws.com
+	```
 3. Pull a Scoold Pro image with a specific tag:
-```
-aws ecr list-images --repository-name scoold-pro
-docker pull 374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:{tag}
-```
+	```
+	aws ecr list-images --repository-name scoold-pro
+	docker pull 374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:{tag}
+	```
 
 The `:latest` tag is not supported but you can use `:latest_stable`. The command `aws get-login-password`
 gives you an access token to the private Docker registry which is valid for **12 hours**.
@@ -700,7 +702,6 @@ For connecting Kubernetes to AWS ECR, please refer to [this article](https://med
 In case you don't want to use AWS CLI for logging into the Scoold Pro registry, install the
 [AWS ECR Docker Credentials Helper](https://github.com/awslabs/amazon-ecr-credential-helper).
 
-
 ## Deploying Scoold to Heroku
 
 **One-click deployment**
@@ -709,7 +710,7 @@ In case you don't want to use AWS CLI for logging into the Scoold Pro registry, 
 
 ### Manual deployment - option 1 (code push)
 
-1. First, clone this repository and create a new Heroku app
+1. Clone this repository and create a new Heroku app
 2. Add Heroku as a Git remote target and push your changes with `git push heroku master`
 3. Go to the Heroku admin panel, under "Settings", "Reveal Config Vars" and set all the configuration variables shown
 above but **replace all dots in the variable names with underscores**, e.g. `scoold.para_endpoint` -> `scoold_para_endpoint`.
@@ -722,14 +723,14 @@ above but **replace all dots in the variable names with underscores**, e.g. `sco
 3. Create a Heroku app or use the id of an existing Heroku app where you want Scoold deployed
 4. Add the `heroku/jvm` and `heroku/java` buildpacks to your Heroku app from the Settings page
 5. Create a file `Procfile` containing this line:
-```
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar scoold-*.jar $JAR_OPTS
-```
+	```
+	web: java -Dserver.port=$PORT $JAVA_OPTS -jar scoold-*.jar $JAR_OPTS
+	```
 6. Open a terminal in the directory containing the JAR file and execute:
-```
-$ heroku plugins:install java
-$ heroku deploy:jar scoold-x.y.z.jar --app myscooldapp
-```
+	```
+	$ heroku plugins:install java
+	$ heroku deploy:jar scoold-x.y.z.jar --app myscooldapp
+	```
 Pushing JARs to Heroku is useful in cases where you have an existing Heroku app which hosts a free version of Scoold,
 deployed through the "one-click" Heroku button, and you want to upgrade it to Scoold Pro.
 
@@ -741,7 +742,7 @@ Click "Reveal Config Vars". Configuration variables (config vars) **must not** c
 becomes `para_endpoint`. You **must** replace every dot with an underscore in order to convert a Scoold configuration
 property to a Heroku environment variable.
 
-It's also helpful to install the Heroku CLI tool. Using the CLI you can watch the Scoold logs with:
+Installing the Heroku CLI tool allows you to watch the Scoold logs with:
 ```
 $ heroku logs --tail --app myscooldapp
 ```
@@ -791,14 +792,14 @@ configure Scoold to work with Amazon Cognito:
 2. Create a Cognito App client with the OAuth 2.0 authorization code grant enabled:
 3. Create a Cognito login subdomain for your app client like this: `https://scoold.auth.eu-west-1.amazoncognito.com`
 4. Edit the Scoold configuration file `application.conf` and add a new OAuth 2.0 authentication provider:
-```ini
-scoold.oa2_app_id = "cognito_app_client_id"
-scoold.oa2_secret = "cognito_app_client_secret"
-scoold.security.oauth.authz_url = "https://scoold.auth.eu-west-1.amazoncognito.com/login"
-scoold.security.oauth.token_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/token"
-scoold.security.oauth.profile_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/userInfo"
-scoold.security.oauth.provider = "Continue with Cognito"
-```
+	```ini
+	scoold.oa2_app_id = "cognito_app_client_id"
+	scoold.oa2_secret = "cognito_app_client_secret"
+	scoold.security.oauth.authz_url = "https://scoold.auth.eu-west-1.amazoncognito.com/login"
+	scoold.security.oauth.token_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/token"
+	scoold.security.oauth.profile_url = "https://scoold.auth.eu-west-1.amazoncognito.com/oauth2/userInfo"
+	scoold.security.oauth.provider = "Continue with Cognito"
+	```
 5. Restart Scoold and login with a user from your Cognito user pool
 
 Make sure you whitelist your Para authentication endpoint with Cognito `https://para_url/oauth2_auth`.
@@ -1157,12 +1158,14 @@ scoold.security.oauth.download_avatars = false
 ```
 
 #### Access token delegation
+
 **PRO** This is an additional security feature, where the access token from the identity provider (IDP)
 is stored in the user's `idpAccessToken` field and validated on each authentication request with the IDP. If the IDP
 revokes a delegated access token, then that user would automatically be logged out from Scoold Pro and denied access
 immediately.
 
 #### Advanced attribute mapping
+
 The basic profile data attributes (name, email, etc.) can be extracted from a complex response payload which is returned
 from the identity provider's `userinfo` endpoint. You can use JSON pointer syntax to locate attribute values within a
 more complex JSON payload like this one:
@@ -1183,6 +1186,7 @@ scoold.security.oauth.parameters.name = "/attributes/DisplayName"
 ```
 
 #### Advanced roles mapping
+
 **PRO** This feature requires token delegation to be enabled with `scoold.security.oauth.token_delegation_enabled = true`.
 When working with complex user profile payloads coming from the ID provider, you can specify the exact property
 name where the roles data is contained. For example, having a JSON user profile response like this:
@@ -1260,15 +1264,15 @@ for other providers, such as Auth0.
    - Use the "Authorization Code" flow
    - Select	that you want **client credentials**
 2. Copy the client credentials (client id, secret) to your Scoold `application.conf` file:
-```ini
-scoold.oa2_app_id = "0oa123...."
-scoold.oa2_secret = "secret"
-scoold.security.oauth.authz_url = "https://${yourOktaDomain}/oauth2/v1/authorize"
-scoold.security.oauth.token_url = "https://${yourOktaDomain}/oauth2/v1/token"
-scoold.security.oauth.profile_url = "https://${yourOktaDomain}/oauth2/v1/userinfo"
-scoold.security.oauth.scope = "openid email profile"
-scoold.security.oauth.provider = "Continue with Okta"
-```
+	```ini
+	scoold.oa2_app_id = "0oa123...."
+	scoold.oa2_secret = "secret"
+	scoold.security.oauth.authz_url = "https://${yourOktaDomain}/oauth2/v1/authorize"
+	scoold.security.oauth.token_url = "https://${yourOktaDomain}/oauth2/v1/token"
+	scoold.security.oauth.profile_url = "https://${yourOktaDomain}/oauth2/v1/userinfo"
+	scoold.security.oauth.scope = "openid email profile"
+	scoold.security.oauth.provider = "Continue with Okta"
+	```
 Make sure to replace `${yourOktaDomain}` with your actual Okta domain name.
 
 3. Restart Scoold and login with an Okta user account
@@ -1295,15 +1299,15 @@ as its authentication provider. The steps are similar to other OAuth2.0 identity
     for `scoold.oa2_secret` setting in your configuration.
 12. Fill in the configuration of Scoold:
 
-```ini
-scoold.oa2_app_id = "e538..."
-scoold.oa2_secret = "secret"
-scoold.security.oauth.authz_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/authorize"
-scoold.security.oauth.token_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/token"
-scoold.security.oauth.profile_url = "https://graph.microsoft.com/oidc/userinfo"
-scoold.security.oauth.scope = "openid email profile"
-scoold.security.oauth.provider = "Continue with AAD"
-```
+	```ini
+	scoold.oa2_app_id = "e538..."
+	scoold.oa2_secret = "secret"
+	scoold.security.oauth.authz_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/authorize"
+	scoold.security.oauth.token_url = "https://login.microsoftonline.com/${yourAADTenantId}/oauth2/v2.0/token"
+	scoold.security.oauth.profile_url = "https://graph.microsoft.com/oidc/userinfo"
+	scoold.security.oauth.scope = "openid email profile"
+	scoold.security.oauth.provider = "Continue with AAD"
+	```
 
 Make sure to replace `${yourAADTenantId}` with your actual AAD tenant ID.
 
@@ -1418,7 +1422,7 @@ Note that the secret key above is **not** the same as your Para secret key! You 
 To print out debug information about LDAP requests, start Para with `-Dlogging.level.org.springframework.ldap=DEBUG`.
 If you are connecting to an internal LDAP server, add the same system property to the Scoold command line.
 
-Please, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap) to learn more about the settings above.
+To learn more about the settings above, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap).
 
 ## SAML configuration
 
@@ -1517,8 +1521,7 @@ Note that the secret key above is **not** the same as your Para secret key! You 
 
 ## Custom authentication (Single Sign-on)
 
-**PRO**
-Para supports custom authentication providers through its "passwordless" filter. This means that you can send any
+**PRO** Para supports custom authentication providers through its "passwordless" filter. This means that you can send any
 user info to Para and it will authenticate that user automatically without passwords. The only verification done here is
 on this secret key value which you provide in your Scoold Pro configuration file:
 ```ini
@@ -1575,8 +1578,7 @@ scoold.signout_url = "https://homepage.com"
 
 ## SCIM 2.0 support
 
-**PRO**
-Scoold Pro has a dedicated SCIM API endpoint for automatic user provisioning at `http://localhost:8000/scim`.
+**PRO** Scoold Pro has a dedicated SCIM API endpoint for automatic user provisioning at `http://localhost:8000/scim`.
 This allows you to manage Scoold Pro users externally, on an identity management platform of your choice.
 Here's an example configuration for enabling SCIM in Scoold:
 
@@ -1614,7 +1616,7 @@ By default there's a public "default" space where all questions go. When you cre
 they will still see all the other questions when they switch to the "default" space. To make the default space private
 set `scoold.is_default_space_public = false`.
 
-**PRO** In Scoold PRO you can create as many space as you need. The open source version is limited to 10 spaces. Also
+**PRO** In Scoold Pro, you can create as many space as you need. The open source version is limited to 10 spaces. Also
 in PRO you can automatically assign multiple spaces to new users, whereas in the OSS version you can only assign one.
 
 If you want to assign space(s) to new users automatically, add this to your configuration:
@@ -1717,7 +1719,7 @@ scoold.approved_domains_for_signups = "acme-corp.com"
 Then a user with email `john@acme-corp.com` will be allowed to login (the identity provider is irrelevant), but user
 `bob@gmail.com` will be denied access.
 
-**PRO** In Scoold PRO this setting can also contain a comma-separated list of identity domains:
+**PRO** In Scoold Pro, this setting can also contain a comma-separated list of identity domains:
 ```ini
 scoold.approved_domains_for_signups = "acme-corp.com,gmail.com"
 ```
@@ -1728,7 +1730,7 @@ You can specify the user with administrative privileges in your `application.con
 ```ini
 scoold.admins = "joe@example.com"
 ```
-**PRO** In Scoold PRO you can have multiple admin users by specifying a comma-separated list of user identifiers.
+**PRO** In Scoold Pro, you can have multiple admin users by specifying a comma-separated list of user identifiers.
 This works both for new and existing users.
 ```ini
 scoold.admins = "joe@example.com,fb:1023405345366,gh:1234124"
@@ -1739,8 +1741,7 @@ users. Similarly, existing regular users will be *promoted* to admins if they ap
 
 ## Anonymous posts
 
-**PRO**
-This feature is enabled with `scoold.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
+**PRO** This feature is enabled with `scoold.anonymous_posts_enabled = true`. It allows everyone to ask questions and write
 replies, without having a Scoold account. Posting to the "Feedback" section will also be open without requiring users
 to sign in. This feature is disabled by default.
 
@@ -1758,8 +1759,7 @@ feedback. This section is disabled by default and can be activated with `scoold.
 
 ## LaTeX/MathML support and advanced highlighting
 
-**PRO**
-You can enable this feature by setting `scoold.mathjax_enabled = true`. Then you can use MathML expressions by surrounding
+**PRO** You can enable this feature by setting `scoold.mathjax_enabled = true`. Then you can use MathML expressions by surrounding
 them with `$$` signs, e.g. `$$ \frac {1}{2} $$` By default, MathJax is disabled.
 
 The Prism syntax highlighter is included and it supports many different languages. You need to specify the language for
@@ -1772,8 +1772,7 @@ For example:
 
 ## File uploads
 
-**PRO**
-Files can be uploaded to the local file system or to cloud storage. File uploads are enabled by default in Scoold Pro.
+**PRO** Files can be uploaded to the local file system or to cloud storage. File uploads are enabled by default in Scoold Pro.
 To disable file uploads altogether set `scoold.uploads_enabled = false`. To protect uploaded files from unauthenticated
 access, set `scoold.uploads_require_auth = true`.
 
@@ -1810,6 +1809,7 @@ scoold.file_uploads_dir = "uploads"
 ```
 
 ### AWS S3 storage provider
+
 To use S3 for file storage, specify the name of the S3 bucket where you want the files to be uploaded. AWS credentials
 and region settings are optional as they can be picked up from the environment automatically.
 ```ini
@@ -1824,6 +1824,7 @@ scoold.s3_secret_key = ""
 ```
 
 ### Azure Blob storage provider
+
 To use Azure Blob storage for storing uploaded files, first you'll need to create a storage account and get a SAS URL
 and token. Scoold Pro will need full permissions to your storage container so it's best that you dedicate a container
 just for Scoold files.
@@ -1846,6 +1847,7 @@ provider, but by configuring Imgur or Cloudinary for avatars, you will essential
 served from.
 
 ### To Imgur
+
 To use Imgur for storing images, specify your Imgur API client id:
 ```ini
 scoold.imgur_client_id = "x23e8t0askdj"
@@ -1854,6 +1856,7 @@ scoold.avatar_repository = "imgur"
 Keep in mind that *only images* can be uploaded to Imgur and other restrictions may apply.
 
 ### To Cloudinary
+
 To use Cloudinary for storing images, specify your Cloudinary API client id:
 ```ini
 scoold.cloudinary_url = "cloudinary://123456:abcdefaddd@scoold"
@@ -1871,7 +1874,7 @@ You must create several presets on your cloudinary account:
 
 ## Slack integration
 
-Scoold **PRO** integrates with Slack on a number of levels. First, Scoold users can sign in with Slack. They can also
+**PRO** Scoold Pro integrates with Slack on a number of levels. First, Scoold users can sign in with Slack. They can also
 use slash commands to search and post questions. Also Scoold can notify Slack users when they are mentioned on Scoold.
 Finally, Scoold allows you to map spaces to Slack workspaces or channels. By default, each Slack workspace (team) is
 mapped to a single Scoold space when people sign in with Slack.
@@ -1951,7 +1954,7 @@ and Scoold doesn't have a Slack access token on record. Simply log into Scoold w
 
 ## Mattermost integration
 
-Scoold **PRO** also integrates with Mattermost. Scoold users can sign in with Mattermost, use slash commands to interact
+**PRO** Scoold Pro also integrates with Mattermost. Scoold users can sign in with Mattermost, use slash commands to interact
 with Scoold and also get in-chat notification for mentions and new posts on Scoold. Scoold allows you to map spaces to
 Mattermost teams or channels. By default, each Mattermost team is mapped to a single Scoold space when people sign in
 with Mattermost.
@@ -1998,7 +2001,7 @@ question from the first message of the thread and save each reply as an answer o
 
 ## Microsoft Teams integration
 
-Scoold **PRO** also integrates with Microsoft Teams. Scoold users can sign in with a Microsoft account,
+**PRO** Scoold Pro also integrates with Microsoft Teams. Scoold users can sign in with a Microsoft account,
 use bot commands to interact with Scoold and also get in-chat notification for mentions and new posts on Scoold.
 Scoold allows you to map spaces to teams or channels. By default, each team in MS Teams is mapped to a single Scoold
 space when people sign in with Microsoft.
@@ -2132,29 +2135,29 @@ proxy server like NGINX in front of Scoold and Para. As an alternative you can u
 
 As an alternative, you can enable SSL and HTTP2 directly in Scoold:
 1. Run the script [`gencerts.sh`](gencerts.sh) to generate the required self-signed certificates
-```
-echo "scoold.local" | sudo tee -a /etc/hosts
-./gencerts.sh scoold.local secret
-```
-The result of that command will be 8 files - `ScooldRootCA.(crt,key,pem)`, `scoold.local.(crt,key,pem)` as well as a
-Java Keystore file `scoold-keystore.p12` and a Truststore file `scoold-truststore.p12`.
-Optionally, you can run generate the server certificates using an existing `RootCA.pem` and `RootCA.key` files like so:
-```
-./gencerts.sh para.local secret /path/to/ca/RootCA
-```
+	```
+	echo "scoold.local" | sudo tee -a /etc/hosts
+	./gencerts.sh scoold.local secret
+	```
+	The result of that command will be 8 files - `ScooldRootCA.(crt,key,pem)`, `scoold.local.(crt,key,pem)` as well as a
+	Java Keystore file `scoold-keystore.p12` and a Truststore file `scoold-truststore.p12`.
+	Optionally, you can run generate the server certificates using an existing `RootCA.pem` and `RootCA.key` files like so:
+	```
+	./gencerts.sh para.local secret /path/to/ca/RootCA
+	```
 
 2. Run Scoold using the following command which enables SSL and HTTP2:
-```
-java -jar -Dconfig.file=./application.conf \
- -Dserver.ssl.key-store-type=PKCS12 \
- -Dserver.ssl.key-store=scoold-keystore.p12 \
- -Dserver.ssl.key-store-password=secret \
- -Dserver.ssl.key-password=secret \
- -Dserver.ssl.key-alias=scoold \
- -Dserver.ssl.enabled=true \
- -Dserver.http2.enabled=true \
-scoold-*.jar
-```
+	```
+	java -jar -Dconfig.file=./application.conf \
+	 -Dserver.ssl.key-store-type=PKCS12 \
+	 -Dserver.ssl.key-store=scoold-keystore.p12 \
+	 -Dserver.ssl.key-store-password=secret \
+	 -Dserver.ssl.key-password=secret \
+	 -Dserver.ssl.key-alias=scoold \
+	 -Dserver.ssl.enabled=true \
+	 -Dserver.http2.enabled=true \
+	scoold-*.jar
+	```
 3. Trust the root CA file `ScooldRootCA.crt` by importing it in you OS keyring or browser (check Google for instructions).
 4. Open `https://scoold.local:8000`
 
@@ -2163,28 +2166,28 @@ scoold-*.jar
 First of all, configure the DNS records for your domain to point to the IP address where Scoold is hosted.
 
 1. SSH into your Ubuntu server and install Nginx and Certbot
-```
-sudo apt-get install nginx certbot python-certbot-nginx
-```
+	```
+	sudo apt-get install nginx certbot python-certbot-nginx
+	```
 2. Get a certificate and autoconfigure nginx to use it
-```
-sudo certbot --nginx
-```
+	```
+	sudo certbot --nginx
+	```
 3. Turn on the Ubuntu firewall to block port `8000` and only allow ports `80` and `443`.
-```
-ufw allow 'Nginx Full' && sudo ufw enable
-```
+	```
+	ufw allow 'Nginx Full' && sudo ufw enable
+	```
 4. Configure nginx to forward requests from the web on ports `80` and `443` to `localhost:8000`
-```
-location / {
-	proxy_pass http://127.0.0.1:8000;
-	proxy_redirect http:// $scheme://;
-	proxy_set_header X-Real-IP $remote_addr;
-	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	proxy_set_header X-Forwarded-Proto https;
-	proxy_set_header Host $http_host;
-}
-```
+	```
+	location / {
+		proxy_pass http://127.0.0.1:8000;
+		proxy_redirect http:// $scheme://;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto https;
+		proxy_set_header Host $http_host;
+	}
+	```
 
 That's it! If the Certbot validation above fails, your DNS is not configured properly or you have conflicting firewall rules.
 Refer to [this article](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
@@ -2198,6 +2201,7 @@ There are two ways to do that:
 - each service can use a TLS certificate signed by a CA which is trusted by all services
 
 ### mTLS between Scoold and an TLS-terminating Nginx proxy
+
 To go the first route, execute the `getcerts.sh` script as shown above. You may need to run it once for Scoold and once
 for Nginx, unless Nginx has its own certificate already. Then add the Nginx certificate to the Truststore.
 ```
@@ -2247,6 +2251,7 @@ ssl_client_certificate /path/to/RootCA.pem;
 And start Scoold using the previously generated Truststore `scoold-truststore.p12` which should already contain the Root CA.
 
 ### mTLS between Scoold and Para
+
 To go the first route, execute the `getcerts.sh` script as shown above for both Scoold and Para. Then create a Truststore
 for each service which contains the certificate of the other.
 ```
@@ -2310,8 +2315,7 @@ scoold.rewrite_inbound_links_with_fqdn = "https://public-scoold-domain.com"
 
 ## Periodic summary emails (email digest)
 
-**PRO**
-You can choose to enable periodic summary emails for all users in Scoold or allow them to opt-in for these messages.
+**PRO** You can choose to enable periodic summary emails for all users in Scoold or allow them to opt-in for these messages.
 By default summary emails are disabled and users can unsubscribe if they are enabled by admins.
 A summary email contains all new questions for a past period of time (daily, weekly). Admins can enable summary emails
 for everyone from the Settings page if `scoold.summary_email_controlled_by_admins = true`. If that parameter is `false`
@@ -2326,8 +2330,7 @@ The summary email contains a list of the top 25 recent questions. For more quest
 
 ## Mentions
 
-**PRO**
-In Scoold Pro you can mention anyone in a question, answer or comment with `@Name`. A popup menu will appear once you
+**PRO** In Scoold Pro, you can mention anyone in a question, answer or comment with `@Name`. A popup menu will appear once you
 start typing after `@` giving you a list of names to choose from. The selected user will be mentioned with a special
 mention tag in the form of `@<userID|John Doe>`. You can edit the name part of that tag (after `|`) but nothing else,
 if you want the mention to work. You can mention up to 10 people in a post.
@@ -2434,7 +2437,8 @@ scoold.always_hide_comment_forms = true
 ```
 
 ### Custom Logo
-In Scoold Pro you can change the logo of the website just by dragging and dropping a new image of your choice.
+	
+**PRO** In Scoold Pro, you can change the logo of the website just by dragging and dropping a new image of your choice.
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
 simply add them as inline CSS:
@@ -2443,6 +2447,7 @@ scoold.inline_css = ".scoold-logo { width: 100px; }"
 ```
 
 ### Custom welcome message (banner)
+
 You can set a short welcome message for unauthenticated users which will be displayed on the top of the page and it
 can also contain HTML (**use only single quotes or escape double quotes `\\\"`**):
 ```ini
@@ -2659,8 +2664,7 @@ Please try to respect the code style of this project. To check your code, run it
 mvn validate
 ```
 
-For more information see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
-
+For more information, see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
 
 ![Square Face](https://raw.githubusercontent.com/Erudika/scoold/master/assets/logosq.png)
 
