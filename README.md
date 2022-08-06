@@ -610,7 +610,7 @@ scoold.password_auth_enabled = true
 
 </details>
 
-On startup, Scoold tries to connect to Para 10 times every 10 seconds (default). If the connection is unsuccessful, the settings will not be persisted. 
+On startup, Scoold tries to connect to Para every 10 seconds, 10 times in total. (default). If the connection is unsuccessful, the settings will not be persisted. 
 
 ```ini
 scoold.connection_retries_max = 10
