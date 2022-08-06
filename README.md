@@ -624,10 +624,11 @@ The *easiest way* to create the Scoold stack is to run `docker compose up`.
 1. Create a new directory and copy [`docker-compose.yml`](docker-compose.yml) (for **Scoold Pro**
 [`docker-compose.yml` is here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml))
 to it from this repository.
-2. Create the two configuration files in the same directory (both files can be left blank for now):
+2. Create the two **blank** configuration files in the same directory. **Both files must be blank in order for the initial auto-configuration to work**.:
 	```
 	$ touch para-application.conf scoold-application.conf
 	```
+	Since the configuration files do not define `scoold.app_secret_key` and `scoold.para_secret_key`, these secrets will be populated automatically upon initialization.
 3. `$ docker compose up`
 
 To stop the containers use <kbd>Ctrl</kbd> + <kbd>C</kbd>.
