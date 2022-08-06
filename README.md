@@ -132,10 +132,10 @@ This is not required when you log in with LDAP, SAML or email/password.
 misplaced
 Save the obtained API keys in `application.conf`, as shown below.
 
-> For all identity providers you must whitelist the Para host with the appropriate authentication endpoint, for example: 
-> GitHub redirect URL: `https://paraio.com/github_auth`  
-> OAuth 2: `https://paraio.com/oauth2_auth`  
-> See [custom authentication](http://paraio.org/docs/#029-passwordless)  
+> For all identity providers, you must whitelist the Para host with the appropriate authentication endpoint:
+> - GitHub: `https://paraio.com/github_auth`  
+> - OAuth 2: `https://paraio.com/oauth2_auth`  
+> Learn more about [custom authentication](http://paraio.org/docs/#029-passwordless)  
 
 ### Quick Start with a self-hosted Para backend (harder)
 
