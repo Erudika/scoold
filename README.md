@@ -180,13 +180,6 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 **Scoold requires a persistent and direct connection to a Para server to function properly.**
 
-<!-- really needed here? The why is missing. Can we highlight them in the example below instead? -->
-<!-- remove or keep --> 
-<!--The most important configuration properties are:
-- `scoold.para_endpoint` - Para server URL
-- `scoold.para_access_key` - Para app application identifier
-- `scoold.para_secret_key` - Para app secret key
--->
 
 Copy this Scoold example configuration to your **`application.conf`** (edit the values if needed):
 ```ini
