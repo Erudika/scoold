@@ -129,8 +129,7 @@ To login with a social account, you must create a developer app with
 [Google](https://console.developers.google.com) or any other identity provider.
 This is not required when you log in with LDAP, SAML or email/password.
 
-misplaced
-Save the obtained API keys in `application.conf`, as shown below.
+Save the obtained API keys in the `application.conf` file that you have created above.
 
 > For all identity providers, you must whitelist the Para host with the appropriate authentication endpoint:
 > - GitHub: `https://paraio.com/github_auth`  
