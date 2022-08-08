@@ -107,8 +107,8 @@ Here's an overview of the architecture:
 
 [JDK 11 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
-1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file
-2. Create Scoold's configuration file named `application.conf` and add the following properties to it:
+1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file.
+2. Create Scoold's configuration file named `application.conf` with these properties:
 	```ini
 	scoold.env = "production"
 	scoold.app_name = "Scoold"
@@ -120,19 +120,21 @@ Here's an overview of the architecture:
 	# (optional) require authentication for viewing content
 	scoold.is_default_space_public = false
 	```
-3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`
+3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`.
 4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
-register a new account with same email you put in the configuration
+register a new account with same email you put in the configuration.
 
-If you want to login with a social account, first you *need* to create a developer app with
+To login with a social account, you must create a developer app with
 [Facebook](https://developers.facebook.com),
-[Google](https://console.developers.google.com) or **any other identity provider** that you wish to use.
-This isn't necessary if you're planning to login with LDAP, SAML or with email and password.
-Save the obtained API keys in `application.conf`, as shown below.
+[Google](https://console.developers.google.com) or any other identity provider.
+This is not required when you log in with LDAP, SAML or email/password.
 
-> For all identity providers you must whitelist the Para host with the
-appropriate authentication endpoint. For example, for GitHub, the redirect URL would be: `https://paraio.com/github_auth`,
-for OAuth 2 - `https://paraio.com/oauth2_auth` and [so on](http://paraio.org/docs/#029-passwordless).
+Save the obtained API keys in the `application.conf` file that you have created above.
+
+> For all identity providers, you must whitelist the Para host with the appropriate authentication endpoint:
+> - GitHub: `https://paraio.com/github_auth`  
+> - OAuth 2: `https://paraio.com/oauth2_auth`  
+> Learn more about [custom authentication](http://paraio.org/docs/#029-passwordless)  
 
 ### Quick Start with a self-hosted Para backend (harder)
 
@@ -178,12 +180,8 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 
 **Scoold requires a persistent and direct connection to a Para server to function properly.**
 
-The most important configuration properties are:
-- `scoold.para_endpoint` - the URL of the Para server
-- `scoold.para_access_key` - the application identifier of your Para app
-- `scoold.para_secret_key` - the secret key for your Para app
 
-Copy the Scoold example configuration below to your **`application.conf`** and edit it if necessary:
+Copy this Scoold example configuration to your **`application.conf`** (edit the values if needed):
 ```ini
 # the name of the application
 scoold.app_name = "Scoold"
@@ -204,7 +202,7 @@ scoold.admins = "admin@domain.com"
 # Enable/disable password authentication
 scoold.password_auth_enabled = true
 ```
-<details><summary><b>View ALL configuration options available in Scoold</b></summary>
+<details><summary><b>View ALL Scoold configuration options</b></summary>
 
 ## Core
 
@@ -604,20 +602,20 @@ scoold.password_auth_enabled = true
 
 </details>
 
-On startup, Scoold will try to connect to Para 10 times, with a 10 second interval between retries. After that it will
-fail and the settings will not be persisted. If you set the maximum number of retries to `-1` there will be an infinite
-number of attempts to connect to Para. These parameters are controlled by:
+On startup, Scoold tries to connect to Para every 10 seconds, 10 times in total. (default). If the connection is unsuccessful, the settings will not be persisted. 
 
 ```ini
 scoold.connection_retries_max = 10
 scoold.connection_retry_interval_sec = 10
 ```
 
+For an infinite number of attempts to connect to Para, set `connection_retries_max` to `-1`.    
+
 ## Docker
 
-Tagged Docker images for Scoold are located at `erudikaltd/scoold` on Docker Hub. **It's highly recommended that you
-pull only release images like `:1.49.0` or `:latest_stable` because the `:latest` tag can be broken or unstable.**
-The `:latest_stable` tag always points to the latest release version.
+For tagged Docker images for Scoold, go to [erudikaltd/scoold on Docker Hub](https://hub.docker.com/r/erudikaltd/scoold/tags). 
+
+The `:latest_stable` tag always points to the latest stable release version. The `:latest` tag can be broken/unstable.
 
 The *easiest way* to create the Scoold stack is to run `docker compose up`.
 
