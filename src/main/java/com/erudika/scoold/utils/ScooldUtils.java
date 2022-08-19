@@ -353,6 +353,9 @@ public final class ScooldUtils {
 			authUser.setOriginalName(u.getName());
 			update = true;
 		}
+		if (authUser.isComplete()) {
+			update = addBadgeOnce(authUser, Profile.Badge.NICEPROFILE, authUser.isComplete()) || update;
+		}
 		return update;
 	}
 

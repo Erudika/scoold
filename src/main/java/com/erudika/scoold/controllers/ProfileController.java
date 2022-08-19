@@ -181,8 +181,7 @@ public class ProfileController {
 
 			updateProfile = updateUserPictureAndName(showUser, picture, name) || updateProfile;
 
-			boolean isComplete = showUser.isComplete() && isMyid(authUser, showUser.getId());
-			if (updateProfile || utils.addBadgeOnce(showUser, Profile.Badge.NICEPROFILE, isComplete)) {
+			if (updateProfile) {
 				showUser.update();
 			}
 			model.addAttribute("user", showUser);

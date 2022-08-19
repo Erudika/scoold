@@ -290,10 +290,7 @@ public class SigninController {
 
 	private void loginWithIdToken(String jwt, HttpServletRequest req, HttpServletResponse res) {
 		User u = pc.signIn("passwordless", jwt, false);
-		if (u != null) {
-			setAuthCookie(u.getPassword(), req, res);
-			onAuthSuccess(u, req, res);
-		}
+		onAuthSuccess(u, req, res);
 	}
 
 	private String onAuthSuccess(User u, HttpServletRequest req, HttpServletResponse res) {
