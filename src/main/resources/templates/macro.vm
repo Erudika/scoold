@@ -922,7 +922,7 @@
 #macro(custombadgebox $badge $clazz)
 #if($badge)
 	#set($style = "$badge.style" )
-	#if(!$isMod) #set($clazz = "" )	#end
+	#if(!$isMod && ($clazz == "add" || $clazz == "remove")) #set($clazz = "" )	#end
 	<span class="chip custom-badge $!{clazz}" title="$!badge.description" style="$style"
 				data-url="$profilelink/$!showUser.creatorid/toggle-badge/$!badge.tag">
 		<i class="fa fa-minus hide tooltipped" data-tooltip="$!lang.get('removebadge')"></i>

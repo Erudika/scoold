@@ -82,7 +82,7 @@ public class PeopleController {
 		}
 
 		if (!qs.endsWith("*")) {
-			qs += " OR properties.groups:(admins)"; // admins are members of every space and always visible
+			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
 		}
 
 		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
