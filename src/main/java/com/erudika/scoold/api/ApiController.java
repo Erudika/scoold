@@ -393,6 +393,7 @@ public class ApiController {
 					createdUser = null; // user existed previously
 				} else if (newUser.getActive() && !createdUser.getActive()) {
 					createdUser.setActive(true);
+					createdUser.setPicture(newUser.getPicture());
 					pc.update(createdUser);
 				}
 			}
@@ -400,6 +401,7 @@ public class ApiController {
 				badReq("Failed to create user. User may already exist.");
 			} else {
 				Profile profile = Profile.fromUser(createdUser);
+				profile.setPicture(newUser.getPicture());
 				profile.getSpaces().addAll(readSpaces(((List<String>) entity.getOrDefault("spaces",
 						Collections.emptyList())).toArray(new String[0])));
 				res.setStatus(HttpStatus.CREATED.value());
