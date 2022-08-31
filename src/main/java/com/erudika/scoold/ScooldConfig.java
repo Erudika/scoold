@@ -1258,9 +1258,20 @@ public class ScooldConfig extends Config {
 			type = Boolean.class,
 			category = "SAML Authentication",
 			tags = {"Pro"},
-			description = "Enable/disable SAML name id encryption.")
+			description = "Enable/disable SAML NameID encryption.")
 	public boolean samlNameidEncryptionEnabled() {
 		return getConfigBoolean("security.saml.security.want_nameid_encrypted", false);
+	}
+
+	@Documented(position = 1231,
+			identifier = "security.saml.security.want_nameid",
+			value = "true",
+			type = Boolean.class,
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "Enable/disable SAML NameID requirement.")
+	public boolean samlNameidEnabled() {
+		return getConfigBoolean("security.saml.security.want_nameid", true);
 	}
 
 	@Documented(position = 1240,
@@ -3277,38 +3288,6 @@ public class ScooldConfig extends Config {
 		return settings;
 	}
 
-	public Map<String, Object> samlSettings() {
-		Map<String, Object> settings = new LinkedHashMap<>();
-		settings.put("security.saml.sp.entityid", samlSPEntityId());
-		settings.put("security.saml.sp.assertion_consumer_service.url", samlSPAssertionConsumerServiceUrl());
-		settings.put("security.saml.sp.nameidformat", samlSPNameIdFormat());
-		settings.put("security.saml.sp.x509cert", samlSPX509Certificate());
-		settings.put("security.saml.sp.privatekey", samlSPX509PrivateKey());
-
-		settings.put("security.saml.idp.entityid", samlIDPEntityId());
-		settings.put("security.saml.idp.single_sign_on_service.url", samlIDPSingleSignOnServiceUrl());
-		settings.put("security.saml.idp.x509cert", samlIDPX509Certificate());
-		settings.put("security.saml.idp.metadata_url", samlIDPMetadataUrl());
-
-		settings.put("security.saml.security.authnrequest_signed", samlAuthnRequestSigningEnabled());
-		settings.put("security.saml.security.want_messages_signed", samlMessageSigningEnabled());
-		settings.put("security.saml.security.want_assertions_signed", samlAssertionSigningEnabled());
-		settings.put("security.saml.security.want_assertions_encrypted", samlAssertionEncryptionEnabled());
-		settings.put("security.saml.security.want_nameid_encrypted", samlNameidEncryptionEnabled());
-		settings.put("security.saml.security.sign_metadata", samlMetadataSigningEnabled());
-		settings.put("security.saml.security.want_xml_validation", samlXMLValidationEnabled());
-		settings.put("security.saml.security.signature_algorithm", samlSignatureAlgorithm());
-
-		settings.put("security.saml.attributes.id", samlIdAttribute());
-		settings.put("security.saml.attributes.picture", samlPictureAttribute());
-		settings.put("security.saml.attributes.email", samlEmailAttribute());
-		settings.put("security.saml.attributes.name", samlNameAttribute());
-		settings.put("security.saml.attributes.firstname", samlFirstNameAttribute());
-		settings.put("security.saml.attributes.lastname", samlLastNameAttribute());
-		settings.put("security.saml.domain", samlDomain());
-		return settings;
-	}
-
 	public Map<String, Object> getParaAppSettings() {
 		Map<String, Object> settings = new LinkedHashMap<String, Object>();
 		settings.put("gp_app_id", googleAppId());
@@ -3335,8 +3314,6 @@ public class ScooldConfig extends Config {
 		settings.putAll(oauthSettings("third"));
 		// LDAP settings
 		settings.putAll(ldapSettings());
-		// SAML settings
-		settings.putAll(samlSettings());
 		// secret key
 		settings.put("app_secret_key", appSecretKey());
 		// email verification

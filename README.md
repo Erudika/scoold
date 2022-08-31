@@ -132,9 +132,9 @@ This is not required when you log in with LDAP, SAML or email/password.
 Save the obtained API keys in the `application.conf` file that you have created above.
 
 > For all identity providers, you must whitelist the Para host with the appropriate authentication endpoint:
-> - GitHub: `https://paraio.com/github_auth`  
-> - OAuth 2: `https://paraio.com/oauth2_auth`  
-> Learn more about [custom authentication](http://paraio.org/docs/#029-passwordless)  
+> - GitHub: `https://paraio.com/github_auth`
+> - OAuth 2: `https://paraio.com/oauth2_auth`
+> Learn more about [custom authentication](http://paraio.org/docs/#029-passwordless)
 
 ### Quick Start with a self-hosted Para backend (harder)
 
@@ -162,7 +162,7 @@ data in your Scoold app.
 
 ### Hardware requirements
 
-Scoold and Para can both be hosted on the same machine, provided it has at least 3 GB of RAM. 
+Scoold and Para can both be hosted on the same machine, provided it has at least 3 GB of RAM.
 
 Scoold requires:
 - at least 500 MB RAM
@@ -354,7 +354,8 @@ scoold.password_auth_enabled = true
 |`scoold.security.saml.security.want_messages_signed` <kbd>Pro</kbd><br>Enable/disable SAML message signing. | `false` | `Boolean`|
 |`scoold.security.saml.security.want_assertions_signed` <kbd>Pro</kbd><br>Enable/disable SAML assertion signing. | `false` | `Boolean`|
 |`scoold.security.saml.security.want_assertions_encrypted` <kbd>Pro</kbd><br>Enable/disable SAML assertion encryption. | `false` | `Boolean`|
-|`scoold.security.saml.security.want_nameid_encrypted` <kbd>Pro</kbd><br>Enable/disable SAML name id encryption. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_nameid_encrypted` <kbd>Pro</kbd><br>Enable/disable SAML NameID encryption. | `false` | `Boolean`|
+|`scoold.security.saml.security.want_nameid` <kbd>Pro</kbd><br>Enable/disable SAML NameID requirement. | `true` | `Boolean`|
 |`scoold.security.saml.security.sign_metadata` <kbd>Pro</kbd><br>Enable/disable SAML metadata signing. | `false` | `Boolean`|
 |`scoold.security.saml.security.want_xml_validation` <kbd>Pro</kbd><br>Enable/disable SAML XML validation. | `true` | `Boolean`|
 |`scoold.security.saml.security.signature_algorithm` <kbd>Pro</kbd><br>SAML signature algorithm. | ` ` | `String`|
@@ -602,18 +603,18 @@ scoold.password_auth_enabled = true
 
 </details>
 
-On startup, Scoold tries to connect to Para every 10 seconds, 10 times in total. (default). If the connection is unsuccessful, the settings will not be persisted. 
+On startup, Scoold tries to connect to Para every 10 seconds, 10 times in total. (default). If the connection is unsuccessful, the settings will not be persisted.
 
 ```ini
 scoold.connection_retries_max = 10
 scoold.connection_retry_interval_sec = 10
 ```
 
-For an infinite number of attempts to connect to Para, set `connection_retries_max` to `-1`.    
+For an infinite number of attempts to connect to Para, set `connection_retries_max` to `-1`.
 
 ## Docker
 
-For tagged Docker images for Scoold, go to [erudikaltd/scoold on Docker Hub](https://hub.docker.com/r/erudikaltd/scoold/tags). 
+For tagged Docker images for Scoold, go to [erudikaltd/scoold on Docker Hub](https://hub.docker.com/r/erudikaltd/scoold/tags).
 
 The `:latest_stable` tag always points to the latest stable release version. The `:latest` tag can be broken/unstable.
 
@@ -2436,7 +2437,7 @@ scoold.always_hide_comment_forms = true
 ```
 
 ### Custom Logo
-	
+
 **PRO** In Scoold Pro, you can change the logo of the website just by dragging and dropping a new image of your choice.
 
 If you wish to add just a few simple CSS rules to the `<head>` element, instead of replacing the whole stylesheet,
