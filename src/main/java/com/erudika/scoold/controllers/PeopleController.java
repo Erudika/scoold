@@ -81,7 +81,7 @@ public class PeopleController {
 			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
 		}
 
-		if (!qs.endsWith("*")) {
+		if (!qs.endsWith("*") && q.equals("*")) {
 			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
 		}
 
