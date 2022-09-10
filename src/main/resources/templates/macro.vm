@@ -754,7 +754,16 @@
 		<div class="row">
 			<div class="col s12">
 				<div class="lightborder pam post-actions">
-					<a href="#post-$!showpost.id" title="Permalink" class="right permalink"><i class="fa fa-bookmark"></i></a>
+					<div class="right">
+						#if($authenticated && $showpost.isQuestion())
+						<a href="#post-$!showpost.id" title="$!lang.get('posts.emailme')" class="follow-thread-bell">
+							<i class="fa fa-bell-o"></i>
+						</a> &nbsp;
+						#end
+						<a href="$!actionlink/$!{showpost.id}#post-$!showpost.id" title="Permalink" class="permalink">
+							<i class="fa fa-bookmark"></i>
+						</a>
+					</div>
 
 					#if ($scooldUtils.isMod($authUser) && ($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion"))
 						<a href="$!actionlink/$showpost.id/approve" title="Approve" class="post-refresh green-text prm"><i class="fa fa-check"></i> $!lang.get("posts.approve")</a>

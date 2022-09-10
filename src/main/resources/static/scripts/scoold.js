@@ -1179,6 +1179,15 @@ $(function () {
 		$.post(dis.closest("form").attr("action"), {emailme: dis.is(":checked")});
 	});
 
+	if ($("#follow-thread-check").is(":checked")) {
+		$(".follow-thread-bell").find("i").toggleClass("fa-bell-o fa-bell red-text");
+	}
+
+	$(".follow-thread-bell").click(function () {
+		$("#follow-thread-check").click();
+		$(this).find("i").toggleClass("fa-bell-o fa-bell red-text");
+	});
+
 	if (typeof hljs !== "undefined") {
 		$("pre code").each(function (i, block) {
 			hljs.highlightBlock(block);
@@ -1217,10 +1226,21 @@ $(function () {
 
 	$(".bookmark-spaceurl").hover(function () {
 		$(this).find("a").toggleClass("hide").on("click", function (e) {
-			navigator.clipboard.writeText(window.location.href);
+			navigator.clipboard.writeText(this.href);
 			$(this).find("i").text("Copied!").attr("class", "green-text smallText").show().fadeOut(3000);
 			return false;
 		});
+	});
+
+	$(".permalink").on("click", function (e) {
+		navigator.clipboard.writeText(this.href);
+		var that = $(this).find("i");
+		var attr = that.attr("class");
+		that.text("Copied!").attr("class", "green-text smallText");
+		setTimeout(function () {
+			that.text("").attr("class", attr);
+		}, 2000);
+		return false;
 	});
 
 	$(".open-merge-window").click(function () {
