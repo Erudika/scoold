@@ -702,6 +702,20 @@ For connecting Kubernetes to AWS ECR, please refer to [this article](https://med
 In case you don't want to use AWS CLI for logging into the Scoold Pro registry, install the
 [AWS ECR Docker Credentials Helper](https://github.com/awslabs/amazon-ecr-credential-helper).
 
+## Git repository for the Scoold Pro source
+
+For license holders with access to the Scoold Pro source code, the steps to browse the Git repository are as follows:
+
+```
+git remote add scoold https://git-codecommit.eu-west-1.amazonaws.com/v1/repos/scoold-pro
+git fetch scoold master
+```
+Then enter your username and password for the Git repository.
+
+You should be able to browse the source code with any of the Git graphic interface tools out there.
+Keep in mind that the repository is read-only, so you can only work with local branches and merge the latest changes 
+from the main branch to your local branch.
+
 ## Deploying Scoold to Heroku
 
 **One-click deployment**
