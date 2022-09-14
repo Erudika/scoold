@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%-20(%d{yyyy-MM-dd HH:mm:ss} [%-5level]) %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+		<facility>LOCAL0</facility>
+		<suffixPattern>[%-5level] %msg%n</suffixPattern>
+	</appender>
+
+	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${para.logs_dir:-.}/${para.logs_name:-para}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover monthly -->
+			<fileNamePattern>para-%d{yyyy-MM}.log.zip</fileNamePattern>
+			<maxHistory>12</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="METRICSAPPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${para.logs_dir:-.}/${para.logs_name:-para}-metrics.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${para.logs_name:-para}-metrics-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+			<maxHistory>7</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="ch.qos.logback" level="WARN"/>
+	<logger name="org.apache" level="WARN"/>
+	<logger name="org.elasticsearch" level="INFO"/>
+	<logger name="org.springframework" level="WARN"/>
+	<logger name="org.springframework.ldap" level="WARN"/>
+	<logger name="org.eclipse.jetty" level="WARN"/>
+	<logger name="com.erudika" level="INFO"/>
+	<logger name="com.amazonaws" level="INFO"/>
+	<logger name="org.tuckey" level="WARN"/>
+	<logger name="org.openid4java" level="ERROR"/>
+	<logger name="org.glassfish" level="WARN"/>
+	<logger name="org.hibernate" level="WARN"/>
+	<logger name="com.hazelcast" level="INFO"/>
+
+	<logger name="paraMetrics" level="INFO" additivity="false">
+		<appender-ref ref="METRICSAPPENDER" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="SYSLOG" />
+		<appender-ref ref="ROLLING" />
+	</root>
+</configuration>
