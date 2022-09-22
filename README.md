@@ -452,6 +452,7 @@ scoold.password_auth_enabled = true
 |`scoold.s3_bucket` <kbd>Pro</kbd><br>AWS S3 bucket name as target for storing files. | ` ` | `String`|
 |`scoold.s3_path` <kbd>Pro</kbd><br>AWS S3 object prefix (directory) inside the bucket. | ` ` | `String`|
 |`scoold.s3_region` <kbd>Pro</kbd><br>AWS S3 region. | ` ` | `String`|
+|`scoold.s3_endpoint` <kbd>Pro</kbd><br>AWS S3 endpoint override. The S3 region will be ignored if this is set. Can be used for connecting to S3-compatible storage providers. | ` ` | `String`|
 |`scoold.s3_access_key` <kbd>Pro</kbd><br>AWS S3 access key. | ` ` | `String`|
 |`scoold.s3_secret_key` <kbd>Pro</kbd><br>AWS S3 secret key. | ` ` | `String`|
 |`scoold.blob_storage_account` <kbd>Pro</kbd><br>Azure Blob Storage account ID. | ` ` | `String`|
@@ -713,7 +714,7 @@ git fetch scoold master
 Then enter your username and password for the Git repository.
 
 You should be able to browse the source code with any of the Git graphic interface tools out there.
-Keep in mind that the repository is read-only, so you can only work with local branches and merge the latest changes 
+Keep in mind that the repository is read-only, so you can only work with local branches and merge the latest changes
 from the main branch to your local branch.
 
 ## Deploying Scoold to Heroku

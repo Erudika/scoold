@@ -2023,6 +2023,16 @@ public class ScooldConfig extends Config {
 		return getConfigParam("s3_region", "");
 	}
 
+	@Documented(position = 1951,
+			identifier = "s3_endpoint",
+			category = "File Storage",
+			tags = {"Pro"},
+			description = "AWS S3 endpoint override. The S3 region will be ignored if this is set. "
+					+ "Can be used for connecting to S3-compatible storage providers.")
+	public String s3Endpoint() {
+		return getConfigParam("s3_endpoint", "");
+	}
+
 	@Documented(position = 1960,
 			identifier = "s3_access_key",
 			category = "File Storage",
