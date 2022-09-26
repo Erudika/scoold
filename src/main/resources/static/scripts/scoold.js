@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -1363,6 +1363,10 @@ $(function () {
 	}).map(function (t) {
 		return {tag: t};
 	});
+
+	if ("undefined" !== typeof MAX_FAVORITE_TAGS) {
+		MAX_TAGS_PER_POST = MAX_FAVORITE_TAGS;
+	}
 
 	// https://stackoverflow.com/a/38317768/108758
 	autocomplete.on({

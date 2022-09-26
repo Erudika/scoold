@@ -214,3 +214,7 @@
 		</div>
 	#end
 </div>
+
+<script nonce="$cspNonce">
+	MAX_FAVORITE_TAGS = $!MAX_FAV_TAGS;
+</script>
