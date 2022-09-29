@@ -347,12 +347,14 @@
 									<b>1.</b> From the System Console, enable OAuth 2.0 Service Provider. Then, create a new
 									<b>trusted</b> Mattermost
 									OAuth 2.0 application from the Integrations section and copy the
-									Client ID and Client Secret to your <code>application.conf</code>:
+									Client ID and Client Secret to your <code>application.conf</code> and 
+									also configure the location of your Mattermost server:
 								</span>
 
 									<code><pre>
   scoold.mm_app_id = "{Client ID}"
   scoold.mm_secret = "{Client Secret}"
+  scoold.mattermost.server_url = "http://mattermost-host:8065"
 									</pre></code>
 
 							</li>
