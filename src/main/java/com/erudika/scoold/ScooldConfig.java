@@ -2530,6 +2530,17 @@ public class ScooldConfig extends Config {
 	 * Mattermost Integration                                                                Mattermost Integration *
 	 ****************************************************************************************************************/
 
+	@Documented(position = 2431,
+			identifier = "mattermost.auth_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Mattermost Integration",
+			tags = {"Pro"},
+			description = "Enable/disable authentication with Mattermost.")
+	public boolean mattermostAuthEnabled() {
+		return getConfigBoolean("mattermost.auth_enabled", !mattermostAppId().isEmpty());
+	}
+
 	@Documented(position = 2440,
 			identifier = "mattermost.server_url",
 			category = "Mattermost Integration",

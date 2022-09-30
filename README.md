@@ -516,6 +516,7 @@ scoold.password_auth_enabled = true
 
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
+|`scoold.mattermost.auth_enabled` <kbd>Pro</kbd><br>Enable/disable authentication with Mattermost. | `false` | `Boolean`|
 |`scoold.mattermost.server_url` <kbd>Pro</kbd><br>Mattermost server URL. | ` ` | `String`|
 |`scoold.mattermost.bot_username` <kbd>Pro</kbd><br>Mattermost bot username. | `scoold` | `String`|
 |`scoold.mattermost.bot_icon_url` <kbd>Pro</kbd><br>Mattermost bot avatar URL. | `/images/logowhite.png` | `String`|
@@ -1979,13 +1980,23 @@ mapping of Mattermost users to Scoold accounts and vice versa. Mattermost IDs ar
 signs in with Mattermost.
 
 The integration endpoint for Mattermost is `/mattermost` - this is where Scoold will accept and process requests from
-Mattermost. To enable the Mattermost integration you need to enable OAuth 2.0 apps and create one in Mattermost's System
-Console. Then set `scoold.mm_app_id` and `scoold.mm_secret`.
+Mattermost. To enable the Mattermost integration you must create a new OAuth 2.0 app in Mattermost's System
+Console. Get the app's credentials and add them to your Scoold configuration as `scoold.mm_app_id` and `scoold.mm_secret`.
+If you just want the Scoold-Mattermost integration working and don't want your users to login with Mattermost, you have
+the option to disable the Mattermost authentication button on the sign in page:
+```ini
+scoold.mattermost.auth_enabled = false
+```
 
 ### [Getting started guide for Scoold + Mattermost](https://scoold.com/mattermost.html).
 
 Here are the configuration properties for Mattermost:
 ```ini
+# Mattermost OAuth2 client id
+scoold.mm_app_id = ""
+# Mattermost OAuth2 client secret
+scoold.mm_secret = ""
+
 scoold.mattermost.server_url = "http://localhost:8065"
 scoold.mattermost.bot_username = "scoold"
 scoold.mattermost.bot_icon_url = "http://localhost:8000/images/logowhite.png"
