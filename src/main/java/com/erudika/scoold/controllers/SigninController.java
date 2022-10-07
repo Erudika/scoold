@@ -82,7 +82,7 @@ public class SigninController {
 		model.addAttribute("ghLoginEnabled", !CONF.githubAppId().isEmpty());
 		model.addAttribute("inLoginEnabled", !CONF.linkedinAppId().isEmpty());
 		model.addAttribute("twLoginEnabled", !CONF.twitterAppId().isEmpty());
-		model.addAttribute("msLoginEnabled", !CONF.microsoftAppId().isEmpty());
+		model.addAttribute("msLoginEnabled", utils.isMicrosoftAuthEnabled());
 		model.addAttribute("slLoginEnabled", utils.isSlackAuthEnabled());
 		model.addAttribute("azLoginEnabled", !CONF.amazonAppId().isEmpty());
 		model.addAttribute("oa2LoginEnabled", !CONF.oauthAppId("").isEmpty());

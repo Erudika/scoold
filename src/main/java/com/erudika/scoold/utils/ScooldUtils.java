@@ -828,6 +828,10 @@ public final class ScooldUtils {
 		return CONF.slackAuthEnabled();
 	}
 
+	public boolean isMicrosoftAuthEnabled() {
+		return CONF.teamsAuthEnabled();
+	}
+
 	public static boolean isGravatarEnabled() {
 		return CONF.gravatarsEnabled();
 	}
@@ -2002,7 +2006,7 @@ public final class ScooldUtils {
 		if (!CONF.twitterAppId().isEmpty()) {
 			return getTwitterLoginURL();
 		}
-		if (!CONF.microsoftAppId().isEmpty()) {
+		if (isMicrosoftAuthEnabled()) {
 			return getMicrosoftLoginURL();
 		}
 		if (isSlackAuthEnabled()) {

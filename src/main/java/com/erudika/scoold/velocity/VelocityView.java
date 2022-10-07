@@ -16,6 +16,7 @@
 package com.erudika.scoold.velocity;
 
 import com.erudika.para.core.utils.Para;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContextException;
-import org.springframework.core.NestedIOException;
 import org.springframework.web.servlet.view.AbstractTemplateView;
 import org.springframework.web.util.NestedServletException;
 
@@ -174,7 +174,7 @@ public class VelocityView extends AbstractTemplateView {
 			}
 			return false;
 		} catch (Exception ex) {
-			throw new NestedIOException(
+			throw new IOException(
 					"Could not load Velocity template for URL [" + getUrl() + "]", ex);
 		}
 	}

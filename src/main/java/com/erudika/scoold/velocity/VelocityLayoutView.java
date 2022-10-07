@@ -15,15 +15,13 @@
  */
 package com.erudika.scoold.velocity;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
-
-import org.springframework.core.NestedIOException;
 
 /**
  * VelocityLayoutView emulates the functionality offered by Velocity's VelocityLayoutServlet to ease page composition
@@ -123,10 +121,10 @@ public class VelocityLayoutView extends VelocityView {
 			getTemplate(this.layoutUrl);
 			return true;
 		} catch (ResourceNotFoundException ex) {
-			throw new NestedIOException("Cannot find Velocity template for URL [" + this.layoutUrl
+			throw new IOException("Cannot find Velocity template for URL [" + this.layoutUrl
 					+ "]: Did you specify the correct resource loader path?", ex);
 		} catch (Exception ex) {
-			throw new NestedIOException(
+			throw new IOException(
 					"Could not load Velocity template for URL [" + this.layoutUrl + "]", ex);
 		}
 	}

@@ -552,6 +552,7 @@ scoold.password_auth_enabled = true
 
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
+|`scoold.teams.auth_enabled`<br>Enable/disable authentication with Microsoft. | `false` | `Boolean`|
 |`scoold.teams.bot_id` <kbd>Pro</kbd><br>Teams bot ID. | ` ` | `String`|
 |`scoold.teams.bot_secret` <kbd>Pro</kbd><br>Teams bot secret key. | ` ` | `String`|
 |`scoold.teams.bot_service_url` <kbd>Pro</kbd><br>Teams bot service URL. | `https://smba.trafficmanager.net/emea/` | `String`|
@@ -1905,6 +1906,11 @@ To enable the Slack integration you need to register for a Slack app first and s
 
 Here are the configuration properties for Slack:
 ```ini
+# Slack OAuth2 client id
+scoold.sl_app_id = ""
+# Slack OAuth2 secret
+scoold.sl_secret = ""
+
 scoold.slack.app_id = "SHORT_APPID"
 scoold.slack.map_workspaces_to_spaces = true
 scoold.slack.map_channels_to_spaces = false
@@ -1982,6 +1988,7 @@ signs in with Mattermost.
 The integration endpoint for Mattermost is `/mattermost` - this is where Scoold will accept and process requests from
 Mattermost. To enable the Mattermost integration you must create a new OAuth 2.0 app in Mattermost's System
 Console. Get the app's credentials and add them to your Scoold configuration as `scoold.mm_app_id` and `scoold.mm_secret`.
+
 If you just want the Scoold-Mattermost integration working and don't want your users to login with Mattermost, you have
 the option to disable the Mattermost authentication button on the sign in page:
 ```ini
@@ -2050,6 +2057,11 @@ The action will create a new question from the first message of the thread and s
 
 Here are the configuration properties for MS Teams:
 ```ini
+# Microsoft OAuth2 client id
+scoold.ms_app_id = ""
+# Microsoft OAuth2 secret
+scoold.ms_secret = ""
+
 scoold.teams.bot_id = ""
 scoold.teams.bot_secret = ""
 scoold.teams.map_workspaces_to_spaces = true
@@ -2069,6 +2081,11 @@ and it has to be created manually from the [Teams Developer Portal](https://dev.
 
 When `scoold.teams.dm_on_new_comment` is enabled, Scoold will send a direct message notification to the author of
 the post on which somebody commented. By default, DMs are turned off and the notification is sent to the channel instead.
+
+If you wish to hide the Microsoft login button "Continue with Microsoft", you can do it by adding this to your configuration:
+```ini
+scoold.teams.auth_enabled = false
+```
 
 ## Notifications in Slack/Mattermost/Teams
 

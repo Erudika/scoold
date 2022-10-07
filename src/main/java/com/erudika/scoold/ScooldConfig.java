@@ -2818,6 +2818,16 @@ public class ScooldConfig extends Config {
 	 * Microsoft Teams Integration                                                      Microsoft Teams Integration *
 	 ****************************************************************************************************************/
 
+	@Documented(position = 2681,
+			identifier = "teams.auth_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Microsoft Teams Integration",
+			description = "Enable/disable authentication with Microsoft.")
+	public boolean teamsAuthEnabled() {
+		return getConfigBoolean("teams.auth_enabled", !microsoftAppId().isEmpty());
+	}
+
 	@Documented(position = 2690,
 			identifier = "teams.bot_id",
 			category = "Microsoft Teams Integration",
