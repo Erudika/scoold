@@ -18,6 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
@@ -32,8 +33,10 @@ import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,11 +68,11 @@ public class ReportsController {
 	public ReportsController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		this.reportsLimiter = Para.createRateLimiter(1, 10, 20);
-		this.reportsLimiterAnon = Para.createRateLimiter(1, 1, 5);
+		this.reportsLimiter = Para.createRateLimiter(3, 10, 20);
+		this.reportsLimiterAnon = Para.createRateLimiter(1, 3, 5);
 	}
 
-	@GetMapping
+	@GetMapping({"", "/delete-all"})
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req) && !utils.isMod(utils.getAuthUser(req))) {
@@ -191,5 +194,22 @@ public class ReportsController {
 			return "redirect:" + REPORTSLINK;
 		}
 		return "base";
+	}
+
+	@PostMapping("/delete-all")
+	public String deleteAll(HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			if (utils.isAdmin(authUser)) {
+				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
+				pager.setSelect(Collections.singletonList(Config._ID));
+				List<Sysprop> reports;
+				do {
+					reports = pc.findQuery(Utils.type(Report.class), "*", pager);
+					pc.deleteAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
+				} while (!reports.isEmpty());
+			}
+		}
+		return "redirect:" + REPORTSLINK;
 	}
 }

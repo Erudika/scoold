@@ -72,7 +72,20 @@
 	#reportform($type $parentid $link)
 #else
 	<div class="page-wrapper">
-		<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
+		<div class="row valign-wrapper">
+			<div class="col m8">
+				<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
+			</div>
+			<div class="col m4 right-align">
+				#if ($isAdmin && $itemcount.count > 0)
+				<strong>
+					<a href="$reportslink/delete-all" class="red-text post-refresh-ask">
+						<i class="fa fa-trash-o"></i> $!lang.get('deleteall')
+					</a>
+				</strong>
+				#end
+			</div>
+		</div>
 
 		<div class="preview-dialog jqmWindow hide"> <div class="center">#ajaxloading(false)</div></div>
 		#if ($itemcount.count == 0)
