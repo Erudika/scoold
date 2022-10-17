@@ -204,6 +204,53 @@ paths:
           description: Post was deleted
         '404':
           description: Not found
+  /api/posts/{id}/tags:
+    patch:
+      summary: Edit question tags
+      description: Add or remove question tags. To change the user who edited the question, specify `lasteditby` in the request body.
+      tags:
+        - posts
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the post to update
+          schema:
+            type: string
+      requestBody:
+        description: The request entity
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                add:
+                  description: A list of tags to add to the question
+                  type: array
+                  items:
+                    type: string
+                remove:
+                  description: A list of tags to remove from the question
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Post was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad request - missing or invalid request entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Post not found
   /api/posts/{id}/approve:
     put:
       summary: Approve a post which awaits approval by a moderator
@@ -711,7 +758,6 @@ paths:
                   type: array
                   items:
                     type: string
-
       responses:
         '200':
           description: Spaces were updated

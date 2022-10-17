@@ -55,6 +55,7 @@ import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -275,6 +276,43 @@ public class ApiController {
 		Model model = new ExtendedModelMap();
 		questionController.delete(id, req, model);
 		res.setStatus(model.containsAttribute("deleted") ? 200 : HttpStatus.NOT_FOUND.value());
+	}
+
+	@PatchMapping("/posts/{id}/tags")
+	public Post updatePostTags(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Model model = new ExtendedModelMap();
+		Map<String, Object> entity = readEntity(req);
+		if (entity.isEmpty()) {
+			badReq("Missing request body.");
+		}
+		String editorid = (String) entity.get("lasteditby");
+		if (!StringUtils.isBlank(editorid)) {
+			Profile authUser = pc.read(Profile.id(editorid));
+			if (authUser != null) {
+				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
+			}
+		}
+		questionController.get(id, "", req.getParameter("sortby"), req, res, model);
+		Post post = (Post) model.getAttribute("showPost");
+		if (post == null) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+		} else if (!utils.canEdit(post, utils.getAuthUser(req))) {
+			badReq("Update failed - user " + editorid + " is not allowed to update post.");
+		} else if (!entity.containsKey("add") && !entity.containsKey("remove")) {
+			badReq("Request body is missing property values for 'add' or 'remove'.");
+		} else {
+			List<String> toAdd = (List<String>) entity.getOrDefault("add", Collections.emptyList());
+			List<String> toRemove = (List<String>) entity.getOrDefault("remove", Collections.emptyList());
+			Set<String> tags = new HashSet<>(post.getTags());
+			if (!toAdd.isEmpty() || !toRemove.isEmpty()) {
+				tags.removeAll(toRemove);
+				tags.addAll(toAdd);
+				post.setTags(new ArrayList<>(tags));
+				questionController.edit(id, post.getTitle(), post.getBody(), String.join(",", tags),
+						post.getLocation(), post.getLatlng(), post.getSpace(), req, res, model);
+			}
+		}
+		return post;
 	}
 
 	@PutMapping("/posts/{id}/approve")
