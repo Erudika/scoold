@@ -325,11 +325,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public static String getTagString(String tag) {
-		if (StringUtils.isBlank(tag)) {
-			return "";
-		}
-		String s = tag.replaceAll("[\\p{S}\\p{P}\\p{C}&&[^+\\.]]", " ").replaceAll("\\p{Z}+", " ").trim();
-		return StringUtils.truncate(Utils.noSpaces(s, "-"), 35);
+		return StringUtils.truncate(tag, 35);
 	}
 
 	public void updateTags(List<String> oldTags, List<String> newTags) {
