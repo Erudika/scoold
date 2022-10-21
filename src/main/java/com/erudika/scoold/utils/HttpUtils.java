@@ -270,7 +270,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(backtoFromCookie)) {
 			backtoFromCookie = req.getParameter("returnto");
 		}
-		String serverUrl = CONF.serverUrl() + "/";
+		String serverUrl = CONF.serverUrl() + CONF.serverContextPath();
 		String resolved = "";
 		try {
 			resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backtoFromCookie).orElse("")).toString();

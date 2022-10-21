@@ -689,7 +689,7 @@ public class ScooldConfig extends Config {
 			description = "Additional sources to add to the `style-src` CSP directive. "
 					+ "Used when adding external fonts to the site.")
 	public String cspStyleSources() {
-		return getConfigParam("csp_style_sources", serverUrl() + serverContextPath() + stylesheetUrl() + " " +
+		return getConfigParam("csp_style_sources", serverUrl() + stylesheetUrl() + " " +
 				externalStyles().replaceAll(",", ""));
 	}
 
@@ -2331,8 +2331,8 @@ public class ScooldConfig extends Config {
 			category = "Customization",
 			description = "The HTML code snippet to embed at the end of each transactional email message.")
 	public String emailsFooterHtml() {
-		return getConfigParam("emails_footer_html", "<a href=\"" + serverUrl() + "\">" + appName() + "</a> &bull; " +
-				"<a href=\"https://scoold.com\">Powered by Scoold</a>");
+		return getConfigParam("emails_footer_html", "<a href=\"" + serverUrl() + serverContextPath() + "\">" +
+				appName() + "</a> &bull; " + "<a href=\"https://scoold.com\">Powered by Scoold</a>");
 	}
 
 	@Documented(position = 2250,

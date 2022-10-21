@@ -119,7 +119,7 @@ public class ReportsController {
 				canCreateReport = reportsLimiterAnon.isAllowed(utils.getParaAppId(), req.getRemoteAddr());
 			}
 			if (StringUtils.startsWith(rep.getLink(), "/")) {
-				rep.setLink(CONF.serverUrl() + CONF.serverContextPath() + rep.getLink());
+				rep.setLink(CONF.serverUrl() + rep.getLink());
 			}
 			if (canCreateReport) {
 				rep.create();

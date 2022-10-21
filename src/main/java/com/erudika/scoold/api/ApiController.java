@@ -1043,7 +1043,7 @@ public class ApiController {
 				trigger.setUrlEncoded(false);
 				trigger.setTriggeredEvent("config.update");
 				trigger.setCustomPayload(payload);
-				trigger.setTargetUrl(CONF.serverUrl() + "/webhooks/config");
+				trigger.setTargetUrl(CONF.serverUrl() + CONF.serverContextPath() + "/webhooks/config");
 				// the goal is to saturate the load balancer and hopefully the payload reaches all nodes behind it
 				trigger.setRepeatedDeliveryAttempts(nodes * 2);
 				WebhooksController.setLastConfigUpdate(trigger.getTimestamp().toString());

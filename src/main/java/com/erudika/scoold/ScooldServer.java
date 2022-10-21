@@ -154,7 +154,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	@Bean
 	public ParaClient paraClientBean() {
 		tryAutoInitParaApp();
-		logger.info("Scoold server is listening on {}", CONF.serverUrl());
+		logger.info("Scoold server is listening on {}", CONF.serverUrl() + CONF.serverContextPath());
 		String accessKey = CONF.paraAccessKey();
 		ParaClient pc = new ParaClient(accessKey, CONF.paraSecretKey());
 		pc.setEndpoint(CONF.paraEndpoint());

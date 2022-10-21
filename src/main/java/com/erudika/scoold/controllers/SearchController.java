@@ -214,7 +214,7 @@ public class SearchController {
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
 		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
-		String baseurl = CONF.serverUrl();
+		String baseurl = CONF.serverUrl() + CONF.serverContextPath();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
 		Map<String, String> lang = utils.getLang(req);
@@ -272,9 +272,10 @@ public class SearchController {
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
 		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
 		if (!questions.isEmpty()) {
-			WebSitemapGenerator generator = new WebSitemapGenerator(CONF.serverUrl());
+			String baseurl = CONF.serverUrl() + CONF.serverContextPath();
+			WebSitemapGenerator generator = new WebSitemapGenerator(baseurl);
 			for (Post post : questions) {
-				String baselink = CONF.serverUrl().concat(post.getPostLink(false, false));
+				String baselink = baseurl.concat(post.getPostLink(false, false));
 				generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
 			}
 			return generator.writeAsStrings().get(0);
