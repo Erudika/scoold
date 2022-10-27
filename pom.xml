@@ -154,6 +154,11 @@
 			<artifactId>commons-text</artifactId>
 			<version>[1.10.0,)</version>
 		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>[1.33,)</version>
+		</dependency>
 
 		<!-- TESTING -->
 		<dependency>
