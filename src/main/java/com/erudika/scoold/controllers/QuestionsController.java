@@ -209,7 +209,7 @@ public class QuestionsController {
 			q.setCreatorid(authUser.getId());
 			q.setSpace(currentSpace);
 			if (StringUtils.isBlank(q.getTagsString())) {
-				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "question" : CONF.defaultQuestionTag()));
+				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "" : CONF.defaultQuestionTag()));
 			}
 			Map<String, String> error = utils.validate(q);
 			if (error.isEmpty()) {
