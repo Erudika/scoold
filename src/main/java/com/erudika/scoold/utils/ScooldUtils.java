@@ -1472,6 +1472,18 @@ public final class ScooldUtils {
 		return isMine(showPost, authUser);
 	}
 
+	public boolean canApproveReply(Post showPost, Profile authUser) {
+		switch (CONF.answersApprovedBy()) {
+			case "admins":
+				return isAdmin(authUser);
+			case "moderators":
+			case "mods":
+				return isMod(authUser);
+			default:
+				return canEdit(showPost, authUser) && (isMine(showPost, authUser) || isMod(authUser));
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public <P extends ParaObject> P populate(HttpServletRequest req, P pobj, String... paramName) {
 		if (pobj == null || paramName == null) {

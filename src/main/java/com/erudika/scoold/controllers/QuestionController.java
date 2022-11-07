@@ -281,8 +281,7 @@ public class QuestionController {
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			return "redirect:" + req.getRequestURI();
 		}
-		if (utils.canEdit(showPost, authUser) && answerid != null &&
-				(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+		if (answerid != null && utils.canApproveReply(showPost, authUser)) {
 			Reply answer = (Reply) pc.read(answerid);
 
 			if (answer != null && answer.isReply()) {

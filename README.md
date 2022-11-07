@@ -395,6 +395,7 @@ scoold.password_auth_enabled = true
 |  ---                       | ---           | ---  |
 |`scoold.new_users_can_comment`<br>Enable/disable the ability for users with reputation below 100 to comments on posts. | `true` | `Boolean`|
 |`scoold.posts_need_approval`<br>Enable/disable the need for approval of new posts by a moderator.  | `false` | `Boolean`|
+|`scoold.answers_approved_by`<br>Controls who is able to mark an answer as accepted/approved. Possible values are `default` (author and moderators), `admins` (admins only), `moderators` (moderators and admins). | `default` | `String`|
 |`scoold.wiki_answers_enabled` <kbd>Pro</kbd><br>Enable/disable the ability for users to create wiki-style answers, editable by everyone. | `true` | `Boolean`|
 |`scoold.media_recording_allowed` <kbd>Pro</kbd><br>Enable/disable support for attaching recorded videos and voice messages to posts. | `true` | `Boolean`|
 |`scoold.delete_protection_enabled`<br>Enable/disable the ability for authors to delete their own question, when it already has answers and activity. | `true` | `Boolean`|

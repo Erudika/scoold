@@ -1578,6 +1578,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("posts_need_approval", false);
 	}
 
+	@Documented(position = 1521,
+			identifier = "answers_approved_by",
+			value = "default",
+			category = "Posts",
+			description = "Controls who is able to mark an answer as accepted/approved. "
+					+ "Possible values are `default` (author and moderators), `admins` (admins only), `moderators` "
+					+ "(moderators and admins).")
+	public String answersApprovedBy() {
+		return getConfigParam("answers_approved_by", "default");
+	}
+
 	@Documented(position = 1530,
 			identifier = "wiki_answers_enabled",
 			value = "true",
