@@ -464,7 +464,7 @@ public class QuestionController {
 		}
 	}
 
-	private List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {
+	public List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {
 		if (showPost == null || showPost.isReply()) {
 			return Collections.emptyList();
 		}

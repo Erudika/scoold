@@ -207,6 +207,10 @@ public class ApiController {
 		return ((List<Question>) model.getAttribute("questionslist")).stream().map(p -> {
 			Map<String, Object> post = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
 			post.put("author", p.getAuthor());
+			if (Boolean.parseBoolean(req.getParameter("includeReplies"))) {
+				Pager itemcount = utils.getPager("pageReplies", req);
+				post.put("children", questionController.getAllAnswers(utils.getSystemUser(), p, itemcount));
+			}
 			return post;
 		}).collect(Collectors.toList());
 	}

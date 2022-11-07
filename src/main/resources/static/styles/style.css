@@ -431,6 +431,13 @@ img.profile-pic:before {
 .swagger-ui .response-col_links {
 	display: none;
 }
+.swagger-ui select {
+	opacity: 1;
+	height: 2rem;
+	width: auto;
+	font-size: 16px;
+	margin: 10px 0;
+}
 
 #passw.pass-meter, #newpassword.pass-meter { border-bottom: 3px solid #F44336; box-shadow: none;}
 #passw.pass-meter.psms-25, #newpassword.pass-meter.psms-25 { border-bottom: 3px solid #F44336; box-shadow: none; }

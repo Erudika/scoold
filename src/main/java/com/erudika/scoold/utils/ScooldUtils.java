@@ -947,10 +947,11 @@ public final class ScooldUtils {
 	public Pager pagerFromParams(String pageParamName, HttpServletRequest req) {
 		Pager p = new Pager(CONF.maxItemsPerPage());
 		p.setPage(Math.min(NumberUtils.toLong(req.getParameter(pageParamName), 1), CONF.maxPages()));
-		p.setLimit(NumberUtils.toInt(req.getParameter("limit"), CONF.maxItemsPerPage()));
-		String lastKey = req.getParameter("lastKey");
-		String sort = req.getParameter("sortby");
-		String desc = req.getParameter("desc");
+		String paramSuffix = StringUtils.substringAfter(pageParamName, "page");
+		String lastKey = Optional.ofNullable(req.getParameter("lastKey")).orElse(req.getParameter("lastKey" + paramSuffix));
+		String sort = Optional.ofNullable(req.getParameter("sortby")).orElse(req.getParameter("sortby" + paramSuffix));
+		String desc = Optional.ofNullable(req.getParameter("desc")).orElse(req.getParameter("desc" + paramSuffix));
+		String limit = Optional.ofNullable(req.getParameter("limit")).orElse(req.getParameter("limit" + paramSuffix));
 		if (!StringUtils.isBlank(desc)) {
 			p.setDesc(Boolean.parseBoolean(desc));
 		}
@@ -959,6 +960,9 @@ public final class ScooldUtils {
 		}
 		if (!StringUtils.isBlank(sort)) {
 			p.setSortby(sort);
+		}
+		if (!StringUtils.isBlank(limit)) {
+			p.setLimit(NumberUtils.toInt(limit, CONF.maxItemsPerPage()));
 		}
 		return p;
 	}

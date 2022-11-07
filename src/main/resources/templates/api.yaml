@@ -91,6 +91,18 @@ paths:
           schema:
             type: string
             enum: [favtags, local]
+        - name: q
+          in: query
+          required: false
+          description: Allows for an additional fine tuned query to be applied to the other filters.
+          schema:
+            type: string
+        - name: includeReplies
+          in: query
+          required: false
+          description: If `true`, answers will be returned embedded inside the `children` array property of each question object.
+          schema:
+            type: boolean
         - name: favtags
           in: query
           required: false

@@ -59,5 +59,7 @@ table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
 .swagger-ui .scheme-container { background-color: transparent; }
 .swagger-ui .dialog-ux .modal-ux, .swagger-ui input[type=email], .swagger-ui input[type=file],
 .swagger-ui input[type=password], .swagger-ui input[type=search], .swagger-ui input[type=text],
-.swagger-ui textarea, .swagger-ui .opblock .opblock-section-header { background-color: #333; color: #efefef; }
+.swagger-ui textarea, .swagger-ui .opblock .opblock-section-header, .swagger-ui select,
+.swagger-ui input[disabled], .swagger-ui select[disabled], .swagger-ui textarea[disabled]
+{ background-color: #333; color: #efefef; }
 .swagger-ui section.models .model-container:hover { background-color: black; color: #efefef; }

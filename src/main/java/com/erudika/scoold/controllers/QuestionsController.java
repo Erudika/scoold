@@ -291,7 +291,10 @@ public class QuestionsController {
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
-		String query = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
+		String queryExt = req.getParameter("q");
+		String questionsQuery = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
+		queryExt = StringUtils.isBlank(queryExt) || queryExt.startsWith("*") ? "" : queryExt;
+		String query = questionsQuery.equals("*") ? queryExt : questionsQuery + " AND (" + queryExt + ")";
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
