@@ -1980,22 +1980,22 @@ public final class ScooldUtils {
 	public String getOAuth2LoginURL() {
 		return CONF.oauthAuthorizationUrl("") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("") +
-				"&scope=" + CONF.oauthScope("") + "&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+				"&scope=" + CONF.oauthScope("") + getOauth2StateParam("") +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("");
 	}
 
 	public String getOAuth2SecondLoginURL() {
 		return CONF.oauthAuthorizationUrl("second") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("second") +
-				"&scope=" +  CONF.oauthScope("second") + "&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+				"&scope=" +  CONF.oauthScope("second") + getOauth2StateParam("second") +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("second");
 	}
 
 	public String getOAuth2ThirdLoginURL() {
 		return CONF.oauthAuthorizationUrl("third") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("third") +
-				"&scope=" +  CONF.oauthScope("third") + "&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth";
+				"&scope=" +  CONF.oauthScope("third") + getOauth2StateParam("third") +
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("third");
 	}
 
 	public String getParaEndpoint() {
@@ -2004,6 +2004,14 @@ public final class ScooldUtils {
 
 	public String getParaAppId() {
 		return StringUtils.removeStart(CONF.paraAccessKey(), "app:");
+	}
+
+	private String getOauth2StateParam(String a) {
+		return CONF.oauthStateParamEnabled(a) ? "&state=" + getParaAppId() : "";
+	}
+
+	private String getOauth2AppidParam(String a) {
+		return CONF.oauthStateParamEnabled(a) ? "" : "?appid=" + getParaAppId();
 	}
 
 	public String getFirstConfiguredLoginURL() {

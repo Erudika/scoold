@@ -294,7 +294,8 @@ public class QuestionsController {
 		String queryExt = req.getParameter("q");
 		String questionsQuery = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
 		queryExt = StringUtils.isBlank(queryExt) || queryExt.startsWith("*") ? "" : queryExt;
-		String query = questionsQuery.equals("*") ? queryExt : questionsQuery + " AND (" + queryExt + ")";
+		String query = questionsQuery.equals("*") && !queryExt.isBlank() ? queryExt : questionsQuery +
+				(queryExt.isBlank() ? "" : " AND (" + queryExt + ")");
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {

@@ -1554,6 +1554,17 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.oauth" + a + ".provider", "Continue with " + a + "OpenID Connect");
 	}
 
+	@Documented(position = 1501,
+			identifier = "security.oauth.state_param_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "OAuth 2.0 Authentication",
+			description = "Enable/disable the use of the OAauth 2.0 state parameter to designate your Para app id. "
+					+ "Some OAauth 2.0 servers throw errors if the length of the state parameter is less than 8 chars.")
+	public boolean oauthStateParamEnabled(String a) {
+		return getConfigBoolean("security.oauth" + a + ".state_param_enabled", true);
+	}
+
 	/* **************************************************************************************************************
 	 * Posts                                                                                                  Posts *
 	 ****************************************************************************************************************/
