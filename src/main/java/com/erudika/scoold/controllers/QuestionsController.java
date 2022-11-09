@@ -291,11 +291,7 @@ public class QuestionsController {
 		String type = Utils.type(Question.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
-		String queryExt = req.getParameter("q");
-		String questionsQuery = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
-		queryExt = StringUtils.isBlank(queryExt) || queryExt.startsWith("*") ? "" : queryExt;
-		String query = questionsQuery.equals("*") && !queryExt.isBlank() ? queryExt : questionsQuery +
-				(queryExt.isBlank() ? "" : " AND (" + queryExt + ")");
+		String query = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
 
 		if (!StringUtils.isBlank(filter) && authUser != null) {
 			if ("favtags".equals(filter)) {
@@ -384,6 +380,15 @@ public class QuestionsController {
 			// should we specify the tags property here? like: tags:(tag1 OR tag2)
 			sb.append("tags").append(":(").append(tags.replaceAll(",", logicalOperator)).append(")");
 			query = sb.toString();
+		}
+		return getQueryWithPossibleExtension(query, req);
+	}
+
+	private String getQueryWithPossibleExtension(String query, HttpServletRequest req) {
+		String queryExt = req.getParameter("q");
+		queryExt = StringUtils.isBlank(queryExt) || queryExt.startsWith("*") ? "" : queryExt;
+		if (!queryExt.isBlank()) {
+			return query.equals("*") ? queryExt : query + " AND (" + queryExt + ")";
 		}
 		return query;
 	}
