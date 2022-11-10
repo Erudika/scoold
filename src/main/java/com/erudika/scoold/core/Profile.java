@@ -353,8 +353,11 @@ public class Profile extends Sysprop {
 
 	public Set<String> getSpaces() {
 		if (ScooldUtils.getInstance().isMod(this)) {
-			spaces = ScooldUtils.getInstance().getAllSpaces().stream().
-					map(s -> s.getId() + Para.getConfig().separator() + s.getName()).collect(Collectors.toSet());
+			ScooldUtils utils = ScooldUtils.getInstance();
+			spaces = utils.getAllSpaces().stream().
+					map(s -> s.getId() + Para.getConfig().separator() + s.getName()).
+					sorted((s1, s2) -> utils.getSpaceName(s1).compareToIgnoreCase(utils.getSpaceName(s2))).
+					collect(Collectors.toCollection(LinkedHashSet::new));
 		}
 		if (spaces == null) {
 			spaces = new LinkedHashSet<String>();
@@ -375,7 +378,10 @@ public class Profile extends Sysprop {
 
 	@JsonIgnore
 	public Set<String> getAllSpaces() {
-		return getSpaces().stream().filter(s -> !s.equalsIgnoreCase(Post.DEFAULT_SPACE)).collect(Collectors.toSet());
+		ScooldUtils utils = ScooldUtils.getInstance();
+		return getSpaces().stream().filter(s -> !s.equalsIgnoreCase(Post.DEFAULT_SPACE)).
+				sorted((s1, s2) -> utils.getSpaceName(s1).compareToIgnoreCase(utils.getSpaceName(s2))).
+				collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	public Long getLastseen() {
