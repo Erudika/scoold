@@ -207,6 +207,22 @@ public final class HttpUtils {
 		return null;
 	}
 
+	public static String getFullUrl(HttpServletRequest req) {
+		return getFullUrl(req, false);
+	}
+
+	public static String getFullUrl(HttpServletRequest req, boolean relative) {
+		String queryString = req.getQueryString();
+		String url = req.getRequestURL().toString();
+		if (queryString != null) {
+			url = req.getRequestURL().append('?').append(queryString).toString();
+		}
+		if (relative) {
+			url = "/" + URI.create(CONF.serverUrl()).relativize(URI.create(url)).toString();
+		}
+		return url;
+	}
+
 	/**
 	 * @param token CAPTCHA
 	 * @return boolean
