@@ -273,6 +273,7 @@ public class ProfileController {
 					}
 					if (!profiles.isEmpty()) {
 						pc.invokePatch("_batch", toUpdate, Map.class);
+						toUpdate.clear();
 					}
 				} while (!profiles.isEmpty());
 			}
