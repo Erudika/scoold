@@ -587,7 +587,6 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 530,
 			identifier = "csp_header",
-			value = "Dynamically generated, with nonces",
 			category = "Security",
 			description = "The CSP header value which will overwrite the default one. This can contain one or more "
 					+ "`{{nonce}}` placeholders, which will be replaced with an actual nonce on each request.")
