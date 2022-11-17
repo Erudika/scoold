@@ -498,6 +498,14 @@ h5 {
 	box-shadow:         0 3px 6px 0 rgba(0,0,0,.12),0 1px 7px 0 rgba(0,0,0,.12),0 3px 6px -1px rgba(0,0,0,.2);
 }
 
+.sidenav-overlay {
+	z-index: 995;
+}
+
+.navbar-fixed .sidenav li:not(.divider) {
+	height: 50px;
+}
+
 .btn, .btn-small, .btn-large, .btn-flat {
 	border-radius: 4px;
 }
