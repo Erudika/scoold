@@ -81,6 +81,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -2007,11 +2008,11 @@ public final class ScooldUtils {
 	}
 
 	private String getOauth2StateParam(String a) {
-		return CONF.oauthStateParamEnabled(a) ? "&state=" + getParaAppId() : "";
+		return "&state=" + (CONF.oauthAppidInStateParamEnabled(a) ? getParaAppId() : UUID.randomUUID().toString());
 	}
 
 	private String getOauth2AppidParam(String a) {
-		return CONF.oauthStateParamEnabled(a) ? "" : "?appid=" + getParaAppId();
+		return CONF.oauthAppidInStateParamEnabled(a) ? "" : "?appid=" + getParaAppId();
 	}
 
 	public String getFirstConfiguredLoginURL() {
