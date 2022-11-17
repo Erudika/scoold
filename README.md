@@ -388,7 +388,7 @@ scoold.password_auth_enabled = true
 |`scoold.security.oauth.users_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it. Alternatives: `security.oauthsecond.users_equivalent_claim_value`, `security.oauththird.users_equivalent_claim_value` | ` ` | `String`|
 |`scoold.security.oauth.domain`<br>OAauth 2.0 domain name for constructing user email addresses in case they are missing. Alternatives: `security.oauthsecond.domain`, `security.oauththird.domain` | ` ` | `String`|
 |`scoold.security.oauth.provider`<br>The text on the button for signing in with OAuth2 or OIDC. | `Continue with OpenID Connect` | `String`|
-|`scoold.security.oauth.state_param_enabled`<br>Enable/disable the use of the OAauth 2.0 state parameter to designate your Para app id. Some OAauth 2.0 servers throw errors if the length of the state parameter is less than 8 chars. | `true` | `Boolean`|
+|`scoold.security.oauth.appid_in_state_param_enabled`<br>Enable/disable the use of the OAauth 2.0 state parameter to designate your Para app id. Some OAauth 2.0 servers throw errors if the length of the state parameter is less than 8 chars. | `true` | `Boolean`|
 
 ## Posts
 
