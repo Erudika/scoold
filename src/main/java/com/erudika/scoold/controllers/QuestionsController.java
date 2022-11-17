@@ -277,7 +277,10 @@ public class QuestionsController {
 			}
 		}
 		utils.storeSpaceIdInCookie(space, req, res);
-		String backTo = HttpUtils.getBackToUrl(req);
+		String backTo = HttpUtils.getBackToUrl(req, true);
+		if (!utils.isAuthenticated(req) && !(utils.isDefaultSpace(space) || utils.isAllSpaces(space))) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + backTo;
+		}
 		if (StringUtils.isBlank(backTo)) {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
