@@ -1365,7 +1365,7 @@ $(function () {
 	});
 
 	if ("undefined" !== typeof MAX_FAVORITE_TAGS) {
-		MAX_TAGS_PER_POST = MAX_FAVORITE_TAGS;
+		MAX_TAGS_PER_POST = MAX_FAVORITE_TAGS; // allow more tags to be added on settings page!
 	}
 
 	// https://stackoverflow.com/a/38317768/108758

@@ -1737,7 +1737,6 @@ public class ScooldConfig extends Config {
 
 	@Documented(position = 1660,
 			identifier = "default_question_tag",
-			value = "question",
 			category = "Posts",
 			description = "The default question tag, used when no other tags are provided by its author.")
 	public String defaultQuestionTag() {
