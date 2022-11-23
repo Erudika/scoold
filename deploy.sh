@@ -24,7 +24,9 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 docker tag scoold:aws $ECR_REPO:$ver
 docker push $ECR_REPO:$ver
 
-# Heroku
-git push heroku master
+mvn clean package
+# Lightsail Demo
+scp target/scoold-$ver.jar d1.scoold.com:~/scoold.jar
+ssh d1.scoold.com "sudo systemctl restart scoold.service"
 
 echo "--done--"
