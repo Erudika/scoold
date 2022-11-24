@@ -1397,7 +1397,7 @@ paths:
                 format: binary
   /api/restore:
     put:
-      summary: Restores a backup ZIP archive, overwriting all existing data in Scoold
+      summary: Restores (asynchronously) a backup ZIP archive, overwriting all existing data in Scoold
       tags:
         - backups
       security:
@@ -1406,13 +1406,16 @@ paths:
         description: A ZIP backup archive
         required: true
         content:
-          application/zip:
-              schema:
-                type: string
-                format: binary
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
       responses:
         '200':
-          description: restore was successful
+          description: Restore operation hast started but is not necessarily complete.
   /api/config:
     get:
       summary: Returns the current Scoold configuration as a list of properties in the HOCON or JSON formats.
