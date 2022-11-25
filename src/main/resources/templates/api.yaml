@@ -1411,6 +1411,7 @@ paths:
               type: object
               properties:
                 file:
+                  description: The binary zip file to restore data from.
                   type: string
                   format: binary
       responses:
