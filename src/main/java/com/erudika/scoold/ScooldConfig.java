@@ -3255,6 +3255,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("user_autocomplete_details_enabled", false);
 	}
 
+	@Documented(position = 3070,
+			identifier = "user_autocomplete_max_results",
+			value = "10",
+			type = Integer.class,
+			category = "Miscellaneous",
+			tags = {"pro"},
+			description = "Controls the maximum number of search results in users' autocomplete.")
+	public int userAutocompleteMaxResults() {
+		return getConfigInt("user_autocomplete_max_results", 10);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {
