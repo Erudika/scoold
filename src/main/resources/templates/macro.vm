@@ -861,7 +861,7 @@
 					<i class="fa fa-save left"></i> $!lang.get('save')
 				</button> &nbsp;
 				<button class="btn waves-effect waves-light canceledit">$!lang.get('close')</button>
-				#if(!$showpost.isReply())
+				#if(!$showpost.isReply() && $isMod)
 				<span class="right">
 					<a href="#" class="canceledit open-merge-window"><i class="fa fa-compress"></i> $!lang.get('posts.mergeinto')</a>
 				</span>
