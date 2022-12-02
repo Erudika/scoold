@@ -187,6 +187,8 @@ public final class ScooldUtils {
 	private Sysprop customTheme;
 	@Inject private Emailer emailer;
 
+	public static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
+
 	@Inject
 	public ScooldUtils(ParaClient pc, LanguageUtils langutils, AvatarRepositoryProxy avatarRepository,
 			GravatarAvatarGenerator gravatarAvatarGenerator) {
@@ -1362,6 +1364,45 @@ public final class ScooldUtils {
 		s.setType("scooldspace");
 		s.setName(space);
 		return s;
+	}
+
+	public boolean assignSpacesToUser(Profile authUser, String... spaces) {
+		if (spaces != null && spaces.length > 0) {
+			//DO: CHECK IF SPACES HAVE CHANGED FIRST! NO CHANGE - NO OP
+			Map<String, Sysprop> spaceObjectsMap = new HashMap<>(spaces.length);
+			for (String space : spaces) {
+				Sysprop s = buildSpaceObject(space);
+				spaceObjectsMap.put(s.getId(), s);
+			}
+			List<Sysprop> spacez = pc.readAll(new ArrayList<>(spaceObjectsMap.keySet()));
+			Set<String> assignedSpaces = new HashSet<>(spacez.size());
+			for (Sysprop space : spacez) {
+				assignedSpaces.add(space.getId() + Para.getConfig().separator() + space.getName());
+				spaceObjectsMap.remove(space.getId());
+			}
+			if (CONF.resetSpacesOnNewAssignment(authUser.getUser().isOAuth2User()
+					|| authUser.getUser().isLDAPUser() || authUser.getUser().isSAMLUser())) {
+				authUser.setSpaces(assignedSpaces);
+			} else {
+				authUser.getSpaces().addAll(assignedSpaces);
+			}
+			if (!spaceObjectsMap.isEmpty()) {
+				// create the remaining spaces which were missing
+				ArrayList<Sysprop> missingSpaces = new ArrayList<>(spaceObjectsMap.size());
+				for (Sysprop missingSpace : spaceObjectsMap.values()) {
+					authUser.getSpaces().add(missingSpace.getId() + Para.getConfig().separator() + missingSpace.getName());
+					missingSpaces.add(missingSpace);
+					getAllSpaces().add(missingSpace); // if we don't add it admins won't see the new space in the list
+				}
+				pc.createAll(missingSpaces);
+				return true;
+			}
+			// Please, consider buying Scoold Pro which doesn't have this limitation.
+			if (authUser.getSpaces().size() > MAX_SPACES) {
+				authUser.setSpaces(authUser.getSpaces().stream().limit(MAX_SPACES).collect(Collectors.toSet()));
+			}
+		}
+		return false;
 	}
 
 	public String sanitizeQueryString(String query, HttpServletRequest req) {

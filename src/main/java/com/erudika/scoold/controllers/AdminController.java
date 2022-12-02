@@ -39,6 +39,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
+import static com.erudika.scoold.utils.ScooldUtils.MAX_SPACES;
 import com.erudika.scoold.utils.Version;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -101,7 +102,6 @@ public class AdminController {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
-	private static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
 	private final String soDateFormat1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 	private final String soDateFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private final ScooldUtils utils;
