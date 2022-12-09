@@ -433,10 +433,10 @@ img.profile-pic:before {
 }
 .swagger-ui select {
 	opacity: 1;
-	height: 2rem;
+	height: 2.4rem;
 	width: auto;
 	font-size: 16px;
-	margin: 10px 0;
+	margin: 0px;
 }
 
 #passw.pass-meter, #newpassword.pass-meter { border-bottom: 3px solid #F44336; box-shadow: none;}

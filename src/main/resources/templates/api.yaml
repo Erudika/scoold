@@ -1,11 +1,13 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.2.0"
+  version: "1.3.0"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
   url: "https://github.com/Erudika/scoold"
+servers:
+  - url: {{serverUrl}}{{contextPath}}
 tags:
 - name: "posts"
 - name: "users"

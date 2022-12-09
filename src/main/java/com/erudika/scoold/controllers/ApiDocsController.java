@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,8 @@ public class ApiDocsController {
 		}
 		Yaml yaml = new Yaml();
 		String yml = utils.loadResource("templates/api.yaml");
+		yml = StringUtils.replaceOnce(yml, "{{serverUrl}}", ScooldUtils.getConfig().serverUrl());
+		yml = StringUtils.replaceOnce(yml, "{{contextPath}}", ScooldUtils.getConfig().serverContextPath());
 		String result = ParaObjectUtils.getJsonWriter().writeValueAsString(yaml.load(yml));
 		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).eTag(Utils.md5(result)).body(result);
 	}
