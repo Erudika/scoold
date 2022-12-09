@@ -194,7 +194,7 @@ public class QuestionController {
 			} catch (IOException ex) { }
 			return "blank";
 		} else {
-			return "redirect:" + showPost.getPostLink(false, false);
+			return "redirect:" + showPost.getPostLinkForRedirect();
 		}
 	}
 
@@ -271,7 +271,7 @@ public class QuestionController {
 				pc.create(showPost);
 			}
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + ((showPost == null) ? QUESTIONSLINK : showPost.getPostLinkForRedirect());
 	}
 
 	@PostMapping("/{id}/approve/{answerid}")
@@ -313,7 +313,7 @@ public class QuestionController {
 				}
 			}
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
 
 	@PostMapping("/{id}/close")
@@ -332,7 +332,7 @@ public class QuestionController {
 			}
 			showPost.update();
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
 
 	@PostMapping("/{id}/restore/{revisionid}")
@@ -346,7 +346,7 @@ public class QuestionController {
 			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
 			showPost.restoreRevisionAndUpdate(revisionid);
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
 
 	@PostMapping("/{id}/delete")
@@ -374,7 +374,7 @@ public class QuestionController {
 				model.addAttribute("deleted", true);
 			}
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
 
 	@PostMapping("/{id}/deprecate")
@@ -388,7 +388,7 @@ public class QuestionController {
 			showPost.setDeprecated(!showPost.getDeprecated());
 			showPost.update();
 		}
-		return "redirect:" + showPost.getPostLink(false, false);
+		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
 
 	@PostMapping("/{id}/merge-into")
@@ -426,7 +426,7 @@ public class QuestionController {
 			targetPost.update();
 			showPost.delete();
 		}
-		return "redirect:" + targetPost.getPostLink(false, false);
+		return "redirect:" + targetPost.getPostLinkForRedirect();
 	}
 
 	@GetMapping("/find/{q}")

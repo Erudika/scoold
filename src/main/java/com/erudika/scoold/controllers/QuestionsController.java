@@ -245,7 +245,7 @@ public class QuestionsController {
 				} catch (IOException ex) { }
 				return "blank";
 			} else {
-				return "redirect:" + q.getPostLink(false, false);
+				return "redirect:" + q.getPostLinkForRedirect();
 			}
 		}
 		if (utils.isAjaxRequest(req)) {
