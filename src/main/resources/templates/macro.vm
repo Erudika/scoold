@@ -714,7 +714,7 @@
 				<div class="left mtm mrl approve-answer-btn">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
 					#if ($approvedAnswer)	#set($onclass = "green-text text-lighten-1") #else #set($onclass = "") #end
-					#if ($authenticated && $showpost.isReply() && $scooldUtils.canApproveReply($showpost, $authUser))
+					#if ($authenticated && $showpost.isReply() && $scooldUtils.canApproveReply($parentpost, $authUser))
 						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
 							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
 					#elseif ($approvedAnswer)
