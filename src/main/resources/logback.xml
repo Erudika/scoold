@@ -23,6 +23,9 @@
 		<encoder>
 			<pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
 		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${scoold.file_logger_level:-INFO}</level>
+		</filter>
 	</appender>
 
 	<appender name="METRICSAPPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
