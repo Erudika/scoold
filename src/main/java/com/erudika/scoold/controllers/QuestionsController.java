@@ -279,9 +279,9 @@ public class QuestionsController {
 		utils.storeSpaceIdInCookie(space, req, res);
 		String backTo = HttpUtils.getBackToUrl(req, true);
 		if (!utils.isAuthenticated(req) && !(utils.isDefaultSpace(space) || utils.isAllSpaces(space))) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + backTo;
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
 		}
-		if (StringUtils.isBlank(backTo)) {
+		if (StringUtils.isBlank(backTo) || backTo.equalsIgnoreCase(req.getServletPath())) {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
 			return "redirect:" + backTo;
