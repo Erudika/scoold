@@ -43,7 +43,7 @@ paths:
   /api/posts:
     post:
       summary: Create a new post
-      description: To publish the post in the given space, set the `space` field. Otherwise the post will be created in the default space.<br>To change the author, set the `creatorid` field to an existing user.
+      description: To publish the post in the given space, set the `space` field. Otherwise the post will be created in the default space.<br>To change the author, set the `creatorid` field to an existing user.<br>To create an answer, set field `type` to `reply` and specify `parentid` to be the ID of the question post.
       tags:
         - posts
       security:
@@ -1566,6 +1566,9 @@ components:
         creatorid:
           type: string
           description: The `id` of the author of this post (an existing user)
+        parentid:
+          type: string
+          description: The `id` of the parent question when the post is an answer
         location:
           type: string
           description: The location name associated with this post
