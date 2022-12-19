@@ -170,6 +170,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("logoUrl", CONF.logoUrl());
 		modelAndView.addObject("logoWidth", CONF.logoWidth());
 		modelAndView.addObject("stylesheetUrl", CONF.stylesheetUrl());
+		modelAndView.addObject("darkStylesheetUrl", CONF.darkStylesheetUrl());
 		modelAndView.addObject("faviconUrl", CONF.faviconUrl());
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));

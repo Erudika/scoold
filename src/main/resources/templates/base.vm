@@ -44,7 +44,7 @@
 		#end
 		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet" media="screen">
 		#if($darkModeEnabled)
-		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet">
+		<link href="$!{darkStylesheetUrl}?r=$!rev" rel="stylesheet">
 		#end
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet">

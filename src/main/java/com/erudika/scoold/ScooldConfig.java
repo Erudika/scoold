@@ -2496,6 +2496,16 @@ public class ScooldConfig extends Config {
 		return getConfigParam("stylesheet_url", stylesLink() + "/style.css");
 	}
 
+	@Documented(position = 2381,
+			identifier = "dark_stylesheet_url",
+			value = "/styles/dark.css",
+			category = "Frontend Assets",
+			description = "A stylesheet URL of a CSS file which will be used when dark mode is enabled. *This will overwrite"
+					+ " all existing dark CSS styles!*")
+	public String darkStylesheetUrl() {
+		return getConfigParam("dark_stylesheet_url", stylesLink() + "/dark.css");
+	}
+
 	@Documented(position = 2390,
 			identifier = "external_styles",
 			category = "Frontend Assets",
