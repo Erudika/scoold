@@ -43,11 +43,12 @@
 		<link rel="stylesheet" href="$!styleslink/api.css?r=$!rev">
 		#end
 		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet" media="screen">
+		#if($darkModeEnabled)
+		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet">
+		#end
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet">
 		#end
-		#set($_confirmMsg = $!lang.get('areyousure'))
-		<script nonce="$cspNonce">CONFIRM_MSG = "$!_confirmMsg";</script>
 		#if ($includeGMapsScripts && $includeGMapsScripts == true)
 		<script nonce="$cspNonce" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
 		#end
@@ -60,9 +61,6 @@
 		<style>
 			$!{_inlineCSS}
 		</style>
-		#end
-		#if($darkModeEnabled)
-		<link href="$!styleslink/dark.css?r=$!rev" rel="stylesheet">
 		#end
 	</head>
 	<body>
@@ -423,9 +421,11 @@
 		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
 		#set($_welcomeMsgOnLogin = $scooldUtils.getWelcomeMessageOnLogin($authUser))
 		#set($_welcomeMessageOnLoginJS = "WELCOME_MESSAGE_ONLOGIN = '$_welcomeMsgOnLogin'")
+		#set($_confirmMsg = $!lang.get('areyousure'))
+		#set($_confirmMsgJS = "CONFIRM_MSG = '$!_confirmMsg'")
 		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$minPassLen;
 			$avatarUploadsEnabledJS;$imgurJS;$cloudinaryJS;
-			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;
+			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;$_confirmMsgJS;
 			if ('serviceWorker' in navigator) {navigator.serviceWorker.register(CONTEXT_PATH + '/service-worker.js');}
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
