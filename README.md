@@ -508,6 +508,7 @@ scoold.password_auth_enabled = true
 |`scoold.small_logo_url`<br>The URL of a smaller logo (only use PNG/JPG!). Used in transactional emails and the meta `og:image`. | `/images/logowhite.png` | `String`|
 |`scoold.cdn_url`<br>A CDN URL where all static assets might be stored. | ` ` | `String`|
 |`scoold.stylesheet_url`<br>A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite all existing CSS styles!* | `/styles/style.css` | `String`|
+|`scoold.dark_stylesheet_url`<br>A stylesheet URL of a CSS file which will be used when dark mode is enabled. *This will overwrite all existing dark CSS styles!* | `/styles/dark.css` | `String`|
 |`scoold.external_styles`<br>A comma-separated list of external CSS files. These will be loaded *after* the main stylesheet. | ` ` | `String`|
 |`scoold.external_scripts._id_`<br>A map of external JS scripts. These will be loaded after the main JS script. For example: `scoold.external_scripts.script1 = "alert('Hi')"` | ` ` | `Map`|
 |`scoold.inline_css`<br>Some short, custom CSS snippet to embed inside the `<head>` element. | ` ` | `String`|
@@ -979,6 +980,12 @@ scoold.stylesheet_url = "https://public.cdn.com/custom.css"
 
 The order in which CSS rules are loaded is this (each overrides the previous ones):
 1. main stylesheet, 2. external stylesheets, 3. inline CSS or custom theme
+
+You can also override the default dark stylesheet which is only loaded if dark mode is enabled:
+
+```ini
+scoold.dark_stylesheet_url = "https://public.cdn.com/dark.css"
+```
 
 ## Serving static files from local disk
 
