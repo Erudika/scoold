@@ -46,6 +46,10 @@ td, th {
 	float: right;
 }
 
+.user-card, .user-card .lastseen {
+	padding-right: 12px;
+}
+
 .aboutme {
 	padding-right: 70px;
 	padding-left: 0;
@@ -116,7 +120,6 @@ td, th {
 	left:  auto;
 	right: 1rem;
 }
-
 
 @media (max-width: 990px) {
 	.chips-container {
