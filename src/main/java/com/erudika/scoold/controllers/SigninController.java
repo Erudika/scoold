@@ -119,8 +119,8 @@ public class SigninController {
 			@RequestParam(name = "id", required = false) String id,
 			@RequestParam(name = "token", required = false) String token,
 			HttpServletRequest req, Model model) {
-		if (utils.isAuthenticated(req)) {
-			return "redirect:" + HOMEPAGE;
+		if (utils.isAuthenticated(req) || !CONF.passwordAuthEnabled()) {
+			return "redirect:" + SIGNINLINK;
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("signup.title"));
@@ -148,6 +148,9 @@ public class SigninController {
 	@PostMapping("/signin/register")
 	public String signup(@RequestParam String name, @RequestParam String email, @RequestParam String passw,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
+		if (!CONF.passwordAuthEnabled()) {
+			return "redirect:" + SIGNINLINK;
+		}
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (!utils.isAuthenticated(req) && approvedDomain &&
 				HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"))) {
@@ -206,8 +209,8 @@ public class SigninController {
 			@RequestParam(name = "email", required = false) String email,
 			@RequestParam(name = "token", required = false) String token,
 			HttpServletRequest req, Model model) {
-		if (utils.isAuthenticated(req)) {
-			return "redirect:" + HOMEPAGE;
+		if (utils.isAuthenticated(req) || !CONF.passwordAuthEnabled()) {
+			return "redirect:" + SIGNINLINK;
 		}
 		model.addAttribute("path", "signin.vm");
 		model.addAttribute("title", utils.getLang(req).get("iforgot.title"));
@@ -228,6 +231,9 @@ public class SigninController {
 			@RequestParam(required = false) String newpassword,
 			@RequestParam(required = false) String token,
 			HttpServletRequest req, Model model) {
+		if (!CONF.passwordAuthEnabled()) {
+			return "redirect:" + SIGNINLINK;
+		}
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		boolean validCaptcha = HttpUtils.isValidCaptcha(req.getParameter("g-recaptcha-response"));
 		if (!utils.isAuthenticated(req) && approvedDomain && validCaptcha) {
