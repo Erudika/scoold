@@ -71,7 +71,6 @@ public class VoteController {
 	@ResponseBody
 	@PostMapping("/voteup/{type}/{id}")
 	public Boolean voteup(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
-		//addModel("voteresult", result);
 		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
 		return processVoteRequest(true, votable, req);
 	}
@@ -79,7 +78,9 @@ public class VoteController {
 	@ResponseBody
 	@PostMapping("/votedown/{type}/{id}")
 	public Boolean votedown(@PathVariable String type, @PathVariable String id, HttpServletRequest req) {
-		//addModel("voteresult", result);
+		if (!CONF.downvotesEnabled()) {
+			return false;
+		}
 		ParaObject votable = StringUtils.isBlank(type) ? pc.read(id) : pc.read(type, id);
 		return processVoteRequest(false, votable, req);
 	}

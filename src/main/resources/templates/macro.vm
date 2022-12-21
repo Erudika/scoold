@@ -964,25 +964,26 @@
 					#set($downvoteCastClass = "cast")
 				#end
 			#end
+			#if($scooldUtils.config.downvotesEnabled())#set($hideDownvoteClass = "")#else#set($hideDownvoteClass = "hide")#end
 			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
 					<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
 				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
-				<a href="${signinlink}?returnto=$!{returnto}">
+				<a href="${signinlink}?returnto=$!{returnto}" class="${hideDownvoteClass}">
 					<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
 				<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
 				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
-				<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
+				<i class="fa fa-chevron-down downvote grey-text mrs ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')"></i>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
 					<i class="fa fa-chevron-up upvote mrs ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')"></i>
 				</a>
 				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
-				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink" title="$!lang.get('votedown.tooltip')">
+				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">
 					<i class="fa fa-chevron-down downvote mrs ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')"></i>
 				</a>
 			#end

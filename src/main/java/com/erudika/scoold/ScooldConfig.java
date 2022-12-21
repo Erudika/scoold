@@ -3168,6 +3168,16 @@ public class ScooldConfig extends Config {
 		return getConfigInt("vote_locked_after_sec", Para.getConfig().voteLockedAfterSec());
 	}
 
+	@Documented(position = 2961,
+			identifier = "downvotes_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable negative votes.")
+	public boolean downvotesEnabled() {
+		return getConfigBoolean("downvotes_enabled", true);
+	}
+
 	@Documented(position = 2970,
 			identifier = "import_batch_size",
 			value = "100",
