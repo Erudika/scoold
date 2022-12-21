@@ -595,6 +595,7 @@ scoold.password_auth_enabled = true
 |`scoold.signout_url`<br>The URL which users will be redirected to after they click 'Sign out'. Can be a page hosted externally. | `/signin?code=5&success=true` | `String`|
 |`scoold.vote_expires_after_sec`<br>Vote expiration timeout, in seconds. Users can vote again on the same content after this period has elapsed. Default is 30 days. | `2592000` | `Integer`|
 |`scoold.vote_locked_after_sec`<br>Vote locking period, in seconds. Vote cannot be changed after this period has elapsed. Default is 30 sec. | `30` | `Integer`|
+|`scoold.downvotes_enabled`<br>Enable/disable negative votes. | `true` | `Boolean`|
 |`scoold.import_batch_size`<br>Maximum number objects to read and send to Para when importing data from a backup. | `100` | `Integer`|
 |`scoold.connection_retries_max`<br>Maximum number of connection retries to Para. | `10` | `Integer`|
 |`scoold.connection_retry_interval_sec`<br>Para connection retry interval, in seconds. | `10` | `Integer`|
