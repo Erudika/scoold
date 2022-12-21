@@ -365,9 +365,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="footer-copyright">
+				#if($showBranding)
+				<div>
 					<div class="container">
-
 						<div class="row mbn">
 							<div class="col l6 s12 sTextCenter">
 								#set($_liclink = $utils.formatMessage("$!lang.get('license')",
@@ -375,16 +375,14 @@
 								<i class="fa fa-creative-commons"></i> $_liclink
 							</div>
 							<div class="col l6 s12 sTextCenter right-align">
-								#if($showBranding)
-									<span>This is a <a href="https://scoold.com"><b>Scoold</b></a> website powered by <a href="https://paraio.com">
-										<img src="$imageslink/paradark.svg" width="60" alt="Para logo" class="para-logo-footer"></a>
-									</span>
-								#end
+								<span>This website is powered by <a href="https://scoold.com"><b>Scoold</b></a> and <a href="https://paraio.com">
+									<img src="$imageslink/paradark.svg" width="60" alt="Para logo" class="para-logo-footer"></a>
+								</span>
 							</div>
 						</div>
-
 					</div>
 				</div>
+				#end
 			</footer>
 		</div>
 
