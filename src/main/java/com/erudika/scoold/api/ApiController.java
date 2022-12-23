@@ -246,7 +246,7 @@ public class ApiController {
 	public Post updatePost(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String editorid = (String) entity.get("lasteditby");
 		if (!StringUtils.isBlank(editorid)) {
@@ -287,7 +287,7 @@ public class ApiController {
 		Model model = new ExtendedModelMap();
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String editorid = (String) entity.get("lasteditby");
 		if (!StringUtils.isBlank(editorid)) {
@@ -406,7 +406,7 @@ public class ApiController {
 	public Map<String, Object> createUser(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		Map<String, Object> userEntity = new HashMap<>();
 		userEntity.put(Config._TYPE, Utils.type(User.class));
@@ -490,7 +490,7 @@ public class ApiController {
 	public Profile updateUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String name = (String) entity.get("name");
 		String location = (String) entity.get("location");
@@ -566,7 +566,7 @@ public class ApiController {
 	public void bulkEditSpaces(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		Set<String> selectedUsers = ((List<String>) entity.getOrDefault("users",
 				Collections.emptyList())).stream().map(id -> Profile.id(id)).collect(Collectors.toSet());
@@ -580,7 +580,7 @@ public class ApiController {
 	public Tag createTag(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		if (pc.read(new Tag((String) entity.get("tag")).getId()) != null) {
 			badReq("Tag already exists.");
@@ -617,7 +617,7 @@ public class ApiController {
 	public Tag updateTag(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		Model model = new ExtendedModelMap();
 		tagsController.rename(id, (String) entity.get("tag"), req, res, model);
@@ -649,7 +649,7 @@ public class ApiController {
 	public Comment createComment(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String comment = (String) entity.get("comment");
 		String parentid = (String) entity.get(Config._PARENTID);
@@ -695,7 +695,7 @@ public class ApiController {
 	public Report createReport(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String creatorid = (String) entity.get(Config._CREATORID);
 		if (!StringUtils.isBlank(creatorid)) {
@@ -746,7 +746,7 @@ public class ApiController {
 	public Sysprop createSpace(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		String name = (String) entity.get(Config._NAME);
 		if (StringUtils.isBlank(name)) {
@@ -785,7 +785,7 @@ public class ApiController {
 		}
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 			return null;
 		}
 		Webhook w = ParaObjectUtils.setAnnotatedFields(new Webhook(), entity, null);
@@ -956,7 +956,7 @@ public class ApiController {
 	public String configSet(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		for (Map.Entry<String, Object> entry : entity.entrySet()) {
 			System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
@@ -980,7 +980,7 @@ public class ApiController {
 	public void configSet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		}
 		Object value = entity.getOrDefault("value", null);
 		if (value != null && !StringUtils.isBlank(value.toString())) {
@@ -1075,7 +1075,7 @@ public class ApiController {
 			req.setAttribute(REST_ENTITY_ATTRIBUTE, entity);
 			return entity;
 		} catch (IOException ex) {
-			badReq("Missing request body.");
+			badReq("Missing or invalid request body.");
 		} catch (Exception ex) {
 			logger.error(null, ex);
 		}
