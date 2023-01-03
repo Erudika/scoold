@@ -25,15 +25,17 @@
 
 	<h2 class="hide-on-med-and-down">$!lang.get("people.title") #showcount($itemcount.count)</h2>
 
-	#if($isAdmin && $request.getParameter("bulkedit"))
-	<form method="get">
-		<div class="input-field">
-			<i class="fa fa-search fa-2x prefix grey-text"></i>
-			<input type="search" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
-			<input type="hidden" name="bulkedit" value="true">
-		</div>
-	</form>
+	#if($isAdmin)
+		<form method="get">
+			<div class="input-field">
+				<i class="fa fa-search fa-2x prefix grey-text"></i>
+				<input type="search" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
+				<input type="hidden" name="bulkedit" value="true">
+			</div>
+		</form>
+	#end
 
+	#if($isAdmin && $request.getParameter("bulkedit"))
 	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
 		<div class="row">
 			<div class="col s12 m6">
