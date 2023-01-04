@@ -270,7 +270,7 @@ public class QuestionsController {
 					authUser.update();
 				}
 			}
-			if (spaceObj != null) {
+			if (spaceObj != null && !utils.isDefaultSpace(spaceObj.getId())) {
 				space = spaceObj.getId().concat(Para.getConfig().separator()).concat(spaceObj.getName());
 			} else {
 				space = Post.DEFAULT_SPACE;
