@@ -192,7 +192,7 @@ public class SigninController {
 					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6))) {
 					User u = pc.read(Utils.type(User.class), ident.getCreatorid());
 					if (u != null && !u.getActive()) {
-						utils.sendVerificationEmail(ident, req);
+						utils.sendVerificationEmail(ident, "", req);
 					}
 				} else {
 					logger.warn("Failed to send email confirmation to '{}' - this can only be done once every 6h.", email);

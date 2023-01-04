@@ -493,6 +493,7 @@ public class ApiController {
 			badReq("Missing or invalid request body.");
 		}
 		String name = (String) entity.get("name");
+		String email = (String) entity.get("email");
 		String location = (String) entity.get("location");
 		String latlng = (String) entity.get("latlng");
 		String website = (String) entity.get("website");
@@ -500,7 +501,7 @@ public class ApiController {
 		String picture = (String) entity.get("picture");
 
 		Model model = new ExtendedModelMap();
-		profileController.edit(id, name, location, latlng, website, aboutme, picture, req, model);
+		profileController.edit(id, name, location, latlng, website, aboutme, picture, email, req, model);
 
 		Profile profile = (Profile) model.getAttribute("user");
 		if (profile == null) {

@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import static com.erudika.para.core.User.Groups.MODS;
 import static com.erudika.para.core.User.Groups.USERS;
@@ -39,11 +40,14 @@ import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -63,6 +67,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/profile")
 public class ProfileController {
 
+	private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -159,12 +164,13 @@ public class ProfileController {
 	public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String website, @RequestParam(required = false) String aboutme,
-			@RequestParam(required = false) String picture, HttpServletRequest req, Model model) {
+			@RequestParam(required = false) String picture, @RequestParam(required = false) String email,
+			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		Profile showUser = getProfileForEditing(id, authUser);
 		if (showUser != null) {
 			boolean updateProfile = false;
-				if (!StringUtils.equals(showUser.getLocation(), location)) {
+			if (!StringUtils.equals(showUser.getLocation(), location)) {
 				showUser.setLatlng(latlng);
 				showUser.setLocation(location);
 				updateProfile = true;
@@ -177,6 +183,13 @@ public class ProfileController {
 			if (!StringUtils.equals(showUser.getAboutme(), aboutme)) {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
+			}
+			if (Utils.isValidEmail(email) && canChangeEmail(showUser.getUser(), email)) {
+				if (utils.isAdmin(authUser) || CONF.allowUnverifiedEmails()) {
+					changeEmail(showUser.getUser(), showUser, email);
+				} else {
+					updateProfile = updateProfile || sendConfirmationEmail(showUser.getUser(), showUser, email, req);
+				}
 			}
 
 			updateProfile = updateUserPictureAndName(showUser, picture, name) || updateProfile;
@@ -293,6 +306,96 @@ public class ProfileController {
 			showUser.update();
 		}
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping(path = "/confirm-email")
+	public String confirmEmail(@RequestParam(name = "id", required = false) String id,
+			@RequestParam(name = "token", required = false) String token,
+			HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser == null || !CONF.passwordAuthEnabled()) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + PROFILELINK;
+		}
+		if (id != null && token != null) {
+			User u = (User) pc.read(id);
+			Sysprop s = pc.read(u.getIdentifier());
+			if (s != null && token.equals(s.getProperty(Config._EMAIL_TOKEN))) {
+				s.addProperty(Config._EMAIL_TOKEN, "");
+				pc.update(s);
+				changeEmail(u, authUser, authUser.getPendingEmail());
+				return "redirect:" + PROFILELINK + "?code=signin.verify.done&success=true";
+			} else {
+				return "redirect:" + SIGNINLINK;
+			}
+		}
+		return "redirect:" + PROFILELINK;
+	}
+
+	@PostMapping(path = "/retry-change-email")
+	public String retryChangeEmail(HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser == null) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + PROFILELINK;
+		}
+		if (!StringUtils.isBlank(authUser.getPendingEmail())) {
+			boolean done = sendConfirmationEmail(authUser.getUser(), authUser, authUser.getPendingEmail(), req);
+			if (!done) {
+				return "redirect:" + PROFILELINK + "?code=7&error=true";
+			}
+		}
+		return "redirect:" + PROFILELINK + "?code=signin.verify.text&success=true";
+	}
+
+	@PostMapping(path = "/cancel-change-email")
+	public String cancelChangeEmail(HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser == null) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + PROFILELINK;
+		}
+		if (!StringUtils.isBlank(authUser.getPendingEmail())) {
+			authUser.setPendingEmail("");
+			authUser.update();
+		}
+		return "redirect:" + PROFILELINK;
+	}
+
+	private void changeEmail(User u, Profile showUser, String email) {
+		boolean approvedDomain = utils.isEmailDomainApproved(email);
+		if (approvedDomain && canChangeEmail(u, email)) {
+			Sysprop s = pc.read(u.getEmail());
+			if (s != null && pc.read(email) == null) {
+				pc.delete(s);
+				s.setId(email);
+				pc.create(s);
+				u.setEmail(email);
+				showUser.setPendingEmail("");
+				pc.updateAll(List.of(u, showUser));
+			} else {
+				logger.info("Failed to change email for user {} - email {} has already been taken.", u.getId(), email);
+			}
+		}
+	}
+
+	private boolean sendConfirmationEmail(User user, Profile showUser, String email, HttpServletRequest req) {
+		if (pc.read(email) == null) {
+			showUser.setPendingEmail(email);
+			Sysprop ident = pc.read(user.getEmail());
+			if (ident != null) {
+				if (!ident.hasProperty("confirmationTimestamp") || Utils.timestamp() >
+					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6))) {
+					utils.sendVerificationEmail(ident, PROFILELINK + "/confirm-email", req);
+					return true;
+				} else {
+					logger.warn("Failed to send email confirmation to '{}' - this can only be done once every 6h.", email);
+				}
+			}
+		}
+		logger.info("Failed to send confirmation email to user {} - email {} has already been taken.", user.getId(), email);
+		return false;
+	}
+
+	private boolean canChangeEmail(User u, String email) {
+		return "generic".equals(u.getIdentityProvider()) && !StringUtils.equals(u.getEmail(), email);
 	}
 
 	private Profile getProfileForEditing(String id, Profile authUser) {

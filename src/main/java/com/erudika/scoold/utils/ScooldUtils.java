@@ -401,18 +401,19 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendVerificationEmail(Sysprop identifier, HttpServletRequest req) {
+	public void sendVerificationEmail(Sysprop identifier, String redirectUrl, HttpServletRequest req) {
 		if (identifier != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
-			String subject = Utils.formatMessage(lang.get("signin.welcome"), CONF.appName());
+			String subject = CONF.appName() + " - " + lang.get("msgcode.6");
 			String body = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
+			redirectUrl = StringUtils.isBlank(redirectUrl) ? SIGNINLINK + "/register" : redirectUrl;
 
 			String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 			identifier.addProperty(Config._EMAIL_TOKEN, token);
 			identifier.addProperty("confirmationTimestamp", Utils.timestamp());
 			pc.update(identifier);
-			token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" +
+			token = CONF.serverUrl() + CONF.serverContextPath() + redirectUrl + "?id=" +
 					identifier.getCreatorid() + "&token=" + token;
 			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
 

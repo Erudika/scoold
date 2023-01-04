@@ -1079,6 +1079,9 @@ $utils.formatDate($date, $format, $currentLocale)
 	#elseif ($request.getParameter("code"))
 		#set($infoStripMsg = $!lang.get("msgcode.${request.getParameter('code')}"))
 		#set($hideInfoStrip = "click2hide")
+		#if(!$infoStripMsg)
+			#set($infoStripMsg = $!lang.get("${request.getParameter('code')}"))
+		#end
 	#else
 		#set($hideInfoStrip = "")
 	#end

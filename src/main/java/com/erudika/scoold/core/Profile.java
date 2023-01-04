@@ -77,6 +77,7 @@ public class Profile extends Sysprop {
 	@Stored private Integer monthlyVotes;
 	@Stored private Integer weeklyVotes;
 	@Stored private List<Map<String, String>> customBadges;
+	@Stored private String pendingEmail;
 
 	private transient String newbadges;
 	private transient Integer newreports;
@@ -315,6 +316,14 @@ public class Profile extends Sysprop {
 
 	public void setCustomBadges(List<Map<String, String>> customBadges) {
 		this.customBadges = customBadges;
+	}
+
+	public String getPendingEmail() {
+		return pendingEmail;
+	}
+
+	public void setPendingEmail(String pendingEmail) {
+		this.pendingEmail = pendingEmail;
 	}
 
 	public List<String> getFavtags() {

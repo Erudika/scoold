@@ -77,7 +77,7 @@
 
 			#if($emailsAllowed)
 			<h3 class="ptl">$!lang.get('settings.notifications')</h3>
-			<p class="mvl grey-text text-darken-1"><i class="fa fa-envelope"></i> <code>$!authUser.user.email</code></p>
+
 			#if($newpostEmailsAllowed)
 			<div class="mbm">
 				<div class="switch">
