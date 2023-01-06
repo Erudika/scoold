@@ -21,11 +21,25 @@
 				<a href="$peoplelink?bulkedit=true" class="chip orange-text text-darken-2"><b>$!lang.get('bulkeditspaces')</b></a>
 			#end
 		#end
+
+		#if($itemcount.name && $itemcount.name == "default_pager")
+			#set($filterActiveClass = "")
+			#set($filterActiveTooltip = $!lang.get('filter'))
+		#else
+			#set($filterActiveClass = "filter-active")
+			#set($filterActiveTooltip = $!lang.get('posts.filtered'))
+		#end
+		#if($isMod)
+			<a href="#" id="user-filter-btn" class="next-div-toggle chip tooltipped ${filterActiveClass}"
+				 data-tooltip="${filterActiveTooltip}" title="${filterActiveTooltip}">
+				<i class="fa fa-filter"></i><span class="hide">Filter</span>
+			</a>
+		#end
 	</div>
 
 	<h2 class="hide-on-med-and-down">$!lang.get("people.title") #showcount($itemcount.count)</h2>
 
-	#if($isAdmin)
+	#if($isMod)
 		<form method="get">
 			<div class="input-field">
 				<i class="fa fa-search fa-2x prefix grey-text"></i>
@@ -33,11 +47,105 @@
 				<input type="hidden" name="bulkedit" value="true">
 			</div>
 		</form>
+
+		<div id="user-filter-drawer" class="lightborder pam mbm hide">
+			<form method="post" action="$peoplelink/apply-filter">
+				<input type="hidden" name="bulkedit" value="$!request.getParameter('bulkedit')">
+				<input type="hidden" name="tab" value="$!request.getParameter('sortby')">
+				<div class="row mbn">
+					<div class="col l6 m12 s12">
+						<strong>$!lang.get('spaces.title')</strong>
+						<div class="input-field">
+							<select multiple name="havingSelectedSpaces">
+								<option #if($havingSpaces && $havingSpaces.contains($scooldUtils.getDefaultSpace()))selected="selected"#end
+												value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
+								#foreach($space in $authUser.allSpaces)
+								<option #if($havingSpaces && $havingSpaces.contains($space))selected="selected"#end
+												value="$space">$!scooldUtils.getSpaceName($space)</option>
+								#end
+							</select>
+							<label>$!lang.get('users.havingspaces')</label>
+						</div>
+						<div class="input-field">
+							<select multiple name="notHavingSelectedSpaces">
+								<option #if($notHavingSpaces && $notHavingSpaces.contains($scooldUtils.getDefaultSpace()))selected="selected"#end
+												value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
+								#foreach($space in $authUser.allSpaces)
+								<option #if($notHavingSpaces && $notHavingSpaces.contains($space))selected="selected"#end
+												value="$space">$!scooldUtils.getSpaceName($space)</option>
+								#end
+							</select>
+							<label>$!lang.get('users.nothavingspaces')</label>
+						</div>
+					</div>
+					<div class="col l2 m4 s6">
+						<strong>$!lang.get('sorting')</strong>
+						<div class="input-field">
+							#macro(sortselected $prop)
+							#if($itemcount.sortby == $prop)selected#end
+							#end
+							<select name="sortby">
+								<option value="timestamp" #sortselected("timestamp")>$!lang.get('posts.creationdate')</option>
+								<option value="name" #sortselected("name")>$!lang.get('name')</option>
+								<option value="votes" #sortselected("votes")>$!lang.get('reputation')</option>
+								<option value="properties.upvotes" #sortselected("properties.upvotes")>+ $!lang.get('votes')</option>
+								<option value="properties.downvotes" #sortselected("properties.downvotes")>- $!lang.get('votes')</option>
+								<option value="properties.lastseen" #sortselected("properties.lastseen")>$!lang.get('profile.about.lastseen')</option>
+							</select>
+						</div>
+						<div>
+							<label>
+								#if($itemcount.desc)
+								<input name="desc" type="radio" value="true" checked>
+								#else
+								<input name="desc" type="radio" value="true">
+								#end
+								<span>$!lang.get('descending')</span>
+							</label>
+						</div>
+						<div>
+							<label>
+								#if(!$itemcount.desc)
+								<input name="desc" type="radio" value="false" checked>
+								#else
+								<input name="desc" type="radio" value="false">
+								#end
+								<span>$!lang.get('ascending')</span>
+							</label>
+						</div>
+					</div>
+					<div class="col l2 m4 s6">
+						<strong>$!lang.get('results')</strong>
+						<div class="input-field">
+							<input type="number" name="limit" min="10" max="250" value="$!itemcount.limit">
+							<span>$!lang.get('perpage')</span>
+						</div>
+						<label data-compactViewEnabled="$compactUsersViewEnabled">
+							#if($compactUsersViewEnabled)
+							<input name="compactViewEnabled" type="checkbox" value="true" checked="checked" class="filled-in compact-view-checkbox">
+							#else
+							<input name="compactViewEnabled" type="checkbox" value="true" class="filled-in compact-view-checkbox">
+							#end
+							<span>$!lang.get('posts.compactview')</span>
+						</label>
+					</div>
+					<div class="col l2 m4 s12">
+						<div class="center-align pvm">
+							<button type="submit" class="btn small waves-effect waves-light">$!lang.get('apply')</button>
+						</div>
+						<div class="center-align pvm">
+							<input id="user-filter-clear-btn" type="submit" class="btn btn-flat white"
+										 name="clear" value="$!lang.get('clear')">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 	#end
 
 	#if($isAdmin && $request.getParameter("bulkedit"))
 	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
-		<div class="row">
+		<div class="row lightborder pam">
 			<div class="col s12 m6">
 				<div class="input-field">
 					<select multiple name="selectedSpaces">
@@ -69,7 +177,9 @@
 				</div>
 			</div>
 			<div class="col s12 m2">
-				<button class="btn waves-effect waves-light mvl right" type="submit"><b>$!lang.get('apply')</b></button>
+				<div class="center-align">
+					<button class="btn waves-effect waves-light mvl" type="submit"><b>$!lang.get('apply')</b></button>
+				</div>
 			</div>
 		</div>
 	#end

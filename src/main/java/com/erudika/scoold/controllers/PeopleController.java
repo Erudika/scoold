@@ -21,12 +21,16 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,9 +38,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +59,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
+
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -68,29 +78,14 @@ public class PeopleController {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
 		}
 		if (req.getRequestURI().endsWith("/bulk-edit")) {
-			return "redirect:" + PEOPLELINK + "?bulk-edit=true";
+			return "redirect:" + PEOPLELINK + "?bulkedit=true";
 		}
 		Profile authUser = utils.getAuthUser(req);
-		Pager itemcount = utils.getPager("page", req);
-		itemcount.setSortby(sortby);
-		// [space query filter] + original query string
-		String qs = utils.sanitizeQueryString(q, req);
-		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
-			qs = q;
-		} else {
-			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
-		}
-
-		if (!qs.endsWith("*") && q.equals("*")) {
-			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
-		}
-
-		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
+		getUsers(q, sortby, authUser, req, model);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
 		model.addAttribute("peopleSelected", "navbtn-hover");
-		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("userlist", userlist);
+
 		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
 			List<ParaObject> spaces = pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
 			model.addAttribute("spaces", spaces);
@@ -153,5 +148,125 @@ public class PeopleController {
 		// for some reason the CSP header is not sent on these responses by the ScooldInterceptor
 		utils.setSecurityHeaders(utils.getCSPNonce(), req, res);
 		HttpUtils.getDefaultAvatarImage(res);
+	}
+
+	@PostMapping("/apply-filter")
+	public String applyFilter(@RequestParam(required = false) String sortby, @RequestParam(required = false) String tab,
+			@RequestParam(required = false, defaultValue = "false") Boolean bulkedit,
+			@RequestParam(required = false) String[] havingSelectedSpaces,
+			@RequestParam(required = false) String[] notHavingSelectedSpaces,
+			@RequestParam(required = false, defaultValue = "false") String compactViewEnabled,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isMod(authUser)) {
+			if (req.getParameter("clear") != null) {
+				HttpUtils.removeStateParam("users-filter", req, res);
+				HttpUtils.removeStateParam("users-view-compact", req, res);
+			} else {
+				List<String> havingSpaces = (havingSelectedSpaces == null || havingSelectedSpaces.length == 0) ?
+						Collections.emptyList() : Arrays.asList(havingSelectedSpaces);
+				List<String> notHavingSpaces = (notHavingSelectedSpaces == null || notHavingSelectedSpaces.length == 0) ?
+						Collections.emptyList() : Arrays.asList(notHavingSelectedSpaces);
+
+				Pager p = utils.pagerFromParams(req);
+				List<String> spacesList = new ArrayList<String>();
+				for (String s : havingSpaces) {
+					spacesList.add(s);
+				}
+				for (String s : notHavingSpaces) {
+					spacesList.add("-" + s);
+				}
+				p.setSelect(spacesList);
+				savePagerToCookie(req, res, p);
+				HttpUtils.setRawCookie("users-view-compact", compactViewEnabled,
+						req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
+			}
+		}
+		return "redirect:" + PEOPLELINK + (bulkedit ? "/bulk-edit" : "") + (StringUtils.isBlank(sortby) ? "" : "?sortby="
+				+ Optional.ofNullable(StringUtils.trimToNull(sortby)).orElse(tab));
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Profile> getUsers(String q, String sortby, Profile authUser, HttpServletRequest req, Model model) {
+		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req), model);
+		itemcount.setSortby(sortby);
+		// [space query filter] + original query string
+		String qs = utils.sanitizeQueryString(q, req);
+		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
+			qs = q;
+		} else {
+			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
+		}
+
+		if (!qs.endsWith("*") && q.equals("*")) {
+			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
+		}
+
+		Set<String> havingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("havingSpaces")).orElse(Set.of());
+		Set<String> notHavingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("notHavingSpaces")).orElse(Set.of());
+		String havingSpacesFilter = "";
+		String notHavingSpacesFilter = "";
+		if (!havingSpaces.isEmpty()) {
+			havingSpacesFilter = "+\"" + String.join("\" +\"", havingSpaces) + "\" ";
+		}
+		if (!notHavingSpaces.isEmpty()) {
+			notHavingSpacesFilter = "-\"" + String.join("\" -\"", notHavingSpaces) + "\"";
+			if (havingSpaces.isEmpty()) {
+				// at least one + keyword is needed otherwise no search results are returned
+				havingSpacesFilter = "+\"" + utils.getDefaultSpace() + "\"";
+			}
+		}
+		if (utils.isMod(authUser) && (!havingSpaces.isEmpty() || !notHavingSpaces.isEmpty())) {
+			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
+			sb.append("properties.spaces").append(":(").append(havingSpacesFilter).append(notHavingSpacesFilter).append(")");
+			qs = sb.toString();
+		}
+
+		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("userlist", userlist);
+		return userlist;
+	}
+
+	private Pager getPagerFromCookie(HttpServletRequest req, Pager defaultPager, Model model) {
+		try {
+			defaultPager.setName("default_pager");
+			String cookie = HttpUtils.getCookieValue(req, "users-filter");
+			if (StringUtils.isBlank(cookie)) {
+				return defaultPager;
+			}
+			Pager pager = ParaObjectUtils.getJsonReader(Pager.class).readValue(Utils.base64dec(cookie));
+			pager.setPage(defaultPager.getPage());
+			pager.setLastKey(null);
+			pager.setCount(0);
+			if (!pager.getSelect().isEmpty()) {
+				Set<String> havingSpaces = new HashSet<String>();
+				Set<String> notHavingSpaces = new HashSet<String>();
+				pager.getSelect().stream().forEach((s) -> {
+					if (s.startsWith("-")) {
+						notHavingSpaces.add(StringUtils.removeStart(s, "-"));
+					} else {
+						havingSpaces.add(s);
+					}
+				});
+				pager.setSelect(null);
+				model.addAttribute("havingSpaces", havingSpaces);
+				model.addAttribute("notHavingSpaces", notHavingSpaces);
+			}
+			return pager;
+		} catch (JsonProcessingException ex) {
+			return Optional.ofNullable(defaultPager).orElse(new Pager(CONF.maxItemsPerPage()) {
+				public String getName() {
+					return "default_pager";
+				}
+			});
+		}
+	}
+
+	private void savePagerToCookie(HttpServletRequest req, HttpServletResponse res, Pager p) {
+		try {
+			HttpUtils.setRawCookie("users-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
+					writeValueAsBytes(p)), req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
+		} catch (JsonProcessingException ex) { }
 	}
 }

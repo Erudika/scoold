@@ -1224,6 +1224,33 @@ $(function () {
 		return true;
 	});
 
+	var qfb = $("#user-filter-btn");
+	qfb.click(function () {
+		if (localStorage.getItem("userFilterOpen")) {
+			localStorage.removeItem("userFilterOpen");
+			$(this).removeClass("grey darken-2 white-text").blur().children("i").removeClass("fa-times").addClass("fa-filter");
+		} else {
+			var checked = $(".compact-view-checkbox").parent("label").attr("data-compactViewEnabled");
+			if (checked === "true") {
+				$(".compact-view-checkbox").prop("checked", true);
+			} else {
+				$(".compact-view-checkbox").prop("checked", false);
+			}
+			localStorage.setItem("userFilterOpen", true);
+			$(this).addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+		}
+	});
+
+	if (localStorage.getItem("userFilterOpen")) {
+		$("#user-filter-drawer").removeClass("hide");
+		qfb.addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+	}
+
+	$("#user-filter-clear-btn").click(function () {
+		qfb.click();
+		return true;
+	});
+
 	$(".bookmark-spaceurl").hover(function () {
 		$(this).find("a").toggleClass("hide").on("click", function (e) {
 			navigator.clipboard.writeText(this.href);
