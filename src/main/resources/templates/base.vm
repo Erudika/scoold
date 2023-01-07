@@ -159,6 +159,22 @@
 								#end
 							#end
 
+							#macro(rolestoggle)
+								#if ($authUser.groups == "admins" || $authUser.groups == "mods")
+									<li>
+										<a href="$profilelink/toggle-editor-role" class="post-refresh" title="Toggle admin/moderator role">
+											#if($authUser.groups == "admins")
+												$!lang.get('admin.toggle1')
+											#elseif($authUser.groups == "mods")
+												$!lang.get('admin.toggle2')
+											#end:
+											#if($authUser.editorRoleEnabled)<span class="green-text">$!lang.get('on').toUpperCase()</span>
+											#else<span class="red-text">$!lang.get('off').toUpperCase()</span>#end</a>
+									</li>
+									<li class="divider"></li>
+								#end
+							#end
+
 							#if($authenticated)
 								#navbarspacesmenu(true)
 								<ul id="user-dropdown" class="dropdown-content">
@@ -169,6 +185,7 @@
 									<li><a href="$settingslink" title="$!lang.get('settings.title')">$!lang.get('settings.title')</a></li>
 									#customnavbarmenulinks()
 									<li class="divider"></li>
+									#rolestoggle()
 									<li><a href="$signoutlink" title="$!lang.get('signout')" class="post-refresh">$!lang.get('signout')</a></li>
 								</ul>
 							#end
@@ -269,6 +286,7 @@
 									#end
 
 									#navbarspacesmenu(false)
+									#rolestoggle()
 									<li><a href="$signoutlink" title="$!lang.get('signout')" class="post-refresh">$!lang.get('signout')</a></li>
 								#end
 							</ul>

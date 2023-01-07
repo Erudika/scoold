@@ -37,6 +37,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
 import java.util.*;
@@ -357,6 +358,17 @@ public class ProfileController {
 			authUser.update();
 		}
 		return "redirect:" + PROFILELINK;
+	}
+
+	@PostMapping("/toggle-editor-role")
+	public String toggleEditorRole(HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser != null && StringUtils.equalsAny(authUser.getGroups(),
+				User.Groups.ADMINS.toString(), User.Groups.MODS.toString())) {
+			authUser.setEditorRoleEnabled(!authUser.isEditorRoleEnabled());
+			authUser.update();
+		}
+		return "redirect:" + HttpUtils.getBackToUrl(req, true);
 	}
 
 	private void changeEmail(User u, Profile showUser, String email) {

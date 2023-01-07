@@ -306,7 +306,7 @@ public final class ScooldUtils {
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
-		if (authUser != null) {
+		if (authUser != null && authUser.isEditorRoleEnabled()) {
 			if (!isAdmin(authUser) && isRecognizedAsAdmin(u)) {
 				logger.info("User '{}' with id={} promoted to admin.", u.getName(), authUser.getId());
 				authUser.setGroups(User.Groups.ADMINS.toString());
@@ -1167,11 +1167,13 @@ public final class ScooldUtils {
 	}
 
 	public boolean isAdmin(Profile authUser) {
-		return authUser != null && User.Groups.ADMINS.toString().equals(authUser.getGroups());
+		return authUser != null &&
+				(User.Groups.ADMINS.toString().equals(authUser.getGroups()) && authUser.isEditorRoleEnabled());
 	}
 
 	public boolean isMod(Profile authUser) {
-		return authUser != null && (isAdmin(authUser) || User.Groups.MODS.toString().equals(authUser.getGroups()));
+		return authUser != null && (isAdmin(authUser) ||
+				(User.Groups.MODS.toString().equals(authUser.getGroups()) && authUser.isEditorRoleEnabled()));
 	}
 
 	public boolean isRecognizedAsAdmin(User u) {

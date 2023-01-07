@@ -78,6 +78,7 @@ public class Profile extends Sysprop {
 	@Stored private Integer weeklyVotes;
 	@Stored private List<Map<String, String>> customBadges;
 	@Stored private String pendingEmail;
+	@Stored private Boolean editorRoleEnabled;
 
 	private transient String newbadges;
 	private transient Integer newreports;
@@ -147,6 +148,7 @@ public class Profile extends Sysprop {
 		this.weeklyVotes = 0;
 		this.anonymityEnabled = false;
 		this.darkmodeEnabled = false;
+		this.editorRoleEnabled = true;
 		this.favtagsEmailsEnabled = ScooldUtils.getConfig().favoriteTagsEmailsEnabled();
 		this.replyEmailsEnabled = ScooldUtils.getConfig().replyEmailsEnabled();
 		this.commentEmailsEnabled = ScooldUtils.getConfig().commentEmailsEnabled();
@@ -467,6 +469,14 @@ public class Profile extends Sysprop {
 
 	public void setOriginalPicture(String originalPicture) {
 		this.originalPicture = originalPicture;
+	}
+
+	public Boolean isEditorRoleEnabled() {
+		return editorRoleEnabled;
+	}
+
+	public void setEditorRoleEnabled(Boolean editorRoleEnabled) {
+		this.editorRoleEnabled = editorRoleEnabled;
 	}
 
 	@SuppressWarnings("unchecked")
