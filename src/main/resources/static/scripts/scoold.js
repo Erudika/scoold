@@ -1251,6 +1251,26 @@ $(function () {
 		return true;
 	});
 
+	var manageBadgesBtn = $("#manage-badges-btn");
+	function toggleManageBadgesBtn() {
+		$("#badges-selector,#spaces-selector").toggleClass("hide");
+		var text = manageBadgesBtn.text();
+		manageBadgesBtn.text(manageBadgesBtn.attr("data-alttext")).attr("data-alttext", text);
+	}
+	manageBadgesBtn.click(function () {
+		if (localStorage.getItem("bulkEditBadges")) {
+			localStorage.removeItem("bulkEditBadges");
+			$("#badges-selector").find("select").val("").formSelect();
+		} else {
+			localStorage.setItem("bulkEditBadges", true);
+		}
+		toggleManageBadgesBtn();
+	});
+
+	if (localStorage.getItem("bulkEditBadges")) {
+		toggleManageBadgesBtn();
+	}
+
 	$(".bookmark-spaceurl").hover(function () {
 		$(this).find("a").toggleClass("hide").on("click", function (e) {
 			navigator.clipboard.writeText(this.href);

@@ -26,6 +26,7 @@ import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Badge;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
@@ -41,6 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,13 +91,17 @@ public class PeopleController {
 		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
 			List<ParaObject> spaces = pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
 			model.addAttribute("spaces", spaces);
+			model.addAttribute("customBadgesMap", pc.findQuery(Utils.type(Badge.class), "*", new Pager(100)).stream().
+				collect(Collectors.toMap(k -> ((Badge) k).getTag(), v -> v)));
 		}
 		return "base";
 	}
 
 	@PostMapping("/bulk-edit")
 	public String bulkEdit(@RequestParam(required = false) String[] selectedUsers,
-			@RequestParam(required = false) final String[] selectedSpaces, HttpServletRequest req) {
+			@RequestParam(required = false) final String[] selectedSpaces,
+			@RequestParam(required = false) final String[] selectedBadges,
+			HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
 		boolean isAdmin = utils.isAdmin(authUser);
 		String operation = req.getParameter("operation");
@@ -107,23 +113,13 @@ public class PeopleController {
 			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
 			List<String> spaces = (selectedSpaces == null || selectedSpaces.length == 0) ?
 					Collections.emptyList() : Arrays.asList(selectedSpaces);
+			List<String> badges = (selectedBadges == null || selectedBadges.length == 0) ?
+					Collections.emptyList() : Arrays.asList(selectedBadges);
 			do {
 				String query = (selection == null || "selected".equals(selection)) ?
 						Config._ID + ":(\"" + String.join("\" \"", selectedUsers) + "\")" : "*";
 				profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
-				profiles.stream().filter(p -> !utils.isMod(p)).forEach(p -> {
-					if ("add".equals(operation)) {
-						p.getSpaces().addAll(spaces);
-					} else if ("remove".equals(operation)) {
-						p.getSpaces().removeAll(spaces);
-					} else {
-						p.setSpaces(new HashSet<String>(spaces));
-					}
-					Map<String, Object> profile = new HashMap<>();
-					profile.put(Config._ID, p.getId());
-					profile.put("spaces", p.getSpaces());
-					toUpdate.add(profile);
-				});
+				bulkEditSpacesAndBadges(profiles, operation, spaces, badges, toUpdate);
 			} while (!profiles.isEmpty());
 			// always patch outside the loop because we modify _docid values!!!
 			LinkedList<Map<String, Object>> batch = new LinkedList<>();
@@ -268,5 +264,50 @@ public class PeopleController {
 			HttpUtils.setRawCookie("users-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
 					writeValueAsBytes(p)), req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		} catch (JsonProcessingException ex) { }
+	}
+
+	private void bulkEditSpacesAndBadges(List<Profile> profiles, String operation,
+			List<String> spaces, List<String> badges, LinkedList<Map<String, Object>> toUpdate) {
+		boolean bulkEditBadges = !badges.isEmpty();
+		final List<Badge> badgez;
+		if (bulkEditBadges) {
+			List<String> ids = badges.stream().map(b -> new Badge(b).getId()).
+					filter(s -> !StringUtils.isBlank(s)).distinct().collect(Collectors.toList());
+			badgez = pc.readAll(ids);
+		} else {
+			badgez = Collections.emptyList();
+		}
+		profiles.stream().filter(p -> !utils.isMod(p)).forEach(p -> {
+			if ("add".equals(operation)) {
+				if (bulkEditBadges) {
+					badgez.forEach(badge -> p.addCustomBadge(badge));
+				} else {
+					p.getSpaces().addAll(spaces);
+				}
+			} else if ("remove".equals(operation)) {
+				if (bulkEditBadges) {
+					badgez.forEach(badge -> p.removeCustomBadge(badge.getTag()));
+				} else {
+					p.getSpaces().removeAll(spaces);
+				}
+			} else {
+				if (bulkEditBadges) {
+					p.setTags(new LinkedList<>());
+					p.setCustomBadges(new LinkedList<>());
+					badgez.forEach(badge -> p.addCustomBadge(badge));
+				} else {
+					p.setSpaces(new HashSet<String>(spaces));
+				}
+			}
+			Map<String, Object> profile = new HashMap<>();
+			profile.put(Config._ID, p.getId());
+			if (bulkEditBadges) {
+				profile.put("tags", p.getTags());
+				profile.put("customBadges", p.getCustomBadges());
+			} else {
+				profile.put("spaces", p.getSpaces());
+			}
+			toUpdate.add(profile);
+		});
 	}
 }

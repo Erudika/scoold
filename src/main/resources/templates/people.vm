@@ -147,7 +147,7 @@
 	<form method="post" action="$peoplelink/bulk-edit?$!{request.queryString}">
 		<div class="row lightborder pam">
 			<div class="col s12 m6">
-				<div class="input-field">
+				<div class="input-field" id="spaces-selector">
 					<select multiple name="selectedSpaces">
 						<option selected="selected" value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
 						#foreach($space in $authUser.allSpaces)
@@ -156,6 +156,16 @@
 					</select>
 					<label>$!lang.get('spaces.title')</label>
 				</div>
+				<div class="input-field hide" id="badges-selector">
+					<select multiple name="selectedBadges">
+						#foreach($badge in $customBadgesMap.values())
+						<option value="$badge.tag">#custombadgebox($badge "add")</option>
+						#end
+					</select>
+					<label>$!lang.get('badges.title')</label>
+				</div>
+				<a href="#" class="smallText" id="manage-badges-btn"
+					 data-alttext="$!lang.get('users.managespaces')">$!lang.get('users.managebadges')</a>
 			</div>
 			<div class="col s12 m2">
 				<div class="input-field">
