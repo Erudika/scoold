@@ -1585,6 +1585,14 @@ public final class ScooldUtils {
 		return error;
 	}
 
+	public Map<String, String> validateQuestionTags(Question q, Map<String, String> errors, HttpServletRequest req) {
+		if (CONF.minTagsPerPost() > Optional.ofNullable(q.getTags()).orElse(List.of()).stream().
+				filter(t -> !StringUtils.isBlank(t)).distinct().count()) {
+			errors.put(Config._TAGS, Utils.formatMessage(getLang(req).get("tags.toofew"), CONF.minTagsPerPost()));
+		}
+		return errors;
+	}
+
 	public String getFullAvatarURL(Profile profile, AvatarFormat format) {
 		return avatarRepository.getLink(profile, format);
 	}

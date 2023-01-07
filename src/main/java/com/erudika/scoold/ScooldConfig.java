@@ -1652,6 +1652,16 @@ public class ScooldConfig extends Config {
 		return getConfigInt("max_tags_per_post", 5);
 	}
 
+	@Documented(position = 1571,
+			identifier = "min_tags_per_post",
+			value = "0",
+			type = Integer.class,
+			category = "Posts",
+			description = "The minimum number of tags a question must have. The minimum is 0.")
+	public int minTagsPerPost() {
+		return getConfigInt("min_tags_per_post", 0);
+	}
+
 	@Documented(position = 1580,
 			identifier = "max_replies_per_post",
 			value = "500",

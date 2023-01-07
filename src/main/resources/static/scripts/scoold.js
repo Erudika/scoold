@@ -1023,7 +1023,8 @@ $(function () {
 				window.location.href = data.url || "";
 			}, function (xhr, status, error) {
 				clearInterval(saveDraftInterval1);
-				window.location.reload(true);
+				$(document).off("submit"); // turn off this handler and prevent infinite redirect loop
+				askForm.submit(); // retry normal POST submit (non-AJAX) to see validation errors
 			});
 		} catch (exception) {}
 	}

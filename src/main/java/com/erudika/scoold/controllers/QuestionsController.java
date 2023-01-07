@@ -211,7 +211,7 @@ public class QuestionsController {
 			if (StringUtils.isBlank(q.getTagsString())) {
 				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "" : CONF.defaultQuestionTag()));
 			}
-			Map<String, String> error = utils.validate(q);
+			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			if (error.isEmpty()) {
 				q.setLocation(location);
 				q.setAuthor(authUser);
@@ -235,6 +235,7 @@ public class QuestionsController {
 				model.addAttribute("path", "questions.vm");
 				model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 				model.addAttribute("askSelected", "navbtn-hover");
+				res.setStatus(400);
 				return "base";
 			}
 			if (utils.isAjaxRequest(req)) {
