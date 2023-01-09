@@ -173,7 +173,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 			pc.throwExceptionOnHTTPError(false);
 			boolean connected = pc.getTimestamp() > 0; // finally, check if app actually exists
 			if (connected) {
-				logger.info("Connected to Para on {} with credentials for '{}'.", pc.getEndpoint(), accessKey);
+				logger.info("Connected to Para on {} with credentials for '{}'.", CONF.paraEndpoint(), accessKey);
 			}
 			return connected;
 		});
