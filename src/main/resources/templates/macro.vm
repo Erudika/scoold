@@ -462,10 +462,10 @@
 					#if(!$compactUsersViewEnabled)<div>#end
 
 						#if ($showFriend.groups == "admins")
-						<small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small>
+						<a href="$peoplelink/tag/groups:admins"><small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small></a>
 						#end
 						#if ($showFriend.groups == "mods")
-						<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
+						<a href="$peoplelink/tag/groups:mods"><small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small></a>
 						#end
 						#foreach($badge in $showFriend.customBadges)
 							#custombadgebox($badge "small")
@@ -949,7 +949,7 @@
 		<i class="fa fa-minus hide tooltipped" data-tooltip="$!lang.get('removebadge')"></i>
 		<i class="fa fa-plus hide tooltipped" data-tooltip="$!lang.get('addbadge')"></i>
 		#if($badge.icon)<span class="badge-icon">$!badge.icon</span>#end
-		<b>$!badge.name</b>
+		<a href="$peoplelink/tag/$!badge.tag"><b>$!badge.name</b></a>
 		<a href="$profilelink/delete-badge/$!badge.tag" class="hide post-refresh-ask" style="$style">
 			<i class="fa fa-close tooltipped mhs" data-tooltip="$!lang.get('deletebadge')"></i>
 		</a>

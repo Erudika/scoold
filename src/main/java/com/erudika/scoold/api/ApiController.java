@@ -467,7 +467,7 @@ public class ApiController {
 	public List<Profile> listUsers(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
-		peopleController.get(sortby, q, req, model);
+		peopleController.get(req.getParameter("tag"), sortby, q, req, model);
 		return (List<Profile>) model.getAttribute("userlist");
 	}
 

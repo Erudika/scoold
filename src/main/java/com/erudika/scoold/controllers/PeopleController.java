@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,8 +74,9 @@ public class PeopleController {
 		this.pc = utils.getParaClient();
 	}
 
-	@GetMapping(path = {"", "/bulk-edit"})
-	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+	@GetMapping(path = {"", "/bulk-edit", "/tag/{tag}"})
+	public String get(@PathVariable(required = false) String tag,
+			@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
@@ -83,7 +85,7 @@ public class PeopleController {
 			return "redirect:" + PEOPLELINK + "?bulkedit=true";
 		}
 		Profile authUser = utils.getAuthUser(req);
-		getUsers(q, sortby, authUser, req, model);
+		getUsers(q, sortby, tag, authUser, req, model);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
 		model.addAttribute("peopleSelected", "navbtn-hover");
@@ -183,7 +185,7 @@ public class PeopleController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getUsers(String q, String sortby, Profile authUser, HttpServletRequest req, Model model) {
+	public List<Profile> getUsers(String q, String sortby, String tag, Profile authUser, HttpServletRequest req, Model model) {
 		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req), model);
 		itemcount.setSortby(sortby);
 		// [space query filter] + original query string
@@ -215,6 +217,15 @@ public class PeopleController {
 		if (utils.isMod(authUser) && (!havingSpaces.isEmpty() || !notHavingSpaces.isEmpty())) {
 			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
 			sb.append("properties.spaces").append(":(").append(havingSpacesFilter).append(notHavingSpacesFilter).append(")");
+			qs = sb.toString();
+		}
+		if (!StringUtils.isBlank(tag)) {
+			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
+			if (tag.startsWith("groups:")) {
+				sb.append("properties.").append(tag);
+			} else {
+				sb.append(Config._TAGS).append(":(\"").append(tag).append("\")");
+			}
 			qs = sb.toString();
 		}
 
