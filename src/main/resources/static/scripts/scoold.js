@@ -874,8 +874,9 @@ $(function () {
 
 	$(document).on('click', '.page-content .questionbox',  function () {
 		if (window.matchMedia("only screen and (max-width: 900px)").matches) {
-			$(this).find("a:first").get(0).click();
+			return $(this).find("a:first").get(0).click();
 		}
+		return false;
 	});
 
 	function replaceMentionsWithMarkdownLinks(text) {
