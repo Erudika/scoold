@@ -2479,6 +2479,15 @@ public class ScooldConfig extends Config {
 		return getConfigParam("logo_url", imagesLink() + "/logo.svg");
 	}
 
+	@Documented(position = 2351,
+			identifier = "logo_dark_url",
+			value = "/images/logo.svg",
+			category = "Frontend Assets",
+			description = "The URL of the logo in the nav bar used in dark mode. Use a PNG, SVG, JPG or WebP format.")
+	public String logoDarkUrl() {
+		return getConfigParam("logo_dark_url", logoUrl());
+	}
+
 	@Documented(position = 2360,
 			identifier = "small_logo_url",
 			value = "/images/logowhite.png",

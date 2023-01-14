@@ -165,9 +165,10 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("languageslink", CONF.serverContextPath() + LANGUAGESLINK);
 		modelAndView.addObject("apidocslink", CONF.serverContextPath() + APIDOCSLINK);
 		// Visual customization
+		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("navbarFixedClass", CONF.fixedNavEnabled() ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", CONF.scooldBrandingEnabled());
-		modelAndView.addObject("logoUrl", CONF.logoUrl());
+		modelAndView.addObject("logoUrl", utils.getLogoUrl(authUser, request));
 		modelAndView.addObject("logoWidth", CONF.logoWidth());
 		modelAndView.addObject("stylesheetUrl", CONF.stylesheetUrl());
 		modelAndView.addObject("darkStylesheetUrl", CONF.darkStylesheetUrl());
@@ -175,7 +176,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("inlineUserCSS", utils.getInlineCSS());
 		modelAndView.addObject("compactViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "questions-view-compact")));
 		modelAndView.addObject("compactUsersViewEnabled", "true".equals(HttpUtils.getCookieValue(request, "users-view-compact")));
-		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("darkModeEnabled", utils.isDarkModeEnabled(authUser, request));
 		// Auth & Badges
 		modelAndView.addObject("authenticated", authUser != null);

@@ -2028,6 +2028,10 @@ public final class ScooldUtils {
 		return loadResource("themes/default.css");
 	}
 
+	public String getLogoUrl(Profile authUser, HttpServletRequest req) {
+		return isDarkModeEnabled(authUser, req) ? CONF.logoDarkUrl() : CONF.logoUrl();
+	}
+
 	public String getSmallLogoUrl() {
 		String defaultLogo = CONF.serverUrl() + CONF.imagesLink() + "/logowhite.png";
 		String logoUrl = CONF.logoSmallUrl();
