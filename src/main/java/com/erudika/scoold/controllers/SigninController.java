@@ -66,7 +66,7 @@ public class SigninController {
 		if (utils.isAuthenticated(req)) {
 			return "redirect:" + (StringUtils.startsWithIgnoreCase(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
 		}
-		if (!HOMEPAGE.equals(returnto) && !SIGNINLINK.equals(returnto)) {
+		if (!HOMEPAGE.equals(returnto) && !StringUtils.startsWith(returnto, SIGNINLINK)) {
 			HttpUtils.setStateParam("returnto", Utils.urlEncode(getBackToUrl(req)), req, res);
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
