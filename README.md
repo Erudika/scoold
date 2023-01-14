@@ -505,6 +505,7 @@ scoold.password_auth_enabled = true
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
 |`scoold.logo_url`<br>The URL of the logo in the nav bar. Use a PNG, SVG, JPG or WebP format. | `/images/logo.svg` | `String`|
+|`scoold.logo_dark_url`<br>The URL of the logo in the nav bar used in dark mode. Use a PNG, SVG, JPG or WebP format. | `/images/logo.svg` | `String`|
 |`scoold.small_logo_url`<br>The URL of a smaller logo (only use PNG/JPG!). Used in transactional emails and the meta `og:image`. | `/images/logowhite.png` | `String`|
 |`scoold.cdn_url`<br>A CDN URL where all static assets might be stored. | ` ` | `String`|
 |`scoold.stylesheet_url`<br>A stylesheet URL of a CSS file which will be used as the main stylesheet. *This will overwrite all existing CSS styles!* | `/styles/style.css` | `String`|

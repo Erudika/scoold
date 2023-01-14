@@ -876,7 +876,6 @@ $(function () {
 		if (window.matchMedia("only screen and (max-width: 900px)").matches) {
 			return $(this).find("a:first").get(0).click();
 		}
-		return false;
 	});
 
 	function replaceMentionsWithMarkdownLinks(text) {
