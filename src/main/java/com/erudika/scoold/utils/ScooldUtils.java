@@ -125,6 +125,7 @@ public final class ScooldUtils {
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
 
 	private List<Sysprop> allSpaces;
+	private Set<String> autoAssignedSpacesFromConfig;
 
 	private static final ScooldConfig CONF = new ScooldConfig();
 
@@ -1369,6 +1370,33 @@ public final class ScooldUtils {
 		return s;
 	}
 
+	public boolean isAutoAssignedSpace(Sysprop space) {
+		return space != null && (isAutoAssignedSpaceInConfig(space) ||
+				(space.getTags() != null && !space.getTags().isEmpty() &&
+				space.getTags().iterator().next().equals("assign-to-all")));
+	}
+
+	public boolean isAutoAssignedSpaceInConfig(Sysprop space) {
+		return space != null && (getAutoAssignedSpacesFromConfig().contains(space.getName()) ||
+				getAutoAssignedSpacesFromConfig().stream().map(s -> buildSpaceObject(s).getId()).
+						anyMatch(i -> i.equalsIgnoreCase(space.getId())));
+	}
+
+	public Set<String> getAutoAssignedSpacesFromConfig() {
+		if (autoAssignedSpacesFromConfig == null) {
+			autoAssignedSpacesFromConfig = Set.of(ScooldUtils.getConfig().autoAssignSpaces().split("\\s*,\\s*"));
+		}
+		return autoAssignedSpacesFromConfig;
+	}
+
+	public String[] getAllAutoAssignedSpaces() {
+		Set<String> allAutoAssignedSpaces = new LinkedHashSet<>();
+		allAutoAssignedSpaces.addAll(pc.findTagged("scooldspace", new String[]{"assign-to-all"},
+				new Pager(200)).stream().map(s -> s.getName()).collect(Collectors.toSet()));
+		allAutoAssignedSpaces.addAll(getAutoAssignedSpacesFromConfig());
+		return allAutoAssignedSpaces.toArray(String[]::new);
+	}
+
 	public boolean assignSpacesToUser(Profile authUser, String... spaces) {
 		if (spaces != null && spaces.length > 0) {
 			//DO: CHECK IF SPACES HAVE CHANGED FIRST! NO CHANGE - NO OP
@@ -1406,6 +1434,40 @@ public final class ScooldUtils {
 			}
 		}
 		return false;
+	}
+
+	public void assingSpaceToAllUsers(Sysprop space) {
+		if (space == null) {
+			return;
+		}
+		Para.asyncExecute(() -> {
+			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
+			List<Profile> profiles;
+			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
+			do {
+				profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
+				profiles.stream().forEach(p -> {
+					Map<String, Object> profile = new HashMap<>();
+					profile.put(Config._ID, p.getId());
+					p.getSpaces().add(space.getId() + Para.getConfig().separator() + space.getName());
+					profile.put("spaces", p.getSpaces());
+					toUpdate.add(profile);
+				});
+			} while (!profiles.isEmpty());
+			// always patch outside the loop because we modify _docid values!!!
+			LinkedList<Map<String, Object>> batch = new LinkedList<>();
+			while (!toUpdate.isEmpty()) {
+				batch.add(toUpdate.pop());
+				if (batch.size() >= 100) {
+					// partial batch update
+					pc.invokePatch("_batch", batch, Map.class);
+					batch.clear();
+				}
+			}
+			if (!batch.isEmpty()) {
+				pc.invokePatch("_batch", batch, Map.class);
+			}
+		});
 	}
 
 	public String sanitizeQueryString(String query, HttpServletRequest req) {

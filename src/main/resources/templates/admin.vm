@@ -34,34 +34,33 @@
 			<div class="mbl">
 				<form method="post" id="create-space-form" action="$adminlink/add-space">
 					##sectoken(false "CREATE_SPACE") ## BREAKS AJAX - NOT USED
-					<div class="row">
-						<div class="col s12 m6">
-							<div class="input-field">
-								<label for="name_text">$!lang.get('name')</label>
-								<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
-								<span class="helper-text" data-error="Space is invalid or already exists!"></span>
+					<div class="lightborder pal">
+						<h4>Create new space</h4>
+						<div class="row mbn">
+							<div class="col s12 m6">
+								<div class="input-field">
+									<label for="name_text">$!lang.get('name')</label>
+									<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
+									<span class="helper-text" data-error="Space is invalid or already exists!"></span>
+								</div>
 							</div>
-						</div>
-						<div class="col s12 m6">
-							<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('add')</button>
+							<div class="col s12 m5">
+								<div class="input-field valign-wrapper">
+									<label>
+										<input type="checkbox" name="assigntoall" class="filled-in">
+										<span>$!lang.get('assignspacetoall')</span>
+									</label>
+								</div>
+							</div>
+							<div class="col s12 m1">
+								<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('add')</button>
+							</div>
 						</div>
 					</div>
 				</form>
 			</div>
 
 			<div class="row spaces-wrapper">
-				<div class="col s12 m6 l3 spacebox">
-					<div class="card-panel z-depth-0 lightborder grey-text">
-						<span class="mediumText">
-							#if($isDefaultSpacePublic)
-								<i class="fa fa-unlock grey-text" title="Public"></i>
-							#else
-								<i class="fa fa-lock red-text" title="Private"></i>
-							#end
-							<a href="$questionslink/space" title="Default space">$!lang.get('defaultspace')</a>
-						</span>
-					</div>
-				</div>
 				#paginate("spaces" $itemcount "" "page" )
 			</div>
 		</div>

@@ -175,7 +175,7 @@ public class Profile extends Sysprop {
 		p.setGroups(ScooldUtils.getInstance().isRecognizedAsAdmin(u)
 				? User.Groups.ADMINS.toString() : u.getGroups());
 		// auto-assign spaces to new users
-		ScooldUtils.getInstance().assignSpacesToUser(p, ScooldUtils.getConfig().autoAssignSpaces().split("\\s*,\\s*"));
+		ScooldUtils.getInstance().assignSpacesToUser(p, ScooldUtils.getInstance().getAllAutoAssignedSpaces());
 		return p;
 	}
 
@@ -471,12 +471,16 @@ public class Profile extends Sysprop {
 		this.originalPicture = originalPicture;
 	}
 
-	public Boolean isEditorRoleEnabled() {
+	public Boolean getEditorRoleEnabled() {
 		return editorRoleEnabled;
 	}
 
 	public void setEditorRoleEnabled(Boolean editorRoleEnabled) {
 		this.editorRoleEnabled = editorRoleEnabled;
+	}
+
+	public boolean isEditorRoleEnabled() {
+		return Boolean.valueOf(editorRoleEnabled);
 	}
 
 	@SuppressWarnings("unchecked")

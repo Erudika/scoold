@@ -89,17 +89,33 @@
 	#end
 #end
 ####################################
-#macro(spacebox $space )
+#macro(spacebox $space)
 <div class="col s12 m6 l3 spacebox">
 	<div class="card-panel z-depth-0 lightborder">
 		<div class="row mbn viewbox valign-wrapper">
-			<div class="col s12 m8 columns">
-				<a href="$questionslink/space/$!space.id" class="mediumText space-name-box" title="$!{spaceName}">$!space.name</a>
+			<div class="col s12 m8 columns ">
+				#if($isDefaultSpacePublic && $scooldUtils.isDefaultSpace($space.name))
+				<i class="fa fa-unlock green-text tooltipped" data-tooltip="This space is public"></i>
+				#else
+				<i class="fa fa-lock grey-text tooltipped" data-tooltip="This space is private"></i>
+				#end
+				#if($scooldUtils.isDefaultSpace($space.name))
+					#set($spaceName = $!lang.get('defaultspace'))
+				#else
+					#set($spaceName = $!space.name)
+				#end
+				#if($scooldUtils.isAutoAssignedSpace($space))
+					<i class="fa fa-users grey-text tooltipped" data-tooltip="Assigned to all users"></i>
+				#end
+				<a href="$questionslink/space/$!space.id" class="space-name-box" title="$!{spaceName}">$!{spaceName}</a>
 			</div>
 			<div class="col s12 m4 columns right-align">
+				#if(!$scooldUtils.isDefaultSpace($space.name))
 				<a href="#" title="$!lang.get('edit')" class="editlink"><i class="fa fa-pencil-square orange-text"></i></a>
+				#end
 			</div>
 		</div>
+		#if(!$scooldUtils.isDefaultSpace($space.name))
 		<div class="row mbn hide editbox">
 			<form method="post" action="$adminlink/rename-space" class="space-rename-form">
 				<div class="">
@@ -110,12 +126,21 @@
 					</div>
 				</div>
 				<div class="">
+					<div class="mbm smallText">
+						<label>
+							<input type="checkbox" name="assigntoall" class="filled-in"
+										 #if($scooldUtils.isAutoAssignedSpace($space))checked="checked"#end
+										 #if($scooldUtils.isAutoAssignedSpaceInConfig($space))disabled#end>
+							<span>$!lang.get('assignspacetoall')</span>
+						</label>
+					</div>
 					<a href="$adminlink/remove-space?space=$!space.id"
 						 class="red-text right mts delete-space">$!lang.get('delete')</a>
 					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
 				</div>
 			</form>
 		</div>
+		#end
 	</div>
 </div>
 #end

@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.3.0"
+  version: "1.5.0"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
@@ -43,7 +43,7 @@ paths:
   /api/posts:
     post:
       summary: Create a new post
-      description: To publish the post in the given space, set the `space` field. Otherwise the post will be created in the default space.<br>To change the author, set the `creatorid` field to an existing user.<br>To create an answer, set field `type` to `reply` and specify `parentid` to be the ID of the question post.
+      description: To publish the post in the given space, set the `space` field. Otherwise the post will be created in the default space.<br>To change the author, set the `creatorid` field to an existing user.<br>To create an answer, set field `type` to `reply` and specify `parentid` to be the ID of the question post.<br>The `body` of the post can contain GitHub-flavored Markdown and mentions like `@<user_id|John Doe>`.
       tags:
         - posts
       security:
@@ -1101,6 +1101,13 @@ paths:
         - spaces
       security:
       - scoold_auth: []
+      parameters:
+        - name: assigntoall
+          in: query
+          required: false
+          description: If `true`, space will be assigned to all new and existing users
+          schema:
+            type: boolean
       requestBody:
         required: true
         content:
@@ -1161,6 +1168,39 @@ paths:
                   $ref: '#/components/schemas/Space'
         '404':
           description: Not found
+    patch:
+      summary: Rename space
+      tags:
+        - spaces
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of an existing space
+          schema:
+            type: string
+        - name: assigntoall
+          in: query
+          required: false
+          description: If `true`, space will be assigned to all new and existing users
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        description: The request body must contain the `name` field as the new name for that space.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Space'
+      responses:
+        '200':
+          description: Space object returned
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/Space'
     delete:
       summary: Delete space
       tags:
@@ -1559,6 +1599,7 @@ components:
           type: string
         body:
           type: string
+          description: Can contain GitHub-flavored Markdown and mentions like `@<user_id|John Doe>` also basic HTML tags if those are explicitly enabled.
         tags:
           type: array
           items:

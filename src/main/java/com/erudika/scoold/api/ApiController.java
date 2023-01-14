@@ -761,9 +761,25 @@ public class ApiController {
 			badReq("Space already exists.");
 			return null;
 		}
-		Sysprop s = utils.buildSpaceObject(name);
+		Model model = new ExtendedModelMap();
+		adminController.addSpace(name, "true".equals(req.getParameter("assigntoall")), req, res, model);
+		checkForErrorsAndThrow(model);
+		Sysprop s = (Sysprop) model.getAttribute("space");
 		res.setStatus(HttpStatus.CREATED.value());
-		return pc.create(s);
+		return s;
+	}
+
+	@PatchMapping("/spaces/{id}")
+	public void updateSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(req);
+		if (entity.isEmpty()) {
+			badReq("Missing or invalid request body.");
+		}
+		String newName = (String) entity.get(Config._NAME);
+		if (StringUtils.isBlank(newName)) {
+			badReq("Property 'name' cannot be blank.");
+		}
+		adminController.renameSpace(id, "true".equals(req.getParameter("assigntoall")), newName, req, res);
 	}
 
 	@GetMapping("/spaces")
@@ -779,6 +795,11 @@ public class ApiController {
 			return null;
 		}
 		return space;
+	}
+
+	@DeleteMapping("/spaces/{id}")
+	public void deleteSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		adminController.removeSpace(id, req, res);
 	}
 
 	@PostMapping("/webhooks")
@@ -925,11 +946,6 @@ public class ApiController {
 		stats.put("scoold_version",  Optional.ofNullable(getClass().getPackage().getImplementationVersion()).
 				orElse("unknown"));
 		return stats;
-	}
-
-	@DeleteMapping("/spaces/{id}")
-	public void deleteSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		pc.delete(new Sysprop(utils.getSpaceId(id)));
 	}
 
 	@GetMapping(value = "/backup", produces = "application/zip")
