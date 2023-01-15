@@ -257,7 +257,7 @@ public class AdminController {
 				});
 			}
 			if (utils.isAutoAssignedSpace(s) ^ assigntoall) {
-				s.setTags(assigntoall ? List.of("assign-to-all") : null);
+				s.setTags(assigntoall ? List.of("assign-to-all") : List.of());
 				utils.assingSpaceToAllUsers(assigntoall ? s : null);
 				pc.update(s);
 			}
