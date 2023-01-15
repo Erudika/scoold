@@ -567,11 +567,8 @@ public final class ScooldUtils {
 	private Set<String> getFavTagsSubscribers(List<String> tags) {
 		if (!tags.isEmpty()) {
 			Set<String> emails = new LinkedHashSet<>();
-			// find all user objects even if there are more than 10000 users in the system
-			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-			List<Profile> profiles;
-			do {
-				profiles = pc.findQuery(Utils.type(Profile.class),
+			pc.readEverything(pager -> {
+				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class),
 						"properties.favtags:(" + tags.stream().
 								map(t -> "\"".concat(t).concat("\"")).distinct().
 								collect(Collectors.joining(" ")) + ") AND properties.favtagsEmailsEnabled:true", pager);
@@ -581,7 +578,8 @@ public final class ScooldUtils {
 
 					users.stream().forEach(u -> emails.add(u.getEmail()));
 				}
-			} while (!profiles.isEmpty());
+				return profiles;
+			});
 			return emails;
 		}
 		return Collections.emptySet();
@@ -1441,11 +1439,8 @@ public final class ScooldUtils {
 			return;
 		}
 		Para.asyncExecute(() -> {
-			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-			List<Profile> profiles;
-			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
-			do {
-				profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
+			pc.updateAllPartially((toUpdate, pager) -> {
+				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
 				profiles.stream().forEach(p -> {
 					Map<String, Object> profile = new HashMap<>();
 					profile.put(Config._ID, p.getId());
@@ -1453,20 +1448,8 @@ public final class ScooldUtils {
 					profile.put("spaces", p.getSpaces());
 					toUpdate.add(profile);
 				});
-			} while (!profiles.isEmpty());
-			// always patch outside the loop because we modify _docid values!!!
-			LinkedList<Map<String, Object>> batch = new LinkedList<>();
-			while (!toUpdate.isEmpty()) {
-				batch.add(toUpdate.pop());
-				if (batch.size() >= 100) {
-					// partial batch update
-					pc.invokePatch("_batch", batch, Map.class);
-					batch.clear();
-				}
-			}
-			if (!batch.isEmpty()) {
-				pc.invokePatch("_batch", batch, Map.class);
-			}
+				return profiles;
+			});
 		});
 	}
 

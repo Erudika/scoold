@@ -271,11 +271,8 @@ public class ProfileController {
 			Badge b = pc.read(new Badge(id).getId());
 			if (b != null) {
 				pc.delete(b);
-				LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
-				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-				List<Profile> profiles;
-				do {
-					profiles = pc.findTagged(Utils.type(Profile.class), new String[]{id}, pager);
+				pc.updateAllPartially((toUpdate, pager) -> {
+					List<Profile> profiles = pc.findTagged(Utils.type(Profile.class), new String[]{id}, pager);
 					for (Profile p : profiles) {
 						p.removeCustomBadge(b.getTag());
 						Map<String, Object> profile = new HashMap<>();
@@ -285,11 +282,8 @@ public class ProfileController {
 						profile.put("customBadges", p.getCustomBadges());
 						toUpdate.add(profile);
 					}
-					if (!profiles.isEmpty()) {
-						pc.invokePatch("_batch", toUpdate, Map.class);
-						toUpdate.clear();
-					}
-				} while (!profiles.isEmpty());
+					return profiles;
+				});
 			}
 		}
 		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);

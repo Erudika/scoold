@@ -231,12 +231,9 @@ public class AdminController {
 				if (index >= 0) {
 					utils.getAllSpaces().get(index).setName(newspace);
 				}
-				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-				LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
-				List<Profile> profiles;
-				do {
+				pc.updateAllPartially((toUpdate, pager) -> {
 					String query = "properties.spaces:(\"" + origSpace + "\")";
-					profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
+					List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
 					profiles.stream().forEach(p -> {
 						p.getSpaces().remove(origSpace);
 						p.getSpaces().add(newSpace);
@@ -245,28 +242,19 @@ public class AdminController {
 						profile.put("spaces", p.getSpaces());
 						toUpdate.add(profile);
 					});
-					if (!toUpdate.isEmpty()) {
-						pc.invokePatch("_batch", toUpdate, Map.class);
-						toUpdate.clear();
-					}
-				} while (!profiles.isEmpty());
-
-				Pager pager2 = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-				List<Post> posts;
-				do {
+					return profiles;
+				});
+				pc.updateAllPartially((toUpdate, pager) -> {
 					String query = "properties.space:(\"" + origSpace + "\")";
-					posts = pc.findQuery("", query, pager2);
+					List<Post> posts = pc.findQuery("", query, pager);
 					posts.stream().forEach(p -> {
 						Map<String, Object> post = new HashMap<>();
 						post.put(Config._ID, p.getId());
 						post.put("space", newSpace);
 						toUpdate.add(post);
 					});
-					if (!toUpdate.isEmpty()) {
-						pc.invokePatch("_batch", toUpdate, Map.class);
-						toUpdate.clear();
-					}
-				} while (!posts.isEmpty());
+					return posts;
+				});
 			}
 			if (utils.isAutoAssignedSpace(s) ^ assigntoall) {
 				s.setTags(assigntoall ? List.of("assign-to-all") : null);

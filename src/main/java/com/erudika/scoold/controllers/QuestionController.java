@@ -413,16 +413,15 @@ public class QuestionController {
 					targetPost.addFollower(u);
 				}
 			}
-			Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-			List<Reply> answers;
-			do {
-				answers = pc.getChildren(showPost, Utils.type(Reply.class), pager);
+			pc.readEverything(pager -> {
+				List<Reply> answers = pc.getChildren(showPost, Utils.type(Reply.class), pager);
 				for (Reply answer : answers) {
 					answer.setParentid(targetPost.getId());
 					answer.setTitle(targetPost.getTitle());
 				}
 				pc.createAll(answers); // overwrite
-			} while (!answers.isEmpty());
+				return answers;
+			});
 			targetPost.update();
 			showPost.delete();
 		}
@@ -445,10 +444,9 @@ public class QuestionController {
 		if (showPost == null || showPost.isReply()) {
 			return;
 		}
-		Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-		List<Reply> answerslist;
-		try {
-			do {
+		pc.readEverything(pager -> {
+			List<Reply> answerslist = List.of();
+			try {
 				answerslist = pc.getChildren(showPost, Utils.type(Reply.class), pager);
 				for (Reply reply : answerslist) {
 					reply.setSpace(space);
@@ -457,11 +455,12 @@ public class QuestionController {
 					pc.updateAll(answerslist);
 					Thread.sleep(500);
 				}
-			} while (!answerslist.isEmpty());
-		} catch (InterruptedException ex) {
-			logger.error(null, ex);
-			Thread.currentThread().interrupt();
-		}
+			} catch (InterruptedException ex) {
+				logger.error(null, ex);
+				Thread.currentThread().interrupt();
+			}
+			return answerslist;
+		});
 	}
 
 	public List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {

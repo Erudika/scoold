@@ -30,7 +30,9 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -114,10 +116,8 @@ public class TagsController {
 
 					t.setCount(pc.getCount(Utils.type(Question.class),
 							Collections.singletonMap(Config._TAGS, newTag.getTag())).intValue());
-					Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-					List<Question> questionslist;
-					do {
-						questionslist = pc.findTagged(Utils.type(Question.class), new String[]{oldTag.getTag()}, pager);
+					pc.updateAllPartially((toUpdate, pager) -> {
+						List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{oldTag.getTag()}, pager);
 						for (Question q : questionslist) {
 							t.setCount(t.getCount() + 1);
 							q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
@@ -130,11 +130,13 @@ public class TagsController {
 									collect(Collectors.toList()));
 							logger.debug("Updated {} out of {} questions with new tag {}.",
 									questionslist.size(), pager.getCount(), t.getTag());
+							Map<String, Object> post = new HashMap<>();
+							post.put(Config._ID, q.getId());
+							post.put(Config._TAGS, q.getTags());
+							toUpdate.add(post);
 						}
-						if (!questionslist.isEmpty()) {
-							pc.updateAll(questionslist);
-						}
-					} while (!questionslist.isEmpty());
+						return questionslist;
+					});
 					updated = pc.create(t); // overwrite new tag object
 				}
 				model.addAttribute("tag", updated);
@@ -163,21 +165,21 @@ public class TagsController {
 				logger.info("User {} ({}) deleted tag '{}'.",
 						authUser.getName(), authUser.getCreatorid(), t.getTag());
 
-				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-				List<Question> questionslist;
-				do {
-					questionslist = pc.findTagged(Utils.type(Question.class), new String[]{t.getTag()}, pager);
+				pc.updateAllPartially((toUpdate, pager) -> {
+					List<Question> questionslist = pc.findTagged(Utils.type(Question.class), new String[]{t.getTag()}, pager);
 					for (Question q : questionslist) {
 						t.setCount(t.getCount() + 1);
 						q.setTags(Optional.ofNullable(q.getTags()).orElse(Collections.emptyList()).stream().
 								filter(ts -> !ts.equals(t.getTag())).distinct().collect(Collectors.toList()));
 						logger.debug("Removed tag {} from {} out of {} questions.",
 								t.getTag(), questionslist.size(), pager.getCount());
+						Map<String, Object> post = new HashMap<>();
+						post.put(Config._ID, q.getId());
+						post.put(Config._TAGS, q.getTags());
+						toUpdate.add(post);
 					}
-					if (!questionslist.isEmpty()) {
-						pc.updateAll(questionslist);
-					}
-				} while (!questionslist.isEmpty());
+					return questionslist;
+				});
 			}
 		}
 		if (utils.isAjaxRequest(req)) {

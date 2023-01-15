@@ -201,13 +201,12 @@ public class ReportsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			if (utils.isAdmin(authUser)) {
-				Pager pager = new Pager(1, "_docid", false, CONF.maxItemsPerPage());
-				pager.setSelect(Collections.singletonList(Config._ID));
-				List<Sysprop> reports;
-				do {
-					reports = pc.findQuery(Utils.type(Report.class), "*", pager);
+				pc.readEverything(pager -> {
+					pager.setSelect(Collections.singletonList(Config._ID));
+					List<Sysprop> reports = pc.findQuery(Utils.type(Report.class), "*", pager);
 					pc.deleteAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
-				} while (!reports.isEmpty());
+					return reports;
+				});
 			}
 		}
 		return "redirect:" + REPORTSLINK;

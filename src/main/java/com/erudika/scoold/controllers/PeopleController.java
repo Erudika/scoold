@@ -109,33 +109,17 @@ public class PeopleController {
 		String operation = req.getParameter("operation");
 		String selection = req.getParameter("selection");
 		if (isAdmin && ("all".equals(selection) || selectedUsers != null)) {
-			// find all user objects even if there are more than 10000 users in the system
-			Pager pager = new Pager(1, "_docid", false, ScooldUtils.getConfig().maxItemsPerPage());
-			List<Profile> profiles;
-			LinkedList<Map<String, Object>> toUpdate = new LinkedList<>();
 			List<String> spaces = (selectedSpaces == null || selectedSpaces.length == 0) ?
 					Collections.emptyList() : Arrays.asList(selectedSpaces);
 			List<String> badges = (selectedBadges == null || selectedBadges.length == 0) ?
 					Collections.emptyList() : Arrays.asList(selectedBadges);
-			do {
-				String query = (selection == null || "selected".equals(selection)) ?
-						Config._ID + ":(\"" + String.join("\" \"", selectedUsers) + "\")" : "*";
-				profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
+			String query = (selection == null || "selected".equals(selection)) ?
+					Config._ID + ":(\"" + String.join("\" \"", selectedUsers) + "\")" : "*";
+			pc.updateAllPartially((toUpdate, pager) -> {
+				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
 				bulkEditSpacesAndBadges(profiles, operation, spaces, badges, toUpdate);
-			} while (!profiles.isEmpty());
-			// always patch outside the loop because we modify _docid values!!!
-			LinkedList<Map<String, Object>> batch = new LinkedList<>();
-			while (!toUpdate.isEmpty()) {
-				batch.add(toUpdate.pop());
-				if (batch.size() >= 100) {
-					// partial batch update
-					pc.invokePatch("_batch", batch, Map.class);
-					batch.clear();
-				}
-			}
-			if (!batch.isEmpty()) {
-				pc.invokePatch("_batch", batch, Map.class);
-			}
+				return profiles;
+			});
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
 	}
@@ -278,7 +262,7 @@ public class PeopleController {
 	}
 
 	private void bulkEditSpacesAndBadges(List<Profile> profiles, String operation,
-			List<String> spaces, List<String> badges, LinkedList<Map<String, Object>> toUpdate) {
+			List<String> spaces, List<String> badges, List<Map<String, Object>> toUpdate) {
 		boolean bulkEditBadges = !badges.isEmpty();
 		final List<Badge> badgez;
 		if (bulkEditBadges) {
