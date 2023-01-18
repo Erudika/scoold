@@ -1316,7 +1316,7 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceId(String space) {
-		if (StringUtils.isBlank(space)) {
+		if (StringUtils.isBlank(space) || "default".equalsIgnoreCase(space)) {
 			return DEFAULT_SPACE;
 		}
 		String s = StringUtils.contains(space, Para.getConfig().separator()) ?
@@ -1364,7 +1364,7 @@ public final class ScooldUtils {
 		String spaceId = getSpaceId(Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
 		Sysprop s = new Sysprop(spaceId);
 		s.setType("scooldspace");
-		s.setName(space);
+		s.setName(isDefaultSpace(space) ? "default" : space);
 		return s;
 	}
 

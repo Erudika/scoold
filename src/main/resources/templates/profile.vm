@@ -290,7 +290,11 @@
 							</span>
 						#end
 						#foreach($space in $userSpaces)
-							#set($spaceString = $scooldUtils.getSpaceName($space))
+							#if($scooldUtils.isDefaultSpace($space))
+								#set($spaceString = $!lang.get('defaultspace'))
+							#else
+								#set($spaceString = $scooldUtils.getSpaceName($space))
+							#end
 							#if($userSpaces.size() > 5)
 							<div class="col m6 l4">
 							#end
