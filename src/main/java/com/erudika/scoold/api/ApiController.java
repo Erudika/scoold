@@ -492,8 +492,9 @@ public class ApiController {
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
-		String name = (String) entity.get("name");
-		String email = (String) entity.get("email");
+		String name = (String) entity.get(Config._NAME);
+		String email = (String) entity.get(Config._EMAIL);
+		String password = (String) entity.get(Config._PASSWORD);
 		String location = (String) entity.get("location");
 		String latlng = (String) entity.get("latlng");
 		String website = (String) entity.get("website");
@@ -512,6 +513,20 @@ public class ApiController {
 			profile.setSpaces(new HashSet<>(readSpaces(((List<String>) entity.getOrDefault("spaces",
 						Collections.emptyList())).toArray(new String[0]))));
 			pc.update(profile);
+		}
+		if (!StringUtils.isBlank(password)) {
+			User u = profile.getUser();
+			if (u == null || !StringUtils.equalsAny(u.getIdentityProvider(), "password", "generic")) {
+				badReq("User's password cannot be modified.");
+			}
+			if (!utils.isPasswordStrongEnough(password)) {
+				badReq("Password is not strong enough.");
+			}
+			Sysprop identifier = pc.read(u.getEmail());
+			identifier.addProperty(Config._RESET_TOKEN, ""); // avoid removeProperty method because it won't be seen by server
+			identifier.addProperty("iforgotTimestamp", 0);
+			identifier.addProperty(Config._PASSWORD, Utils.bcrypt(password));
+			pc.update(identifier);
 		}
 		return profile;
 	}

@@ -2028,6 +2028,33 @@ public final class ScooldUtils {
 		return logoUrl;
 	}
 
+	public boolean isPasswordStrongEnough(String password) {
+		if (StringUtils.length(password) >= CONF.minPasswordLength()) {
+			int score = 0;
+			if (password.matches(".*[a-z].*")) {
+				score++;
+			}
+			if (password.matches(".*[A-Z].*")) {
+				score++;
+			}
+			if (password.matches(".*[0-9].*")) {
+				score++;
+			}
+			if (password.matches(".*[^\\w\\s\\n\\t].*")) {
+				score++;
+			}
+			// 1 = good strength, 2 = medium strength, 3 = high strength
+			if (CONF.minPasswordStrength() <= 1) {
+				return score >= 2;
+			} else if (CONF.minPasswordStrength() == 2) {
+				return score >= 3;
+			} else {
+				return score >= 4;
+			}
+		}
+		return false;
+	}
+
 	public String getCSPNonce() {
 		return Utils.generateSecurityToken(16);
 	}
