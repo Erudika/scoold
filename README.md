@@ -841,11 +841,11 @@ to your container, containing the configuration. It should be mounted as `/scool
 
 ## Deploying Scoold to Google App Engine
 
-1. Clone this repo and change directory to it
-2. Create a project in the Google Cloud Platform Console
-3. Install the Google Cloud SDK
-4. Delete `Dockerfile` and `app.yml`
-4. Edit `app.gae.yaml` to suit your needs
+1. Download the Scoold JAR package to a local folder
+2. Copy the file `app.gae.yaml` from this repository to the same folder
+3. Create a project in the Google Cloud Platform Console
+4. Install the Google Cloud SDK
+5. Edit `app.gae.yaml` and fill in the correct configuration properties
 6. Deploy it with `gcloud preview app deploy app.gae.yaml`
 
 ## Deploying Scoold to a servlet container

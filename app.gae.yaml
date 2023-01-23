@@ -1,6 +1,8 @@
 runtime: java
 env: flex
-
+handlers:
+  - url: /.*
+  script: scoold.jar
 env_variables:
   # --SCOOLD CONFIG VARS--
   scoold_env: production
