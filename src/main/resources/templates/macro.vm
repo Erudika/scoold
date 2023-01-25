@@ -755,7 +755,9 @@
 						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
 							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
 					#elseif ($approvedAnswer)
-						<span class="green-text"><i class="fa fa-check-circle fa-3x"></i></span>
+						<span class="green-text"><i class="fa fa-check-circle fa-3x"
+						#if($showPost.approvalTimestamp)title="Accepted #formatdate($showpost.approvalTimestamp 'dd MMMM yyyy, HH:mm')"#end></i>
+						</span>
 					#end
 				</div>
 				#votebox($showpost "hugeText mtm")

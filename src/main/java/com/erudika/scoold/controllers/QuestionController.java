@@ -292,6 +292,7 @@ public class QuestionController {
 					if (answerid.equals(showPost.getAnswerid())) {
 						// Answer approved award - UNDO
 						showPost.setAnswerid("");
+						showPost.setApprovalTimestamp(0L);
 						if (!samePerson) {
 							author.removeRep(CONF.answerApprovedRewardAuthor());
 							authUser.removeRep(CONF.answerApprovedRewardVoter());
@@ -300,6 +301,7 @@ public class QuestionController {
 					} else {
 						// Answer approved award - GIVE
 						showPost.setAnswerid(answerid);
+						showPost.setApprovalTimestamp(Utils.timestamp());
 						if (!samePerson) {
 							author.addRep(CONF.answerApprovedRewardAuthor());
 							authUser.addRep(CONF.answerApprovedRewardVoter());
