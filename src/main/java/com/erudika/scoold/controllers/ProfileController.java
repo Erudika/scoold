@@ -359,7 +359,7 @@ public class ProfileController {
 		Profile authUser = utils.getAuthUser(req);
 		if (authUser != null && StringUtils.equalsAny(authUser.getGroups(),
 				User.Groups.ADMINS.toString(), User.Groups.MODS.toString())) {
-			authUser.setEditorRoleEnabled(!authUser.isEditorRoleEnabled());
+			authUser.setEditorRoleEnabled(!authUser.getEditorRoleEnabled());
 			authUser.update();
 		}
 		return "redirect:" + HttpUtils.getBackToUrl(req, true);

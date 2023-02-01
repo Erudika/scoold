@@ -479,10 +479,6 @@ public class Profile extends Sysprop {
 		this.editorRoleEnabled = editorRoleEnabled;
 	}
 
-	public boolean isEditorRoleEnabled() {
-		return Boolean.valueOf(editorRoleEnabled);
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Question> getAllQuestions(Pager pager) {
 		if (getId() == null) {
