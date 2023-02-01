@@ -38,6 +38,9 @@
 		<encoder>
 			<pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
 		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${scoold.file_logger_level:-INFO}</level>
+		</filter>
 	</appender>
 
 	<logger name="ch.qos.logback" level="WARN"/>
@@ -54,7 +57,7 @@
 	<logger name="org.hibernate" level="WARN"/>
 	<logger name="com.hazelcast" level="INFO"/>
 
-	<logger name="paraMetrics" level="INFO" additivity="false">
+	<logger name="paraMetrics" additivity="false">
 		<appender-ref ref="METRICSAPPENDER" />
 	</logger>
 
