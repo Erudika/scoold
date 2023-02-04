@@ -79,8 +79,10 @@ public class ScooldServer extends SpringBootServletInitializer {
 		if (CONF.accessLogEnabled()) {
 			System.setProperty("server.jetty.accesslog.append", "true");
 			System.setProperty("server.jetty.accesslog.enabled", "true");
-			System.setProperty("server.jetty.accesslog.filename", System.getProperty("para.logs_dir", ".")
-					+ File.separator + CONF.getConfigRootPrefix() + "-access.log");
+			if (!System.getProperty("scoold.file_logger_level", "INFO").equalsIgnoreCase("OFF")) {
+				System.setProperty("server.jetty.accesslog.filename", System.getProperty("para.logs_dir", ".")
+						+ File.separator + CONF.getConfigRootPrefix() + "-access.log");
+			}
 		}
 	}
 
