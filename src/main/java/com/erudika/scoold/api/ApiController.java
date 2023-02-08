@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -464,11 +465,25 @@ public class ApiController {
 	}
 
 	@GetMapping("/users")
-	public List<Profile> listUsers(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+	public List<Map<String, Object>> listUsers(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
 		peopleController.get(req.getParameter("tag"), sortby, q, req, model);
-		return (List<Profile>) model.getAttribute("userlist");
+		List<Profile> profiles = (List<Profile>) model.getAttribute("userlist");
+		List<Map<String, Object>> results = new LinkedList<>();
+		Map<String, User> usersMap = new HashMap<>();
+		if (profiles != null && !profiles.isEmpty()) {
+			List<User> users = pc.readAll(profiles.stream().map(p -> p.getCreatorid()).collect(Collectors.toList()));
+			for (User user : users) {
+				usersMap.put(user.getId(), user);
+			}
+			for (Profile profile : profiles) {
+				Map<String, Object> u = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
+				u.put("user", usersMap.get(profile.getCreatorid()));
+				results.add(u);
+			}
+		}
+		return results;
 	}
 
 	@GetMapping("/users/{id}")
