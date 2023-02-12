@@ -2720,8 +2720,22 @@ Please try to respect the code style of this project. To check your code, run it
 ```sh
 mvn validate
 ```
+### Using wsl2 in window and IntelliJ
+1. Install wsl2 in windows
+2. Clone the repository in wsl2
+3. Open IntelliJ
+4. File | Open : In the path enter : ```\\wsl$\Ubuntu\<path in wsl2> ```
+5. If intellij crashes while opening, try following:
+6. File | New Projects Setup | Structure for new Projects
+7. Configure a WSL JDK for project SDK. Command to find path of jdk : ```readlink -f $(which java)```
+8. Then delete the .idea, and reopen this project.
 
-For more information, see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
+### Others
+#### CRLF issue doing maven install in windows
+1. If you get this issue ```Expected line ending for file is LF(\n), but CRLF(\r\n) is detected```.
+2. Skip checkstyle during maven build/install using ```mvn install -Dcheckstyle.skip```
+
+3. For more information, see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
 
 ![Square Face](https://raw.githubusercontent.com/Erudika/scoold/master/assets/logosq.png)
 
