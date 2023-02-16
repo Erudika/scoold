@@ -147,6 +147,15 @@ Save the obtained API keys in the `application.conf` file that you have created 
 	java -jar -Dconfig.file=./scoold-application.conf \
 	  -Dscoold.autoinit.para_config_file=../para-application.conf scoold-*.jar`
 	```
+On startup, Scoold will try to initialize itself automatically using the root access key for Para. **Alternatively** you
+could provide Scoold with the root access key directly, instead of pointing it to the Para configuration file, like so:
+```
+	java -jar -Dconfig.file=./scoold-application.conf \
+	  -Dscoold.autoinit.root_app_secret_key="{secret key for root app}" scoold-*.jar`
+```
+The secret key for the root Para app can be found inside the Para configuration file, or `para-application.conf`,
+labeled `para.root_secret_key`.
+
 4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
 register a new account with same email you put in the configuration
 
