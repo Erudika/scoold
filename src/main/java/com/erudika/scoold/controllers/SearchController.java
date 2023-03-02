@@ -263,22 +263,29 @@ public class SearchController {
 		}
 		return ResponseEntity.ok().
 				contentType(MediaType.APPLICATION_XML).
-				cacheControl(CacheControl.maxAge(3, TimeUnit.HOURS)).
+				cacheControl(CacheControl.maxAge(6, TimeUnit.HOURS)).
 				eTag(Utils.md5(sitemap)).
 				body(sitemap);
 	}
 
 	private String getSitemap(HttpServletRequest req) throws IOException, FeedException {
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
-		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
-		if (!questions.isEmpty()) {
-			String baseurl = CONF.serverUrl() + CONF.serverContextPath();
-			WebSitemapGenerator generator = new WebSitemapGenerator(baseurl);
-			for (Post post : questions) {
-				String baselink = baseurl.concat(post.getPostLink(false, false));
-				generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
+		if (canList) {
+			List<Post> questions = new LinkedList<>();
+			pc.readEverything(pager -> {
+				List<Post> results = utils.fullQuestionsSearch("*", pager);
+				questions.addAll(results);
+				return results;
+			});
+			if (!questions.isEmpty()) {
+				String baseurl = CONF.serverUrl() + CONF.serverContextPath();
+				WebSitemapGenerator generator = new WebSitemapGenerator(baseurl);
+				for (Post post : questions) {
+					String baselink = baseurl.concat(post.getPostLink(false, false));
+					generator.addUrl(new WebSitemapUrl.Options(baselink).lastMod(new Date(post.getTimestamp())).build());
+				}
+				return generator.writeAsStrings().get(0);
 			}
-			return generator.writeAsStrings().get(0);
 		}
 		return "<_/>";
 	}
