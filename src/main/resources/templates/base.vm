@@ -143,6 +143,7 @@
 											<li class="divider"></li>
 										#end
 										#foreach($space in $authUser.allSpaces)
+										#if(!$scooldUtils.isDefaultSpace($space))
 											#if($!currentSpace == $space)
 												#set($spaceSelectedClass = "navbtn-hover white-text")
 											#else
@@ -152,6 +153,7 @@
 											<li><a href="$questionslink/space/$!scooldUtils.getSpaceId($!space)?returnto=$!returnto" title="$!{spaceName}"
 														 class="$!{spaceSelectedClass}">$!utils.abbreviate($!spaceName, 35)</a></li>
 											<li class="divider"></li>
+										#end
 										#end
 									#if($wrapped)
 									</ul>

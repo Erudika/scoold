@@ -290,6 +290,7 @@
 							</span>
 						#end
 						#foreach($space in $userSpaces)
+						#if(!$scooldUtils.isDefaultSpace($space))
 							#if($scooldUtils.isDefaultSpace($space))
 								#set($spaceString = $!lang.get('defaultspace'))
 							#else
@@ -305,6 +306,7 @@
 							#if($userSpaces.size() > 5)
 							</div>
 							#end
+						#end
 						#end
 					</div>
 				#end
