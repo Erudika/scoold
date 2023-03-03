@@ -151,7 +151,9 @@
 					<select multiple name="selectedSpaces">
 						<option selected="selected" value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
 						#foreach($space in $authUser.allSpaces)
+						#if(!$scooldUtils.isDefaultSpace($space))
 						<option value="$space">$!scooldUtils.getSpaceName($space)</option>
+						#end
 						#end
 					</select>
 					<label>$!lang.get('spaces.title')</label>

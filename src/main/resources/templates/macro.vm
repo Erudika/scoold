@@ -945,12 +945,14 @@
 						#set($selectedPostSpace = $!scooldUtils.getSpaceId($!scooldUtils.getValidSpaceIdExcludingAll($authUser, "", $request)))
 					#end
 					#if($scooldUtils.canAccessSpace($authUser, "default"))
-						<option value="$!scooldUtils.getSpaceId('default')" #if($scooldUtils.isDefaultSpace($selectedPostSpace))selected#end>$!lang.get('defaultspace')</option>
+						<option value="$scooldUtils.getDefaultSpace()" #if($scooldUtils.isDefaultSpace($selectedPostSpace))selected#end>$!lang.get('defaultspace')</option>
 					#end
 					#foreach($space in $authUser.allSpaces)
+					#if(!$scooldUtils.isDefaultSpace($space))
 						<option value="$!space" #if($!scooldUtils.getSpaceId($space).equals($selectedPostSpace))selected#end>
 							$!scooldUtils.getSpaceName($space)
 						</option>
+					#end
 					#end
 				</select>
 			</div>
