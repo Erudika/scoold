@@ -2,7 +2,9 @@
 
 ## Scoold - Stack Overflow in a JAR
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.erudika%3Ascoold&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.erudika%3Ascoold)
+
+[![Docker pulls](https://img.shields.io/docker/pulls/erudikaltd/scoold)](https://hub.docker.com/r/erudikaltd/scoold)
+[![Docker pulls](https://img.shields.io/docker/image-size/erudikaltd/scoold)](https://hub.docker.com/r/erudikaltd/scoold)
 [![Join the chat at https://gitter.im/Erudika/scoold](https://badges.gitter.im/Erudika/scoold.svg)](https://gitter.im/Erudika/scoold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Scoold** is a Q&A and a knowledge sharing platform for teams. The project was created back in 2008, released in 2012 as
