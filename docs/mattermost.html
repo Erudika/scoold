@@ -346,10 +346,15 @@
 								<span class="pam">
 									<b>1.</b> From the System Console, enable OAuth 2.0 Service Provider. Then, create a new
 									<b>trusted</b> Mattermost
-									OAuth 2.0 application from the Integrations section and copy the
-									Client ID and Client Secret to your <code>application.conf</code> and 
-									also configure the location of your Mattermost server:
-								</span>
+									OAuth 2.0 application from the Integrations section with name "Scoold". The URL of the application
+									can be the same as your Scoold server URL. Add these two callback URLs (change them to match your Scoold server URL):
+								</span><br>
+								<img src="mm_step2.png" alt="Step 1" class="responsive-img">
+							</li>
+							<li class="mvm mediumText"><span class="pam">
+								<b>2.</b> Copy the Client ID and Client Secret of your Mattermost OAuth 2.0 application to your
+								Scoold configuration file (<code>application.conf</code>) and also configure the location of your Mattermost server:
+									</span>
 
 									<code><pre>
   scoold.mm_app_id = "{Client ID}"
@@ -359,13 +364,9 @@
 
 							</li>
 							<li class="mvm mediumText"><span class="pam">
-								<b>2.</b> From the System Console, enable Incoming Webhooks, integrations to override usernames,
-								integrations to override profile picture icons and click "Save changes".</span><br>
-								<img src="mm_step1.png" alt="Step 1" class="responsive-img">
-							</li>
-							<li class="mvm mediumText"><span class="pam">
-								<b>3.</b> Whitelist the following redirect (callback) URLs in your OAuth 2.0 application settings: </span><br><br>
-								<img src="mm_step2.png" alt="Step 2" class="responsive-img">
+								<b>3.</b> Go to System Console > Integration Management and enable Incoming Webhooks, integrations to override usernames,
+								integrations to override profile picture icons and click "Save changes": </span><br><br>
+								<img src="mm_step1.png" alt="Step 3" class="responsive-img">
 							</li>
 							<li class="mvm mediumText"><span class="pam">
 								<b>4.</b> Visit the "Administration" page in Scoold and click the "Add to Mattermost" button.
