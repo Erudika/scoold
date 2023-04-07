@@ -34,13 +34,20 @@ import static com.erudika.scoold.ScooldServer.PROFILELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Badge;
 import com.erudika.scoold.core.Post;
+import static com.erudika.scoold.core.Post.DEFAULT_SPACE;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.core.Sticky;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -458,28 +465,48 @@ public class ProfileController {
 	}
 
 	public List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+		itemcount.setSortby("votes");
+		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
 		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
-			List<Question> qlist = new ArrayList<>();
-			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
-			qlist.addAll(showUser.getAllQuestions(itemcount));
-			qlist.addAll(showUser.getAllUnapprovedQuestions(p));
-			itemcount.setCount(itemcount.getCount() + p.getCount());
-			return qlist;
+			return pc.findQuery("", getTypeQuery(Utils.type(Question.class), Utils.type(Sticky.class),
+					Utils.type(UnapprovedQuestion.class)) + " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		} else {
-			return showUser.getAllQuestions(itemcount);
+			return pc.findQuery("", getTypeQuery(Utils.type(Question.class), Utils.type(Sticky.class))
+								+ " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		}
 	}
 
 	public List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
+		itemcount.setSortby("votes");
+		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
 		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
-			List<Reply> alist = new ArrayList<>();
-			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
-			alist.addAll(showUser.getAllAnswers(itemcount));
-			alist.addAll(showUser.getAllUnapprovedAnswers(p));
-			itemcount.setCount(itemcount.getCount() + p.getCount());
-			return alist;
+			return pc.findQuery("", getTypeQuery(Utils.type(Reply.class), Utils.type(UnapprovedReply.class))
+								+ " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		} else {
-			return showUser.getAllAnswers(itemcount);
+			return pc.findQuery("", getTypeQuery(Utils.type(Reply.class))
+					+ " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		}
+	}
+
+	private String getTypeQuery(String... types) {
+		return Config._TYPE + ":(" + String.join(" OR ", types) + ")";
+	}
+
+	private String getAuthorQuery(Profile showUser) {
+		return Config._CREATORID + ":(\"" + showUser.getId() + "\")";
+	}
+
+	private String getSpaceFilter(Profile authUser, boolean isMyProfile) {
+		String spaceFilter;
+		if (utils.isMod(authUser) || isMyProfile) {
+			spaceFilter = "";
+		} else if (authUser != null && authUser.hasSpaces()) {
+			spaceFilter = "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
+					collect(Collectors.joining(" OR ")) + ")";
+		} else {
+			spaceFilter = "properties.space:\"" + DEFAULT_SPACE + "\"";
+		}
+		spaceFilter = StringUtils.isBlank(spaceFilter) ? "" : " AND " + spaceFilter;
+		return spaceFilter;
 	}
 }
