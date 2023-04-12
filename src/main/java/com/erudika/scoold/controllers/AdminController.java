@@ -225,12 +225,11 @@ public class AdminController {
 			String origSpace = s.getId() + Para.getConfig().separator() + s.getName();
 			String newSpace = s.getId() + Para.getConfig().separator() + newspace;
 			if (!origSpace.equals(newSpace)) {
-				int index = utils.getAllSpaces().indexOf(s);
 				s.setName(newspace);
 				pc.update(s);
-				if (index >= 0) {
-					utils.getAllSpaces().get(index).setName(newspace);
-				}
+				utils.getAllSpaces().parallelStream().
+						filter(ss -> ss.getId().equals(s.getId())).
+						forEach(e -> e.setName(newspace));
 				pc.updateAllPartially((toUpdate, pager) -> {
 					String query = "properties.spaces:(\"" + origSpace + "\")";
 					List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
@@ -260,6 +259,9 @@ public class AdminController {
 				s.setTags(assigntoall ? List.of("assign-to-all") : List.of());
 				utils.assingSpaceToAllUsers(assigntoall ? s : null);
 				pc.update(s);
+				utils.getAllSpaces().parallelStream().
+						filter(ss -> ss.getId().equals(s.getId())).
+						forEach(e -> e.setTags(s.getTags()));
 			}
 		}
 		if (utils.isAjaxRequest(req)) {
@@ -762,7 +764,8 @@ public class AdminController {
 	}
 
 	private List<Sysprop> getSpaces(Pager itemcount) {
-		List<Sysprop> spaces = new LinkedList<>(pc.findQuery("scooldspace", "*", itemcount));
+		Set<Sysprop> spaces = utils.getAllSpaces();
+		itemcount.setCount(spaces.size());
 		LinkedList<Sysprop> list = new LinkedList<>(spaces.stream().
 				filter(s -> !utils.isDefaultSpace(s.getName())).collect(Collectors.toList()));
 		if (itemcount.getPage() <= 1) {

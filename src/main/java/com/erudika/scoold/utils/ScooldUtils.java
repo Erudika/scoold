@@ -124,7 +124,7 @@ public final class ScooldUtils {
 	private static final Map<String, String> WHITELISTED_MACROS;
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
 
-	private List<Sysprop> allSpaces;
+	private Set<Sysprop> allSpaces;
 	private Set<String> autoAssignedSpacesFromConfig;
 
 	private static final ScooldConfig CONF = new ScooldConfig();
@@ -1220,9 +1220,9 @@ public final class ScooldUtils {
 		return ALL_MY_SPACES.equalsIgnoreCase(getSpaceId(space));
 	}
 
-	public List<Sysprop> getAllSpaces() {
+	public Set<Sysprop> getAllSpaces() {
 		if (allSpaces == null) {
-			allSpaces = new LinkedList<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
+			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
 		}
 		return allSpaces;
 	}
@@ -1389,8 +1389,9 @@ public final class ScooldUtils {
 
 	public String[] getAllAutoAssignedSpaces() {
 		Set<String> allAutoAssignedSpaces = new LinkedHashSet<>();
-		allAutoAssignedSpaces.addAll(pc.findTagged("scooldspace", new String[]{"assign-to-all"},
-				new Pager(200)).stream().map(s -> s.getName()).collect(Collectors.toSet()));
+		allAutoAssignedSpaces.addAll(getAllSpaces().parallelStream().
+				filter(s -> s.getTags().contains("assign-to-all")).
+				map(s -> s.getName()).collect(Collectors.toSet()));
 		allAutoAssignedSpaces.addAll(getAutoAssignedSpacesFromConfig());
 		return allAutoAssignedSpaces.toArray(String[]::new);
 	}
