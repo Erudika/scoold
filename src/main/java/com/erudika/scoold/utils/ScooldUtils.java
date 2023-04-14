@@ -1370,8 +1370,7 @@ public final class ScooldUtils {
 
 	public boolean isAutoAssignedSpace(Sysprop space) {
 		return space != null && (isAutoAssignedSpaceInConfig(space) ||
-				(space.getTags() != null && !space.getTags().isEmpty() &&
-				space.getTags().iterator().next().equals("assign-to-all")));
+				Optional.ofNullable(space.getTags()).orElse(List.of()).contains("assign-to-all"));
 	}
 
 	public boolean isAutoAssignedSpaceInConfig(Sysprop space) {
@@ -1390,7 +1389,7 @@ public final class ScooldUtils {
 	public String[] getAllAutoAssignedSpaces() {
 		Set<String> allAutoAssignedSpaces = new LinkedHashSet<>();
 		allAutoAssignedSpaces.addAll(getAllSpaces().parallelStream().
-				filter(s -> s.getTags().contains("assign-to-all")).
+				filter(this::isAutoAssignedSpace).
 				map(s -> s.getName()).collect(Collectors.toSet()));
 		allAutoAssignedSpaces.addAll(getAutoAssignedSpacesFromConfig());
 		return allAutoAssignedSpaces.toArray(String[]::new);
