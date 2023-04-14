@@ -2673,7 +2673,7 @@ where "xx" is the language code for your locale. Finally, open a pull request he
 **Icelandic** | [lang_is.properties](src/main/resources/lang_is.properties) | 0%
 **Indonesian** | [lang_in.properties](src/main/resources/lang_in.properties) | 0%
 **Irish** | [lang_ga.properties](src/main/resources/lang_ga.properties) | 0%
-**Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | 0%
+**Italian** | [lang_it.properties](src/main/resources/lang_it.properties) | :heavy_check_mark: Thanks Marco Livrieri!
 **Japanese** | [lang_ja.properties](src/main/resources/lang_ja.properties) | :heavy_check_mark: Thanks Mozy Okubo!
 **Korean** | [lang_ko.properties](src/main/resources/lang_ko.properties) | :heavy_check_mark: Thanks HyunWoo Jo!
 **Lithuanian** | [lang_lt.properties](src/main/resources/lang_lt.properties) | 0%
