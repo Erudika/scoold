@@ -134,7 +134,7 @@
 							<span>$!lang.get('assignspacetoall')</span>
 						</label>
 					</div>
-					<a href="$adminlink/remove-space?space=$!space.id"
+					<a href="$adminlink/remove-space?space=$!space.id:$!space.name"
 						 class="red-text right mts delete-space">$!lang.get('delete')</a>
 					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
 				</div>

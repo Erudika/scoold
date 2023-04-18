@@ -1359,12 +1359,19 @@ public final class ScooldUtils {
 	}
 
 	public Sysprop buildSpaceObject(String space) {
-		space = Utils.abbreviate(space, 255);
-		space = space.replaceAll(Para.getConfig().separator(), "");
-		String spaceId = getSpaceId(Utils.noSpaces(Utils.stripAndTrim(space, " "), "-"));
-		Sysprop s = new Sysprop(spaceId);
+		String spaceId, spaceName;
+		String col = Para.getConfig().separator();
+		if (space.startsWith(getSpaceId(space))) {
+			spaceId = StringUtils.substringBefore(StringUtils.substringAfter(space, col), col);
+			spaceName = StringUtils.substringAfterLast(space, col);
+		} else {
+			spaceId = space;
+			spaceName = Utils.abbreviate(space, 255).replaceAll(col, "");
+		}
+		Sysprop s = new Sysprop();
 		s.setType("scooldspace");
-		s.setName(isDefaultSpace(space) ? "default" : space);
+		s.setId(getSpaceId(Utils.noSpaces(Utils.stripAndTrim(spaceId, " "), "-")));
+		s.setName(isDefaultSpace(space) ? "default" : spaceName);
 		return s;
 	}
 
@@ -1390,7 +1397,7 @@ public final class ScooldUtils {
 		Set<String> allAutoAssignedSpaces = new LinkedHashSet<>();
 		allAutoAssignedSpaces.addAll(getAllSpaces().parallelStream().
 				filter(this::isAutoAssignedSpace).
-				map(s -> s.getName()).collect(Collectors.toSet()));
+				map(s -> s.getId() + Para.getConfig().separator() + s.getName()).collect(Collectors.toSet()));
 		allAutoAssignedSpaces.addAll(getAutoAssignedSpacesFromConfig());
 		return allAutoAssignedSpaces.toArray(String[]::new);
 	}

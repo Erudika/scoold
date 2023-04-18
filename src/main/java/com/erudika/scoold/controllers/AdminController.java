@@ -201,7 +201,7 @@ public class AdminController {
 	public String removeSpace(@RequestParam String space, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && !utils.isDefaultSpace(space) && utils.isAdmin(authUser)) {
-			Sysprop s = new Sysprop(utils.getSpaceId(space));
+			Sysprop s = utils.buildSpaceObject(space);
 			pc.delete(s);
 			authUser.getSpaces().remove(space);
 			authUser.update();
