@@ -1193,7 +1193,7 @@ public final class ScooldUtils {
 	}
 
 	public String getWelcomeMessage(Profile authUser) {
-		return authUser == null ? CONF.welcomeMessage() : "";
+		return authUser == null ? CONF.welcomeMessage().replaceAll("'", "&apos;") : "";
 	}
 
 	public String getWelcomeMessageOnLogin(Profile authUser) {
@@ -1205,7 +1205,7 @@ public final class ScooldUtils {
 			welcomeMsgOnlogin = Utils.compileMustache(Collections.singletonMap("user",
 					ParaObjectUtils.getAnnotatedFields(authUser, false)), welcomeMsgOnlogin);
 		}
-		return welcomeMsgOnlogin;
+		return welcomeMsgOnlogin.replaceAll("'", "&apos;");
 	}
 
 	public boolean isDefaultSpace(String space) {
