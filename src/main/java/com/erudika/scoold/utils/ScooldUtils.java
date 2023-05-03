@@ -1212,6 +1212,10 @@ public final class ScooldUtils {
 		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
 	}
 
+	public boolean isDefaultSpace(Sysprop space) {
+		return space != null && isDefaultSpace(space.getId());
+	}
+
 	public String getDefaultSpace() {
 		return DEFAULT_SPACE;
 	}
@@ -1346,7 +1350,9 @@ public final class ScooldUtils {
 	public String getSpaceFilter(Profile authUser, String spaceId) {
 		if (isAllSpaces(spaceId)) {
 			if (authUser != null && authUser.hasSpaces()) {
-				return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
+				return "(" + authUser.getSpaces().stream().
+						filter(Predicate.not(this::isDefaultSpace)).
+						map(s -> "properties.space:\"" + s + "\"").
 						collect(Collectors.joining(" OR ")) + ")";
 			} else {
 				return "properties.space:\"" + DEFAULT_SPACE + "\"";
@@ -1397,6 +1403,7 @@ public final class ScooldUtils {
 		Set<String> allAutoAssignedSpaces = new LinkedHashSet<>();
 		allAutoAssignedSpaces.addAll(getAllSpaces().parallelStream().
 				filter(this::isAutoAssignedSpace).
+				filter(Predicate.not(this::isDefaultSpace)).
 				map(s -> s.getId() + Para.getConfig().separator() + s.getName()).collect(Collectors.toSet()));
 		allAutoAssignedSpaces.addAll(getAutoAssignedSpacesFromConfig());
 		return allAutoAssignedSpaces.toArray(String[]::new);

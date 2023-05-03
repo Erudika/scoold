@@ -358,6 +358,11 @@ public class Profile extends Sysprop {
 		if (spaces == null) {
 			spaces = new LinkedHashSet<String>();
 		}
+		String invalidDefault = Post.DEFAULT_SPACE + Para.getConfig().separator() + "default"; // causes problems
+		if (spaces.contains(invalidDefault)) {
+			spaces.remove(invalidDefault);
+			spaces.add(Post.DEFAULT_SPACE);
+		}
 		if (spaces.isEmpty()) {
 			spaces.add(Post.DEFAULT_SPACE);
 		}
