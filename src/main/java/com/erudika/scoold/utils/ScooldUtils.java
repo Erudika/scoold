@@ -1271,7 +1271,7 @@ public final class ScooldUtils {
 		String spaceAttr = (String) req.getAttribute(CONF.spaceCookie());
 		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, CONF.spaceCookie())) : spaceAttr;
 		String space = getValidSpaceId(authUser, spaceValue);
-		return (isAllSpaces(space) && isMod(authUser)) ? DEFAULT_SPACE : verifyExistingSpace(authUser, space);
+		return verifyExistingSpace(authUser, space);
 	}
 
 	public void storeSpaceIdInCookie(String space, HttpServletRequest req, HttpServletResponse res) {
@@ -1349,16 +1349,16 @@ public final class ScooldUtils {
 
 	public String getSpaceFilter(Profile authUser, String spaceId) {
 		if (isAllSpaces(spaceId)) {
-			if (authUser != null && authUser.hasSpaces()) {
-				return "(" + authUser.getSpaces().stream().
-						filter(Predicate.not(this::isDefaultSpace)).
-						map(s -> "properties.space:\"" + s + "\"").
+			if (isMod(authUser)) {
+				return "*";
+			} else if (authUser != null && authUser.hasSpaces()) {
+				return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").
 						collect(Collectors.joining(" OR ")) + ")";
 			} else {
 				return "properties.space:\"" + DEFAULT_SPACE + "\"";
 			}
-		} else if (isDefaultSpace(spaceId) && isMod(authUser)) { // DO NOT MODIFY!
-			return "*";
+//		} else if (isDefaultSpace(spaceId) && isMod(authUser)) { // DO NOT MODIFY!
+//			return "*";
 		} else {
 			return "properties.space:\"" + spaceId + "\"";
 		}
