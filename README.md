@@ -698,20 +698,24 @@ If you purchase Scoold Pro you can get access to the private Docker registry hos
 Access to the private registry is not given automatically upon purchase - you have to request it. You will then be issued
 a special access key and secret for AWS ECR. Then execute the following BASH commands (these require
 [AWS CLI v2.x](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)):
-1. Configure AWS CLI to use the new credentials:
+1. Configure AWS CLI to use the new credentials or instruct AWS CLI to use an existing credentials
+profile, e.g. `export AWS_PROFILE=docker`:
 	```
 	aws configure
 	```
-2. Authenticate Docker with ECR using the temporary access token:
+2. Authenticate with our ECR registry - a temporary access token will be issued for 12h:
 	```
 	aws ecr get-login-password --region eu-west-1 | \
 		docker login --username AWS --password-stdin 374874639893.dkr.ecr.eu-west-1.amazonaws.com
 	```
+If the command above doesn't succeed, you won't be able to pull the latest Scoold Pro image or run `docker compose`.
+
 3. Pull a Scoold Pro image with a specific tag:
 	```
 	aws ecr list-images --repository-name scoold-pro
 	docker pull 374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:{tag}
 	```
+You can also run `docker compose up` instead - [download `docker-compose.yml` for Scoold Pro here](https://raw.githubusercontent.com/Erudika/scoold-pro/master/docker-compose.yml)
 
 The `:latest` tag is not supported but you can use `:latest_stable`. The command `aws get-login-password`
 gives you an access token to the private Docker registry which is valid for **12 hours**.
