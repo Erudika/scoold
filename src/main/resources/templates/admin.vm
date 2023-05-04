@@ -287,10 +287,11 @@
 											#if($apiKey && $apiKey.key)
 												#if($apiKeysExpirations.get($apiKey.key) == 0)
 													never
-												#elseif($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
-													<span class="red">expired</span>
 												#else
 													#formatdate($apiKeysExpirations.get($apiKey.key), "YYYY-MM-dd HH:mm")
+													#if($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
+														<strong class="red-text">expired</strong>
+													#end
 												#end
 											#end
 										</span>
