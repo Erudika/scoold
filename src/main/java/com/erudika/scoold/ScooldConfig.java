@@ -1662,6 +1662,16 @@ public class ScooldConfig extends Config {
 		return getConfigInt("min_tags_per_post", 0);
 	}
 
+	@Documented(position = 1572,
+			identifier = "tag_creation_allowed",
+			value = "true",
+			type = Boolean.class,
+			category = "Posts",
+			description = "Enable/disable tag creation by normal users. If disabled, only admins and moderators can create new tags.")
+	public boolean tagCreationAllowed() {
+		return getConfigBoolean("tag_creation_allowed", true);
+	}
+
 	@Documented(position = 1580,
 			identifier = "max_replies_per_post",
 			value = "500",
