@@ -413,6 +413,8 @@ scoold.password_auth_enabled = true
 |`scoold.delete_protection_enabled`<br>Enable/disable the ability for authors to delete their own question, when it already has answers and activity. | `true` | `Boolean`|
 |`scoold.max_text_length`<br>The maximum text length of each post (question or answer). Longer content will be truncated. | `20000` | `Integer`|
 |`scoold.max_tags_per_post`<br>The maximum number of tags a question can have. The minimum is 0 - then the default tag is used. | `5` | `Integer`|
+|`scoold.min_tags_per_post`<br>The minimum number of tags a question must have. The minimum is 0. | `0` | `Integer`|
+|`scoold.tag_creation_allowed`<br>Enable/disable tag creation by normal users. If disabled, only admins and moderators can create new tags. | `true` | `Boolean`|
 |`scoold.max_replies_per_post`<br>The maximum number of answers a question can have. | `500` | `Integer`|
 |`scoold.max_comments_per_id`<br>The maximum number of comments a post can have. | `1000` | `Integer`|
 |`scoold.max_comment_length`<br>The maximum length of each comment. | `600` | `Integer`|
