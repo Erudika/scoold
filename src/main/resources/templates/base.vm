@@ -316,33 +316,33 @@
 							<div class="row">
 								<div class="col m6 s12">
 									<div>
-										<b>Examples:</b> <code>query</code>, <code>"exact match"</code>, <code>wildcard*</code>,
+										<b>$!lang.get('search.help.examples'):</b> <code>query</code>, <code>"exact match"</code>, <code>wildcard*</code>,
 										<code>wild?ard</code>, <code>wild*rd</code>
 									</div>
 									<div>
-										<b>Fuzzy search:</b> <code>cake~</code> (finds <code>cakes</code>, <code>bake</code>)
+										<b>$!lang.get('search.help.fuzzy'):</b> <code>cake~</code> (finds <code>cakes</code>, <code>bake</code>)
 									</div>
 									<div>
-										<b>Term boost:</b> <code>"red velvet"^4</code>, <code>chocolate^2</code>
+										<b>$!lang.get('search.help.boost'):</b> <code>"red velvet"^4</code>, <code>chocolate^2</code>
 									</div>
 									<div>
-										<b>Field grouping:</b> <code>tags:(+work -"fun-stuff")</code>
+										<b>$!lang.get('search.help.grouping'):</b> <code>tags:(+work -"fun-stuff")</code>
 									</div>
 									<div>
-										<b>Escaping:</b> Escape characters <code>+-&|!(){}[]^"~*?:\</code> with <code>\</code>, e.g. <code>\+</code>
+										<b>$!lang.get('search.help.escaping')</b> <code>+-&|!(){}[]^"~*?:\</code> - e.g. <code>\+</code> <code>\*</code> <code>\!</code>
 									</div>
 								</div>
 								<div class="col m6 s12">
 									<div>
-										<b>Range search:</b> <code>properties.timestamp:[1587729413488 TO *]</code> (inclusive),
-										<code>properties.title:{A TO Z}</code>(excluding A and Z)
+										<b>$!lang.get('search.help.range'):</b> <code>properties.timestamp:[1587729413488 TO *]</code> ($!lang.get('search.help.inclusive')),
+										<code>properties.title:{A TO Z}</code>($!lang.get('search.help.excluding'))
 									</div>
 									<div>
-										<b>Combinations:</b> <code>chocolate AND vanilla</code>, <code>chocolate OR vanilla</code>,
+										<b>$!lang.get('search.help.combine'):</b> <code>chocolate AND vanilla</code>, <code>chocolate OR vanilla</code>,
 										<code>(chocolate OR vanilla) NOT "vanilla pudding"</code>
 									</div>
 									<div>
-										<b>Field search:</b> <code>properties.title:"The Title" AND text</code>
+										<b>$!lang.get('search.help.field'):</b> <code>properties.title:"The Title" AND text</code>
 									</div>
 								</div>
 							</div>

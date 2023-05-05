@@ -13,8 +13,8 @@
 				<div class="input-field mvn">
 					#set($maxplus1 = $!maxCommentLength + 1)
 					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')
-						<span class="grey-text mhs"><i class="fa fa-info-circle"></i> Markdown can be used here, e.g.
-						<b>[link](http://url.com)</b> <b>`code`</b> <b>**bold**</b> <b>*italic*</b></span>
+						<span class="grey-text mhs"><i class="fa fa-info-circle"></i> $!lang.get('comments.markdown'), e.g.
+						<span>[link](http://url.com)</span> <code>`code`</code> <b>**bold**</b> <i>*italic*</i></small>
 					</label>
 					<input id="new-comment-$!{parentid}" type="text" name="comment" value=""
 								 data-length="$!maxCommentLength" maxlength="$!maxplus1" class="validate charcounter" required>

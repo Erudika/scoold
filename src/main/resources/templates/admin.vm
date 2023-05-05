@@ -41,7 +41,7 @@
 								<div class="input-field">
 									<label for="name_text">$!lang.get('name')</label>
 									<input type="text" id="name_text" name="space" class="validate" maxlength="255" minlength="2" required>
-									<span class="helper-text" data-error="Space is invalid or already exists!"></span>
+									<span class="helper-text" data-error="$!lang.get('admin.spaceexists')"></span>
 								</div>
 							</div>
 							<div class="col s12 m5">
@@ -158,7 +158,7 @@
 							</div>
 							<label>
 								<input type="checkbox" name="isso" class="filled-in">
-								<span>This is an archive exported from Stack Overflow for Teams</span>
+								<span>$!lang.get('admin.soarchive')</span>
 							</label>
 						</div>
 					</div>
@@ -313,7 +313,7 @@
 				</div>
 			</form>
 			#else
-			<h4 class="em3v card-panel center-align">The Scoold API is disabled.</h4>
+			<h4 class="em3v card-panel center-align">$!lang.get('admin.apidisabled')</h4>
 			#end
 		</div>
 	</div>

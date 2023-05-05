@@ -87,7 +87,7 @@
 				#end
 				<div class="viewbox">
 					<span class="largeText">$!{showUser.name}</span>
-					#if ($isAdmin && $showUser.originalName)
+					#if ($isAdmin && $showUser.originalName && $showUser.originalName != $showUser.name)
 						<div class="tooltipped" data-tooltip="Original name">$!{showUser.originalName}</div>
 					#end
 					#if ($showUser.location && !$showUser.location.isEmpty() && !$showUser.anonymityEnabled)
