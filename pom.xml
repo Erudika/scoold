@@ -4,7 +4,7 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.52.3</version>
+	<version>1.53.0</version>
 	<packaging>${packaging.type}</packaging>
 
 	<parent>
