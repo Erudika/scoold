@@ -115,6 +115,7 @@ public class QuestionController {
 		allPosts.addAll(answerslist);
 		utils.getProfiles(allPosts);
 		utils.getComments(allPosts);
+		utils.getLinkedComment(showPost, req);
 		utils.getVotes(allPosts, authUser);
 		utils.updateViewCount(showPost, req, res);
 

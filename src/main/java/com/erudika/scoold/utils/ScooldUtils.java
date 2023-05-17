@@ -1081,6 +1081,22 @@ public final class ScooldUtils {
 		}
 	}
 
+	public void getLinkedComment(Post showPost, HttpServletRequest req) {
+		if (showPost != null && req.getParameter("commentid") != null) {
+			Comment c = pc.read(req.getParameter("commentid"));
+			if (c != null) {
+				if (showPost.getComments() == null) {
+					showPost.setComments(List.of(c));
+					showPost.getItemcount().setCount(1);
+				} else {
+					Set<Comment> comments = new LinkedHashSet<>(showPost.getComments());
+					comments.add(c);
+					showPost.setComments(List.of(comments.toArray(Comment[]::new)));
+				}
+			}
+		}
+	}
+
 	public void getVotes(List<Post> allPosts, Profile authUser) {
 		if (authUser == null) {
 			return;

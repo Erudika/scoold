@@ -21,7 +21,15 @@
 				/ <strong class="orange-text">$!lang.get('deprecated')</strong>
 			#end
 			</span>
-			<div id="post-title" class="largeText">$!{showPost.title}</div>
+			<div id="post-title" class="largeText">
+				#if($showPost.isReply())
+					<a href="$questionlink/$showPost.parentid/#stripstr($!showPost.title)" class="tooltipped" data-tooltip="⮪ $!lang.get('backtopost')">
+						<i class="fa fa-reply smallText grey-text"></i> $!{showPost.title}
+					</a>
+				#else
+					$!{showPost.title}
+				#end
+			</div>
 			<hr>
 			#ajaxloading(true)
 			<div class="mbl pbl">

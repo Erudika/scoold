@@ -364,12 +364,14 @@ $(function () {
 	});
 
 	$(document).on("click", ".permalink",  function() {
-		if ($(this).attr("href") === $(this).text()) {
-			return true;
-		} else {
-			$(this).text($(this).attr("href"));
-			return false;
-		}
+		navigator.clipboard.writeText(this.href);
+		var that = $(this).find("i");
+		var attr = that.attr("class");
+		that.text("Copied!").attr("class", "green-text smallText");
+		setTimeout(function () {
+			that.text("").attr("class", attr);
+		}, 2000);
+		return false;
 	});
 
 	$(document).on("click", ".click2hide",  function() {
@@ -1278,17 +1280,6 @@ $(function () {
 			$(this).find("i").text("Copied!").attr("class", "green-text smallText").show().fadeOut(3000);
 			return false;
 		});
-	});
-
-	$(".permalink").on("click", function (e) {
-		navigator.clipboard.writeText(this.href);
-		var that = $(this).find("i");
-		var attr = that.attr("class");
-		that.text("Copied!").attr("class", "green-text smallText");
-		setTimeout(function () {
-			that.text("").attr("class", attr);
-		}, 2000);
-		return false;
 	});
 
 	$(".open-merge-window").click(function () {

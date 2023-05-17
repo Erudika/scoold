@@ -41,7 +41,7 @@
 		#set($hidden = "noclass")
 	#end
 
-	<div class="mbs ${hidden}">
+	<div class="mbs ${hidden} #if($request.getParameter('commentid') == $showcomment.id)sticky-post card-panel mediumText#end">
 		#votebox($showcomment "left mrm pbs")
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
 		<div class="comment-text">$!{_commentHtml}</div>
@@ -59,6 +59,9 @@
 		#else
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "noicon")
 		#end
+		<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Permalink" class="permalink phs">
+			<i class="fa fa-bookmark"></i>
+		</a>
 	</div>
 </div>
 #end
@@ -817,7 +820,7 @@
 					#end
 
 					#if ($canComment && !$showpost.isFeedback() && $scooldUtils.alwaysHideCommentForms())
-						<a href="#" title="Add a comment" class="next-div-toggle prm"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
+						<a href="#" title="Add a comment" class="next-div-toggle prm add-comment-link"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
 					#end
 
 					#if ($showpost.lasteditby)
