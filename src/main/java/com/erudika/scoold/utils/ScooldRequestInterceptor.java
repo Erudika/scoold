@@ -139,11 +139,12 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		// Cookies
 		modelAndView.addObject("localeCookieName", CONF.localeCookie());
 		// Paths
+		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("imageslink", CONF.imagesLink()); // do not add context path prefix!
 		modelAndView.addObject("scriptslink", CONF.scriptsLink()); // do not add context path prefix!
 		modelAndView.addObject("styleslink", CONF.stylesLink()); // do not add context path prefix!
 		modelAndView.addObject("peoplelink", CONF.serverContextPath() + PEOPLELINK);
-		modelAndView.addObject("profilelink", CONF.serverContextPath() + PROFILELINK);
+		modelAndView.addObject("profilelink", CONF.usersDiscoverabilityEnabled(utils.isAdmin(authUser)) ? CONF.serverContextPath() + PROFILELINK : "#");
 		modelAndView.addObject("searchlink", CONF.serverContextPath() + SEARCHLINK);
 		modelAndView.addObject("signinlink", CONF.serverContextPath() + SIGNINLINK);
 		modelAndView.addObject("signoutlink", CONF.serverContextPath() + SIGNOUTLINK);
@@ -165,7 +166,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("languageslink", CONF.serverContextPath() + LANGUAGESLINK);
 		modelAndView.addObject("apidocslink", CONF.serverContextPath() + APIDOCSLINK);
 		// Visual customization
-		Profile authUser = (Profile) request.getAttribute(AUTH_USER_ATTRIBUTE);
 		modelAndView.addObject("navbarFixedClass", CONF.fixedNavEnabled() ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", CONF.scooldBrandingEnabled());
 		modelAndView.addObject("logoUrl", utils.getLogoUrl(authUser, request));

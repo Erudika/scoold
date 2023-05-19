@@ -94,6 +94,7 @@ public class SearchController {
 		String queryString = StringUtils.trimToEmpty(StringUtils.isBlank(q) ? query : q);
 		// [space query filter] + original query string
 		String qs = utils.sanitizeQueryString(queryString, req);
+		boolean usersPublic = CONF.usersDiscoverabilityEnabled(utils.isAdmin(utils.getAuthUser(req)));
 
 		if ("questions".equals(type)) {
 			questionslist = utils.fullQuestionsSearch(qs, itemcount);
@@ -101,7 +102,7 @@ public class SearchController {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
-		} else if ("people".equals(type)) {
+		} else if ("people".equals(type) && usersPublic) {
 			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), itemcount);
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
@@ -111,7 +112,9 @@ public class SearchController {
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
 			}
-			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
+			if (usersPublic) {
+				userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
+			}
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		}
 		ArrayList<Post> list = new ArrayList<Post>();

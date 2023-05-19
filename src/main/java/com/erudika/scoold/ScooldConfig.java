@@ -3315,6 +3315,17 @@ public class ScooldConfig extends Config {
 		return getConfigInt("user_autocomplete_max_results", 10);
 	}
 
+	@Documented(position = 3080,
+			identifier = "users_discoverability_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable discoverability of users on the site. If disabled, user profiles and the "
+					+ "users page will be hidden for all except admins.")
+	public boolean usersDiscoverabilityEnabled(boolean isAdmin) {
+		return isAdmin || getConfigBoolean("users_discoverability_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

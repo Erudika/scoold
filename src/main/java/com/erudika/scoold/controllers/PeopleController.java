@@ -24,6 +24,7 @@ import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.PEOPLELINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Badge;
@@ -85,6 +86,11 @@ public class PeopleController {
 			return "redirect:" + PEOPLELINK + "?bulkedit=true";
 		}
 		Profile authUser = utils.getAuthUser(req);
+
+		if (!CONF.usersDiscoverabilityEnabled(utils.isAdmin(authUser))) {
+			return "redirect:" + HOMEPAGE;
+		}
+
 		getUsers(q, sortby, tag, authUser, req, model);
 		model.addAttribute("path", "people.vm");
 		model.addAttribute("title", utils.getLang(req).get("people.title"));
