@@ -621,6 +621,7 @@ scoold.password_auth_enabled = true
 |`scoold.access_log_enabled`<br>Enable/disable the Scoold access log. | `false` | `Boolean`|
 |`scoold.user_autocomplete_details_enabled`<kbd>Pro</kbd><br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
 |`scoold.user_autocomplete_max_results`<kbd>Pro</kbd><br>Controls the maximum number of search results in users' autocomplete. | `10` | `Integer`|
+|`scoold.users_discoverability_enabled`<kbd>Pro</kbd><br>Enable/disable discoverability of users on the site. If disabled, user profiles and the users page will be hidden for all except admins.' autocomplete. | `true` | `Boolean`|
 
 </details>
 
@@ -2508,6 +2509,9 @@ scoold.comment_emails_enabled = false
 
 # comment input box toggle
 scoold.always_hide_comment_forms = true
+
+# show/hide user profiles and users page
+scoold.users_discoverability_enabled = true
 ```
 
 ### Custom Logo
