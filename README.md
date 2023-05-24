@@ -890,7 +890,7 @@ Scoold and Scoold Pro. Simply go to the Administration page and download all you
 Then on the target installation go to the Administration page and import the ZIP file which contains the backup.
 
 **Important:** All data will be overwritten on restore, so it's highly recommended that the target Scoold installation
-is fresh and containing no data.
+is fresh and contains no data.
 
 When using the default H2 database, you can also copy the `./data` directory to the new installation or just copy all
 `*.db` files. The data directory also contains Lucene index folders for each app, e.g. `./data/scoold-lucene`. These
@@ -1074,7 +1074,7 @@ for testing purposes or in certain situations where you want to programmatically
 
 ## reCAPTCHA support
 
-You can protect signups and password reset functionality with reCAPTCHA v3. First you will need to register a new domain
+You can protect signups and password reset functionality with reCAPTCHA v3. First, you will need to register a new domain
 at [Google reCAPTCHA](https://www.google.com/recaptcha/admin). Create a new reCAPTCHA v3, add your site to the whitelist
 and copy the two keys - a clientside key (site key) and a serverside key (secret). Then, protect the pages
 `/signin/register` and `/signin/iforgot` by adding these properties to your configuration:
@@ -1139,9 +1139,9 @@ scoold.host_url = "https://your.scoold.url"
 ```
 This is required for authentication requests to be redirected back to the origin.
 
-**Important:** You must to whitelist the [Para endpoints](https://paraio.org/docs/#031-github) in the admin consoles of
+**Important:** You must whitelist the [Para endpoints](https://paraio.org/docs/#031-github) in the admin consoles of
 each authentication provider. For example, for GitHub you need to whitelist `https://parahost.com/github_auth` as a
-callback URL (redirect URL). Same thing applies for the other providers. For these two providers you need to whitelist
+callback URL (redirect URL). The same thing applies for the other providers. For these two providers you need to whitelist
 these two URLs, containing the public address of Scoold:
 ```
 https://myscoold.com
@@ -1154,7 +1154,7 @@ pointing to the URL of your Scoold server.
 
 In some cases ([see related issue](https://github.com/Erudika/scoold/issues/199)) you want to have Scoold connect to
 Para which is hosted somewhere on your local network and logging in with some authentication providers, like Microsoft,
-doesn't work. In such cases you would see an error "redirect_uri mismatch" or "invalid redirect_uri - must start with
+doesn't work. In such cases, you would see an error "redirect_uri mismatch" or "invalid redirect_uri - must start with
 https:// or http://localhost". To make it work you can set `scoold.security.redirect_uri = "https://public-para.host"`
 while still keeping `scoold.para_endpoint = "http://local-ip:8080"`.
 
@@ -1215,7 +1215,7 @@ immediately.
 
 #### Advanced attribute mapping
 
-The basic profile data attributes (name, email, etc.) can be extracted from a complex response payload which is returned
+The basic profile data attributes (name, email, etc.) can be extracted from a complex response payload that is returned
 from the identity provider's `userinfo` endpoint. You can use JSON pointer syntax to locate attribute values within a
 more complex JSON payload like this one:
 ```
@@ -1337,7 +1337,7 @@ as its authentication provider. The steps are similar to other OAuth2.0 identity
 4. Choose *New registration*
 5. Put the name of the new app, and select supported account types (accoding to your requirements)
 6. Provide the *Redirect URI* - it needs to point to Para's `/oauth2_auth` endpoint (make sure that
-   this URL is accessible from your users' devices). For development purposes `http://localhost:8080/oauth2_auth`
+   this URL is accessible from your users' devices). For development purposes, `http://localhost:8080/oauth2_auth`
    is probably sufficient.
 7. Click *Register*.
 8. Copy the *Application (client) ID* that you should be seeing now at the top - it is the value for `scoold.oa2_app_id`
