@@ -802,7 +802,7 @@
 							<i class="fa fa-bell-o"></i>
 						</a> &nbsp;
 						#end
-						<a href="$!actionlink/$!{showpost.id}#post-$!showpost.id" title="Permalink" class="permalink">
+						<a href="$!actionlink/#if($showpost.parentid)$!{showpost.parentid}#else$!{showpost.id}#end#post-$!showpost.id" title="Permalink" class="permalink">
 							<i class="fa fa-bookmark"></i>
 						</a>
 					</div>
