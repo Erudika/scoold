@@ -1456,6 +1456,12 @@ paths:
                   description: The binary zip file to restore data from.
                   type: string
                   format: binary
+                isso:
+                  description: Flag to indicate if zip archive is coming from Stack Overflow for Teams
+                  type: boolean
+                deleteall:
+                  description: Flag to delete all existing objects before importing the new archive
+                  type: boolean
       responses:
         '200':
           description: Restore operation hast started but is not necessarily complete.

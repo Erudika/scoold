@@ -385,11 +385,21 @@ public class AdminController {
 	@PostMapping("/import")
 	public String restore(@RequestParam("file") MultipartFile file,
 			@RequestParam(required = false, defaultValue = "false") Boolean isso,
+			@RequestParam(required = false, defaultValue = "false") Boolean deleteall,
 			HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isAdmin(authUser)) {
 			res.setStatus(403);
 			return null;
+		}
+		if (deleteall) {
+			logger.info("Deleting all existing objects before import...");
+			pc.readEverything((pager) -> {
+				pager.setSelect(Collections.singletonList(Config._ID));
+				List<Sysprop> objects = pc.findQuery("", "*", pager);
+				pc.deleteAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+				return objects;
+			});
 		}
 		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
 		String filename = file.getOriginalFilename();
@@ -460,7 +470,6 @@ public class AdminController {
 				pc.update(si);
 			}
 		});
-		//return "redirect:" + ADMINLINK + "?error=true&imported=" + count;
 		return "redirect:" + ADMINLINK + "?success=true&imported=1#backup-tab";
 	}
 

@@ -986,8 +986,9 @@ public class ApiController {
 	@PutMapping("/restore")
 	public void restore(@RequestParam("file") MultipartFile file,
 			@RequestParam(required = false, defaultValue = "false") Boolean isso,
+			@RequestParam(required = false, defaultValue = "false") Boolean deleteall,
 			HttpServletRequest req, HttpServletResponse res) {
-		adminController.restore(file, isso, req, res);
+		adminController.restore(file, isso, deleteall, req, res);
 	}
 
 	@GetMapping("/config")
