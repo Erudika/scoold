@@ -67,7 +67,7 @@
 
 		<div id="webhooks-tab" class="col s12">
 			#if($scooldUtils.isWebhooksEnabled())
-			<div class="mbl">
+			<div class="mbl lightborder pal">
 				<form method="post" id="create-webhook-form" action="$adminlink/create-webhook">
 					#sectoken(false "CREATE_WEBHOOK")
 					<div class="row mvn">
@@ -118,8 +118,9 @@
 							</div>
 						</div>
 					</div>
-
-					<button class="btn mtl waves-effect waves-light" type="submit">$!lang.get('create')</button>
+					<div class="center-align">
+						<button class="btn waves-effect waves-light" type="submit">$!lang.get('create')</button>
+					</div>
 				</form>
 			</div>
 
@@ -134,8 +135,8 @@
 		<div id="backup-tab" class="col s12">
 			<div class="row">
 				<div class="col s12 m3">
-					<div class="row mvn lightborder pal center-align">
-						<div class="col s12 input-field em5v">
+					<div class="lightborder pal center-align">
+						<div class="input-field em5v">
 							<a href="$adminlink/export" class="btn waves-effect waves-light mvs">
 								<i class="fa fa-download"></i> &nbsp;$!lang.get('admin.export')
 							</a>
@@ -226,8 +227,8 @@
 		</div>
 
 		<div id="themes-tab" class="col s12">
-			<form action="$adminlink/set-theme" method="post" id="select-theme-form">
-				<div>
+			<form action="$adminlink/set-theme" method="post" id="select-theme-form" class="lightborder pal">
+				<div class="mbl pbl">
 				#set($themesMap = {	'default': ['light-blue', 'pink lighten-1'],
 														'red': ['red darken-3', 'blue-grey darken-3'],
 														'green': ['green darken-3', 'brown darken-3'],
@@ -256,7 +257,7 @@
 					<label>CSS</label>
 					<textarea name="css" class="materialize-textarea monotext">$!customTheme</textarea>
 				</div>
-				<div class="mvl">
+				<div class="mtl center-align">
 					<button type="submit" class="btn waves-effect waves-light">$!lang.get('apply')</button>
 				</div>
 			</form>
@@ -264,7 +265,7 @@
 
 		<div id="api-tab" class="col s12">
 			#if($scooldUtils.isApiEnabled())
-			<form action="$adminlink/generate-api-key" method="post" id="api-key-form">
+			<form action="$adminlink/generate-api-key" method="post" id="api-key-form" class="lightborder pal">
 				<p>API keys are in the JSON Web Token format. Changing <code>app_secret_key</code> would revoke all keys at once.
 					Validity period of 0 hours means the key never expires.</p>
 				<div class="row mbn">
@@ -322,7 +323,7 @@
 				</div>
 			</form>
 			#else
-			<h4 class="em3v card-panel center-align">$!lang.get('admin.apidisabled')</h4>
+			<h4 class="lightborder pal center-align"><div class="em3v">$!lang.get('admin.apidisabled')</div></h4>
 			#end
 		</div>
 	</div>
