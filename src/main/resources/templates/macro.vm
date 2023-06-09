@@ -625,7 +625,7 @@
 						<i class="fa fa-link grey-text"></i> <a href="$!firstLink">$firstLink</a>
 						#end
 						<span class="right">
-							#if(!$request.requestURI.startsWith("/profile"))
+							#if(!$request.requestURI.startsWith("$!CONTEXT_PATH/profile"))
 								#personlink($showpost.author)
 							#end
 							<span class="grey-text"><i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")</span>
@@ -673,7 +673,7 @@
 						</div>
 					</div>
 					<div class="col s2 m1 l3">
-						#if(!$request.requestURI.startsWith("/profile"))
+						#if(!$request.requestURI.startsWith("$!CONTEXT_PATH/profile"))
 							<div class=" hide-on-med-and-down">
 								#smallpersonbox($showpost.author)
 							</div>
@@ -718,7 +718,7 @@
 					</div>
 				</div>
 				<div class="col s12 m2 l3 columns">
-					#if(!$request.requestURI.startsWith("/profile"))
+					#if(!$request.requestURI.startsWith("$!CONTEXT_PATH/profile"))
 						<div class="r">
 							#tinypersonbox($answer.author)
 						</div>
