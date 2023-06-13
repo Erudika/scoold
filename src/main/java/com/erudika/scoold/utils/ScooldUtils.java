@@ -758,15 +758,6 @@ public final class ScooldUtils {
 		return StringEscapeUtils.escapeHtml4(value);
 	}
 
-	public Profile readAuthUser(HttpServletRequest req) {
-		Profile authUser = null;
-		User u = pc.me(HttpUtils.getStateParam(CONF.authCookie(), req));
-		if (u != null && isEmailDomainApproved(u.getEmail())) {
-			return getOrCreateProfile(u, req);
-		}
-		return authUser;
-	}
-
 	public Profile getAuthUser(HttpServletRequest req) {
 		return (Profile) req.getAttribute(AUTH_USER_ATTRIBUTE);
 	}
@@ -1679,11 +1670,11 @@ public final class ScooldUtils {
 			String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
 			if (!StringUtils.isBlank(jwt)) {
 				if (CONF.oneSessionPerUser()) {
-					synchronized (pc) {
-						pc.setAccessToken(jwt);
-						pc.revokeAllTokens();
-						pc.signOut();
-					}
+					logger.debug("Trying to revoke all user tokens for user...");
+					ParaClient pcc = new ParaClient(CONF.paraAccessKey(), CONF.paraSecretKey());
+					pcc.setAccessToken(jwt);
+					pcc.revokeAllTokens();
+					pcc.signOut();
 				}
 				HttpUtils.removeStateParam(CONF.authCookie(), req, res);
 			}
