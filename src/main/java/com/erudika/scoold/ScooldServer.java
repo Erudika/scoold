@@ -30,7 +30,6 @@ import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
 import com.typesafe.config.ConfigFactory;
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -160,7 +159,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		logger.info("Scoold server is listening on {}", CONF.serverUrl() + CONF.serverContextPath());
 		String accessKey = CONF.paraAccessKey();
 		ParaClient pc = new ParaClient(accessKey, CONF.paraSecretKey());
-		setParaEndpointAndApiPath(pc);
+		ScooldUtils.setParaEndpointAndApiPath(pc);
 		pc.setChunkSize(CONF.batchRequestSize()); // unlimited batch size
 
 		printRootAppConnectionNotice();
@@ -280,21 +279,6 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 	}
 
-	private void setParaEndpointAndApiPath(ParaClient pc) {
-		try {
-			URL endpoint = new URL(CONF.paraEndpoint());
-			if (!StringUtils.isBlank(endpoint.getPath()) && !"/".equals(endpoint.getPath())) {
-				// support Para deployed under a specific context path
-				pc.setEndpoint(StringUtils.removeEnd(CONF.paraEndpoint(), endpoint.getPath()));
-				pc.setApiPath(StringUtils.stripEnd(endpoint.getPath(), "/") + pc.getApiPath());
-			} else {
-				pc.setEndpoint(CONF.paraEndpoint());
-			}
-		} catch (Exception e) {
-			logger.error("Invalid Para endpoint URL: {}", CONF.paraEndpoint());
-		}
-	}
-
 	private void tryAutoInitParaApp() {
 		String rootSecret = null;
 		String confFile = CONF.getConfigFilePath();
@@ -308,7 +292,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 		}
 		if (rootSecret != null) {
 			ParaClient pcRoot = new ParaClient(App.id(Config.PARA), rootSecret);
-			setParaEndpointAndApiPath(pcRoot);
+			ScooldUtils.setParaEndpointAndApiPath(pcRoot);
 			String childApp = CONF.paraAccessKey();
 			boolean connectionOk = pcRoot.getTimestamp() > 0;
 			if (connectionOk && (pcRoot.getCount("app") == 1 || pcRoot.read(childApp) == null)) {

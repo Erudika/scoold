@@ -65,6 +65,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -230,6 +231,21 @@ public final class ScooldUtils {
 		String admin = StringUtils.substringBefore(CONF.admins(), ",");
 		if (!StringUtils.isBlank(admin)) {
 			ADMINS.add(admin);
+		}
+	}
+
+	public static void setParaEndpointAndApiPath(ParaClient pc) {
+		try {
+			URL endpoint = new URL(CONF.paraEndpoint());
+			if (!StringUtils.isBlank(endpoint.getPath()) && !"/".equals(endpoint.getPath())) {
+				// support Para deployed under a specific context path
+				pc.setEndpoint(StringUtils.removeEnd(CONF.paraEndpoint(), endpoint.getPath()));
+				pc.setApiPath(StringUtils.stripEnd(endpoint.getPath(), "/") + pc.getApiPath());
+			} else {
+				pc.setEndpoint(CONF.paraEndpoint());
+			}
+		} catch (Exception e) {
+			logger.error("Invalid Para endpoint URL: {}", CONF.paraEndpoint());
 		}
 	}
 
@@ -1672,6 +1688,7 @@ public final class ScooldUtils {
 				if (CONF.oneSessionPerUser()) {
 					logger.debug("Trying to revoke all user tokens for user...");
 					ParaClient pcc = new ParaClient(CONF.paraAccessKey(), CONF.paraSecretKey());
+					setParaEndpointAndApiPath(pcc);
 					pcc.setAccessToken(jwt);
 					pcc.revokeAllTokens();
 					pcc.signOut();
