@@ -1090,7 +1090,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #if($text && !$text.isEmpty())
 	<div class="chip phl ${class}">
 		<i class="fa fa-close close"></i>
-		<div class="msg mrl left">#if($text == "") &nbsp; #else $text #end</div>
+		<div class="msg mrl left-align">#if($text == "") &nbsp; #else $text #end</div>
 	</div>
 #end
 #end

@@ -275,6 +275,9 @@ textarea.simple-editor {
 	padding-top: 0.4em;
 	float: right;
 }
+.input-field > .chip.red {
+	width: 100%;
+}
 .material-icons {
 	display: inline-block;
 	font: normal normal normal 14px/1 FontAwesome;
