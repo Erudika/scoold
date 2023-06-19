@@ -2143,7 +2143,8 @@ public class ScooldConfig extends Config {
 	@Documented(position = 2030,
 			identifier = "welcome_message",
 			category = "Customization",
-			description = "Adds a brief intro text inside a banner at the top of the main page for new visitors to see.")
+			description = "Adds a brief intro text inside a banner at the top of the main page for new visitors to see."
+					+ "Not shown to authenticated users.")
 	public String welcomeMessage() {
 		return getConfigParam("welcome_message", "");
 	}
@@ -2151,9 +2152,17 @@ public class ScooldConfig extends Config {
 	@Documented(position = 2040,
 			identifier = "welcome_message_onlogin",
 			category = "Customization",
-			description = "Adds a brief intro text inside a banner at the top of the 'Sign in' page only.")
+			description = "Adds a brief intro text inside a banner at the top of the page. Shown to authenticated users only.")
 	public String welcomeMessageOnLogin() {
 		return getConfigParam("welcome_message_onlogin", "");
+	}
+
+	@Documented(position = 2041,
+			identifier = "welcome_message_prelogin",
+			category = "Customization",
+			description = "Adds a brief intro text inside a banner at the top of the page. Shown only on the 'Sign in' page.")
+	public String welcomeMessagePreLogin() {
+		return getConfigParam("welcome_message_prelogin", "");
 	}
 
 	@Documented(position = 2050,

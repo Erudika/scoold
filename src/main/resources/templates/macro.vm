@@ -1153,6 +1153,13 @@ $utils.formatDate($date, $format, $currentLocale)
 			#end
 		</div>
 	</div>
+
+	#if(!$scooldUtils.getWelcomeMessagePreLogin($authUser, $request).isEmpty())
+	<div class="card-panel infostrip2 click2hide hide">
+			<a href="#" class="right close-infostrip"><i class="fa fa-times"></i></a>
+			<div class="infostrip2-content"></div>
+	</div>
+	#end
 #end
 #####################################
 #macro(externalScripts $inhead)

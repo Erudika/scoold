@@ -392,14 +392,14 @@ $(function () {
 	});
 
 	$(document).on("click", ".close-infostrip", function () {
-		var name = $(this).closest(".infostrip").hide().data("name");
+		var name = $(this).closest(".infostrip,.infostrip2").hide().data("name");
 		localStorage.setItem(name + "-hidden", "true");
 		return false;
 	});
 
 	if (WELCOME_MESSAGE && WELCOME_MESSAGE.trim().length > 0) {
 		var hidden = "true" === localStorage.getItem("welcome-message-hidden");
-		if (!hidden && window.location.pathname !== CONTEXT_PATH + "/signin") {
+		if (!hidden && window.location.pathname.indexOf(CONTEXT_PATH + "/signin") < 0) {
 			$(".infostrip").removeClass("hide").data("name", "welcome-message");
 			$(".infostrip-content").html(WELCOME_MESSAGE);
 		}
@@ -407,9 +407,17 @@ $(function () {
 
 	if (WELCOME_MESSAGE_ONLOGIN && WELCOME_MESSAGE_ONLOGIN.trim().length > 0) {
 		var hidden = "true" === localStorage.getItem("welcome-message-onlogin-hidden");
-		if (!hidden && window.location.pathname !== CONTEXT_PATH + "/signin") {
+		if (!hidden && window.location.pathname.indexOf(CONTEXT_PATH + "/signin") < 0) {
 			$(".infostrip").removeClass("hide").data("name", "welcome-message-onlogin");
 			$(".infostrip-content").html(WELCOME_MESSAGE_ONLOGIN);
+		}
+	}
+
+	if (WELCOME_MESSAGE_PRELOGIN && WELCOME_MESSAGE_PRELOGIN.trim().length > 0) {
+		var hidden = "true" === localStorage.getItem("welcome-message-prelogin-hidden");
+		if (!hidden) {
+			$(".infostrip2").removeClass("hide").data("name", "welcome-message-prelogin");
+			$(".infostrip2-content").html(WELCOME_MESSAGE_PRELOGIN);
 		}
 	}
 

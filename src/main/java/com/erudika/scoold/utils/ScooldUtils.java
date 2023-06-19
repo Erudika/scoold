@@ -1231,6 +1231,13 @@ public final class ScooldUtils {
 		return welcomeMsgOnlogin.replaceAll("'", "&apos;");
 	}
 
+	public String getWelcomeMessagePreLogin(Profile authUser, HttpServletRequest req) {
+		if (StringUtils.startsWithIgnoreCase(req.getRequestURI(), CONF.serverContextPath() + SIGNINLINK)) {
+			return authUser == null ? CONF.welcomeMessagePreLogin().replaceAll("'", "&apos;") : "";
+		}
+		return "";
+	}
+
 	public boolean isDefaultSpace(String space) {
 		return DEFAULT_SPACE.equalsIgnoreCase(getSpaceId(space));
 	}

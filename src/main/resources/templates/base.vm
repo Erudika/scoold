@@ -441,11 +441,13 @@
 		#set($_welcomeMessageJS = "WELCOME_MESSAGE = '$_welcomeMsg'")
 		#set($_welcomeMsgOnLogin = $scooldUtils.getWelcomeMessageOnLogin($authUser))
 		#set($_welcomeMessageOnLoginJS = "WELCOME_MESSAGE_ONLOGIN = '$_welcomeMsgOnLogin'")
+		#set($_welcomeMsgPreLogin = $scooldUtils.getWelcomeMessagePreLogin($authUser, $request))
+		#set($_welcomeMessagePreLoginJS = "WELCOME_MESSAGE_PRELOGIN = '$_welcomeMsgPreLogin'")
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		#set($_confirmMsgJS = "CONFIRM_MSG = '$!_confirmMsg'")
 		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$minPassLen;
 			$avatarUploadsEnabledJS;$imgurJS;$cloudinaryJS;
-			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;$_confirmMsgJS;
+			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;$_welcomeMessagePreLoginJS;$_confirmMsgJS;
 			if ('serviceWorker' in navigator) {navigator.serviceWorker.register(CONTEXT_PATH + '/service-worker.js');}
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
