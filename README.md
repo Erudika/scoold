@@ -480,8 +480,9 @@ scoold.password_auth_enabled = true
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
 |`scoold.default_language_code`<br>The default language code to use for the site. Set this to make the site load a different language from English. | ` ` | `String`|
-|`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see. | ` ` | `String`|
-|`scoold.welcome_message_onlogin`<br>Adds a brief intro text inside a banner at the top of the 'Sign in' page only. | ` ` | `String`|
+|`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see. Not shown to authenticated users. | ` ` | `String`|
+|`scoold.welcome_message_onlogin`<br>Adds a brief intro text inside a banner at the top of the page. Shown to authenticated users only. | ` ` | `String`|
+|`scoold.welcome_message_prelogin`<br>Adds a brief intro text inside a banner at the top of the page. Shown only on the 'Sign in' page. | ` ` | `String`|
 |`scoold.dark_mode_enabled`<br>Enable/disable the option for users to switch to the dark theme. | `true` | `Boolean`|
 |`scoold.meta_description`<br>The content inside the description `<meta>` tag. | `Scoold is friendly place for knowledge sharing and collaboration...` | `String`|
 |`scoold.meta_keywords`<br>The content inside the keywords `<meta>` tag. | `knowledge base, knowledge sharing, collaboration, wiki...` | `String`|
