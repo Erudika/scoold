@@ -354,7 +354,13 @@ public abstract class Post extends Sysprop {
 				return !existingTagz.containsKey(t.getId());
 			}).collect(Collectors.toList()));
 		} else {
-			newTagz.clear();
+			Iterator<Map.Entry<String, Tag>> it = newTagz.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, Tag> entry = it.next();
+				if (!existingTagz.containsKey(entry.getKey())) {
+					it.remove();
+				}
+			}
 		}
 		// increment or decrement the count of the rest
 		existingTagz.values().forEach(t -> {

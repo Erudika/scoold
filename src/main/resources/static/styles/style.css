@@ -274,6 +274,9 @@ textarea.simple-editor {
 .chip:focus {
 	background-color: #666;
 }
+.chip > .msg {
+	display: contents;
+}
 .chips-container {
 	padding-top: 0.4em;
 	float: right;

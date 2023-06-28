@@ -517,7 +517,9 @@ public class QuestionController {
 			List<String> newTags = Arrays.asList(StringUtils.split(tags, ","));
 			HashSet<String> addedTags = new HashSet<>(newTags);
 			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
-			showPost.updateTags(showPost.getTags(), newTags);
+			if (newTags.size() >= CONF.minTagsPerPost()) {
+				showPost.updateTags(showPost.getTags(), newTags);
+			}
 			return addedTags;
 		}
 		return Collections.emptySet();
