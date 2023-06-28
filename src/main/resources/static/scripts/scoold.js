@@ -935,6 +935,7 @@ $(function () {
 		var mde = new EasyMDE({
 			element: elem,
 			autoDownloadFontAwesome: false,
+			sideBySideFullscreen: false,
 			showIcons: ["code", "table", "strikethrough"],
 			spellChecker: false,
 			promptURLs: true,
