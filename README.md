@@ -1837,8 +1837,9 @@ If the MIME type is not specified in the format `extension:mime_type`, the defau
 files.
 
 <details><summary><b>View list of allowed file formats for uploads</b></summary>
-| File extension | MIME type |
-|  ---           | ---       |
+
+| File extension | MIME type               |
+| ---            | ---                     |
 | jpg         | image/jpeg                 |
 | jpeg        | image/jpeg                 |
 | jpe         | image/jpeg                 |
@@ -1966,6 +1967,7 @@ files.
 | key         | application/vnd.apple.keynote |
 | numbers     | application/vnd.apple.numbers |
 | pages       | application/vnd.apple.pages |
+
 </details>
 
 
