@@ -1677,8 +1677,15 @@ public final class ScooldUtils {
 	}
 
 	public Map<String, String> validateQuestionTags(Question q, Map<String, String> errors, HttpServletRequest req) {
-		if (CONF.minTagsPerPost() > Optional.ofNullable(q.getTags()).orElse(List.of()).stream().
-				filter(t -> !StringUtils.isBlank(t)).distinct().count()) {
+		Set<String> tagz = Optional.ofNullable(q.getTags()).orElse(List.of()).stream().
+				filter(t -> !StringUtils.isBlank(t)).distinct().collect(Collectors.toSet());
+		long tagCount = tagz.size();
+		if (!CONF.tagCreationAllowed() && !ScooldUtils.getInstance().isMod(q.getAuthor())) {
+			q.setTags(pc.findByIds(tagz.stream().map(t -> new Tag(t).getId()).collect(Collectors.toList())).stream().
+					map(tt -> ((Tag) tt).getTag()).collect(Collectors.toList()));
+			tagCount = q.getTags().size();
+		}
+		if (CONF.minTagsPerPost() > tagCount) {
 			errors.put(Config._TAGS, Utils.formatMessage(getLang(req).get("tags.toofew"), CONF.minTagsPerPost()));
 		}
 		return errors;

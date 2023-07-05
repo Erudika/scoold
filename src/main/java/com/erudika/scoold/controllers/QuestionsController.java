@@ -207,6 +207,7 @@ public class QuestionsController {
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
+			q.setAuthor(authUser);
 			q.setSpace(currentSpace);
 			if (StringUtils.isBlank(q.getTagsString())) {
 				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "" : CONF.defaultQuestionTag()));
@@ -214,7 +215,6 @@ public class QuestionsController {
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			if (error.isEmpty()) {
 				q.setLocation(location);
-				q.setAuthor(authUser);
 				String qid = q.create();
 				utils.sendNewPostNotifications(q, req);
 				if (!StringUtils.isBlank(latlng)) {

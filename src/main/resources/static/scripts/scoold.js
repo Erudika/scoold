@@ -1460,9 +1460,7 @@ $(function () {
 			if (val && val.length > 0) {
 				$.get(CONTEXT_PATH + "/tags/" + val, function (data) {
 					var tags = {};
-					if (data.length === 0) {
-						data.push({tag: val});
-					}
+					//if (data.length === 0) {data.push({tag: val});}
 					data.map(function (t) {
 						tags[t.tag] = null;
 					});
