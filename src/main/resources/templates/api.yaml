@@ -48,6 +48,13 @@ paths:
         - posts
       security:
       - scoold_auth: []
+      parameters:
+        - name: notificationsDisabled
+          in: query
+          required: false
+          description: If set, all notifications for newly created posts will be disabled. This is to prevent spamming users when creating posts in bulk.
+          schema:
+            type: boolean
       requestBody:
         description: The request entity
         required: true

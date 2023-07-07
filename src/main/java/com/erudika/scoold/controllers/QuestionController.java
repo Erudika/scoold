@@ -184,7 +184,9 @@ public class QuestionController {
 			updatePost(showPost, authUser);
 			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
-			utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
+			if (req.getParameter("notificationsDisabled") == null) {
+				utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
+			}
 		}
 		model.addAttribute("post", showPost);
 		if (utils.isAjaxRequest(req)) {

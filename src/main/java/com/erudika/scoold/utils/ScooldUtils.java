@@ -635,7 +635,7 @@ public final class ScooldUtils {
 
 	@SuppressWarnings("unchecked")
 	public void sendNewPostNotifications(Post question, HttpServletRequest req) {
-		if (question == null) {
+		if (question == null || req.getParameter("notificationsDisabled") != null) {
 			return;
 		}
 		// the current user - same as utils.getAuthUser(req)
