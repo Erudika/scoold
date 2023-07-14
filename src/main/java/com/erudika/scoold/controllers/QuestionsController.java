@@ -350,6 +350,8 @@ public class QuestionsController {
 	private String getQuestionsQuery(HttpServletRequest req, Profile authUser, String sortby, String currentSpace, Pager p) {
 		boolean spaceFiltered = isSpaceFilteredRequest(authUser, currentSpace);
 		String query = utils.getSpaceFilteredQuery(req, spaceFiltered, null, utils.getSpaceFilter(authUser, currentSpace));
+		String spaceFilter = utils.getSpaceFilter(authUser, currentSpace);
+		spaceFilter = StringUtils.isBlank(spaceFilter) || spaceFilter.startsWith("*") ? "" : spaceFilter + " AND ";
 		if ("activity".equals(sortby)) {
 			p.setSortby("properties.lastactivity");
 		} else if ("votes".equals(sortby)) {
@@ -357,24 +359,21 @@ public class QuestionsController {
 		} else if ("answered".equals(sortby)) {
 			p.setSortby("timestamp");
 			String q = "properties.answerid:[* TO *]";
-			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
-					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
 		} else if ("unanswered".equals(sortby)) {
 			p.setSortby("timestamp");
 			if ("default_pager".equals(p.getName()) && p.isDesc()) {
 				p.setDesc(false);
 			}
 			String q = "properties.answercount:0";
-			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
-					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
 		} else if ("unapproved".equals(sortby)) {
 			p.setSortby("timestamp");
 			if ("default_pager".equals(p.getName()) && p.isDesc()) {
 				p.setDesc(false);
 			}
 			String q = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]";
-			query = utils.getSpaceFilteredQuery(req, spaceFiltered,
-					utils.getSpaceFilter(authUser, currentSpace) + " AND " + q, q);
+			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
 		}
 		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
 		if (StringUtils.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
