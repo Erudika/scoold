@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS: false */
+/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED: false */
 "use strict";
 $(function () {
 	var mapCanvas = $("div#map-canvas");
@@ -1441,6 +1441,12 @@ $(function () {
 			minLength: 2
 		},
 		onChipAdd: function (c) {
+			if (autocompleteChipsInstance && !TAG_CREATION_ALLOWED) {
+				var txt = autocompleteChipsInstance.chipsData[autocompleteChipsInstance.chipsData.length - 1];
+				if (!autocompleteChipsInstance.autocomplete.options.data.hasOwnProperty(txt.tag)) {
+					autocompleteChipsInstance.deleteChip(autocompleteChipsInstance.chipsData.length - 1);
+				}
+			}
 			$(c).find('i.close').text("");
 			autocomplete.next('input[type=hidden]').val(this.chipsData.map(function (c) {
 				return c.tag;

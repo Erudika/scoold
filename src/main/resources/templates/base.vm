@@ -445,9 +445,10 @@
 		#set($_welcomeMessagePreLoginJS = "WELCOME_MESSAGE_PRELOGIN = '$_welcomeMsgPreLogin'")
 		#set($_confirmMsg = $!lang.get('areyousure'))
 		#set($_confirmMsgJS = "CONFIRM_MSG = '$!_confirmMsg'")
+		#set($isTagCreationAllowed = "TAG_CREATION_ALLOWED = $scooldUtils.config.tagCreationAllowed()")
 		<script nonce="$cspNonce">$ctxPathJS;$isRTLJS;$isAdminJS;$maxTagsJS;$minPassLen;
 			$avatarUploadsEnabledJS;$imgurJS;$cloudinaryJS;
-			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;$_welcomeMessagePreLoginJS;$_confirmMsgJS;
+			$_welcomeMessageJS;$_welcomeMessageOnLoginJS;$_welcomeMessagePreLoginJS;$_confirmMsgJS;$isTagCreationAllowed;
 			if ('serviceWorker' in navigator) {navigator.serviceWorker.register(CONTEXT_PATH + '/service-worker.js');}
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
