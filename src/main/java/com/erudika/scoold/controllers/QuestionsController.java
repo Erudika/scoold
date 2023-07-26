@@ -72,6 +72,9 @@ public class QuestionsController {
 	private final ParaClient pc;
 
 	@Inject
+	private QuestionController questionController;
+
+	@Inject
 	public QuestionsController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
@@ -87,6 +90,12 @@ public class QuestionsController {
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
 		return "base";
+	}
+
+	@GetMapping({"/questions/{id}", "/questions/{id}/{title}", "/questions/{id}/{title}/*"})
+	public String getAlias(@PathVariable String id, @PathVariable(required = false) String title,
+			@RequestParam(required = false) String sortby, HttpServletRequest req, HttpServletResponse res, Model model) {
+		return questionController.get(id, title, sortby, req, res, model);
 	}
 
 	@GetMapping("/questions/tag/{tag}")
@@ -148,7 +157,7 @@ public class QuestionsController {
 		res.setStatus(200);
 	}
 
-	@GetMapping("/questions/{filter}")
+	@GetMapping({"/questions/favtags", "/questions/local"})
 	public String getSorted(@PathVariable(required = false) String filter,
 			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
