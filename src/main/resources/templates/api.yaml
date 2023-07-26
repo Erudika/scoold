@@ -762,6 +762,13 @@ paths:
         - users
       security:
       - scoold_auth: []
+      parameters:
+        - name: operation
+          in: query
+          required: false
+          description: The type of operation for adding multiple spaces - `add`, `remove` or `set`.
+          schema:
+            type: string
       requestBody:
         description: The request entity
         required: true
