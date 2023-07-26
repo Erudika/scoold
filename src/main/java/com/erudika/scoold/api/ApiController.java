@@ -187,7 +187,7 @@ public class ApiController {
 		post.setSpace(spaces.iterator().hasNext() ? spaces.iterator().next() : null);
 
 		if (post.isQuestion()) {
-			questionsController.post(post.getLocation(), post.getLatlng(), post.getAddress(), post.getSpace(),
+			questionsController.post(post.getLocation(), post.getLatlng(), post.getAddress(), post.getSpace(), post.getId(),
 					req, res, model);
 		} else if (post.isReply()) {
 			questionController.reply(post.getParentid(), "", null, req, res, model);

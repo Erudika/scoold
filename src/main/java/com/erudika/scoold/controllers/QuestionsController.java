@@ -207,7 +207,7 @@ public class QuestionsController {
 
 	@PostMapping("/questions/ask")
 	public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String address, String space,
+			@RequestParam(required = false) String address, String space, String postId,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -223,8 +223,10 @@ public class QuestionsController {
 			}
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			if (error.isEmpty()) {
+				String qid = StringUtils.isBlank(postId) ? Utils.getNewId() : postId;
+				q.setId(qid);
 				q.setLocation(location);
-				String qid = q.create();
+				q.create();
 				utils.sendNewPostNotifications(q, req);
 				if (!StringUtils.isBlank(latlng)) {
 					Address addr = new Address(qid + Para.getConfig().separator() + Utils.type(Address.class));

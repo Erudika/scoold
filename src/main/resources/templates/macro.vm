@@ -602,7 +602,7 @@
 						#if($showpost.type == "unapprovedquestion")
 						<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
 						#end
-						<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">
+						<a href="$!actionlink/$!utils.urlEncode($showpost.id)/#stripstr($!showpost.title)" class="mediumText">
 							#if($showSpaceLabel)
 								#set($spaceLabel = "$!scooldUtils.getSpaceName($!showpost.space)")
 								#if(!$spaceLabel.trim().isEmpty())
@@ -665,7 +665,7 @@
 							#if($showpost.type == "unapprovedquestion")
 								<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
 							#end
-							<a href="$!actionlink/$showpost.id/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+							<a href="$!actionlink/$!utils.urlEncode($showpost.id)/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
 						</div>
 						<div class="mbs">
 							#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )
