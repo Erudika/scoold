@@ -1078,6 +1078,9 @@ public class ApiController {
 		List<String> ids = spaces.stream().map(s -> utils.getSpaceId(s)).
 				filter(s -> !s.isEmpty() && !utils.isDefaultSpace(s)).distinct().collect(Collectors.toList());
 		List<Sysprop> existing = pc.readAll(ids);
+		if (spaces.contains(Post.DEFAULT_SPACE) || spaces.contains("default")) {
+			existing.add(utils.buildSpaceObject(Post.DEFAULT_SPACE));
+		}
 		return existing.stream().map(s -> s.getId() + Para.getConfig().separator() + s.getName()).collect(Collectors.toList());
 	}
 
