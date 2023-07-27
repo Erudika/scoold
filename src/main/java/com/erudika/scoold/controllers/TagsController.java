@@ -29,16 +29,20 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -91,6 +95,18 @@ public class TagsController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("tagslist", tagslist);
 		return "base";
+	}
+
+	@PostMapping("/create")
+	public String create(@RequestParam String tags, HttpServletRequest req, HttpServletResponse res, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isMod(authUser)) {
+			Set<Tag> tagz = Arrays.asList(StringUtils.split(tags, ",", 50)).stream().limit(50).
+					map(t -> new Tag(t)).collect(Collectors.toSet());
+			tagz.removeAll(pc.readAll(tagz.stream().map(t -> t.getId()).collect(Collectors.toList())));
+			pc.createAll(new ArrayList<>(tagz));
+		}
+		return "redirect:" + TAGSLINK + "?success=true&code=done";
 	}
 
 	@PostMapping

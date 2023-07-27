@@ -6,9 +6,31 @@
 		#setsortbyselection($sortarr 'popular')
 		<a href="$tagslink#sortorderparam('?')" title="Most used tags" class="chip $sortarr.popular">#sortordericon() $!lang.get("posts.mostpopular")</a>
 		<a href="$tagslink?sortby=tag#sortorderparamasc('&' 'tag')" title="Tags by name" class="chip $sortarr.tag">#sortordericon("tag") $!lang.get("name")</a>
+		#if($isMod)
+		<a href="#" title="Add tag" class="chip orange-text next-div-toggle"><i class="fa fa-plus-circle"></i> <b>$!lang.get('add')</b></a>
+		#end
 	</div>
 
 	<h2 class="hide-on-med-and-down">$!lang.get("tags.title") #showcount($itemcount.count)</h2>
+
+	<div class="hide mam z-0">
+		<form method="post" id="create-tags-form" action="$tagslink/create">
+			##sectoken(false "CREATE_TAGS") ## BREAKS AJAX - NOT USED
+			<div class="lightborder pal">
+				<div class="row mbn">
+					<div class="col s12 m11">
+						<div class="input-field">
+							<label for="name_text">$!lang.get('tags.title')</label>
+							<input type="text" id="name_text" name="tags" class="validate" maxlength="400" minlength="2" placeholder="e.g. tag1, tag2, tag3" required>
+						</div>
+					</div>
+					<div class="col s12 m1 ce">
+						<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('add')</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
 
 	#if($tagslist.isEmpty())
 		<div class="card-panel hugeText center-align grey-text">
