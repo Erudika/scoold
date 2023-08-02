@@ -1564,6 +1564,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("security.oauth" + a + ".appid_in_state_param_enabled", true);
 	}
 
+	@Documented(position = 1502,
+			identifier = "security.oauth.send_scope_to_token_endpoint",
+			value = "true",
+			type = Boolean.class,
+			category = "OAuth 2.0 Authentication",
+			description = "Enable/disable sending the OAauth 2.0 scope parameter in the token request. "
+					+ "Some OAuth 2.0 servers require this to be turned off.")
+	public boolean oauthSendScopeToTokenEndpointEnabled(String a) {
+		return getConfigBoolean("security.oauth" + a + ".send_scope_to_token_endpoint", true);
+	}
+
 	/* **************************************************************************************************************
 	 * Posts                                                                                                  Posts *
 	 ****************************************************************************************************************/
@@ -3395,6 +3406,7 @@ public class ScooldConfig extends Config {
 		settings.put("security.oauth" + a + ".download_avatars", oauthAvatarDownloadingEnabled(a));
 		settings.put("security.oauth" + a + ".domain", oauthDomain(a));
 		settings.put("security.oauth" + a + ".token_delegation_enabled", oauthTokenDelegationEnabled(a));
+		settings.put("security.oauth" + a + ".send_scope_to_token_endpoint", oauthSendScopeToTokenEndpointEnabled(a));
 		return settings;
 	}
 
