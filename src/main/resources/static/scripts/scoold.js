@@ -879,7 +879,11 @@ $(function () {
      ****************************************************/
 
 	if (window.location.hash !== "" && window.location.hash.match(/^#post-.*/)) {
-		$(window.location.hash).addClass("selected-post");
+		try {
+			$(window.location.hash).addClass("selected-post");
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	$(document).on('click', '.page-content .questionbox',  function () {

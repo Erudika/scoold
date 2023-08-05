@@ -740,6 +740,9 @@
 ####################################
 #macro(postbox $showpost $parentpost)
 #set($actionlink = "#getpostlink($showpost false true)")
+#if($showpost.id != $!utils.urlEncode($showpost.id))
+	$showpost.setId($!utils.urlEncode($showpost.id))
+#end
 #if($request.getServletPath().endsWith("/edit-post-$!showpost.id"))#set($resumeEditPost = "resume-editing")#else#set($resumeEditPost = "" )#end
 <div id="$!showpost.id" class="postbox $!{showpost.type}box $!{resumeEditPost}">
 	#if($showpost.isReply())<hr>#end
