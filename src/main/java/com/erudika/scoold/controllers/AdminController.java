@@ -59,6 +59,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -578,6 +579,7 @@ public class AdminController {
 						getOrDefault("tags", ""), "|"), "|");
 				p.setTags(Arrays.asList(t.split("\\|")));
 				p.setAnswercount(((Integer) obj.getOrDefault("answerCount", 0)).longValue());
+				p.setViewcount(((Integer) obj.getOrDefault("viewCount", 0)).longValue());
 				Integer answerId = (Integer) obj.getOrDefault("acceptedAnswerId", null);
 				p.setAnswerid(answerId != null ? "post_" + answerId : null);
 			} else if ("answer".equalsIgnoreCase((String) obj.get("postType"))) {
@@ -589,6 +591,7 @@ public class AdminController {
 			}
 			p.setId("post_" + (Integer) obj.getOrDefault("id", Utils.getNewId()));
 			p.setBody((String) obj.get("bodyMarkdown"));
+			p.setSpace((String) obj.getOrDefault("space", Post.DEFAULT_SPACE)); // optional
 			p.setVotes((Integer) obj.getOrDefault("score", 0));
 			p.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			Integer creatorId = (Integer) obj.getOrDefault("ownerUserId", null);
@@ -660,6 +663,7 @@ public class AdminController {
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void importUsersFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport,
 			Map<String, User> accounts2emails, Sysprop si) throws ParseException {
 		logger.info("Importing {} users...", objs.size());
@@ -671,7 +675,9 @@ public class AdminController {
 			u.setActive(true);
 			u.setCreatorid(((Integer) obj.get("accountId")).toString());
 			u.setGroups("admin".equalsIgnoreCase((String) obj.get("userTypeId"))
-					? User.Groups.ADMINS.toString() : User.Groups.USERS.toString());
+					? User.Groups.ADMINS.toString() :
+					("mod".equalsIgnoreCase((String) obj.get("userTypeId")) ?
+							User.Groups.MODS.toString() : User.Groups.USERS.toString()));
 			u.setEmail(u.getId() + "@scoold.com");
 			u.setIdentifier(u.getEmail());
 			u.setName((String) obj.get("realName"));
@@ -679,14 +685,25 @@ public class AdminController {
 			u.setUpdated(StringUtils.isBlank(lastLogin) ? null :
 					DateUtils.parseDate(lastLogin, soDateFormat1, soDateFormat2).getTime());
 			u.setPicture((String) obj.get("profileImageUrl"));
-			u.setPassword(Utils.generateSecurityToken(10));
+
+			Sysprop s = new Sysprop();
+			s.setId(u.getIdentifier());
+			s.setName(Config._IDENTIFIER);
+			s.setCreatorid(u.getId());
+			String password = (String) obj.getOrDefault("passwordHash", Utils.bcrypt(Utils.generateSecurityToken(10)));
+			if (!StringUtils.isBlank(password)) {
+				s.addProperty(Config._PASSWORD, password);
+				u.setPassword(password);
+			}
 
 			Profile p = Profile.fromUser(u);
 			p.setVotes((Integer) obj.get("reputation"));
 			p.setAboutme((String) obj.getOrDefault("title", ""));
 			p.setLastseen(u.getUpdated());
+			p.setSpaces(new HashSet<String>((List<String>) obj.getOrDefault("spaces", List.of(Post.DEFAULT_SPACE))));
 			toImport.add(u);
 			toImport.add(p);
+			toImport.add(s);
 			imported += 2;
 
 			User cachedUser = accounts2emails.get(u.getCreatorid());
