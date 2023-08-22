@@ -67,6 +67,7 @@ public class SettingsController {
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
 		model.addAttribute("newpostEmailsEnabled", utils.isSubscribedToNewPosts(req));
+		model.addAttribute("newreplyEmailsEnabled", utils.isSubscribedToNewReplies(req));
 		model.addAttribute("emailsAllowed", utils.isNotificationsAllowed());
 		model.addAttribute("newpostEmailsAllowed", utils.isNewPostNotificationAllowed());
 		model.addAttribute("favtagsEmailsAllowed", utils.isFavTagsNotificationAllowed());
@@ -81,7 +82,8 @@ public class SettingsController {
 			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
 			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
 			@RequestParam(required = false) String newpostEmailsOn, @RequestParam(required = false) String favtagsEmailsOn,
-			@RequestParam(required = false) List<String> favspaces, HttpServletRequest req, HttpServletResponse res) {
+			@RequestParam(required = false) List<String> favspaces, @RequestParam(required = false) String newreplyEmailsOn,
+			HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			setFavTags(authUser, tags);
@@ -100,6 +102,11 @@ public class SettingsController {
 				utils.subscribeToNewPosts(authUser.getUser());
 			} else {
 				utils.unsubscribeFromNewPosts(authUser.getUser());
+			}
+			if ("on".equals(newreplyEmailsOn) && utils.isReplyNotificationAllowed() && utils.isMod(authUser)) {
+				utils.subscribeToNewReplies(authUser.getUser());
+			} else {
+				utils.unsubscribeFromNewReplies(authUser.getUser());
 			}
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {

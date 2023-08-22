@@ -752,6 +752,15 @@ $(function () {
 		return false;
 	});
 
+	$("#newpostEmailsFilter select").on("change", function () {
+		var selected = $(this).find("option:not([disabled])").filter(":selected").length;
+		if (selected > 0) {
+			$(this).find("option[disabled]").removeAttr("selected");
+		} else {
+			$(this).find("option[disabled]").attr("selected");
+		}
+	});
+
 	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/

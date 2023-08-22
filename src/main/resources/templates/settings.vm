@@ -108,12 +108,13 @@
 				#end
 				<div id="newpostEmailsFilter" class="${hideFavspacesClass}">
 					<div class="row">
-						<div class="col s12 m8">
-							<p class="mediumText pvl mtm">$!lang.get('settings.filterbyspace')</p>
+						<div class="col s12 m5">
+							<p class="ptl mtm">$!lang.get('settings.filterbyspace'):</p>
 						</div>
-						<div class="col s12 m4">
+						<div class="col s12 m7">
 							<div class="input-field">
 								<select multiple name="favspaces">
+									<option value="" disabled #if($authUser.favspaces.isEmpty())selected#end>$!lang.get('allspaces')</option>
 									#foreach($space in $authUser.allSpaces)
 										#set($spaceId = $!scooldUtils.getSpaceId($!space))
 										#if($newpostEmailsEnabled && $authUser.favspaces.contains($spaceId))
@@ -125,8 +126,15 @@
 								</select>
 							</div>
 						</div>
+						#if($isMod)
+							<div class="col s12">
+								<label>
+									<input type="checkbox" name="newreplyEmailsOn" class="filled-in" #if($newreplyEmailsEnabled)checked="checked"#end>
+									<span>$!lang.get('settings.newreplymails')</span>
+								</label>
+							</div>
+						#end
 					</div>
-
 				</div>
 			</div>
 			#end

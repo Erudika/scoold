@@ -545,6 +545,32 @@ public final class ScooldUtils {
 		}
 	}
 
+	public Object isSubscribedToNewReplies(HttpServletRequest req) {
+		if (!isReplyNotificationAllowed()) {
+			return false;
+		}
+		Profile authUser = getAuthUser(req);
+		if (authUser != null) {
+			User u = authUser.getUser();
+			if (u != null) {
+				return getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_reply_subscribers").contains(u.getEmail());
+			}
+		}
+		return false;
+	}
+
+	public void subscribeToNewReplies(User u) {
+		if (u != null) {
+			subscribeToNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_reply_subscribers");
+		}
+	}
+
+	public void unsubscribeFromNewReplies(User u) {
+		if (u != null) {
+			unsubscribeFromNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_reply_subscribers");
+		}
+	}
+
 	private Map<String, Profile> buildProfilesMap(List<User> users) {
 		if (users != null && !users.isEmpty()) {
 			Map<String, User> userz = users.stream().collect(Collectors.toMap(u -> u.getId(), u -> u));
@@ -714,10 +740,13 @@ public final class ScooldUtils {
 				rep.create();
 			}
 
-			if (isReplyNotificationAllowed() && parentPost.hasFollowers()) {
-				emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()),
-						subject,
-						compileEmailTemplate(model));
+			if (isReplyNotificationAllowed()) {
+				if (parentPost.hasFollowers()) {
+					emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()), subject, compileEmailTemplate(model));
+				}
+				// also notify all mods/admins who wish to monitor all answers
+				Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_reply_subscribers"));
+				sendEmailsToSubscribersInSpace(emails, parentPost.getSpace(), subject, compileEmailTemplate(model));
 			}
 		}
 	}
