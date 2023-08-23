@@ -212,7 +212,7 @@ public class QuestionsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
-			boolean needsApproval = utils.postNeedsApproval(authUser);
+			boolean needsApproval = utils.postsNeedApproval(req);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());
@@ -334,7 +334,7 @@ public class QuestionsController {
 			questionslist = pc.findQuery(type, query, itemcount);
 		}
 
-		if (utils.postsNeedApproval() && utils.isMod(authUser)) {
+		if (utils.postsNeedApproval(req) && utils.isMod(authUser)) {
 			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
 			List<UnapprovedQuestion> uquestionslist = pc.findQuery(Utils.type(UnapprovedQuestion.class), query, p);
 			List<Question> qlist = new LinkedList<>(uquestionslist);

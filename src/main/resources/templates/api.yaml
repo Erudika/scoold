@@ -1201,6 +1201,12 @@ paths:
           description: If `true`, space will be assigned to all new and existing users
           schema:
             type: boolean
+        - name: needsapproval
+          in: query
+          required: false
+          description: If `false`, space will not require moderators to approve each post.
+          schema:
+            type: boolean
       requestBody:
         required: true
         description: The request body must contain the `name` field as the new name for that space.

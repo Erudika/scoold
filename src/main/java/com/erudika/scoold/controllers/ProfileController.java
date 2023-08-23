@@ -467,7 +467,7 @@ public class ProfileController {
 	public List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
 		itemcount.setSortby("votes");
 		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
-		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
+		if (CONF.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
 			return pc.findQuery("", getTypeQuery(Utils.type(Question.class), Utils.type(Sticky.class),
 					Utils.type(UnapprovedQuestion.class)) + " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		} else {
@@ -479,7 +479,7 @@ public class ProfileController {
 	public List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
 		itemcount.setSortby("votes");
 		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
-		if (utils.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
+		if (CONF.postsNeedApproval() && (isMyProfile || utils.isMod(authUser))) {
 			return pc.findQuery("", getTypeQuery(Utils.type(Reply.class), Utils.type(UnapprovedReply.class))
 								+ " AND " + getAuthorQuery(showUser) + spaceFilter, itemcount);
 		} else {

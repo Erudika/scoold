@@ -210,7 +210,7 @@ public class ApiController {
 			post.put("author", p.getAuthor());
 			if (Boolean.parseBoolean(req.getParameter("includeReplies"))) {
 				Pager itemcount = utils.getPager("pageReplies", req);
-				post.put("children", questionController.getAllAnswers(utils.getSystemUser(), p, itemcount));
+				post.put("children", questionController.getAllAnswers(utils.getSystemUser(), p, itemcount, req));
 			}
 			return post;
 		}).collect(Collectors.toList());
@@ -809,7 +809,8 @@ public class ApiController {
 		if (StringUtils.isBlank(newName)) {
 			badReq("Property 'name' cannot be blank.");
 		}
-		adminController.renameSpace(id, "true".equals(req.getParameter("assigntoall")), newName, req, res);
+		adminController.renameSpace(id, "true".equals(req.getParameter("assigntoall")),
+				"true".equals(req.getParameter("needsapproval")), newName, req, res);
 	}
 
 	@GetMapping("/spaces")

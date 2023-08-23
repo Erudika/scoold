@@ -137,6 +137,15 @@
 							<span>$!lang.get('assignspacetoall')</span>
 						</label>
 					</div>
+					#if($scooldUtils.config.postsNeedApproval())
+					<div class="mbm smallText">
+						<label>
+							<input type="checkbox" name="needsapproval" class="filled-in"
+										 #if($space.getProperties().getOrDefault("posts_need_approval", $scooldUtils.config.postsNeedApproval()))checked="checked"#end>
+							<span>Posts need approval</span>
+						</label>
+					</div>
+					#end
 					<a href="$adminlink/remove-space?space=$!space.id:$!space.name"
 						 class="red-text right mts delete-space">$!lang.get('delete')</a>
 					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
@@ -438,8 +447,9 @@
 						</ul>
 					</div>
 					#end
+					#set($hideSpacesForMods = ($scooldUtils.isMod($showFriend) && $scooldUtils.config.modsAccessAllSpaces()))
 					<div class="person-name ${ptmClass}">
-						#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
+						#if($isAdmin && $request.getParameter("bulkedit") && !$hideSpacesForMods)
 							<span class="grey-text l">
 								<label for="$!showFriend.id">
 									<input type="checkbox" name="selectedUsers" value="$!showFriend.id" class="filled-in" id="$!showFriend.id">
@@ -452,7 +462,7 @@
 							<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
 						#end
 					</div>
-					#if($isAdmin && $request.getParameter("bulkedit") && !$scooldUtils.isMod($showFriend))
+					#if($isAdmin && $request.getParameter("bulkedit") && !$hideSpacesForMods)
 						<div class="smallText">
 							<i class="fa fa-th-large grey-text"></i>
 							#if(!$showFriend.hasSpaces() || $showFriend.getSpaces().contains($scooldUtils.getDefaultSpace()))

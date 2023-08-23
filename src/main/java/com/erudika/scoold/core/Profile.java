@@ -348,7 +348,7 @@ public class Profile extends Sysprop {
 	}
 
 	public Set<String> getSpaces() {
-		if (ScooldUtils.getInstance().isMod(this)) {
+		if (ScooldUtils.getInstance().isMod(this) && ScooldUtils.getConfig().modsAccessAllSpaces()) {
 			ScooldUtils utils = ScooldUtils.getInstance();
 			spaces = utils.getAllSpaces().stream().
 					map(s -> s.getId() + Para.getConfig().separator() + s.getName()).

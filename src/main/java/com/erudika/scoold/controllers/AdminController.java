@@ -219,6 +219,7 @@ public class AdminController {
 	@PostMapping("/rename-space")
 	public String renameSpace(@RequestParam String space,
 			@RequestParam(required = false, defaultValue = "false") Boolean assigntoall,
+			@RequestParam(required = false, defaultValue = "false") Boolean needsapproval,
 			@RequestParam String newspace, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		Sysprop s = pc.read(utils.getSpaceId(space));
@@ -227,10 +228,6 @@ public class AdminController {
 			String newSpace = s.getId() + Para.getConfig().separator() + newspace;
 			if (!origSpace.equals(newSpace)) {
 				s.setName(newspace);
-				pc.update(s);
-				utils.getAllSpaces().parallelStream().
-						filter(ss -> ss.getId().equals(s.getId())).
-						forEach(e -> e.setName(newspace));
 				pc.updateAllPartially((toUpdate, pager) -> {
 					String query = "properties.spaces:(\"" + origSpace + "\")";
 					List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
@@ -259,11 +256,17 @@ public class AdminController {
 			if (utils.isAutoAssignedSpace(s) ^ assigntoall) {
 				s.setTags(assigntoall ? List.of("assign-to-all") : List.of());
 				utils.assingSpaceToAllUsers(assigntoall ? s : null);
-				pc.update(s);
-				utils.getAllSpaces().parallelStream().
-						filter(ss -> ss.getId().equals(s.getId())).
-						forEach(e -> e.setTags(s.getTags()));
 			}
+
+			s.addProperty("posts_need_approval", needsapproval && CONF.postsNeedApproval());
+			pc.update(s);
+			utils.getAllSpaces().parallelStream().
+					filter(ss -> ss.getId().equals(s.getId())).
+					forEach(e -> {
+						e.setName(s.getName());
+						e.setTags(s.getTags());
+						e.setProperties(s.getProperties());
+					});
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);

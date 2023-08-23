@@ -692,7 +692,7 @@ public final class ScooldUtils {
 			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 			emails.addAll(getFavTagsSubscribers(question.getTags()));
 			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
-		} else if (postsNeedApproval() && question instanceof UnapprovedQuestion) {
+		} else if (postsNeedApproval(req) && question instanceof UnapprovedQuestion) {
 			Report rep = new Report();
 			rep.setDescription("New question awaiting approval");
 			rep.setSubType(Report.ReportType.OTHER);
@@ -731,7 +731,7 @@ public final class ScooldUtils {
 				}
 			}
 
-			if (postsNeedApproval() && reply instanceof UnapprovedReply) {
+			if (postsNeedApproval(req) && reply instanceof UnapprovedReply) {
 				Report rep = new Report();
 				rep.setDescription("New reply awaiting approval");
 				rep.setSubType(Report.ReportType.OTHER);
@@ -1236,12 +1236,13 @@ public final class ScooldUtils {
 		return isAuthenticated(req) && ((authUser.hasBadge(ENTHUSIAST) || CONF.newUsersCanComment() || isMod(authUser)));
 	}
 
-	public boolean postsNeedApproval() {
-		return CONF.postsNeedApproval();
-	}
-
-	public boolean postNeedsApproval(Profile authUser) {
-		return postsNeedApproval() && authUser.getVotes() < CONF.postsReputationThreshold() && !isMod(authUser);
+	public boolean postsNeedApproval(HttpServletRequest req) {
+		Profile authUser = getAuthUser(req);
+		String spaceId = getSpaceId(getSpaceIdFromCookie(authUser, req));
+		Sysprop s = getAllSpaces().parallelStream().filter(ss -> ss.getId().equals(spaceId)).findFirst().orElse(null);
+		boolean def = (s == null) ? CONF.postsNeedApproval() :
+				(boolean) s.getProperties().getOrDefault("posts_need_approval", CONF.postsNeedApproval());
+		return def && authUser.getVotes() < CONF.postsReputationThreshold() && !isMod(authUser);
 	}
 
 	public String getWelcomeMessage(Profile authUser) {
@@ -1294,7 +1295,7 @@ public final class ScooldUtils {
 		if (authUser == null) {
 			return isDefaultSpacePublic() && isDefaultSpace(targetSpaceId);
 		}
-		if (isMod(authUser) || isAllSpaces(targetSpaceId)) {
+		if ((isMod(authUser) && CONF.modsAccessAllSpaces()) || isAllSpaces(targetSpaceId)) {
 			return true;
 		}
 		if (StringUtils.isBlank(targetSpaceId) || targetSpaceId.length() < 2) {
@@ -1408,7 +1409,7 @@ public final class ScooldUtils {
 
 	public String getSpaceFilter(Profile authUser, String spaceId) {
 		if (isAllSpaces(spaceId)) {
-			if (isMod(authUser)) {
+			if (isMod(authUser) && CONF.modsAccessAllSpaces()) {
 				return "*";
 			} else if (authUser != null && authUser.hasSpaces()) {
 				return "(" + authUser.getSpaces().stream().map(s -> "properties.space:\"" + s + "\"").

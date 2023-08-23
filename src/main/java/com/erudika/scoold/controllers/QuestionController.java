@@ -109,7 +109,7 @@ public class QuestionController {
 
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby("newest".equals(sortby) ? "timestamp" : "votes");
-		List<Reply> answerslist = getAllAnswers(authUser, showPost, itemcount);
+		List<Reply> answerslist = getAllAnswers(authUser, showPost, itemcount, req);
 		LinkedList<Post> allPosts = new LinkedList<Post>();
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
@@ -219,7 +219,7 @@ public class QuestionController {
 			followPost(showPost, authUser, emailme);
 		} else if (!showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
-			boolean needsApproval = utils.postNeedsApproval(authUser);
+			boolean needsApproval = utils.postsNeedApproval(req);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
 			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
@@ -469,13 +469,13 @@ public class QuestionController {
 		});
 	}
 
-	public List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount) {
+	public List<Reply> getAllAnswers(Profile authUser, Post showPost, Pager itemcount, HttpServletRequest req) {
 		if (showPost == null || showPost.isReply()) {
 			return Collections.emptyList();
 		}
 		List<Reply> answers = new ArrayList<>();
 		Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
-		if (utils.postsNeedApproval() && (utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+		if (utils.postsNeedApproval(req) && (utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
 			answers.addAll(showPost.getUnapprovedAnswers(p));
 		}
 		answers.addAll(showPost.getAnswers(itemcount));

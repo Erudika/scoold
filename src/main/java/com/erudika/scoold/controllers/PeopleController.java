@@ -278,7 +278,7 @@ public class PeopleController {
 		} else {
 			badgez = Collections.emptyList();
 		}
-		profiles.stream().filter(p -> !utils.isMod(p)).forEach(p -> {
+		profiles.stream().filter(p -> !(utils.isMod(p) && CONF.modsAccessAllSpaces())).forEach(p -> {
 			if ("add".equals(operation)) {
 				if (bulkEditBadges) {
 					badgez.forEach(badge -> p.addCustomBadge(badge));

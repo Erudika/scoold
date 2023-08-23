@@ -1807,6 +1807,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("reset_spaces_on_new_assignment", def);
 	}
 
+	@Documented(position = 1691,
+			identifier = "mods_access_all_spaces",
+			value = "true",
+			type = Boolean.class,
+			category = "Spaces",
+			description = "By default, moderators have access to and can edit content in all spaces. "
+					+ "When disabled, moderators can only access the spaces they are assigned to by admins.")
+	public boolean modsAccessAllSpaces() {
+		return getConfigBoolean("mods_access_all_spaces", true);
+	}
+
 	/* **************************************************************************************************************
 	 * Reputation and Rewards                                                                Reputation and Rewards *
 	 ****************************************************************************************************************/
