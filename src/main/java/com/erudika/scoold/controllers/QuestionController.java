@@ -219,7 +219,7 @@ public class QuestionController {
 			followPost(showPost, authUser, emailme);
 		} else if (!showPost.isClosed() && !showPost.isReply()) {
 			//create new answer
-			boolean needsApproval = utils.postsNeedApproval(req);
+			boolean needsApproval = utils.postsNeedApproval(req) && utils.userNeedsApproval(authUser);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
 			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {

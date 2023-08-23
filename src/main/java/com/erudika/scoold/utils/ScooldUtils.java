@@ -666,35 +666,38 @@ public final class ScooldUtils {
 		}
 		// the current user - same as utils.getAuthUser(req)
 		Profile postAuthor = question.getAuthor() != null ? question.getAuthor() : pc.read(question.getCreatorid());
-		if (!question.getType().equals(Utils.type(UnapprovedQuestion.class))) {
-			if (!isNewPostNotificationAllowed()) {
-				return;
-			}
+		if (!isNewPostNotificationAllowed()) {
+			return;
+		}
+		boolean awaitingApproval = postsNeedApproval(req) && question instanceof UnapprovedQuestion;
+		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, String> lang = getLang(req);
+		String name = postAuthor.getName();
+		String body = Utils.markdownToHtml(question.getBody());
+		String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(avatarRepository.
+				getLink(postAuthor, AvatarFormat.Square25)));
+		String postURL = CONF.serverUrl() + question.getPostLink(false, false);
+		String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
+				map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
+				collect(Collectors.joining("&nbsp;"));
+		String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name,
+				Utils.abbreviate(question.getTitle(), 255));
+		model.put("subject", escapeHtml((awaitingApproval ? "[" + lang.get("reports.awaitingapproval") + "] " : "") + subject));
+		model.put("logourl", getSmallLogoUrl());
+		model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
+		model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
+				postURL, escapeHtml(question.getTitle()), body, tagsString));
 
-			Map<String, Object> model = new HashMap<String, Object>();
-			Map<String, String> lang = getLang(req);
-			String name = postAuthor.getName();
-			String body = Utils.markdownToHtml(question.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(avatarRepository.
-					getLink(postAuthor, AvatarFormat.Square25)));
-			String postURL = CONF.serverUrl() + question.getPostLink(false, false);
-			String tagsString = Optional.ofNullable(question.getTags()).orElse(Collections.emptyList()).stream().
-					map(t -> "<span class=\"tag\">" + escapeHtml(t) + "</span>").
-					collect(Collectors.joining("&nbsp;"));
-			String subject = Utils.formatMessage(lang.get("notification.newposts.subject"), name,
-					Utils.abbreviate(question.getTitle(), 255));
-			model.put("subject", escapeHtml(subject));
-			model.put("logourl", getSmallLogoUrl());
-			model.put("heading", Utils.formatMessage(lang.get("notification.newposts.heading"), picture, escapeHtml(name)));
-			model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
-					postURL, escapeHtml(question.getTitle()), body, tagsString));
+		Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
+		emails.addAll(getFavTagsSubscribers(question.getTags()));
+		sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 
-			Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
-			emails.addAll(getFavTagsSubscribers(question.getTags()));
-			sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
-		} else if (postsNeedApproval(req) && question instanceof UnapprovedQuestion) {
+		if (awaitingApproval) {
 			Report rep = new Report();
-			rep.setDescription("New question awaiting approval");
+			rep.setName(question.getTitle());
+			rep.setContent(Utils.abbreviate(question.getBody(), 2000));
+			rep.setParentid(question.getId());
+			rep.setDescription(lang.get("reports.awaitingapproval"));
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setLink(question.getPostLink(false, false));
 			rep.setAuthorName(postAuthor.getName());
@@ -704,10 +707,14 @@ public final class ScooldUtils {
 
 	public void sendReplyNotifications(Post parentPost, Post reply, HttpServletRequest req) {
 		// send email notification to author of post except when the reply is by the same person
-		if (parentPost != null && reply != null && !StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
-			Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
+		if (parentPost == null || reply == null) {
+			return;
+		}
+		Map<String, String> lang = getLang(req);
+		Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
+		boolean awaitingApproval = postsNeedApproval(req) && reply instanceof UnapprovedReply;
+		if (!StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Map<String, Object> model = new HashMap<String, Object>();
-			Map<String, String> lang = getLang(req);
 			String name = replyAuthor.getName();
 			String body = Utils.markdownToHtml(reply.getBody());
 			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(avatarRepository.
@@ -715,7 +722,7 @@ public final class ScooldUtils {
 			String postURL = CONF.serverUrl() + parentPost.getPostLink(false, false);
 			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
 					Utils.abbreviate(reply.getTitle(), 255));
-			model.put("subject", escapeHtml(subject));
+			model.put("subject", escapeHtml((awaitingApproval ? "[" + lang.get("reports.awaitingapproval") + "] " : "") + subject));
 			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
 					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
@@ -731,15 +738,6 @@ public final class ScooldUtils {
 				}
 			}
 
-			if (postsNeedApproval(req) && reply instanceof UnapprovedReply) {
-				Report rep = new Report();
-				rep.setDescription("New reply awaiting approval");
-				rep.setSubType(Report.ReportType.OTHER);
-				rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
-				rep.setAuthorName(reply.getAuthor().getName());
-				rep.create();
-			}
-
 			if (isReplyNotificationAllowed()) {
 				if (parentPost.hasFollowers()) {
 					emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()), subject, compileEmailTemplate(model));
@@ -748,6 +746,18 @@ public final class ScooldUtils {
 				Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_reply_subscribers"));
 				sendEmailsToSubscribersInSpace(emails, parentPost.getSpace(), subject, compileEmailTemplate(model));
 			}
+		}
+
+		if (awaitingApproval) {
+			Report rep = new Report();
+			rep.setName(parentPost.getTitle());
+			rep.setContent(Utils.abbreviate(reply.getBody(), 2000));
+			rep.setParentid(reply.getId());
+			rep.setDescription(lang.get("reports.awaitingapproval"));
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
+			rep.setAuthorName(replyAuthor.getName());
+			rep.create();
 		}
 	}
 
@@ -1240,9 +1250,12 @@ public final class ScooldUtils {
 		Profile authUser = getAuthUser(req);
 		String spaceId = getSpaceId(getSpaceIdFromCookie(authUser, req));
 		Sysprop s = getAllSpaces().parallelStream().filter(ss -> ss.getId().equals(spaceId)).findFirst().orElse(null);
-		boolean def = (s == null) ? CONF.postsNeedApproval() :
+		return (s == null) ? CONF.postsNeedApproval() :
 				(boolean) s.getProperties().getOrDefault("posts_need_approval", CONF.postsNeedApproval());
-		return def && authUser.getVotes() < CONF.postsReputationThreshold() && !isMod(authUser);
+	}
+
+	public boolean userNeedsApproval(Profile authUser) {
+		return (authUser == null || authUser.getVotes() < CONF.postsReputationThreshold()) && !isMod(authUser);
 	}
 
 	public String getWelcomeMessage(Profile authUser) {

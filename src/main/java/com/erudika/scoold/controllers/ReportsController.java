@@ -65,6 +65,9 @@ public class ReportsController {
 	private final ParaClient pc;
 
 	@Inject
+	private QuestionController questionController;
+
+	@Inject
 	public ReportsController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
@@ -174,6 +177,37 @@ public class ReportsController {
 				report.setSolution(solution);
 				report.update();
 			}
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + REPORTSLINK;
+		}
+		return "base";
+	}
+
+	@PostMapping("/{id}/open")
+	public String open(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			Report report = pc.read(id);
+			if (report != null && utils.isMod(authUser)) {
+				report.setClosed(false);
+				report.update();
+			}
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + REPORTSLINK;
+		}
+		return "base";
+	}
+
+	@PostMapping("/{id}/approve")
+	public String approveItem(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Report report = pc.read(id);
+		if (report != null) {
+			questionController.modApprove(report.getParentid(), req);
+			report.setClosed(true);
+			report.setDescription(report.getDescription() + " ");
+			report.update();
 		}
 		if (!utils.isAjaxRequest(req)) {
 			return "redirect:" + REPORTSLINK;

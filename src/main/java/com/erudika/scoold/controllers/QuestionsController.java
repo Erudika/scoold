@@ -212,7 +212,7 @@ public class QuestionsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			String currentSpace = utils.getValidSpaceIdExcludingAll(authUser, space, req);
-			boolean needsApproval = utils.postsNeedApproval(req);
+			boolean needsApproval = utils.postsNeedApproval(req) && utils.userNeedsApproval(authUser);
 			Question q = utils.populate(req, needsApproval ? new UnapprovedQuestion() : new Question(),
 					"title", "body", "tags|,", "location");
 			q.setCreatorid(authUser.getId());

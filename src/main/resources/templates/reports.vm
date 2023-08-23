@@ -1,68 +1,99 @@
 #macro(reportspage $reports )
 #foreach($showreport in $reports)
-	<div class="reportbox card-panel">
-		<div class="row">
-			<div class="col m7 largeText">
+	<div class="reportbox card-panel #if ($showreport.closed)closed-report z-depth-0#end">
+		<div class="row mbn">
+			<div class="col m7 mediumText">
 				#if ($showreport.closed)#set($hideCheck = "")#else#set($hideCheck = "hide")#end
 				<div class="left mrl green-text report-closed-icon ${hideCheck}"><i class="fa fa-check"></i></div>
-				$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
+				#if($showreport.description && !$showreport.description.isEmpty())
+					<small class="grey-text"><strong>$!lang.get("reports.$!{showreport.subType.toLowerCase()}")</strong></small>
+					<br>
+					$showreport.description
+				#else
+						$!lang.get("reports.$!{showreport.subType.toLowerCase()}")
+				#end
 			</div>
 			<div class="col m5 r">
-				#if ($showreport.closed)#set($hideClose = "hide")#else#set($hideClose = "")#end
-				<a href="#" class="btn editlink green darken-1 report-close-btn ${hideClose}" title="Close report">
-					<i class="fa fa-check"></i> $!lang.get("close")
-				</a>
-				#if ($isAdmin)
-				<a href="$reportslink/$!showreport.id/delete" title="Delete" class="btn red white-text delete-report">
-					<i class="fa fa-times"></i> $!lang.get("delete")
-				</a>
+				#if($showreport.link && $showreport.link.length() > 1)
+				<a href="$!showreport.link" class="btn green darken-1"><i class="fa fa-external-link-square white-text"></i> $!lang.get('reports.goto')</a>
 				#end
 			</div>
 		</div>
 
-		<div class="row viewbox">
-			<div class="col m10">
-				<div class="c">
+		<div class="viewbox">
+			<div class="row">
+				<div class="col m12">
+					#if($showreport.properties.size() > 0)
+						#foreach($entry in $showreport.properties.entrySet())
+							<div><code><b>$entry.key</b>: $entry.value</code></div>
+						#end
+					#end
+
+					#if ($showreport.name && $showreport.content && !$showreport.content.isEmpty())
+					<div>
+						<div><strong>$showreport.name</strong></div>
+						#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showreport.content))) )
+						<span>$showBody</span>
+					</div>
+					#end
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col m6 s12">
+					<div class="valign-wrapper">
+						#if ($showreport.closed)#set($hideClose = "hide")#else#set($hideClose = "")#end
+						<a href="#" class="btn-flat editlink report-close-btn ${hideClose} pln" title="Close report">
+							<strong><i class="fa fa-check"></i>&nbsp;$!lang.get("close")</strong>
+						</a>
+						#if($showreport.parentid && !$showreport.parentid.isEmpty() && $lang.get("reports.awaitingapproval") == $showreport.description)
+							<a href="$reportslink/$!showreport.id/approve" class="btn-flat approve-btn green-text ${hideClose}" title="Approve content">
+								<strong><i class="fa fa-check"></i>&nbsp;$!lang.get("posts.approve")</strong>
+							</a>
+						#end
+						#if ($showreport.closed)#set($hideOpen = "")#else#set($hideOpen = "hide")#end
+						<a href="$reportslink/$!showreport.id/open" class="btn-flat report-open-btn pln ${hideOpen}" title="Reopen report">
+							<strong><i class="fa fa-undo"></i>&nbsp;$!lang.get("reopen")</strong>
+						</a>
+						#if ($isAdmin)
+						<a href="$reportslink/$!showreport.id/delete" title="Delete" class="btn-flat red-text delete-report">
+							<strong>$!lang.get("delete")</strong>
+						</a>
+						#end
+					</div>
+				</div>
+				<div class="col m6 s12 r">
 					<strong> <i class="fa fa-user-circle grey-text"></i>
 						#if ($showreport.creatorid)
-							<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.authorName:</a>
+						<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.authorName</a>
 						#else
-							<span>$!showreport.authorName:</span>
+						<span>$!showreport.authorName</span>
 						#end
-					</strong>
-					#if ($showreport.description && !$showreport.description.isEmpty())
-					<span>$showreport.description</span>
-					#end
+					</strong> &nbsp;
+					<span class="right grey-text"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
+					<br>
 					#if ($showreport.solution && !$showreport.solution.isEmpty())
 					#set($hide = "" )#else#set($hide = "hide" )#end
+					<div class="${hide}">
+						<i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
+						<span class="report-solution-text">$!showreport.solution</span>
+					</div>
 				</div>
-				#if($showreport.link && $showreport.link.length() > 1)
-					<i class="fa fa-external-link-square grey-text"></i> <a href="$!showreport.link"> $!showreport.link</a>
-				#end
-				<div class="${hide}">
-					<i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
-					<span class="report-solution-text">$!showreport.solution</span>
-				</div>
-				#if($showreport.properties.size() > 0)
-					#foreach($entry in $showreport.properties.entrySet())
-						<div><code><b>$entry.key</b>: $entry.value</code></div>
-					#end
-				#end
 			</div>
-			<div class="col m2 r mtl">
-				<span class="right grey-text"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
-			</div>
+
 		</div>
 
-		<div class="hide editbox mtm">
-			<form method="post" action="$reportslink/$!showreport.id/close" class="close-report-form">
-				#sectoken(false)
-				<div class="input-field">
-					<label>$!lang.get('reports.actionstaken')</label>
-					<textarea name="solution" class="materialize-textarea mbm"></textarea>
-				</div>
-				<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
-			</form>
+		<div class="row hide editbox">
+			<div class="col s12">
+				<form method="post" action="$reportslink/$!showreport.id/close" class="close-report-form">
+					#sectoken(false)
+					<div class="input-field">
+						<label>$!lang.get('reports.actionstaken')</label>
+						<textarea name="solution" class="materialize-textarea mbm"></textarea>
+					</div>
+					<button type="submit" class="btn waves-effect waves-light report-solution-btn">$!lang.get('save') &amp; $!lang.get('close')</button>
+				</form>
+			</div>
 		</div>
 	</div>
 #end

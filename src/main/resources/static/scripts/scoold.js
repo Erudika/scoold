@@ -529,10 +529,34 @@ $(function () {
 		clearForm(form);
 	});
 
-	submitFormBind("form.close-report-form", function(data, status, xhr, form) {
-		var parent = $(form).closest(".reportbox");
+	function closeReport(parent, click) {
+		parent.addClass("closed-report z-depth-0");
 		parent.find(".report-closed-icon").removeClass("hide");
-		parent.find(".report-close-btn").click().hide();
+		if (click) {
+			parent.find(".report-close-btn").click();
+		}
+		parent.find(".report-close-btn,.approve-btn").addClass("hide");
+		parent.find(".report-open-btn").removeClass("hide");
+	}
+
+	submitFormBind("form.close-report-form", function(data, status, xhr, form) {
+		closeReport($(form).closest(".reportbox"), true);
+	});
+
+	$(".approve-btn").on("click", function(e) {
+		$.post($(this).attr("href"));
+		closeReport($(this).closest(".reportbox"), false);
+		return false;
+	});
+
+	$(".report-open-btn").on("click", function(e) {
+		$.post($(this).attr("href"));
+		var parent = $(this).closest(".reportbox");
+		parent.removeClass("closed-report z-depth-0");
+		parent.find(".report-closed-icon").addClass("hide");
+		parent.find(".report-close-btn,.approve-btn").removeClass("hide");
+		parent.find(".report-open-btn").addClass("hide");
+		return false;
 	});
 
 	/****************************************************

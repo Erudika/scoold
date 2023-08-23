@@ -17,9 +17,9 @@
  */
 package com.erudika.scoold.core;
 
+import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.annotations.Stored;
-import com.erudika.para.client.ParaClient;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Objects;
 
@@ -35,6 +35,7 @@ public class Report extends Sysprop {
 	@Stored private String authorName;
 	@Stored private String link;
 	@Stored private String solution;
+	@Stored private String content;
 	@Stored private Boolean closed;
 
 	public enum ReportType {
@@ -64,6 +65,14 @@ public class Report extends Sysprop {
 
 	private ParaClient client() {
 		return ScooldUtils.getInstance().getParaClient();
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public Boolean getClosed() {
