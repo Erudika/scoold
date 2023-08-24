@@ -3357,6 +3357,17 @@ public class ScooldConfig extends Config {
 		return isAdmin || getConfigBoolean("users_discoverability_enabled", true);
 	}
 
+	@Documented(position = 3090,
+			identifier = "notifications_as_reports_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable copies of new content notifications in the form of reports on the site. "
+					+ " Instead of checking their email, mods will be able to view and act on those on the reports page.")
+	public boolean notificationsAsReportsEnabled() {
+		return getConfigBoolean("notifications_as_reports_enabled", false);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

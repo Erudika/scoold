@@ -691,11 +691,12 @@ public final class ScooldUtils {
 		Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 		emails.addAll(getFavTagsSubscribers(question.getTags()));
 		sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
+		createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
 
 		if (awaitingApproval) {
 			Report rep = new Report();
 			rep.setName(question.getTitle());
-			rep.setContent(Utils.abbreviate(question.getBody(), 2000));
+			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(question.getBody()), 2000));
 			rep.setParentid(question.getId());
 			rep.setDescription(lang.get("reports.awaitingapproval"));
 			rep.setSubType(Report.ReportType.OTHER);
@@ -713,21 +714,21 @@ public final class ScooldUtils {
 		Map<String, String> lang = getLang(req);
 		Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
 		boolean awaitingApproval = postsNeedApproval(req) && reply instanceof UnapprovedReply;
-		if (!StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
-			Map<String, Object> model = new HashMap<String, Object>();
-			String name = replyAuthor.getName();
-			String body = Utils.markdownToHtml(reply.getBody());
-			String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(avatarRepository.
-					getLink(replyAuthor, AvatarFormat.Square25)));
-			String postURL = CONF.serverUrl() + parentPost.getPostLink(false, false);
-			String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
-					Utils.abbreviate(reply.getTitle(), 255));
-			model.put("subject", escapeHtml((awaitingApproval ? "[" + lang.get("reports.awaitingapproval") + "] " : "") + subject));
-			model.put("logourl", getSmallLogoUrl());
-			model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
-					Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
-			model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
+		Map<String, Object> model = new HashMap<String, Object>();
+		String name = replyAuthor.getName();
+		String body = Utils.markdownToHtml(reply.getBody());
+		String picture = Utils.formatMessage("<img src='{0}' width='25'>", escapeHtmlAttribute(avatarRepository.
+				getLink(replyAuthor, AvatarFormat.Square25)));
+		String postURL = CONF.serverUrl() + parentPost.getPostLink(false, false);
+		String subject = Utils.formatMessage(lang.get("notification.reply.subject"), name,
+				Utils.abbreviate(reply.getTitle(), 255));
+		model.put("subject", escapeHtml((awaitingApproval ? "[" + lang.get("reports.awaitingapproval") + "] " : "") + subject));
+		model.put("logourl", getSmallLogoUrl());
+		model.put("heading", Utils.formatMessage(lang.get("notification.reply.heading"),
+				Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+		model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
+		if (!StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {
 				User author = authorProfile.getUser();
@@ -748,10 +749,14 @@ public final class ScooldUtils {
 			}
 		}
 
+		if (isReplyNotificationAllowed()) {
+			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
+		}
+
 		if (awaitingApproval) {
 			Report rep = new Report();
 			rep.setName(parentPost.getTitle());
-			rep.setContent(Utils.abbreviate(reply.getBody(), 2000));
+			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(reply.getBody()), 2000));
 			rep.setParentid(reply.getId());
 			rep.setDescription(lang.get("reports.awaitingapproval"));
 			rep.setSubType(Report.ReportType.OTHER);
@@ -780,25 +785,41 @@ public final class ScooldUtils {
 				last5ids.add(parentPost.getCreatorid());
 			}
 			Map<String, String> lang = getLang(req);
-			List<Profile> last5commentators = pc.readAll(new ArrayList<>(last5ids));
-			last5commentators = last5commentators.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
-			pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).forEach(author -> {
-				if (isCommentNotificationAllowed()) {
-					Map<String, Object> model = new HashMap<String, Object>();
-					String name = commentAuthor.getName();
-					String body = Utils.markdownToHtml(comment.getComment());
-					String pic = Utils.formatMessage("<img src='{0}' width='25'>",
+
+			if (isCommentNotificationAllowed()) {
+				final List<Profile> last5 = pc.readAll(new ArrayList<>(last5ids));
+				List<Profile> last5commentators = last5.stream().filter(u -> u.getCommentEmailsEnabled()).collect(Collectors.toList());
+				Map<String, Object> model = new HashMap<String, Object>();
+				String name = commentAuthor.getName();
+				String body = Utils.markdownToHtml(comment.getComment());
+				String pic = Utils.formatMessage("<img src='{0}' width='25'>",
 						escapeHtmlAttribute(avatarRepository.getLink(commentAuthor, AvatarFormat.Square25)));
-					String postURL = CONF.serverUrl() + parentPost.getPostLink(false, false);
-					String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
-					model.put("subject", escapeHtml(subject));
-					model.put("logourl", getSmallLogoUrl());
-					model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
-							Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
-					model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
-					emailer.sendEmail(Arrays.asList(((User) author).getEmail()), subject, compileEmailTemplate(model));
-				}
-			});
+				String postURL = CONF.serverUrl() + parentPost.getPostLink(false, false) + "?commentid=" + comment.getId();
+				String subject = Utils.formatMessage(lang.get("notification.comment.subject"), name, parentPost.getTitle());
+				model.put("subject", escapeHtml(subject));
+				model.put("logourl", getSmallLogoUrl());
+				model.put("heading", Utils.formatMessage(lang.get("notification.comment.heading"),
+						Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
+				model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div class='panel'>{2}</div>", pic, escapeHtml(name), body));
+
+				List<String> emails = pc.readAll(last5commentators.stream().map(u -> u.getCreatorid()).collect(Collectors.toList())).
+						stream().map(author -> ((User) author).getEmail()).collect(Collectors.toList());
+
+				emailer.sendEmail(emails, subject, compileEmailTemplate(model));
+				createReportCopyOfNotificiation(name, postURL, subject, body, false);
+			}
+		}
+	}
+
+	private void createReportCopyOfNotificiation(String author, String url, String subject, String template, boolean awaitingApproval) {
+		if (CONF.notificationsAsReportsEnabled() && !awaitingApproval) {
+			Report rep = new Report();
+			rep.setContent(template);
+			rep.setDescription(subject);
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setLink(url);
+			rep.setAuthorName(author);
+			rep.create();
 		}
 	}
 

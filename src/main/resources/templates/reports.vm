@@ -31,9 +31,11 @@
 
 					#if ($showreport.name && $showreport.content && !$showreport.content.isEmpty())
 					<div>
-						<div><strong>$showreport.name</strong></div>
-						#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showreport.content))) )
-						<span>$showBody</span>
+						#if(!$showreport.name.startsWith("ParaObject "))
+							<div><strong>$showreport.namestrong></div>
+						#end
+						#set($_showBody = $!showreport.content)
+						<span>$_showBody</span>
 					</div>
 					#end
 				</div>
@@ -108,9 +110,16 @@
 				<h2>$!lang.get("reports.title") #showcount($itemcount.count)</h2>
 			</div>
 			<div class="col m4 right-align">
+				#if ($isAdmin && $scooldUtils.config.postsNeedApproval())
+				<span class="mrm">
+					<a href="$reportslink/cleanup-unapproved" class="red-text post-refresh rusure">
+						<i class="fa fa-trash-o"></i> $!lang.get('reports.cleanup')
+					</a>
+				</span>
+				#end
 				#if ($isAdmin && $itemcount.count > 0)
 				<strong>
-					<a href="$reportslink/delete-all" class="red-text post-refresh-ask">
+					<a href="$reportslink/delete-all" class="red-text post-refresh rusure">
 						<i class="fa fa-trash-o"></i> $!lang.get('deleteall')
 					</a>
 				</strong>

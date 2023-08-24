@@ -18,6 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
@@ -26,11 +27,14 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.RateLimiter;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
+import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.REPORTSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
+import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Collections;
@@ -79,7 +83,7 @@ public class ReportsController {
 	public String get(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req) && !utils.isMod(utils.getAuthUser(req))) {
-			return "redirect:" + REPORTSLINK;
+			return "redirect:" + HOMEPAGE;
 		} else if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + REPORTSLINK;
 		}
@@ -240,6 +244,23 @@ public class ReportsController {
 					List<Sysprop> reports = pc.findQuery(Utils.type(Report.class), "*", pager);
 					pc.deleteAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
 					return reports;
+				});
+			}
+		}
+		return "redirect:" + REPORTSLINK;
+	}
+
+	@PostMapping("/cleanup-unapproved")
+	public String cleanupUnapproved(HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
+			if (utils.isAdmin(authUser)) {
+				pc.readEverything(pager -> {
+					pager.setSelect(Collections.singletonList(Config._ID));
+					List<ParaObject> objects = pc.findQuery("", Config._TYPE + ":" + Utils.type(UnapprovedQuestion.class) +
+							" OR " + Config._TYPE + ":" + Utils.type(UnapprovedReply.class), pager);
+					pc.deleteAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+					return objects;
 				});
 			}
 		}

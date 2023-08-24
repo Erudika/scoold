@@ -137,15 +137,13 @@
 							<span>$!lang.get('assignspacetoall')</span>
 						</label>
 					</div>
-					#if($scooldUtils.config.postsNeedApproval())
 					<div class="mbm smallText">
 						<label>
 							<input type="checkbox" name="needsapproval" class="filled-in"
 										 #if($space.getProperties().getOrDefault("posts_need_approval", $scooldUtils.config.postsNeedApproval()))checked="checked"#end>
-							<span>Posts need approval</span>
+							<span>$!lang.get('admin.needapproval')</span>
 						</label>
 					</div>
-					#end
 					<a href="$adminlink/remove-space?space=$!space.id:$!space.name"
 						 class="red-text right mts delete-space">$!lang.get('delete')</a>
 					<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button>
