@@ -281,7 +281,7 @@ scoold.password_auth_enabled = true
 |`scoold.signup_captcha_secret_key`<br>The reCAPTCHA v3 secret. | ` ` | `String`|
 |`scoold.csp_reports_enabled`<br>Enable/disable automatic reports each time the Content Security Policy is violated. | `false` | `Boolean`|
 |`scoold.csp_header_enabled`<br>Enable/disable the Content Security Policy (CSP) header. | `true` | `Boolean`|
-|`scoold.csp_header`<br>The CSP header value which will overwrite the default one. This can contain one or more `{{nonce}}` placeholders, which will be replaced with an actual nonce on each request. | `Dynamically generated, with nonces` | `String`|
+|`scoold.csp_header`<br>The CSP header value which will overwrite the default one. This can contain one or more `{{nonce}}` placeholders, which will be replaced with an actual nonce on each request. | ` ` | `String`|
 |`scoold.hsts_header_enabled`<br>Enable/disable the `Strict-Transport-Security` security header. | `true` | `Boolean`|
 |`scoold.framing_header_enabled`<br>Enable/disable the `X-Frame-Options` security header. | `true` | `Boolean`|
 |`scoold.xss_header_enabled`<br>Enable/disable the `X-XSS-Protection` security header. | `true` | `Boolean`|
@@ -329,8 +329,10 @@ scoold.password_auth_enabled = true
 |`scoold.security.ldap.user_search_base`<br>LDAP search base, which will be used only if a direct bind is unsuccessfull. | ` ` | `String`|
 |`scoold.security.ldap.user_search_filter`<br>LDAP search filter, for finding users if a direct bind is unsuccessful. | `(cn={0})` | `String`|
 |`scoold.security.ldap.user_dn_pattern`<br>LDAP user DN pattern, which will be comined with the base DN to form the full path to theuser object, for a direct binding attempt. | `uid={0}` | `String`|
-|`scoold.security.ldap.ad_mode_enabled`<br>Enable/disable support for authenticating with Active Directory. If `true` AD is enabled. | `false` | `Boolean`|
-|`scoold.security.ldap.active_directory_domain`<br>AD domain name. Add this *only* if you are connecting to an Active Directory server. | ` ` | `String`||`scoold.security.ldap.bind_dn`<br>LDAP bind DN | ` ` | `String`|
+|`scoold.security.ldap.ad_mode_enabled`<br>Enable/disable support for authenticating with Active Directory. If `true`, AD is enabled. | `false` | `Boolean`|
+|`scoold.security.ldap.active_directory_domain`<br>AD domain name. Add this *only* if you are connecting to an Active Directory server. | ` ` | `String`|
+|`scoold.security.ldap.password_attribute`<br>LDAP password attribute name. | `userPassword` | `String`|
+|`scoold.security.ldap.bind_dn`<br>LDAP bind DN | ` ` | `String`|
 |`scoold.security.ldap.bind_pass`<br>LDAP bind password. | ` ` | `String`|
 |`scoold.security.ldap.username_as_name`<br>Enable/disable the use of usernames for names on Scoold. | `false` | `Boolean`|
 |`scoold.security.ldap.provider` <kbd>Pro</kbd><br>The text on the LDAP sign in button. | `Continue with LDAP` | `String`|
@@ -393,13 +395,14 @@ scoold.password_auth_enabled = true
 |`scoold.security.oauth.download_avatars`<br>Enable/disable OAauth 2.0 avatar downloading to local disk. Used when avatars are large in size. Alternatives: `security.oauthsecond.download_avatars`, `security.oauththird.download_avatars` | `false` | `Boolean`|
 |`scoold.security.oauth.token_delegation_enabled` <kbd>Pro</kbd><br>Enable/disable OAauth 2.0 token delegation. The ID and access tokens will be saved and delegated to Scoold from Para. Alternatives: `security.oauthsecond.token_delegation_enabled`, `security.oauththird.token_delegation_enabled` | `false` | `Boolean`|
 |`scoold.security.oauth.spaces_attribute_name` <kbd>Pro</kbd><br>OAauth 2.0 attribute mapping for users' `spaces`. The spaces can be comma-separated. Alternatives: `security.oauthsecond.spaces_attribute_name`, `security.oauththird.spaces_attribute_name` | `spaces` | `String`|
-|`scoold.security.oauth.groups_attribute_name` <kbd>Pro</kbd><br>OAauth 2.0 attribute mapping for users' `groups`. Alternatives: `security.oauthsecond.groups_attribute_name`, `security.oauththird.groups_attribute_name` | `` | `String`|
+|`scoold.security.oauth.groups_attribute_name` <kbd>Pro</kbd><br>OAauth 2.0 attribute mapping for users' `groups`. Use this for mapping `admin`, `mod` and `user` roles to Scoold users.Alternatives: `security.oauthsecond.groups_attribute_name`, `security.oauththird.groups_attribute_name` | ` ` | `String`|
 |`scoold.security.oauth.mods_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for mapping OAuth2 users having it, to moderators on Scoold. Alternatives: `security.oauthsecond.mods_equivalent_claim_value`, `security.oauththird.mods_equivalent_claim_value` | `mod` | `String`|
 |`scoold.security.oauth.admins_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for mapping OAuth2 users having it, to administrators on Scoold. Alternatives: `security.oauthsecond.admins_equivalent_claim_value`, `security.oauththird.admins_equivalent_claim_value` | `admin` | `String`|
-|`scoold.security.oauth.users_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it. Alternatives: `security.oauthsecond.users_equivalent_claim_value`, `security.oauththird.users_equivalent_claim_value` | ` ` | `String`|
+|`scoold.security.oauth.users_equivalent_claim_value` <kbd>Pro</kbd><br>OAauth 2.0 claim used for **denying access** to OAuth2 users **not** having it, *unless*they already have the admin or moderator roles assigned. Alternatives: `security.oauthsecond.users_equivalent_claim_value`, `security.oauththird.users_equivalent_claim_value` | ` ` | `String`|
 |`scoold.security.oauth.domain`<br>OAauth 2.0 domain name for constructing user email addresses in case they are missing. Alternatives: `security.oauthsecond.domain`, `security.oauththird.domain` | ` ` | `String`|
 |`scoold.security.oauth.provider`<br>The text on the button for signing in with OAuth2 or OIDC. | `Continue with OpenID Connect` | `String`|
 |`scoold.security.oauth.appid_in_state_param_enabled`<br>Enable/disable the use of the OAauth 2.0 state parameter to designate your Para app id. Some OAauth 2.0 servers throw errors if the length of the state parameter is less than 8 chars. | `true` | `Boolean`|
+|`scoold.security.oauth.send_scope_to_token_endpoint`<br>Enable/disable sending the OAauth 2.0 scope in the token request. Some OAuth 2.0 servers require this to be turned off. | `true` | `Boolean`|
 
 ## Posts
 
@@ -423,7 +426,7 @@ scoold.password_auth_enabled = true
 |`scoold.nearme_feature_enabled`<br>Enable/disable the ability for users to attach geolocation data to questions and location-based filtering of questions. | `false` | `Boolean`|
 |`scoold.merge_question_bodies`<br>Enable/disable the merging of question bodies when two questions are merged into one. | `true` | `Boolean`|
 |`scoold.max_similar_posts`<br>The maximum number of similar posts which will be displayed on the side. | `7` | `Integer`|
-|`scoold.default_question_tag`<br>The default question tag, used when no other tags are provided by its author. | `question` | `String`|
+|`scoold.default_question_tag`<br>The default question tag, used when no other tags are provided by its author. | ` ` | `String`|
 |`scoold.posts_rep_threshold`<br>The minimum reputation an author needs to create a post without approval by moderators. This is only required if new posts need apporval. | `100` | `Integer`|
 
 ## Spaces
@@ -432,6 +435,7 @@ scoold.password_auth_enabled = true
 |  ---                       | ---           | ---  |
 |`scoold.auto_assign_spaces`<br>A comma-separated list of spaces to assign to all new users. | ` ` | `String`|
 |`scoold.reset_spaces_on_new_assignment`<br>Spaces delegated from identity providers will overwrite the existing ones for users. | `true` | `Boolean`|
+|`scoold.mods_access_all_spaces`<br>By default, moderators have access to and can edit content in all spaces. When disabled, moderators can only access the spaces they are assigned to by admins. | `true` | `Boolean`|
 
 ## Reputation and Rewards
 
@@ -480,7 +484,7 @@ scoold.password_auth_enabled = true
 | Property key & Description | Default Value | Type |
 |  ---                       | ---           | ---  |
 |`scoold.default_language_code`<br>The default language code to use for the site. Set this to make the site load a different language from English. | ` ` | `String`|
-|`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see. Not shown to authenticated users. | ` ` | `String`|
+|`scoold.welcome_message`<br>Adds a brief intro text inside a banner at the top of the main page for new visitors to see.Not shown to authenticated users. | ` ` | `String`|
 |`scoold.welcome_message_onlogin`<br>Adds a brief intro text inside a banner at the top of the page. Shown to authenticated users only. | ` ` | `String`|
 |`scoold.welcome_message_prelogin`<br>Adds a brief intro text inside a banner at the top of the page. Shown only on the 'Sign in' page. | ` ` | `String`|
 |`scoold.dark_mode_enabled`<br>Enable/disable the option for users to switch to the dark theme. | `true` | `Boolean`|
@@ -494,12 +498,16 @@ scoold.password_auth_enabled = true
 |`scoold.footer_html`<br>Some custom HTML content to be added to the website footer. | ` ` | `String`|
 |`scoold.navbar_link1_url`<br>The URL of an extra custom link which will be added to the top navbar. | ` ` | `String`|
 |`scoold.navbar_link1_text`<br>The title of an extra custom link which will be added to the top navbar. | `Link1` | `String`|
+|`scoold.navbar_link1_target`<br>The target attribute of an extra custom link which will be added to the top navbar. | ` ` | `String`|
 |`scoold.navbar_link2_url`<br>The URL of an extra custom link which will be added to the top navbar. | ` ` | `String`|
 |`scoold.navbar_link2_text`<br>The title of an extra custom link which will be added to the top navbar. | `Link2` | `String`|
+|`scoold.navbar_link2_target`<br>The target attribute of an extra custom link which will be added to the top navbar. | ` ` | `String`|
 |`scoold.navbar_menu_link1_url`<br>The URL of an extra custom link which will be added to user's dropdown menu. Only shown to authenticated users. | ` ` | `String`|
 |`scoold.navbar_menu_link1_text`<br>The title of an extra custom link which will be added to the user's dropdown menu. | `Menu Link1` | `String`|
+|`scoold.navbar_menu_link1_target`<br>The target attribute of an extra custom link which will be added to user's dropdown menu. | ` ` | `String`|
 |`scoold.navbar_menu_link2_url`<br>The URL of an extra custom link which will be added to user's dropdown menu. Only shown to authenticated users. | ` ` | `String`|
 |`scoold.navbar_menu_link2_text`<br>The title of an extra custom link which will be added to the user's dropdown menu. | `Menu Link2` | `String`|
+|`scoold.navbar_menu_link2_target`<br>The target attribute of an extra custom link which will be added to the user's dropdown menu. | ` ` | `String`|
 |`scoold.always_hide_comment_forms`<br>Enable/disable a visual tweak which keeps all comment text editors closed at all times. | `true` | `Boolean`|
 |`scoold.footer_links_enabled`<br>Enable/disable all links in the website footer. | `true` | `Boolean`|
 |`scoold.emails_footer_html`<br>The HTML code snippet to embed at the end of each transactional email message. | `<a href="{host_url}">{app_name}</a> &bull; <a href="https://scoold.com">Powered by Scoold</a>` | `String`|
@@ -620,9 +628,10 @@ scoold.password_auth_enabled = true
 |`scoold.autoinit.para_config_file`<br>Does the same as `scoold.autoinit.root_app_secret_key` but tries to read the secret key for the root Para app from the Para configuration file, wherever that may be. | ` ` | `String`|
 |`scoold.sitemap_enabled`<br>Enable/disable the generation of `/sitemap.xml`. | `true` | `Boolean`|
 |`scoold.access_log_enabled`<br>Enable/disable the Scoold access log. | `false` | `Boolean`|
-|`scoold.user_autocomplete_details_enabled`<kbd>Pro</kbd><br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
-|`scoold.user_autocomplete_max_results`<kbd>Pro</kbd><br>Controls the maximum number of search results in users' autocomplete. | `10` | `Integer`|
-|`scoold.users_discoverability_enabled`<kbd>Pro</kbd><br>Enable/disable discoverability of users on the site. If disabled, user profiles and the users page will be hidden for all except admins.' autocomplete. | `true` | `Boolean`|
+|`scoold.user_autocomplete_details_enabled` <kbd>pro</kbd><br>Enable/disable extra details when displaying user results in autocomplete. | `false` | `Boolean`|
+|`scoold.user_autocomplete_max_results` <kbd>pro</kbd><br>Controls the maximum number of search results in users' autocomplete. | `10` | `Integer`|
+|`scoold.users_discoverability_enabled`<br>Enable/disable discoverability of users on the site. If disabled, user profiles and the users page will be hidden for all except admins. | `true` | `Boolean`|
+|`scoold.notifications_as_reports_enabled`<br>Enable/disable copies of new content notifications in the form of reports on the site.  Instead of checking their email, mods will be able to view and act on those on the reports page. | `false` | `Boolean`|
 
 </details>
 
