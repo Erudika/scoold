@@ -32,7 +32,7 @@
 					#if ($showreport.name && $showreport.content && !$showreport.content.isEmpty())
 					<div>
 						#if(!$showreport.name.startsWith("ParaObject "))
-							<div><strong>$showreport.namestrong></div>
+							<div><strong>$showreport.name<strong></div>
 						#end
 						#set($_showBody = $!showreport.content)
 						<span>$_showBody</span>
