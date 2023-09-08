@@ -3500,7 +3500,8 @@ public class ScooldConfig extends Config {
 				+ "form-action 'self' " + serverUrl() + serverContextPath() + SIGNOUTLINK + "; "
 				+ "connect-src 'self' " + (inProduction() ? serverUrl() : "")
 				+ " maps.googleapis.com api.imgur.com api.cloudinary.com accounts.google.com " + cspConnectSources() + "; "
-				+ "frame-src 'self' *.google.com staticxx.facebook.com " + cspFrameSources() + "; "
+				+ "frame-src 'self' *.google.com " + cspFrameSources() + "; "
+				+ "frame-ancestors 'self'; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
 				// unsafe-inline required by MathJax and Google Maps!
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com "
