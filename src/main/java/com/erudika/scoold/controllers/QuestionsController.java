@@ -158,12 +158,11 @@ public class QuestionsController {
 	}
 
 	@GetMapping({"/questions/favtags", "/questions/local"})
-	public String getSorted(@PathVariable(required = false) String filter,
-			@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
+	public String getSorted(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
 		}
-		getQuestions(sortby, filter, req, model);
+		getQuestions(sortby, req.getServletPath().endsWith("/favtags") ? "favtags" : "local", req, model);
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
