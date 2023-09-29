@@ -201,6 +201,7 @@ public class QuestionsController {
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("includeEmojiPicker", true);
 		model.addAttribute("title", utils.getLang(req).get("posts.ask"));
+		model.addAttribute("draftQuestion", utils.populate(req, new Question(), "title", "body", "tags|,", "location", "space"));
 		return "base";
 	}
 
