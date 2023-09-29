@@ -599,6 +599,10 @@ small.badgebox, .custom-badge.small {
 	padding: 1px 5px;
 }
 
+.qstatsbox strong {
+	font-weight: 500;
+}
+
 table.striped>tbody>tr:nth-child(odd) {
     background-color: rgba(242,242,242,0.5);
 }
@@ -667,7 +671,7 @@ table.striped>tbody>tr:nth-child(odd) {
 		font-size: 2em;
 	}
 	.card-panel {
-		padding: 10px;
+		padding: 10px 20px;
 		margin: 5px 0;
 	}
 	.container {
