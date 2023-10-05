@@ -1334,6 +1334,21 @@ $(function () {
 		});
 	});
 
+	$(".save-question-template").find("a").on("click", function (e) {
+		var dis = $(this);
+		var txt = dis.text();
+		dis.text("Saved!").attr("class", "green-text smallText");
+		setTimeout(function () {
+			dis.text(txt).attr("class", "");
+		}, 3000);
+		$.post(dis.attr("href"), {
+			title: localStorage.getItem("ask-form-title"),
+			body: localStorage.getItem("ask-form-body"),
+			tags: localStorage.getItem("ask-form-tags")
+		});
+		return false;
+	});
+
 	$(".open-merge-window").click(function () {
 		$(this).closest(".editbox").addClass("hide");
 		$(".merge-window").removeClass("hide");

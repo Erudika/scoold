@@ -201,7 +201,25 @@ public class QuestionsController {
 		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("includeEmojiPicker", true);
 		model.addAttribute("title", utils.getLang(req).get("posts.ask"));
-		model.addAttribute("draftQuestion", utils.populate(req, new Question(), "title", "body", "tags|,", "location", "space"));
+
+		Question draft = utils.populate(req, new Question(), "title", "body", "tags|,", "location", "space");
+		Sysprop spaceObj = utils.isAuthenticated(req) ? pc.read(utils.getSpaceId(utils.
+				getSpaceIdFromCookie(utils.getAuthUser(req), req))) : pc.read(Post.DEFAULT_SPACE);
+		if (spaceObj != null) {
+			String title = (String) spaceObj.getProperty("titleTemplate");
+			String body = (String) spaceObj.getProperty("bodyTemplate");
+			String tags = (String) spaceObj.getProperty("tagsTemplate");
+			if (!StringUtils.isBlank(title)) {
+				draft.setTitle(title);
+			}
+			if (!StringUtils.isBlank(body)) {
+				draft.setBody(body);
+			}
+			if (!StringUtils.isBlank(tags)) {
+				draft.setTags(Arrays.asList(tags.split(",")));
+			}
+		}
+		model.addAttribute("draftQuestion", draft);
 		return "base";
 	}
 
@@ -297,6 +315,29 @@ public class QuestionsController {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
 			return "redirect:" + backTo;
+		}
+	}
+
+	@PostMapping("/questions/save-template")
+	public String saveTemplate(@RequestParam(required = false) String title, @RequestParam(required = false) String body,
+			@RequestParam(required = false) String tags, HttpServletRequest req, HttpServletResponse res, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			String space = utils.getSpaceIdFromCookie(authUser, req);
+			Sysprop spaceObj = pc.read(utils.getSpaceId(space));
+			if (spaceObj == null) {
+				spaceObj = utils.buildSpaceObject("default");
+			}
+			spaceObj.addProperty("titleTemplate", title);
+			spaceObj.addProperty("bodyTemplate", body);
+			spaceObj.addProperty("tagsTemplate", tags);
+			pc.update(spaceObj);
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "blank";
+		} else {
+			return "redirect:" + QUESTIONSLINK + "/ask";
 		}
 	}
 

@@ -52,6 +52,11 @@
 				#end
 
 				<div>
+					#if($isAdmin)
+					<small class="save-question-template right mll pvl">
+						<a href="$questionslink/save-template"><i class="fa fa-save"></i> Save as template</a>
+					</small>
+					#end
 					<button class="btn mtl waves-effect waves-light" type="submit">
 						<i class="fa fa-paper-plane left"></i>$!lang.get('post')
 					</button>
