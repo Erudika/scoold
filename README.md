@@ -1707,6 +1707,16 @@ by your IDP, set `scoold.security.oauth.spaces_attribute_name`, which by default
 attribute should contain comma-separated list of spaces. If the spaces pushed from the IDP do not exist, Scoold will
 create them for you.
 
+There are two ways to assign moderators to spaces - a user can be promoted to moderator and be allowed to access all spaces,
+or, every space can have an individually assigned moderator. The option that controls this operation is:
+```
+# when false, mods are manually assigned per each space
+scoold.mods_access_all_spaces = true
+```
+When the above is set to `false`, administrators can go to the profile page of a user and make them a moderator in the
+spaces they choose. For all other spaces, the user in question will be a regular user.
+Only administrators can promote users to moderators, no matter how the option above is configured.
+
 ## Webhooks
 
 Webhooks are enabled by default in Scoold. To disable this functionality set `scoold.webhooks_enabled = false`. If you
