@@ -292,6 +292,7 @@ public final class ScooldUtils {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);
 				authUser.setOriginalPicture(u.getPicture());
+				authUser.setCurrentSpace(getSpaceIdFromCookie(authUser, req));
 				boolean updatedRank = promoteOrDemoteUser(authUser, u);
 				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
 				if (updatedRank || updatedProfile) {
@@ -1254,8 +1255,21 @@ public final class ScooldUtils {
 	}
 
 	public boolean isMod(Profile authUser) {
-		return authUser != null && (isAdmin(authUser) ||
-				(User.Groups.MODS.toString().equals(authUser.getGroups()) && authUser.getEditorRoleEnabled()));
+		if (authUser == null || !authUser.getEditorRoleEnabled()) {
+			return false;
+		}
+		if (ScooldUtils.getConfig().modsAccessAllSpaces()) {
+			return isAdmin(authUser) || User.Groups.MODS.toString().equals(authUser.getGroups());
+		} else {
+			return isAdmin(authUser) || authUser.isModInCurrentSpace();
+		}
+	}
+
+	public boolean isModAnywhere(Profile authUser) {
+		if (authUser == null) {
+			return false;
+		}
+		return ScooldUtils.getConfig().modsAccessAllSpaces() ? isMod(authUser) : !authUser.getModspaces().isEmpty();
 	}
 
 	public boolean isRecognizedAsAdmin(User u) {

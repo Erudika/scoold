@@ -73,7 +73,7 @@
 					#end
 				</div>
 			</div>
-			#if($scooldUtils.isMod($showUser) || $scooldUtils.isAdmin($showUser))
+			#if($scooldUtils.isModAnywhere($showUser) || $scooldUtils.isAdmin($showUser))
 				#set($hideBadgePanel = "")
 			#else
 				#set($hideBadgePanel = "hide")
@@ -84,7 +84,7 @@
 					<i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')
 				</span>
 				#end
-				#if ($showUser.groups == "mods")#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
+				#if ($scooldUtils.isModAnywhere($showUser))#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
 				<span class="chip badgebox black-text moderator-icon ${hideModIcon}">
 					<i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')
 				</span>
@@ -252,6 +252,22 @@
 					#end
 				#end
 
+				#macro(makemodlink $s)
+					#if ($isAdmin && !$scooldUtils.config.modsAccessAllSpaces())
+						#if(!$scooldUtils.isAdmin($showUser))
+						<small>
+							<a href="$profilelink/$showUser.creatorid/make-mod?space=$!s" class="make-mod-btn">
+								#if ($showUser.isModInSpace($s))#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
+								<span class="#if($showUser.isModInSpace($s))#else hide#end">Unmake mod</span>
+								<span class="#if($showUser.isModInSpace($s))hide#else#end">Make mod</span>
+							</a>
+						</small>
+						#end
+					#end
+				#end
+
+				#macro(spaceboxclass $s)smallspacebox#if(!$scooldUtils.config.modsAccessAllSpaces() && $showUser.isModInSpace($s)) orange-border#end#end
+
 				#if ($showUser.hasSpaces() && $canEdit)
 					#set($userSpaces = $showUser.allSpaces)
 					<h4 class="grey-text text-darken-1 pvs">
@@ -259,10 +275,12 @@
 					</h4>
 					<div class="#if($userSpaces.size() > 5)row#end">
 						#if(!$showUser.hasSpaces() || $showUser.getSpaces().contains($scooldUtils.getDefaultSpace()))
-							<span class="chip smallspacebox">
-								<i class="fa fa-th-large grey-text"></i>
-								<span class="mhm">$!lang.get('defaultspace')</span>
-							</span>
+							#if($userSpaces.size() > 5)<div class="col m6 l4">#end
+								<span class="chip #spaceboxclass('default')">
+									<i class="fa fa-th-large grey-text"></i>
+									<span class="mhm">$!lang.get('defaultspace')  #makemodlink($scooldUtils.getSpaceId('default'))</span>
+								</span>
+							#if($userSpaces.size() > 5)</div>#end
 						#end
 						#foreach($space in $userSpaces)
 						#if(!$scooldUtils.isDefaultSpace($space))
@@ -271,16 +289,12 @@
 							#else
 								#set($spaceString = $scooldUtils.getSpaceName($space))
 							#end
-							#if($userSpaces.size() > 5)
-							<div class="col m6 l4">
-							#end
-								<span class="chip smallspacebox">
+							#if($userSpaces.size() > 5)<div class="col m6 l4">#end
+								<span class="chip #spaceboxclass($space)">
 									<i class="fa fa-th-large grey-text"></i>
-									<span class="mhm">${spaceString}</span>
+									<span class="mhs">${spaceString} #makemodlink($scooldUtils.getSpaceId($space))</span>
 								</span>
-							#if($userSpaces.size() > 5)
-							</div>
-							#end
+							#if($userSpaces.size() > 5)</div>#end
 						#end
 						#end
 					</div>
@@ -361,7 +375,7 @@
 				<div class="row">
 					<div class="col m6">
 						#getreportlink($showUser "$profilelink/$!showUser.creatorid" "chip")
-						#if ($isAdmin)
+						#if ($isAdmin && $scooldUtils.config.modsAccessAllSpaces())
 							#if(!$scooldUtils.isAdmin($showUser))
 								<a href="$profilelink/$showUser.creatorid/make-mod" class="chip make-mod-btn">
 									#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end

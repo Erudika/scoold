@@ -155,7 +155,16 @@ public class ProfileController {
 			Profile showUser = pc.read(Profile.id(id));
 			if (showUser != null) {
 				if (utils.isAdmin(authUser) && !utils.isAdmin(showUser)) {
-					showUser.setGroups(utils.isMod(showUser) ? USERS.toString() : MODS.toString());
+					if (CONF.modsAccessAllSpaces()) {
+						showUser.setGroups(utils.isMod(showUser) ? USERS.toString() : MODS.toString());
+					} else {
+						String space = req.getParameter("space");
+						if (showUser.isModInSpace(space)) {
+							showUser.getModspaces().remove(space);
+						} else {
+							showUser.getModspaces().add(space);
+						}
+					}
 					showUser.update();
 				}
 			}

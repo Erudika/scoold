@@ -610,8 +610,14 @@ $(function () {
 		var dis = $(this);
 		$.post(dis.attr("href"));
 		dis.find("span").toggleClass("hide");
-		$(".moderator-icon").toggleClass("hide");
-		$(".moderator-icon").parent("div").toggleClass("hide");
+		var modCount = $(".smallspacebox.orange-border").length;
+		dis.closest(".smallspacebox").toggleClass("orange-border");
+		if ((modCount === 0 && $(".smallspacebox.orange-border").length === 0) ||
+				(modCount === 0 && $(".smallspacebox.orange-border").length === 1) ||
+				(modCount === 1 && $(".smallspacebox.orange-border").length === 0)) {
+			$(".moderator-icon").toggleClass("hide");
+			$(".moderator-icon").parent("div").toggleClass("hide");
+		}
 		return false;
 	});
 
