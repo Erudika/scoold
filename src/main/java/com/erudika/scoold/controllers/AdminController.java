@@ -578,8 +578,8 @@ public class AdminController {
 			if (StringUtils.equalsAnyIgnoreCase((String) obj.get("postType"), "question", "article")) {
 				p = new Question();
 				p.setTitle((String) obj.get("title"));
-				String t = StringUtils.stripStart(StringUtils.stripEnd((String) obj.
-						getOrDefault("tags", ""), "|"), "|");
+				String t = StringUtils.trimToEmpty(StringUtils.stripStart(StringUtils.stripEnd((String) obj.
+						getOrDefault("tags", ""), "|"), "|"));
 				p.setTags(Arrays.asList(t.split("\\|")));
 				p.setAnswercount(((Integer) obj.getOrDefault("answerCount", 0)).longValue());
 				p.setViewcount(((Integer) obj.getOrDefault("viewCount", 0)).longValue());
