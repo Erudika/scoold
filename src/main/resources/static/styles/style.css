@@ -358,6 +358,16 @@ img.profile-pic:before {
 	background-size: cover;
 	color: transparent;
 }
+.rep-overlay:before {
+	content: attr(data-votes);
+	text-shadow: 0px 0px 5px black;
+	color: white;
+	font-size: small;
+	font-weight: bold;
+	padding: 0px 3px;
+	position: absolute;
+	bottom: -16px;
+}
 .user-card-compact {
 	min-height: 48px;
 }

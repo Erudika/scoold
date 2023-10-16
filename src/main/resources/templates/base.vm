@@ -216,7 +216,7 @@
 										#navbarspaces()
 									#end
 									<li>
-										<a class="dropdown-trigger scoold-user-dropdown" href="#!" data-target="user-dropdown">
+										<a class="dropdown-trigger scoold-user-dropdown rep-overlay" href="#!" data-target="user-dropdown" data-votes="$!authUser.votes">
 											<img src="#profilepic($authUser, 'Square50')" width="50" class="profile-pic responsive-img" alt="Avatar">
 											<i class="fa fa-caret-down right"></i></a>
 									</li>
