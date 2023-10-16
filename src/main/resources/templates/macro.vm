@@ -59,8 +59,8 @@
 		#else
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "noicon")
 		#end
-		<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Permalink" class="permalink phs">
-			<i class="fa fa-bookmark"></i>
+		<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Copy permalink" class="permalink phs">
+			<i class="fa fa-share-square"></i>
 		</a>
 	</div>
 </div>
@@ -169,7 +169,7 @@
 		$scooldUtils.getSpaceName($!currentSpace)
 	#end
 	<a href="$questionslink/space/$scooldUtils.getSpaceId($!currentSpace)"
-		 class="hide tooltipped" data-tooltip="Copy link"><i class="fa fa-bookmark-o"></i></a>
+		 class="hide tooltipped" data-tooltip="Copy link"><i class="fa fa-share-square-o"></i></a>
 </p>
 #end
 ####################################
@@ -813,8 +813,8 @@
 							<i class="fa fa-bell-o"></i>
 						</a> &nbsp;
 						#end
-						<a href="$!actionlink/#if($showpost.parentid)$!{showpost.parentid}#else$!{showpost.id}#end#post-$!showpost.id" title="Permalink" class="permalink">
-							<i class="fa fa-bookmark"></i>
+						<a href="$!actionlink/#if($showpost.parentid)$!{showpost.parentid}#else$!{showpost.id}#end#post-$!showpost.id" title="Copy permalink" class="permalink">
+							<i class="fa fa-share-square"></i>
 						</a>
 					</div>
 
