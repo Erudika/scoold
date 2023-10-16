@@ -349,11 +349,12 @@ $(function () {
 
 	$(document).on("click", ".post-refresh-ask",  function() {
 		var elem = $(this);
-		return areYouSure(function() {
+		areYouSure(function() {
 			$.post(elem.attr("href"), function(data) {
-				window.location = elem.attr("href");
+				window.location.reload(true);
 			});
 		}, rusuremsg, false);
+		return false;
 	});
 
 	$(document).on("click", ".post-refresh",  function() {

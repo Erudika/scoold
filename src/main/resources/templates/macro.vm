@@ -854,6 +854,12 @@
 						#end
 					#end
 
+					#if ($scooldUtils.isMod($authUser) && $showpost.isReply())
+						<a href="$!actionlink/$showpost.parentid/make-comment/$showpost.id" title="Convert to comment" class="post-refresh-ask prm">
+							<i class="fa fa-level-up"></i> $!lang.get('posts.makecomment')
+						</a>
+					#end
+
 					#if (!$authenticated || ($authenticated && $showpost.creatorid != $authUser.id))
 						#getreportlink($showpost "$questionlink/$!showpost.id" "prm")
 					#end

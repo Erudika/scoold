@@ -28,6 +28,7 @@ import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
@@ -339,6 +340,32 @@ public class QuestionController {
 			showPost.update();
 		}
 		return "redirect:" + showPost.getPostLinkForRedirect();
+	}
+
+	@PostMapping("/{id}/make-comment/{answerid}")
+	public String makeComment(@PathVariable String id, @PathVariable String answerid, HttpServletRequest req) {
+		Post question = pc.read(id);
+		Post answer = pc.read(answerid);
+		Profile authUser = utils.getAuthUser(req);
+		if (question == null || answer == null) {
+			return "redirect:" + req.getRequestURI();
+		}
+		if (utils.isMod(authUser) && answer.isReply()) {
+			Profile author = pc.read(answer.getCreatorid());
+			Comment c = new Comment();
+			c.setParentid(answer.getParentid());
+			c.setComment(answer.getBody());
+			c.setCreatorid(answer.getCreatorid());
+			c.setAuthorName(Optional.ofNullable(author).orElse(authUser).getName());
+			c = pc.create(c);
+			if (c != null) {
+				question.addCommentId(c.getId());
+				pc.update(question);
+				answer.delete();
+				return "redirect:" + question.getPostLinkForRedirect();
+			}
+		}
+		return "redirect:" + QUESTIONSLINK + "/" + answer.getParentid();
 	}
 
 	@PostMapping("/{id}/restore/{revisionid}")
