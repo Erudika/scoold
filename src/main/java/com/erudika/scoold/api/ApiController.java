@@ -502,6 +502,7 @@ public class ApiController {
 	}
 
 	@PatchMapping("/users/{id}")
+	@SuppressWarnings("unchecked")
 	public Profile updateUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
@@ -524,9 +525,29 @@ public class ApiController {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
+		boolean update = false;
 		if (entity.containsKey("spaces")) {
 			profile.setSpaces(new HashSet<>(readSpaces(((List<String>) entity.getOrDefault("spaces",
 						Collections.emptyList())).toArray(new String[0]))));
+			update = true;
+		}
+		if (entity.containsKey("replyEmailsEnabled")) {
+			profile.setReplyEmailsEnabled((Boolean) entity.get("replyEmailsEnabled"));
+			update = true;
+		}
+		if (entity.containsKey("commentEmailsEnabled")) {
+			profile.setCommentEmailsEnabled((Boolean) entity.get("commentEmailsEnabled"));
+			update = true;
+		}
+		if (entity.containsKey("favtagsEmailsEnabled")) {
+			profile.setFavtagsEmailsEnabled((Boolean) entity.get("favtagsEmailsEnabled"));
+			update = true;
+		}
+		if (entity.containsKey("favtags") && entity.get("favtags") instanceof List) {
+			profile.setFavtags((List<String>) entity.get("favtags"));
+			update = true;
+		}
+		if (update) {
 			pc.update(profile);
 		}
 		if (!StringUtils.isBlank(password)) {
