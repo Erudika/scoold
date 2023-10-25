@@ -4,13 +4,13 @@
 
 	<groupId>com.erudika</groupId>
 	<artifactId>scoold</artifactId>
-	<version>1.56.1</version>
+	<version>1.57.0</version>
 	<packaging>${packaging.type}</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.16</version>
+		<version>2.7.17</version>
 	</parent>
 
 	<organization>
