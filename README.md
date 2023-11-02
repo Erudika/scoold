@@ -110,7 +110,7 @@ Here's an overview of the architecture:
 [JDK 11 or higher](https://openjdk.java.net/) is required to build and run the project. All major operating systems are supported.
 
 1. Create a new app on [ParaIO.com](https://paraio.com) and copy your access keys to a file.
-2. Create Scoold's configuration file named `application.conf` with these properties:
+2. Create Scoold's configuration file named `scoold-application.conf` with these properties:
 	```ini
 	scoold.env = "production"
 	scoold.app_name = "Scoold"
@@ -122,7 +122,7 @@ Here's an overview of the architecture:
 	# (optional) require authentication for viewing content
 	scoold.is_default_space_public = false
 	```
-3. Start Scoold with `java -jar -Dconfig.file=./application.conf scoold-*.jar`.
+3. Start Scoold with `java -jar -Dconfig.file=./scoold-application.conf scoold-*.jar`.
 4. Open [localhost:8000/signin/register](http://localhost:8000/signin/register) and
 register a new account with same email you put in the configuration.
 
@@ -131,7 +131,7 @@ To login with a social account, you must create a developer app with
 [Google](https://console.developers.google.com) or any other identity provider.
 This is not required when you log in with LDAP, SAML or email/password.
 
-Save the obtained API keys in the `application.conf` file that you have created above.
+Save the obtained API keys in the `scoold-application.conf` file that you have created above.
 
 > For all identity providers, you must whitelist the Para host with the appropriate authentication endpoint:
 > - GitHub: `https://paraio.com/github_auth`
@@ -195,7 +195,7 @@ By default, Scoold will load its configuration from a file named `application.co
 `scoold-application.conf` or `app.conf` and then loaded with the system property `-Dconfig.file=app.conf`.
 The configuration can also be loaded from a [JSON file or a URL](https://github.com/lightbend/config#standard-behavior).
 
-Copy this Scoold example configuration to your **`application.conf`** (edit the values if needed):
+Copy this Scoold example configuration to your **`scoold-application.conf`** (edit the values if needed):
 ```ini
 # the name of the application
 scoold.app_name = "Scoold"
@@ -677,17 +677,17 @@ specified in `scoold.security.redirect_uri`. Para must be a publicly accessible 
 requests will fail.
 
 If you prefer, you can run the Scoold container outside of Docker Compose.
-First, have your Scoold `application.conf` configuration file ready in the current directory and run this command:
+First, have your Scoold `scoold-application.conf` configuration file ready in the current directory and run this command:
 
 ```
-$ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold/application.conf \
+$ docker run -ti -p 8000:8000 --rm -v $(pwd)/scoold-application.conf:/scoold/application.conf \
   -e JAVA_OPTS="-Dconfig.file=/scoold/application.conf" erudikaltd/scoold:latest_stable
 ```
 
 For **Scoold Pro** the images are located in a private registry. You can get access to it once you purchase a Pro license.
 The run command for **Scoold Pro** is similar with the only difference being the uploads volume:
 ```
-$ docker run -ti -p 8000:8000 --rm -v $(pwd)/application.conf:/scoold-pro/application.conf \
+$ docker run -ti -p 8000:8000 --rm -v $(pwd)/scoold-application.conf:/scoold-pro/application.conf \
   -v scoold-uploads:/scoold-pro/uploads -e JAVA_OPTS="-Dconfig.file=/scoold-pro/application.conf" \
   374874639893.dkr.ecr.eu-west-1.amazonaws.com/scoold-pro:latest_stable
 ```
@@ -812,7 +812,7 @@ $ heroku restart --app myscooldapp
 1. Create a droplet running Ubuntu and SSH into it
 2. Create a user `ubuntu` with `adduser ubuntu`
 3. Execute (as root) `wget https://raw.githubusercontent.com/Erudika/scoold/master/installer.sh && bash installer.sh`
-4. Copy the configuration file to your droplet: `scp application.conf root@123.234.12.34:/home/ubuntu`
+4. Copy the configuration file to your droplet: `scp scoold-application.conf root@123.234.12.34:/home/ubuntu`
 5. Restart Scoold with `ssh root@123.234.12.34 "systemctl restart scoold.service"`
 6. Go to `http://123.234.12.34:8000` and verify that Scoold is running (use the correct IP address of your droplet)
 7. Configure SSL on DigitalOcean or install nginx + letsencrypt on your droplet (see instructions below)
@@ -847,7 +847,7 @@ configure Scoold to work with Amazon Cognito:
 1. Create a Cognito user pool (if you don't have one already)
 2. Create a Cognito App client with the OAuth 2.0 authorization code grant enabled:
 3. Create a Cognito login subdomain for your app client like this: `https://scoold.auth.eu-west-1.amazoncognito.com`
-4. Edit the Scoold configuration file `application.conf` and add a new OAuth 2.0 authentication provider:
+4. Edit the Scoold configuration file `scoold-application.conf` and add a new OAuth 2.0 authentication provider:
 	```ini
 	scoold.oa2_app_id = "cognito_app_client_id"
 	scoold.oa2_secret = "cognito_app_client_secret"
@@ -868,7 +868,7 @@ Make sure you whitelist your Para authentication endpoint with Cognito `https://
 2. Fill in the required parameters
 3. Launch the container
 4. Go to your container and press "Connect" using `/bin/sh`
-5. In the terminal type in `vi application.conf`, hit `i` and paste in your configuration
+5. In the terminal type in `vi scoold-application.conf`, hit `i` and paste in your configuration
 6. Hit `Esc` and type in `:wq` then restart your container
 Another option is to attach a [secret volume](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-volume-secret)
 to your container, containing the configuration. It should be mounted as `/scoold/application.conf`.
@@ -889,7 +889,7 @@ The instructions for Tomcat in particular are:
 1. Generate a WAR package with `mvn -Pwar package`
 2. Rename the WAR package to `ROOT.war` if you want it deployed to the root context or leave it as is
 3. Put the WAR package in `Tomcat/webapps/` & start Tomcat
-4. Put `application.conf` in `Tomcat/webapps/scoold-folder/WEB-INF/classes/` & restart Tomcat
+4. Copy config file `cp scoold-application.conf Tomcat/webapps/scoold-folder/WEB-INF/classes/application.conf` & restart Tomcat
 
 Scoold is compatible with Tomcat 9+.
 
@@ -1084,7 +1084,7 @@ For **Gmail** you have to turn on "Less secure app access" in your Google accoun
 ## Email verification
 
 You can enable or disable the email verification step by setting `scoold.security.allow_unverified_emails = true`
-(in Scoold's `application.conf`). By default, email verification is turned off when Scoold is running in development mode.
+(in Scoold's `scoold-application.conf`). By default, email verification is turned off when Scoold is running in development mode.
 This will allow new users to register with fake emails and Scoold will not send them a confirmation email. It's useful
 for testing purposes or in certain situations where you want to programmatically sign up users who don't have an email.
 
@@ -1328,7 +1328,7 @@ for other providers, such as Auth0.
    - Add `http://para-host:8080/oauth2_auth` as a login redirect URI
    - Use the "Authorization Code" flow
    - Select	that you want **client credentials**
-2. Copy the client credentials (client id, secret) to your Scoold `application.conf` file:
+2. Copy the client credentials (client id, secret) to your Scoold `scoold-application.conf` file:
 	```ini
 	scoold.oa2_app_id = "0oa123...."
 	scoold.oa2_secret = "secret"
@@ -1801,7 +1801,7 @@ scoold.approved_domains_for_signups = "acme-corp.com,gmail.com"
 
 ## Admins
 
-You can specify the user with administrative privileges in your `application.conf` file:
+You can specify the user with administrative privileges in your `scoold-application.conf` file:
 ```ini
 scoold.admins = "joe@example.com"
 ```
@@ -2384,7 +2384,7 @@ As an alternative, you can enable SSL and HTTP2 directly in Scoold:
 
 2. Run Scoold using the following command which enables SSL and HTTP2:
 	```
-	java -jar -Dconfig.file=./application.conf \
+	java -jar -Dconfig.file=./scoold-application.conf \
 	 -Dserver.ssl.key-store-type=PKCS12 \
 	 -Dserver.ssl.key-store=scoold-keystore.p12 \
 	 -Dserver.ssl.key-store-password=secret \
@@ -2465,7 +2465,7 @@ location / {
 ```
 <details><summary><b>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
-    java -jar -Dconfig.file=./application.conf \
+    java -jar -Dconfig.file=./scoold-application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=scoold-keystore.p12 \
      -Dserver.ssl.key-store-password=secret \
@@ -2498,7 +2498,7 @@ keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-tr
 ```
 <details><summary><b>Run Para with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
-    java -jar -Dconfig.file=/para/application.conf \
+    java -jar -Dconfig.file=/para/para-application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=para-keystore.p12 \
      -Dserver.ssl.key-store-password=secret \
@@ -2514,7 +2514,7 @@ keytool -v -importcert -file para.local.pem -alias para -keystore scoold-para-tr
 </details>
 <details><summary><b>Run Scoold with this command which enables TLS, HTTP2 and mTLS.</b></summary>
 
-    java -jar -Dconfig.file=/scoold/application.conf \
+    java -jar -Dconfig.file=/scoold/scoold-application.conf \
      -Dserver.ssl.key-store-type=PKCS12 \
      -Dserver.ssl.key-store=scoold-keystore.p12 \
      -Dserver.ssl.key-store-password=secret \
@@ -2880,7 +2880,7 @@ $ mvn install
 ```
 To run a local instance of Scoold for development, use:
 ```sh
-$ mvn -Dconfig.file=./application.conf spring-boot:run
+$ mvn -Dconfig.file=./scoold-application.conf spring-boot:run
 ```
 
 To generate a WAR package, run:
