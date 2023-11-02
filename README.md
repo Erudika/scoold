@@ -168,6 +168,7 @@ data in your Scoold app.
 - The convention is to use `para-application.conf` and `scoold-application.conf` for Para and Scoold respectively.
 - All settings shown here are meant to be kept inside the Scoold configuration file.
 - SMTP settings must be configured before deploying Scoold to production.
+- Scoold **does not have** a default user account with default username and password.
 
 [Read the Para docs](https://paraio.org/docs) for details on how to run and configure your Scoold backend.
 
@@ -190,7 +191,9 @@ JVM parameters: e.g. `java -jar -Xms600m -Xmx600m scoold-*.jar`
 ## Configuration
 
 **Scoold requires a persistent and direct connection to a Para server to function properly.**
-
+By default, Scoold will load its configuration from a file named `application.conf` but that file can be renamed to
+`scoold-application.conf` or `app.conf` and then loaded with the system property `-Dconfig.file=app.conf`.
+The configuration can also be loaded from a [JSON file or a URL](https://github.com/lightbend/config#standard-behavior).
 
 Copy this Scoold example configuration to your **`application.conf`** (edit the values if needed):
 ```ini
@@ -661,6 +664,9 @@ to it from this repository.
 	```
 	Since the configuration files do not define `scoold.app_secret_key` and `scoold.para_secret_key`, these secrets will be populated automatically upon initialization.
 3. `$ docker compose up`
+
+Finally, open `locahost:8000/signin/register` and create a new account. If you've configured your email with
+`scoold.admins = "my@email"` and you sign up with the same email, you will become admin automatically.
 
 To stop the containers use <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 
