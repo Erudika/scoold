@@ -608,7 +608,7 @@ public final class ScooldUtils {
 	}
 
 	private Set<String> getFavTagsSubscribers(List<String> tags) {
-		if (!tags.isEmpty()) {
+		if (tags != null && tags.stream().filter(t -> !StringUtils.isBlank(t)).count() > 0) {
 			Set<String> emails = new LinkedHashSet<>();
 			pc.readEverything(pager -> {
 				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class),
