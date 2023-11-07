@@ -1940,12 +1940,7 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(jti)) {
 			return false;
 		}
-		if (API_KEYS.isEmpty()) {
-			Sysprop s = pc.read("api_keys");
-			if (s != null) {
-				API_KEYS.putAll(s.getProperties());
-			}
-		}
+		loadApiKeysObject(); // prevent overwriting the API keys object
 		if (API_KEYS.containsKey(jti) && expired) {
 			revokeApiKey(jti);
 		}
@@ -1956,11 +1951,13 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(jti) || StringUtils.isBlank(jwt)) {
 			return;
 		}
+		loadApiKeysObject(); // prevent overwriting the API keys object
 		API_KEYS.put(jti, jwt);
 		saveApiKeysObject();
 	}
 
 	public void revokeApiKey(String jti) {
+		loadApiKeysObject(); // prevent overwriting the API keys object
 		API_KEYS.remove(jti);
 		saveApiKeysObject();
 	}
@@ -1987,6 +1984,15 @@ public final class ScooldUtils {
 		Sysprop s = new Sysprop("api_keys");
 		s.setProperties(API_KEYS);
 		pc.create(s);
+	}
+
+	private void loadApiKeysObject() {
+		if (API_KEYS.isEmpty()) {
+			Sysprop s = pc.read("api_keys");
+			if (s != null) {
+				API_KEYS.putAll(s.getProperties());
+			}
+		}
 	}
 
 	public Profile getSystemUser() {
