@@ -182,7 +182,7 @@ public class AdminController {
 					authUser.getSpaces().add(spaceObj.getId() + Para.getConfig().separator() + spaceObj.getName());
 					authUser.update();
 					model.addAttribute("space", spaceObj);
-					utils.getAllSpaces().add(spaceObj);
+					utils.getAllSpacesAdmin().add(spaceObj);
 				} else {
 					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
 				}
@@ -206,7 +206,7 @@ public class AdminController {
 			pc.delete(s);
 			authUser.getSpaces().remove(space);
 			authUser.update();
-			utils.getAllSpaces().remove(s);
+			utils.getAllSpacesAdmin().remove(s);
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
@@ -260,7 +260,7 @@ public class AdminController {
 
 			s.addProperty("posts_need_approval", needsapproval && CONF.postsNeedApproval());
 			pc.update(s);
-			utils.getAllSpaces().parallelStream().
+			utils.getAllSpacesAdmin().parallelStream().
 					filter(ss -> ss.getId().equals(s.getId())).
 					forEach(e -> {
 						e.setName(s.getName());
@@ -793,7 +793,7 @@ public class AdminController {
 	}
 
 	private List<Sysprop> getSpaces(Pager itemcount) {
-		Set<Sysprop> spaces = utils.getAllSpaces();
+		Set<Sysprop> spaces = utils.getAllSpacesAdmin();
 		itemcount.setCount(spaces.size());
 		LinkedList<Sysprop> list = new LinkedList<>(spaces.stream().
 				filter(s -> !utils.isDefaultSpace(s.getName())).collect(Collectors.toList()));

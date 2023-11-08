@@ -1339,6 +1339,13 @@ public final class ScooldUtils {
 		return allSpaces;
 	}
 
+	public Set<Sysprop> getAllSpacesAdmin() {
+		if (allSpaces == null || pc.getCount("scooldspace").intValue() != allSpaces.size()) { // caching issue on >1 nodes
+			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
+		}
+		return allSpaces;
+	}
+
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
 		if (authUser == null) {
 			return isDefaultSpacePublic() && isDefaultSpace(targetSpaceId);
