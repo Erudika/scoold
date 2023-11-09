@@ -1975,13 +1975,16 @@ public final class ScooldUtils {
 
 	public Map<String, Long> getApiKeysExpirations() {
 		return API_KEYS.keySet().stream().collect(Collectors.toMap(k -> k, k -> {
+			String jwt = (String) API_KEYS.get(k);
 			try {
-				Date exp = SignedJWT.parse((String) API_KEYS.get(k)).getJWTClaimsSet().getExpirationTime();
-				if (exp != null) {
-					return exp.getTime();
+				if (!StringUtils.isBlank(jwt)) {
+					Date exp = SignedJWT.parse(jwt).getJWTClaimsSet().getExpirationTime();
+					if (exp != null) {
+						return exp.getTime();
+					}
 				}
 			} catch (ParseException ex) {
-				logger.error(null, ex);
+				logger.error("Failed to parse API key " + StringUtils.substring(jwt, 0, 10), ex);
 			}
 			return 0L;
 		}));
