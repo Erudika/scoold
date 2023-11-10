@@ -342,9 +342,10 @@ public final class ScooldUtils {
 	}
 
 	private Profile getOrCreateProfile(User u, HttpServletRequest req) {
-		Profile authUser = pc.read(Profile.id(u.getId()));
+		Profile authUser = pc.read(Profile.id(u.getId())); // what if this request fails (server down, OS frozen, etc)?
 		if (authUser == null) {
-			authUser = Profile.fromUser(u);
+			authUser = pc.read(Profile.id(u.getId()));
+			authUser = (authUser == null) ? Profile.fromUser(u) : authUser;
 			authUser.create();
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
