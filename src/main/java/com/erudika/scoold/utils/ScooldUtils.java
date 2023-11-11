@@ -182,6 +182,7 @@ public final class ScooldUtils {
 	}
 
 	private final ParaClient pc;
+	private final ParaClient pcThrows;
 	private final LanguageUtils langutils;
 	private final AvatarRepository avatarRepository;
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
@@ -198,7 +199,10 @@ public final class ScooldUtils {
 		this.langutils = langutils;
 		this.avatarRepository = avatarRepository;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
+		this.pcThrows = new ParaClient(CONF.paraAccessKey(), CONF.paraSecretKey());
 		API_USER.setPicture(avatarRepository.getAnonymizedLink(CONF.supportEmail()));
+		setParaEndpointAndApiPath(pcThrows);
+		pcThrows.throwExceptionOnHTTPError(true);
 	}
 
 	public ParaClient getParaClient() {
@@ -342,10 +346,18 @@ public final class ScooldUtils {
 	}
 
 	private Profile getOrCreateProfile(User u, HttpServletRequest req) {
-		Profile authUser = pc.read(Profile.id(u.getId())); // what if this request fails (server down, OS frozen, etc)?
+		Profile authUser;
+		try {
+			authUser = pcThrows.read(Profile.id(u.getId())); // what if this request fails (server down, OS frozen, etc)?
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			authUser = pcThrows.read(Profile.id(u.getId())); // try again
+			if (authUser != null) {
+				return authUser;
+			}
+		}
 		if (authUser == null) {
-			authUser = pc.read(Profile.id(u.getId()));
-			authUser = (authUser == null) ? Profile.fromUser(u) : authUser;
+			authUser = Profile.fromUser(u);
 			authUser.create();
 			if (!u.getIdentityProvider().equals("generic")) {
 				sendWelcomeEmail(u, false, req);
