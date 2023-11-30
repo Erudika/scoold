@@ -157,11 +157,14 @@ public final class ScooldUtils {
 		HOOK_EVENTS = new HashSet<>(Arrays.asList(
 				"question.create",
 				"question.close",
+				"question.view",
 				"answer.create",
 				"answer.accept",
 				"report.create",
 				"comment.create",
+				"user.signin",
 				"user.signup",
+				"user.search",
 				"revision.restore"));
 
 		WHITELISTED_MACROS = new HashMap<String, String>();

@@ -22,16 +22,19 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.User;
 import com.erudika.para.core.annotations.Email;
 import com.erudika.para.core.utils.Config;
+import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
+import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -39,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -159,6 +163,7 @@ public class SigninController {
 				User u = pc.signIn("password", email + ":" + name + ":" + passw, false);
 				if (u != null && u.getActive()) {
 					setAuthCookie(u.getPassword(), req, res);
+					triggerLoginEvent(u, req);
 					return "redirect:" + getBackToUrl(req);
 				} else {
 					verifyEmailIfNecessary(name, email, req);
@@ -305,6 +310,7 @@ public class SigninController {
 		if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
 			// the user password in this case is a Bearer token (JWT)
 			setAuthCookie(u.getPassword(), req, res);
+			triggerLoginEvent(u, req);
 			return "redirect:" + getBackToUrl(req);
 		} else if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {
 			logger.warn("Signin failed for {} because that domain is not in the whitelist.", u.getEmail());
@@ -420,5 +426,19 @@ public class SigninController {
 			}
 		}
 		return false;
+	}
+
+	private void triggerLoginEvent(User u, HttpServletRequest req) {
+		if (req != null && u != null) {
+			Profile authUser = utils.getAuthUser(req);
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
+			Map<String, String> headers = new HashMap<>();
+			headers.put(HttpHeaders.REFERER, req.getHeader(HttpHeaders.REFERER));
+			headers.put(HttpHeaders.USER_AGENT, req.getHeader(HttpHeaders.USER_AGENT));
+			headers.put("User-IP", req.getRemoteAddr());
+			payload.put("user", u);
+			payload.put("headers", headers);
+			utils.triggerHookEvent("user.signin", payload);
+		}
 	}
 }

@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -56,6 +57,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -136,6 +138,7 @@ public class QuestionController {
 		if (showPost.getAuthor() != null) {
 			model.addAttribute("ogimage", utils.getFullAvatarURL(showPost.getAuthor(), AvatarFormat.Profile));
 		}
+		triggerQuestionViewEvent(showPost, req);
 		return "base";
 	}
 
@@ -602,6 +605,25 @@ public class QuestionController {
 			author.removeRep(CONF.answerApprovedRewardAuthor());
 			authUser.removeRep(CONF.answerApprovedRewardVoter());
 			pc.updateAll(Arrays.asList(author, authUser));
+		}
+	}
+
+	private void triggerQuestionViewEvent(Post question, HttpServletRequest req) {
+		if (req != null) {
+			Profile authUser = utils.getAuthUser(req);
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
+			if (authUser != null) {
+				payload.put("visitor", ParaObjectUtils.getAnnotatedFields(authUser, false));
+			} else {
+				payload.put("visitor", Collections.emptyMap());
+			}
+			Map<String, String> headers = new HashMap<>();
+			headers.put(HttpHeaders.REFERER, req.getHeader(HttpHeaders.REFERER));
+			headers.put(HttpHeaders.USER_AGENT, req.getHeader(HttpHeaders.USER_AGENT));
+			headers.put("User-IP", req.getRemoteAddr());
+			payload.put("headers", headers);
+			payload.put("question", question);
+			utils.triggerHookEvent("question.view", payload);
 		}
 	}
 }
