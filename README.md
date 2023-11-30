@@ -1737,15 +1737,21 @@ The standard events emitted by Scoold are:
 
 - `question.create` - whenever a new question is created
 - `question.close` - whenever a question is closed
+- `question.view` - whenever a question is viewed by anyone
 - `answer.create` - whenever a new answer is created
 - `answer.accept` - whenever an answer is accepted
 - `report.create` - whenever a new report is created
 - `comment.create` - whenever a new comment is created
+- `user.signin` - whenever a user signs in to the system
 - `user.signup` - whenever a new user is created
+- `user.search` - whenever a user performs a search
 - `revision.restore` - whenever a revision is restored
 - `user.ban` -  <kbd>Pro</kbd> whenever a user is banned
 - `user.mention` -  <kbd>Pro</kbd> whenever a user is mentioned
 - `question.like` - <kbd>Pro</kbd> whenever a question is favorited
+
+The event playloads for events `user.signin`, `question.view` and `user.search` contain extra information about the
+client which made the original request, e.g. IP address, `User-Agent` and `Referrer` headers.
 
 In addition to the standard event, Para also sends webhooks to the following core (CRUD) events, for all object types:
 `create`, `update`, `delete`, `createAll`, `updateAll`, `deleteAll`.
