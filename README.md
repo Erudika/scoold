@@ -142,15 +142,17 @@ Save the obtained API keys in the `scoold-application.conf` file that you have c
 
 **Note: The Para backend server is deployed separately and is required for Scoold to run.**
 
-1. [Follow this guide to run the Para backend server locally on port 8080](https://paraio.org/docs/#001-intro)
-2. Create a separate folder `scoold` and inside, a new configuration file named `scoold-application.conf` (see example above)
-3. Start Scoold with the following command, pointing it to the location of the Para configuration file:
+1. [Download the latest executable Para JAR package](https://github.com/Erudika/para/releases)
+2. Start Para with the command `java -jar -Dconfig.file=./para-application.conf para-*.jar`
+3. Create a separate folder `scoold` and inside, a new configuration file named `scoold-application.conf` (see example above)
+4. Start Scoold with the following command, pointing it to the location of the Para configuration file:
 	```
 	java -jar -Dconfig.file=./scoold-application.conf \
 	  -Dscoold.autoinit.para_config_file=../para-application.conf scoold-*.jar`
 	```
-On startup, Scoold will try to initialize itself automatically using the root access key for Para. **Alternatively** you
-could provide Scoold with the root access key directly, instead of pointing it to the Para configuration file, like so:
+On startup, Para will initialize and create its own configuration file. Scoold will then try to initialize and
+configure itself automatically by reading the `para-application.conf`. **Alternatively** you could provide
+Scoold with the root access key directly, instead of pointing it to the Para configuration file, like so:
 ```
 	java -jar -Dconfig.file=./scoold-application.conf \
 	  -Dscoold.autoinit.root_app_secret_key="{secret key for root app}" scoold-*.jar`
@@ -170,7 +172,7 @@ data in your Scoold app.
 - SMTP settings must be configured before deploying Scoold to production.
 - Scoold **does not have** a default user account with default username and password.
 
-[Read the Para docs](https://paraio.org/docs) for details on how to run and configure your Scoold backend.
+[Read the Para docs](https://paraio.org/docs) for further details on how to run and configure your Scoold backend.
 
 ### Hardware requirements
 
@@ -826,7 +828,7 @@ $ heroku restart --app myscooldapp
 **Lightsail**
 
 1. Click the button above
-2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS"
+2. Choose "Linux", "OS only", "Ubuntu 18.04 LTS" (or later version)
 3. Click "+ Add launch script" and copy/paste the contents of [installer.sh](https://github.com/Erudika/scoold/blob/master/installer.sh)
 4. Download the default SSH key pair or upload your own
 5. Choose the 512MB instance or larger (1GB recommended)
