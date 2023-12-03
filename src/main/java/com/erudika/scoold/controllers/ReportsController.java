@@ -38,6 +38,7 @@ import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -95,6 +96,9 @@ public class ReportsController {
 		model.addAttribute("reportsSelected", "navbtn-hover");
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("reportslist", reportslist);
+		Pager count = new Pager(1);
+		pc.findQuery("", "type:(" + Utils.type(UnapprovedQuestion.class) + " OR " + Utils.type(UnapprovedReply.class) + ")", count);
+		model.addAttribute("unapprovedCount", count.getCount());
 		return "base";
 	}
 
@@ -255,13 +259,15 @@ public class ReportsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			if (utils.isAdmin(authUser)) {
+				List<String> toDelete = new LinkedList<>();
 				pc.readEverything(pager -> {
 					pager.setSelect(Collections.singletonList(Config._ID));
 					List<ParaObject> objects = pc.findQuery("", Config._TYPE + ":" + Utils.type(UnapprovedQuestion.class) +
 							" OR " + Config._TYPE + ":" + Utils.type(UnapprovedReply.class), pager);
-					pc.deleteAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+					toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
 					return objects;
 				});
+				pc.deleteAll(toDelete);
 			}
 		}
 		return "redirect:" + REPORTSLINK;
