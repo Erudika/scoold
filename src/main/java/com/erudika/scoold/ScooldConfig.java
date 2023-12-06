@@ -24,10 +24,10 @@ import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SIGNOUTLINK;
 import com.typesafe.config.ConfigObject;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -2581,13 +2581,17 @@ public class ScooldConfig extends Config {
 			description = "A map of external JS scripts. These will be loaded after the main JS script. For example: "
 					+ "`scoold.external_scripts.script1 = \"alert('Hi')\"`")
 	public Map<String, Object> externalScripts() {
+		String prefix = "scoold_external_scripts_";
+		Map<String, Object> ext = new LinkedHashMap<>(System.getenv().keySet().stream().
+				filter(k -> k.startsWith(prefix)).collect(Collectors.
+						toMap(mk -> StringUtils.removeStart(mk, prefix), mv -> System.getenv(mv))));
 		if (getConfig().hasPath("external_scripts")) {
 			ConfigObject extScripts = getConfig().getObject("external_scripts");
 			if (extScripts != null && !extScripts.isEmpty()) {
-				return new LinkedHashMap<>(extScripts.unwrapped());
+				ext.putAll(extScripts.unwrapped());
 			}
 		}
-		return Collections.emptyMap();
+		return ext;
 	}
 
 	@Documented(position = 2410,
