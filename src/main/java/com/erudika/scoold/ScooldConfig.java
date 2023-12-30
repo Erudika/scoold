@@ -1603,7 +1603,7 @@ public class ScooldConfig extends Config {
 			identifier = "answers_approved_by",
 			value = "default",
 			category = "Posts",
-			description = "Controls who is able to mark an answer as accepted/approved. "
+			description = "Controls who is able to mark an answer as accepted. "
 					+ "Possible values are `default` (author and moderators), `admins` (admins only), `moderators` "
 					+ "(moderators and admins).")
 	public String answersApprovedBy() {
