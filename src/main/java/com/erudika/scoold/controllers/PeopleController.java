@@ -167,7 +167,7 @@ public class PeopleController {
 				p.setSelect(spacesList);
 				savePagerToCookie(req, res, p);
 				HttpUtils.setRawCookie("users-view-compact", compactViewEnabled,
-						req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
+						req, res, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 			}
 		}
 		return "redirect:" + PEOPLELINK + (bulkedit ? "/bulk-edit" : "") + (StringUtils.isBlank(sortby) ? "" : "?sortby="
@@ -263,7 +263,7 @@ public class PeopleController {
 	private void savePagerToCookie(HttpServletRequest req, HttpServletResponse res, Pager p) {
 		try {
 			HttpUtils.setRawCookie("users-filter", Utils.base64enc(ParaObjectUtils.getJsonWriterNoIdent().
-					writeValueAsBytes(p)), req, res, false, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
+					writeValueAsBytes(p)), req, res, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 		} catch (JsonProcessingException ex) { }
 	}
 

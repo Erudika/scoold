@@ -1410,7 +1410,7 @@ public final class ScooldUtils {
 		// used for setting the space from a direct URL to a particular space
 		req.setAttribute(CONF.spaceCookie(), space);
 		HttpUtils.setRawCookie(CONF.spaceCookie(), Utils.base64encURL(space.getBytes()),
-				req, res, true, "Strict", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+				req, res, "Strict", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}
 
 	public String verifyExistingSpace(Profile authUser, String space) {

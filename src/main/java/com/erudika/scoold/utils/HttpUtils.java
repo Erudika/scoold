@@ -125,7 +125,7 @@ public final class HttpUtils {
 	 */
 	public static void setStateParam(String name, String value, HttpServletRequest req,
 			HttpServletResponse res, boolean httpOnly) {
-		setRawCookie(name, value, req, res, httpOnly, null, -1);
+		setRawCookie(name, value, req, res, null, -1);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public final class HttpUtils {
 	 */
 	public static void removeStateParam(String name, HttpServletRequest req,
 			HttpServletResponse res) {
-		setRawCookie(name, "", req, res, false, null, 0);
+		setRawCookie(name, "", req, res, null, 0);
 	}
 
 	/**
@@ -155,12 +155,11 @@ public final class HttpUtils {
 	 * @param value the value
 	 * @param req HTTP request
 	 * @param res HTTP response
-	 * @param httpOnly HTTP only flag
 	 * @param sameSite SameSite flag
 	 * @param maxAge max age
 	 */
 	public static void setRawCookie(String name, String value, HttpServletRequest req,
-			HttpServletResponse res, boolean httpOnly, String sameSite, int maxAge) {
+			HttpServletResponse res, String sameSite, int maxAge) {
 		if (StringUtils.isBlank(name) || value == null || req == null || res == null) {
 			return;
 		}
@@ -172,9 +171,7 @@ public final class HttpUtils {
 		sb.append("Path=").append(path).append(";");
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge < 0 ? CONF.sessionTimeoutSec() : maxAge).append(";");
-		if (httpOnly) {
-			sb.append("HttpOnly;");
-		}
+		sb.append("HttpOnly;"); // all cookies should be HttpOnly, JS does not need to read cookie values
 		if (StringUtils.startsWithIgnoreCase(CONF.serverUrl(), "https://") || req.isSecure()) {
 			sb.append("Secure;");
 		}
@@ -274,7 +271,7 @@ public final class HttpUtils {
 		if (StringUtils.isBlank(jwt)) {
 			return;
 		}
-		setRawCookie(CONF.authCookie(), jwt, req, res, true, "Lax", CONF.sessionTimeoutSec());
+		setRawCookie(CONF.authCookie(), jwt, req, res, "Lax", CONF.sessionTimeoutSec());
 	}
 
 	/**
