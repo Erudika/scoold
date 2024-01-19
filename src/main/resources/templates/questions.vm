@@ -1,4 +1,4 @@
-#if($currentSpace && !$currentSpace.isEmpty())
+#if($currentSpace && !$currentSpace.isEmpty() && !$askSelected)
 	#spacelabel($currentSpace)
 #end
 <div class="page-wrapper">
@@ -8,6 +8,9 @@
 		<div class="pts">
 			<form method="post" id="ask-question-form">
 				#sectoken(false "CREATE_POST")
+
+				#spaceselect()
+
 				<div class="input-field">
 					<i class="fa fa-paragraph pvm prefix grey-text"></i>
 					<label for="title_text">$!lang.get('posts.title')</label>
@@ -33,8 +36,6 @@
 						#getmessagebox("red white-text" $error.get("tags"))
 					</div>
 				</div>
-
-				#spaceselect()
 
 				#if($scooldUtils.isNearMeFeatureEnabled())
 				<div class="mll pll">

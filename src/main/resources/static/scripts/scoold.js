@@ -906,7 +906,6 @@ $(function () {
 						contentDiv.append(trimmed).find(".dropdown-trigger").dropdown();
 					}
 					$(document).trigger("event:page");
-					initMaterialize(); // fix for tooltips after ajax load
 				}
 			}
 		});
@@ -959,6 +958,7 @@ $(function () {
 	updateMentionsWithLinks();
 
 	$(document).on("event:page", function() {
+		initMaterialize();
 		updateMentionsWithLinks();
 	});
 
@@ -1390,6 +1390,12 @@ $(function () {
 			instance.updateData(listOfQuestionsFoundData);
 			instance.open();
 		});
+	});
+
+	$(".select-space-template").on("change", function () {
+		var selected = $(this).find("option:not([disabled])").filter(":selected").val();
+		window.onbeforeunload = function () {return true;};
+		window.location.href = CONTEXT_PATH + "/questions/space/" + encodeURIComponent(selected) + "?returnto=/questions/ask";
 	});
 
 	/****************************************************
