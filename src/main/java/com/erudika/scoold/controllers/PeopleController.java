@@ -190,8 +190,10 @@ public class PeopleController {
 			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
 		}
 
-		String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
-		qs = utils.getUsersSearchQuery(qs, spaceFilter);
+		if (!StringUtils.equalsAny(q.trim(), "", "*")) {
+			String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
+			qs = utils.getUsersSearchQuery(q, spaceFilter);
+		}
 
 		Set<String> havingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("havingSpaces")).orElse(Set.of());
 		Set<String> notHavingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("notHavingSpaces")).orElse(Set.of());
