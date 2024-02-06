@@ -185,6 +185,7 @@ public class ProfileController {
 			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		Profile showUser = getProfileForEditing(id, authUser);
+		String queryString = "";
 		if (showUser != null) {
 			boolean updateProfile = false;
 			if (!StringUtils.equals(showUser.getLocation(), location)) {
@@ -206,6 +207,7 @@ public class ProfileController {
 					changeEmail(showUser.getUser(), showUser, email);
 				} else {
 					updateProfile = updateProfile || sendConfirmationEmail(showUser.getUser(), showUser, email, req);
+					queryString = updateProfile ? "?code=signin.verify.start&success=true" : "?code=9&error=true";
 				}
 			}
 
@@ -216,7 +218,7 @@ public class ProfileController {
 			}
 			model.addAttribute("user", showUser);
 		}
-		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
+		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id) + queryString;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -322,18 +324,28 @@ public class ProfileController {
 	@GetMapping(path = "/confirm-email")
 	public String confirmEmail(@RequestParam(name = "id", required = false) String id,
 			@RequestParam(name = "token", required = false) String token,
+			@RequestParam(name = "token2", required = false) String token2,
 			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (authUser == null || !CONF.passwordAuthEnabled()) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PROFILELINK;
 		}
-		if (id != null && token != null) {
+		if (id != null && (!StringUtils.isBlank(token) || !StringUtils.isBlank(token2))) {
 			User u = (User) pc.read(id);
 			Sysprop s = pc.read(u.getIdentifier());
-			if (s != null && token.equals(s.getProperty(Config._EMAIL_TOKEN))) {
+			if (s != null && StringUtils.equals(token, (String) s.getProperty(Config._EMAIL_TOKEN))) {
 				s.addProperty(Config._EMAIL_TOKEN, "");
 				pc.update(s);
-				changeEmail(u, authUser, authUser.getPendingEmail());
+				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
+					return changeEmail(u, authUser, authUser.getPendingEmail());
+				}
+				return "redirect:" + PROFILELINK + "?code=signin.verify.done&success=true";
+			} else if (s != null && StringUtils.equals(token2, (String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
+				s.addProperty(Config._EMAIL_TOKEN + "2", "");
+				pc.update(s);
+				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN))) {
+					return changeEmail(u, authUser, authUser.getPendingEmail());
+				}
 				return "redirect:" + PROFILELINK + "?code=signin.verify.done&success=true";
 			} else {
 				return "redirect:" + SIGNINLINK;
@@ -354,7 +366,7 @@ public class ProfileController {
 				return "redirect:" + PROFILELINK + "?code=7&error=true";
 			}
 		}
-		return "redirect:" + PROFILELINK + "?code=signin.verify.text&success=true";
+		return "redirect:" + PROFILELINK + "?code=signin.verify.start&success=true";
 	}
 
 	@PostMapping(path = "/cancel-change-email")
@@ -381,7 +393,7 @@ public class ProfileController {
 		return "redirect:" + HttpUtils.getBackToUrl(req, true);
 	}
 
-	private void changeEmail(User u, Profile showUser, String email) {
+	private String changeEmail(User u, Profile showUser, String email) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (approvedDomain && canChangeEmail(u, email)) {
 			Sysprop s = pc.read(u.getEmail());
@@ -392,27 +404,31 @@ public class ProfileController {
 				u.setEmail(email);
 				showUser.setPendingEmail("");
 				pc.updateAll(List.of(u, showUser));
+				return "redirect:" + PROFILELINK + "?code=signin.verify.changed&success=true";
 			} else {
 				logger.info("Failed to change email for user {} - email {} has already been taken.", u.getId(), email);
+				return "redirect:" + PROFILELINK + "?code=1&error=true";
 			}
 		}
+		return "redirect:" + PROFILELINK + "?code=9&error=true";
 	}
 
 	private boolean sendConfirmationEmail(User user, Profile showUser, String email, HttpServletRequest req) {
-		if (pc.read(email) == null) {
-			showUser.setPendingEmail(email);
+		if (pc.read(email) == null && pc.findTerms(Utils.type(User.class), Map.of(Config._EMAIL, email), true).isEmpty()) {
 			Sysprop ident = pc.read(user.getEmail());
 			if (ident != null) {
 				if (!ident.hasProperty("confirmationTimestamp") || Utils.timestamp() >
 					((long) ident.getProperty("confirmationTimestamp") + TimeUnit.HOURS.toMillis(6))) {
-					utils.sendVerificationEmail(ident, PROFILELINK + "/confirm-email", req);
+					showUser.setPendingEmail(email);
+					utils.sendVerificationEmail(ident, email, PROFILELINK + "/confirm-email", req);
 					return true;
 				} else {
 					logger.warn("Failed to send email confirmation to '{}' - this can only be done once every 6h.", email);
 				}
 			}
+		} else {
+			logger.info("Failed to send confirmation email to user {} - email {} has already been taken.", user.getId(), email);
 		}
-		logger.info("Failed to send confirmation email to user {} - email {} has already been taken.", user.getId(), email);
 		return false;
 	}
 

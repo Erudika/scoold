@@ -435,27 +435,40 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendVerificationEmail(Sysprop identifier, String redirectUrl, HttpServletRequest req) {
+	public void sendVerificationEmail(Sysprop identifier, String newEmail, String redirectUrl, HttpServletRequest req) {
 		if (identifier != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
-			String subject = CONF.appName() + " - " + lang.get("msgcode.6");
+			String subject = CONF.appName() + " - " + (StringUtils.isBlank(newEmail) ? lang.get("msgcode.6") :
+					lang.get("signin.verify.change") + newEmail);
 			String body = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
 			redirectUrl = StringUtils.isBlank(redirectUrl) ? SIGNINLINK + "/register" : redirectUrl;
 
-			String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
-			identifier.addProperty(Config._EMAIL_TOKEN, token);
+			String token1 = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+			String token2 = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+			identifier.addProperty(Config._EMAIL_TOKEN, token1);
+			identifier.addProperty(Config._EMAIL_TOKEN + "2", token2);
 			identifier.addProperty("confirmationTimestamp", Utils.timestamp());
 			pc.update(identifier);
-			token = CONF.serverUrl() + CONF.serverContextPath() + redirectUrl + "?id=" +
-					identifier.getCreatorid() + "&token=" + token;
-			body = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body;
+			token1 = CONF.serverUrl() + CONF.serverContextPath() + redirectUrl + "?id=" +
+					identifier.getCreatorid() + "&token=" + token1;
+			token2 = CONF.serverUrl() + CONF.serverContextPath() + redirectUrl + "?id=" +
+					identifier.getCreatorid() + "&token2=" + token2;
+
+			body = "<b><a href=\"{0}\">" + (StringUtils.isBlank(newEmail) ? lang.get("signin.welcome.verify") :
+					lang.get("signin.verify.change")) + " " + newEmail + "</a></b><br><br>" + body;
 
 			model.put("subject", escapeHtml(subject));
 			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", lang.get("hello"));
-			model.put("body", body);
+			model.put("body", Utils.formatMessage(body, token1));
+
 			emailer.sendEmail(Arrays.asList(identifier.getId()), subject, compileEmailTemplate(model));
+
+			if (!StringUtils.isBlank(newEmail)) {
+				model.put("body", Utils.formatMessage(body, token2));
+				emailer.sendEmail(Arrays.asList(newEmail), subject, compileEmailTemplate(model));
+			}
 		}
 	}
 
