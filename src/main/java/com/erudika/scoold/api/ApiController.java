@@ -144,17 +144,8 @@ public class ApiController {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
-		Map<String, Object> intro = new HashMap<>();
-		intro.put("message", CONF.appName() + " API, see docs at " + CONF.serverUrl()
-				+ CONF.serverContextPath() + "/apidocs");
-		boolean healthy;
-		try {
-			healthy = pc != null && pc.getTimestamp() > 0;
-		} catch (Exception e) {
-			healthy = false;
-		}
-		intro.put("healthy", healthy);
-		intro.put("pro", false);
+		Map<String, Object> intro = healthCheck();
+		boolean healthy = (boolean) intro.getOrDefault("healthy", false);
 		if (!healthy) {
 			res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
@@ -163,6 +154,10 @@ public class ApiController {
 
 	@GetMapping("/ping")
 	public String ping(HttpServletRequest req, HttpServletResponse res) {
+		if (!(boolean) healthCheck().getOrDefault("healthy", false)) {
+			res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return "ponk";
+		}
 		return "pong";
 	}
 
@@ -1143,6 +1138,21 @@ public class ApiController {
 		error.put("code", code);
 		error.put("message", ex.getMessage());
 		return error;
+	}
+
+	private Map<String, Object> healthCheck() {
+		Map<String, Object> healthObj = new HashMap<>();
+		healthObj.put("message", CONF.appName() + " API, see docs at " + CONF.serverUrl()
+				+ CONF.serverContextPath() + "/apidocs");
+		boolean healthy;
+		try {
+			healthy = pc != null && pc.getTimestamp() > 0;
+		} catch (Exception e) {
+			healthy = false;
+		}
+		healthObj.put("healthy", healthy);
+		healthObj.put("pro", false);
+		return healthObj;
 	}
 
 	private Map<String, Object> readEntity(HttpServletRequest req) {
