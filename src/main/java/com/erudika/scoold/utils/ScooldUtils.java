@@ -100,6 +100,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -235,9 +236,14 @@ public final class ScooldUtils {
 			APPROVED_DOMAINS.add(approvedDomain);
 		}
 		// multiple admins are allowed only in Scoold PRO
-		String admin = StringUtils.substringBefore(CONF.admins(), ",");
-		if (!StringUtils.isBlank(admin)) {
-			ADMINS.add(admin);
+		// Gowri is over-riding this
+		//String admin = StringUtils.substringBefore(CONF.admins(), ",");
+		String[] admins = CONF.admins().split(",");
+		if (admins != null && admins.length > 0) {
+			ADMINS.addAll(Arrays.asList(admins));
+			//List admins
+			logger.info("Admins in ScooldUtils {}", ADMINS.toString());
+
 		}
 	}
 
@@ -416,14 +422,18 @@ public final class ScooldUtils {
 			String body2 = CONF.emailsWelcomeText2(lang);
 			String body3 = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
 
-			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
-				Sysprop s = pc.read(user.getIdentifier());
-				if (s != null) {
-					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
-					s.addProperty(Config._EMAIL_TOKEN, token);
-					pc.update(s);
-					token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
-					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body3;
+			//do not persist token if approval is required
+			if (CONF.isModeratorApproval()) {
+
+				if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
+					Sysprop s = pc.read(user.getIdentifier());
+					if (s != null) {
+						String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+						s.addProperty(Config._EMAIL_TOKEN, token);
+						pc.update(s);
+						token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
+						body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body3;
+					}
 				}
 			}
 
@@ -431,7 +441,55 @@ public final class ScooldUtils {
 			model.put("logourl", getSmallLogoUrl());
 			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
 			model.put("body", body1 + body2 + body3);
-			emailer.sendEmail(Arrays.asList(user.getEmail()), subject, compileEmailTemplate(model));
+			emailer.sendEmail(Arrays.asList(user.getEmail().split(",")), subject, compileEmailTemplate(model));
+		}
+	}
+
+	public void sendModeratorEmail(User user, String emails, boolean verifyEmail, HttpServletRequest req) {
+		// send welcome email notification
+		if (user != null) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
+			String subject = Utils.formatMessage(lang.get("signup.moderator.welcome"), CONF.appName());
+			String body1 = Utils.formatMessage(CONF.moderatorEmailsWelcomeText1(lang), user.getName(), user.getEmail());
+			String body2 = "<br/>";
+			String body3 = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
+
+			if (verifyEmail && !user.getActive() && !StringUtils.isBlank(user.getIdentifier())) {
+				Sysprop s = pc.read(user.getIdentifier());
+				if (s != null) {
+					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
+					s.addProperty(Config._EMAIL_TOKEN, token);
+					pc.update(s);
+					token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
+					body2 = "<b><a href=\"" + token + "\">" + Utils.formatMessage(lang.get("signup.moderator.approve"), user.getName()) + "</a></b><br><br>" + body2;
+				}
+			}
+
+			model.put("subject", escapeHtml(subject));
+			model.put("logourl", getSmallLogoUrl());
+			model.put("heading", lang.get("signup.moderator.title"));
+			model.put("body", body1 + body2 + body3);
+			emailer.sendEmail(Arrays.asList(emails.split(",")), subject, compileEmailTemplate(model));
+		}
+	}
+
+	public void sendConfirmationEmail(User user, boolean verifyEmail, HttpServletRequest req) {
+		// send welcome email notification
+		if (user != null) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, String> lang = getLang(req);
+			String subject = Utils.formatMessage(lang.get("confirmation.welcome"), CONF.appName());
+			String url = "<a href=\"" + CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "\">" + CONF.appName() + "</a>";
+			String body1 = Utils.formatMessage(CONF.moderatorConfirmationEmailBody(lang), url, url);
+			String body2 = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
+
+			model.put("subject", escapeHtml(subject));
+			model.put("logourl", getSmallLogoUrl());
+			//since this is addressing the user, the key "signin.welcome.title" is retained
+			model.put("heading", Utils.formatMessage(lang.get("signin.welcome.title"), escapeHtml(user.getName())));
+			model.put("body", body1 + body2);
+			emailer.sendEmail(Arrays.asList(user.getEmail().split(",")), subject, compileEmailTemplate(model));
 		}
 	}
 
@@ -642,6 +700,17 @@ public final class ScooldUtils {
 			return emails;
 		}
 		return Collections.emptySet();
+	}
+
+	@SuppressWarnings("unchecked")
+	public String fixHtml(String html) {
+		if (StringUtils.isNotBlank(html)) {
+
+			if (html.indexOf("youtube") > 0 && CONF.getBooleanValue("scoold.embed_youtube")) {
+				return Parser.unescapeEntities(html, true);
+			}
+		}
+		return html;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1266,8 +1335,10 @@ public final class ScooldUtils {
 	}
 
 	public boolean isAdmin(Profile authUser) {
+//		return authUser != null &&
+//				(User.Groups.ADMINS.toString().equals(authUser.getGroups()) && authUser.getEditorRoleEnabled());
 		return authUser != null &&
-				(User.Groups.ADMINS.toString().equals(authUser.getGroups()) && authUser.getEditorRoleEnabled());
+			ADMINS.contains(authUser.getUser().getEmail());
 	}
 
 	public boolean isMod(Profile authUser) {
