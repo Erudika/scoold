@@ -2236,26 +2236,26 @@ public final class ScooldUtils {
 
 	public String getFacebookLoginURL() {
 		return "https://www.facebook.com/dialog/oauth?client_id=" + CONF.facebookAppId() +
-				"&response_type=code&scope=email&redirect_uri=" + getParaEndpoint() +
-				"/facebook_auth&state=" + getParaAppId();
+				"&response_type=code&scope=email&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/facebook_auth" + getHostUrlParam();
 	}
 
 	public String getGoogleLoginURL() {
-		return "https://accounts.google.com/o/oauth2/v2/auth?" +
-				"client_id=" + CONF.googleAppId() + "&response_type=code&scope=openid%20profile%20email&redirect_uri="
-				+ getParaEndpoint() + "/google_auth&state=" + getParaAppId();
+		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + CONF.googleAppId() +
+				"&response_type=code&scope=openid%20profile%20email&state=" + getParaAppId() +
+				"&redirect_uri=" + getParaEndpoint() + "/google_auth" + getHostUrlParam();
 	}
 
 	public String getGitHubLoginURL() {
 		return "https://github.com/login/oauth/authorize?response_type=code&client_id=" + CONF.githubAppId() +
 				"&scope=user%3Aemail&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/github_auth";
+				"&redirect_uri=" + getParaEndpoint() + "/github_auth" + getHostUrlParam();
 	}
 
 	public String getLinkedInLoginURL() {
 		return "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CONF.linkedinAppId() +
 				"&scope=r_liteprofile%20r_emailaddress&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/linkedin_auth";
+				"&redirect_uri=" + getParaEndpoint() + "/linkedin_auth" + getHostUrlParam();
 	}
 
 	public String getTwitterLoginURL() {
@@ -2266,40 +2266,43 @@ public final class ScooldUtils {
 		return "https://login.microsoftonline.com/" + CONF.microsoftTenantId() +
 				"/oauth2/v2.0/authorize?response_type=code&client_id=" + CONF.microsoftAppId() +
 				"&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/microsoft_auth";
+				"&redirect_uri=" + getParaEndpoint() + "/microsoft_auth" + getHostUrlParam();
 	}
 
 	public String getSlackLoginURL() {
 		return "https://slack.com/oauth/v2/authorize?response_type=code&client_id=" + CONF.slackAppId() +
 				"&user_scope=identity.basic%20identity.email%20identity.team%20identity.avatar&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/slack_auth";
+				"&redirect_uri=" + getParaEndpoint() + "/slack_auth" + getHostUrlParam();
 	}
 
 	public String getAmazonLoginURL() {
 		return "https://www.amazon.com/ap/oa?response_type=code&client_id=" + CONF.amazonAppId() +
 				"&scope=profile&state=" + getParaAppId() +
-				"&redirect_uri=" + getParaEndpoint() + "/amazon_auth";
+				"&redirect_uri=" + getParaEndpoint() + "/amazon_auth" + getHostUrlParam();
 	}
 
 	public String getOAuth2LoginURL() {
 		return CONF.oauthAuthorizationUrl("") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("") +
 				"&scope=" + CONF.oauthScope("") + getOauth2StateParam("") +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("");
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("") +
+				getHostUrlParam(CONF.oauthAppidInStateParamEnabled(""));
 	}
 
 	public String getOAuth2SecondLoginURL() {
 		return CONF.oauthAuthorizationUrl("second") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("second") +
 				"&scope=" +  CONF.oauthScope("second") + getOauth2StateParam("second") +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("second");
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("second") +
+				getHostUrlParam(CONF.oauthAppidInStateParamEnabled("second"));
 	}
 
 	public String getOAuth2ThirdLoginURL() {
 		return CONF.oauthAuthorizationUrl("third") + "?" +
 				"response_type=code&client_id=" + CONF.oauthAppId("third") +
 				"&scope=" +  CONF.oauthScope("third") + getOauth2StateParam("third") +
-				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("third");
+				"&redirect_uri=" + getParaEndpoint() + "/oauth2_auth" + getOauth2AppidParam("third") +
+				getHostUrlParam(CONF.oauthAppidInStateParamEnabled("third"));
 	}
 
 	public String getParaEndpoint() {
@@ -2316,6 +2319,14 @@ public final class ScooldUtils {
 
 	private String getOauth2AppidParam(String a) {
 		return CONF.oauthAppidInStateParamEnabled(a) ? "" : "?appid=" + getParaAppId();
+	}
+
+	private String getHostUrlParam() {
+		return getHostUrlParam(true);
+	}
+
+	private String getHostUrlParam(boolean isSingleParam) {
+		return StringUtils.isBlank(CONF.hostUrlAliases()) ? "" : ((isSingleParam ? "?" : "&") + "host_url=" + CONF.serverUrl());
 	}
 
 	public String getFirstConfiguredLoginURL() {

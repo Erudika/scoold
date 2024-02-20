@@ -3140,6 +3140,17 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.redirect_uri", paraEndpoint());
 	}
 
+	@Documented(position = 2881,
+			identifier = "security.hosturl_aliases",
+			category = "Miscellaneous",
+			description = "Provides a comma-separated list of alternative `host_url` public addresses to be used when "
+					+ "returning from an authentication request to Para backend. This will override the hostname defined "
+					+ "in `signin_success` and `signin_failure` and allow Scoold to run on multiple different public URLs "
+					+ "while each separate server shares the same configuration. **Each must be a valid URL**")
+	public String hostUrlAliases() {
+		return getConfigParam("security.hosturl_aliases", "");
+	}
+
 	@Documented(position = 2890,
 			identifier = "redirect_signin_to_idp",
 			value = "false",
@@ -3492,6 +3503,7 @@ public class ScooldConfig extends Config {
 		settings.put("session_timeout", sessionTimeoutSec());
 
 		// URLs for success and failure
+		settings.put("security.hosturl_aliases", hostUrlAliases());
 		settings.put("signin_success", serverUrl() + serverContextPath() + SIGNINLINK + "/success?jwt=id");
 		settings.put("signin_failure", serverUrl() + serverContextPath() + SIGNINLINK + "?code=3&error=true");
 		return settings;
