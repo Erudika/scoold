@@ -272,7 +272,8 @@ public class QuestionController {
 			if (showPost instanceof UnapprovedQuestion) {
 				showPost.setType(Utils.type(Question.class));
 				pc.create(showPost);
-				utils.sendNewPostNotifications(showPost, req);
+				// this notification here is redundant
+				//utils.sendNewPostNotifications(showPost, req);
 			} else if (showPost instanceof UnapprovedReply) {
 				showPost.setType(Utils.type(Reply.class));
 				pc.create(showPost);
