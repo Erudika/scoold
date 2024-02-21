@@ -490,7 +490,6 @@ public class ProfileController {
 	}
 
 	public List<? extends Post> getQuestions(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
-		itemcount.setSortby("votes");
 		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
 		if (isMyProfile || utils.isMod(authUser)) {
 			return pc.findQuery("", getTypeQuery(Utils.type(Question.class), Utils.type(Sticky.class),
@@ -502,7 +501,6 @@ public class ProfileController {
 	}
 
 	public List<? extends Post> getAnswers(Profile authUser, Profile showUser, boolean isMyProfile, Pager itemcount) {
-		itemcount.setSortby("votes");
 		String spaceFilter = getSpaceFilter(authUser, isMyProfile);
 		if (isMyProfile || utils.isMod(authUser)) {
 			return pc.findQuery("", getTypeQuery(Utils.type(Reply.class), Utils.type(UnapprovedReply.class))
