@@ -203,8 +203,12 @@ public class QuestionsController {
 		model.addAttribute("title", utils.getLang(req).get("posts.ask"));
 
 		Question draft = utils.populate(req, new Question(), "title", "body", "tags|,", "location", "space");
-		Sysprop spaceObj = utils.isAuthenticated(req) ? pc.read(utils.getSpaceId(utils.
-				getSpaceIdFromCookie(utils.getAuthUser(req), req))) : pc.read(Post.DEFAULT_SPACE);
+		String sid = Post.DEFAULT_SPACE;
+		if (utils.isAuthenticated(req)) {
+			sid = utils.getSpaceId(utils.getSpaceIdFromCookie(utils.getAuthUser(req), req));
+			sid = StringUtils.replace(sid, "*", "default");
+		}
+		Sysprop spaceObj =  pc.read(sid);
 		if (spaceObj != null) {
 			String title = (String) spaceObj.getProperty("titleTemplate");
 			String body = (String) spaceObj.getProperty("bodyTemplate");
