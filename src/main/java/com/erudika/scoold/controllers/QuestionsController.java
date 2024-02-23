@@ -89,6 +89,7 @@ public class QuestionsController {
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("title", utils.getLang(req).get("questions.title"));
 		model.addAttribute("questionsSelected", "navbtn-hover");
+		model.addAttribute("questionsTypeFilter", HttpUtils.getCookieValue(req, "questions-type-filter"));
 		return "base";
 	}
 
@@ -170,17 +171,23 @@ public class QuestionsController {
 	}
 
 	@PostMapping("/questions/apply-filter")
-	public String applyFilter(@RequestParam(required = false) String sortby, @RequestParam(required = false) String tab,
+	public String applyFilter(@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String typeFilter, @RequestParam(required = false) String tab,
 			@RequestParam(required = false, defaultValue = "false") String compactViewEnabled,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (req.getParameter("clear") != null) {
 			HttpUtils.removeStateParam("questions-filter", req, res);
+			HttpUtils.removeStateParam("questions-type-filter", req, res);
 			HttpUtils.removeStateParam("questions-view-compact", req, res);
 		} else {
 			Pager p = utils.pagerFromParams(req);
 			if (!StringUtils.isBlank(req.getParameter(Config._TAGS))) {
 				boolean matchAll = "true".equals(req.getParameter("matchAllTags"));
 				p.setName("with_tags:" + (matchAll ? "+" : "") + req.getParameter(Config._TAGS));
+			}
+			if (!StringUtils.isBlank(typeFilter)) {
+				HttpUtils.setRawCookie("questions-type-filter", typeFilter,
+					req, res, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
 			}
 			savePagerToCookie(req, res, p);
 			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
@@ -423,13 +430,6 @@ public class QuestionsController {
 			}
 			String q = "properties.answercount:0";
 			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
-		} else if ("unapproved".equals(sortby)) {
-			p.setSortby("timestamp");
-			if ("default_pager".equals(p.getName()) && p.isDesc()) {
-				p.setDesc(false);
-			}
-			String q = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]";
-			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
 		}
 		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
 		if (StringUtils.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
@@ -445,7 +445,9 @@ public class QuestionsController {
 
 	private String getQueryWithPossibleExtension(String query, HttpServletRequest req) {
 		String queryExt = req.getParameter("q");
-		queryExt = StringUtils.isBlank(queryExt) || queryExt.startsWith("*") ? "" : queryExt;
+		if (StringUtils.isBlank(queryExt) || queryExt.startsWith("*")) {
+			queryExt = StringUtils.trimToEmpty(HttpUtils.getCookieValue(req, "questions-type-filter"));
+		}
 		if (!queryExt.isBlank()) {
 			return query.equals("*") ? queryExt : query + " AND (" + queryExt + ")";
 		}

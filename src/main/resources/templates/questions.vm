@@ -83,7 +83,6 @@
 			<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
 			<a href="${questionslink}$!{filter}?sortby=answered" class="chip $sortarr.answered">$!lang.get("posts.answered")</a>
 			<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
-			<a href="${questionslink}$!{filter}?sortby=unapproved" class="chip $sortarr.unapproved">$!lang.get("posts.unapproved")</a>
 
 			#if ($authenticated)
 				#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
@@ -170,7 +169,7 @@
 								<option value="properties.answercount" #sortselected("properties.answercount")>$!lang.get('answers.title')</option>
 								<option value="properties.viewcount" #sortselected("properties.viewcount")>$!lang.get('posts.views')</option>
 								<option value="properties.lastactivity" #sortselected("properties.lastactivity")>$!lang.get('profile.about.lastseen')</option>
-								<option value="properties.lastedited" #sortselected("properties.lastedited")>Last edited</option>
+								<option value="properties.lastedited" #sortselected("properties.lastedited")>$!lang.get('posts.lastedited')</option>
 							</select>
 						</div>
 						<div>
@@ -210,13 +209,29 @@
 						</label>
 					</div>
 					<div class="col l2 m4 s12">
-						<div class="center-align pvm">
-							<button type="submit" class="btn small waves-effect waves-light">$!lang.get('apply')</button>
+						<strong>$!lang.get('filter')</strong>
+						<div class="input-field">
+							#macro(filterselected $prop)
+							#if($questionsTypeFilter == $prop)selected#end
+							#end
+							#set($unacceptedQuery = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]" )
+							<select name="typeFilter">
+								<option value="" #filterselected("")>$!lang.get('showall')</option>
+								<option value="type:question" #filterselected("type:question")>$!lang.get('questions.title')</option>
+								<option value="type:sticky" #filterselected("type:sticky")>$!lang.get('posts.sticky')</option>
+								<option value="type:unapprovedquestion" #filterselected("type:unapprovedquestion")>$!lang.get('posts.unapprovedq')</option>
+								<option value="$unacceptedQuery" #filterselected($unacceptedQuery)>$!lang.get('posts.unaccepted')</option>
+							</select>
 						</div>
-						<div class="center-align pvm">
-							<input id="question-filter-clear-btn" type="submit" class="btn btn-flat white"
-										 name="clear" value="$!lang.get('clear')">
-						</div>
+					</div>
+				</div>
+
+				<div class="center">
+					<hr>
+					<div class="pvs">
+						<button type="submit" class="btn small waves-effect waves-light">$!lang.get('apply')</button> &nbsp; &nbsp;
+						<input id="question-filter-clear-btn" type="submit" class="btn btn-flat white"
+											 name="clear" value="$!lang.get('clear')">
 					</div>
 				</div>
 			</form>
