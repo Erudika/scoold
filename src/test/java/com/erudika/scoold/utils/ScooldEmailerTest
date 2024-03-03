@@ -1,0 +1,58 @@
+package com.erudika.scoold.utils;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
+
+import javax.mail.internet.MimeMessage;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+
+public class ScooldEmailerTest {
+
+	private ScooldEmailer scooldEmailer;
+	@Mock
+	private JavaMailSender javaMailSenderMock;
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		scooldEmailer = new ScooldEmailer(javaMailSenderMock);
+	}
+
+	@Test
+	public void getTrue_whenValidEmailsAndNoException() {
+		List<String> emails = List.of("test1@mail.com", "test2@mail.com", "test3@mail.com");
+		doNothing().when(javaMailSenderMock).send(Mockito.any(MimeMessage.class));
+		assertTrue(scooldEmailer.sendEmail(emails, "Subject", "Body"));
+	}
+
+	@Test
+	public void sendEmailThrowsMailException() {
+		List<String> emails = Collections.singletonList("test@mail.com");
+		doThrow(MailSendException.class).when(javaMailSenderMock).send(any(MimeMessage.class));
+
+		assertTrue(scooldEmailer.sendEmail(emails, "Subject", "Body"));
+	}
+
+	@Test
+	public void getFalse_whenEmailIsEmpty() {
+		assertFalse(scooldEmailer.sendEmail(Collections.emptyList(), "Subject", "Body"));
+	}
+
+	@Test
+	public void getFalse_whenEmailIsNull() {
+		assertFalse(scooldEmailer.sendEmail(null, "Subject", "Body"));
+	}
+
+}
