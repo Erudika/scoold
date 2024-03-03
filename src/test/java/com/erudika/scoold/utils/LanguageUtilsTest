@@ -1,0 +1,97 @@
+package com.erudika.scoold.utils;
+
+import com.erudika.para.client.ParaClient;
+
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import java.util.Locale;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class LanguageUtilsTest {
+
+	private LanguageUtils languageUtils;
+
+	@Before
+	public void setUp() {
+		ParaClient paraClient = new ParaClient("","");
+		languageUtils = new LanguageUtils(paraClient);
+	}
+
+	@Test
+	public void getProperLocale_ReturnProperLocale() {
+		Locale properLocale = languageUtils.getProperLocale("en");
+		assertEquals(Locale.ENGLISH, properLocale);
+	}
+
+	@Test
+	public void getAllLocales_ReturnAllLocales() {
+		Map<String, Locale> allLocales = languageUtils.getAllLocales();
+		assertNotNull(allLocales);
+		assertFalse(allLocales.isEmpty());
+	}
+
+	@Test
+	public void getDefaultLanguageCode_ReturnsDefaultLanguageCode() {
+		String defaultLanguageCode = languageUtils.getDefaultLanguageCode();
+		assertEquals("en", defaultLanguageCode);
+	}
+
+	@Test
+	public void returnDefaultTranslations_whenNullLanguageCode() {
+		Map<String, String> translations = languageUtils.readLanguage(null);
+
+		assertNotNull(translations);
+		assertFalse(translations.isEmpty());
+	}
+
+	@Test
+	public void returnDefaultTranslations_whenEmptyLanguageCode() {
+		Map<String, String> translations = languageUtils.readLanguage("");
+
+		assertNotNull(translations);
+		assertFalse(translations.isEmpty());
+	}
+
+	@Test
+	public void returnTranslations_forValidLanguageCode_whenInvalidRegionalLanguage() {
+		final String langCode = "zh_CN";
+		Map<String, String> translations = languageUtils.readLanguage(langCode);
+
+		assertNotNull(translations);
+	}
+
+	@Test
+	public void getProperLocale_ReturnsCorrectLocale_ForEnLanguageCode() {
+		Locale enLocale = languageUtils.getProperLocale("en");
+		assertNotNull(enLocale);
+		assertEquals(Locale.ENGLISH, enLocale);
+	}
+
+	@Test
+	public void getProperLocale_ReturnsCorrectLocale_ForZhCNLanguageCode() {
+		Locale zhCNLocale = languageUtils.getProperLocale("zh_CN");
+		assertNotNull(zhCNLocale);
+		assertEquals(Locale.SIMPLIFIED_CHINESE, zhCNLocale);
+	}
+
+	@Test
+	public void getProperLocale_ReturnsCorrectLocale_ForZhTWLanguageCode() {
+		Locale zhTWLocale = languageUtils.getProperLocale("zh_TW");
+		assertNotNull(zhTWLocale);
+		assertEquals(Locale.TRADITIONAL_CHINESE, zhTWLocale);
+	}
+
+	@Test
+	public void getProperLocale_ReturnsDefaultLocale_ForInvalidLanguageCode() {
+		Locale invalidLocale = languageUtils.getProperLocale("xx_YY");
+		assertNotNull(invalidLocale);
+		assertEquals(Locale.ENGLISH, invalidLocale);
+	}
+
+
+}
