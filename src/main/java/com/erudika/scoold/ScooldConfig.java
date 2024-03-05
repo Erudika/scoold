@@ -1594,7 +1594,7 @@ public class ScooldConfig extends Config {
 			value = "false",
 			type = Boolean.class,
 			category = "Posts",
-			description = "Enable/disable the need for approval of new posts by a moderator. ")
+			description = "Enable/disable the need for approval of new posts (both questions and answers) by a moderator. ")
 	public boolean postsNeedApproval() {
 		return getConfigBoolean("posts_need_approval", false);
 	}
@@ -1608,6 +1608,16 @@ public class ScooldConfig extends Config {
 					+ "(moderators and admins).")
 	public String answersApprovedBy() {
 		return getConfigParam("answers_approved_by", "default");
+	}
+
+	@Documented(position = 1522,
+			identifier = "answers_need_approval",
+			value = "false",
+			type = Boolean.class,
+			category = "Posts",
+			description = "Enable/disable the need for approval of new answers by a moderator. ")
+	public boolean answersNeedApproval() {
+		return getConfigBoolean("answers_need_approval", postsNeedApproval());
 	}
 
 	@Documented(position = 1530,
