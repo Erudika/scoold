@@ -278,6 +278,7 @@ public class QuestionController {
 				showPost.setType(Utils.type(Reply.class));
 				pc.create(showPost);
 			}
+			utils.deleteReportsAfterModAction(showPost);
 		}
 		return "redirect:" + ((showPost == null) ? QUESTIONSLINK : showPost.getPostLinkForRedirect());
 	}
@@ -397,6 +398,7 @@ public class QuestionController {
 		if (!showPost.isReply()) {
 			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser)) || utils.isMod(authUser)) {
 				showPost.delete();
+				utils.deleteReportsAfterModAction(showPost);
 				model.addAttribute("deleted", true);
 				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
@@ -408,6 +410,7 @@ public class QuestionController {
 				parent.setAnswerid(showPost.getId().equals(parent.getAnswerid()) ? "" : parent.getAnswerid());
 				parent.update();
 				showPost.delete();
+				utils.deleteReportsAfterModAction(showPost);
 				model.addAttribute("deleted", true);
 			}
 		}
@@ -461,6 +464,7 @@ public class QuestionController {
 			});
 			targetPost.update();
 			showPost.delete();
+			utils.deleteReportsAfterModAction(showPost);
 		}
 		return "redirect:" + targetPost.getPostLinkForRedirect();
 	}

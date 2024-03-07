@@ -841,6 +841,18 @@ public final class ScooldUtils {
 		}
 	}
 
+	public void deleteReportsAfterModAction(Post parent) {
+		if (parent != null) {
+			List<String> toDelete = new LinkedList<>();
+			pc.readEverything(pager -> {
+				List<ParaObject> objects = pc.getChildren(parent, Utils.type(Report.class), pager);
+				toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+				return objects;
+			});
+			pc.deleteAll(toDelete);
+		}
+	}
+
 	private void createReportCopyOfNotificiation(String author, String url, String subject, String template, boolean awaitingApproval) {
 		if (CONF.notificationsAsReportsEnabled() && !awaitingApproval) {
 			Report rep = new Report();

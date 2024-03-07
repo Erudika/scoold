@@ -37,7 +37,6 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +214,7 @@ public class ReportsController {
 			questionController.modApprove(report.getParentid(), req);
 			report.setClosed(true);
 			report.setDescription(report.getDescription() + " ");
-			report.update();
+			report.delete();
 		}
 		if (!utils.isAjaxRequest(req)) {
 			return "redirect:" + REPORTSLINK;
@@ -244,7 +243,7 @@ public class ReportsController {
 			Profile authUser = utils.getAuthUser(req);
 			if (utils.isAdmin(authUser)) {
 				pc.readEverything(pager -> {
-					pager.setSelect(Collections.singletonList(Config._ID));
+					//pager.setSelect(Collections.singletonList(Config._ID));
 					List<Sysprop> reports = pc.findQuery(Utils.type(Report.class), "*", pager);
 					pc.deleteAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
 					return reports;
@@ -261,7 +260,7 @@ public class ReportsController {
 			if (utils.isAdmin(authUser)) {
 				List<String> toDelete = new LinkedList<>();
 				pc.readEverything(pager -> {
-					pager.setSelect(Collections.singletonList(Config._ID));
+					//pager.setSelect(Collections.singletonList(Config._ID));
 					List<ParaObject> objects = pc.findQuery("", Config._TYPE + ":" + Utils.type(UnapprovedQuestion.class) +
 							" OR " + Config._TYPE + ":" + Utils.type(UnapprovedReply.class), pager);
 					toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
