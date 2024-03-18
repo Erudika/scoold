@@ -20,13 +20,17 @@ package com.erudika.scoold.utils;
 import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Para;
 import com.erudika.scoold.ScooldConfig;
+import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import javax.mail.internet.MimeMessage;
+import javax.mail.util.ByteArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
  * A simple JavaMail implementation of {@link Emailer}.
@@ -62,6 +66,37 @@ public class ScooldEmailer implements Emailer {
 					logger.error("Failed to send email to {} with body [{}]. {}", email, body, ex.getMessage());
 				}
 			});
+		});
+		return true;
+	}
+
+
+	@Override
+	public boolean sendEmail(List<String> emails, String subject, String body, InputStream attachment, String mimeType, String fileName) {
+		if (emails == null || emails.isEmpty()) {
+			return false;
+		}
+		Para.asyncExecute(() -> {
+			MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
+				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+				Iterator<String> emailz = emails.iterator();
+				msg.setTo(emailz.next());
+				while (emailz.hasNext()) {
+					msg.addBcc(emailz.next());
+				}
+				msg.setSubject(subject);
+				msg.setFrom(Para.getConfig().supportEmail());
+				msg.setText(body, true); // body is assumed to be HTML
+				if (attachment != null) {
+					msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
+				}
+			};
+			try {
+				mailSender.send(preparator);
+				logger.debug("Email sent to {}, {}", emails, subject);
+			} catch (MailException ex) {
+				logger.error("Failed to send email. {}", ex.getMessage());
+			}
 		});
 		return true;
 	}
