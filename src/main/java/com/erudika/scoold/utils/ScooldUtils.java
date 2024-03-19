@@ -85,6 +85,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,6 +128,8 @@ public final class ScooldUtils {
 
 	private Set<Sysprop> allSpaces;
 	private Set<String> autoAssignedSpacesFromConfig;
+	private long lastSpacesCountTimestamp;
+	private int spacesCount = 0;
 
 	private static final ScooldConfig CONF = new ScooldConfig();
 
@@ -1374,17 +1377,19 @@ public final class ScooldUtils {
 	}
 
 	public Set<Sysprop> getAllSpaces() {
-		if (allSpaces == null) {
-			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
-		}
-		return allSpaces;
+		return getAllSpacesAdmin();
 	}
 
 	public Set<Sysprop> getAllSpacesAdmin() {
-		if (allSpaces == null || pc.getCount("scooldspace").intValue() != allSpaces.size()) { // caching issue on >1 nodes
+		if (Utils.timestamp() - lastSpacesCountTimestamp > TimeUnit.SECONDS.toMillis(30)) {
+			lastSpacesCountTimestamp = Utils.timestamp();
+			spacesCount = pc.getCount("scooldspace").intValue();
+		}
+		if (allSpaces == null || spacesCount != allSpaces.size()) { // caching issue on >1 nodes
 			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
 		}
-		return allSpaces;
+		return allSpaces.stream().sorted((s1, s2) -> getSpaceName(s1.getName()).compareToIgnoreCase(getSpaceName(s2.getName()))).
+				collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
