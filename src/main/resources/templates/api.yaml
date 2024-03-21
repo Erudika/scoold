@@ -1398,7 +1398,7 @@ paths:
         - name: type
           in: path
           required: true
-          description: The type of object to search for - one of `questions`, `answers`, `people`, `comments`, `feedback`.
+          description: The type of object to search for - one of `question`, `reply`, `user`, `profile`, `comment`, `report`, `revision`, `badge`, `feedback`.
           schema:
             type: string
         - name: query
