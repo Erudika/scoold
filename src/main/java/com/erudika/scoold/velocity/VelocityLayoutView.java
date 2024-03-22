@@ -18,7 +18,7 @@ package com.erudika.scoold.velocity;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;

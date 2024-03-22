@@ -22,7 +22,7 @@ import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.TERMSLINK;
 import com.erudika.scoold.utils.ScooldUtils;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

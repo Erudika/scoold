@@ -17,7 +17,7 @@
 package com.erudika.scoold.velocity;
 
 import java.io.IOException;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;

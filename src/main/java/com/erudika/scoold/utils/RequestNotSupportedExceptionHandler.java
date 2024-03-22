@@ -22,7 +22,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -40,7 +40,7 @@ public class RequestNotSupportedExceptionHandler extends ResponseEntityException
 
 	@Override
 	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		Set<HttpMethod> supportedMethods = ex.getSupportedHttpMethods();
 		if (!CollectionUtils.isEmpty(supportedMethods)) {
 			headers.setAllow(supportedMethods);

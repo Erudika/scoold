@@ -21,6 +21,9 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -30,9 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -40,7 +40,6 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
@@ -82,7 +81,7 @@ public final class HttpUtils {
 //					setConnectionReuseStrategy(new NoConnectionReuseStrategy()).
 //					setRedirectStrategy(new LaxRedirectStrategy()).
 					setDefaultRequestConfig(RequestConfig.custom().
-							setConnectTimeout(timeout, TimeUnit.SECONDS).
+//							setConnectTimeout(timeout, TimeUnit.SECONDS).
 							setConnectionRequestTimeout(timeout, TimeUnit.SECONDS).
 							build()).
 					build();
@@ -236,13 +235,16 @@ public final class HttpUtils {
 		params.add(new BasicNameValuePair("response", token));
 		HttpPost post = new HttpPost("https://www.google.com/recaptcha/api/siteverify");
 		post.setEntity(new UrlEncodedFormEntity(params));
-		try (CloseableHttpResponse resp = HttpUtils.getHttpClient().execute(post)) {
-			if (resp.getCode() == HttpStatus.SC_OK && resp.getEntity() != null) {
-				Map<String, Object> data = ParaObjectUtils.getJsonReader(Map.class).readValue(resp.getEntity().getContent());
-				if (data != null && data.containsKey("success")) {
-					return (boolean) data.getOrDefault("success", false);
+		try {
+			return HttpUtils.getHttpClient().execute(post, (resp) -> {
+				if (resp.getCode() == HttpStatus.SC_OK && resp.getEntity() != null) {
+					Map<String, Object> data = ParaObjectUtils.getJsonReader(Map.class).readValue(resp.getEntity().getContent());
+					if (data != null && data.containsKey("success")) {
+						return (boolean) data.getOrDefault("success", false);
+					}
 				}
-			}
+				return false;
+			});
 		} catch (Exception ex) {
 			LoggerFactory.getLogger(HttpUtils.class).debug("Failed to verify CAPTCHA: {}", ex.getMessage());
 		}

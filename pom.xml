@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.18</version>
+		<version>3.2.4</version>
 	</parent>
 
 	<organization>
@@ -19,7 +19,7 @@
 	</organization>
 
 	<name>Scoold</name>
-	<description>Scoold is an open source Q and A platform written in Java.</description>
+	<description>Scoold is an open source Q and A platform for teams.</description>
 	<url>https://scoold.com</url>
 
 	<developers>
@@ -59,6 +59,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
+	 <maven.compiler.source>17</maven.compiler.source>
+	 <maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -162,7 +164,6 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>2.2</version>
 		</dependency>
 
 		<!-- TESTING -->
@@ -184,7 +185,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>templating-maven-plugin</artifactId>
-					<version>1.0.0</version>
+					<version>3.0.0</version>
 					<executions>
 						<execution>
 							<id>generate-verion-class</id>
@@ -210,7 +211,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.2.0</version>
 				<configuration>
 					<revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
@@ -255,9 +256,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.12.1</version>
 				<configuration>
-					<release>11</release>
 					<showDeprecation>true</showDeprecation>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showWarnings>true</showWarnings>
@@ -271,7 +271,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>3.3.1</version>
 				<dependencies>
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
@@ -300,10 +300,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.2.5</version>
 				<configuration>
 					<!--<argLine>-Xmx256m  ${surefireArgLine}</argLine>-->
-					<skipTests>${skipUTs}</skipTests>
+					<skipTests>${skipTests}</skipTests>
 					<!--					<parallel>methods</parallel>
 					<threadCount>10</threadCount>
 					<forkCount>2C</forkCount>-->
@@ -313,7 +313,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.9.1.2184</version>
+				<version>3.10.0.2594</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -331,6 +331,7 @@
 				<dependency>
 					<groupId>org.eclipse.jetty.http2</groupId>
 					<artifactId>http2-server</artifactId>
+					<version>11.0.20</version>
 				</dependency>
 				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
@@ -339,12 +340,6 @@
 				<dependency>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-jetty</artifactId>
-					<exclusions>
-						<exclusion>
-							<groupId>org.eclipse.jetty.websocket</groupId>
-							<artifactId>*</artifactId>
-						</exclusion>
-					</exclusions>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -355,8 +350,8 @@
 			</properties>
 			<dependencies>
 				<dependency>
-					<groupId>javax.servlet</groupId>
-					<artifactId>javax.servlet-api</artifactId>
+					<groupId>jakarta.servlet</groupId>
+					<artifactId>jakarta.servlet-api</artifactId>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>

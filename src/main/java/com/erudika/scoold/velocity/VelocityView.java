@@ -16,11 +16,12 @@
 package com.erudika.scoold.velocity;
 
 import com.erudika.para.core.utils.Para;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.servlet.view.AbstractTemplateView;
-import org.springframework.web.util.NestedServletException;
 
 /**
  * View using the Velocity template engine.
@@ -305,7 +305,7 @@ public class VelocityView extends AbstractTemplateView {
 					initTool(tool, velocityContext);
 					velocityContext.put(attributeName, tool);
 				} catch (Exception ex) {
-					throw new NestedServletException("Could not instantiate Velocity tool '" + attributeName + "'", ex);
+					throw new ServletException("Could not instantiate Velocity tool '" + attributeName + "'", ex);
 				}
 			}
 		}
@@ -408,7 +408,7 @@ public class VelocityView extends AbstractTemplateView {
 			template.merge(context, response.getWriter());
 		} catch (MethodInvocationException ex) {
 			Throwable cause = ex.getCause();
-			throw new NestedServletException(
+			throw new ServletException(
 					"Method invocation failed during rendering of Velocity view with name '"
 					+ getBeanName() + "': " + ex.getMessage() + "; reference [" + ex.getReferenceName()
 					+ "], method '" + ex.getMethodName() + "'",
