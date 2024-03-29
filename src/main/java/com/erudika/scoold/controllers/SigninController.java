@@ -112,7 +112,11 @@ public class SigninController {
 	@GetMapping("/signin/success")
 	public String signinSuccess(@RequestParam String jwt, HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!StringUtils.isBlank(jwt)) {
-			return loginWithIdToken(jwt, req, res);
+			if (!utils.isAuthenticated(req)) {
+				return loginWithIdToken(jwt, req, res);
+			} else {
+				return "redirect:" + getBackToUrl(req);
+			}
 		} else {
 			return "redirect:" + SIGNINLINK + "?code=3&error=true";
 		}
