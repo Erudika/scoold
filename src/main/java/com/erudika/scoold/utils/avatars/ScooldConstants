@@ -1,0 +1,10 @@
+package com.erudika.scoold.utils;
+
+import com.erudika.scoold.ScooldServer;
+
+public class ScooldConstants {
+
+	public static final String SIGNINLINK = ScooldServer.HOMEPAGE + "signin";
+	public static final String AUTH_USER_ATTRIBUTE = ScooldServer.TOKEN_PREFIX + "AUTH_USER";
+	public static final String REST_ENTITY_ATTRIBUTE = "REST_ENTITY";
+}
