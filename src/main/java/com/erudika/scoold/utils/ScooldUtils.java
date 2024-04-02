@@ -1629,29 +1629,29 @@ public final class ScooldUtils {
 	}
 
 	public String sanitizeQueryString(String query, HttpServletRequest req) {
-		String qf = getSpaceFilteredQuery(req);
+		String filteredQuery = getSpaceFilteredQuery(req);
 		String defaultQuery = "*";
-		String q = StringUtils.trimToEmpty(query);
-		if (qf.isEmpty() || qf.length() > 1) {
-			q = q.replaceAll("[\\?<>]", "").trim();
-			q = q.replaceAll("$[\\*]*", "");
-			q = RegExUtils.removeAll(q, "AND");
-			q = RegExUtils.removeAll(q, "OR");
-			q = RegExUtils.removeAll(q, "NOT");
-			q = q.trim();
+		String cleanQuery = StringUtils.trimToEmpty(query);
+		if (filteredQuery.isEmpty() || filteredQuery.length() > 1) {
+			cleanQuery = cleanQuery.replaceAll("[\\?<>]", "").trim();
+			cleanQuery = cleanQuery.replaceAll("$[\\*]*", "");
+			cleanQuery = RegExUtils.removeAll(cleanQuery, "AND");
+			cleanQuery = RegExUtils.removeAll(cleanQuery, "OR");
+			cleanQuery = RegExUtils.removeAll(cleanQuery, "NOT");
+			cleanQuery = cleanQuery.trim();
 			defaultQuery = "";
 		}
-		if (qf.isEmpty()) {
+		if (filteredQuery.isEmpty()) {
 			return defaultQuery;
-		} else if ("*".equals(qf)) {
-			return q;
-		} else if ("*".equals(q)) {
-			return qf;
+		} else if ("*".equals(filteredQuery)) {
+			return cleanQuery;
+		} else if ("*".equals(cleanQuery)) {
+			return filteredQuery;
 		} else {
-			if (q.isEmpty()) {
-				return qf;
+			if (cleanQuery.isEmpty()) {
+				return filteredQuery;
 			} else {
-				return qf + " AND " + q;
+				return filteredQuery + " AND " + cleanQuery;
 			}
 		}
 	}
