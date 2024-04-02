@@ -170,8 +170,10 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!StringUtils.isBlank(space) && utils.isAdmin(authUser)) {
 			Sysprop spaceObj = utils.buildSpaceObject(space);
-			if (utils.isDefaultSpace(spaceObj.getId()) || pc.getCount("scooldspace") >= MAX_SPACES ||
-					pc.read(spaceObj.getId()) != null) {
+			boolean isDefaultSpace = utils.isDefaultSpace(spaceObj.getId());
+			boolean reachedMaxSpaces = pc.getCount("scooldspace") >= MAX_SPACES;
+			boolean spaceExists = pc.read(spaceObj.getId()) != null;
+			if (isDefaultSpace || reachedMaxSpaces || spaceExists) {
 				model.addAttribute("error", Map.of("name", "Space exists or maximum number of spaces reached."));
 			} else {
 				if (assigntoall) {
