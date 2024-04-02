@@ -34,7 +34,6 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldConfig;
-import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
@@ -311,7 +310,7 @@ public final class ScooldUtils {
 			} else {
 				clearSession(req, res);
 				logger.info("Invalid JWT found in cookie {}.", CONF.authCookie());
-				res.sendRedirect(CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "?code=3&error=true");
+				res.sendRedirect(CONF.serverUrl() + CONF.serverContextPath() + ScooldConstants.SIGNINLINK + "?code=3&error=true");
 				return null;
 			}
 		}
@@ -425,7 +424,7 @@ public final class ScooldUtils {
 					String token = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 					s.addProperty(Config._EMAIL_TOKEN, token);
 					pc.update(s);
-					token = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
+					token = CONF.serverUrl() + CONF.serverContextPath() + ScooldConstants.SIGNINLINK + "/register?id=" + user.getId() + "&token=" + token;
 					body3 = "<b><a href=\"" + token + "\">" + lang.get("signin.welcome.verify") + "</a></b><br><br>" + body3;
 				}
 			}
@@ -445,7 +444,7 @@ public final class ScooldUtils {
 			String subject = CONF.appName() + " - " + (StringUtils.isBlank(newEmail) ? lang.get("msgcode.6") :
 					lang.get("signin.verify.change") + newEmail);
 			String body = getDefaultEmailSignature(CONF.emailsWelcomeText3(lang));
-			redirectUrl = StringUtils.isBlank(redirectUrl) ? SIGNINLINK + "/register" : redirectUrl;
+			redirectUrl = StringUtils.isBlank(redirectUrl) ? ScooldConstants.SIGNINLINK + "/register" : redirectUrl;
 
 			String token1 = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
 			String token2 = Utils.base64encURL(Utils.generateSecurityToken().getBytes());
@@ -479,7 +478,7 @@ public final class ScooldUtils {
 		if (email != null && token != null) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			Map<String, String> lang = getLang(req);
-			String url = CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
+			String url = CONF.serverUrl() + CONF.serverContextPath() + ScooldConstants.SIGNINLINK + "/iforgot?email=" + email + "&token=" + token;
 			String subject = lang.get("iforgot.title");
 			String body1 = lang.get("notification.iforgot.body1") + "<br><br>";
 			String body2 = Utils.formatMessage("<b><a href=\"{0}\">" + lang.get("notification.iforgot.body2") +
@@ -880,7 +879,7 @@ public final class ScooldUtils {
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
-		return (Profile) req.getAttribute(AUTH_USER_ATTRIBUTE);
+		return (Profile) req.getAttribute(ScooldConstants.AUTH_USER_ATTRIBUTE);
 	}
 
 	public boolean isAuthenticated(HttpServletRequest req) {
@@ -1354,7 +1353,7 @@ public final class ScooldUtils {
 	}
 
 	public String getWelcomeMessagePreLogin(Profile authUser, HttpServletRequest req) {
-		if (StringUtils.startsWithIgnoreCase(req.getRequestURI(), CONF.serverContextPath() + SIGNINLINK)) {
+		if (StringUtils.startsWithIgnoreCase(req.getRequestURI(), CONF.serverContextPath() + ScooldConstants.SIGNINLINK)) {
 			return authUser == null ? CONF.welcomeMessagePreLogin().replaceAll("'", "&apos;") : "";
 		}
 		return "";
@@ -1761,7 +1760,7 @@ public final class ScooldUtils {
 		Map<String, Object> data = new LinkedHashMap<String, Object>();
 		if (isApiRequest(req)) {
 			try {
-				data = (Map<String, Object>) req.getAttribute(REST_ENTITY_ATTRIBUTE);
+				data = (Map<String, Object>) req.getAttribute(ScooldConstants.REST_ENTITY_ATTRIBUTE);
 				if (data == null) {
 					data = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
 				}
@@ -2378,6 +2377,6 @@ public final class ScooldUtils {
 		if (!CONF.oauthAppId("third").isEmpty()) {
 			return getOAuth2ThirdLoginURL();
 		}
-		return SIGNINLINK + "?code=3&error=true";
+		return ScooldConstants.SIGNINLINK + "?code=3&error=true";
 	}
 }
