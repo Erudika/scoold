@@ -306,7 +306,7 @@ public class AdminController {
 	@PostMapping("/toggle-webhook")
 	public String toggleWebhook(@RequestParam String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
-		if (!StringUtils.isBlank(id) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
+		if (isEligibleForWebhookOperations(id, authUser)) {
 			Webhook webhook = pc.read(id);
 			if (webhook != null) {
 				webhook.setActive(!webhook.getActive());
@@ -321,10 +321,14 @@ public class AdminController {
 		}
 	}
 
+	private boolean isEligibleForWebhookOperations(String id, Profile authUser) {
+		return !StringUtils.isBlank(id) && utils.isAdmin(authUser) && utils.isWebhooksEnabled();
+	}
+
 	@PostMapping("/delete-webhook")
 	public String deleteWebhook(@RequestParam String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
-		if (!StringUtils.isBlank(id) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
+		if (isEligibleForWebhookOperations(id, authUser)) {
 			Webhook webhook = new Webhook();
 			webhook.setId(id);
 			pc.delete(webhook);
