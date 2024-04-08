@@ -58,9 +58,6 @@
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<netbeans.hint.j2eeVersion>1.7</netbeans.hint.j2eeVersion>
-	 <maven.compiler.source>17</maven.compiler.source>
-	 <maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -68,7 +65,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.49.3</version>
+			<version>1.49.5</version>
 		</dependency>
 
 		<!-- VELOCITY -->
