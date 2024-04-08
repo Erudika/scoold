@@ -1,4 +1,4 @@
-FROM maven:3.8-jdk-11-slim AS build
+FROM maven:3-eclipse-temurin-21-alpine AS build
 
 RUN mkdir -p /scoold
 RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
