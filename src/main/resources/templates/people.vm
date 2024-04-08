@@ -152,7 +152,7 @@
 						<option selected="selected" value="$scooldUtils.getDefaultSpace()">$!lang.get('defaultspace')</option>
 						#foreach($space in $scooldUtils.allSpacesAdmin)
 						#if(!$scooldUtils.isDefaultSpace($space.id))
-						<option value="$space">$!space.name</option>
+						<option value="$space.id:$space.name">$!space.name</option>
 						#end
 						#end
 					</select>
