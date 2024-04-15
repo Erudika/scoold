@@ -4,7 +4,7 @@ RUN mkdir -p /scoold
 RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
 RUN cd /scoold/scoold-master && mvn -q -DskipTests=true clean package
 
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM eclipse-temurin:21-alpine
 
 ENV BOOT_SLEEP=0 \
     JAVA_OPTS=""
