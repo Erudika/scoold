@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.2.5</version>
 	</parent>
 
 	<organization>
@@ -401,7 +401,11 @@
 							</execution>
 						</executions>
 						<configuration>
-							<buildArgs>--initialize-at-build-time=org.apache.velocity.runtime.resource.ResourceManagerImpl --initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy --initialize-at-build-time=com.vladsch.flexmark.html.HtmlRenderer</buildArgs>
+							<buildArgs>--initialize-at-build-time=org.apache.velocity.runtime.resource.ResourceManagerImpl --initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy --initialize-at-build-time=com.vladsch.flexmark.html.HtmlRenderer --initialize-at-build-time=com.vladsch.flexmark.util.sequence.LineAppendable --initialize-at-build-time=com.vladsch.flexmark.util.data.SharedDataKeys --initialize-at-build-time=com.vladsch.flexmark.util.misc.Extension</buildArgs>
+							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
+							<agentConfiguration>
+								<enabled>true</enabled>
+							</agentConfiguration>
 						</configuration>
 					</plugin>
 					<plugin>
