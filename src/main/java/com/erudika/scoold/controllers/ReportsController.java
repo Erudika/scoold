@@ -19,7 +19,6 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.ParaObject;
-import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
@@ -36,14 +35,14 @@ import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -242,12 +241,14 @@ public class ReportsController {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
 			if (utils.isAdmin(authUser)) {
+				List<String> toDelete = new LinkedList<>();
 				pc.readEverything(pager -> {
 					//pager.setSelect(Collections.singletonList(Config._ID));
-					List<Sysprop> reports = pc.findQuery(Utils.type(Report.class), "*", pager);
-					pc.deleteAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
+					List<ParaObject> reports = pc.findQuery(Utils.type(Report.class), "*", pager);
+					toDelete.addAll(reports.stream().map(r -> r.getId()).collect(Collectors.toList()));
 					return reports;
 				});
+				pc.deleteAll(toDelete);
 			}
 		}
 		return "redirect:" + REPORTSLINK;

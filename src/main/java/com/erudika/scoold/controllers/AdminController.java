@@ -50,6 +50,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
 import com.typesafe.config.ConfigValue;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,9 +76,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -396,15 +396,6 @@ public class AdminController {
 			res.setStatus(403);
 			return null;
 		}
-		if (deleteall) {
-			logger.info("Deleting all existing objects before import...");
-			pc.readEverything((pager) -> {
-				pager.setSelect(Collections.singletonList(Config._ID));
-				List<Sysprop> objects = pc.findQuery("", "*", pager);
-				pc.deleteAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
-				return objects;
-			});
-		}
 		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
 		String filename = file.getOriginalFilename();
 		Sysprop s = new Sysprop();
@@ -417,6 +408,18 @@ public class AdminController {
 		Sysprop si = pc.create(s);
 
 		Para.asyncExecute(() -> {
+			if (deleteall) {
+				logger.info("Deleting all existing objects before import...");
+				List<String> toDelete = new LinkedList<>();
+				pc.readEverything((pager) -> {
+					pager.setSelect(Collections.singletonList(Config._ID));
+					List<Sysprop> objects = pc.findQuery("", "*", pager);
+					toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+					return objects;
+				});
+				pc.deleteAll(toDelete);
+			}
+
 			Map<String, String> comments2authors = new LinkedHashMap<>();
 			Map<String, User> accounts2emails = new LinkedHashMap<>();
 			try (InputStream inputStream = file.getInputStream()) {
