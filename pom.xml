@@ -387,6 +387,7 @@
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
+						<version>0.10.1</version>
 						<extensions>true</extensions>
 						<executions>
 							<execution>
@@ -398,7 +399,18 @@
 							</execution>
 						</executions>
 						<configuration>
-							<buildArgs>--initialize-at-build-time=org.apache.velocity.runtime.resource.ResourceManagerImpl --initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy --initialize-at-build-time=com.vladsch.flexmark.html.HtmlRenderer --initialize-at-build-time=com.vladsch.flexmark.util.sequence.LineAppendable --initialize-at-build-time=com.vladsch.flexmark.util.data.SharedDataKeys --initialize-at-build-time=com.vladsch.flexmark.util.misc.Extension</buildArgs>
+							<buildArgs>
+								<buildArg>--initialize-at-build-time=ch.qos.logback</buildArg>
+								<buildArg>--initialize-at-build-time=org.slf4j</buildArg>
+								<buildArg>--initialize-at-build-time=org.apache.velocity.runtime.resource.ResourceManagerImpl</buildArg>
+								<buildArg>--initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy</buildArg>
+								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.html.HtmlRenderer</buildArg>
+								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.util.sequence.LineAppendable</buildArg>
+								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.util.data</buildArg>
+								<buildArg>--initialize-at-build-time=com.fasterxml.jackson</buildArg>
+								<buildArg>--initialize-at-build-time=org.xml.sax.helpers</buildArg>
+								<buildArg>-H:IncludeResources="velocity-engine-core:.*/velocity.properties"</buildArg>
+							</buildArgs>
 							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
 							<agentConfiguration>
 								<enabled>true</enabled>
