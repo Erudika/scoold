@@ -862,11 +862,14 @@ $(function () {
 		var $form = $(form);
 		var hiddenTag = $form.find("input[type=hidden]");
 		var tag = $form.find("input[name=newtag]").val();
+		var description = $form.find("input[name=description]").val();
 		hiddenTag.val(tag);
 		$form.closest(".col").find(".tag-count").html("&times; " + (data.count || 0)).end().
 				find(".next-div-toggle").click().prevAll("a").text(data.tag || tag).attr("href", function (i, href) {
 					return href.substring(0, href.lastIndexOf('/') + 1) + encodeURIComponent(data.tag);
 				});
+		$form.closest(".card-panel").find(".editlink").click();
+		$form.closest(".card-panel").find(".tag-description-box").text(description);
 	});
 
 	$(document).on("click", "a.delete-tag",  function() {

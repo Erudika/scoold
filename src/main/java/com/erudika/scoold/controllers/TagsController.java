@@ -28,6 +28,10 @@ import static com.erudika.scoold.ScooldServer.TAGSLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +42,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,8 +110,8 @@ public class TagsController {
 	}
 
 	@PostMapping
-	public String rename(@RequestParam String tag, @RequestParam String newtag, HttpServletRequest req,
-			HttpServletResponse res, Model model) {
+	public String rename(@RequestParam String tag, @RequestParam String newtag, @RequestParam String description,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		int count = 0;
 		if (utils.isMod(authUser)) {
@@ -155,6 +155,11 @@ public class TagsController {
 					});
 					updated = pc.create(t); // overwrite new tag object
 				}
+				model.addAttribute("tag", updated);
+				count = t.getCount();
+			} else if (t != null && !StringUtils.equals(oldTag.getDescription(), description)) {
+				t.setDescription(description);
+				updated = pc.update(t);
 				model.addAttribute("tag", updated);
 				count = t.getCount();
 			}
