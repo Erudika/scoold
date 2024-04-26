@@ -39,6 +39,10 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.Produces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,10 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHeaders;
@@ -397,8 +397,8 @@ public class QuestionController {
 		}
 		if (!showPost.isReply()) {
 			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser)) || utils.isMod(authUser)) {
-				showPost.delete();
 				utils.deleteReportsAfterModAction(showPost);
+				showPost.delete();
 				model.addAttribute("deleted", true);
 				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
@@ -409,8 +409,8 @@ public class QuestionController {
 				parent.setAnswercount(parent.getAnswercount() - 1);
 				parent.setAnswerid(showPost.getId().equals(parent.getAnswerid()) ? "" : parent.getAnswerid());
 				parent.update();
-				showPost.delete();
 				utils.deleteReportsAfterModAction(showPost);
+				showPost.delete();
 				model.addAttribute("deleted", true);
 			}
 		}
