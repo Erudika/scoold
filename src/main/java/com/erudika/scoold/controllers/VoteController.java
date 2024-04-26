@@ -33,10 +33,10 @@ import static com.erudika.scoold.core.Profile.Badge.SUPPORTER;
 import static com.erudika.scoold.core.Profile.Badge.VOTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,6 +193,7 @@ public class VoteController {
 			rep.setDescription(utils.getLang(req).get("posts.forclosing"));
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setAuthorName("System");
+			rep.addProperty(utils.getLang(req).get("spaces.title"), p.getSpace());
 			rep.create();
 		}
 	}

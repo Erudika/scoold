@@ -63,6 +63,9 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -92,9 +95,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
@@ -735,6 +735,7 @@ public final class ScooldUtils {
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setLink(question.getPostLink(false, false));
 			rep.setAuthorName(postAuthor.getName());
+			rep.addProperty(lang.get("spaces.title"), question.getSpace());
 			rep.create();
 		}
 	}
@@ -795,6 +796,7 @@ public final class ScooldUtils {
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
 			rep.setAuthorName(replyAuthor.getName());
+			rep.addProperty(lang.get("spaces.title"), reply.getSpace());
 			rep.create();
 		}
 	}
