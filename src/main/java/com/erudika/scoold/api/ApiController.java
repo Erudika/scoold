@@ -54,6 +54,7 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -72,7 +73,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -670,7 +670,7 @@ public class ApiController {
 			badReq("Missing or invalid request body.");
 		}
 		Model model = new ExtendedModelMap();
-		tagsController.rename(id, (String) entity.get("tag"), req, res, model);
+		tagsController.rename(id, (String) entity.get("tag"), (String) entity.get("description"), req, res, model);
 		if (!model.containsAttribute("tag")) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;

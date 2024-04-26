@@ -882,6 +882,10 @@ paths:
                   description: The new name of the tag
                   type: string
                   example: new-tag-name
+                description:
+                  description: The new description of the tag
+                  type: string
+                  example: some text
       responses:
         '200':
           description: Tag was renamed
