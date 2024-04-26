@@ -22,7 +22,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Component
 @Singleton

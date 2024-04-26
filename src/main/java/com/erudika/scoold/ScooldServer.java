@@ -35,7 +35,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.slf4j.Logger;

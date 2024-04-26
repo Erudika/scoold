@@ -22,7 +22,7 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.io.IOException;
 import java.util.Collections;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;

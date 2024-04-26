@@ -18,7 +18,7 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.scoold.utils.ScooldUtils;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

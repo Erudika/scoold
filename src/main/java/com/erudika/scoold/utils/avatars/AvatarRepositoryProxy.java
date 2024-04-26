@@ -20,7 +20,7 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import org.springframework.stereotype.Component;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import software.amazon.awssdk.utils.StringUtils;
 
 @Component

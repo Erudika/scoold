@@ -22,7 +22,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.utils.ScooldUtils;
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
