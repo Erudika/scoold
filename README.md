@@ -453,6 +453,7 @@ scoold.password_auth_enabled = true
 |`scoold.voteup_reward_author`<br>Reputation points given to author of comment or other post as reward when a user upvotes it. | `2` | `Integer`|
 |`scoold.answer_approve_reward_author`<br>Reputation points given to author of answer as reward when the question's author accepts it. | `10` | `Integer`|
 |`scoold.answer_approve_reward_voter`<br>Reputation points given to author of question who accepted an answer. | `3` | `Integer`|
+|`scoold.answer_create_reward_author`<br>Reputation points given to author who added an answer to a question (awarded once per question). | `5` | `Integer`|
 |`scoold.post_votedown_penalty_author`<br>Reputation points taken from author of post as penalty when their post was downvoted. | `3` | `Integer`|
 |`scoold.post_votedown_penalty_voter`<br>Reputation points taken from the user who downvotes any content. Discourages downvoting slightly. | `1` | `Integer`|
 |`scoold.voter_ifhas`<br>Number of votes (up or down) needed from a user for earning the `voter` badge. | `100` | `Integer`|
