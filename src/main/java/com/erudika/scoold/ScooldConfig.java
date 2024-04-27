@@ -24,11 +24,11 @@ import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SIGNOUTLINK;
 import com.typesafe.config.ConfigObject;
+import jakarta.inject.Named;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
@@ -1880,6 +1880,16 @@ public class ScooldConfig extends Config {
 			description = "Reputation points given to author of question who accepted an answer.")
 	public int answerApprovedRewardVoter() {
 		return getConfigInt("answer_approve_reward_voter", 3);
+	}
+
+	@Documented(position = 1741,
+			identifier = "answer_create_reward_author",
+			value = "5",
+			type = Integer.class,
+			category = "Reputation and Rewards",
+			description = "Reputation points given to author who added an answer to a question (awarded once per question).")
+	public int answerCreatedRewardAuthor() {
+		return getConfigInt("answer_create_reward_author", 5);
 	}
 
 	@Documented(position = 1750,

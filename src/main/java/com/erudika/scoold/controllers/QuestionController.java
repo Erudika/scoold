@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
+import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
@@ -231,6 +232,7 @@ public class QuestionController {
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());
 				answer.setSpace(showPost.getSpace());
+				addRepOnReplyOnce(showPost, authUser, false);
 				answer.create();
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
@@ -276,6 +278,7 @@ public class QuestionController {
 				//utils.sendNewPostNotifications(showPost, req);
 			} else if (showPost instanceof UnapprovedReply) {
 				showPost.setType(Utils.type(Reply.class));
+				addRepOnReplyOnce(pc.read(showPost.getParentid()), (Profile) pc.read(showPost.getCreatorid()), true);
 				pc.create(showPost);
 			}
 			utils.deleteReportsAfterModAction(showPost);
@@ -515,6 +518,13 @@ public class QuestionController {
 		}
 		answers.addAll(showPost.getAnswers(itemcount));
 		itemcount.setCount(itemcount.getCount() + p.getCount());
+		if (utils.postsNeedApproval(req) && authUser != null && !utils.isMod(authUser)) {
+			List<UnapprovedReply> uanswerslist = pc.findQuery(Utils.type(UnapprovedReply.class),
+					Config._PARENTID + ":\"" + showPost.getId() + "\" AND " +
+							Config._CREATORID + ":\"" + authUser.getId() + "\"");
+			itemcount.setCount(itemcount.getCount() + uanswerslist.size());
+			answers.addAll(uanswerslist);
+		}
 		return answers;
 	}
 
@@ -629,6 +639,15 @@ public class QuestionController {
 			payload.put("headers", headers);
 			payload.put("question", question);
 			utils.triggerHookEvent("question.view", payload);
+		}
+	}
+
+	private void addRepOnReplyOnce(Post parentPost, Profile author, boolean isModAction) {
+		if ((!CONF.postsNeedApproval() || isModAction) && CONF.answerCreatedRewardAuthor() > 0 &&
+				!parentPost.getCreatorid().equals(author.getId()) && pc.getCount(Utils.type(Reply.class),
+						Map.of(Config._PARENTID, parentPost.getId(), Config._CREATORID, author.getId())) == 0) {
+			author.addRep(CONF.answerCreatedRewardAuthor());
+			pc.update(author);
 		}
 	}
 }
