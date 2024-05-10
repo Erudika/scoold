@@ -18,6 +18,8 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.User;
+import com.erudika.para.core.annotations.Email;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.ParaObjectUtils;
@@ -43,6 +45,8 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,8 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -112,8 +115,8 @@ public class SearchController {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
 			feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString, itemcount);
-		} else if ("people".equals(type) && usersPublic) {
-			userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), itemcount);
+		} else if (("people".equals(type) || isEmailQuery(queryString)) && usersPublic) {
+			userlist = searchUsers(queryString, req, itemcount);
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
@@ -123,7 +126,7 @@ public class SearchController {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
 			}
 			if (usersPublic) {
-				userlist = pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req));
+				userlist = searchUsers(queryString, req);
 			}
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		}
@@ -152,6 +155,21 @@ public class SearchController {
 	private String getUsersSearchQuery(String qs, HttpServletRequest req) {
 		String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
 		return utils.getUsersSearchQuery(qs, spaceFilter);
+	}
+
+	private List<Profile> searchUsers(String queryString, HttpServletRequest req, Pager... pager) {
+		if (isEmailQuery(queryString)) {
+			List<String> uids = pc.findTerms(Utils.type(User.class),
+					Map.of(Config._EMAIL, StringUtils.remove(queryString, "\"")), true).
+					stream().map(u -> Profile.id(u.getId())).collect(Collectors.toList());
+			return pc.findByIds(uids);
+		} else {
+			return pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), pager);
+		}
+	}
+
+	private boolean isEmailQuery(String q) {
+		return q.matches(Email.EMAIL_PATTERN) || StringUtils.remove(q, "\"").matches(Email.EMAIL_PATTERN);
 	}
 
 	@ResponseBody
