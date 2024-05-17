@@ -24,9 +24,9 @@
 			<div class="row">
 				<div class="col m12">
 					#if($showreport.properties.size() > 0)
-						#foreach($entry in $showreport.properties.entrySet())
-							#if($entry.key != "key")
-								<div><code><b>$entry.key</b>: $entry.value</code></div>
+						#foreach($key in $showreport.properties.keySet())
+							#if($key != "key")
+								<div><code><b>$!key</b>: $!showreport.properties.get($key)</code></div>
 							#end
 						#end
 					#end

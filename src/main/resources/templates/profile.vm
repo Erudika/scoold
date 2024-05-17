@@ -245,10 +245,10 @@
 							#end
 						#end
 					</span>
-					#foreach($entry in $badges.entrySet())
-						#set($badge = $entry.key)
+					#foreach($key in $badges.keySet())
+						#set($badge = $key)
 						#if ($badge.endsWith("+")) #set($badge = $badge.replaceAll("\\+", ""))	#end
-						#badgebox($badge $entry.value)
+						#badgebox($badge $badges.get($key))
 					#end
 				#end
 

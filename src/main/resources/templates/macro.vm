@@ -1180,23 +1180,23 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #####################################
 #macro(externalScripts $inhead)
-	#foreach($externalScript in $externalScripts.entrySet())
+	#foreach($key in $externalScripts.keySet())
 		#if($inhead)
-			#set($head = $externalScript.getKey().startsWith("head"))
+			#set($head = $key.startsWith("head"))
 		#else
-			#set($head = !$externalScript.getKey().startsWith("head"))
+			#set($head = !$key.startsWith("head"))
 		#end
-		#if($head && ($externalScript.getKey().startsWith("bypassconsent") || $cookieConsentGiven))
-			<!-- External Script: $externalScript.key Begin -->
-			#if($externalScript.value.startsWith("http:") || $externalScript.value.startsWith("https:"))
+		#if($head && ($key.startsWith("bypassconsent") || $cookieConsentGiven))
+			<!-- External Script: $key Begin -->
+			#if($externalScripts.get($key).startsWith("http:") || $externalScripts.get($key).startsWith("https:"))
 				<script nonce="$cspNonce" src="$externalScript.value"></script>
 			#else
-				#set($_extScript = $scooldUtils.base64DecodeScript($!externalScript.value) )
+				#set($_extScript = $scooldUtils.base64DecodeScript($!externalScripts.get($key)) )
 				<script nonce="$cspNonce">
 					$!_extScript
 				</script>
 			#end
-			<!-- External Script: $externalScript.key End -->
+			<!-- External Script: $key End -->
 		#end
 	#end
 #end

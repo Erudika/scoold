@@ -17,11 +17,13 @@
  */
 package com.erudika.scoold.utils;
 
+import java.net.URI;
 import java.util.Set;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +31,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * HttpRequestMethodNotSupportedException handler - suppress spammy log messages.
@@ -48,4 +51,9 @@ public class RequestNotSupportedExceptionHandler extends ResponseEntityException
 		return new ResponseEntity<>(null, headers, status);
 	}
 
+	@Override
+	protected ResponseEntity<Object> handleNoResourceFoundException(
+			NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(URI.create("/not-found")).build();
+	}
 }

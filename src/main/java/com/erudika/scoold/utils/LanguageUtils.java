@@ -21,6 +21,8 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Translation;
 import com.erudika.para.core.utils.Para;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +32,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -114,7 +114,7 @@ public class LanguageUtils {
 			}
 		}
 		LANG_CACHE.put(langCode, lang);
-		return Collections.unmodifiableMap(lang);
+		return Map.copyOf(lang);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class LanguageUtils {
 			// initialize the language cache maps
 			LANG_CACHE.put(getDefaultLanguageCode(), readLanguageFromFileAndUpdateProgress(getDefaultLanguageCode()));
 		}
-		return Collections.unmodifiableMap(LANG_CACHE.get(getDefaultLanguageCode()));
+		return LANG_CACHE.get(getDefaultLanguageCode());
 	}
 
 	/**
@@ -161,14 +161,14 @@ public class LanguageUtils {
 	 */
 	public Map<String, Integer> getTranslationProgressMap() {
 		if (!LANG_PROGRESS_CACHE.isEmpty() && LANG_PROGRESS_CACHE.size() > 2) { // en + default user lang
-			return Collections.unmodifiableMap(LANG_PROGRESS_CACHE);
+			return LANG_PROGRESS_CACHE;
 		}
 		for (String langCode : ALL_LOCALES.keySet()) {
 			if (!langCode.equals(getDefaultLanguageCode())) {
 				LANG_CACHE.put(langCode, readLanguageFromFileAndUpdateProgress(langCode));
 			}
 		}
-		return Collections.unmodifiableMap(LANG_PROGRESS_CACHE);
+		return LANG_PROGRESS_CACHE;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class LanguageUtils {
 	 * @return a map of language codes to locales
 	 */
 	public Map<String, Locale> getAllLocales() {
-		return Collections.unmodifiableMap(ALL_LOCALES);
+		return ALL_LOCALES;
 	}
 
 	private int calculateProgressPercent(double approved, double defsize) {

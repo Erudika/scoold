@@ -104,7 +104,7 @@
 										#else
 											<input type="checkbox" class="filled-in" id="follow-thread-check">
 										#end
-										<span><strong class="mediumText">$!lang.get('posts.emailme')</strong></span>
+										<span><strong class="">$!lang.get('posts.emailme')</strong></span>
 									</label>
 								</div>
 

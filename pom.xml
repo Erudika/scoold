@@ -49,11 +49,6 @@
 		<url>https://github.com/Erudika/scoold/issues</url>
 	</issueManagement>
 
-	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/Erudika/scoold</url>
-	</ciManagement>
-
 	<properties>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.50.0</version>
+			<version>1.50.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -79,7 +74,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<exclusions>
+<!--			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -88,7 +83,7 @@
 					<groupId>org.apache.logging.log4j</groupId>
 					<artifactId>log4j-to-slf4j</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -400,16 +395,10 @@
 						</executions>
 						<configuration>
 							<buildArgs>
-								<buildArg>--initialize-at-build-time=ch.qos.logback</buildArg>
-								<buildArg>--initialize-at-build-time=org.slf4j</buildArg>
-								<buildArg>--initialize-at-build-time=org.apache.velocity.runtime.resource.ResourceManagerImpl</buildArg>
-								<buildArg>--initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy</buildArg>
-								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.html.HtmlRenderer</buildArg>
-								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.util.sequence.LineAppendable</buildArg>
-								<buildArg>--initialize-at-build-time=com.vladsch.flexmark.util.data</buildArg>
-								<buildArg>--initialize-at-build-time=com.fasterxml.jackson</buildArg>
-								<buildArg>--initialize-at-build-time=org.xml.sax.helpers</buildArg>
-								<buildArg>-H:IncludeResources="velocity-engine-core:.*/velocity.properties"</buildArg>
+								<!--THIS CAUSES SOME CONFLICTS WITH AZURE CORE WHERE IT'S INITIALIZED AT BUILD TIME-->
+								<buildArg>--initialize-at-run-time=org.slf4j.LoggerFactory</buildArg>
+								<buildArg>-H:+IncludeAllLocales</buildArg>
+								<buildArg>-H:ConfigurationFileDirectories=src/main/resources/META-INF/native-image/com.erudika/scoold/</buildArg>
 							</buildArgs>
 							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
 							<agentConfiguration>

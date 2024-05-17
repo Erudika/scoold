@@ -23,19 +23,20 @@ import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.utils.CoreUtils;
 import com.erudika.scoold.utils.ScooldEmailer;
 import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
 import com.typesafe.config.ConfigFactory;
+import jakarta.inject.Named;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
-import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 
 	static {
 		// tells ParaClient where to look for classes that implement ParaObject
-		System.setProperty("para.core_package_name", "com.erudika.scoold.core");
+		CoreUtils.registerCoreClasses();
 		System.setProperty("server.port", String.valueOf(CONF.serverPort()));
 		System.setProperty("server.servlet.context-path", CONF.serverContextPath());
 		System.setProperty("server.use-forward-headers", String.valueOf(CONF.inProduction()));

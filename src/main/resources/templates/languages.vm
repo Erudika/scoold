@@ -2,11 +2,12 @@
 	<h2>$!lang.get("translate.select")</h2>
 
 	<div class="row">
-		#foreach($entry in $allLocales.entrySet())
+		#foreach($key in $allLocales.keySet())
 		<div class="col s12 m6 l3">
-			#set($showLangKey = $entry.key)
-			#set($showLangName = $!entry.value.getDisplayName($!entry.value))
-			#set($progress = $!langProgressMap.getOrDefault($!entry.key, 0))
+			#set($value = $allLocales.get($key) )
+			#set($showLangKey = $key)
+			#set($showLangName = $!value.getDisplayName($!value))
+			#set($progress = $!langProgressMap.getOrDefault($!key, 0))
 
 			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green white-text") #else #set($selclass = "") #end
 				<div class="center-align">

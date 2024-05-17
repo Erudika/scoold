@@ -284,22 +284,22 @@
 				<div>
 					#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
 					<table class="striped api-key-table ${hideTable}">
-						#macro(apikeyrow $apiKey)
-							#if(!$apiKey)#set($hideRow = "hide")#else#set($hideRow = "")#end
+						#macro(apikeyrow $key $value)
+							#if(!$key)#set($hideRow = "hide")#else#set($hideRow = "")#end
 							<tr class="api-key-row ${hideRow}">
 								<td>
-									<a href="$adminlink/revoke-api-key?jti=$!apiKey.key" class="api-key-revoke red-text right">
+									<a href="$adminlink/revoke-api-key?jti=$!key" class="api-key-revoke red-text right">
 										<i class="fa fa-times"></i> Revoke
 									</a>
 									<div>
 										<strong>Expires:</strong>
 										<span class="api-key-expires">
-											#if($apiKey && $apiKey.key)
-												#if($apiKeysExpirations.get($apiKey.key) == 0)
+											#if($key)
+												#if($apiKeysExpirations.get($key) == 0)
 													never
 												#else
-													#formatdate($apiKeysExpirations.get($apiKey.key), "YYYY-MM-dd HH:mm")
-													#if($apiKeysExpirations.get($apiKey.key) < $utils.timestamp())
+													#formatdate($apiKeysExpirations.get($key), "YYYY-MM-dd HH:mm")
+													#if($apiKeysExpirations.get($key) < $utils.timestamp())
 														<strong class="red-text">expired</strong>
 													#end
 												#end
@@ -307,7 +307,7 @@
 										</span>
 										<a href="#" class="api-key-show next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
 										<div class="hide">
-											<input type="text" value="$!apiKey.value" class="api-key">
+											<input type="text" value="$!value" class="api-key">
 											<span class="green-text"></span><span>&nbsp;</span>
 										</div>
 									</div>
@@ -316,8 +316,8 @@
 						#end
 
 						#apikeyrow("")
-						#foreach($apiKey in $apiKeys.entrySet())
-							#apikeyrow($apiKey)
+						#foreach($key in $apiKeys.keySet())
+							#apikeyrow($key $apiKeys.get($key))
 						#end
 					</table>
 				</div>
@@ -352,15 +352,15 @@
 				<div class="collapsible-header"><i class="fa fa-wrench grey-text"></i>$!lang.get('admin.configuration')</div>
 				<div class="collapsible-body">
 					<table class="highlight">
-						#foreach($conf in $configMap.entrySet())
+						#foreach($key in $configMap.keySet())
 							<tr>
-								<td><code>$conf.key</code></td>
+								<td><code>$key</code></td>
 								<td><code class="">
-										#if(($conf.key.contains("secret") || $conf.key.contains("password") || $conf.key.contains("privatekey")) ||
-											$conf.key.contains("pass") && $conf.value && !$conf.value.isEmpty())
+										#if(($key.contains("secret") || $key.contains("password") || $key.contains("privatekey")) ||
+											$key.contains("pass") && $configMap.get($key) && !$configMap.get($key).isEmpty())
 											***************************
 										#else
-											$!conf.value
+											$!configMap.get($key)
 										#end
 									</code></td>
 							</tr>

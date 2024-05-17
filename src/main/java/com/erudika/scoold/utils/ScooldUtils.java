@@ -18,7 +18,6 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.client.ParaClient;
-import com.erudika.para.core.Address;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
@@ -36,7 +35,6 @@ import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Comment;
-import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import static com.erudika.scoold.core.Post.ALL_MY_SPACES;
 import static com.erudika.scoold.core.Post.DEFAULT_SPACE;
@@ -121,7 +119,6 @@ public final class ScooldUtils {
 	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Para.getConfig().separator();
 
 	private static final Profile API_USER;
-	private static final Set<String> CORE_TYPES;
 	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
@@ -139,23 +136,6 @@ public final class ScooldUtils {
 		API_USER.setCreatorid("1");
 		API_USER.setTimestamp(Utils.timestamp());
 		API_USER.setGroups(User.Groups.ADMINS.toString());
-
-		CORE_TYPES = new HashSet<>(Arrays.asList(Utils.type(Comment.class),
-				Utils.type(Feedback.class),
-				Utils.type(Profile.class),
-				Utils.type(Question.class),
-				Utils.type(Reply.class),
-				Utils.type(Report.class),
-				Utils.type(Revision.class),
-				Utils.type(UnapprovedQuestion.class),
-				Utils.type(UnapprovedReply.class),
-				// Para core types
-				Utils.type(Address.class),
-				Utils.type(Sysprop.class),
-				Utils.type(Tag.class),
-				Utils.type(User.class),
-				Utils.type(Vote.class)
-		));
 
 		HOOK_EVENTS = new HashSet<>(Arrays.asList(
 				"question.create",
@@ -1046,11 +1026,11 @@ public final class ScooldUtils {
 	}
 
 	public Set<String> getCoreScooldTypes() {
-		return Collections.unmodifiableSet(CORE_TYPES);
+		return CoreUtils.getCoreTypes();
 	}
 
 	public Set<String> getCustomHookEvents() {
-		return Collections.unmodifiableSet(HOOK_EVENTS);
+		return Set.copyOf(HOOK_EVENTS);
 	}
 
 	public Pager getPager(String pageParamName, HttpServletRequest req) {
@@ -2018,7 +1998,7 @@ public final class ScooldUtils {
 	}
 
 	public Map<String, Object> getApiKeys() {
-		return Collections.unmodifiableMap(API_KEYS);
+		return loadApiKeysObject();
 	}
 
 	public Map<String, Long> getApiKeysExpirations() {
@@ -2044,13 +2024,14 @@ public final class ScooldUtils {
 		pc.create(s);
 	}
 
-	private void loadApiKeysObject() {
+	private Map<String, Object> loadApiKeysObject() {
 		if (API_KEYS.isEmpty()) {
 			Sysprop s = pc.read("api_keys");
 			if (s != null) {
 				API_KEYS.putAll(s.getProperties());
 			}
 		}
+		return API_KEYS;
 	}
 
 	public Profile getSystemUser() {

@@ -132,7 +132,7 @@
 												#set($allSpacesSelectedClass = "navbtn-hover white-text")
 											#end
 											<li><a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces"
-														 class="${allSpacesSelectedClass}">$!lang.get('allspaces')</a></li>
+														 class="$!{allSpacesSelectedClass}">$!lang.get('allspaces')</a></li>
 											<li class="divider"></li>
 										#end
 										#if($scooldUtils.canAccessSpace($authUser, "default"))

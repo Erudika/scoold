@@ -20,6 +20,7 @@ package com.erudika.scoold.controllers;
 import com.erudika.scoold.utils.ScooldUtils;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +42,10 @@ public class NotFoundController {
 	}
 
 	@GetMapping
-	public String get(HttpServletRequest req, Model model) {
+	public String get(HttpServletRequest req, HttpServletResponse res, Model model) {
 		model.addAttribute("path", "notfound.vm");
 		model.addAttribute("title", utils.getLang(req).get("notfound.title"));
+		res.setStatus(404);
 		return "base";
 	}
 }

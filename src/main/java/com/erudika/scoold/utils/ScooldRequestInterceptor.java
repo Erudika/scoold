@@ -23,13 +23,13 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Report.ReportType;
-import java.net.ConnectException;
-import java.util.Collections;
-import java.util.Locale;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.ConnectException;
+import java.util.Collections;
+import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,16 +216,16 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		// CSP, HSTS, etc, headers. See https://securityheaders.com
 		utils.setSecurityHeaders(cspNonce, request, response);
 		// default metadata for social meta tags
-		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("title", "").toString())) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("title", "") + "")) {
 			modelAndView.addObject("title", CONF.appName());
 		}
-		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("description", "").toString())) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("description", "") + "")) {
 			modelAndView.addObject("description", CONF.metaDescription());
 		}
-		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("keywords", "").toString())) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("keywords", "") + "")) {
 			modelAndView.addObject("keywords", CONF.metaKeywords());
 		}
-		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("ogimage", "").toString())) {
+		if (StringUtils.isBlank(modelAndView.getModel().getOrDefault("ogimage", "") + "")) {
 			modelAndView.addObject("ogimage", CONF.metaAppIconUrl());
 		}
 	}
