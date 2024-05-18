@@ -27,3 +27,8 @@ data/
 old/
 deploy*.sh
 *.log
+demo.conf
+template.yml
+bootstrap
+taillogs-demo.sh
+src/assembly/**
