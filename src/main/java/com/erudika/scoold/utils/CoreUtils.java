@@ -18,7 +18,6 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.core.Address;
-import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
@@ -38,9 +37,7 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import org.apache.commons.collections.bidimap.DualHashBidiMap;
 
 /**
  * Core utils.
@@ -50,10 +47,6 @@ import org.apache.commons.collections.bidimap.DualHashBidiMap;
 public final class CoreUtils {
 
 	private static final Set<String> CORE_TYPES;
-
-	private static final Map<String, String> CORE_PARA_TYPES = new DualHashBidiMap();
-	private static final Map<String, Class<? extends ParaObject>> CORE_CLASSES = new DualHashBidiMap();
-	private static final Map<String, Class<? extends ParaObject>> CORE_PARA_CLASSES = new DualHashBidiMap();
 
 	private CoreUtils() { }
 
