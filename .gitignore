@@ -3,12 +3,14 @@
 *.jar
 *.zip
 *.bak
+*.log
 keys.txt
 application.conf
 application-dev.conf
 reference.conf
 nbactions.xml
 Tomcat.dpf
+licenseheader.txt
 nb-configuration.xml
 nbactions*.xml
 nbactions.xml
@@ -29,6 +31,5 @@ deploy*.sh
 *.log
 demo.conf
 template.yml
-bootstrap
 taillogs-demo.sh
-src/assembly/**
+
