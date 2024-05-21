@@ -299,11 +299,11 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
+<!--			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.10.0.2594</version>
-			</plugin>
+				<version>3.11.0.3922</version>
+			</plugin>-->
 		</plugins>
 	</build>
 
@@ -388,7 +388,7 @@
 							<execution>
 								<id>build-native</id>
 								<goals>
-									<goal>build</goal>
+									<goal>compile-no-fork</goal>
 								</goals>
 								<phase>package</phase>
 							</execution>
@@ -404,6 +404,9 @@
 							<agentConfiguration>
 								<enabled>true</enabled>
 							</agentConfiguration>
+							<metadataRepository>
+								<enabled>true</enabled>
+							</metadataRepository>
 						</configuration>
 					</plugin>
 					<plugin>

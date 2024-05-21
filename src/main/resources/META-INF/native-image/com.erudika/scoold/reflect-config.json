@@ -2746,6 +2746,393 @@
 		"name": "org.eclipse.core.runtime.FileLocator"
 	},
 	{
+		"name": "org.eclipse.jetty.ee10.annotations.AnnotationConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.jsp.JettyJspServlet"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.plus.webapp.EnvConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.plus.webapp.PlusConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.security.jaspi.JaspiAuthenticator"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.servlet.ServletContextHandler$ServletContextApi",
+		"queryAllDeclaredMethods": true,
+		"methods": [{
+				"name": "addFilter",
+				"parameterTypes": ["java.lang.String", "jakarta.servlet.Filter"]
+			}, {
+				"name": "addFilter",
+				"parameterTypes": ["java.lang.String", "java.lang.Class"]
+			}, {
+				"name": "addFilter",
+				"parameterTypes": ["java.lang.String", "java.lang.String"]
+			}, {
+				"name": "addJspFile",
+				"parameterTypes": ["java.lang.String", "java.lang.String"]
+			}, {
+				"name": "addListener",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "addListener",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "addListener",
+				"parameterTypes": ["java.util.EventListener"]
+			}, {
+				"name": "addServlet",
+				"parameterTypes": ["java.lang.String", "jakarta.servlet.Servlet"]
+			}, {
+				"name": "addServlet",
+				"parameterTypes": ["java.lang.String", "java.lang.Class"]
+			}, {
+				"name": "addServlet",
+				"parameterTypes": ["java.lang.String", "java.lang.String"]
+			}, {
+				"name": "checkListener",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "createFilter",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "createInstance",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "createListener",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "createServlet",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "declareRoles",
+				"parameterTypes": ["java.lang.String[]"]
+			}, {
+				"name": "getAttribute",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getAttributeNames",
+				"parameterTypes": []
+			}, {
+				"name": "getClassLoader",
+				"parameterTypes": []
+			}, {
+				"name": "getContext",
+				"parameterTypes": []
+			}, {
+				"name": "getContextHandler",
+				"parameterTypes": []
+			}, {
+				"name": "getContextPath",
+				"parameterTypes": []
+			}, {
+				"name": "getDefaultSessionTrackingModes",
+				"parameterTypes": []
+			}, {
+				"name": "getEffectiveMajorVersion",
+				"parameterTypes": []
+			}, {
+				"name": "getEffectiveMinorVersion",
+				"parameterTypes": []
+			}, {
+				"name": "getEffectiveSessionTrackingModes",
+				"parameterTypes": []
+			}, {
+				"name": "getFilterRegistration",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getFilterRegistrations",
+				"parameterTypes": []
+			}, {
+				"name": "getInitParameter",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getInitParameterNames",
+				"parameterTypes": []
+			}, {
+				"name": "getJspConfigDescriptor",
+				"parameterTypes": []
+			}, {
+				"name": "getMajorVersion",
+				"parameterTypes": []
+			}, {
+				"name": "getMimeType",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getMinorVersion",
+				"parameterTypes": []
+			}, {
+				"name": "getNamedDispatcher",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getRealPath",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getRequestCharacterEncoding",
+				"parameterTypes": []
+			}, {
+				"name": "getRequestDispatcher",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getResourceAsStream",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getResourcePaths",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getResponseCharacterEncoding",
+				"parameterTypes": []
+			}, {
+				"name": "getServerInfo",
+				"parameterTypes": []
+			}, {
+				"name": "getServletContextName",
+				"parameterTypes": []
+			}, {
+				"name": "getServletRegistration",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getServletRegistrations",
+				"parameterTypes": []
+			}, {
+				"name": "getSessionCookieConfig",
+				"parameterTypes": []
+			}, {
+				"name": "getSessionTimeout",
+				"parameterTypes": []
+			}, {
+				"name": "getVirtualServerName",
+				"parameterTypes": []
+			}, {
+				"name": "isEnabled",
+				"parameterTypes": []
+			}, {
+				"name": "isExtendedListenerTypes",
+				"parameterTypes": []
+			}, {
+				"name": "log",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "log",
+				"parameterTypes": ["java.lang.String", "java.lang.Throwable"]
+			}, {
+				"name": "removeAttribute",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "setAttribute",
+				"parameterTypes": ["java.lang.String", "java.lang.Object"]
+			}, {
+				"name": "setEffectiveMajorVersion",
+				"parameterTypes": ["int"]
+			}, {
+				"name": "setEffectiveMinorVersion",
+				"parameterTypes": ["int"]
+			}, {
+				"name": "setEnabled",
+				"parameterTypes": ["boolean"]
+			}, {
+				"name": "setExtendedListenerTypes",
+				"parameterTypes": ["boolean"]
+			}, {
+				"name": "setInitParameter",
+				"parameterTypes": ["java.lang.String", "java.lang.String"]
+			}, {
+				"name": "setJspConfigDescriptor",
+				"parameterTypes": ["jakarta.servlet.descriptor.JspConfigDescriptor"]
+			}, {
+				"name": "setRequestCharacterEncoding",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "setResponseCharacterEncoding",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "setSessionTimeout",
+				"parameterTypes": ["int"]
+			}, {
+				"name": "setSessionTrackingModes",
+				"parameterTypes": ["java.util.Set"]
+			}, {
+				"name": "toString",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.servlets.DoSFilter"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.ClassMatcher$ByLocationOrModule",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.ClassMatcher$ByPackageOrName",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.FragmentConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JaasConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JaspiConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JettyWebXmlConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JmxConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JndiConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.JspConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.MetaInfConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.ServletsConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.WebAppConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.WebAppContext$ServletApiContext",
+		"queryAllDeclaredMethods": true,
+		"methods": [{
+				"name": "getContext",
+				"parameterTypes": ["java.lang.String"]
+			}, {
+				"name": "getResource",
+				"parameterTypes": ["java.lang.String"]
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.WebInfConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.webapp.WebXmlConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.websocket.jakarta.common.JakartaWebSocketSession",
+		"methods": [{
+				"name": "filterReturnType",
+				"parameterTypes": ["java.lang.Object"]
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.ee10.websocket.server.config.JettyWebSocketConfiguration"
+	},
+	{
+		"name": "org.eclipse.jetty.http.Http10FieldPreEncoder"
+	},
+	{
+		"name": "org.eclipse.jetty.http.Http11FieldPreEncoder"
+	},
+	{
+		"name": "org.eclipse.jetty.http.pathmap.PathSpecSet",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.http2.hpack.HpackFieldPreEncoder"
+	},
+	{
+		"name": "org.eclipse.jetty.jmx.ObjectMBean"
+	},
+	{
+		"name": "org.eclipse.jetty.jndi.ContextFactory",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.jndi.InitialContextFactory",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.jndi.java.javaNameParser",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.jndi.java.javaURLContextFactory",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.security.jaas.JAASLoginService"
+	},
+	{
+		"name": "org.eclipse.jetty.util.AsciiLowerCaseSet",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.util.TypeUtil",
+		"methods": [{
+				"name": "getClassLoaderLocation",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "getCodeSourceLocation",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "getModuleLocation",
+				"parameterTypes": ["java.lang.Class"]
+			}, {
+				"name": "getSystemClassLoaderLocation",
+				"parameterTypes": ["java.lang.Class"]
+			}]
+	},
+	{
+		"name": "org.eclipse.jetty.websocket.core.internal.FragmentExtension"
+	},
+	{
+		"name": "org.eclipse.jetty.websocket.core.internal.FrameCaptureExtension"
+	},
+	{
+		"name": "org.eclipse.jetty.websocket.core.internal.IdentityExtension"
+	},
+	{
+		"name": "org.eclipse.jetty.websocket.core.internal.PerMessageDeflateExtension"
+	},
+	{
+		"name": "org.eclipse.jetty.websocket.core.internal.ValidationExtension"
+	},
+	{
 		"name": "org.graalvm.nativeimage.ImageInfo",
 		"methods": [{
 				"name": "inImageCode",
@@ -3293,11 +3680,76 @@
 				"name": "getCompression",
 				"parameterTypes": []
 			}, {
+				"name": "getJetty",
+				"parameterTypes": []
+			}, {
+				"name": "getMaxHttpRequestHeaderSize",
+				"parameterTypes": []
+			}, {
+				"name": "getNetty",
+				"parameterTypes": []
+			}, {
 				"name": "getServlet",
+				"parameterTypes": []
+			}, {
+				"name": "getTomcat",
+				"parameterTypes": []
+			}, {
+				"name": "getUndertow",
 				"parameterTypes": []
 			}, {
 				"name": "setPort",
 				"parameterTypes": ["java.lang.Integer"]
+			}]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.ServerProperties$ForwardHeadersStrategy",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.ServerProperties$Jetty",
+		"allDeclaredFields": true,
+		"queryAllDeclaredMethods": true,
+		"queryAllDeclaredConstructors": true,
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}, {
+				"name": "getMaxHttpFormPostSize",
+				"parameterTypes": []
+			}, {
+				"name": "getMaxHttpResponseHeaderSize",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.ServerProperties$Jetty$Accesslog",
+		"allDeclaredFields": true,
+		"queryAllDeclaredMethods": true,
+		"queryAllDeclaredConstructors": true,
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.ServerProperties$Jetty$Accesslog$FORMAT",
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
+			}]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.ServerProperties$Jetty$Threads",
+		"allDeclaredFields": true,
+		"queryAllDeclaredMethods": true,
+		"queryAllDeclaredConstructors": true,
+		"methods": [{
+				"name": "<init>",
+				"parameterTypes": []
 			}]
 	},
 	{
@@ -3336,6 +3788,10 @@
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration$TomcatWebServerFactoryCustomizerConfiguration",
+		"queryAllDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration$JettyWebServerFactoryCustomizerConfiguration",
 		"queryAllDeclaredMethods": true
 	},
 	{
@@ -3396,6 +3852,10 @@
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration$EmbeddedTomcat",
+		"queryAllDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration$EmbeddedJetty",
 		"queryAllDeclaredMethods": true
 	},
 	{
@@ -3517,6 +3977,10 @@
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration$TomcatWebSocketConfiguration",
+		"queryAllDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration$JettyWebSocketConfiguration",
 		"queryAllDeclaredMethods": true
 	},
 	{
