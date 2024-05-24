@@ -215,7 +215,7 @@ public final class ScooldUtils {
 		// multiple domains/admins are allowed only in Scoold PRO
 		String approvedDomain = StringUtils.substringBefore(CONF.approvedDomainsForSignups(), ",");
 		if (!StringUtils.isBlank(approvedDomain)) {
-			APPROVED_DOMAINS.add(approvedDomain);
+			APPROVED_DOMAINS.add(approvedDomain.toLowerCase());
 		}
 		// multiple admins are allowed only in Scoold PRO
 		String admin = StringUtils.substringBefore(CONF.admins(), ",");
@@ -524,7 +524,7 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(email)) {
 			return false;
 		}
-		if (!APPROVED_DOMAINS.isEmpty() && !APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@"))) {
+		if (!APPROVED_DOMAINS.isEmpty() && !APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@").toLowerCase())) {
 			logger.warn("Attempted signin from an unknown domain - email {} is part of an unapproved domain.", email);
 			return false;
 		}
