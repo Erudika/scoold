@@ -307,6 +307,8 @@ public final class ScooldUtils {
 			return API_USER;
 		} else if (req.getRequestURI().equals(CONF.serverContextPath() + "/api/stats") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
+		} else if (req.getRequestURI().startsWith(CONF.serverContextPath() + "/api/config") && isValidJWToken(apiKeyJWT)) {
+			return API_USER;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new UnauthorizedException();
 		}
