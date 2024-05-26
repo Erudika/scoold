@@ -994,7 +994,7 @@ public class ApiController {
 		stats.put("unapproved_replies", uacount);
 		stats.put("para_version", Optional.ofNullable(paraVer).orElse("unknown"));
 		stats.put("scoold_version",  Optional.ofNullable(getClass().getPackage().getImplementationVersion()).
-				orElse("unknown"));
+				orElse(Optional.ofNullable(System.getenv("SCOOLD_VERSION")).orElse("unknown")));
 		return stats;
 	}
 

@@ -1,5 +1,6 @@
 #!/bin/sh
 
 cd ${LAMBDA_TASK_ROOT:-.}
+export SCOOLD_VERSION
 
 ./scoold -Dsoftware.amazon.awssdk.http.service.impl=software.amazon.awssdk.http.urlconnection.UrlConnectionSdkHttpService -Dconfig.file=application.conf -Dspring.main.banner-mode=off -Dserver.port=8000

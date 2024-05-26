@@ -2468,6 +2468,9 @@
 				"name": "getLocalPort",
 				"parameterTypes": []
 			}, {
+				"name": "getName",
+				"parameterTypes": []
+			}, {
 				"name": "getProperty",
 				"parameterTypes": ["java.lang.String"]
 			}, {
