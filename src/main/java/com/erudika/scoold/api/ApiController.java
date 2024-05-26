@@ -54,6 +54,8 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValue;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,6 +75,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -1022,12 +1025,23 @@ public class ApiController {
 
 	@PutMapping("/config")
 	public String configSet(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
-		if (entity.isEmpty()) {
-			badReq("Missing or invalid request body.");
-		}
-		for (Map.Entry<String, Object> entry : entity.entrySet()) {
-			System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
+		if ("application/hocon".equals(req.getContentType())) {
+			try {
+				String config = IOUtils.toString(req.getInputStream(), "utf-8");
+				for (Map.Entry<String, ConfigValue> entry : ConfigFactory.parseString(config).entrySet()) {
+					System.setProperty(entry.getKey(), entry.getValue().unwrapped().toString());
+				}
+			} catch (IOException ex) {
+				badReq("Missing or invalid request body.");
+			}
+		} else {
+			Map<String, Object> entity = readEntity(req);
+			if (entity.isEmpty()) {
+				badReq("Missing or invalid request body.");
+			}
+			for (Map.Entry<String, Object> entry : entity.entrySet()) {
+				System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
+			}
 		}
 		CONF.store();
 		pc.setAppSettings(CONF.getParaAppSettings());
@@ -1161,7 +1175,7 @@ public class ApiController {
 			req.setAttribute(REST_ENTITY_ATTRIBUTE, entity);
 			return entity;
 		} catch (IOException ex) {
-			badReq("Missing or invalid request body.");
+			badReq("Expected 'application/json' body but got '" + req.getContentType() + "' in request body.");
 		} catch (Exception ex) {
 			logger.error(null, ex);
 		}

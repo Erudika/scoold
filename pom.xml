@@ -224,7 +224,7 @@
 				<configuration>
 					<!--==============================================-->
 					<!-- ENABLE FORK MODE IF YOU WANT TO USE DEVTOOLS -->
-					<fork>false</fork>
+					<!--<fork>false</fork>-->
 					<!--==============================================-->
 				</configuration>
 				<executions>
@@ -274,7 +274,6 @@
 						<phase>validate</phase>
 						<configuration>
 							<configLocation>${basedir}/src/main/resources/checkstyle.xml</configLocation>
-							<encoding>UTF-8</encoding>
 							<consoleOutput>true</consoleOutput>
 							<failsOnError>true</failsOnError>
 							<linkXRef>false</linkXRef>

@@ -1513,12 +1513,15 @@ paths:
       security:
       - scoold_auth: []
       requestBody:
-        description: All configuration properties and values inside a JSON object. Property keys **must not start with** the `scoold.` prefix.
+        description: All configuration properties and values inside a JSON object or HOCON string. Property keys **must not start with** the `scoold.` prefix.
         required: true
         content:
           application/json:
             schema:
               type: object
+          application/hocon:
+            schema:
+              type: string
       responses:
         '200':
           description: Returns the whole updated Scoold configuration as a JSON object
