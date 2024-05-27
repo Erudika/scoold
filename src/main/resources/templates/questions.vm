@@ -68,8 +68,10 @@
 		#macro(questionsTitle)
 			#if ($tag)
 				<small>$!lang.get("posts.tagged") <span class="chip tagchip smallText">$!tag</span></small>
+				#set($tagpath = "/tag/$!tag")
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
+				#set($tagpath = "")
 			#end
 		#end
 
@@ -78,11 +80,11 @@
 		<div class="chips-container">
 			#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'answered': "", 'unanswered': "", 'unapproved': "", 'filter': ""} )
 			#setsortbyselection($sortarr 'newest')
-			<a href="${questionslink}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
-			<a href="${questionslink}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
-			<a href="${questionslink}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
-			<a href="${questionslink}$!{filter}?sortby=answered" class="chip $sortarr.answered">$!lang.get("posts.answered")</a>
-			<a href="${questionslink}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
+			<a href="${questionslink}${tagpath}$!{filter}" class="chip $sortarr.newest">$!lang.get("newest")</a>
+			<a href="${questionslink}${tagpath}$!{filter}?sortby=votes" class="chip $sortarr.votes">$!lang.get("votes")</a>
+			<a href="${questionslink}${tagpath}$!{filter}?sortby=activity" class="chip $sortarr.activity">$!lang.get("posts.updated")</a>
+			<a href="${questionslink}${tagpath}$!{filter}?sortby=answered" class="chip $sortarr.answered">$!lang.get("posts.answered")</a>
+			<a href="${questionslink}${tagpath}$!{filter}?sortby=unanswered" class="chip $sortarr.unanswered">$!lang.get("posts.unanswered")</a>
 
 			#if ($authenticated)
 				#if($request.getParameter('sortby'))#set($sortby = "?sortby=$request.getParameter('sortby')")#else#set($sortby = "")#end
