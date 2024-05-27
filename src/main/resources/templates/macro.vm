@@ -243,7 +243,7 @@
 			#if (!$link || $link.isEmpty())
 			<span class="chip mrs">$!showtag</span>
 			#else
-			<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="chip mrs">$!showtag</a>
+			<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="chip mrs tagchip">$!showtag</a>
 			#end
 		#end
 	#end

@@ -67,7 +67,7 @@
 	#else
 		#macro(questionsTitle)
 			#if ($tag)
-				<small>$!lang.get("posts.tagged") <span class="grey-text text-darken-2">$!tag</span></small>
+				<small>$!lang.get("posts.tagged") <span class="chip tagchip smallText">$!tag</span></small>
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
 			#end

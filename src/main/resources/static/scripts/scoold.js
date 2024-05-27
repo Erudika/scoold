@@ -879,6 +879,28 @@ $(function () {
 		return false;
 	});
 
+	var tagDescriptions = {};
+	$(".tagchip").on("mousemove", function () {
+		var that = $(this);
+		var tag = that.text();
+		if (tag && $.trim(tag) !== "") {
+			if (!tagDescriptions[tag] || tagDescriptions[tag] === "") {
+				tagDescriptions[tag] = " ";
+				$.get(CONTEXT_PATH + "/tags/" + tag, function (data) {
+					//if (data.length === 0) {data.push({tag: val});}
+					data.map(function (t) {
+						if (t.description) {
+							tagDescriptions[t.tag] = t.description;
+						}
+					});
+				});
+			}
+			if ($.trim(tagDescriptions[tag]) !== "" && that.attr("title") !== tagDescriptions[tag]) {
+				that.attr("title", tagDescriptions[tag]);
+			}
+		}
+	});
+
 	/****************************************************
      *                  PAGINATION
      ****************************************************/
