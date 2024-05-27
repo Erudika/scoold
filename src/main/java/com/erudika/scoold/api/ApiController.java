@@ -54,6 +54,7 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.Version;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import jakarta.inject.Inject;
@@ -993,7 +994,7 @@ public class ApiController {
 		stats.put("unapproved_questions", uqcount);
 		stats.put("unapproved_replies", uacount);
 		stats.put("para_version", Optional.ofNullable(paraVer).orElse("unknown"));
-		stats.put("scoold_version",  Optional.ofNullable(getClass().getPackage().getImplementationVersion()).
+		stats.put("scoold_version", Optional.ofNullable(Version.getVersion()).
 				orElse(Optional.ofNullable(System.getenv("SCOOLD_VERSION")).orElse("unknown")));
 		return stats;
 	}
