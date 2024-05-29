@@ -2552,6 +2552,17 @@
 		"allPublicClasses": true
 	},
 	{
+		"name": "org.apache.velocity.runtime.directive.ForeachScope",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
 		"name": "org.apache.velocity.runtime.ParserPoolImpl",
 		"methods": [{
 				"name": "<init>",
