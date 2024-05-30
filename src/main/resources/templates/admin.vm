@@ -101,11 +101,17 @@
 					</div>
 
 					<div class="row mvn">
-						<div class="col s12 m9">
+						<div class="col s12 m7">
 							<div class="input-field">
 								<label for="targetUrl">Destination URL</label>
 								<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" placeholder="https://" required>
 								<span class="helper-text" data-error="Please enter a valid URL"></span>
+							</div>
+						</div>
+						<div class="col s12 m2">
+							<div class="input-field">
+								<label for="filter">Property filter</label>
+								<input type="text" id="filter" name="filter" placeholder="tags:tag1,tag2">
 							</div>
 						</div>
 						<div class="col s12 m3">

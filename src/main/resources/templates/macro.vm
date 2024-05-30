@@ -205,6 +205,9 @@
 			#if($webhook.typeFilter)
 				<span class="chip"><code><i class="fa fa-filter gray"></i> $!webhook.typeFilter</code></span>
 			#end
+			#if($webhook.propertyFilter)
+				<span class="chip"><code><i class="fa fa-filter gray"></i> $!webhook.propertyFilter</code></span>
+			#end
 			#foreach($event in $webhook.customEvents)
 				<span class="chip"><code>$!event</code></span>
 			#end

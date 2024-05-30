@@ -278,7 +278,8 @@ public class AdminController {
 
 	@PostMapping("/create-webhook")
 	public String createWebhook(@RequestParam String targetUrl, @RequestParam(required = false) String type,
-			@RequestParam Boolean json, @RequestParam Set<String> events, HttpServletRequest req, Model model) {
+			@RequestParam Boolean json, @RequestParam Set<String> events, @RequestParam(required = false) String filter,
+			HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
 		if (Utils.isValidURL(targetUrl) && utils.isAdmin(authUser) && utils.isWebhooksEnabled()) {
 			Webhook webhook = new Webhook(targetUrl);
@@ -294,6 +295,7 @@ public class AdminController {
 				webhook.setTypeFilter(type);
 			}
 			webhook.setUrlEncoded(!json);
+			webhook.setPropertyFilter(filter);
 			webhook.resetSecret();
 			pc.create(webhook);
 		} else {
