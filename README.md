@@ -1781,6 +1781,16 @@ This will create a new custom event `revision.create` which will fire whenever a
 This makes it easy to integrate Scoold with services like Zapier because it implements the
 [RESTHooks](https://resthooks.org/) best practices.
 
+Finally, you can configure a webhook so that it is only fired when the payload matches a certain filter.
+A filter could contain one or more values of a property, e.g. `tags:tag1,tag2`. If the payload inside the webhook matches
+the filter, then the payload is sent to the target URL, otherwise it is ignored.
+Here are some examples of webhook property filters:
+- `tags:tag1,tag2` - payload must contain a **list** property `tags` and it must have **both** `tag1` and `tag2` in it
+- `tags:tag1|tag2` - payload must contain a **list** property `tags` and it must have **either** `tag1` or `tag2` in it
+- `name:Gordon` - payload must contain a **String** property and it must be `Gordon`
+- `name:Gordon|Joe` - payload must contain a **String** property and it must be **either** `Gordon` or `Joe`
+- `tags:-` - payload must contain a **list** or **string** property `tags` and it **must be empty**
+
 For more details about webhooks, please read the [Para docs on webhooks](https://paraio.org/docs/#011-webhooks).
 
 ## Session management and duration
