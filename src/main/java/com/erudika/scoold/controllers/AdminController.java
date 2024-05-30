@@ -49,7 +49,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
-import com.typesafe.config.ConfigValue;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -121,18 +120,17 @@ public class AdminController {
 		} else if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
-		Map<String, Object> configMap = new LinkedHashMap<String, Object>();
-		for (Map.Entry<String, ConfigValue> entry : CONF.getConfig().entrySet()) {
-			ConfigValue value = entry.getValue();
-			configMap.put(entry.getKey(), value != null ? value.unwrapped() : "-");
-		}
+		Map<String, Object> configMetadata = new LinkedHashMap<String, Object>();
+		try {
+			configMetadata = ParaObjectUtils.getJsonReader(Map.class).readValue(CONF.renderConfigDocumentation("json", true));
+		} catch (IOException ex) { }
 
 		Pager itemcount = utils.getPager("page", req);
 		Pager itemcount1 = utils.getPager("page1", req);
 		itemcount.setLimit(40);
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
-		model.addAttribute("configMap", configMap);
+		model.addAttribute("configMap", CONF);
 		model.addAttribute("version", pc.getServerVersion());
 		model.addAttribute("endpoint", CONF.redirectUri());
 		model.addAttribute("paraapp", CONF.paraAccessKey());
@@ -532,6 +530,27 @@ public class AdminController {
 			logger.info("Started rebuilding the search index for '{}'...", CONF.paraAccessKey());
 		}
 		return "redirect:" + ADMINLINK;
+	}
+
+	@PostMapping("/save-config")
+	public String saveConfig(@RequestParam String key, @RequestParam(defaultValue = "") String value, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			if ("on".equals(value)) {
+				value = "true";
+			}
+			if (value != null && !StringUtils.isBlank(value)) {
+				System.setProperty(key, value);
+			} else {
+				System.clearProperty(key);
+			}
+			logger.info("Configuration was changed: user {} modified property '{}'.", authUser.getId(), key);
+			CONF.store();
+			if (CONF.getParaAppSettings().containsKey(key)) {
+				pc.addAppSetting(key, value);
+			}
+		}
+		return "redirect:" + ADMINLINK + "#configuration-tab";
 	}
 
 	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry, ObjectReader mapReader,

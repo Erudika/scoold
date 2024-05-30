@@ -27,6 +27,7 @@
 				<li class="tab col s2"><a href="#backup-tab">$!{lang.get("backups.title")} </a></li>
 				<li class="tab col s2"><a href="#themes-tab">$!{lang.get("admin.themes")} </a></li>
 				<li class="tab col s2"><a href="#api-tab">API keys </a></li>
+				<li class="tab col s2"><a href="#configuration-tab">$!lang.get('admin.configuration') </a></li>
 			</ul>
 		</div>
 
@@ -332,6 +333,67 @@
 			<h4 class="lightborder pal center-align"><div class="em3v">$!lang.get('admin.apidisabled')</div></h4>
 			#end
 		</div>
+
+		<div id="configuration-tab" class="col s12">
+			<ul class="collapsible" data-collapsible="expandable">
+			#foreach($key in $configMetadata.keySet())
+				<li #if($key == "Core")class="active"#end>
+					<div class="collapsible-header"><i class="fa fa-chevron-right"></i> <b>$key</b></div>
+					<div class="collapsible-body">
+						<table class="highlight">
+						#foreach($pkey in $configMetadata.get($key).keySet())
+							<tr>
+								<td>
+									<code>$pkey</code>
+									#if($configMetadata.get($key).get($pkey).tags)
+										<small class="chip small">$configMetadata.get($key).get($pkey).tags</small>
+									#end
+									<br>
+									<small>
+										<tt><b>$configMetadata.get($key).get($pkey).type</b></tt> &nbsp;
+										$configMetadata.get($key).get($pkey).description
+									</small>
+								</td>
+								<td>
+									<form method="post" action="$adminlink/save-config">
+										<div class="row mbn valign-wrapper">
+											<div class="col s12 m10">
+												#set($pk = $pkey.substring(7))
+												#set($propval = $configMap.getConfigValue($pk, ""))
+												<input name="key" type="hidden" value="$pkey">
+
+												#if($configMetadata.get($key).get($pkey).type == "Boolean")
+												<label>
+													<input name="value" type="checkbox" #if($propval == "true")checked="checked"#end class="filled-in">
+													<span>$!pk</span>
+												</label>
+												#else
+												<div class="input-field mbn">
+													<!--<label>$pk</label>-->
+													#if(($pk.contains("secret") || $pk.contains("password") || $pk.contains("privatekey")) ||
+														$pk.contains("pass") && $configMap.get($pk) && !$configMap.get($pk).isEmpty())
+														#set($propval = "***************************")
+														<input type="password" name="value" value="$!propval">
+													#else
+														<input type="text" name="value" value="$!propval">
+													#end
+												</div>
+												#end
+											</div>
+											<div class="col s12 m2">
+												<button type="submit" class="btn-small waves-effect waves-light rusure">&nbsp;$!lang.get('save')</button>
+											</div>
+										</div>
+									</form>
+								</td>
+							</tr>
+						#end
+						</table>
+					</div>
+				</li>
+			#end
+			</ul>
+		</div>
 	</div>
 
 	<div class="ptl">
@@ -352,26 +414,6 @@
 							<input type="submit" class="btn waves-effect waves-light darken-2 white-text orange rusure" value="Rebuild search index">
 						</form>
 					</div>
-				</div>
-			</li>
-			<li>
-				<div class="collapsible-header"><i class="fa fa-wrench grey-text"></i>$!lang.get('admin.configuration')</div>
-				<div class="collapsible-body">
-					<table class="highlight">
-						#foreach($key in $configMap.keySet())
-							<tr>
-								<td><code>$key</code></td>
-								<td><code class="">
-										#if(($key.contains("secret") || $key.contains("password") || $key.contains("privatekey")) ||
-											$key.contains("pass") && $configMap.get($key) && !$configMap.get($key).isEmpty())
-											***************************
-										#else
-											$!configMap.get($key)
-										#end
-									</code></td>
-							</tr>
-						#end
-					</table>
 				</div>
 			</li>
 			<li>
