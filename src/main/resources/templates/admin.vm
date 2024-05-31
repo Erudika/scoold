@@ -345,34 +345,36 @@
 							<tr>
 								<td>
 									<code>$pkey</code>
+									<small class="mhl"><b>$configMetadata.get($key).get($pkey).type</b></small>
 									#if($configMetadata.get($key).get($pkey).tags)
 										<small class="chip small">$configMetadata.get($key).get($pkey).tags</small>
 									#end
-									<br>
 									<small>
-										<tt><b>$configMetadata.get($key).get($pkey).type</b></tt> &nbsp;
-										$configMetadata.get($key).get($pkey).description
+										#set($_description = $utils.markdownToHtml($configMetadata.get($key).get($pkey).description))
+										$_description
 									</small>
 								</td>
 								<td>
-									<form method="post" action="$adminlink/save-config">
+									<form method="post" action="$adminlink/save-config" class="configuration-form">
 										<div class="row mbn valign-wrapper">
 											<div class="col s12 m10">
 												#set($pk = $pkey.substring(7))
 												#set($propval = $configMap.getConfigValue($pk, ""))
+												#if(!$propval || $propval.isEmpty())
+													#set($propval = $configMetadata.get($key).get($pkey).defaultValue)
+												#end
 												<input name="key" type="hidden" value="$pkey">
 
 												#if($configMetadata.get($key).get($pkey).type == "Boolean")
 												<label>
 													<input name="value" type="checkbox" #if($propval == "true")checked="checked"#end class="filled-in">
-													<span>$!pk</span>
+													<span data-on="$!lang.get('on')" data-off="$!lang.get('off')">#if($propval == "true")$!lang.get('on')#else$!lang.get('off')#end</span>
 												</label>
 												#else
 												<div class="input-field mbn">
-													<!--<label>$pk</label>-->
-													#if(($pk.contains("secret") || $pk.contains("password") || $pk.contains("privatekey")) ||
-														$pk.contains("pass") && $configMap.get($pk) && !$configMap.get($pk).isEmpty())
-														#set($propval = "***************************")
+													#if(($pk.contains("secret") || $pk.contains("password") || $pk.contains("privatekey") || $pk.contains("pass")) &&
+														$propval && !$propval.isEmpty())
+														#set($propval = "****************")
 														<input type="password" name="value" value="$!propval">
 													#else
 														<input type="text" name="value" value="$!propval">
@@ -381,7 +383,7 @@
 												#end
 											</div>
 											<div class="col s12 m2">
-												<button type="submit" class="btn-small waves-effect waves-light rusure">&nbsp;$!lang.get('save')</button>
+												<button type="submit" class="btn-small btn-flat waves-effect waves-light rusure">&nbsp;$!lang.get('save')</button>
 											</div>
 										</div>
 									</form>
