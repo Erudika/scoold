@@ -515,7 +515,6 @@ $(function () {
 	});
 
 	$(".configuration-form .filled-in").on("click", function () {
-		var that = $(this);
 		var next = $(this).next("span");
 		if (next.text() === next.attr("data-on")) {
 			next.text(next.attr("data-off"));
