@@ -1192,7 +1192,7 @@ $utils.formatDate($date, $format, $currentLocale)
 		#if($head && ($key.startsWith("bypassconsent") || $cookieConsentGiven))
 			<!-- External Script: $key Begin -->
 			#if($externalScripts.get($key).startsWith("http:") || $externalScripts.get($key).startsWith("https:"))
-				<script nonce="$cspNonce" src="$externalScript.value"></script>
+				<script nonce="$cspNonce" src="$!externalScripts.get($key)"></script>
 			#else
 				#set($_extScript = $scooldUtils.base64DecodeScript($!externalScripts.get($key)) )
 				<script nonce="$cspNonce">
