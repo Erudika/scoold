@@ -676,6 +676,10 @@ table.striped>tbody>tr:nth-child(odd) {
 	.sTextCenter.r {
 		text-align: center;
 	}
+	.smallText {
+		font-size: 0.9em;
+		line-height: 2.5em;
+	}
 	.mediumText {
 		font-size: 1.1em;
 		line-height: 2.2em;

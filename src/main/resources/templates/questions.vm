@@ -67,7 +67,9 @@
 	#else
 		#macro(questionsTitle)
 			#if ($tag)
-				<small>$!lang.get("posts.tagged") <span class="chip tagchip smallText">$!tag</span></small>
+				<small>$!lang.get("posts.tagged")
+					<span class="chip tagchip smallText #if($tagDescription)tooltipped#end" data-tooltip="$!tagDescription">$!tag</span>
+				</small>
 				#set($tagpath = "/tag/$!tag")
 			#else
 				$!lang.get("questions.title") #showcount($itemcount.count)
@@ -76,6 +78,9 @@
 		#end
 
 		<h4 class="hide-on-large-only">#questionsTitle()</h4>
+		#if($tagDescription)
+			<div class="mbl lightborder pam smallText hide-on-large-only">$!tagDescription</div>
+		#end
 
 		<div class="chips-container">
 			#set($sortarr = {'votes': "", 'newest': "", 'activity': "", 'answered': "", 'unanswered': "", 'unapproved': "", 'filter': ""} )
