@@ -606,7 +606,15 @@ small.badgebox, .custom-badge.small {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-
+.spacelabel {
+	border-radius: 3px;
+	color: #444;
+	height: 2rem;
+	padding: 10px;
+	margin-bottom: -10px;
+	font-weight: bold;
+	background-color: #f6f6f6;
+}
 .qstatsbox div {
 	font-size: 14px;
 	padding: 1px 5px;

@@ -5,8 +5,8 @@
 
 /* nav bar and footer */
 nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { background-color: #444; }
-.navbar-color { background-color: #424242; }
-.page-footer .footer-copyright { color: white; }
+.navbar-color, .spacelabel { background-color: #424242; }
+.page-footer .footer-copyright, .spacelabel { color: white; }
 .page-footer .btn-flat { color: white; }
 
 /* switches and inputs */

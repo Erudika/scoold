@@ -1362,7 +1362,7 @@ $(function () {
 	}
 
 	$(".bookmark-spaceurl").hover(function () {
-		$(this).find("a").toggleClass("hide").on("click", function (e) {
+		$(this).find("a:last").toggleClass("hide").on("click", function (e) {
 			navigator.clipboard.writeText(this.href);
 			$(this).find("i").text("Copied!").attr("class", "green-text smallText").show().fadeOut(3000);
 			return false;

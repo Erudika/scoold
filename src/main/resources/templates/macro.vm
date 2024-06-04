@@ -162,15 +162,25 @@
 #end
 ####################################
 #macro(spacelabel $currentSpace)
-<p class="mediumText grey-text bookmark-spaceurl">
+<div class="spacelabel bookmark-spaceurl valign-wrapper">
+	#if($scooldUtils.canAccessSpace($authUser, "default"))
+		<a href="$questionslink/space?returnto=$!returnto" title="$!lang.get('defaultspace')"><i class="fa fa-home grey-text mrm"></i></a>
+	#else
+		<i class="fa fa-home grey-text mrm"></i>
+	#end
+	<i class="fa fa-angle-right grey-text mrm"></i>
+	#if(!$scooldUtils.isAllSpaces($currentSpace))
+		<a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces" class="grey-text smallText mrm">$!lang.get('allspaces')</a>
+		<i class="fa fa-angle-right grey-text mrm"></i>
+	#end
 	#if($scooldUtils.isAllSpaces($currentSpace))
 		$!lang.get('allspaces')
 	#else
 		$scooldUtils.getSpaceName($!currentSpace)
 	#end
 	<a href="$questionslink/space/$scooldUtils.getSpaceId($!currentSpace)"
-		 class="hide tooltipped" data-tooltip="Copy link"><i class="fa fa-share-square-o"></i></a>
-</p>
+		 class="hide tooltipped mhs" data-tooltip="Copy link"><i class="fa fa-share-square-o"></i></a>
+</div>
 #end
 ####################################
 #macro(webhookbox $webhook )
