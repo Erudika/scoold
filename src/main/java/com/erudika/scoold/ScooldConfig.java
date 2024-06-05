@@ -3403,6 +3403,25 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("notifications_as_reports_enabled", false);
 	}
 
+	@Documented(position = 3100,
+			identifier = "akismet_api_key",
+			category = "Miscellaneous",
+			description = "API Key for Akismet for activating anti-spam protection of all posts.")
+	public String akismetApiKey() {
+		return getConfigParam("akismet_api_key", "");
+	}
+
+	@Documented(position = 3110,
+			identifier = "automatic_spam_protection_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable autonomous action taken against spam posts - if detected a spam post will be "
+					+ "blocked without notice. By default, spam posts will require action and approval by admins.")
+	public boolean automaticSpamProtectionEnabled() {
+		return getConfigBoolean("automatic_spam_protection_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

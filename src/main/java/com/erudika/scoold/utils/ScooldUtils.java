@@ -94,6 +94,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import net.thauvin.erik.akismet.Akismet;
+import net.thauvin.erik.akismet.AkismetComment;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -684,7 +686,7 @@ public final class ScooldUtils {
 		if (!isNewPostNotificationAllowed()) {
 			return;
 		}
-		boolean awaitingApproval = postsNeedApproval(req) && question instanceof UnapprovedQuestion;
+		boolean awaitingApproval = postsNeedApproval(req) || question instanceof UnapprovedQuestion;
 		Map<String, Object> model = new HashMap<String, Object>();
 		Map<String, String> lang = getLang(req);
 		String name = postAuthor.getName();
@@ -713,8 +715,8 @@ public final class ScooldUtils {
 			rep.setName(question.getTitle());
 			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(question.getBody()), 2000));
 			rep.setParentid(question.getId());
-			rep.setDescription(lang.get("reports.awaitingapproval"));
-			rep.setSubType(Report.ReportType.OTHER);
+			rep.setDescription(lang.get("reports.awaitingapproval") + (question.isSpam() ? " [spam]" : ""));
+			rep.setSubType(question.isSpam() ? Report.ReportType.SPAM : Report.ReportType.OTHER);
 			rep.setLink(question.getPostLink(false, false));
 			rep.setAuthorName(postAuthor.getName());
 			rep.addProperty(lang.get("spaces.title"), getSpaceName(question.getSpace()));
@@ -729,7 +731,7 @@ public final class ScooldUtils {
 		}
 		Map<String, String> lang = getLang(req);
 		Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
-		boolean awaitingApproval = postsNeedApproval(req) && reply instanceof UnapprovedReply;
+		boolean awaitingApproval = postsNeedApproval(req) || reply instanceof UnapprovedReply;
 		Map<String, Object> model = new HashMap<String, Object>();
 		String name = replyAuthor.getName();
 		String body = Utils.markdownToHtml(reply.getBody());
@@ -774,8 +776,8 @@ public final class ScooldUtils {
 			rep.setName(parentPost.getTitle());
 			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(reply.getBody()), 2000));
 			rep.setParentid(reply.getId());
-			rep.setDescription(lang.get("reports.awaitingapproval"));
-			rep.setSubType(Report.ReportType.OTHER);
+			rep.setDescription(lang.get("reports.awaitingapproval") + (reply.isSpam() ? " [spam]" : ""));
+			rep.setSubType(reply.isSpam() ? Report.ReportType.SPAM : Report.ReportType.OTHER);
 			rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
 			rep.setAuthorName(replyAuthor.getName());
 			rep.addProperty(lang.get("spaces.title"), getSpaceName(reply.getSpace()));
@@ -2230,6 +2232,87 @@ public final class ScooldUtils {
 			}
 		}
 		return false;
+	}
+
+	public AkismetComment buildAkismetComment(ParaObject pobj, Profile authUser, HttpServletRequest req) {
+		if (pobj == null) {
+			return null;
+		}
+		final AkismetComment comment = new AkismetComment(req);
+		if (pobj instanceof Comment) {
+			comment.setContent(((Comment) pobj).getComment());
+			comment.setPermalink(CONF.serverUrl() + "/comment/" + ((Comment) pobj).getId());
+			comment.setType("comment");
+		} else if (pobj instanceof Post) {
+			comment.setContent(((Post) pobj).getTitle() + " \n " + ((Post) pobj).getBody());
+			comment.setPermalink(CONF.serverUrl() + ((Post) pobj).getPostLinkForRedirect());
+			comment.setType(((Post) pobj).isReply() ? "reply" : "forum‑post");
+		}
+		if (authUser != null) {
+			comment.setAuthor(authUser.getName());
+			User u = authUser.getUser();
+			if (u != null) {
+				comment.setAuthorEmail(u.getEmail());
+			}
+		}
+		comment.setUserRole(isMod(authUser) ? "administrator" : null);
+		return comment;
+	}
+
+	public AkismetComment buildAkismetCommentFromReport(Report rep, HttpServletRequest req) {
+		if (rep == null) {
+			return null;
+		}
+		final AkismetComment comment = new AkismetComment(req);
+		comment.setContent(rep.getContent());
+		comment.setPermalink(rep.getLink());
+		comment.setType(rep.getLink().contains("/comment/") ? "comment" : "forum-post");
+
+		Profile authUser = pc.read(rep.getCreatorid());
+		if (authUser != null) {
+			comment.setAuthor(authUser.getName());
+			User u = authUser.getUser();
+			if (u != null) {
+				comment.setAuthorEmail(u.getEmail());
+			}
+		}
+		comment.setUserRole(isMod(authUser) ? "administrator" : null);
+		return comment;
+	}
+
+	public boolean isSpam(ParaObject pobj, Profile authUser, HttpServletRequest req) {
+		if (pobj == null || StringUtils.isBlank(CONF.akismetApiKey())) {
+			return false;
+		}
+		final AkismetComment comment = buildAkismetComment(pobj, authUser, req);
+		Akismet akismet = new Akismet(CONF.akismetApiKey(), CONF.serverUrl());
+		final boolean isSpam = akismet.checkComment(comment);
+		confirmSpam(comment, isSpam, CONF.automaticSpamProtectionEnabled(), req);
+		return true;
+//		return isSpam;
+	}
+
+	public void confirmSpam(AkismetComment comment, boolean isSpam, boolean submit, HttpServletRequest req) {
+		Akismet akismet = new Akismet(CONF.akismetApiKey(), CONF.serverUrl());
+		if (isSpam) {
+			if (submit) {
+				boolean err = akismet.submitSpam(comment);
+				if (err) {
+					logger.error("Failed to confirm spam to Akismet: " +
+							akismet.getResponse() + " " + akismet.getErrorMessage());
+				} else {
+					logger.info("Detected spam post by user {} which was blocked, URL {}.",
+							comment.getAuthor(), comment.getPermalink());
+				}
+			}
+		} else {
+			if (submit) {
+				boolean err = akismet.submitHam(comment);
+				if (err) {
+					logger.error(akismet.getErrorMessage());
+				}
+			}
+		}
 	}
 
 	public String getCSPNonce() {

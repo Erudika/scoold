@@ -31,6 +31,9 @@ import com.erudika.scoold.ScooldConfig;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,9 +45,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -89,6 +89,7 @@ public abstract class Post extends Sysprop {
 	private transient List<Comment> comments;
 	private transient Pager itemcount;
 	private transient Vote vote;
+	private transient boolean spam;
 
 	public Post() {
 		this.answercount = 0L;
@@ -277,6 +278,14 @@ public abstract class Post extends Sysprop {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public boolean isSpam() {
+		return spam;
+	}
+
+	public void setSpam(boolean spam) {
+		this.spam = spam;
 	}
 
 	public boolean isClosed() {

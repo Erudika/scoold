@@ -55,6 +55,14 @@
 								<strong><i class="fa fa-check"></i>&nbsp;$!lang.get("posts.approve")</strong>
 							</a>
 						#end
+						#if($showreport.subType.toLowerCase() == "spam")
+							<a href="$reportslink/$!showreport.id/confirm-spam?spam=true" class="btn-flat approve-btn red-text ${hideClose}" title="Confirm Spam">
+								<strong><i class="fa fa-thumbs-down"></i>&nbsp;Confirm Spam</strong>
+							</a>
+							<a href="$reportslink/$!showreport.id/confirm-spam?spam=false" class="btn-flat approve-btn green-text ${hideClose}" title="Not Spam">
+								<strong><i class="fa fa-thumbs-up"></i>&nbsp;Not Spam</strong>
+							</a>
+						#end
 						#if ($showreport.closed)#set($hideOpen = "")#else#set($hideOpen = "hide")#end
 						<a href="$reportslink/$!showreport.id/open" class="btn-flat report-open-btn pln ${hideOpen}" title="Reopen report">
 							<strong><i class="fa fa-undo"></i>&nbsp;$!lang.get("reopen")</strong>

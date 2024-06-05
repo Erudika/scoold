@@ -236,6 +236,30 @@ public class ReportsController {
 		return "base";
 	}
 
+	@PostMapping("/{id}/confirm-spam")
+	public String confirmSpam(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		if (utils.isAuthenticated(req) && !StringUtils.isBlank(CONF.akismetApiKey())) {
+			Profile authUser = utils.getAuthUser(req);
+			Report rep = pc.read(id);
+			if (rep != null && utils.isAdmin(authUser)) {
+				utils.confirmSpam(utils.buildAkismetCommentFromReport(rep, req),
+						"true".equals(req.getParameter("spam")), true, req);
+
+				if ("true".equals(req.getParameter("deleteUser"))) {
+					Profile p = pc.read(rep.getCreatorid());
+					if (p != null && !utils.isMod(p)) {
+						p.delete();
+					}
+				}
+				rep.delete();
+			}
+		}
+		if (!utils.isAjaxRequest(req)) {
+			return "redirect:" + REPORTSLINK;
+		}
+		return "base";
+	}
+
 	@PostMapping("/delete-all")
 	public String deleteAll(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {

@@ -21,18 +21,20 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
 import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
+import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.util.List;
-import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/comment")
 public class CommentController {
 
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
@@ -110,6 +113,7 @@ public class CommentController {
 			Comment showComment = utils.populate(req, new Comment(), "comment");
 			showComment.setCreatorid(authUser.getId());
 			Map<String, String> error = utils.validate(showComment);
+			handleSpam(showComment, authUser, error, req);
 			if (error.isEmpty()) {
 				showComment.setComment(comment);
 				showComment.setParentid(parentid);
@@ -117,7 +121,7 @@ public class CommentController {
 
 				if (showComment.create() != null) {
 					long commentCount = authUser.getComments();
-					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= ScooldUtils.getConfig().commentatorIfHasRep());
+					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= CONF.commentatorIfHasRep());
 					authUser.setComments(commentCount + 1);
 					authUser.update();
 					model.addAttribute("showComment", showComment);
@@ -131,5 +135,22 @@ public class CommentController {
 			}
 		}
 		return "comment";
+	}
+
+	private void handleSpam(Comment c, Profile authUser, Map<String, String> error, HttpServletRequest req) {
+		boolean isSpam = utils.isSpam(c, authUser, req);
+		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
+			error.put("comment", "spam");
+		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {
+			Report rep = new Report();
+			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(c.getComment()), 2000));
+			rep.setParentid(c.getId());
+			rep.setCreatorid(authUser.getId());
+			rep.setDescription("SPAM detected");
+			rep.setSubType(Report.ReportType.SPAM);
+			rep.setLink(CONF.serverUrl() + "/comment/" + c.getId());
+			rep.setAuthorName(authUser.getName());
+			rep.create();
+		}
 	}
 }

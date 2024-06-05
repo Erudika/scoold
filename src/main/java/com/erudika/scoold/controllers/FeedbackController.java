@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.FEEDBACKLINK;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
@@ -28,15 +29,16 @@ import com.erudika.scoold.core.Feedback;
 import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/feedback")
 public class FeedbackController {
 
+	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
@@ -158,6 +161,7 @@ public class FeedbackController {
 			Profile authUser = utils.getAuthUser(req);
 			Post post = utils.populate(req, new Feedback(), "title", "body", "tags|,");
 			Map<String, String> error = utils.validate(post);
+			handleSpam(post, authUser, error, req);
 			if (authUser != null && error.isEmpty()) {
 				post.setCreatorid(authUser.getId());
 				post.create();
@@ -184,6 +188,7 @@ public class FeedbackController {
 			//create new answer
 			Reply answer = utils.populate(req, new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
+			handleSpam(answer, authUser, error, req);
 			if (!error.containsKey("body")) {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
@@ -191,7 +196,7 @@ public class FeedbackController {
 				answer.create();
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
-				if (showPost.getAnswercount() >= ScooldUtils.getConfig().maxRepliesPerPost()) {
+				if (showPost.getAnswercount() >= CONF.maxRepliesPerPost()) {
 					showPost.setCloserid("0");
 				}
 				// update without adding revisions
@@ -227,5 +232,22 @@ public class FeedbackController {
 			}
 		}
 		return "redirect:" + FEEDBACKLINK;
+	}
+
+	private void handleSpam(Post q, Profile authUser, Map<String, String> error, HttpServletRequest req) {
+		boolean isSpam = utils.isSpam(q, authUser, req);
+		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
+			error.put("body", "spam");
+			Report rep = new Report();
+			rep.setName(q.getTitle());
+			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(q.getBody()), 2000));
+			rep.setCreatorid(authUser.getId());
+			rep.setParentid(q.getId());
+			rep.setDescription("SPAM detected");
+			rep.setSubType(Report.ReportType.SPAM);
+			rep.setLink(q.getPostLinkForRedirect());
+			rep.setAuthorName(authUser.getName());
+			rep.create();
+		}
 	}
 }

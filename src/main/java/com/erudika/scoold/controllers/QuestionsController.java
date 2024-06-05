@@ -252,6 +252,7 @@ public class QuestionsController {
 				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "" : CONF.defaultQuestionTag()));
 			}
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
+			q = handleSpam(q, authUser, error, req);
 			if (error.isEmpty()) {
 				String qid = StringUtils.isBlank(postId) ? Utils.getNewId() : postId;
 				q.setId(qid);
@@ -492,5 +493,24 @@ public class QuestionsController {
 		payload.put("author", q == null ? null : q.getAuthor());
 		utils.triggerHookEvent("question.create", payload);
 		return payload;
+	}
+
+	private Question handleSpam(Question q, Profile authUser, Map<String, String> error, HttpServletRequest req) {
+		boolean isSpam = utils.isSpam(q, authUser, req);
+		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
+			error.put("body", "spam");
+		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {
+			UnapprovedQuestion spamq = new UnapprovedQuestion();
+			spamq.setTitle(q.getTitle());
+			spamq.setBody(q.getBody());
+			spamq.setTags(q.getTags());
+			spamq.setLocation(q.getLocation());
+			spamq.setCreatorid(q.getCreatorid());
+			spamq.setAuthor(authUser);
+			spamq.setSpace(q.getSpace());
+			spamq.setSpam(true);
+			return spamq;
+		}
+		return q;
 	}
 }

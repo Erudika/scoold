@@ -35,6 +35,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Profile.Badge;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
@@ -186,7 +187,7 @@ public class QuestionController {
 			if (showPost.hasUpdatedContent(beforeUpdate)) {
 				Revision.createRevisionFromPost(showPost, false);
 			}
-			updatePost(showPost, authUser);
+			updatePost(showPost, authUser, req);
 			updateLocation(showPost, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 			if (req.getParameter("notificationsDisabled") == null) {
@@ -227,6 +228,7 @@ public class QuestionController {
 			boolean needsApproval = CONF.answersNeedApproval() && utils.postsNeedApproval(req) && utils.userNeedsApproval(authUser);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
+			answer = handleSpam(answer, authUser, error, req);
 			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
@@ -528,7 +530,25 @@ public class QuestionController {
 		return answers;
 	}
 
-	private void updatePost(Post showPost, Profile authUser) {
+	private void updatePost(Post showPost, Profile authUser, HttpServletRequest req) {
+		boolean isSpam = utils.isSpam(showPost, authUser, req);
+		if (isSpam) {
+			if (CONF.automaticSpamProtectionEnabled()) {
+				return;
+			} else {
+				Report rep = new Report();
+				rep.setName(showPost.getTitle());
+				rep.setContent(Utils.abbreviate(Utils.markdownToHtml(showPost.getBody()), 2000));
+				rep.setParentid(showPost.getId());
+				rep.setCreatorid(authUser.getId());
+				rep.setDescription("SPAM detected");
+				rep.setSubType(Report.ReportType.SPAM);
+				rep.setLink(showPost.getPostLink(false, false));
+				rep.setAuthorName(authUser.getName());
+				rep.addProperty(utils.getLang(req).get("spaces.title"), utils.getSpaceName(showPost.getSpace()));
+				rep.create();
+			}
+		}
 		showPost.setLasteditby(authUser.getId());
 		showPost.setLastedited(System.currentTimeMillis());
 		if (showPost.isQuestion()) {
@@ -649,5 +669,24 @@ public class QuestionController {
 			author.addRep(CONF.answerCreatedRewardAuthor());
 			pc.update(author);
 		}
+	}
+
+	private Reply handleSpam(Reply a, Profile authUser, Map<String, String> error, HttpServletRequest req) {
+		boolean isSpam = utils.isSpam(a, authUser, req);
+		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
+			error.put("body", "spam");
+		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {
+			UnapprovedReply spama = new UnapprovedReply();
+			spama.setTitle(a.getTitle());
+			spama.setBody(a.getBody());
+			spama.setTags(a.getTags());
+			spama.setCreatorid(a.getCreatorid());
+			spama.setParentid(a.getParentid());
+			spama.setAuthor(authUser);
+			spama.setSpace(a.getSpace());
+			spama.setSpam(true);
+			return spama;
+		}
+		return a;
 	}
 }

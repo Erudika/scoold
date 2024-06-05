@@ -153,6 +153,11 @@
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.thauvin.erik</groupId>
+			<artifactId>akismet-kotlin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- TESTING -->
 		<dependency>
@@ -251,10 +256,6 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
-					<compilerArgument>-Xlint:-options</compilerArgument>
-					<compilerArguments>
-						<endorseddirs>${endorsed.dir}</endorseddirs>
-					</compilerArguments>
 				</configuration>
 			</plugin>
 			<plugin>
