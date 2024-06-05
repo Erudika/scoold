@@ -1012,7 +1012,7 @@ public class ApiController {
 		adminController.restore(file, isso, deleteall, req, res);
 	}
 
-	@GetMapping("/config")
+	@GetMapping(path = "/config", produces = {"application/hocon", "application/json"})
 	public String config(HttpServletRequest req, HttpServletResponse res) {
 		String format = req.getParameter("format");
 		if ("hocon".equalsIgnoreCase(format)) {
@@ -1078,7 +1078,7 @@ public class ApiController {
 		triggerConfigUpdateEvent(Collections.singletonMap(CONF.getConfigRootPrefix() + "." + key, value));
 	}
 
-	@GetMapping("/config/options")
+	@GetMapping(path = "/config/options", produces = {"text/markdown", "application/hocon", "application/json"})
 	public ResponseEntity<Object> configOptions(HttpServletRequest req, HttpServletResponse res) {
 		String format = req.getParameter("format");
 		String groupby = req.getParameter("groupby");
