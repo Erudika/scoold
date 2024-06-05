@@ -408,7 +408,7 @@ scoold.password_auth_enabled = true
 |`scoold.security.oauth.domain`<br>OAauth 2.0 domain name for constructing user email addresses in case they are missing. Alternatives: `security.oauthsecond.domain`, `security.oauththird.domain` | ` ` | `String`|
 |`scoold.security.oauth.provider`<br>The text on the button for signing in with OAuth2 or OIDC. | `Continue with OpenID Connect` | `String`|
 |`scoold.security.oauth.appid_in_state_param_enabled`<br>Enable/disable the use of the OAauth 2.0 state parameter to designate your Para app id. Some OAauth 2.0 servers throw errors if the length of the state parameter is less than 8 chars. | `true` | `Boolean`|
-|`scoold.security.oauth.send_scope_to_token_endpoint`<br>Enable/disable sending the OAauth 2.0 scope in the token request. Some OAuth 2.0 servers require this to be turned off. | `true` | `Boolean`|
+|`scoold.security.oauth.send_scope_to_token_endpoint`<br>Enable/disable sending the OAauth 2.0 scope parameter in the token request. Some OAuth 2.0 servers require this to be turned off. | `true` | `Boolean`|
 
 ## Posts
 
@@ -417,7 +417,7 @@ scoold.password_auth_enabled = true
 |`scoold.new_users_can_comment`<br>Enable/disable the ability for users with reputation below 100 to comments on posts. | `true` | `Boolean`|
 |`scoold.posts_need_approval`<br>Enable/disable the need for approval of new posts (both questions and answers) by a moderator.  | `false` | `Boolean`|
 |`scoold.answers_approved_by`<br>Controls who is able to mark an answer as accepted. Possible values are `default` (author and moderators), `admins` (admins only), `moderators` (moderators and admins). | `default` | `String`|
-|`scoold.answers_need_approval`<br>Enable/disable the need for approval of answers by a moderator.  | `false` | `Boolean`|
+|`scoold.answers_need_approval`<br>Enable/disable the need for approval of new answers by a moderator.  | `false` | `Boolean`|
 |`scoold.wiki_answers_enabled` <kbd>Pro</kbd><br>Enable/disable the ability for users to create wiki-style answers, editable by everyone. | `true` | `Boolean`|
 |`scoold.media_recording_allowed` <kbd>Pro</kbd><br>Enable/disable support for attaching recorded videos and voice messages to posts. | `true` | `Boolean`|
 |`scoold.delete_protection_enabled`<br>Enable/disable the ability for authors to delete their own question, when it already has answers and activity. | `true` | `Boolean`|
@@ -641,6 +641,8 @@ scoold.password_auth_enabled = true
 |`scoold.user_autocomplete_max_results` <kbd>pro</kbd><br>Controls the maximum number of search results in users' autocomplete. | `10` | `Integer`|
 |`scoold.users_discoverability_enabled`<br>Enable/disable discoverability of users on the site. If disabled, user profiles and the users page will be hidden for all except admins. | `true` | `Boolean`|
 |`scoold.notifications_as_reports_enabled`<br>Enable/disable copies of new content notifications in the form of reports on the site.  Instead of checking their email, mods will be able to view and act on those on the reports page. | `false` | `Boolean`|
+|`scoold.akismet_api_key`<br>API Key for Akismet for activating anti-spam protection of all posts. | ` ` | `String`|
+|`scoold.automatic_spam_protection_enabled`<br>Enable/disable autonomous action taken against spam posts - if detected a spam post will be blocked without notice. By default, spam posts will require action and approval by admins. | `true` | `Boolean`|
 
 </details>
 
@@ -1847,6 +1849,24 @@ to sign in. This feature is disabled by default.
 People may wish to make their profile details anonymous from the Settings page. To allow this option set:
 ```ini
 scoold.profile_anonimity_enabled = true
+```
+
+## Spam protection
+
+Scoold can be configured to detect and block spam content with the help of the Akismet API. To enable this functionality,
+specify your Akismet API key like this:
+
+```ini
+scoold.akismet_api_key = "xyz123"
+```
+
+By default, all content published on the site will be scanned for spam by Akismet and if spam is detected, that content
+will be ignored and the user will get an error, preventing them from posting it. If you turn off automatic protection,
+a report will be created each time a spam post is detected so that mods/admins can take action on it. In the meantime
+the post would be marked as "pending approval".
+
+```ini
+scoold.automatic_spam_protection_enabled = false
 ```
 
 ## Enabling the "Feedback" section
