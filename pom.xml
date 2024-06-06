@@ -158,6 +158,12 @@
 			<artifactId>akismet-kotlin</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<!--QR Code generator-->
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.5.3</version>
+		</dependency>
 
 		<!-- TESTING -->
 		<dependency>

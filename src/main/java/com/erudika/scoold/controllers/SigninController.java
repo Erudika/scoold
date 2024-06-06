@@ -32,14 +32,14 @@ import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.hc.core5.http.HttpHeaders;
@@ -274,6 +274,52 @@ public class SigninController {
 		logger.info("Password reset failed for {} - authenticated={}, approvedDomain={}, validCaptcha={}",
 				email, utils.isAuthenticated(req), approvedDomain, validCaptcha);
 		return "redirect:" + SIGNINLINK + "/iforgot";
+	}
+
+	@GetMapping("/signin/two-factor")
+	public String twoFA(HttpServletRequest req, Model model) {
+		String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
+		if (StringUtils.isBlank(jwt)) {
+			return "redirect:" + SIGNINLINK;
+		}
+		model.addAttribute("path", "signin.vm");
+		model.addAttribute("title", utils.getLang(req).get("signin.twofactor"));
+		model.addAttribute("signinSelected", "navbtn-hover");
+		model.addAttribute("twofactor", true);
+		return "base";
+	}
+
+	@PostMapping("/signin/two-factor")
+	public String twoFAVerify(@RequestParam(name = "reset", required = false, defaultValue = "false") Boolean reset,
+			@RequestParam String code, HttpServletRequest req, HttpServletResponse res, Model model) {
+		String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
+		if (StringUtils.isBlank(jwt)) {
+			return "redirect:" + SIGNINLINK;
+		}
+		User u = pc.me(jwt);
+		if (u == null) {
+			return "redirect:" + SIGNINLINK + "?code=3&error=true";
+		}
+		if (reset && Utils.bcryptMatches(code, u.getTwoFAbackupKeyHash())) {
+			u.setTwoFA(false);
+			u.setTwoFAkey("");
+			u.setTwoFAbackupKeyHash("");
+			pc.update(u);
+			return "redirect:" + getBackToUrl(req);
+		} else {
+			int totpKey = NumberUtils.toInt(code, 0);
+			if (utils.isValid2FACode(u.getTwoFAkey(), totpKey, 0)) {
+				HttpUtils.set2FACookie(u, utils.getUnverifiedClaimsFromJWT(jwt).getIssueTime(), req, res);
+				return "redirect:" + getBackToUrl(req);
+			} else {
+				model.addAttribute("path", "signin.vm");
+				model.addAttribute("title", utils.getLang(req).get("signin.twofactor"));
+				model.addAttribute("signinSelected", "navbtn-hover");
+				model.addAttribute("twofactor", true);
+				model.addAttribute("error", Map.of("code", utils.getLang(req).get("signin.invalidcode")));
+				return "base";
+			}
+		}
 	}
 
 	@PostMapping("/signout")

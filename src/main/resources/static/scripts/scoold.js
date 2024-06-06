@@ -801,6 +801,15 @@ $(function () {
 		}
 	});
 
+	$("#twofaSwitch").on("click", function () {
+		var div = $("#twofaSetup");
+		if (div.hasClass("hide")) {
+			div.removeClass("hide");
+		} else {
+			div.addClass("hide");
+		}
+	});
+
 	/****************************************************
      *                    MODAL DIALOGS
      ****************************************************/

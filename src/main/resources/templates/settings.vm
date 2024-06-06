@@ -19,6 +19,69 @@
 	#else
 		<h2>$!lang.get("settings.title")</h2>
 
+		<h3 class="ptl">$!lang.get('signin.twofactor')</h3>
+		<div class="mbm">
+			<div class="switch">
+				<label>
+					$!lang.get('off')
+					#if($authUser.user.twoFA || $backupCode)
+						<input id="twofaSwitch" type="checkbox" name="twofa" checked="checked" value="true">
+					#else
+						<input id="twofaSwitch" type="checkbox" name="twofa" value="true">
+					#end
+					<span class="lever"></span>
+					$!lang.get('on')
+				</label>
+				<span class="mll mediumText"></span>
+			</div>
+			<div id="twofaSetup" class="#if(!$backupCode)hide#end">
+				<div class="row">
+					#if(!$authUser.user.twoFA && !$backupCode)
+					<div class="col l3 m6 s12">
+						<img src="$settingslink/qr" class="mbl responsive-img" width="300">
+					</div>
+					#end
+					<div class="col l4 m6 s12">
+						#if($backupCode)
+						<p class="green-text"><i class="fa fa-check-circle"></i> $!lang.get('settings.twofaon')</p>
+						<p class="orange-text"><i class="fa fa-warning"></i> <b>$!lang.get('settings.savecode')</b></p>
+						<code class="lightborder pam">$backupCode</code>
+						#else
+						<form method="post" action="$settingslink/toggle-twofa" class="mtl">
+							#sectoken(false "TWO_FACTOR")
+							<div class="mvm">
+								#if($authUser.user.twoFA)
+									<small>$!lang.get('settings.twofaoff')</small>
+								#else
+									<small>$!lang.get('settings.scancode')</small>
+								#end
+								#getmessagebox("red white-text" $error.get("code"))
+								<div class="input-field">
+									<label for="code">
+										$!lang.get('signin.code')
+									</label>
+									<input id="code" type="text" name="code" #if(!$authUser.user.twoFA)required#end>
+								</div>
+
+								#if($authUser.user.twoFA)
+								<div class="input-field">
+									<label for="backupCode">
+										$!lang.get('signin.backupcode')
+									</label>
+									<input id="backupCode" type="text" name="backupCode">
+								</div>
+								#end
+							</div>
+							<button type="submit" class="btn mbl">
+								$!lang.get('confirm')
+							</button>
+						</form>
+						#end
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<form method="post">
 			#if($scooldUtils.isNearMeFeatureEnabled())
 				<h3>$!lang.get('posts.locationfilter')</h3>

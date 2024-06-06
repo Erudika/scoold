@@ -17,6 +17,8 @@
  */
 package com.erudika.scoold.utils;
 
+import com.erudika.para.core.User;
+import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
@@ -28,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,6 +59,7 @@ public final class HttpUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
+	public static final String TWO_FA_COOKIE = CONF.authCookie() + "-2fa";
 	private static CloseableHttpClient httpclient;
 	private static final String DEFAULT_AVATAR = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 			+ "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"svg8\" width=\"756\" height=\"756\" "
@@ -274,6 +278,41 @@ public final class HttpUtils {
 			return;
 		}
 		setRawCookie(CONF.authCookie(), jwt, req, res, "Lax", CONF.sessionTimeoutSec());
+	}
+
+	/**
+	 * Sets the 2FA cookie.
+	 * @param authUser auth user
+	 * @param loginTime login time
+	 * @param req req
+	 * @param res res
+	 */
+	public static void set2FACookie(User authUser, Date loginTime, HttpServletRequest req, HttpServletResponse res) {
+		if (authUser != null && !StringUtils.isBlank(authUser.getTwoFAkey())) {
+			String cookieValue = Utils.hmacSHA256(authUser.getId(),
+					loginTime.getTime() + Para.getConfig().separator() + authUser.getTwoFAkey());
+			setRawCookie(TWO_FA_COOKIE, cookieValue, req, res, "Lax", CONF.sessionTimeoutSec());
+		} else {
+			removeStateParam(TWO_FA_COOKIE, req, res);
+		}
+	}
+
+	/**
+	 * Checks the validity of the 2FA cookie.
+	 * @param authUser auth user
+	 * @param loginTime login time
+	 * @param req req
+	 * @param res res
+	 * @return true if valid
+	 */
+	public static boolean isValid2FACookie(User authUser, Date loginTime, HttpServletRequest req, HttpServletResponse res) {
+		String twoFACookie = getStateParam(TWO_FA_COOKIE, req);
+		if (!StringUtils.isBlank(twoFACookie) && authUser != null) {
+			String computed = Utils.hmacSHA256(authUser.getId(),
+					loginTime.getTime() + Para.getConfig().separator() + authUser.getTwoFAkey());
+			return StringUtils.equals(computed, twoFACookie);
+		}
+		return false;
 	}
 
 	/**

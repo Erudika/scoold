@@ -70,6 +70,9 @@ import jakarta.validation.ConstraintViolation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +97,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import net.thauvin.erik.akismet.Akismet;
 import net.thauvin.erik.akismet.AkismetComment;
 import org.apache.commons.codec.binary.Base64;
@@ -278,7 +283,7 @@ public final class ScooldUtils {
 		if (isApiRequest(req)) {
 			return checkApiAuth(req);
 		} else if (jwt != null && !StringUtils.endsWithAny(req.getRequestURI(),
-				".js", ".css", ".svg", ".png", ".jpg", ".ico", ".gif", ".woff2", ".woff", "people/avatar")) {
+				".js", ".css", ".svg", ".png", ".jpg", ".ico", ".gif", ".woff2", ".woff", "people/avatar", "/two-factor")) {
 			User u = pc.me(jwt);
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
@@ -289,6 +294,10 @@ public final class ScooldUtils {
 				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
 				if (updatedRank || updatedProfile) {
 					authUser.update();
+				}
+				if (u.getTwoFA() && !HttpUtils.isValid2FACookie(u, getUnverifiedClaimsFromJWT(jwt).getIssueTime(), req, res)) {
+					res.sendRedirect(CONF.serverUrl() + CONF.serverContextPath() + SIGNINLINK + "/two-factor");
+					return null;
 				}
 			} else {
 				clearSession(req, res);
@@ -1825,6 +1834,7 @@ public final class ScooldUtils {
 					pcc.signOut();
 				}
 				HttpUtils.removeStateParam(CONF.authCookie(), req, res);
+				HttpUtils.set2FACookie(null, null, req, res);
 			}
 			HttpUtils.removeStateParam("dark-mode", req, res);
 		}
@@ -1973,6 +1983,63 @@ public final class ScooldUtils {
 		}
 		logger.error("Failed to generate JWT token - app_secret_key is blank.");
 		return null;
+	}
+
+	public JWTClaimsSet getUnverifiedClaimsFromJWT(String jwt) {
+		try {
+			if (jwt != null) {
+				SignedJWT sjwt = SignedJWT.parse(jwt);
+				return sjwt.getJWTClaimsSet();
+			}
+		} catch (ParseException e) {
+			logger.warn(null, e);
+		}
+		return null;
+	}
+
+	/**
+	 * Calcuclate the TOTP code from a secret and check if it matches the one provided by the user.
+	 * @param secret TOTP secret key
+	 * @param code 2FA code
+	 * @param variance number of 30s time frames in which 2FA codes are valid: 0 = valid once, 1 = valid for 60s, etc.
+	 * @return true if codes match
+	 */
+	public boolean isValid2FACode(String secret, int code, int variance) {
+		if (secret != null) {
+			try {
+				// time frame is 30 seconds
+				long timeIndex = System.currentTimeMillis() / 1000 / 30;
+				byte[] secretBytes = secret.replaceAll("=", "").getBytes();
+				for (int i = -variance; i <= variance; i++) {
+					long calculatedCode = getCode(secretBytes, timeIndex + i);
+					if (calculatedCode == code) {
+						return true;
+					}
+				}
+			} catch (Exception ex) {
+				logger.error(null, ex);
+			}
+		}
+		return false;
+	}
+
+	private long getCode(byte[] secret, long timeIndex)
+			throws NoSuchAlgorithmException, InvalidKeyException {
+		SecretKeySpec signKey = new SecretKeySpec(secret, "HmacSHA1");
+		ByteBuffer buffer = ByteBuffer.allocate(8);
+		buffer.putLong(timeIndex);
+		byte[] timeBytes = buffer.array();
+		Mac mac = Mac.getInstance("HmacSHA1");
+		mac.init(signKey);
+		byte[] hash = mac.doFinal(timeBytes);
+		int offset = hash[19] & 0xf;
+		long truncatedHash = hash[offset] & 0x7f;
+		for (int i = 1; i < 4; i++) {
+			truncatedHash <<= 8;
+			truncatedHash |= hash[offset + i] & 0xff;
+		}
+		truncatedHash = truncatedHash % 1000000;
+		return truncatedHash;
 	}
 
 	public boolean isApiKeyRevoked(String jti, boolean expired) {

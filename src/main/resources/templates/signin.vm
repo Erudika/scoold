@@ -124,6 +124,53 @@
 		</div>
 	</div>
 </div>
+#elseif($twofactor)
+<div class="page-wrapper">
+	<div class="row ptl">
+		<div class="col s12 m12 l6 offset-l3 center">
+			<div class="card-panel lighten-4">
+				<h2 class="grey-text text-darken-2 pbl">$!lang.get("signin.twofactor")</h2>
+				<form method="post" action="$signinlink/two-factor">
+					#sectoken(false "TWO_FACTOR")
+					<div class="mvm">
+						#getmessagebox("red white-text" $error.get("code"))
+
+						<div class="row">
+							<div class="col s12 m12 l6 offset-l3 center">
+								<div class="input-field">
+									<label for="code">
+										#if($request.getParameter("reset"))
+											$!lang.get('signin.backupcode')
+										#else
+											$!lang.get('signin.code')
+										#end
+									</label>
+									<input id="code" type="text" name="code" autofocus required>
+									#if($request.getParameter("reset"))
+									<input type="hidden" name="reset" value="true">
+									#end
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<button type="submit" class="btn mbl">
+						#if($request.getParameter("reset"))
+							$!lang.get('confirm')
+						#else
+							$!lang.get('continue')
+						#end
+					</button>
+					#if(!$request.getParameter("reset"))
+					<div class="mtl">
+						<a href="$signinlink/two-factor?reset=true">$!lang.get('signin.usebackupcode')</a>
+					</div>
+					#end
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 #else
 <div class="page-wrapper">
 	<div class="row">
