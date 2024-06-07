@@ -326,7 +326,7 @@
 				<dependency>
 					<groupId>org.eclipse.jetty.http2</groupId>
 					<artifactId>http2-server</artifactId>
-					<version>11.0.20</version>
+					<version>11.0.21</version>
 				</dependency>
 				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
