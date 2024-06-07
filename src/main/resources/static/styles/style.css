@@ -367,6 +367,7 @@ img.profile-pic:before {
 	padding: 0px 3px;
 	position: absolute;
 	bottom: -16px;
+	z-index: 1;
 }
 .user-card-compact {
 	min-height: 48px;
