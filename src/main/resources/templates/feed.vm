@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <link>${baseurl}feed.xml</link>
+    <title>$title</title>
+    <description>$description</description>
+    <lastBuildDate>$updated</lastBuildDate>
+		<atom:link href="${baseurl}feed.xml" rel="self" type="application/rss+xml" />
+	  #foreach($entry in $entries)
+    <item>
+      <guid isPermaLink="true">$entry.id</guid>
+      <title>$entry.title</title>
+      <description>$entry.body</description>
+  	  <link>$entry.url</link>
+      <pubDate>$entry.created</pubDate>
+    </item>
+	  #end
+  </channel>
+</rss>

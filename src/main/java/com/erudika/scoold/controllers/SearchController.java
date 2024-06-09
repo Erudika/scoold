@@ -37,16 +37,9 @@ import com.erudika.scoold.core.Sticky;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedOutput;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +48,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -229,59 +223,40 @@ public class SearchController {
 				body(json);
 	}
 
-	@ResponseBody
-	@GetMapping("/feed.xml")
-	public ResponseEntity<String> feed(HttpServletRequest req) {
-		String feed = "";
-		try {
-			feed = new SyndFeedOutput().outputString(getFeed(req));
-		} catch (Exception ex) {
-			logger.error("Could not generate feed", ex);
-		}
-		return ResponseEntity.ok().
-				contentType(MediaType.APPLICATION_ATOM_XML).
-				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
-				eTag(Utils.md5(feed)).
-				body(feed);
-	}
-
-	private SyndFeed getFeed(HttpServletRequest req) throws IOException, FeedException {
+	@GetMapping(path = "/feed.xml", produces = "application/rss+xml")
+	public String feed(Model model, HttpServletRequest req, HttpServletResponse res) {
+		// [space query filter] + original query string
+		String qs = utils.sanitizeQueryString("*", req);
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
-		List<Post> questions = canList ? utils.fullQuestionsSearch("*") : Collections.emptyList();
-		List<SyndEntry> entries = new ArrayList<SyndEntry>();
+		List<Post> questions = canList ? utils.fullQuestionsSearch(qs) : Collections.emptyList();
+		List<Map<String, String>> entriez = new LinkedList<>();
+		Map<String, String> lang = utils.getLang(req);
 		String baseurl = CONF.serverUrl() + CONF.serverContextPath();
 		baseurl = baseurl.endsWith("/") ? baseurl : baseurl + "/";
 
-		Map<String, String> lang = utils.getLang(req);
-
-		SyndFeed feed = new SyndFeedImpl();
-		feed.setFeedType("atom_1.0");
-		feed.setTitle(Utils.formatMessage(lang.get("feed.title"), CONF.appName()));
-		feed.setLink(baseurl);
-		feed.setDescription(Utils.formatMessage(lang.get("feed.description"), CONF.appName()));
+		model.addAttribute("title", Utils.formatMessage(lang.get("feed.title"), CONF.appName()));
+		model.addAttribute("description", Utils.formatMessage(lang.get("feed.description"), CONF.appName()));
+		model.addAttribute("baseurl", baseurl);
+		model.addAttribute("updated", Utils.formatDate(Utils.timestamp(), "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH));
 
 		for (Post post : questions) {
-			SyndEntry entry;
-			SyndContent description;
 			String baselink = baseurl.concat("question/").concat(post.getId());
-
-			entry = new SyndEntryImpl();
-			entry.setTitle(post.getTitle());
-			entry.setLink(baselink);
-			entry.setPublishedDate(new Date(post.getTimestamp()));
-			entry.setAuthor(baseurl.concat("profile/").concat(post.getCreatorid()));
-			entry.setUri(baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("url", baselink);
+			map.put("title", post.getTitle());
+			map.put("id", baselink.concat("/").concat(Utils.stripAndTrim(post.getTitle()).
 					replaceAll("\\p{Z}+", "-").toLowerCase()));
-
-			description = new SyndContentImpl();
-			description.setType("text/html");
-			description.setValue(Utils.markdownToHtml(post.getBody()));
-
-			entry.setDescription(description);
-			entries.add(entry);
+			map.put("created", Utils.formatDate(post.getTimestamp(), "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH));
+			map.put("updated", Utils.formatDate(post.getUpdated(), "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH));
+			map.put("author", baseurl.concat("profile/").concat(post.getCreatorid()));
+			map.put("body", StringUtils.removeEnd(Utils.markdownToHtml(post.getBody()), "\n"));
+			entriez.add(map);
 		}
-		feed.setEntries(entries);
-		return feed;
+		model.addAttribute("entries", entriez);
+		res.setCharacterEncoding("UTF-8");
+		res.setContentType("application/rss+xml");
+		res.addHeader("Cache-Control", "max-age=3600");
+		return "feed";
 	}
 
 	@ResponseBody
@@ -303,7 +278,7 @@ public class SearchController {
 				body(sitemap);
 	}
 
-	private String getSitemap(HttpServletRequest req) throws IOException, FeedException {
+	private String getSitemap(HttpServletRequest req) throws IOException {
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
 		if (canList) {
 			List<Post> questions = new LinkedList<>();
