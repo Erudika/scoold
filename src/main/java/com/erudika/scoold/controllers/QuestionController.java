@@ -249,7 +249,7 @@ public class QuestionController {
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
-				utils.sendReplyNotifications(showPost, answer, req);
+				utils.sendReplyNotifications(showPost, answer, needsApproval, req);
 				model.addAttribute("newpost", getNewAnswerPayload(answer));
 			} else {
 				model.addAttribute("error", error);

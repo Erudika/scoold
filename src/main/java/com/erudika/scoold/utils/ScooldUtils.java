@@ -45,8 +45,6 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
-import com.erudika.scoold.core.UnapprovedQuestion;
-import com.erudika.scoold.core.UnapprovedReply;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
@@ -686,7 +684,7 @@ public final class ScooldUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendNewPostNotifications(Post question, HttpServletRequest req) {
+	public void sendNewPostNotifications(Post question, boolean needApproval, HttpServletRequest req) {
 		if (question == null || req.getParameter("notificationsDisabled") != null) {
 			return;
 		}
@@ -695,7 +693,7 @@ public final class ScooldUtils {
 		if (!isNewPostNotificationAllowed()) {
 			return;
 		}
-		boolean awaitingApproval = postsNeedApproval(req) || question instanceof UnapprovedQuestion;
+		boolean awaitingApproval = needApproval;
 		Map<String, Object> model = new HashMap<String, Object>();
 		Map<String, String> lang = getLang(req);
 		String name = postAuthor.getName();
@@ -717,7 +715,9 @@ public final class ScooldUtils {
 		Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
 		emails.addAll(getFavTagsSubscribers(question.getTags()));
 		sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
-		createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
+		if (!isMod(postAuthor)) {
+			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
+		}
 
 		if (awaitingApproval) {
 			Report rep = new Report();
@@ -733,14 +733,14 @@ public final class ScooldUtils {
 		}
 	}
 
-	public void sendReplyNotifications(Post parentPost, Post reply, HttpServletRequest req) {
+	public void sendReplyNotifications(Post parentPost, Post reply, boolean needApproval, HttpServletRequest req) {
 		// send email notification to author of post except when the reply is by the same person
 		if (parentPost == null || reply == null) {
 			return;
 		}
 		Map<String, String> lang = getLang(req);
 		Profile replyAuthor = reply.getAuthor(); // the current user - same as utils.getAuthUser(req)
-		boolean awaitingApproval = postsNeedApproval(req) || reply instanceof UnapprovedReply;
+		boolean awaitingApproval = needApproval;
 		Map<String, Object> model = new HashMap<String, Object>();
 		String name = replyAuthor.getName();
 		String body = Utils.markdownToHtml(reply.getBody());
@@ -776,7 +776,7 @@ public final class ScooldUtils {
 			}
 		}
 
-		if (isReplyNotificationAllowed()) {
+		if (isReplyNotificationAllowed() && !isMod(replyAuthor)) {
 			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
 		}
 

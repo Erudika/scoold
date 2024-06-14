@@ -25,7 +25,7 @@
 				<div class="col m12">
 					#if($showreport.properties.size() > 0)
 						#foreach($key in $showreport.properties.keySet())
-							#if($key != "key")
+							#if($key != "key" && $!showreport.properties.get($key))
 								<div><code><b>$!key</b>: $!showreport.properties.get($key)</code></div>
 							#end
 						#end

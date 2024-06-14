@@ -258,7 +258,7 @@ public class QuestionsController {
 				q.setId(qid);
 				q.setLocation(location);
 				q.create();
-				utils.sendNewPostNotifications(q, req);
+				utils.sendNewPostNotifications(q, needsApproval, req);
 				if (!StringUtils.isBlank(latlng)) {
 					Address addr = new Address(qid + Para.getConfig().separator() + Utils.type(Address.class));
 					addr.setAddress(address);
