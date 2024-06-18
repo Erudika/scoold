@@ -1387,6 +1387,24 @@ public final class ScooldUtils {
 				collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
+	public void addSpaceToCachedList(Sysprop space) {
+		if (space != null) {
+			if (allSpaces == null || allSpaces.isEmpty()) {
+				getAllSpacesAdmin();
+			}
+			allSpaces.add(space);
+		}
+	}
+
+	public void removeSpaceFromCachedList(Sysprop space) {
+		if (space != null) {
+			if (allSpaces == null || allSpaces.isEmpty()) {
+				getAllSpacesAdmin();
+			}
+			allSpaces.remove(space);
+		}
+	}
+
 	public boolean canAccessSpace(Profile authUser, String targetSpaceId) {
 		if (authUser == null) {
 			return isDefaultSpacePublic() && isDefaultSpace(targetSpaceId);
@@ -2082,8 +2100,8 @@ public final class ScooldUtils {
 						return exp.getTime();
 					}
 				}
-			} catch (ParseException ex) {
-				logger.error("Failed to parse API key " + StringUtils.substring(jwt, 0, 10), ex);
+			} catch (Exception ex) {
+				logger.error("Failed to parse API key " + k + " - key doesn't seem to be in JWT format.", ex.getMessage());
 			}
 			return 0L;
 		}));

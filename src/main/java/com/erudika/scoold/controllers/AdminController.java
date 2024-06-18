@@ -180,7 +180,7 @@ public class AdminController {
 					authUser.getSpaces().add(spaceObj.getId() + Para.getConfig().separator() + spaceObj.getName());
 					authUser.update();
 					model.addAttribute("space", spaceObj);
-					utils.getAllSpacesAdmin().add(spaceObj);
+					utils.addSpaceToCachedList(spaceObj);
 				} else {
 					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
 				}
@@ -204,7 +204,7 @@ public class AdminController {
 			pc.delete(s);
 			authUser.getSpaces().remove(space);
 			authUser.update();
-			utils.getAllSpacesAdmin().remove(s);
+			utils.removeSpaceFromCachedList(s);
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
