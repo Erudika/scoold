@@ -2101,7 +2101,7 @@ public final class ScooldUtils {
 					}
 				}
 			} catch (Exception ex) {
-				logger.error("Failed to parse API key " + k + " - key doesn't seem to be in JWT format.", ex.getMessage());
+				logger.error("Failed to parse API key " + k + " - key doesn't seem to be in JWT format. {}", ex.getMessage());
 			}
 			return 0L;
 		}));

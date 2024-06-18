@@ -1443,6 +1443,13 @@ paths:
         - stats
       security:
       - scoold_auth: []
+      parameters:
+        - name: includeLogs
+          in: query
+          required: false
+          description: If set to `true` will read and return the Scoold log file as well.
+          schema:
+            type: boolean
       responses:
         '200':
           description: stats

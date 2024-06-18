@@ -61,6 +61,9 @@ import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,6 +79,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -996,6 +1000,19 @@ public class ApiController {
 		stats.put("para_version", Optional.ofNullable(paraVer).orElse("unknown"));
 		stats.put("scoold_version", Optional.ofNullable(Version.getVersion()).
 				orElse(Optional.ofNullable(System.getenv("SCOOLD_VERSION")).orElse("unknown")));
+
+		if ("true".equals(req.getParameter("includeLogs"))) {
+			try {
+				String logFile = System.getProperty("para.logs_dir", System.getProperty("user.dir"))
+						+ "/" + System.getProperty("para.logs_name", "scoold") + ".log";
+				Path path = Paths.get(logFile);
+				try (Stream<String> lines = Files.lines(path)) {
+					stats.put("log", lines.collect(Collectors.joining("\n")));
+				}
+			} catch (Exception e) {
+				logger.error("Failed to read log file. {}", e.getMessage());
+			}
+		}
 		return stats;
 	}
 

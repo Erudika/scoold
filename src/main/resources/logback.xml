@@ -13,10 +13,10 @@
 	</appender>
 
 	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${para.logs_dir:-.}/${para.logs_name:-para}.log</file>
+		<file>${para.logs_dir:-.}/${para.logs_name:-scoold}.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover monthly -->
-			<fileNamePattern>para-%d{yyyy-MM}.log.zip</fileNamePattern>
+			<fileNamePattern>${para.logs_name:-scoold}-%d{yyyy-MM}.log.zip</fileNamePattern>
 			<maxHistory>12</maxHistory>
 			<totalSizeCap>3GB</totalSizeCap>
 		</rollingPolicy>
@@ -29,9 +29,9 @@
 	</appender>
 
 	<appender name="METRICSAPPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${para.logs_dir:-.}/${para.logs_name:-para}-metrics.log</file>
+		<file>${para.logs_dir:-.}/${para.logs_name:-scoold}-metrics.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${para.logs_name:-para}-metrics-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+			<fileNamePattern>${para.logs_name:-scoold}-metrics-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
 			<maxHistory>7</maxHistory>
 			<totalSizeCap>1GB</totalSizeCap>
 		</rollingPolicy>
