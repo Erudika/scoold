@@ -2009,10 +2009,31 @@
 		"name": "java.time.DurationEditor"
 	},
 	{
-		"name": "java.util.ArrayList"
+		"name": "java.util.Collection",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true
 	},
 	{
-		"name": "java.util.Enumeration"
+		"name": "java.util.ArrayList",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true
+	},
+	{
+		"name": "java.util.Enumeration",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true
 	},
 	{
 		"name": "java.util.HashSet",
