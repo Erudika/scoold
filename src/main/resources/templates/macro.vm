@@ -257,6 +257,7 @@
 			<span class="chip mrs">$!showtag</span>
 			#else
 			<a href="$link/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="chip mrs tagchip">$!showtag</a>
+			<div class="material-tooltip"><div class="tooltip-content"></div></div>
 			#end
 		#end
 	#end
