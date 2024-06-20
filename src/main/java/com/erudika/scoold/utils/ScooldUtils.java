@@ -2373,8 +2373,7 @@ public final class ScooldUtils {
 		Akismet akismet = new Akismet(CONF.akismetApiKey(), CONF.serverUrl());
 		final boolean isSpam = akismet.checkComment(comment);
 		confirmSpam(comment, isSpam, CONF.automaticSpamProtectionEnabled(), req);
-		return true;
-//		return isSpam;
+		return isSpam;
 	}
 
 	public void confirmSpam(AkismetComment comment, boolean isSpam, boolean submit, HttpServletRequest req) {
