@@ -369,6 +369,17 @@ public class ApiController {
 		}
 	}
 
+	@GetMapping("/posts/{id}/answers")
+	public List<Reply> getPostReplies(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Post post = pc.read(id);
+		if (post == null) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
+		Pager itemcount = utils.getPager("page", req);
+		return questionController.getAllAnswers(utils.getAuthUser(req), post, itemcount, req);
+	}
+
 	@GetMapping("/posts/{id}/comments")
 	public List<Comment> getPostComments(@PathVariable String id,
 			@RequestParam(required = false, defaultValue = "5") String limit,

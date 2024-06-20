@@ -444,6 +444,34 @@ paths:
           description: vote succeeded
         '400':
           description: vote failed
+  /api/posts/{id}/answers:
+    get:
+      summary: Returns a page of answers for a given post
+      description: You can paginate through answers by setting the parameters `sortby`, `desc`, `limit` and `page`.
+      tags:
+        - posts
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the parent question
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sortby'
+        - $ref: '#/components/parameters/desc'
+      responses:
+        '200':
+          description: A list of answers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posts'
+        '404':
+          description: Not found
   /api/posts/{id}/comments:
     get:
       summary: Returns a page of comments for a given post
