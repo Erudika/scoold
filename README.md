@@ -1746,8 +1746,10 @@ The standard events emitted by Scoold are:
 - `question.create` - whenever a new question is created
 - `question.close` - whenever a question is closed
 - `question.view` - whenever a question is viewed by anyone
+- `question.approve` - whenever a question is approved by moderator
 - `answer.create` - whenever a new answer is created
 - `answer.accept` - whenever an answer is accepted
+- `answer.approve` - whenever an answer is approved by moderator
 - `report.create` - whenever a new report is created
 - `comment.create` - whenever a new comment is created
 - `user.signin` - whenever a user signs in to the system
