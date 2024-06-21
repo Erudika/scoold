@@ -386,32 +386,40 @@ public class SigninController {
 
 	private String getEmailFromAccessToken(String accessToken) {
 		String[] tokenParts = StringUtils.split(accessToken, ":");
-		return (tokenParts != null && tokenParts.length > 0) ? tokenParts[0] : "";
+		return (tokenParts != null && tokenParts.length > 0) ? StringUtils.toRootLowerCase(tokenParts[0]) : "";
 	}
 
 	private boolean isEmailRegistered(String email) {
-		Sysprop ident = pc.read(email);
+		if (StringUtils.isBlank(email)) {
+			return false;
+		}
+		Sysprop ident = pc.read(email.toLowerCase());
 		return ident != null && ident.hasProperty(Config._PASSWORD);
 	}
 
 	private boolean isAccountLocked(String email) {
-		Sysprop ident = pc.read(email);
-		if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
-			User u = pc.read(Utils.type(User.class), ident.getCreatorid());
-			return u != null && !u.getActive();
+		if (!StringUtils.isBlank(email)) {
+			Sysprop ident = pc.read(email.toLowerCase());
+			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
+				User u = pc.read(Utils.type(User.class), ident.getCreatorid());
+				return u != null && !u.getActive();
+			}
 		}
 		return false;
 	}
 
 	private void verifyEmailIfNecessary(String name, String email, HttpServletRequest req) {
-		Sysprop ident = pc.read(email);
-		if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
-			User u = new User(ident.getCreatorid());
-			u.setActive(false);
-			u.setName(name);
-			u.setEmail(email);
-			u.setIdentifier(email);
-			utils.sendWelcomeEmail(u, true, req);
+		if (!StringUtils.isBlank(email)) {
+			email = email.toLowerCase();
+			Sysprop ident = pc.read(email);
+			if (ident != null && !ident.hasProperty(Config._EMAIL_TOKEN)) {
+				User u = new User(ident.getCreatorid());
+				u.setActive(false);
+				u.setName(name);
+				u.setEmail(email);
+				u.setIdentifier(email);
+				utils.sendWelcomeEmail(u, true, req);
+			}
 		}
 	}
 
@@ -424,6 +432,7 @@ public class SigninController {
 		if (StringUtils.isBlank(email)) {
 			return "";
 		}
+		email = email.toLowerCase();
 		Sysprop s = pc.read(email);
 		// pass reset emails can be sent once every 12h
 		if (s != null) {
