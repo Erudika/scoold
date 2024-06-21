@@ -898,41 +898,43 @@ $(function () {
 	});
 
 	var tagDescriptions = {};
-	$(".tagchip").on("mouseenter mouseover mousemove", function () {
+	$(".tagchip").on("mouseenter", function () {
 		var that = $(this);
 		var tag = that.text();
 		if (tag && $.trim(tag) !== "") {
 			if (!tagDescriptions[tag] || tagDescriptions[tag] === "") {
-				tagDescriptions[tag] = " ";
 				$.get(CONTEXT_PATH + "/tags/" + tag, function (data) {
-					//if (data.length === 0) {data.push({tag: val});}
 					data.map(function (t) {
 						if (t.description) {
 							tagDescriptions[t.tag] = t.description;
 							showTagTooltip(that, tagDescriptions[tag]);
-							that.attr("title", "");
 						}
 					});
 				});
 			}
 			if ($.trim(tagDescriptions[tag]) !== "" && that.attr("data-tooltip") !== tagDescriptions[tag]) {
-				that.attr("title", "");
 				showTagTooltip(that, tagDescriptions[tag]);
 			}
 		}
 	});
 
 	function showTagTooltip(that, text) {
-		that.next("div.material-tooltip").css({
-			"opacity":"1",
-			"visibility":"visible",
-			"left": that.offset().left,
-			"top": that.offset().top + 40
-		}).find(".tooltip-content").text(text);
+		if (text && $.trim(text) !== "") {
+			that.attr("title", "");
+			that.next("div.material-tooltip").css({
+				"opacity":"1",
+				"visibility":"visible",
+				"left": that.offset().left,
+				"top": that.offset().top + 40
+			}).find(".tooltip-content").text(text);
+		}
 	}
 
 	$(".tagchip").on("mouseleave", function () {
-		$(this).next("div.material-tooltip").css({"opacity": "0", "visibility": "hidden"});
+		var that = $(this);
+		setTimeout(function () {
+			that.next("div.material-tooltip").css({"opacity": "0", "visibility": "hidden"});
+		}, 150);
 	});
 
 	/****************************************************
