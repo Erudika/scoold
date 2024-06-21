@@ -86,6 +86,7 @@ public abstract class Post extends Sysprop {
 
 	private transient Profile author;
 	private transient Profile lastEditor;
+	private transient Profile approvedby;
 	private transient List<Comment> comments;
 	private transient Pager itemcount;
 	private transient Vote vote;
@@ -106,6 +107,14 @@ public abstract class Post extends Sysprop {
 
 	public void setApprovalTimestamp(Long approvalTimestamp) {
 		this.approvalTimestamp = approvalTimestamp;
+	}
+
+	public Profile getApprovedby() {
+		return approvedby;
+	}
+
+	public void setApprovedby(Profile approvedby) {
+		this.approvedby = approvedby;
 	}
 
 	public Boolean getDeprecated() {

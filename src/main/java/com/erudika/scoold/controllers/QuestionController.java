@@ -275,13 +275,17 @@ public class QuestionController {
 		if (utils.isMod(authUser)) {
 			if (showPost instanceof UnapprovedQuestion) {
 				showPost.setType(Utils.type(Question.class));
+				showPost.setApprovedby(authUser);
 				pc.create(showPost);
 				// this notification here is redundant
 				//utils.sendNewPostNotifications(showPost, req);
+				utils.triggerHookEvent("question.approve", showPost);
 			} else if (showPost instanceof UnapprovedReply) {
 				showPost.setType(Utils.type(Reply.class));
+				showPost.setApprovedby(authUser);
 				addRepOnReplyOnce(pc.read(showPost.getParentid()), (Profile) pc.read(showPost.getCreatorid()), true);
 				pc.create(showPost);
+				utils.triggerHookEvent("answer.approve", showPost);
 			}
 			utils.deleteReportsAfterModAction(showPost);
 		}
