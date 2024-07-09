@@ -457,7 +457,7 @@ public class QuestionsController {
 	}
 
 	private boolean isSpaceFilteredRequest(Profile authUser, String space) {
-		return !(utils.isDefaultSpace(space) && utils.isMod(authUser)) && utils.canAccessSpace(authUser, space);
+		return utils.canAccessSpace(authUser, space);
 	}
 
 	private Pager getPagerFromCookie(HttpServletRequest req, Pager defaultPager) {
