@@ -1248,11 +1248,7 @@ paths:
               $ref: '#/components/schemas/Space'
       responses:
         '200':
-          description: Space object returned
-          content:
-            application/json:
-                schema:
-                  $ref: '#/components/schemas/Space'
+          description: Space was updated, empty response.
     delete:
       summary: Delete space
       tags:
