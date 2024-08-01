@@ -115,6 +115,7 @@ public class QuestionController {
 		Pager itemcount = utils.getPager("page", req);
 		itemcount.setSortby("newest".equals(sortby) ? "timestamp" : "votes");
 		List<Reply> answerslist = getAllAnswers(authUser, showPost, itemcount, req);
+		showPost.setAnswercount(itemcount.getCount()); // autocorrect answer count
 		LinkedList<Post> allPosts = new LinkedList<Post>();
 		allPosts.add(showPost);
 		allPosts.addAll(answerslist);
@@ -374,6 +375,7 @@ public class QuestionController {
 			c = pc.create(c);
 			if (c != null) {
 				question.addCommentId(c.getId());
+				question.setAnswercount(question.getAnswercount() - 1);
 				pc.update(question);
 				answer.delete();
 				return "redirect:" + question.getPostLinkForRedirect();
