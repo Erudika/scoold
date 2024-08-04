@@ -347,6 +347,10 @@
 								<span class="pam">
 									<b>1.</b> Visit the <a href="">Azure Poral</a>, navigate to "App registrations" and create a new
 									<b>multitenant</b> app registration called "Scoold" with the "Web" type selected under "Redirect URI".
+									If you choose to create a single tenant app registration, you must specify your tenant ID and add
+									explicit API permissions to your app registration
+									(<small class="grey-text"><code>Channel.ReadBasic.All, ChannelMessage.Read.All, Group.Read.All, User.Read, email, offline_access, openid, profile</code></small>).
+									<br><br>
 									In the "Certificates and Secrets" tab, create a new client secret and take note of the secret key.
 									Then go to the "Overview" tab and take note of the "Application (client) ID". Add these two values to
 									your Scoold configuration file <code>application.conf</code>:
@@ -355,6 +359,7 @@
 								<code><pre>
   scoold.ms_app_id = "{Client ID}"
   scoold.ms_secret = "{Client Secret}"
+  scoold.ms_tenant_id = "{Tenant ID}"
 								</pre></code>
 
 							</li>
