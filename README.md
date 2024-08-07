@@ -597,6 +597,7 @@ scoold.password_auth_enabled = true
 |`scoold.teams.post_to_space` <kbd>Pro</kbd><br>Default space on Scoold where questions created on Teams will be published. Set it to `workspace` for using the team's name. | ` ` | `String`|
 |`scoold.teams.map_channels_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Teams channels to Scoold spaces. When enabled, will create a Scoold space for each Teams channel. | `false` | `Boolean`|
 |`scoold.teams.map_workspaces_to_spaces` <kbd>Pro</kbd><br>Enable/disable mapping of Teams teams to Scoold spaces. When enabled, will create a Scoold space for each Teams team. | `true` | `Boolean`|
+|`scoold.teams.private_teams_listing_allowed` <kbd>Pro</kbd><br>Enable/disable the listing of private teams on the Administration page when configuring notification webhooks for Scoold spaces. | `true` | `Boolean`|
 |`scoold.teams.max_notification_webhooks` <kbd>Pro</kbd><br>The maximum number of incoming webhooks which can be created on Scoold. Each webhook links a Teams channel to Scoold. | `10` | `Integer`|
 |`scoold.teams.default_title` <kbd>Pro</kbd><br>Default question title for questions created on Teams. | `A question from Microsoft Teams` | `String`|
 |`scoold.teams.default_question_tags` <kbd>Pro</kbd><br>Default question tags for questions created on Teams (comma-separated list). | `via-teams` | `String`|

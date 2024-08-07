@@ -3048,6 +3048,18 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("teams.map_workspaces_to_spaces", true);
 	}
 
+	@Documented(position = 2781,
+			identifier = "teams.private_teams_listing_allowed",
+			value = "true",
+			type = Boolean.class,
+			category = "Microsoft Teams Integration",
+			tags = {"Pro"},
+			description = "Enable/disable the listing of private teams on the Administration page "
+					+ "when configuring notification webhooks for Scoold spaces.")
+	public boolean teamsPrivateTeamsListingAllowed() {
+		return getConfigBoolean("teams.private_teams_listing_allowed", true);
+	}
+
 	@Documented(position = 2790,
 			identifier = "teams.max_notification_webhooks",
 			value = "10",

@@ -347,9 +347,9 @@
 								<span class="pam">
 									<b>1.</b> Visit the <a href="">Azure Poral</a>, navigate to "App registrations" and create a new
 									<b>multitenant</b> app registration called "Scoold" with the "Web" type selected under "Redirect URI".
-									If you choose to create a single tenant app registration, you must specify your tenant ID and add
-									explicit API permissions to your app registration
-									(<small class="grey-text"><code>Channel.ReadBasic.All, ChannelMessage.Read.All, Group.Read.All, User.Read, email, offline_access, openid, profile</code></small>).
+									If you choose to create a <b>single tenant</b> app registration, you must specify your tenant ID and explicitly
+									add the following API permissions to your app registration:
+									<small><code>Channel.ReadBasic.All, ChannelMessage.Read.All, Group.Read.All, User.ReadBasic.All, email, offline_access, openid, profile</code></small>.
 									<br><br>
 									In the "Certificates and Secrets" tab, create a new client secret and take note of the secret key.
 									Then go to the "Overview" tab and take note of the "Application (client) ID". Add these two values to
@@ -401,7 +401,8 @@
 							<li class="mvm mediumText"><span class="pam">
 									<b>6.</b> On the same page, click the "Download app package" button. Download the Zip file and sideload
 									it in Teams - go to the Teams app catalog and click "Upload a custom app > Upload for me or my teams"
-									at the bottom-left and select the Scoold.zip package.</span>
+									at the bottom-left and select the <code>Scoold.zip</code> package. <b>Repeat this step for every team
+									where you want to receive notifications from Scoold.</b></span>
 							</li>
 							<li class="mvm mediumText"><span class="pam">
 									<b>7.</b> Click the <b>"Add to team"</b> button and select the team/channel where you want the Scoold app installed.</span>
