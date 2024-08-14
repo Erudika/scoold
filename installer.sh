@@ -8,7 +8,7 @@ WORKDIR="/home/ubuntu"
 JARURL="https://github.com/Erudika/scoold/releases/download/${VERSION}/scoold-${VERSION}.jar"
 sfile="/etc/systemd/system/scoold.service"
 
-apt-get update && apt-get install -y wget openjdk-11-jre &&
+apt-get update && apt-get install -y wget openjdk-21-jre &&
 wget -O scoold.jar ${JARURL} && \
 mv scoold.jar $WORKDIR && \
 chown ubuntu:ubuntu ${WORKDIR}/scoold.jar && \
