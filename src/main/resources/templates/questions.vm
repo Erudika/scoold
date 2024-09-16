@@ -221,7 +221,7 @@
 							#macro(filterselected $prop)
 							#if($questionsTypeFilter == $prop)selected#end
 							#end
-							#set($unacceptedQuery = "properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]" )
+							#set($unacceptedQuery = $utils.urlEncode("properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]") )
 							<select name="typeFilter">
 								<option value="" #filterselected("")>$!lang.get('showall')</option>
 								<option value="type:question" #filterselected("type:question")>$!lang.get('questions.title')</option>

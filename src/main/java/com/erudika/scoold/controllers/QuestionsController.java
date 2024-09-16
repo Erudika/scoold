@@ -189,6 +189,8 @@ public class QuestionsController {
 			if (!StringUtils.isBlank(typeFilter)) {
 				HttpUtils.setRawCookie("questions-type-filter", typeFilter,
 					req, res, "Strict", (int) TimeUnit.DAYS.toSeconds(365));
+			} else {
+				HttpUtils.removeStateParam("questions-type-filter", req, res);
 			}
 			savePagerToCookie(req, res, p);
 			HttpUtils.setRawCookie("questions-view-compact", compactViewEnabled,
@@ -451,7 +453,7 @@ public class QuestionsController {
 			queryExt = StringUtils.trimToEmpty(HttpUtils.getCookieValue(req, "questions-type-filter"));
 		}
 		if (!queryExt.isBlank()) {
-			return query.equals("*") ? queryExt : query + " AND (" + queryExt + ")";
+			return query.equals("*") ? queryExt : query + " AND (" + Utils.urlDecode(queryExt) + ")";
 		}
 		return query;
 	}
