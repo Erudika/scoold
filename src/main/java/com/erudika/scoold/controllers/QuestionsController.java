@@ -452,8 +452,9 @@ public class QuestionsController {
 		if (StringUtils.isBlank(queryExt) || queryExt.startsWith("*")) {
 			queryExt = StringUtils.trimToEmpty(HttpUtils.getCookieValue(req, "questions-type-filter"));
 		}
+		queryExt = Utils.urlDecode(queryExt);
 		if (!queryExt.isBlank()) {
-			return query.equals("*") ? queryExt : query + " AND (" + Utils.urlDecode(queryExt) + ")";
+			return query.equals("*") ? queryExt : query + " AND (" + queryExt + ")";
 		}
 		return query;
 	}
