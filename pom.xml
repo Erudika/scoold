@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>9.40</version>
+			<version>9.41</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudinary</groupId>
