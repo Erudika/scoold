@@ -149,7 +149,8 @@ public class ProfileController {
 	}
 
 	@PostMapping("/{id}/make-mod")
-	public String makeMod(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public String makeMod(@PathVariable String id, @RequestParam(required = false, defaultValue = "") List<String> spaces,
+			HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (!isMyid(authUser, Profile.id(id))) {
 			Profile showUser = pc.read(Profile.id(id));
@@ -158,11 +159,12 @@ public class ProfileController {
 					if (CONF.modsAccessAllSpaces()) {
 						showUser.setGroups(utils.isMod(showUser) ? USERS.toString() : MODS.toString());
 					} else {
-						String space = req.getParameter("space");
-						if (showUser.isModInSpace(space)) {
-							showUser.getModspaces().remove(space);
-						} else {
-							showUser.getModspaces().add(space);
+						for (String space : spaces) {
+							if (showUser.isModInSpace(space)) {
+								showUser.getModspaces().remove(space);
+							} else {
+								showUser.getModspaces().add(space);
+							}
 						}
 					}
 					showUser.update();

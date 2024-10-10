@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.5.0"
+  version: "1.6.0"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
@@ -751,7 +751,13 @@ paths:
         - name: id
           in: path
           required: true
-          description: The id of the post
+          description: The id of the user to promote/demote
+          schema:
+            type: string
+        - name: spaces
+          in: query
+          required: false
+          description: A comma-separated list of spaces in which the user will be promoted/demoted to moderator. Endpoint acts a toggle switch. This parameter is **only required if** `scoold.mods_access_all_spaces = false`.
           schema:
             type: string
       responses:
@@ -769,7 +775,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The id of the post
+          description: The id of the user to ban/unban
           schema:
             type: string
         - name: banuntil

@@ -618,8 +618,9 @@ public class ApiController {
 	}
 
 	@PutMapping("/users/{id}/moderator")
-	public void makeUserMod(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		profileController.makeMod(id, req, res);
+	public void makeUserMod(@PathVariable String id, @RequestParam(required = false, defaultValue = "") List<String> spaces,
+			HttpServletRequest req, HttpServletResponse res) {
+		profileController.makeMod(id, spaces, req, res);
 	}
 
 	@PutMapping("/users/{id}/ban")

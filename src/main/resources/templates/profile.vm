@@ -256,7 +256,7 @@
 					#if ($isAdmin && !$scooldUtils.config.modsAccessAllSpaces())
 						#if(!$scooldUtils.isAdmin($showUser))
 						<small>
-							<a href="$profilelink/$showUser.creatorid/make-mod?space=$!s" class="make-mod-btn">
+							<a href="$profilelink/$showUser.creatorid/make-mod?spaces=$!s" class="make-mod-btn">
 								#if ($showUser.isModInSpace($s))#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
 								<span class="#if($showUser.isModInSpace($s))#else hide#end">Unmake mod</span>
 								<span class="#if($showUser.isModInSpace($s))hide#else#end">Make mod</span>
