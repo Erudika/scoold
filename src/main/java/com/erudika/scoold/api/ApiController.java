@@ -641,9 +641,9 @@ public class ApiController {
 				Collections.emptyList())).stream().distinct().collect(Collectors.toSet());
 		Set<String> selectedBadges = ((List<String>) entity.getOrDefault("badges",
 				Collections.emptyList())).stream().distinct().collect(Collectors.toSet());
-		peopleController.bulkEdit(selectedUsers.toArray(new String[0]),
-				readSpaces(selectedSpaces).toArray(new String[0]),
-				selectedBadges.toArray(new String[0]), req);
+		peopleController.bulkEdit(selectedUsers.toArray(String[]::new),
+				readSpaces(selectedSpaces).toArray(String[]::new),
+				selectedBadges.toArray(String[]::new), req);
 	}
 
 	@PostMapping("/tags")

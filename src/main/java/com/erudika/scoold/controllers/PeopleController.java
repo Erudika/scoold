@@ -32,6 +32,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -119,12 +119,18 @@ public class PeopleController {
 					Collections.emptyList() : Arrays.asList(selectedSpaces);
 			List<String> badges = (selectedBadges == null || selectedBadges.length == 0) ?
 					Collections.emptyList() : Arrays.asList(selectedBadges);
-			String query = (selection == null || "selected".equals(selection)) ?
-					Config._ID + ":(\"" + String.join("\" \"", selectedUsers) + "\")" : "*";
+
 			pc.updateAllPartially((toUpdate, pager) -> {
-				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), query, pager);
-				bulkEditSpacesAndBadges(profiles, operation, spaces, badges, toUpdate);
-				return profiles;
+				List<Profile> profiles;
+				if (selection == null || "selected".equals(selection)) {
+					profiles = pc.readAll(List.of(selectedUsers));
+					bulkEditSpacesAndBadges(profiles, operation, spaces, badges, toUpdate);
+					return Collections.emptyList();
+				} else {
+					profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
+					bulkEditSpacesAndBadges(profiles, operation, spaces, badges, toUpdate);
+					return profiles;
+				}
 			});
 		}
 		return "redirect:" + PEOPLELINK + (isAdmin ? "?" + req.getQueryString() : "");
