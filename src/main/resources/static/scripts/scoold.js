@@ -33,7 +33,7 @@ $(function () {
 		$('input.autocomplete').autocomplete();
 		$('.collapsible').collapsible();
 		$('.tooltipped').tooltip();
-		$('.modal').modal();
+		$('.modal', '.modal-trigger').modal();
 		$('.chips').chips();
 		$('.tabs').tabs();
 		$('.dropdown-trigger').dropdown({

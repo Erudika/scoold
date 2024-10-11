@@ -182,6 +182,138 @@
 		"allPublicClasses": true
 	},
 	{
+		"name": "com.erudika.para.core.ParaObject",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Address",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.App",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Linkable",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Linker",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Sysprop",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Tag",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Translation",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.User",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Votable",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Vote",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
+		"name": "com.erudika.para.core.Webhook",
+		"allDeclaredConstructors": true,
+		"allPublicConstructors": true,
+		"allDeclaredMethods": true,
+		"allPublicMethods": true,
+		"allDeclaredFields": true,
+		"allPublicFields": true,
+		"allDeclaredClasses": true,
+		"allPublicClasses": true
+	},
+	{
 		"name": "com.erudika.scoold.core.Badge",
 		"allDeclaredConstructors": true,
 		"allPublicConstructors": true,
