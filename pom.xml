@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity-engine-core</artifactId>
-			<version>2.3</version>
+			<version>2.4</version>
 		</dependency>
 
 		<!-- SPRING BOOT -->
@@ -174,6 +174,8 @@
 	</dependencies>
 
 	<build>
+		<finalName>scoold-${project.version}</finalName>
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -240,7 +242,6 @@
 						</goals>
 						<configuration>
 							<executable>true</executable>
-							<finalName>scoold-${project.version}</finalName>
 							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
 							<excludeDevtools>true</excludeDevtools>
 						</configuration>
