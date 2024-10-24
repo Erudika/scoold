@@ -344,7 +344,7 @@ img.profile-pic {
 }
 .user-card img.profile-pic, .user-card-compact img.profile-pic {
 	width: 100%;
-	padding: 6px 0px 0px 6px;
+	padding: 6px 0px 0px 7px;
 }
 img.profile-pic:before {
   content: " ";

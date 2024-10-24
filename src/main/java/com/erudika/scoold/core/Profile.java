@@ -77,6 +77,7 @@ public class Profile extends Sysprop {
 	@Stored private List<Map<String, String>> customBadges;
 	@Stored private String pendingEmail;
 	@Stored private Boolean editorRoleEnabled;
+	@Stored private String preferredSpace;
 
 	private transient String currentSpace;
 	private transient String newbadges;
@@ -366,6 +367,18 @@ public class Profile extends Sysprop {
 
 	public void setFavspaces(Set<String> favspaces) {
 		this.favspaces = favspaces;
+	}
+
+	public String getPreferredSpace() {
+		// returns a preferred staring space upon login
+		if (StringUtils.isBlank(preferredSpace)) {
+			preferredSpace = ScooldUtils.getConfig().defaultStartingSpace();
+		}
+		return preferredSpace;
+	}
+
+	public void setPreferredSpace(String preferredSpace) {
+		this.preferredSpace = preferredSpace;
 	}
 
 	public boolean isModInCurrentSpace() {

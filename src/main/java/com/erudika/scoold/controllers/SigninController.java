@@ -166,7 +166,7 @@ public class SigninController {
 			if (!isEmailRegistered(email) && approvedDomain && isSubmittedByHuman(req) && goodPass) {
 				User u = pc.signIn("password", email + ":" + name + ":" + passw, false);
 				if (u != null && u.getActive()) {
-					setAuthCookie(u.getPassword(), req, res);
+					setAuthCookie(u, req, res);
 					triggerLoginEvent(u, req);
 					return "redirect:" + getBackToUrl(req);
 				} else {
@@ -359,7 +359,7 @@ public class SigninController {
 	private String onAuthSuccess(User u, HttpServletRequest req, HttpServletResponse res) {
 		if (u != null && utils.isEmailDomainApproved(u.getEmail())) {
 			// the user password in this case is a Bearer token (JWT)
-			setAuthCookie(u.getPassword(), req, res);
+			setAuthCookie(u, req, res);
 			triggerLoginEvent(u, req);
 			return "redirect:" + getBackToUrl(req);
 		} else if (u != null && !utils.isEmailDomainApproved(u.getEmail())) {

@@ -1807,6 +1807,14 @@ public class ScooldConfig extends Config {
 		return getConfigParam("auto_assign_spaces", "");
 	}
 
+	@Documented(position = 1681,
+			identifier = "default_starting_space",
+			category = "Spaces",
+			description = "The starting space to be selected for all users upon sign in.")
+	public String defaultStartingSpace() {
+		return getConfigParam("default_starting_space", "");
+	}
+
 	@Documented(position = 1690,
 			identifier = "reset_spaces_on_new_assignment",
 			value = "true",

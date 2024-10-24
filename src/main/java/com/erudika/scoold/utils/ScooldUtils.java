@@ -67,6 +67,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
@@ -233,7 +234,7 @@ public final class ScooldUtils {
 
 	public static void setParaEndpointAndApiPath(ParaClient pc) {
 		try {
-			URL endpoint = new URL(CONF.paraEndpoint());
+			URL endpoint = new URI(CONF.paraEndpoint()).toURL();
 			if (!StringUtils.isBlank(endpoint.getPath()) && !"/".equals(endpoint.getPath())) {
 				// support Para deployed under a specific context path
 				pc.setEndpoint(StringUtils.removeEnd(CONF.paraEndpoint(), endpoint.getPath()));
@@ -1455,7 +1456,7 @@ public final class ScooldUtils {
 		// used for setting the space from a direct URL to a particular space
 		req.setAttribute(CONF.spaceCookie(), space);
 		HttpUtils.setRawCookie(CONF.spaceCookie(), Utils.base64encURL(space.getBytes()),
-				req, res, "Strict", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
+				req, res, "Lax", StringUtils.isBlank(space) ? 0 : 365 * 24 * 60 * 60);
 	}
 
 	public String verifyExistingSpace(Profile authUser, String space) {

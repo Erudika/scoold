@@ -23,6 +23,7 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import com.erudika.scoold.core.Profile;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -269,15 +270,22 @@ public final class HttpUtils {
 
 	/**
 	 * Sets the session cookie.
-	 * @param jwt a JWT from Para
+	 * @param authUser auth user
 	 * @param req req
 	 * @param res res
 	 */
-	public static void setAuthCookie(String jwt, HttpServletRequest req, HttpServletResponse res) {
-		if (StringUtils.isBlank(jwt)) {
-			return;
+	public static void setAuthCookie(User authUser, HttpServletRequest req, HttpServletResponse res) {
+		if (!StringUtils.isBlank(authUser.getPassword())) {
+			setRawCookie(CONF.authCookie(), authUser.getPassword(), req, res, "Lax", CONF.sessionTimeoutSec());
 		}
-		setRawCookie(CONF.authCookie(), jwt, req, res, "Lax", CONF.sessionTimeoutSec());
+		try {
+			Profile authu = ScooldUtils.getInstance().getParaClient().read(Profile.id(authUser.getId()));
+			if (authu != null && !StringUtils.isBlank(authu.getPreferredSpace())) {
+				ScooldUtils.getInstance().storeSpaceIdInCookie(authu.getPreferredSpace(), req, res);
+			}
+		} catch (Exception ex) {
+			logger.error(null, ex);
+		}
 	}
 
 	/**

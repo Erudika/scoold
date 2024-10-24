@@ -110,6 +110,7 @@ public class SettingsController {
 			}
 			setAnonymity(authUser, req.getParameter("anon"));
 			setDarkMode(authUser, req.getParameter("dark"));
+			authUser.setPreferredSpace(req.getParameter("preferredSpace"));
 			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn) && utils.isReplyNotificationAllowed());
 			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn) && utils.isCommentNotificationAllowed());
 			authUser.setFavtagsEmailsEnabled(Boolean.valueOf(favtagsEmailsOn) && utils.isFavTagsNotificationAllowed());
