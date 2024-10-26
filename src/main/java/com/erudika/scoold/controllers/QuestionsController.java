@@ -102,7 +102,7 @@ public class QuestionsController {
 	@GetMapping("/questions/tag/{tag}")
 	public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
 		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = Collections.emptyList();
@@ -162,7 +162,7 @@ public class QuestionsController {
 	@GetMapping({"/questions/favtags", "/questions/local"})
 	public String getSorted(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
 		}
 		getQuestions(sortby, req.getServletPath().endsWith("/favtags") ? "favtags" : "local", req, model);
 		model.addAttribute("path", "questions.vm");

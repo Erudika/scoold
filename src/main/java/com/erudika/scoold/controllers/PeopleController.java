@@ -82,7 +82,7 @@ public class PeopleController {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + PEOPLELINK;
 		}
-		if (req.getRequestURI().endsWith("/bulk-edit")) {
+		if (req.getServletPath().endsWith("/bulk-edit")) {
 			return "redirect:" + PEOPLELINK + "?bulkedit=true";
 		}
 		Profile authUser = utils.getAuthUser(req);
