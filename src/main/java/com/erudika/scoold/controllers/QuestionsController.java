@@ -102,7 +102,7 @@ public class QuestionsController {
 	@GetMapping("/questions/tag/{tag}")
 	public String getTagged(@PathVariable String tag, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
 		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Question> questionslist = Collections.emptyList();
@@ -162,7 +162,7 @@ public class QuestionsController {
 	@GetMapping({"/questions/favtags", "/questions/local"})
 	public String getSorted(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
 		}
 		getQuestions(sortby, req.getServletPath().endsWith("/favtags") ? "favtags" : "local", req, model);
 		model.addAttribute("path", "questions.vm");
@@ -324,9 +324,9 @@ public class QuestionsController {
 		utils.storeSpaceIdInCookie(space, req, res);
 		String backTo = HttpUtils.getBackToUrl(req, true);
 		if (!utils.isAuthenticated(req) && !(utils.isDefaultSpace(space) || utils.isAllSpaces(space))) {
-			return "redirect:" + SIGNINLINK + "?returnto=" + req.getServletPath();
+			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
 		}
-		if (StringUtils.isBlank(backTo) || backTo.equalsIgnoreCase(req.getServletPath())) {
+		if (StringUtils.isBlank(backTo) || backTo.equalsIgnoreCase(req.getRequestURI())) {
 			return get(req.getParameter("sortby"), req, model);
 		} else {
 			return "redirect:" + backTo;

@@ -108,7 +108,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("includeHighlightJS", CONF.codeHighlightingEnabled());
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
-		modelAndView.addObject("returnto", StringUtils.removeStart(request.getServletPath(), CONF.serverContextPath()));
+		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONF.serverContextPath()));
 		modelAndView.addObject("rev", StringUtils.substring(Utils.md5(Version.getVersion() + CONF.paraSecretKey()), 0, 12));
 		// Configurable constants
 		modelAndView.addObject("MAX_PAGES", CONF.maxPages());

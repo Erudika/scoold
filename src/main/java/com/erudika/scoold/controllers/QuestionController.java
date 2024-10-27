@@ -102,7 +102,7 @@ public class QuestionController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + (utils.isDefaultSpacePublic() || utils.isAuthenticated(req) ?
-					QUESTIONSLINK : SIGNINLINK + "?returnto=" + req.getServletPath());
+					QUESTIONSLINK : SIGNINLINK + "?returnto=" + req.getRequestURI());
 		} else if (!utils.isDefaultSpace(showPost.getSpace()) && pc.read(utils.getSpaceId(showPost.getSpace())) == null) {
 			showPost.setSpace(Post.DEFAULT_SPACE);
 			pc.update(showPost);
@@ -159,7 +159,7 @@ public class QuestionController {
 				res.setStatus(400);
 				return "blank";
 			} else {
-				return "redirect:" + req.getServletPath(); // + "/edit-post-12345" ?
+				return "redirect:" + req.getRequestURI(); // + "/edit-post-12345" ?
 			}
 		}
 		boolean isQuestion = !showPost.isReply();
@@ -298,7 +298,7 @@ public class QuestionController {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (answerid != null && utils.canApproveReply(showPost, authUser)) {
 			Reply answer = (Reply) pc.read(answerid);
@@ -343,7 +343,7 @@ public class QuestionController {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (showPost == null) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.isMod(authUser) && !showPost.isReply()) {
 			if (showPost.isClosed()) {
@@ -363,7 +363,7 @@ public class QuestionController {
 		Post answer = pc.read(answerid);
 		Profile authUser = utils.getAuthUser(req);
 		if (question == null || answer == null) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.isMod(authUser) && answer.isReply()) {
 			Profile author = pc.read(answer.getCreatorid());
@@ -389,7 +389,7 @@ public class QuestionController {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser)) {
 			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
@@ -404,7 +404,7 @@ public class QuestionController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
 			model.addAttribute("post", showPost);
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (!showPost.isReply()) {
 			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser)) || utils.isMod(authUser)) {
@@ -433,7 +433,7 @@ public class QuestionController {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.canEdit(showPost, authUser) || showPost == null) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser)) {
 			showPost.setDeprecated(!showPost.getDeprecated());
@@ -449,7 +449,7 @@ public class QuestionController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!(utils.canEdit(showPost, authUser) && utils.canEdit(targetPost, authUser)) || showPost == null ||
 				targetPost == null || showPost.isReply() || targetPost.isReply() || showPost.equals(targetPost)) {
-			return "redirect:" + req.getServletPath();
+			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser) && utils.canEdit(targetPost, authUser)) {
 			if (CONF.mergeQuestionBodies()) {
