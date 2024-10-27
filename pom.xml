@@ -291,7 +291,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.0</version>
+				<version>3.5.1</version>
 				<configuration>
 					<!--<argLine>-Xmx256m  ${surefireArgLine}</argLine>-->
 					<skipTests>${skipTests}</skipTests>
@@ -318,21 +318,6 @@
 			<properties>
 				<packaging.type>jar</packaging.type>
 			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.eclipse.jetty.http2</groupId>
-					<artifactId>http2-server</artifactId>
-					<version>11.0.24</version>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-alpn-java-server</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-jetty</artifactId>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>war</id>
@@ -440,7 +425,7 @@
 
 					<plugin>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>3.5.0</version>
+						<version>3.5.1</version>
 						<executions>
 							<execution>
 								<goals>
