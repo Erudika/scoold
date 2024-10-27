@@ -30,22 +30,15 @@ import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
 import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.StreamingOutput;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import net.logicsquad.qr4j.QrCode;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -183,7 +176,7 @@ public class SettingsController {
 		return "redirect:" + SETTINGSLINK;
 	}
 
-	@GetMapping(path = "/qr", produces = "image/png")
+	@GetMapping(path = "/qr", produces = "image/svg+xml")
 	public void generate2FAQRCode(HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
 			return;
@@ -201,19 +194,11 @@ public class SettingsController {
 				user.getEmail(), new Base32().encodeAsString(user.getTwoFAkey().
 				replaceAll("=", "").getBytes()).replaceAll("=", ""));
 
-		QRCodeWriter writer = new QRCodeWriter();
-		final BitMatrix matrix;
 		try {
-			matrix = writer.encode(otpProtocol, BarcodeFormat.QR_CODE, 300, 300);
-			StreamingOutput qrCode = new StreamingOutput() {
-				@Override
-				public void write(OutputStream os) throws IOException, WebApplicationException {
-					MatrixToImageWriter.writeToStream(matrix, "PNG", os);
-					os.flush();
-				}
-			};
-			res.setContentType("image/png");
-			qrCode.write(res.getOutputStream());
+			QrCode qr = QrCode.encodeText(otpProtocol, QrCode.Ecc.MEDIUM);
+			res.setContentType("image/svg+xml");
+			res.getOutputStream().write(qr.toSvg(1, "#FFF", "#000").getBytes());
+			res.getOutputStream().flush();
 		} catch (Exception ex) {
 			return;
 		}

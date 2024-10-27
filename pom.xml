@@ -153,11 +153,11 @@
 			<artifactId>akismet-kotlin</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<!--QR Code generator-->
 		<dependency>
-			<!--QR Code generator-->
-			<groupId>com.google.zxing</groupId>
-			<artifactId>javase</artifactId>
-			<version>3.5.3</version>
+			<groupId>net.logicsquad</groupId>
+			<artifactId>qr4j</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 		<!-- TESTING -->
