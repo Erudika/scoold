@@ -29,7 +29,6 @@ import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
-import com.typesafe.config.ConfigFactory;
 import jakarta.inject.Named;
 import java.io.File;
 import java.nio.file.Files;
@@ -286,7 +285,8 @@ public class ScooldServer extends SpringBootServletInitializer {
 		if (!CONF.autoInitWithRootAppSecretKey().isBlank()) {
 			rootSecret = CONF.autoInitWithRootAppSecretKey().trim();
 		} else if (!CONF.autoInitWithParaConfigFile().isBlank()) {
-			com.typesafe.config.Config paraConfig = ConfigFactory.parseFile(new File(CONF.autoInitWithParaConfigFile()));
+			com.typesafe.config.Config paraConfig =
+					Config.parseFileWithoutIncludes(new File(CONF.autoInitWithParaConfigFile()));
 			if (paraConfig.hasPath("para.root_secret_key")) {
 				rootSecret = paraConfig.getString("para.root_secret_key");
 			}

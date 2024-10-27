@@ -55,7 +55,6 @@ import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.Version;
-import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -1058,7 +1057,7 @@ public class ApiController {
 		if ("application/hocon".equals(req.getContentType())) {
 			try {
 				String config = IOUtils.toString(req.getInputStream(), "utf-8");
-				for (Map.Entry<String, ConfigValue> entry : ConfigFactory.parseString(config).entrySet()) {
+				for (Map.Entry<String, ConfigValue> entry : Config.parseStringWithoutIncludes(config).entrySet()) {
 					System.setProperty(entry.getKey(), entry.getValue().unwrapped().toString());
 				}
 			} catch (IOException ex) {
