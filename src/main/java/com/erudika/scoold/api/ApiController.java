@@ -1018,7 +1018,9 @@ public class ApiController {
 						+ "/" + System.getProperty("para.logs_name", "scoold") + ".log";
 				Path path = Paths.get(logFile);
 				try (Stream<String> lines = Files.lines(path)) {
-					stats.put("log", lines.collect(Collectors.joining("\n")));
+					List<String> linez = lines.collect(Collectors.toList());
+					linez.subList(Math.max(0, linez.size() - 10000), linez.size());
+					stats.put("log", linez.stream().collect(Collectors.joining("\n")));
 				}
 			} catch (Exception e) {
 				logger.error("Failed to read log file. {}", e.getMessage());
