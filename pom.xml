@@ -39,7 +39,7 @@
 
 	<scm>
 		<connection>scm:git:https://github.com/Erudika/scoold.git</connection>
-		<developerConnection>scm:git:git@github.com:Erudika/scoold.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/Erudika/scoold.git</developerConnection>
 		<url>https://github.com/Erudika/scoold</url>
 		<tag>HEAD</tag>
 	</scm>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.50.3-SNAPSHOT</version>
+			<version>1.50.3</version>
 		</dependency>
 
 		<!-- VELOCITY -->
