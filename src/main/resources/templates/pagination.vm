@@ -1,25 +1,25 @@
 #set($Integer = 0)
 #evaluate($scooldUtils.getMacroCode($!request.getParameter('pageMacroCode')))
 #if($request.getParameter("page"))
-	#set($page = $Integer.parseInt($request.getParameter("page")))
+	#set($page = $scooldUtils.getPager("page", $request).getPage())
 	#if($page > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $page + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end
 #if($request.getParameter("page1"))
-	#set($page1 = $Integer.parseInt($request.getParameter("page1")))
+	#set($page1 = $scooldUtils.getPager("page1", $request).getPage())
 	#if($page1 > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $page1 + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end
 #if($request.getParameter("page2"))
-	#set($page2 = $Integer.parseInt($request.getParameter("page2")))
+	#set($page2 = $scooldUtils.getPager("page2", $request).getPage())
 	#if($page2 > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $page2 + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
 #end
 #if($request.getParameter("page3"))
-	#set($page3 = $Integer.parseInt($request.getParameter("page3")))
+	#set($page3 = $scooldUtils.getPager("page3", $request).getPage())
 	#if($page3 > $MAX_PAGES) #set($pnext = 1) #else #set($pnext = $page3 + 1) #end
 	<span class="$!{pnext}"></span>
 	#stop
