@@ -1480,6 +1480,12 @@ paths:
           description: If set to `true` will read and return the Scoold log file as well.
           schema:
             type: boolean
+        - name: maxLogLines
+          in: query
+          required: false
+          description: The number of log lines to return, default is `10000`.
+          schema:
+            type: integer
       responses:
         '200':
           description: stats

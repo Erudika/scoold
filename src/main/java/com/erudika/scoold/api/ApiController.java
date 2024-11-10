@@ -1014,13 +1014,14 @@ public class ApiController {
 
 		if ("true".equals(req.getParameter("includeLogs"))) {
 			try {
+				int maxLines = NumberUtils.toInt(req.getParameter("maxLogLines"), 10000);
 				String logFile = System.getProperty("para.logs_dir", System.getProperty("user.dir"))
 						+ "/" + System.getProperty("para.logs_name", "scoold") + ".log";
 				Path path = Paths.get(logFile);
 				try (Stream<String> lines = Files.lines(path)) {
 					List<String> linez = lines.collect(Collectors.toList());
-					linez.subList(Math.max(0, linez.size() - 10000), linez.size());
-					stats.put("log", linez.stream().collect(Collectors.joining("\n")));
+					stats.put("log", linez.subList(Math.max(0, linez.size() - maxLines), linez.size()).
+							stream().collect(Collectors.joining("\n")));
 				}
 			} catch (Exception e) {
 				logger.error("Failed to read log file. {}", e.getMessage());
