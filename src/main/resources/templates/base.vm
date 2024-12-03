@@ -93,7 +93,7 @@
 
 							#macro(navbarlinks)
 								<li><a href="$questionslink" title="$!lang.get('questions.title')" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
-								#if($profilelink != "#")
+								#if($scooldUtils.config.usersDiscoverabilityEnabled($isAdmin))
 								<li><a href="$peoplelink" title="$!lang.get('people.title')" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
 								#end
 								<li><a href="$tagslink" title="$!lang.get('tags.title')" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>
@@ -273,7 +273,7 @@
 								#end
 								<li><a href="$questionslink/ask" title="$!lang.get('posts.ask')" class="$!{askSelected}">$!lang.get("posts.ask")</a></li>
 								<li><a href="$questionslink" title="$!lang.get('questions.title')" class="$!{questionsSelected}">$!lang.get("questions.title")</a></li>
-								#if($profilelink != "#")
+								#if($scooldUtils.config.usersDiscoverabilityEnabled($isAdmin))
 								<li><a href="$peoplelink" title="$!lang.get('people.title')" class="$!{peopleSelected}">$!lang.get("people.title")</a></li>
 								#end
 								<li><a href="$tagslink" title="$!lang.get('tags.title')" class="$!{tagsSelected}">$!lang.get("tags.title")</a></li>

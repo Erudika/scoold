@@ -115,7 +115,8 @@ public class ProfileController {
 		boolean protekted = !utils.isDefaultSpacePublic() && !utils.isAuthenticated(req);
 		boolean sameSpace = (utils.canAccessSpace(showUser, "default") && utils.canAccessSpace(authUser, "default")) ||
 				(authUser != null && showUser.getSpaces().stream().anyMatch(s -> utils.canAccessSpace(authUser, s)));
-		if (protekted || !sameSpace || !CONF.usersDiscoverabilityEnabled(utils.isAdmin(authUser))) {
+		boolean profilesAreHidden = !isMyProfile && !CONF.usersDiscoverabilityEnabled(utils.isAdmin(authUser));
+		if (protekted || !sameSpace || profilesAreHidden) {
 			return "redirect:" + PEOPLELINK;
 		}
 

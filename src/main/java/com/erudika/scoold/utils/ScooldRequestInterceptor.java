@@ -144,7 +144,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("scriptslink", CONF.scriptsLink()); // do not add context path prefix!
 		modelAndView.addObject("styleslink", CONF.stylesLink()); // do not add context path prefix!
 		modelAndView.addObject("peoplelink", CONF.serverContextPath() + PEOPLELINK);
-		modelAndView.addObject("profilelink", CONF.usersDiscoverabilityEnabled(utils.isAdmin(authUser)) ? CONF.serverContextPath() + PROFILELINK : "#");
+		modelAndView.addObject("profilelink", CONF.serverContextPath() + PROFILELINK);
 		modelAndView.addObject("searchlink", CONF.serverContextPath() + SEARCHLINK);
 		modelAndView.addObject("signinlink", CONF.serverContextPath() + SIGNINLINK);
 		modelAndView.addObject("signoutlink", CONF.serverContextPath() + SIGNOUTLINK);
