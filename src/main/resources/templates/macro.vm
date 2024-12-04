@@ -1013,7 +1013,7 @@
 		<i class="fa fa-plus hide tooltipped" data-tooltip="$!lang.get('addbadge')"></i>
 		#if($badge.icon)<span class="badge-icon">$!badge.icon</span>#end
 		<a href="$peoplelink/tag/$!badge.tag"><b>$!badge.name</b></a>
-		<a href="$profilelink/delete-badge/$!badge.tag" class="hide post-refresh-ask" style="$style">
+		<a href="$profilelink/delete-badge/$!badge.tag" class="post-refresh-ask #if(!$isMod)hide#end" style="$style">
 			<i class="fa fa-close tooltipped mhs" data-tooltip="$!lang.get('deletebadge')"></i>
 		</a>
 	</span>

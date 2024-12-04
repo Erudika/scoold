@@ -750,7 +750,7 @@ $(function () {
 	$(document).on("mouseenter", ".custom-badge", function () {
 		var dis = $(this);
 		if (dis.hasClass("add")) {
-			dis.find(".fa-plus, a").removeClass("hide");
+			dis.find(".fa-plus").removeClass("hide");
 		} else if ($(this).hasClass("remove")) {
 			dis.find(".fa-minus").removeClass("hide");
 		}
@@ -760,7 +760,7 @@ $(function () {
 		if (dis.hasClass("add")) {
 			dis.find(".fa-plus").addClass("hide");
 		} else if ($(this).hasClass("remove")) {
-			dis.find(".fa-minus, a").addClass("hide");
+			dis.find(".fa-minus").addClass("hide");
 		}
 	});
 
