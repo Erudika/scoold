@@ -121,9 +121,12 @@ public class AdminController {
 			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
 		Map<String, Object> configMetadata = new LinkedHashMap<String, Object>();
-		try {
-			configMetadata = ParaObjectUtils.getJsonReader(Map.class).readValue(CONF.renderConfigDocumentation("json", true));
-		} catch (IOException ex) { }
+		if (CONF.configEditingEnabled()) {
+			try {
+				configMetadata = ParaObjectUtils.getJsonReader(Map.class).
+						readValue(CONF.renderConfigDocumentation("json", true));
+			} catch (IOException ex) { }
+		}
 
 		Pager itemcount = utils.getPager("page", req);
 		Pager itemcount1 = utils.getPager("page1", req);
@@ -131,6 +134,7 @@ public class AdminController {
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
 		model.addAttribute("configMap", CONF);
+		model.addAttribute("configMetadata", configMetadata);
 		model.addAttribute("version", pc.getServerVersion());
 		model.addAttribute("endpoint", CONF.redirectUri());
 		model.addAttribute("paraapp", CONF.paraAccessKey());
@@ -354,8 +358,8 @@ public class AdminController {
 	@GetMapping(value = "/export", produces = "application/zip")
 	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse response) {
 		Profile authUser = utils.getAuthUser(req);
-		if (!utils.isAdmin(authUser)) {
-			return new ResponseEntity<StreamingResponseBody>(HttpStatus.UNAUTHORIZED);
+		if (!utils.isAdmin(authUser) || !CONF.dataImportExportEnabled()) {
+			return new ResponseEntity<StreamingResponseBody>(HttpStatus.FORBIDDEN);
 		}
 		String fileName = App.identifier(CONF.paraAccessKey()) + "_" + Utils.formatDate("YYYYMMdd_HHmmss", Locale.US);
 		response.setContentType("application/zip");
@@ -392,8 +396,8 @@ public class AdminController {
 			@RequestParam(required = false, defaultValue = "false") Boolean deleteall,
 			HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
-		if (!utils.isAdmin(authUser)) {
-			res.setStatus(403);
+		if (!utils.isAdmin(authUser) || !CONF.dataImportExportEnabled()) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
 		ObjectReader reader = ParaObjectUtils.getJsonMapper().readerFor(new TypeReference<List<Map<String, Object>>>() { });
@@ -535,7 +539,7 @@ public class AdminController {
 	@PostMapping("/save-config")
 	public String saveConfig(@RequestParam String key, @RequestParam(defaultValue = "") String value, HttpServletRequest req) {
 		Profile authUser = utils.getAuthUser(req);
-		if (utils.isAdmin(authUser)) {
+		if (utils.isAdmin(authUser) && CONF.configEditingEnabled()) {
 			if ("on".equals(value)) {
 				value = "true";
 			}
@@ -544,7 +548,7 @@ public class AdminController {
 			} else {
 				System.clearProperty(key);
 			}
-			logger.info("Configuration was changed: user {} modified property '{}'.", authUser.getId(), key);
+			logger.info("Configuration property '{}' was modified by user {}.", key, authUser.getCreatorid());
 			CONF.store();
 			if (CONF.getParaAppSettings().containsKey(key)) {
 				pc.addAppSetting(key, value);

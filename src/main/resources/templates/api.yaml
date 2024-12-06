@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   description: "This is the Scoold API. First, you need to generate an [API key](/admin) in order to access the API."
-  version: "1.6.0"
+  version: "1.6.1"
   title: "Scoold API documentation"
 externalDocs:
   description: "README"
@@ -1504,6 +1504,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '403':
+          description: Forbidden - this feature is disabled or invalid request.
   /api/restore:
     put:
       summary: Restores (asynchronously) a backup ZIP archive, overwriting all existing data in Scoold
@@ -1531,7 +1533,9 @@ paths:
                   type: boolean
       responses:
         '200':
-          description: Restore operation hast started but is not necessarily complete.
+          description: Restore operation has started asynchronously but is not necessarily complete.
+        '403':
+          description: Forbidden - this feature is disabled or invalid request.
   /api/config:
     get:
       summary: Returns the current Scoold configuration as a list of properties in the HOCON or JSON formats.

@@ -3442,6 +3442,26 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("automatic_spam_protection_enabled", true);
 	}
 
+	@Documented(position = 3120,
+			identifier = "data_import_export_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable backup and restore features on the Administration page.")
+	public boolean dataImportExportEnabled() {
+		return getConfigBoolean("data_import_export_enabled", true);
+	}
+
+	@Documented(position = 3130,
+			identifier = "config_editing_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable live configuration editing for admins on the Administration page.")
+	public boolean configEditingEnabled() {
+		return getConfigBoolean("config_editing_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

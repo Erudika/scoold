@@ -24,10 +24,14 @@
 			<ul class="tabs adminpage">
 				<li class="tab col s2"><a href="#spaces-tab">$!{lang.get("spaces.title")} #showcount($itemcount.count)</a></li>
 				<li class="tab col s2"><a href="#webhooks-tab">Webhooks #showcount($itemcount1.count)</a></li>
+				#if($scooldUtils.config.dataImportExportEnabled())
 				<li class="tab col s2"><a href="#backup-tab">$!{lang.get("backups.title")} </a></li>
+				#end
 				<li class="tab col s2"><a href="#themes-tab">$!{lang.get("admin.themes")} </a></li>
 				<li class="tab col s2"><a href="#api-tab">API keys </a></li>
+				#if($scooldUtils.config.configEditingEnabled())
 				<li class="tab col s2"><a href="#configuration-tab">$!lang.get('admin.configuration') </a></li>
+				#end
 			</ul>
 		</div>
 
@@ -139,6 +143,7 @@
 			#end
 		</div>
 
+		#if($scooldUtils.config.dataImportExportEnabled())
 		<div id="backup-tab" class="col s12">
 			<div class="row">
 				<div class="col s12 m3">
@@ -232,6 +237,7 @@
 			</div>
 			#end
 		</div>
+		#end
 
 		<div id="themes-tab" class="col s12">
 			<form action="$adminlink/set-theme" method="post" id="select-theme-form" class="lightborder pal">
@@ -334,6 +340,7 @@
 			#end
 		</div>
 
+		#if($scooldUtils.config.configEditingEnabled())
 		<div id="configuration-tab" class="col s12">
 			<ul class="collapsible" data-collapsible="expandable">
 			#foreach($key in $configMetadata.keySet())
@@ -396,6 +403,7 @@
 			#end
 			</ul>
 		</div>
+		#end
 	</div>
 
 	<div class="ptl">
