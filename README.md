@@ -644,6 +644,8 @@ scoold.password_auth_enabled = true
 |`scoold.notifications_as_reports_enabled`<br>Enable/disable copies of new content notifications in the form of reports on the site.  Instead of checking their email, mods will be able to view and act on those on the reports page. | `false` | `Boolean`|
 |`scoold.akismet_api_key`<br>API Key for Akismet for activating anti-spam protection of all posts. | ` ` | `String`|
 |`scoold.automatic_spam_protection_enabled`<br>Enable/disable autonomous action taken against spam posts - if detected a spam post will be blocked without notice. By default, spam posts will require action and approval by admins. | `true` | `Boolean`|
+|`scoold.data_import_export_enabled`<br>Enable/disable backup and restore features on the Administration page. | `true` | `Boolean`|
+|`scoold.config_editing_enabled`<br>Enable/disable live configuration editing for admins on the Administration page. | `true` | `Boolean`|
 
 </details>
 
