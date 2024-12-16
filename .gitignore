@@ -26,6 +26,7 @@ src/main/webapp/WEB-INF/lib/**
 src/web/src/main/webapp/WEB-INF/classes/
 src/main/webapp/click/
 data/
+docs-src/
 old/
 deploy*.sh
 *.log
