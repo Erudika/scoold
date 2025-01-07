@@ -96,7 +96,7 @@
 <div class="col s12 m6 l3 spacebox">
 	<div class="card-panel z-depth-0 lightborder">
 		<div class="row mbn viewbox valign-wrapper">
-			<div class="col s12 m8 columns ">
+			<div class="col s12 m11 columns ">
 				#if($isDefaultSpacePublic && $scooldUtils.isDefaultSpace($space.name))
 				<i class="fa fa-unlock green-text tooltipped" data-tooltip="This space is public"></i>
 				#else
@@ -112,7 +112,7 @@
 				#end
 				<a href="$questionslink/space/$!space.id" class="space-name-box" title="$!{spaceName}">$!{spaceName}</a>
 			</div>
-			<div class="col s12 m4 columns right-align">
+			<div class="col s12 m1 columns right-align">
 				#if(!$scooldUtils.isDefaultSpace($space.name))
 				<a href="#" title="$!lang.get('edit')" class="editlink"><i class="fa fa-pencil-square orange-text"></i></a>
 				#end

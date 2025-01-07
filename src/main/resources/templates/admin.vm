@@ -367,16 +367,18 @@
 											<div class="col s12 m10">
 												#set($pk = $pkey.substring(7))
 												#set($propval = $configMap.getConfigValue($pk, ""))
-												#if(!$propval || $propval.isEmpty())
+												#set($isbool = $configMetadata.get($key).get($pkey).type == "Boolean")
+												#if(!$isbool && (!$propval || $propval.isEmpty()))
 													#set($propval = $configMetadata.get($key).get($pkey).defaultValue)
 												#end
 												<input name="key" type="hidden" value="$pkey">
 
-												#if($configMetadata.get($key).get($pkey).type == "Boolean")
+												#if($isbool)
 												<label>
 													<input name="value" type="checkbox" #if($propval == "true")checked="checked"#end class="filled-in">
 													<span data-on="$!lang.get('on')" data-off="$!lang.get('off')">#if($propval == "true")$!lang.get('on')#else$!lang.get('off')#end</span>
 												</label>
+												<input name="isbool" type="hidden" value="true">
 												#else
 												<div class="input-field mbn">
 													#if(($pk.contains("secret") || $pk.contains("password") || $pk.contains("privatekey") || $pk.contains("pass")) &&

@@ -542,6 +542,8 @@ public class AdminController {
 		if (utils.isAdmin(authUser) && CONF.configEditingEnabled()) {
 			if ("on".equals(value)) {
 				value = "true";
+			} else if ("true".equals(req.getParameter("isbool")) && StringUtils.isBlank(value)) {
+				value = "false";
 			}
 			if (value != null && !StringUtils.isBlank(value)) {
 				System.setProperty(key, value);
