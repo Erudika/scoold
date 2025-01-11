@@ -348,7 +348,7 @@
 <div class="row mbn userbox user-${userboxid}">
 	<div class="col s4 m5 l3">
 		#if ($showu)
-			<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name">
+			<a href="$!showu.getProfileLink()" title="$!showu.name">
 				<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="pic">
 			</a>
 		#else
@@ -368,7 +368,7 @@
 		</div>
 		<div class="userbox-body">
 			#if ($showu)
-				<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" class="userbox-name">$showu.name</a>
+				<a href="$!showu.getProfileLink()" class="userbox-name">$showu.name</a>
 			#else
 				<span class="grey-text">$!lang.get("profile.deleted")</span>
 			#end
@@ -396,7 +396,7 @@
 #macro(tinypersonbox $showu)
 <div>
 	#if ($showu)
-		<a href="$profilelink/$!showu.creatorid/#stripstr($!showu.name)" title="$!showu.name [$!showu.votes]">
+		<a href="$!showu.getProfileLink()" title="$!showu.name [$!showu.votes]">
 			<img src="#profilepic($!showu, 'Square32')" width="32" class="profile-pic responsive-img" alt="pic">
 		</a>
 	#else
@@ -408,8 +408,7 @@
 #macro(personlink $showu)
 <span>
 	#if ($showu)
-		#if ($showu.name)#set($seopsuffix = "/#stripstr($!showu.name)" )#else#set($seopsuffix = "" )#end
-		<a href="$profilelink/$!{showu.id}$!{seosuffix}" title="Go to profile">$!showu.name</a>
+		<a href="$!showu.getProfileLink()" title="Go to profile">$!showu.name</a>
 	#else
 		$!lang.get("profile.deleted")
 	#end
@@ -444,7 +443,7 @@
 		<div class="card personbox ${personboxClass} #if($scooldUtils.isBanned($showFriend) && $isMod)yellow lighten-5 #end">
 			<div class="row ${cardClass}">
 				<div class="col ${cardCol1Class}" title="$!showFriend.name">
-					<a href="$profilelink/$!showFriend.creatorid/#stripstr($!showFriend.name)" title="$!showFriend.name">
+					<a href="$!showFriend.getProfileLink()" title="$!showFriend.name">
 						<img src="#profilepic($showFriend, 'Square127')" class="profile-pic responsive-img" alt="pic">
 					</a>
 				</div>
@@ -466,12 +465,12 @@
 								<label for="$!showFriend.id">
 									<input type="checkbox" name="selectedUsers" value="$!showFriend.id" class="filled-in" id="$!showFriend.id">
 									<span>
-										<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+										<a href="$!showFriend.getProfileLink()">$!{showFriend.name}</a>
 									</span>
 								</label>
 							</span>
 						#else
-							<a href="$profilelink/${showFriend.creatorid}/#stripstr($!showFriend.name)">$!{showFriend.name}</a>
+							<a href="$!showFriend.getProfileLink()">$!{showFriend.name}</a>
 						#end
 					</div>
 					#if($isAdmin && $request.getParameter("bulkedit") && !$hideSpacesForMods)
@@ -550,7 +549,7 @@
 #macro(questionspage $posts )
 	#set($showSpaceLabel = $scooldUtils.isAllSpaces($currentSpace) || $isMod)
 	#foreach($showpost in $posts)
-	#set($actionlink = "#getpostlink($showpost false true)")
+	#set($actionlink = "#getpostlink($showpost false false)")
 	#set($actionlink2 = "#getpostlink($showpost true true)")
 	#if($showpost.id == $request.getParameter("deleted"))
 		#set($deleted = "hide")
@@ -624,7 +623,7 @@
 						#if($showpost.type == "unapprovedquestion")
 						<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
 						#end
-						<a href="$!actionlink/$!utils.urlEncode($showpost.id)/#stripstr($!showpost.title)" class="mediumText">
+						<a href="$!actionlink" class="mediumText">
 							#if($showSpaceLabel)
 								#set($spaceLabel = "$!scooldUtils.getSpaceName($!showpost.space)")
 								#if(!$spaceLabel.trim().isEmpty())
@@ -687,7 +686,7 @@
 							#if($showpost.type == "unapprovedquestion")
 								<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
 							#end
-							<a href="$!actionlink/$!utils.urlEncode($showpost.id)/#stripstr($!showpost.title)" class="mediumText">$!showpost.title</a>
+							<a href="$!actionlink" class="mediumText">$!showpost.title</a>
 						</div>
 						<div class="mbs">
 							#set($showBody = $utils.stripHtml($utils.markdownToHtml($utils.stripHtml($!showpost.body))) )

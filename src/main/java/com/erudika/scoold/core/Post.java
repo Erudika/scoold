@@ -538,8 +538,8 @@ public abstract class Post extends Sysprop {
 
 	public String getPostLink(boolean plural, boolean noid, boolean withContextPathPrefix) {
 		Post p = this;
-		String ptitle = Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-");
-		String pid = (noid ? "" : "/" + p.getId() + "/" + ptitle);
+		String ptitle = StringUtils.stripAccents(Utils.noSpaces(Utils.stripAndTrim(p.getTitle()), "-"));
+		String pid = (noid ? "" : "/" + Utils.urlEncode(p.getId()) + "/" + Utils.urlEncode(ptitle));
 		String ctx = withContextPathPrefix ? CONF.serverContextPath() : "";
 		if (p.isQuestion()) {
 			return ctx + (plural ? ScooldServer.QUESTIONSLINK : ScooldServer.QUESTIONLINK + pid);
