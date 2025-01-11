@@ -22,6 +22,7 @@ import com.erudika.para.core.User;
 import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.Utils;
+import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
@@ -750,6 +751,13 @@ public class Profile extends Sysprop {
 					Collections.singletonMap("properties.closed", false)).intValue();
 		}
 		return newreports;
+	}
+
+	public String getProfileLink() {
+		String name = StringUtils.stripAccents(Utils.noSpaces(Utils.stripAndTrim(this.getName()), "-"));
+		String seoName = StringUtils.isBlank(name) ? "" : ("/" + name);
+		String pid = "/" + Utils.urlEncode(this.getCreatorid()) + seoName;
+		return ScooldServer.PROFILELINK + pid;
 	}
 
 	public boolean equals(Object obj) {
