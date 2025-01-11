@@ -23,7 +23,7 @@
 			</span>
 			<div id="post-title" class="largeText">
 				#if($showPost.isReply())
-					<a href="$questionlink/$showPost.parentid/#stripstr($!showPost.title)" class="tooltipped" data-tooltip="⮪ $!lang.get('backtopost')">
+					<a href="$!showPost.getPostLinkForRedirect()" class="tooltipped" data-tooltip="⮪ $!lang.get('backtopost')">
 						<i class="fa fa-reply smallText grey-text"></i> $!{showPost.title}
 					</a>
 				#else
@@ -50,9 +50,9 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)#sortorderparam('?')" title="Most voted answers"
+						<a href="$!showPost.getPostLinkForRedirect()#sortorderparam('?')" title="Most voted answers"
 							 class="chip $sortarr.votes">#sortordericon() $!lang.get("votes")</a>
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
+						<a href="$!showPost.getPostLinkForRedirect()?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
 							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
 					<h3 class="grey-text">$!lang.get("answers.title") #showcount($itemcount.count)</h3>
