@@ -49,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
+import com.typesafe.config.ConfigValueFactory;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -545,13 +546,16 @@ public class AdminController {
 			} else if ("true".equals(req.getParameter("isbool")) && StringUtils.isBlank(value)) {
 				value = "false";
 			}
+			com.typesafe.config.Config modifiedConf = CONF.getConfig();
 			if (value != null && !StringUtils.isBlank(value)) {
+				modifiedConf = modifiedConf.withValue(key, ConfigValueFactory.fromAnyRef(value));
 				System.setProperty(key, value);
 			} else {
+				modifiedConf = modifiedConf.withoutPath(key);
 				System.clearProperty(key);
 			}
 			logger.info("Configuration property '{}' was modified by user {}.", key, authUser.getCreatorid());
-			CONF.store();
+			CONF.overwriteConfig(modifiedConf).store();
 			if (CONF.getParaAppSettings().containsKey(key)) {
 				pc.addAppSetting(key, value);
 			}

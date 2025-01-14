@@ -56,6 +56,7 @@ import com.erudika.scoold.utils.BadRequestException;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.Version;
 import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueFactory;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -1057,10 +1058,12 @@ public class ApiController {
 
 	@PutMapping("/config")
 	public String configSet(HttpServletRequest req, HttpServletResponse res) {
+		com.typesafe.config.Config modifiedConf = com.typesafe.config.ConfigFactory.empty();
 		if ("application/hocon".equals(req.getContentType())) {
 			try {
 				String config = IOUtils.toString(req.getInputStream(), "utf-8");
 				for (Map.Entry<String, ConfigValue> entry : Config.parseStringWithoutIncludes(config).entrySet()) {
+					modifiedConf = modifiedConf.withoutPath(entry.getKey()).withValue(entry.getKey(), entry.getValue());
 					System.setProperty(entry.getKey(), entry.getValue().unwrapped().toString());
 				}
 			} catch (IOException ex) {
@@ -1072,10 +1075,12 @@ public class ApiController {
 				badReq("Missing or invalid request body.");
 			}
 			for (Map.Entry<String, Object> entry : entity.entrySet()) {
+				String key = CONF.getConfigRootPrefix() + "." + entry.getKey();
+				modifiedConf = modifiedConf.withoutPath(key).withValue(key, ConfigValueFactory.fromAnyRef(entry.getValue()));
 				System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
 			}
 		}
-		CONF.store();
+		CONF.overwriteConfig(modifiedConf).store();
 		pc.setAppSettings(CONF.getParaAppSettings());
 		triggerConfigUpdateEvent(CONF.getConfigMap());
 		return config(req, res);
@@ -1096,13 +1101,17 @@ public class ApiController {
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
+		com.typesafe.config.Config modifiedConf = CONF.getConfig();
+		String kee = CONF.getConfigRootPrefix() + "." + key;
 		Object value = entity.getOrDefault("value", null);
 		if (value != null && !StringUtils.isBlank(value.toString())) {
-			System.setProperty(CONF.getConfigRootPrefix() + "." + key, value.toString());
+			modifiedConf = modifiedConf.withValue(kee, ConfigValueFactory.fromAnyRef(value));
+			System.setProperty(kee, value.toString());
 		} else {
+			modifiedConf = modifiedConf.withoutPath(kee);
 			System.clearProperty(CONF.getConfigRootPrefix() + "." + key);
 		}
-		CONF.store();
+		CONF.overwriteConfig(modifiedConf).store();
 		if (CONF.getParaAppSettings().containsKey(key)) {
 			pc.addAppSetting(key, value);
 		}
