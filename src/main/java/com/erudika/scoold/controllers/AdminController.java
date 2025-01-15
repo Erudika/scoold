@@ -413,21 +413,20 @@ public class AdminController {
 		Sysprop si = pc.create(s);
 
 		Para.asyncExecute(() -> {
-			if (deleteall) {
-				logger.info("Deleting all existing objects before import...");
-				List<String> toDelete = new LinkedList<>();
-				pc.readEverything((pager) -> {
-					pager.setSelect(Collections.singletonList(Config._ID));
-					List<Sysprop> objects = pc.findQuery("", "*", pager);
-					toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
-					return objects;
-				});
-				pc.deleteAll(toDelete);
-			}
-
 			Map<String, String> comments2authors = new LinkedHashMap<>();
 			Map<String, User> accounts2emails = new LinkedHashMap<>();
 			try (InputStream inputStream = file.getInputStream()) {
+				if (deleteall) {
+					logger.info("Deleting all existing objects before import...");
+					List<String> toDelete = new LinkedList<>();
+					pc.readEverything((pager) -> {
+						pager.setSelect(Collections.singletonList(Config._ID));
+						List<Sysprop> objects = pc.findQuery("", "*", pager);
+						toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+						return objects;
+					});
+					pc.deleteAll(toDelete);
+				}
 				if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
 					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
 						ZipEntry zipEntry;
@@ -466,11 +465,16 @@ public class AdminController {
 						}
 					}
 				} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
-					List<Map<String, Object>> objects = reader.readValue(inputStream);
-					List<ParaObject> toCreate = new LinkedList<ParaObject>();
-					objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
-					si.addProperty("count", objects.size());
-					pc.createAll(toCreate);
+					if (isso) {
+						List<Map<String, Object>> objs = reader.readValue(inputStream);
+						importFromSOArchiveSingle(filename, objs, comments2authors, accounts2emails, si);
+					} else {
+						List<Map<String, Object>> objects = reader.readValue(inputStream);
+						List<ParaObject> toCreate = new LinkedList<ParaObject>();
+						objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
+						si.addProperty("count", objects.size());
+						pc.createAll(toCreate);
+					}
 				}
 				logger.info("Imported {} objects to {}. Executed by {}", si.getProperty("count"),
 						CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
@@ -572,35 +576,40 @@ public class AdminController {
 					zipIn.closeEntry();
 				}
 			});
-			List<ParaObject> toImport = new LinkedList<>();
-			switch (zipEntry.getName()) {
-				case "posts.json":
-					importPostsFromSO(objs, toImport, si);
-					break;
-				case "tags.json":
-					importTagsFromSO(objs, toImport, si);
-					break;
-				case "comments.json":
-					importCommentsFromSO(objs, toImport, comments2authors, si);
-					break;
-				case "users.json":
-					importUsersFromSO(objs, toImport, accounts2emails, si);
-					break;
-				case "users2badges.json":
-					// nice to have...
-					break;
-				case "accounts.json":
-					importAccountsFromSO(objs, accounts2emails);
-					break;
-				default:
-					break;
-			}
 			// IN PRO: rewrite all image links to relative local URLs
-			return toImport;
+			return importFromSOArchiveSingle(zipEntry.getName(), objs, comments2authors, accounts2emails, si);
 		} else {
 			// IN PRO: store files in ./uploads
 			return Collections.emptyList();
 		}
+	}
+
+	private List<ParaObject> importFromSOArchiveSingle(String fileName, List<Map<String, Object>> objs,
+			Map<String, String> comments2authors, Map<String, User> accounts2emails, Sysprop si) throws ParseException {
+		List<ParaObject> toImport = new LinkedList<>();
+		switch (fileName) {
+			case "posts.json":
+				importPostsFromSO(objs, toImport, si);
+				break;
+			case "tags.json":
+				importTagsFromSO(objs, toImport, si);
+				break;
+			case "comments.json":
+				importCommentsFromSO(objs, toImport, comments2authors, si);
+				break;
+			case "users.json":
+				importUsersFromSO(objs, toImport, accounts2emails, si);
+				break;
+			case "users2badges.json":
+				// nice to have...
+				break;
+			case "accounts.json":
+				importAccountsFromSO(objs, accounts2emails);
+				break;
+			default:
+				break;
+		}
+		return toImport;
 	}
 
 	private void importPostsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si)
