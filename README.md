@@ -3,7 +3,7 @@
 
 
 
-## Scoold - Stack Overflow in a JAR
+## Scoold - Stack Overflow in a JAR JAR
 
 
 [![Docker pulls](https://img.shields.io/docker/pulls/erudikaltd/scoold)](https://hub.docker.com/r/erudikaltd/scoold)
