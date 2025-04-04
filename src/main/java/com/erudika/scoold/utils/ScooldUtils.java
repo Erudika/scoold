@@ -311,15 +311,15 @@ public final class ScooldUtils {
 	}
 
 	private ParaObject checkApiAuth(HttpServletRequest req) {
-		if (req.getServletPath().equals(CONF.serverContextPath() + "/api")) {
+		if (req.getServletPath().equals("/api")) {
 			return null;
 		}
 		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
-		if (req.getServletPath().equals(CONF.serverContextPath() + "/api/ping")) {
+		if (req.getServletPath().equals("/api/ping")) {
 			return API_USER;
-		} else if (req.getServletPath().equals(CONF.serverContextPath() + "/api/stats") && isValidJWToken(apiKeyJWT)) {
+		} else if (req.getServletPath().equals("/api/stats") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
-		} else if (req.getServletPath().startsWith(CONF.serverContextPath() + "/api/config") && isValidJWToken(apiKeyJWT)) {
+		} else if (req.getServletPath().startsWith("/api/config") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
 		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
 			throw new UnauthorizedException();
@@ -1288,7 +1288,7 @@ public final class ScooldUtils {
 	}
 
 	public boolean isApiRequest(HttpServletRequest req) {
-		return req.getServletPath().startsWith(CONF.serverContextPath() + "/api/") || req.getServletPath().equals(CONF.serverContextPath() + "/api");
+		return req.getServletPath().startsWith("/api/") || req.getServletPath().equals("/api");
 	}
 
 	public boolean isAdmin(Profile authUser) {
@@ -1352,7 +1352,7 @@ public final class ScooldUtils {
 	}
 
 	public String getWelcomeMessagePreLogin(Profile authUser, HttpServletRequest req) {
-		if (StringUtils.startsWithIgnoreCase(req.getServletPath(), CONF.serverContextPath() + SIGNINLINK)) {
+		if (StringUtils.startsWithIgnoreCase(req.getServletPath(), SIGNINLINK)) {
 			return authUser == null ? CONF.welcomeMessagePreLogin().replaceAll("'", "&apos;") : "";
 		}
 		return "";
