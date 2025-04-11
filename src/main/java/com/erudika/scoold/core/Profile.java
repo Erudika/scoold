@@ -757,7 +757,7 @@ public class Profile extends Sysprop {
 		String name = StringUtils.stripAccents(Utils.noSpaces(Utils.stripAndTrim(this.getName()), "-"));
 		String seoName = StringUtils.isBlank(name) ? "" : ("/" + name);
 		String pid = "/" + Utils.urlEncode(this.getCreatorid()) + seoName;
-		return ScooldServer.PROFILELINK + pid;
+		return ScooldUtils.getConfig().serverContextPath() + ScooldServer.PROFILELINK + pid;
 	}
 
 	public boolean equals(Object obj) {
