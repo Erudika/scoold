@@ -542,7 +542,8 @@ public class AdminController {
 	}
 
 	@PostMapping("/save-config")
-	public String saveConfig(@RequestParam String key, @RequestParam(defaultValue = "") String value, HttpServletRequest req) {
+	public String saveConfig(@RequestParam String key, @RequestParam(defaultValue = "") String value,
+			HttpServletRequest req, HttpServletResponse res) {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.isAdmin(authUser) && CONF.configEditingEnabled()) {
 			if ("on".equals(value)) {
@@ -564,7 +565,12 @@ public class AdminController {
 				pc.addAppSetting(key, value);
 			}
 		}
-		return "redirect:" + ADMINLINK + "#configuration-tab";
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + ADMINLINK + "#configuration-tab";
+		}
 	}
 
 	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry, ObjectReader mapReader,

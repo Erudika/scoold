@@ -523,6 +523,15 @@ $(function () {
 		}
 	});
 
+	submitFormBind("form.configuration-form", function (data, status, xhr, form) {
+		var btn = $(form).find("button[type='submit']");
+		var txt = btn.html();
+		btn.html("<span class='green-text'>&#x2714;" + txt + "</span>").addClass("disabled");
+		setTimeout(function () {
+			btn.removeClass("disabled").html(txt);
+		}, 3000);
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/
