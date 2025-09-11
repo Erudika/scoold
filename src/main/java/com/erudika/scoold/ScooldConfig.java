@@ -3462,6 +3462,16 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("config_editing_enabled", true);
 	}
 
+	@Documented(position = 3140,
+			identifier = "ai_training_allowed",
+			value = "false",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable permission for AI training on content from the website, using the new RSL standard.")
+	public boolean aiTrainingAllowed() {
+		return getConfigBoolean("ai_training_allowed", false);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

@@ -188,6 +188,65 @@ public class SearchController {
 	}
 
 	@ResponseBody
+	@GetMapping("/license.xml")
+	public ResponseEntity<String> rsl(HttpServletRequest req) {
+		String xmlDeny = "<rsl xmlns=\"https://rslstandard.org/rsl\">\n"
+				+ "<content url=\"/\">\n"
+				+ "    <license>\n"
+				+ "      <prohibits type=\"usage\">train-ai</prohibits>\n"
+				+ "    </license>\n"
+				+ "  </content>"
+				+ "</rsl>";
+		String xmlAllow = "<rsl xmlns=\"https://rslstandard.org/rsl\">\n"
+				+ "  <content url=\"/\" server=\"https://rslcollective.org/api\">\n"
+				+ "    <license>\n"
+				+ "      <permits type=\"usage\">train-ai</permits>\n"
+				+ "      <payment type=\"attribution\"/>\n"
+				+ "    </license>\n"
+				+ "  </content>\n"
+				+ "</rsl>";
+		String xml = CONF.aiTrainingAllowed() ? xmlAllow : xmlDeny;
+		return ResponseEntity.ok().
+				contentType(MediaType.APPLICATION_XML).
+				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+				eTag(Utils.md5(xml)).
+				body(xml);
+	}
+
+	@ResponseBody
+	@GetMapping("/robots.txt")
+	public ResponseEntity<String> robots(HttpServletRequest req) {
+		String robots = "# " + CONF.appName() + " - robots.txt\n"
+				+ "\n"
+				+ "License: " + CONF.serverUrl() + CONF.serverContextPath() + "/license.xml\n"
+				+ "Content-Usage: train-ai=" + (CONF.aiTrainingAllowed() ? "y" : "n")
+				+ "\n"
+				+ "User-agent: *\n"
+				+ "\n"
+				+ "Disallow: /error\n"
+				+ "Disallow: /feedback\n"
+				+ "Disallow: /api/*\n"
+				+ "Disallow: /p/\n"
+				+ "Disallow: /signout/\n"
+				+ "Disallow: /search/\n"
+				+ "Disallow: /*?getreportform*\n"
+				+ "Allow: /\n"
+				+ "User-agent: Yahoo Pipes 1.0\n"
+				+ "Disallow: /\n"
+				+ "User-agent: 008\n"
+				+ "Disallow: /\n"
+				+ "User-agent: voltron\n"
+				+ "Disallow: /\n"
+				+ "User-agent: Bytespider\n"
+				+ "Disallow: /";
+		return ResponseEntity.ok().
+				contentType(MediaType.TEXT_PLAIN).
+				cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).
+				eTag(Utils.md5(robots)).
+				body(robots);
+	}
+
+	@ResponseBody
 	@GetMapping("/manifest.webmanifest")
 	public ResponseEntity<String> webmanifest(HttpServletRequest req) {
 		String json = "{\n"
