@@ -77,6 +77,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -292,7 +293,7 @@ public class AdminController {
 			webhook.setCreateAll(events.contains("createAll"));
 			webhook.setUpdateAll(events.contains("updateAll"));
 			webhook.setDeleteAll(events.contains("deleteAll"));
-			webhook.setCustomEvents(events.stream().filter(e -> !StringUtils.equalsAny(e,
+			webhook.setCustomEvents(events.stream().filter(e -> !Strings.CS.equalsAny(e,
 					"create", "update", "delete", "createAll", "updateAll", "deleteAll")).collect(Collectors.toList()));
 			if (utils.getCoreScooldTypes().contains(type)) {
 				webhook.setTypeFilter(type);
@@ -427,7 +428,7 @@ public class AdminController {
 					});
 					pc.deleteAll(toDelete);
 				}
-				if (StringUtils.endsWithIgnoreCase(filename, ".zip")) {
+				if (Strings.CI.endsWith(filename, ".zip")) {
 					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
 						ZipEntry zipEntry;
 						List<ParaObject> toCreate = new LinkedList<ParaObject>();
@@ -464,7 +465,7 @@ public class AdminController {
 							updateSOUserAccounts(accounts2emails);
 						}
 					}
-				} else if (StringUtils.endsWithIgnoreCase(filename, ".json")) {
+				} else if (Strings.CI.endsWith(filename, ".json")) {
 					if (isso) {
 						List<Map<String, Object>> objs = reader.readValue(inputStream);
 						importFromSOArchiveSingle(filename, objs, comments2authors, accounts2emails, si);
@@ -624,7 +625,7 @@ public class AdminController {
 		int imported = 0;
 		for (Map<String, Object> obj : objs) {
 			Post p;
-			if (StringUtils.equalsAnyIgnoreCase((String) obj.get("postType"), "question", "article")) {
+			if (Strings.CI.equalsAny((String) obj.get("postType"), "question", "article")) {
 				p = new Question();
 				p.setTitle((String) obj.get("title"));
 				String t = StringUtils.trimToEmpty(StringUtils.stripStart(StringUtils.stripEnd((String) obj.

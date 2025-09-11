@@ -20,9 +20,9 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.para.core.User;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class GravatarAvatarRepositoryTest {

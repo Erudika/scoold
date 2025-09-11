@@ -103,6 +103,7 @@ import net.thauvin.erik.akismet.AkismetComment;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -237,7 +238,7 @@ public final class ScooldUtils {
 			URL endpoint = new URI(CONF.paraEndpoint()).toURL();
 			if (!StringUtils.isBlank(endpoint.getPath()) && !"/".equals(endpoint.getPath())) {
 				// support Para deployed under a specific context path
-				pc.setEndpoint(StringUtils.removeEnd(CONF.paraEndpoint(), endpoint.getPath()));
+				pc.setEndpoint(Strings.CS.removeEnd(CONF.paraEndpoint(), endpoint.getPath()));
 				pc.setApiPath(StringUtils.stripEnd(endpoint.getPath(), "/") + pc.getApiPath());
 			} else {
 				pc.setEndpoint(CONF.paraEndpoint());
@@ -283,7 +284,7 @@ public final class ScooldUtils {
 		String jwt = HttpUtils.getStateParam(CONF.authCookie(), req);
 		if (isApiRequest(req)) {
 			return checkApiAuth(req);
-		} else if (jwt != null && !StringUtils.endsWithAny(req.getServletPath(),
+		} else if (jwt != null && !Strings.CS.endsWithAny(req.getServletPath(),
 				".js", ".css", ".svg", ".png", ".jpg", ".ico", ".gif", ".woff2", ".woff", "people/avatar", "/two-factor")) {
 			User u = pc.me(jwt);
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
@@ -314,7 +315,7 @@ public final class ScooldUtils {
 		if (req.getServletPath().equals("/api")) {
 			return null;
 		}
-		String apiKeyJWT = StringUtils.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
+		String apiKeyJWT = Strings.CS.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
 		if (req.getServletPath().equals("/api/ping")) {
 			return API_USER;
 		} else if (req.getServletPath().equals("/api/stats") && isValidJWToken(apiKeyJWT)) {
@@ -373,17 +374,17 @@ public final class ScooldUtils {
 
 	private boolean updateProfilePictureAndName(Profile authUser, User u) {
 		boolean update = false;
-		if (!StringUtils.equals(u.getPicture(), authUser.getPicture())
+		if (!Strings.CS.equals(u.getPicture(), authUser.getPicture())
 				&& !gravatarAvatarGenerator.isLink(authUser.getPicture())
 				&& !CONF.avatarEditsEnabled()) {
 			authUser.setPicture(u.getPicture());
 			update = true;
 		}
-		if (!CONF.nameEditsEnabled() &&	!StringUtils.equals(u.getName(), authUser.getName())) {
+		if (!CONF.nameEditsEnabled() &&	!Strings.CS.equals(u.getName(), authUser.getName())) {
 			authUser.setName(StringUtils.abbreviate(u.getName(), 256));
 			update = true;
 		}
-		if (!StringUtils.equals(u.getName(), authUser.getOriginalName())) {
+		if (!Strings.CS.equals(u.getName(), authUser.getOriginalName())) {
 			authUser.setOriginalName(u.getName());
 			update = true;
 		}
@@ -758,7 +759,7 @@ public final class ScooldUtils {
 				Utils.formatMessage("<a href='{0}'>{1}</a>", postURL, escapeHtml(parentPost.getTitle()))));
 		model.put("body", Utils.formatMessage("<h2>{0} {1}:</h2><div>{2}</div>", picture, escapeHtml(name), body));
 
-		if (!StringUtils.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
+		if (!Strings.CS.equals(parentPost.getCreatorid(), reply.getCreatorid())) {
 			Profile authorProfile = pc.read(parentPost.getCreatorid());
 			if (authorProfile != null) {
 				User author = authorProfile.getUser();
@@ -807,7 +808,7 @@ public final class ScooldUtils {
 			triggerHookEvent("comment.create", payload);
 			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
 			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
-			boolean isCommentatorThePostAuthor = StringUtils.equals(parentPost.getCreatorid(), comment.getCreatorid());
+			boolean isCommentatorThePostAuthor = Strings.CS.equals(parentPost.getCreatorid(), comment.getCreatorid());
 			Set<String> last5ids = pc.findChildren(parentPost, Utils.type(Comment.class),
 					"!(" + Config._CREATORID + ":\"" + comment.getCreatorid() + "\")", p).
 					stream().map(c -> c.getCreatorid()).distinct().collect(Collectors.toSet());
@@ -1110,7 +1111,7 @@ public final class ScooldUtils {
 	}
 
 	public boolean isLanguageRTL(String langCode) {
-		return StringUtils.equalsAnyIgnoreCase(langCode, "ar", "he", "dv", "iw", "fa", "ps", "sd", "ug", "ur", "yi");
+		return Strings.CI.equalsAny(langCode, "ar", "he", "dv", "iw", "fa", "ps", "sd", "ug", "ur", "yi");
 	}
 
 	public void getProfiles(List<? extends ParaObject> objects) {
@@ -1241,7 +1242,7 @@ public final class ScooldUtils {
 		//do not count views from author
 		if (showPost != null && !isMine(showPost, getAuthUser(req))) {
 			String postviews = StringUtils.trimToEmpty(HttpUtils.getStateParam("postviews", req));
-			if (!StringUtils.contains(postviews, showPost.getId())) {
+			if (!Strings.CS.contains(postviews, showPost.getId())) {
 				long views = (showPost.getViewcount() == null) ? 0 : showPost.getViewcount();
 				showPost.setViewcount(views + 1); //increment count
 				HttpUtils.setStateParam("postviews", (postviews.isEmpty() ? "" : postviews + ".") + showPost.getId(),
@@ -1344,7 +1345,7 @@ public final class ScooldUtils {
 			return "";
 		}
 		String welcomeMsgOnlogin = CONF.welcomeMessageOnLogin();
-		if (StringUtils.contains(welcomeMsgOnlogin, "{{")) {
+		if (Strings.CS.contains(welcomeMsgOnlogin, "{{")) {
 			welcomeMsgOnlogin = Utils.compileMustache(Collections.singletonMap("user",
 					ParaObjectUtils.getAnnotatedFields(authUser, false)), welcomeMsgOnlogin);
 		}
@@ -1352,7 +1353,7 @@ public final class ScooldUtils {
 	}
 
 	public String getWelcomeMessagePreLogin(Profile authUser, HttpServletRequest req) {
-		if (StringUtils.startsWithIgnoreCase(req.getServletPath(), SIGNINLINK)) {
+		if (Strings.CI.startsWith(req.getServletPath(), SIGNINLINK)) {
 			return authUser == null ? CONF.welcomeMessagePreLogin().replaceAll("'", "&apos;") : "";
 		}
 		return "";
@@ -1426,7 +1427,7 @@ public final class ScooldUtils {
 		boolean isMemberOfSpace = false;
 		for (String space : authUser.getSpaces()) {
 			String spaceId = getSpaceId(targetSpaceId);
-			if (StringUtils.startsWithIgnoreCase(space, spaceId + Para.getConfig().separator()) || space.equalsIgnoreCase(spaceId)) {
+			if (Strings.CI.startsWith(space, spaceId + Para.getConfig().separator()) || space.equalsIgnoreCase(spaceId)) {
 				isMemberOfSpace = true;
 				break;
 			}
@@ -1500,7 +1501,7 @@ public final class ScooldUtils {
 		if (StringUtils.isBlank(space) || "default".equalsIgnoreCase(space)) {
 			return DEFAULT_SPACE;
 		}
-		String s = StringUtils.contains(space, Para.getConfig().separator()) ?
+		String s = Strings.CS.contains(space, Para.getConfig().separator()) ?
 				StringUtils.substring(space, 0, space.lastIndexOf(Para.getConfig().separator())) : "scooldspace:" + space;
 		return "scooldspace".equals(s) ? space : s;
 	}
@@ -1749,7 +1750,7 @@ public final class ScooldUtils {
 		}
 		if (CONF.deleteProtectionEnabled()) {
 			if (showPost.isReply()) {
-				return isMine(showPost, authUser) && !StringUtils.equals(approvedAnswerId, showPost.getId());
+				return isMine(showPost, authUser) && !Strings.CS.equals(approvedAnswerId, showPost.getId());
 			} else {
 				return isMine(showPost, authUser) && showPost.getAnswercount() == 0;
 			}
@@ -1939,7 +1940,7 @@ public final class ScooldUtils {
 		String fqdn = CONF.rewriteInboundLinksWithFQDN();
 		if (!StringUtils.isBlank(fqdn)) {
 			model.entrySet().stream().filter(e -> (e.getValue() instanceof String)).forEachOrdered(e -> {
-				model.put(e.getKey(), StringUtils.replace((String) e.getValue(), CONF.serverUrl(), fqdn));
+				model.put(e.getKey(), Strings.CS.replace((String) e.getValue(), CONF.serverUrl(), fqdn));
 			});
 		}
 		return Utils.compileMustache(model, loadEmailTemplate("notify"));
@@ -2479,7 +2480,7 @@ public final class ScooldUtils {
 	}
 
 	public String getParaAppId() {
-		return StringUtils.removeStart(CONF.paraAccessKey(), "app:");
+		return Strings.CS.removeStart(CONF.paraAccessKey(), "app:");
 	}
 
 	private String getOauth2StateParam(String a) {

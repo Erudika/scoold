@@ -22,6 +22,7 @@ import com.erudika.para.core.annotations.Stored;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 
 /**
@@ -43,7 +44,7 @@ public class Badge extends Sysprop {
 	}
 
 	public Badge(String id) {
-		if (StringUtils.startsWith(id, PREFIX)) {
+		if (Strings.CS.startsWith(id, PREFIX)) {
 			setName(id);
 			setTag(id.replaceAll(PREFIX, ""));
 			setId(PREFIX.concat(getTag()));

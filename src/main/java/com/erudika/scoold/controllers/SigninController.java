@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -70,9 +71,9 @@ public class SigninController {
 	public String get(@RequestParam(name = "returnto", required = false, defaultValue = HOMEPAGE) String returnto,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
-			return "redirect:" + (StringUtils.startsWithIgnoreCase(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
+			return "redirect:" + (Strings.CI.startsWith(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
 		}
-		if (!HOMEPAGE.equals(returnto) && !StringUtils.startsWith(returnto, SIGNINLINK)) {
+		if (!HOMEPAGE.equals(returnto) && !Strings.CS.startsWith(returnto, SIGNINLINK)) {
 			HttpUtils.setStateParam("returnto", Utils.urlEncode(getBackToUrl(req)), req, res);
 		} else {
 			HttpUtils.removeStateParam("returnto", req, res);
@@ -333,7 +334,7 @@ public class SigninController {
 
 	private String getAuth(String provider, String accessToken, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isAuthenticated(req)) {
-			if (StringUtils.equalsAnyIgnoreCase(accessToken, "password", "ldap")) {
+			if (Strings.CI.equalsAny(accessToken, "password", "ldap")) {
 				accessToken = req.getParameter("username") + ":" +
 						("password".equals(accessToken) ? ":" : "") +
 						req.getParameter("password");
@@ -478,7 +479,7 @@ public class SigninController {
 			String storedToken = (String) s.getProperty(key);
 			// tokens expire afer a reasonably short period ~ 30 mins
 			long timeout = (long) CONF.passwordResetTimeoutSec() * 1000L;
-			if (StringUtils.equals(storedToken, token) && (s.getUpdated() + timeout) > Utils.timestamp()) {
+			if (Strings.CS.equals(storedToken, token) && (s.getUpdated() + timeout) > Utils.timestamp()) {
 				return true;
 			} else {
 				logger.info("User {} tried to reset password with an expired reset token.", s.getId());

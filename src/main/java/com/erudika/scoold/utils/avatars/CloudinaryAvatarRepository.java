@@ -18,7 +18,7 @@
 package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public class CloudinaryAvatarRepository implements AvatarRepository {
 	private static final String BASE_URL = "https://res.cloudinary.com/";
@@ -64,7 +64,7 @@ public class CloudinaryAvatarRepository implements AvatarRepository {
 	}
 
 	private boolean isCloudinaryLink(String url) {
-		return StringUtils.startsWith(url, BASE_URL);
+		return Strings.CS.startsWith(url, BASE_URL);
 	}
 
 	private String configureLink(String url, AvatarFormat format) {

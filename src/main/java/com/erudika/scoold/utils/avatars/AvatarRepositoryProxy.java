@@ -19,9 +19,9 @@ package com.erudika.scoold.utils.avatars;
 
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
-import org.springframework.stereotype.Component;
 import jakarta.inject.Singleton;
-import software.amazon.awssdk.utils.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.springframework.stereotype.Component;
 
 @Component
 @Singleton
@@ -60,7 +60,7 @@ public class AvatarRepositoryProxy implements AvatarRepository {
 
 	@Override
 	public boolean store(Profile profile, String url) {
-		if (profile != null && StringUtils.equals(profile.getPicture(), url)) {
+		if (profile != null && Strings.CS.equals(profile.getPicture(), url)) {
 			return false;
 		}
 		return repository.store(profile, url);

@@ -82,6 +82,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +175,7 @@ public class ApiController {
 		Map<String, Object> entity = readEntity(req);
 		if (!entity.containsKey(Config._TYPE)) {
 			entity.put(Config._TYPE, POST_TYPES[0]);
-		} else if (!StringUtils.equalsAnyIgnoreCase((CharSequence) entity.get(Config._TYPE), POST_TYPES)) {
+		} else if (!Strings.CI.equalsAny((CharSequence) entity.get(Config._TYPE), POST_TYPES)) {
 			badReq("Invalid post type - could be one of " + Arrays.toString(POST_TYPES));
 		}
 		Post post = ParaObjectUtils.setAnnotatedFields(entity);
@@ -566,7 +567,7 @@ public class ApiController {
 		}
 		if (!StringUtils.isBlank(password)) {
 			User u = profile.getUser();
-			if (u == null || !StringUtils.equalsAny(u.getIdentityProvider(), "password", "generic")) {
+			if (u == null || !Strings.CS.equalsAny(u.getIdentityProvider(), "password", "generic")) {
 				badReq("User's password cannot be modified.");
 			}
 			if (!utils.isPasswordStrongEnough(password)) {

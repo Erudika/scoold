@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
@@ -109,7 +110,7 @@ public class ScooldConfig extends Config {
 			category = "Core",
 			description = "The internet-facing (public) URL of this Scoold server.")
 	public String serverUrl() {
-		return StringUtils.removeEnd(getConfigParam("host_url", "http://localhost:" + serverPort()), "/");
+		return Strings.CS.removeEnd(getConfigParam("host_url", "http://localhost:" + serverPort()), "/");
 	}
 
 	@Documented(position = 60,
@@ -2612,7 +2613,7 @@ public class ScooldConfig extends Config {
 		String prefix = "scoold_external_scripts_";
 		Map<String, Object> ext = new LinkedHashMap<>(System.getenv().keySet().stream().
 				filter(k -> k.startsWith(prefix)).collect(Collectors.
-						toMap(mk -> StringUtils.removeStart(mk, prefix), mv -> System.getenv(mv))));
+						toMap(mk -> Strings.CS.removeStart(mk, prefix), mv -> System.getenv(mv))));
 		if (getConfig().hasPath("external_scripts")) {
 			ConfigObject extScripts = getConfig().getObject("external_scripts");
 			if (extScripts != null && !extScripts.isEmpty()) {

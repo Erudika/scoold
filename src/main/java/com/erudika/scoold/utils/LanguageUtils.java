@@ -34,6 +34,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -123,7 +124,7 @@ public class LanguageUtils {
 	 * @return a locale. default is English
 	 */
 	public Locale getProperLocale(String langCode) {
-		if (StringUtils.startsWith(langCode, "zh")) {
+		if (Strings.CS.startsWith(langCode, "zh")) {
 			if ("zh_tw".equalsIgnoreCase(langCode)) {
 				return Locale.TRADITIONAL_CHINESE;
 			} else {
@@ -206,7 +207,7 @@ public class LanguageUtils {
 						String propVal = lang.getProperty(propKey);
 						if (!langCode.equalsIgnoreCase(getDefaultLanguageCode())) {
 							String defaultVal = getDefaultLanguage().get(propKey);
-							if (!StringUtils.isBlank(propVal) && !StringUtils.equalsIgnoreCase(propVal, defaultVal)) {
+							if (!StringUtils.isBlank(propVal) && !Strings.CI.equals(propVal, defaultVal)) {
 								progress++;
 							} else if (StringUtils.isBlank(propVal)) {
 								propVal = defaultVal;

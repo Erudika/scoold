@@ -20,6 +20,7 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 
 public class ImgurAvatarRepository implements AvatarRepository {
@@ -43,7 +44,7 @@ public class ImgurAvatarRepository implements AvatarRepository {
 	}
 
 	private boolean isImgurLink(String picture) {
-		return StringUtils.startsWithIgnoreCase(picture, "https://i.imgur.com/");
+		return Strings.CI.startsWith(picture, "https://i.imgur.com/");
 	}
 
 	@Override

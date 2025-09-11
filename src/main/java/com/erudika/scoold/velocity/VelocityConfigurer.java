@@ -16,12 +16,10 @@
 
 package com.erudika.scoold.velocity;
 
-import java.io.IOException;
 import jakarta.servlet.ServletContext;
-
+import java.io.IOException;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.web.context.ServletContextAware;

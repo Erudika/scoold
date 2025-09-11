@@ -46,6 +46,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  *
@@ -590,8 +591,8 @@ public abstract class Post extends Sysprop {
 		if (beforeUpdate == null) {
 			return false;
 		}
-		return !StringUtils.equals(getTitle(), beforeUpdate.getTitle())
-				|| !StringUtils.equals(getBody(), beforeUpdate.getBody())
+		return !Strings.CS.equals(getTitle(), beforeUpdate.getTitle())
+				|| !Strings.CS.equals(getBody(), beforeUpdate.getBody())
 				|| !Objects.equals(getTags(), beforeUpdate.getTags());
 	}
 

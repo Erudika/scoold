@@ -19,10 +19,9 @@ package com.erudika.scoold.utils.avatars;
 
 import com.erudika.para.core.User;
 import com.erudika.scoold.core.Profile;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

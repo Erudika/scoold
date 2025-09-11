@@ -20,9 +20,10 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 import jakarta.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.springframework.stereotype.Component;
 
 @Component
 @Singleton
@@ -58,6 +59,6 @@ public class GravatarAvatarGenerator {
 	}
 
 	public boolean isLink(String link) {
-		return StringUtils.contains(link, "gravatar.com");
+		return Strings.CS.contains(link, "gravatar.com");
 	}
 }

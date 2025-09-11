@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -127,7 +128,7 @@ public class ReportsController {
 				rep.setAuthorName(utils.getLang(req).get("anonymous"));
 				canCreateReport = reportsLimiterAnon.isAllowed(utils.getParaAppId(), req.getRemoteAddr());
 			}
-			if (StringUtils.startsWith(rep.getLink(), "/")) {
+			if (Strings.CS.startsWith(rep.getLink(), "/")) {
 				rep.setLink(CONF.serverUrl() + rep.getLink());
 			}
 			if (canCreateReport) {

@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hibernate.validator.constraints.URL;
 
 public class Profile extends Sysprop {
@@ -158,7 +159,7 @@ public class Profile extends Sysprop {
 	}
 
 	public static final String id(String userid) {
-		if (StringUtils.endsWith(userid, Para.getConfig().separator() + "profile")) {
+		if (Strings.CS.endsWith(userid, Para.getConfig().separator() + "profile")) {
 			return userid;
 		} else {
 			return userid != null ? userid + Para.getConfig().separator() + "profile" : null;
@@ -188,7 +189,7 @@ public class Profile extends Sysprop {
 	public User getUser() {
 		if (user == null) {
 			user = client().read(getCreatorid() == null
-					? StringUtils.removeEnd(getId(), Para.getConfig().separator() + "profile") : getCreatorid());
+					? Strings.CS.removeEnd(getId(), Para.getConfig().separator() + "profile") : getCreatorid());
 		}
 		return user;
 	}
@@ -646,7 +647,7 @@ public class Profile extends Sysprop {
 	}
 
 	public boolean hasBadge(Badge b) {
-		return StringUtils.containsIgnoreCase(badges, ",".concat(b.toString()).concat(","));
+		return Strings.CI.contains(badges, ",".concat(b.toString()).concat(","));
 	}
 
 	public void addBadge(Badge b) {

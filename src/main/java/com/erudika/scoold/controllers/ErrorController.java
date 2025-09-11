@@ -20,12 +20,12 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.io.IOException;
-import java.util.Collections;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.util.Collections;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,7 +54,7 @@ public class ErrorController {
 		model.addAttribute("reason", req.getAttribute("jakarta.servlet.error.message"));
 		model.addAttribute("code", code);
 
-		if (StringUtils.startsWith((CharSequence) req.getAttribute("jakarta.servlet.forward.request_uri"), "/api/")) {
+		if (Strings.CS.startsWith((CharSequence) req.getAttribute("jakarta.servlet.forward.request_uri"), "/api/")) {
 			res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 			ParaObjectUtils.getJsonWriterNoIdent().writeValue(res.getOutputStream(),
 					Collections.singletonMap("error", code + " - " + req.getAttribute("jakarta.servlet.error.message")));

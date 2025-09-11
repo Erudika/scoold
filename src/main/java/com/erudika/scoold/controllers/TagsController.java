@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -157,7 +158,7 @@ public class TagsController {
 				}
 				model.addAttribute("tag", updated);
 				count = t.getCount();
-			} else if (t != null && !StringUtils.equals(oldTag.getDescription(), description)) {
+			} else if (t != null && !Strings.CS.equals(oldTag.getDescription(), description)) {
 				t.setDescription(description);
 				updated = pc.update(t);
 				model.addAttribute("tag", updated);

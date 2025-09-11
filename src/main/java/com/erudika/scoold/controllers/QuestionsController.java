@@ -50,6 +50,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -216,7 +217,7 @@ public class QuestionsController {
 		String sid = Post.DEFAULT_SPACE;
 		if (utils.isAuthenticated(req)) {
 			sid = utils.getSpaceId(utils.getSpaceIdFromCookie(utils.getAuthUser(req), req));
-			sid = StringUtils.replace(sid, "*", "default");
+			sid = Strings.CS.replace(sid, "*", "default");
 		}
 		Sysprop spaceObj =  pc.read(sid);
 		if (spaceObj != null) {
@@ -435,10 +436,10 @@ public class QuestionsController {
 			String q = "properties.answercount:0";
 			query = utils.getSpaceFilteredQuery(req, spaceFiltered, spaceFilter + q, q);
 		}
-		String tags = StringUtils.trimToEmpty(StringUtils.removeStart(p.getName(), "with_tags:"));
-		if (StringUtils.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
+		String tags = StringUtils.trimToEmpty(Strings.CS.removeStart(p.getName(), "with_tags:"));
+		if (Strings.CS.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
 			String logicalOperator = tags.startsWith("+") ? " AND " : " OR ";
-			tags = StringUtils.remove(tags, "+");
+			tags = Strings.CS.remove(tags, "+");
 			StringBuilder sb = new StringBuilder("*".equals(query) ? "" : query.concat(" AND "));
 			// should we specify the tags property here? like: tags:(tag1 OR tag2)
 			sb.append("tags").append(":(").append(tags.replaceAll(",", logicalOperator)).append(")");

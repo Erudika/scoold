@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -191,17 +192,17 @@ public class ProfileController {
 		String queryString = "";
 		if (showUser != null) {
 			boolean updateProfile = false;
-			if (!StringUtils.equals(showUser.getLocation(), location)) {
+			if (!Strings.CS.equals(showUser.getLocation(), location)) {
 				showUser.setLatlng(latlng);
 				showUser.setLocation(location);
 				updateProfile = true;
 			}
-			if (!StringUtils.equals(showUser.getWebsite(), website) &&
+			if (!Strings.CS.equals(showUser.getWebsite(), website) &&
 					(StringUtils.isBlank(website) || Utils.isValidURL(website))) {
 				showUser.setWebsite(website);
 				updateProfile = true;
 			}
-			if (!StringUtils.equals(showUser.getAboutme(), aboutme)) {
+			if (!Strings.CS.equals(showUser.getAboutme(), aboutme)) {
 				showUser.setAboutme(aboutme);
 				updateProfile = true;
 			}
@@ -344,14 +345,14 @@ public class ProfileController {
 		if (id != null && (!StringUtils.isBlank(token) || !StringUtils.isBlank(token2))) {
 			User u = (User) pc.read(id);
 			Sysprop s = pc.read(u.getIdentifier());
-			if (s != null && StringUtils.equals(token, (String) s.getProperty(Config._EMAIL_TOKEN))) {
+			if (s != null && Strings.CS.equals(token, (String) s.getProperty(Config._EMAIL_TOKEN))) {
 				s.addProperty(Config._EMAIL_TOKEN, "");
 				pc.update(s);
 				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
 					return changeEmail(u, authUser, authUser.getPendingEmail());
 				}
 				return "redirect:" + PROFILELINK + "?code=signin.verify.start&success=true";
-			} else if (s != null && StringUtils.equals(token2, (String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
+			} else if (s != null && Strings.CS.equals(token2, (String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
 				s.addProperty(Config._EMAIL_TOKEN + "2", "");
 				pc.update(s);
 				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN))) {
@@ -407,7 +408,7 @@ public class ProfileController {
 	@PostMapping("/toggle-editor-role")
 	public String toggleEditorRole(HttpServletRequest req, Model model) {
 		Profile authUser = utils.getAuthUser(req);
-		if (authUser != null && StringUtils.equalsAny(authUser.getGroups(),
+		if (authUser != null && Strings.CS.equalsAny(authUser.getGroups(),
 				User.Groups.ADMINS.toString(), User.Groups.MODS.toString())) {
 			authUser.setEditorRoleEnabled(!authUser.getEditorRoleEnabled());
 			authUser.update();
@@ -459,7 +460,7 @@ public class ProfileController {
 	}
 
 	private boolean canChangeEmail(User u, String email) {
-		return "generic".equals(u.getIdentityProvider()) && !StringUtils.equals(u.getEmail(), email);
+		return "generic".equals(u.getIdentityProvider()) && !Strings.CS.equals(u.getEmail(), email);
 	}
 
 	private Profile getProfileForEditing(String id, Profile authUser) {

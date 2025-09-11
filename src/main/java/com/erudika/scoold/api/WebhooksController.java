@@ -25,12 +25,12 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.api.ApiController.logger;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.Collections;
-import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collections;
+import java.util.Map;
+import org.apache.commons.lang3.Strings;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,7 +63,7 @@ public class WebhooksController {
 			String signature = (String) entity.get("signature");
 			String id = (String) entity.get(Config._ID);
 			boolean alreadyUpdated = id.equals(lastConfigUpdate);
-			if (StringUtils.equals(signature, Utils.hmacSHA256(payload, CONF.paraSecretKey())) && !alreadyUpdated) {
+			if (Strings.CS.equals(signature, Utils.hmacSHA256(payload, CONF.paraSecretKey())) && !alreadyUpdated) {
 				Map<String, Object> configMap = ParaObjectUtils.getJsonReader(Map.class).readValue(payload);
 				configMap.entrySet().forEach((entry) -> {
 					System.setProperty(entry.getKey(), entry.getValue().toString());

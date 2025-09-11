@@ -31,6 +31,7 @@ import java.net.ConnectException;
 import java.util.Collections;
 import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -85,7 +86,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 
-		if (modelAndView == null || StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
+		if (modelAndView == null || Strings.CS.startsWith(modelAndView.getViewName(), "redirect:")) {
 			return; // skip if redirect
 		}
 		// Misc
@@ -108,7 +109,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("includeHighlightJS", CONF.codeHighlightingEnabled());
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
-		modelAndView.addObject("returnto", StringUtils.removeStart(request.getRequestURI(), CONF.serverContextPath()));
+		modelAndView.addObject("returnto", Strings.CS.removeStart(request.getRequestURI(), CONF.serverContextPath()));
 		modelAndView.addObject("rev", StringUtils.substring(Utils.md5(Version.getVersion() + CONF.paraSecretKey()), 0, 12));
 		// Configurable constants
 		modelAndView.addObject("MAX_PAGES", CONF.maxPages());

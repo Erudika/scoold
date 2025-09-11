@@ -54,6 +54,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +155,7 @@ public class SearchController {
 	private List<Profile> searchUsers(String queryString, HttpServletRequest req, Pager... pager) {
 		if (isEmailQuery(queryString)) {
 			List<String> uids = pc.findTerms(Utils.type(User.class),
-					Map.of(Config._EMAIL, StringUtils.remove(queryString, "\"")), true).
+					Map.of(Config._EMAIL, Strings.CS.remove(queryString, "\"")), true).
 					stream().map(u -> Profile.id(u.getId())).collect(Collectors.toList());
 			return pc.findByIds(uids);
 		} else {
@@ -163,7 +164,7 @@ public class SearchController {
 	}
 
 	private boolean isEmailQuery(String q) {
-		return q.matches(Email.EMAIL_PATTERN) || StringUtils.remove(q, "\"").matches(Email.EMAIL_PATTERN);
+		return q.matches(Email.EMAIL_PATTERN) || Strings.CS.remove(q, "\"").matches(Email.EMAIL_PATTERN);
 	}
 
 	@ResponseBody
@@ -308,7 +309,7 @@ public class SearchController {
 			map.put("created", Utils.formatDate(post.getTimestamp(), "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH));
 			map.put("updated", Utils.formatDate(post.getUpdated(), "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH));
 			map.put("author", baseurl.concat("profile/").concat(post.getCreatorid()));
-			map.put("body", StringUtils.removeEnd(Utils.markdownToHtml(post.getBody()), "\n"));
+			map.put("body", Strings.CS.removeEnd(Utils.markdownToHtml(post.getBody()), "\n"));
 			entriez.add(map);
 		}
 		model.addAttribute("entries", entriez);

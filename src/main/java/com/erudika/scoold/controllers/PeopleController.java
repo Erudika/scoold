@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -196,7 +197,7 @@ public class PeopleController {
 			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
 		}
 
-		if (!StringUtils.equalsAny(q.trim(), "", "*")) {
+		if (!Strings.CS.equalsAny(q.trim(), "", "*")) {
 			String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
 			qs = utils.getUsersSearchQuery(q, spaceFilter);
 		}
@@ -252,7 +253,7 @@ public class PeopleController {
 				Set<String> notHavingSpaces = new HashSet<String>();
 				pager.getSelect().stream().forEach((s) -> {
 					if (s.startsWith("-")) {
-						notHavingSpaces.add(StringUtils.removeStart(s, "-"));
+						notHavingSpaces.add(Strings.CS.removeStart(s, "-"));
 					} else {
 						havingSpaces.add(s);
 					}

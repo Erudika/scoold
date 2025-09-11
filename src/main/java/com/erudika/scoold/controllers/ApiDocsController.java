@@ -22,11 +22,11 @@ import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
-import jakarta.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,8 +71,8 @@ public class ApiDocsController {
 		}
 		Yaml yaml = new Yaml();
 		String yml = utils.loadResource("templates/api.yaml");
-		yml = StringUtils.replaceOnce(yml, "{{serverUrl}}", ScooldUtils.getConfig().serverUrl());
-		yml = StringUtils.replaceOnce(yml, "{{contextPath}}", ScooldUtils.getConfig().serverContextPath());
+		yml = Strings.CS.replaceOnce(yml, "{{serverUrl}}", ScooldUtils.getConfig().serverUrl());
+		yml = Strings.CS.replaceOnce(yml, "{{contextPath}}", ScooldUtils.getConfig().serverContextPath());
 		String result = ParaObjectUtils.getJsonWriter().writeValueAsString(yaml.load(yml));
 		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).eTag(Utils.md5(result)).body(result);
 	}

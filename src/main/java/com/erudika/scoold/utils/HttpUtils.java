@@ -39,6 +39,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -176,7 +177,7 @@ public final class HttpUtils {
 		sb.append("Expires=").append(expires).append(";");
 		sb.append("Max-Age=").append(maxAge < 0 ? CONF.sessionTimeoutSec() : maxAge).append(";");
 		sb.append("HttpOnly;"); // all cookies should be HttpOnly, JS does not need to read cookie values
-		if (StringUtils.startsWithIgnoreCase(CONF.serverUrl(), "https://") || req.isSecure()) {
+		if (Strings.CI.startsWith(CONF.serverUrl(), "https://") || req.isSecure()) {
 			sb.append("Secure;");
 		}
 		if (!StringUtils.isBlank(sameSite)) {
@@ -318,7 +319,7 @@ public final class HttpUtils {
 		if (!StringUtils.isBlank(twoFACookie) && authUser != null) {
 			String computed = Utils.hmacSHA256(authUser.getId(),
 					loginTime.getTime() + Para.getConfig().separator() + authUser.getTwoFAkey());
-			return StringUtils.equals(computed, twoFACookie);
+			return Strings.CS.equals(computed, twoFACookie);
 		}
 		return false;
 	}
@@ -346,7 +347,7 @@ public final class HttpUtils {
 		} catch (Exception e) {
 			logger.warn("Invalid return-to URI: {}", e.getMessage());
 		}
-		if (!StringUtils.startsWithIgnoreCase(resolved, serverUrl)) {
+		if (!Strings.CI.startsWith(resolved, serverUrl)) {
 			backto = "";
 		} else {
 			backto = resolved;

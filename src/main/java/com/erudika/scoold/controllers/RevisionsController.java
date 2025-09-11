@@ -18,20 +18,20 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.para.core.utils.Pager;
+import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import com.erudika.scoold.core.Post;
+import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.utils.ScooldUtils;
-import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
-import com.erudika.scoold.core.Profile;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
