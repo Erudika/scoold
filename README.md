@@ -646,6 +646,7 @@ scoold.password_auth_enabled = true
 |`scoold.automatic_spam_protection_enabled`<br>Enable/disable autonomous action taken against spam posts - if detected a spam post will be blocked without notice. By default, spam posts will require action and approval by admins. | `true` | `Boolean`|
 |`scoold.data_import_export_enabled`<br>Enable/disable backup and restore features on the Administration page. | `true` | `Boolean`|
 |`scoold.config_editing_enabled`<br>Enable/disable live configuration editing for admins on the Administration page. | `true` | `Boolean`|
+|`scoold.ai_training_allowed`<br>Enable/disable permission for AI training on content from the website, using the new RSL standard. | `false` | `Boolean`|
 
 </details>
 
