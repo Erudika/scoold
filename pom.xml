@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.4</version>
+		<version>3.5.5</version>
 	</parent>
 
 	<organization>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>10.4</version>
+			<version>10.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudinary</groupId>
@@ -383,6 +383,10 @@
 						<configuration>
 							<buildArgs>
 								<!--THIS CAUSES SOME CONFLICTS WITH AZURE CORE WHERE IT'S INITIALIZED AT BUILD TIME-->
+								<buildArg>--gc=G1</buildArg>
+								<buildArg>-march=native</buildArg>
+								<buildArg>-R:MaxHeapSize=800m</buildArg>
+								<buildArg>-H:+UnlockExperimentalVMOptions</buildArg>
 								<buildArg>--initialize-at-run-time=org.slf4j.LoggerFactory</buildArg>
 								<buildArg>-H:+IncludeAllLocales</buildArg>
 								<buildArg>-H:ConfigurationFileDirectories=src/main/resources/META-INF/native-image/com.erudika/scoold/</buildArg>
