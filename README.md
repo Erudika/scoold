@@ -347,6 +347,7 @@ scoold.password_auth_enabled = true
 |`scoold.security.ldap.compare_passwords`<br>LDAP compare passwords. | ` ` | `String`|
 |`scoold.security.ldap.password_param`<br>LDAP password parameter name. | `password` | `String`|
 |`scoold.security.ldap.username_param`<br>LDAP username parameter name. | `username` | `String`|
+|`scoold.security.ldap.displayname_attribute`<br>Maps an LDAP property to the full name of the person. By default, the value of CN is used as the name of the Para user. Acceptable values are `cn`, `displayname`, `uid`, `username`, `sn`. | `cn` | `String`|
 |`scoold.security.ldap.is_local` <kbd>Pro</kbd><br>Enable/disable local handling of LDAP requests, instead of sending those to Para. | `false` | `Boolean`|
 
 ## SAML Authentication
