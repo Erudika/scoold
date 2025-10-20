@@ -1035,6 +1035,17 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.ldap.username_param", "username");
 	}
 
+	@Documented(position = 1011,
+			identifier = "security.ldap.displayname_attribute",
+			value = "cn",
+			category = "LDAP Authentication",
+			description = "Maps an LDAP property to the full name of the person. By default, "
+			+ "the value of CN is used as the name of the Para user. Acceptable values are "
+					+ "`cn`, `displayname`, `uid`, `username`, `sn`.")
+	public String ldapDisplayNameAttribute() {
+		return getConfigParam("security.ldap.displayname_attribute", "cn");
+	}
+
 	@Documented(position = 1020,
 			identifier = "security.ldap.is_local",
 			value = "false",
@@ -3552,6 +3563,7 @@ public class ScooldConfig extends Config {
 		settings.put("security.ldap.active_directory_domain", ldapActiveDirectoryDomain());
 		settings.put("security.ldap.mods_group_node", ldapModeratorsGroupNode());
 		settings.put("security.ldap.admins_group_node", ldapAdministratorsGroupNode());
+		settings.put("security.ldap.displayname_attribute", ldapDisplayNameAttribute());
 		if (!ldapComparePasswords().isEmpty()) {
 			settings.put("security.ldap.compare_passwords", ldapComparePasswords());
 		}
