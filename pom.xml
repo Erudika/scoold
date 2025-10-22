@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.50.8</version>
+			<version>1.51.0</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -142,7 +142,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>[3.18.0,)</version>
+			<version>[3.19.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
@@ -251,7 +251,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>3.14.1</version>
 				<configuration>
 					<release>17</release>
 					<showDeprecation>true</showDeprecation>
@@ -291,7 +291,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.3</version>
+				<version>3.5.4</version>
 				<configuration>
 					<!--<argLine>-Xmx256m  ${surefireArgLine}</argLine>-->
 					<skipTests>${skipTests}</skipTests>
@@ -429,7 +429,7 @@
 
 					<plugin>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>3.5.3</version>
+						<version>3.5.4</version>
 						<executions>
 							<execution>
 								<goals>
