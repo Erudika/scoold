@@ -336,7 +336,7 @@ pre, code.hljs, code[class*="language-"], pre[class*="language-"] {
 	min-height: 127px;
 }
 .user-card img {
-	max-height: 120px;
+	max-height: 118px;
 }
 img.profile-pic {
 	object-fit: cover;
@@ -726,7 +726,7 @@ table.striped>tbody>tr:nth-child(odd) {
 		margin-bottom: 10px;
 	}
 	.user-card img {
-		max-height: 90px;
+		max-height: 89px;
 	}
 	.userbox {
 		width: auto;
