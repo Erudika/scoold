@@ -719,10 +719,12 @@ There's a Helm chart inside the `helm/` folder. First edit `helm/scoold/values.y
 Kubernetes with a single command:
 
 ```
-cd helm; helm install ./scoold
+cd helm; helm install scoold ./scoold
 ```
 
-For more info, read the README at `helm/README.md`.
+For more info, check the quick start guide at [`helm/README.md`](helm/README.md).
+
+The Helm chart for **Scoold Pro** is in the [`erudika/scoold-pro` repo](https://github.com/Erudika/scoold-pro/tree/master/helm).
 
 ## Docker registry for Scoold Pro images
 
