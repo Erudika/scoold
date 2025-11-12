@@ -3,16 +3,16 @@ kind: Pod
 metadata:
   name: "{{ include "scoold.fullname" . }}-test-connection"
   labels:
-    app.kubernetes.io/name: {{ include "scoold.name" . }}
-    helm.sh/chart: {{ include "scoold.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "scoold.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test-success
 spec:
   containers:
     - name: wget
-      image: busybox
-      command: ['wget']
-      args:  ['{{ include "scoold.fullname" . }}:{{ .Values.service.port }}']
+      image: busybox:1.36
+      command:
+        - sh
+        - -c
+      args:
+        - wget --spider --timeout=5 "{{ include "scoold.fullname" . }}:{{ .Values.service.port }}"
   restartPolicy: Never

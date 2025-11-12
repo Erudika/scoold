@@ -1,12 +1,27 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
+{{- if .Values.ecrHelper.enabled }}
+{{- $saName := include "scoold.ecrHelperServiceAccountName" . }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
-  name: ecr-cred-helper
+  name: {{ include "scoold.fullname" . }}-ecr-helper
+  labels:
+    {{- include "scoold.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "delete", "get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "scoold.fullname" . }}-ecr-helper
+  labels:
+    {{- include "scoold.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: ecr-cred-helper
-    namespace: {{ .Values.namespace }}
+    name: {{ $saName }}
 roleRef:
-  kind: ClusterRole
-  name: cluster-admin
   apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "scoold.fullname" . }}-ecr-helper
+{{- end }}

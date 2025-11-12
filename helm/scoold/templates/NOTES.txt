@@ -7,8 +7,9 @@
 1. Get the application URL by running these commands:
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
-  {{- range $.Values.ingress.paths }}
-  Visit http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host }}{{ . }} to use your application
+  {{- $hostName := $host.host | default (include "scoold.fullname" $) }}
+  {{- range $path := $host.paths }}
+  Visit http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $hostName }}{{ $path.path }} to use your application
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}

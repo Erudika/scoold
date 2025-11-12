@@ -3,10 +3,7 @@ kind: Service
 metadata:
   name: {{ include "scoold.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "scoold.name" . }}
-    helm.sh/chart: {{ include "scoold.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "scoold.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -15,5 +12,4 @@ spec:
       protocol: TCP
       name: {{ .Values.service.name }}
   selector:
-    app.kubernetes.io/name: {{ include "scoold.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "scoold.selectorLabels" . | nindent 4 }}

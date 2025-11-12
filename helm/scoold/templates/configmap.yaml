@@ -1,15 +1,11 @@
 {{- if .Values.applicationConf }}
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "scoold.name" . }}-config
+  name: {{ include "scoold.fullname" . }}-config
   labels:
-    heritage: {{ .Release.Service | quote }}
-    release: {{ .Release.Name | quote }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: {{ include "scoold.name" . }}
+    {{- include "scoold.labels" . | nindent 4 }}
 data:
   application.conf: |
-{{ .Values.applicationConf | indent 4 }}
-{{- end -}}
+{{- nindent 4 .Values.applicationConf }}
+{{- end }}
