@@ -82,22 +82,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-ecrHelper:
-  enabled: false
-  schedule: "0 */6 * * *"
-  accountId: ""
-  region: ""
-  secretName: ""
-  contactEmail: ""
-  awsSecretRef:
-    name: "scoold"
-    key: "aws_ecr_secret"
-  accessKeyId: ""
-  serviceAccount:
-    name: ""
-    annotations: {}
-  image:
-    repository: odaniait/aws-kubectl
-    tag: latest
-    pullPolicy: IfNotPresent

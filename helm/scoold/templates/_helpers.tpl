@@ -52,13 +52,3 @@ app.kubernetes.io/name: {{ include "scoold.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{/*
-ServiceAccount name for the ECR helper
-*/}}
-{{- define "scoold.ecrHelperServiceAccountName" -}}
-{{- if .Values.ecrHelper.serviceAccount.name -}}
-{{- .Values.ecrHelper.serviceAccount.name -}}
-{{- else -}}
-{{- printf "%s-ecr-helper" (include "scoold.fullname" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}

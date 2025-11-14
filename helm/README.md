@@ -39,7 +39,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the Scoold chart and their default values.
+The following table lists the configurable parameters inside `[values.yaml](values.yaml)` and their default values.
 
 | Parameter                           | Description                                                   | Default                                                  |
 |-------------------------------------|---------------------------------------------------------------|----------------------------------------------------------|
@@ -64,14 +64,16 @@ The following table lists the configurable parameters of the Scoold chart and th
 | `nodeSelector`                      | Node selector                                                 | `{}`                                                     |
 | `tolerations`                       | Tolerations                                                   | `[]`                                                     |
 | `affinity`                          | Affinity rules                                                | `{}`                                                     |
-| `ecrHelper.enabled`                 | Enable the optional ECR credential helper                     | `false`                                                  |
-
-For more information please refer to the [Scoold README](https://github.com/Erudika/scoold/blob/master/README.md).
 
 A YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
 $ helm install scoold ./scoold -f values.yaml
 ```
+Or, when updating the chart with new configuration:
 
-> **Tip**: You can use the default [values.yaml](values.yaml)
+```console
+$ helm upgrade --install scoold ./scoold -f values.yaml
+```
+
+For more Scoold configuration options, please refer to the [Scoold README](https://github.com/erudika/scoold#configuration).
