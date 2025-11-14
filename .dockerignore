@@ -1,0 +1,3 @@
+# Allow Docker builds to see the full source tree; only ignore build outputs.
+target/
+**/target/
