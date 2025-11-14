@@ -22,8 +22,16 @@ In the `./helm/` directory of this repo, execute the following console command:
 ```console
 $ helm install scoold ./scoold
 ```
-
 The command deploys Scoold on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+
+If you want to auto-initialize Scoold from scratch, deploy the Para Helm chart first, then take note of the root app secret key.
+The root app secret key is stored in the `para-application.conf` file located inside `/para/application.conf` inside the Para pod.
+Then modify `values.yaml` and add this Scoold configuration property:
+
+```ini
+scoold.autoinit.root_app_secret_key="{secret key for root Para app}"
+```
+Finally, run `helm upgrade --install scoold ./scoold`.
 
 > **Tip**: List all releases using `helm list`
 
