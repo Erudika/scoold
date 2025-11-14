@@ -1,19 +1,31 @@
-FROM maven:3-eclipse-temurin-21-alpine AS build
+FROM maven:eclipse-temurin AS deps
 
-RUN mkdir -p /scoold
-RUN curl -Ls https://github.com/Erudika/scoold/archive/master.tar.gz | tar -xz -C /scoold
-RUN cd /scoold/scoold-master && mvn -q -DskipTests=true clean package
+ENV SCOOLD_HOME=/scoold
+WORKDIR ${SCOOLD_HOME}
 
-FROM eclipse-temurin:21-alpine
+COPY pom.xml pom.xml
+RUN mvn -B dependency:go-offline --fail-never
 
-ENV BOOT_SLEEP=0 \
-    JAVA_OPTS=""
+FROM deps AS build
 
-COPY --from=build /scoold/scoold-master/target/scoold-*.jar /scoold/scoold.jar
+ENV SCOOLD_HOME=/scoold
+WORKDIR ${SCOOLD_HOME}
 
-WORKDIR /scoold
+COPY . .
+RUN mvn -B -am -DskipTests=true package && \
+    cp target/scoold-*.jar ${SCOOLD_HOME}/scoold.jar
+
+FROM eclipse-temurin:25-jre-alpine
+
+ENV SCOOLD_HOME=/scoold
+ENV BOOT_SLEEP=0
+ENV JAVA_OPTS=""
+WORKDIR ${SCOOLD_HOME}
+
+COPY --from=build ${SCOOLD_HOME}/scoold.jar ./scoold.jar
 
 EXPOSE 8000
 
-CMD sleep $BOOT_SLEEP && \
-	java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar scoold.jar
+ENTRYPOINT ["sh", "-c", "sleep $BOOT_SLEEP && exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar scoold.jar \"$@\"", "scoold"]
+CMD []
+
