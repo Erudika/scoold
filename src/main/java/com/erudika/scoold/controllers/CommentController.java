@@ -29,6 +29,7 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
 import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.core.Report;
+import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -138,7 +139,7 @@ public class CommentController {
 	}
 
 	private void handleSpam(Comment c, Profile authUser, Map<String, String> error, HttpServletRequest req) {
-		boolean isSpam = utils.isSpam(c, authUser, req);
+		boolean isSpam = AntiSpamUtils.isSpam(c, authUser, req);
 		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
 			error.put("comment", "spam");
 		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {

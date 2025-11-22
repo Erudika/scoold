@@ -39,6 +39,7 @@ import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import jakarta.inject.Inject;
@@ -537,7 +538,7 @@ public class QuestionController {
 	}
 
 	private void updatePost(Post showPost, Profile authUser, HttpServletRequest req) {
-		boolean isSpam = utils.isSpam(showPost, authUser, req);
+		boolean isSpam = AntiSpamUtils.isSpam(showPost, authUser, req);
 		if (isSpam) {
 			if (CONF.automaticSpamProtectionEnabled()) {
 				return;
@@ -678,7 +679,7 @@ public class QuestionController {
 	}
 
 	private Reply handleSpam(Reply a, Profile authUser, Map<String, String> error, HttpServletRequest req) {
-		boolean isSpam = utils.isSpam(a, authUser, req);
+		boolean isSpam = AntiSpamUtils.isSpam(a, authUser, req);
 		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
 			error.put("body", "spam");
 		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {

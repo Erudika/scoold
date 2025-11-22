@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>10.5</version>
+			<version>10.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudinary</groupId>
@@ -147,11 +147,6 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.thauvin.erik</groupId>
-			<artifactId>akismet-kotlin</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 		<!--QR Code generator-->
 		<dependency>
@@ -370,7 +365,7 @@
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
-						<version>0.11.0</version>
+						<version>0.11.3</version>
 						<extensions>true</extensions>
 						<executions>
 							<execution>

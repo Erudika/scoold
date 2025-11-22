@@ -34,6 +34,7 @@ import static com.erudika.scoold.core.Profile.Badge.REPORTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
+import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -243,7 +244,7 @@ public class ReportsController {
 			Profile authUser = utils.getAuthUser(req);
 			Report rep = pc.read(id);
 			if (rep != null && utils.isAdmin(authUser)) {
-				utils.confirmSpam(utils.buildAkismetCommentFromReport(rep, req),
+				AntiSpamUtils.confirmSpam(AntiSpamUtils.buildAkismetCommentFromReport(rep, req),
 						"true".equals(req.getParameter("spam")), true, req);
 
 				if ("true".equals(req.getParameter("deleteUser"))) {

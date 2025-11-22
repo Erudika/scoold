@@ -98,8 +98,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import net.thauvin.erik.akismet.Akismet;
-import net.thauvin.erik.akismet.AkismetComment;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -2321,86 +2319,6 @@ public final class ScooldUtils {
 			}
 		}
 		return false;
-	}
-
-	public AkismetComment buildAkismetComment(ParaObject pobj, Profile authUser, HttpServletRequest req) {
-		if (pobj == null) {
-			return null;
-		}
-		final AkismetComment comment = new AkismetComment(req);
-		if (pobj instanceof Comment) {
-			comment.setContent(((Comment) pobj).getComment());
-			comment.setPermalink(CONF.serverUrl() + "/comment/" + ((Comment) pobj).getId());
-			comment.setType("comment");
-		} else if (pobj instanceof Post) {
-			comment.setContent(((Post) pobj).getTitle() + " \n " + ((Post) pobj).getBody());
-			comment.setPermalink(CONF.serverUrl() + ((Post) pobj).getPostLinkForRedirect());
-			comment.setType(((Post) pobj).isReply() ? "reply" : "forum‑post");
-		}
-		if (authUser != null) {
-			comment.setAuthor(authUser.getName());
-			User u = authUser.getUser();
-			if (u != null) {
-				comment.setAuthorEmail(u.getEmail());
-			}
-		}
-		comment.setUserRole(isMod(authUser) ? "administrator" : null);
-		return comment;
-	}
-
-	public AkismetComment buildAkismetCommentFromReport(Report rep, HttpServletRequest req) {
-		if (rep == null) {
-			return null;
-		}
-		final AkismetComment comment = new AkismetComment(req);
-		comment.setContent(rep.getContent());
-		comment.setPermalink(rep.getLink());
-		comment.setType(rep.getLink().contains("/comment/") ? "comment" : "forum-post");
-
-		Profile authUser = pc.read(rep.getCreatorid());
-		if (authUser != null) {
-			comment.setAuthor(authUser.getName());
-			User u = authUser.getUser();
-			if (u != null) {
-				comment.setAuthorEmail(u.getEmail());
-			}
-		}
-		comment.setUserRole(isMod(authUser) ? "administrator" : null);
-		return comment;
-	}
-
-	public boolean isSpam(ParaObject pobj, Profile authUser, HttpServletRequest req) {
-		if (pobj == null || StringUtils.isBlank(CONF.akismetApiKey())) {
-			return false;
-		}
-		final AkismetComment comment = buildAkismetComment(pobj, authUser, req);
-		Akismet akismet = new Akismet(CONF.akismetApiKey(), CONF.serverUrl());
-		final boolean isSpam = akismet.checkComment(comment);
-		confirmSpam(comment, isSpam, CONF.automaticSpamProtectionEnabled(), req);
-		return isSpam;
-	}
-
-	public void confirmSpam(AkismetComment comment, boolean isSpam, boolean submit, HttpServletRequest req) {
-		Akismet akismet = new Akismet(CONF.akismetApiKey(), CONF.serverUrl());
-		if (isSpam) {
-			if (submit) {
-				boolean err = akismet.submitSpam(comment);
-				if (err) {
-					logger.error("Failed to confirm spam to Akismet: " +
-							akismet.getResponse() + " " + akismet.getErrorMessage());
-				} else {
-					logger.info("Detected spam post by user {} which was blocked, URL {}.",
-							comment.getAuthor(), comment.getPermalink());
-				}
-			}
-		} else {
-			if (submit) {
-				boolean err = akismet.submitHam(comment);
-				if (err) {
-					logger.error(akismet.getErrorMessage());
-				}
-			}
-		}
 	}
 
 	public String getCSPNonce() {

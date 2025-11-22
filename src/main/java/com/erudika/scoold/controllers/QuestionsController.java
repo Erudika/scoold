@@ -33,6 +33,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
+import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -500,7 +501,7 @@ public class QuestionsController {
 	}
 
 	private Question handleSpam(Question q, Profile authUser, Map<String, String> error, HttpServletRequest req) {
-		boolean isSpam = utils.isSpam(q, authUser, req);
+		boolean isSpam = AntiSpamUtils.isSpam(q, authUser, req);
 		if (isSpam && CONF.automaticSpamProtectionEnabled()) {
 			error.put("body", "spam");
 		} else if (isSpam && !CONF.automaticSpamProtectionEnabled()) {
