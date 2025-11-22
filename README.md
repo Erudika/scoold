@@ -73,11 +73,9 @@ your company or team.
 
 ...and more!
 
-## Live Demos
+## [Live DEMO](https://demo.scoold.com)
 
-### [Scoold Demo](https://live.scoold.com)  |  [Scoold Pro Demo](https://pro.scoold.com)
-
-For **admin** access, open the Scoold Pro demo and login with "Demo login".
+For **admin** access, go to the demo login page and click "Continue with Demo Login".
 
 ## Scoold architecture intro (or 'what the heck is Para?')
 
@@ -1022,7 +1020,7 @@ Another option is to add external stylesheets to the website:
 scoold.external_styles = "https://mydomain.com/style1.css, https://mydomain.com/style2.css"
 ```
 The last option is to completely replace the main stylesheet with a custom one. It's a good idea to copy the default
-CSS rules from [`/styles/style.css`](https://live.scoold.com/styles/style.css) and modify those, then upload the new
+CSS rules from [`/styles/style.css`](https://demo.scoold.com.com/styles/style.css) and modify those, then upload the new
 custom stylesheet file to a public location and set:
 
 ```ini
