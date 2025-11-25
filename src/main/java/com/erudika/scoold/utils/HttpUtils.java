@@ -214,15 +214,10 @@ public final class HttpUtils {
 	}
 
 	public static String getFullUrl(HttpServletRequest req, boolean relative) {
-		String queryString = req.getQueryString();
-		String url = req.getRequestURL().toString();
-		if (queryString != null) {
-			url = req.getRequestURL().append('?').append(queryString).toString();
-		}
-		if (relative) {
-			url = "/" + URI.create(CONF.serverUrl()).relativize(URI.create(url)).toString();
-		}
-		return url;
+		String queryString = StringUtils.isBlank(req.getQueryString()) ? "" : "?" + req.getQueryString();
+		URI currentUri = URI.create(CONF.serverContextPath() + req.getServletPath() + queryString);
+		URI base = URI.create(CONF.serverUrl());
+		return relative ? base.relativize(currentUri).toString() : base.resolve(currentUri).toString();
 	}
 
 	/**

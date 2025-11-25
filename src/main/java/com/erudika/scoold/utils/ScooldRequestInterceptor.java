@@ -85,7 +85,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-
 		if (modelAndView == null || Strings.CS.startsWith(modelAndView.getViewName(), "redirect:")) {
 			return; // skip if redirect
 		}
@@ -93,6 +92,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("HOMEPAGE", HOMEPAGE);
 		modelAndView.addObject("APPNAME", CONF.appName());
 		modelAndView.addObject("CDN_URL", CONF.cdnUrl());
+		modelAndView.addObject("CANONICAL_URL", HttpUtils.getFullUrl(request, false));
 		modelAndView.addObject("IN_PRODUCTION", CONF.inProduction());
 		modelAndView.addObject("IN_DEVELOPMENT", !CONF.inProduction());
 		modelAndView.addObject("MAX_ITEMS_PER_PAGE", CONF.maxItemsPerPage());

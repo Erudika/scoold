@@ -18,7 +18,7 @@
 		<meta property="fb:app_id" content="$!FB_APP_ID">
 		<meta property="og:title" content="$!title">
 		<meta property="og:type" content="article">
-		<meta property="og:url" content="$!request.getRequestURL()">
+		<meta property="og:url" content="$!CANONICAL_URL">
 		<meta property="og:image" content="$!ogimage">
 		<meta property="og:description" content="$!description">
 		<meta name="twitter:card" content="summary">
