@@ -209,7 +209,7 @@
 								<th class="capitalize">$!lang.get('date')</th>
 								<th>$!lang.get('admin.importlog.user')</th>
 								<th>$!lang.get('admin.importlog.file')</th>
-								<th>$!lang.get('admin.importlog.count')</th>
+								<th class="right-align">$!lang.get('admin.importlog.count')</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -218,15 +218,14 @@
 									<td>#formatdate($!import.timestamp, "YYYY-MM-dd HH:mm")</td>
 									<td><a href="$profilelink/$!import.creatorid">$!import.name</a></td>
 									<td>$!import.getProperty("file")</td>
-									<td>
+									<td class="right-align">
 										$!import.getProperty("count")
 										#if($!import.getProperty("status") == "pending")
-											<strong>(in progress)</strong>
-											<div class="progress">
-												<div class="indeterminate"></div>
-											</div>
+											<i class="fa fa-spinner fa-spin orange-text tooltipped" data-tooltip="in progress"></i>
 										#elseif($!import.getProperty("status") == "failed")
-											<strong class="red-text">(with errors)</strong>
+											<i class="fa fa-exclamation-circle red-text tooltipped" data-tooltip="with errors"></i>
+										#else
+											<i class="fa fa-check-circle green-text tooltipped" data-tooltip="completed"></i>
 										#end
 									</td>
 								</tr>
