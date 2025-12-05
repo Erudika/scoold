@@ -15,11 +15,9 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, google, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED: false */
+/*global window: false, jQuery: false, $: false, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED: false */
 "use strict";
 $(function () {
-	var mapCanvas = $("div#map-canvas");
-	var locationbox = $("input.locationbox");
 	var rusuremsg = CONFIRM_MSG;
 	var hostURL = window.location.protocol + "//" + window.location.host;
 	var imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif',
@@ -45,120 +43,6 @@ $(function () {
 	}
 
 	initMaterialize();
-
-	/**************************
-	 *    Google Maps API
-	 **************************/
-	if (typeof google !== 'undefined') {
-		if (locationbox.length && !mapCanvas.length && google) {
-			var searchLocation = new google.maps.places.SearchBox(locationbox.get(0));
-			searchLocation.addListener('places_changed', function () {
-				var lat = searchLocation.getPlaces()[0].geometry.location.lat();
-				var lng = searchLocation.getPlaces()[0].geometry.location.lng();
-				if (lat && lng) {
-					locationbox.siblings("input[name=latlng]").val(lat + "," + lng);
-				}
-				if (searchLocation.getPlaces()[0].formatted_address) {
-					locationbox.siblings("input[name=address]").val(searchLocation.getPlaces()[0].formatted_address);
-				}
-			});
-			// prevent form submit on enter pressed
-			locationbox.keypress(function (event) {
-				if (event.keyCode === 10 || event.keyCode === 13) event.preventDefault();
-			});
-		}
-
-		function initMap(elem) {
-			var geocoder = new google.maps.Geocoder(),
-				marker = new google.maps.Marker({}),
-				locbox = locationbox,
-				latlngbox = $("input.latlngbox:first"),
-				mapElem = elem || mapCanvas.get(0),
-				mapZoom = 5,
-				mapMarker = new google.maps.Marker({visible: false});
-
-			var myLatlng = new google.maps.LatLng(47.6975, 9.3241);
-			if (latlngbox.length && latlngbox.val().length > 5) {
-				var ll = latlngbox.val().split(",");
-				myLatlng = new google.maps.LatLng(ll[0], ll[1]);
-				mapZoom = 10;
-			}
-			var map = new google.maps.Map(mapElem, {
-						zoom: mapZoom,
-						center: myLatlng,
-						mapTypeId: google.maps.MapTypeId.ROADMAP,
-						mapTypeControl: false,
-						streetViewControl: false
-				});
-
-			marker.setPosition(myLatlng);
-			marker.setMap(map);
-
-			if (locbox.length && $.trim(locbox.val()) !== "") {
-				geocoder.geocode({address: locbox.val()}, function(results, status) {
-					if (status === google.maps.GeocoderStatus.OK && results.length && results.length > 0) {
-						var latlng = results[0].geometry.location;
-						mapMarker = new google.maps.Marker({position: latlng, visible: true});
-						mapMarker.setMap(map);
-						map.setCenter(latlng);
-						map.setZoom(mapZoom);
-					}
-				});
-			}
-
-			google.maps.event.addListener(map, 'click', function(event) {
-	//			map.setCenter(event.latLng);
-				marker.setPosition(event.latLng);
-				marker.setMap(map);
-				latlngbox.val(event.latLng.lat() + "," + event.latLng.lng());
-
-				geocoder.geocode({location: event.latLng}, function(results, status) {
-					if (status !== google.maps.GeocoderStatus.OK) {
-						locbox.val("");
-					} else {
-						if (results.length && results.length > 0) {
-							var h = 0,
-								country = "",
-								locality = "",
-								sublocality = "";
-
-							for (h = 0; h < results.length; h++) {
-								var arr = results[h].address_components, i;
-								for (i = 0; i < arr.length; i++) {
-									var type = $.trim(arr[i].types[0]);
-									var name = arr[i].long_name;
-									if (type === "country") {
-										country = name || "";
-									}
-									if (type === "locality") {
-										locality = name || "";
-									}
-									if (type === "sublocality") {
-										sublocality = name || "";
-									}
-								}
-							}
-						}
-						var found = "";
-
-						if (sublocality !== "" && country !== "") {
-							found = sublocality + ", " + country;
-						} else if (locality !== "" && country !== "") {
-							found = locality +  ", " + country;
-						} else {
-							found = country;
-						}
-
-						locbox.val(found);
-					}
-				});
-			});
-		}
-
-		if (mapCanvas.length && mapCanvas.is(":visible")) {
-			initMap();
-		}
-	}
 
 	/****************************************************
      *					MISC FUNCTIONS

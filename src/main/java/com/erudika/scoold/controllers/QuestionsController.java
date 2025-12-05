@@ -210,7 +210,7 @@ public class QuestionsController {
 		model.addAttribute("path", "questions.vm");
 		model.addAttribute("askSelected", "navbtn-hover");
 		model.addAttribute("defaultTag", CONF.defaultQuestionTag());
-		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
+		model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("includeEmojiPicker", true);
 		model.addAttribute("title", utils.getLang(req).get("posts.ask"));
 
@@ -279,7 +279,7 @@ public class QuestionsController {
 				model.addAttribute("draftQuestion", q);
 				model.addAttribute("defaultTag", "");
 				model.addAttribute("path", "questions.vm");
-				model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
+				model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 				model.addAttribute("askSelected", "navbtn-hover");
 				res.setStatus(400);
 				return "base";

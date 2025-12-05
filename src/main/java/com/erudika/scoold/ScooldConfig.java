@@ -1765,7 +1765,7 @@ public class ScooldConfig extends Config {
 			description = "Enable/disable the ability for users to attach geolocation data to questions and "
 					+ "location-based filtering of questions.")
 	public boolean postsNearMeEnabled() {
-		return getConfigBoolean("nearme_feature_enabled", !googleMapsApiKey().isEmpty());
+		return getConfigBoolean("nearme_feature_enabled", false);
 	}
 
 	@Documented(position = 1640,
@@ -3216,7 +3216,8 @@ public class ScooldConfig extends Config {
 	@Documented(position = 2900,
 			identifier = "gmaps_api_key",
 			category = "Miscellaneous",
-			description = "The Google Maps API key. Used for geolocation functionality, (e.g. 'posts near me', location).")
+			description = "*DEPRECATED:* This property will be ignored.")
+	@Deprecated
 	public String googleMapsApiKey() {
 		return getConfigParam("gmaps_api_key", "");
 	}
@@ -3617,11 +3618,11 @@ public class ScooldConfig extends Config {
 				+ "media-src 'self' blob:; "
 				+ "form-action 'self' " + serverUrl() + serverContextPath() + SIGNOUTLINK + "; "
 				+ "connect-src 'self' " + (inProduction() ? serverUrl() : "")
-				+ " maps.googleapis.com api.imgur.com api.cloudinary.com accounts.google.com " + cspConnectSources() + "; "
+				+ " api.imgur.com api.cloudinary.com accounts.google.com " + cspConnectSources() + "; "
 				+ "frame-src 'self' *.google.com " + cspFrameSources() + "; "
 				+ "frame-ancestors 'self'; "
 				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
-				// unsafe-inline required by MathJax and Google Maps!
+				// unsafe-inline required by MathJax!
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com "
 				+ (cdnUrl().startsWith("/") ? "" : cdnUrl() + " ") + cspStyleSources() + "; "
 				+ "img-src 'self' https: data:; "

@@ -102,8 +102,12 @@
 				<h3 class="ptl">$!lang.get('posts.locationfilter')</h3>
 				<div class="mbm">
 					<p>$!lang.get('settings.location')</p>
+					<div class="input-field">
+						<i class="fa fa-map-marker fa-2x grey-text prefix"></i>
+						<input type="text" name="location" value="$!authUser.latlngLabel" class="locationbox autocomplete"
+									 placeholder="$!lang.get('profile.about.location')">
+					</div>
 					<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
-					<div id="map-canvas" class="gmap center">#ajaxloading(false)</div>
 				</div>
 			#end
 

@@ -49,9 +49,6 @@
 		#if($!langDirection == "RTL")
 		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet">
 		#end
-		#if ($includeGMapsScripts && $includeGMapsScripts == true)
-		<script nonce="$cspNonce" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=$!GMAPS_API_KEY"></script>
-		#end
 		#externalScripts(true)
 		#foreach($externalStyle in $externalStyles)
 		<link href="$!externalStyle" rel="stylesheet">
@@ -427,6 +424,9 @@
 		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath().startsWith($profilelink))
 		#if($avatarUploadsEnabledBool)
 			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev"></script>
+		#end
+		#if ($includeLocatorScripts && $includeLocatorScripts == true)
+		<script nonce="$cspNonce" src="$!scriptslink/cities.js?r=$!rev"></script>
 		#end
 
 		#set($ctxPathJS = "CONTEXT_PATH = '$CONTEXT_PATH'")

@@ -130,7 +130,7 @@ public class ProfileController {
 		model.addAttribute("title", showUser.getName());
 		model.addAttribute("description", getUserDescription(showUser, itemcount1.getCount(), itemcount2.getCount()));
 		model.addAttribute("ogimage", utils.getFullAvatarURL(showUser, AvatarFormat.Profile));
-		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
+		model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("showUser", showUser);
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size() + showUser.getTags().size());

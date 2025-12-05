@@ -52,8 +52,9 @@ public class Profile extends Sysprop {
 	@Stored private String originalName;
 	@Stored private String originalPicture;
 	@Stored private Long lastseen;
-	@Stored private String location;
+	@Stored private String location; // display location on profile
 	@Stored private String latlng;
+	@Stored private String latlngLabel; // location label for "near me"
 	@Stored private String status;
 	@Stored private String aboutme;
 	@Stored private String badges;
@@ -323,6 +324,14 @@ public class Profile extends Sysprop {
 
 	public void setLatlng(String latlng) {
 		this.latlng = latlng;
+	}
+
+	public String getLatlngLabel() {
+		return latlngLabel;
+	}
+
+	public void setLatlngLabel(String latlngLabel) {
+		this.latlngLabel = latlngLabel;
 	}
 
 	public String getNewbadges() {

@@ -100,7 +100,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("TOKEN_PREFIX", TOKEN_PREFIX);
 		modelAndView.addObject("CONTEXT_PATH", CONF.serverContextPath());
 		modelAndView.addObject("FB_APP_ID", CONF.facebookAppId());
-		modelAndView.addObject("GMAPS_API_KEY", CONF.googleMapsApiKey());
 		modelAndView.addObject("IMGUR_CLIENT_ID", CONF.imgurClientId());
 		modelAndView.addObject("IMGUR_ENABLED", ScooldUtils.isImgurAvatarRepositoryEnabled());
 		modelAndView.addObject("CLOUDINARY_ENABLED", ScooldUtils.isCloudinaryAvatarRepositoryEnabled());

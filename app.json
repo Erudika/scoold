@@ -79,11 +79,6 @@
 			"required": false,
 			"value": "587"
 		},
-		"scoold_gmaps_api_key": {
-			"description": "Google Maps API key for showing a map for geolocation filtering of posts.",
-			"required": false,
-			"value": ""
-		},
 		"scoold_admins": {
 			"description": "Administrator identifiers - comma-separated list admin identifiers, used to recognize user as admin (can be an email or a social id).",
 			"required": false,

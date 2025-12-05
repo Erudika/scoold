@@ -83,7 +83,7 @@ public class SettingsController {
 		model.addAttribute("favtagsEmailsAllowed", utils.isFavTagsNotificationAllowed());
 		model.addAttribute("replyEmailsAllowed", utils.isReplyNotificationAllowed());
 		model.addAttribute("commentEmailsAllowed", utils.isCommentNotificationAllowed());
-		model.addAttribute("includeGMapsScripts", utils.isNearMeFeatureEnabled());
+		model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 		return "base";
 	}
 
@@ -99,6 +99,7 @@ public class SettingsController {
 			setFavTags(authUser, tags);
 			setFavSpaces(authUser, favspaces);
 			if (!StringUtils.isBlank(latlng)) {
+				authUser.setLatlngLabel(req.getParameter("location"));
 				authUser.setLatlng(latlng);
 			}
 			setAnonymity(authUser, req.getParameter("anon"));
