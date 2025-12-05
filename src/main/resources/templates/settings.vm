@@ -18,144 +18,194 @@
 		</div>
 	#else
 		<h2>$!lang.get("settings.title")</h2>
-
-		<h3 class="ptl">$!lang.get('signin.twofactor')</h3>
-		<div class="mbm">
-			<div class="switch">
-				<label>
-					$!lang.get('off')
-					#if($authUser.user.twoFA || $backupCode)
-						<input id="twofaSwitch" type="checkbox" name="twofa" checked="checked" value="true">
-					#else
-						<input id="twofaSwitch" type="checkbox" name="twofa" value="true">
-					#end
-					<span class="lever"></span>
-					$!lang.get('on')
-				</label>
-				<span class="mll mediumText"></span>
-			</div>
-			<div id="twofaSetup" class="#if(!$backupCode)hide#end">
-				<div class="row">
-					#if(!$authUser.user.twoFA && !$backupCode)
-					<div class="col l3 m6 s12">
-						<img src="$settingslink/qr" class="mbl responsive-img" width="300">
-					</div>
-					#end
-					<div class="col l4 m6 s12">
-						#if($backupCode)
-						<p class="green-text"><i class="fa fa-check-circle"></i> $!lang.get('settings.twofaon')</p>
-						<p class="orange-text"><i class="fa fa-warning"></i> <b>$!lang.get('settings.savecode')</b></p>
-						<code class="lightborder pam">$backupCode</code>
-						#else
-						<form method="post" action="$settingslink/toggle-twofa" class="mtl">
-							#sectoken(false "TWO_FACTOR")
-							<div class="mvm">
-								#if($authUser.user.twoFA)
-									<small>$!lang.get('settings.twofaoff')</small>
-								#else
-									<small>$!lang.get('settings.scancode')</small>
-								#end
-								#getmessagebox("red white-text" $error.get("code"))
-								<div class="input-field">
-									<label for="code">
-										$!lang.get('signin.code')
-									</label>
-									<input id="code" type="text" name="code" #if(!$authUser.user.twoFA)required#end>
-								</div>
-
-								#if($authUser.user.twoFA)
-								<div class="input-field">
-									<label for="backupCode">
-										$!lang.get('signin.backupcode')
-									</label>
-									<input id="backupCode" type="text" name="backupCode">
-								</div>
-								#end
-							</div>
-							<button type="submit" class="btn mbl">
-								$!lang.get('confirm')
-							</button>
-						</form>
-						#end
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<form method="post">
-			#set($userSpaces = $authUser.allSpaces)
-			<h3 class="ptl">$!lang.get('settings.preferredspace')</h3>
-			<div class="mbm">
-				<div class="input-field">
-					<i class="fa fa-th-large pvm prefix grey-text"></i>
-					<select name="preferredSpace" >
-						<option value="scooldspace:*" #if($authUser.preferredSpace.isBlank())selected="selected"#end>$!lang.get('allspaces')</option>
-						<option value="scooldspace:default" #if($authUser.preferredSpace == "scooldspace:default")selected="selected"#end>$!lang.get('defaultspace')</option>
-						#foreach($space in $userSpaces)
-						<option value="$space" #if($authUser.preferredSpace == $space)selected="selected"#end>$scooldUtils.getSpaceName($space)</option>
-						#end
-					</select>
-				</div>
-			</div>
 
-			#if($scooldUtils.isNearMeFeatureEnabled())
-				<h3 class="ptl">$!lang.get('posts.locationfilter')</h3>
-				<div class="mbm">
-					<p>$!lang.get('settings.location')</p>
-					<div class="input-field">
-						<i class="fa fa-map-marker fa-2x grey-text prefix"></i>
-						<input type="text" name="location" value="$!authUser.latlngLabel" class="locationbox autocomplete"
-									 placeholder="$!lang.get('profile.about.location')">
+			<div class="row">
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						<h3>$!lang.get('signin.twofactor')</h3>
+						<div class="switch">
+							<label>
+								$!lang.get('off')
+								#if($authUser.user.twoFA || $backupCode)
+								<input id="twofaSwitch" type="checkbox" name="twofa" checked="checked" value="true">
+								#else
+								<input id="twofaSwitch" type="checkbox" name="twofa" value="true">
+								#end
+								<span class="lever"></span>
+								$!lang.get('on')
+							</label>
+							<p>$!lang.get('signin.twofactor.text')</p>
+						</div>
+						<div id="twofaSetup" class="#if(!$backupCode)hide#end">
+							<div class="row mbn mtl">
+								#if(!$authUser.user.twoFA && !$backupCode)
+								<div class="col l6 m6 s12">
+									<img src="$settingslink/qr" class="mbl responsive-img" width="300">
+								</div>
+								#end
+								<div class="col l6 m6 s12">
+									#if($backupCode)
+									<p class="green-text"><i class="fa fa-check-circle"></i> $!lang.get('settings.twofaon')</p>
+									<p class="orange-text"><i class="fa fa-warning"></i> <b>$!lang.get('settings.savecode')</b></p>
+									<code class="lightborder pam">$backupCode</code>
+									#else
+									<form method="post" action="$settingslink/toggle-twofa" class="mtl">
+										#sectoken(false "TWO_FACTOR")
+										<div class="mvm">
+											#if($authUser.user.twoFA)
+											<small>$!lang.get('settings.twofaoff')</small>
+											#else
+											<small>$!lang.get('settings.scancode')</small>
+											#end
+											#getmessagebox("red white-text" $error.get("code"))
+											<div class="input-field">
+												<label for="code">
+													$!lang.get('signin.code')
+												</label>
+												<input id="code" type="text" name="code" #if(!$authUser.user.twoFA)required#end>
+											</div>
+
+											#if($authUser.user.twoFA)
+											<div class="input-field">
+												<label for="backupCode">
+													$!lang.get('signin.backupcode')
+												</label>
+												<input id="backupCode" type="text" name="backupCode">
+											</div>
+											#end
+										</div>
+										<button type="submit" class="btn mbl">
+											$!lang.get('confirm')
+										</button>
+									</form>
+									#end
+								</div>
+							</div>
+						</div>
 					</div>
-					<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
 				</div>
-			#end
 
-			<div class="mbm">
-				<h3 class="ptl">$!lang.get('posts.tagfilter')</h3>
-				<p>$!lang.get("settings.tagfilter.text")</p>
-				#sectoken(false)
-				<div class="input-field">
-					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
-					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
-					<input type="hidden" name="tags" value="$!authUser.favtagsString">
-				</div>
-			</div>
-
-			#if($authUser.user.identityProvider == "generic")
-				<h3>$!lang.get('password')
-					#if($request.getParameter("passChanged"))
-						<small class="green-text"><i class="fa fa-check"></i></small>
-					#end
-				</h3>
-				<div class="row">
-					<div class="col m3">
-						<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')">
-					</div>
-					<div class="col m3">
-						<input type="password" name="newpassword" value="" minlength="6" placeholder="$!lang.get('newpassword')">
+				#if($scooldUtils.isAnonymityEnabled())
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						<h3>$!lang.get('settings.anonymity')</h3>
+						<div class="mbn">
+							<div class="switch">
+								<label>
+									$!lang.get('off')
+									#if($authUser.anonymityEnabled)
+									<input type="checkbox" name="anon" checked="checked" value="true">
+									#else
+									<input type="checkbox" name="anon" value="true">
+									#end
+									<span class="lever"></span>
+									$!lang.get('on')
+								</label>
+								<p>$!lang.get('settings.anonymity.text')</p>
+							</div>
+						</div>
 					</div>
 				</div>
-			#end
+				#end
 
-			#if($scooldUtils.isAnonymityEnabled())
-				<h3 class="ptl">$!lang.get('settings.anonymity')</h3>
-				<div class="mbm">
-					<div class="switch">
-						<label>
-							$!lang.get('off')
-							#if($authUser.anonymityEnabled)
-							<input type="checkbox" name="anon" checked="checked" value="true">
-							#else
-							<input type="checkbox" name="anon" value="true">
+				#if($scooldUtils.isDarkModeEnabled())
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						<h3>$!lang.get('settings.darkmode')</h3>
+						<div class="mbn">
+							<div class="switch">
+								<label>
+									$!lang.get('off')
+									#if($darkModeEnabled)
+									<input type="checkbox" name="dark" checked="checked" value="true">
+									#else
+									<input type="checkbox" name="dark" value="true">
+									#end
+									<span class="lever"></span>
+									$!lang.get('on')
+								</label>
+								<p>$!lang.get('settings.darkmode.text')</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				#end
+
+				#if($authUser.user.identityProvider == "generic")
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						<h3>$!lang.get('password')
+							#if($request.getParameter("passChanged"))
+							<small class="green-text"><i class="fa fa-check"></i></small>
 							#end
-							<span class="lever"></span>
-							$!lang.get('on')
-						</label>
-						<span class="mll mediumText">$!lang.get('settings.anonymity.text')</span>
+						</h3>
+						<div class="mvl pvm">
+							<a href="#" class="next-div-toggle click2hide">$!lang.get('change')</a>
+						</div>
+						<div class="row mbn hide">
+							<div class="col m10 s12 offset-m1">
+								<input type="password" name="oldpassword" value="" minlength="6" placeholder="$!lang.get('password')">
+							</div>
+							<div class="col m10 s12 offset-m1">
+								<input type="password" name="newpassword" value="" minlength="6" placeholder="$!lang.get('newpassword')">
+							</div>
+						</div>
 					</div>
 				</div>
-			#end
+				#end
+
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						#set($userSpaces = $authUser.allSpaces)
+						<h3>$!lang.get('settings.preferredspace')</h3>
+						<div class="mvl phl">
+							<div class="input-field">
+								<!--<i class="fa fa-th-large pvm prefix grey-text"></i>-->
+								<select name="preferredSpace" >
+									<option value="scooldspace:*" #if($authUser.preferredSpace.isBlank())selected="selected"#end>$!lang.get('allspaces')</option>
+									<option value="scooldspace:default" #if($authUser.preferredSpace == "scooldspace:default")selected="selected"#end>$!lang.get('defaultspace')</option>
+									#foreach($space in $userSpaces)
+									<option value="$space" #if($authUser.preferredSpace == $space)selected="selected"#end>$scooldUtils.getSpaceName($space)</option>
+									#end
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				#if($scooldUtils.isNearMeFeatureEnabled())
+				<div class="col s12 m4 mbl">
+					<div class="lightborder pal center-align">
+						<h3>$!lang.get('posts.locationfilter')</h3>
+						<div class="mbn">
+							<div class="input-field phl">
+								<!--<i class="fa fa-map-marker fa-2x grey-text prefix"></i>-->
+								<input type="text" name="location" value="$!authUser.latlngLabel" class="locationbox autocomplete"
+											 placeholder="$!lang.get('profile.about.location')">
+							</div>
+							<input type="hidden" name="latlng" class="latlngbox" value="$!{authUser.latlng}">
+							<p class="mbn">$!lang.get('settings.location')</p>
+						</div>
+					</div>
+				</div>
+				#end
+			</div>
+
+			<div class="mbm">
+				<div class="lightborder pal ">
+					<h3>$!lang.get('posts.tagfilter')</h3>
+					#sectoken(false)
+					<div class="mbn">
+						<div class="input-field">
+							<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+							<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
+							<input type="hidden" name="tags" value="$!authUser.favtagsString">
+						</div>
+						<p>$!lang.get("settings.tagfilter.text")</p>
+					</div>
+				</div>
+			</div>
 
 			#if($emailsAllowed)
 			<h3 class="ptl">$!lang.get('settings.notifications')</h3>
@@ -272,25 +322,6 @@
 				</div>
 			</div>
 			#end
-			#end
-
-			#if($scooldUtils.isDarkModeEnabled())
-			<h3 class="ptl">$!lang.get('settings.darkmode')</h3>
-			<div class="mbm">
-				<div class="switch">
-					<label>
-						$!lang.get('off')
-						#if($darkModeEnabled)
-						<input type="checkbox" name="dark" checked="checked" value="true">
-						#else
-						<input type="checkbox" name="dark" value="true">
-						#end
-						<span class="lever"></span>
-						$!lang.get('on')
-					</label>
-					<span class="mll mediumText">$!lang.get('settings.darkmode.text')</span>
-				</div>
-			</div>
 			#end
 
 			<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('save')</button>
