@@ -619,7 +619,6 @@ scoold.password_auth_enabled = true
 |`scoold.security.redirect_uri`<br>Publicly accessible, internet-facing URL of the Para endpoint where authenticated users will be redirected to, from the identity provider. Used when Para is hosted behind a proxy. | `http://localhost:8080` | `String`|
 |`scoold.security.hosturl_aliases`<br>Provides a comma-separated list of alternative `host_url` public addresses to be used when returning from an authentication request to Para backend. This will override the hostname defined in `signin_success` and `signin_failure` and allow Scoold to run on multiple different public URLs while each separate server shares the same configuration. **Each must be a valid URL** | ` ` | `String`|
 |`scoold.redirect_signin_to_idp`<br>Enable/disable the redirection of users from the signin page, directly to the IDP login page. | `false` | `Boolean`|
-|`scoold.gmaps_api_key`<br>The Google Maps API key. Used for geolocation functionality, (e.g. 'posts near me', location). | ` ` | `String`|
 |`scoold.imgur_client_id` <kbd>preview</kbd><br>Imgur API client id. Used for uploading avatars to Imgur. **Note:** Imgur have some breaking restrictions going on in their API and this might not work. | ` ` | `String`|
 |`scoold.cloudinary_url` <kbd>preview</kbd><br>Cloudinary URL. Used for uploading avatars to Cloudinary. | ` ` | `String`|
 |`scoold.max_fav_tags`<br>Maximum number of favorite tags. | `50` | `Integer`|
