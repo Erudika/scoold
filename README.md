@@ -346,7 +346,6 @@ scoold.password_auth_enabled = true
 |`scoold.security.ldap.password_param`<br>LDAP password parameter name. | `password` | `String`|
 |`scoold.security.ldap.username_param`<br>LDAP username parameter name. | `username` | `String`|
 |`scoold.security.ldap.displayname_attribute`<br>Maps an LDAP property to the full name of the person. By default, the value of CN is used as the name of the Para user. Acceptable values are `cn`, `displayname`, `uid`, `username`, `sn`. | `cn` | `String`|
-|`scoold.security.ldap.is_local` <kbd>Pro</kbd><br>Enable/disable local handling of LDAP requests, instead of sending those to Para. | `false` | `Boolean`|
 
 ## SAML Authentication
 
@@ -378,7 +377,6 @@ scoold.password_auth_enabled = true
 |`scoold.security.saml.security.want_xml_validation` <kbd>Pro</kbd><br>Enable/disable SAML XML validation. | `true` | `Boolean`|
 |`scoold.security.saml.security.signature_algorithm` <kbd>Pro</kbd><br>SAML signature algorithm. | ` ` | `String`|
 |`scoold.security.saml.domain` <kbd>Pro</kbd><br>SAML domain name. | `paraio.com` | `String`|
-|`scoold.security.saml.is_local` <kbd>Pro</kbd><br>Enable/disable local handling of SAML requests, instead of sending those to Para. | `false` | `Boolean`|
 
 ## OAuth 2.0 Authentication
 
@@ -1483,21 +1481,7 @@ scoold.security.ldap.user_dn_pattern = "uid={0}"
 ```
 To test this, try logging in with user `manager` and password `Secret123`.
 
-### Local (internal) LDAP authentication
-
-**PRO** Scoold Pro can authenticate users with an internal (local) LDAP server, even if your Para backend is hosted outside
-of your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require a publicly
-accessible LDAP server. To enable this feature, add this to your configuration:
-```ini
-scoold.security.ldap.is_local = true
-# required for passwordless authentication with Para
-scoold.app_secret_key = "change_to_long_random_string"
-```
-Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
-(min. 32 chars).
-
 To print out debug information about LDAP requests, start Para with `-Dlogging.level.org.springframework.ldap=DEBUG`.
-If you are connecting to an internal LDAP server, add the same system property to the Scoold command line.
 
 To learn more about the settings above, read the [LDAP docs for Para](https://paraio.org/docs/#030-ldap).
 
@@ -1584,17 +1568,6 @@ scoold.security.saml.domain = "paraio.com"
 # Sets the string on the login button
 scoold.security.saml.provider = "Continue with SAML"
 ```
-
-Scoold Pro can authenticate users with an internal (local) SAML provider, even if your Para backend is hosted outside of
-your network (like ParaIO.com). This adds an extra layer of security and flexibility and doesn't require your SAML
-endpoints to be publicly accessible. To enable this feature, add this to your configuration:
-```ini
-scoold.security.saml.is_local = true
-# required for passwordless authentication with Para
-scoold.app_secret_key = "change_to_long_random_string"
-```
-Note that the secret key above is **not** the same as your Para secret key! You have to generate a random string for that
-(min. 32 chars).
 
 ## Custom authentication (Single Sign-on)
 
