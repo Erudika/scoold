@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>4.0.0</version>
 	</parent>
 
 	<organization>
@@ -137,12 +137,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>[1.14.0,)</version>
+			<version>1.15.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>[3.19.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
@@ -236,7 +235,6 @@
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
-							<executable>true</executable>
 							<mainClass>com.erudika.scoold.ScooldServer</mainClass>
 							<excludeDevtools>true</excludeDevtools>
 						</configuration>
@@ -365,7 +363,6 @@
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
-						<version>0.11.3</version>
 						<extensions>true</extensions>
 						<executions>
 							<execution>
@@ -402,7 +399,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>3.7.1</version>
+						<version>3.8.0</version>
 						<executions>
 							<execution>
 								<id>zip-assembly</id>

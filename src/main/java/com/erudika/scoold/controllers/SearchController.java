@@ -56,18 +56,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -292,7 +290,7 @@ public class SearchController {
 	@GetMapping("/cities.json")
 	public ResponseEntity<InputStreamResource> cities(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		InputStream in = SearchController.class.getClassLoader().getResourceAsStream("static/scripts/data/cities.json.gz");
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+		HttpHeaders headers = new HttpHeaders();
 		headers.put(HttpHeaders.CONTENT_TYPE, List.of(MediaType.APPLICATION_JSON_VALUE));
 		headers.put(HttpHeaders.CONTENT_ENCODING, List.of("gzip"));
 		headers.put(HttpHeaders.CACHE_CONTROL, List.of(CacheControl.maxAge(128, TimeUnit.DAYS).getHeaderValue()));

@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.server.ErrorPage;
-import org.springframework.boot.web.server.ErrorPageRegistrar;
-import org.springframework.boot.web.server.ErrorPageRegistry;
+import org.springframework.boot.web.error.ErrorPage;
+import org.springframework.boot.web.error.ErrorPageRegistrar;
+import org.springframework.boot.web.error.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -221,18 +221,15 @@ public class ScooldServer extends SpringBootServletInitializer {
 	 */
 	@Bean
 	public ErrorPageRegistrar errorPageRegistrar() {
-		return new ErrorPageRegistrar() {
-			@Override
-			public void registerErrorPages(ErrorPageRegistry epr) {
-				epr.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/not-found"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/error/403"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.UNAUTHORIZED, "/error/401"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/error/500"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.SERVICE_UNAVAILABLE, "/error/503"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/error/400"));
-				epr.addErrorPages(new ErrorPage(HttpStatus.METHOD_NOT_ALLOWED, "/error/405"));
-				epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
-			}
+		return (ErrorPageRegistry epr) -> {
+			epr.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/not-found"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/error/403"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.UNAUTHORIZED, "/error/401"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/error/500"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.SERVICE_UNAVAILABLE, "/error/503"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/error/400"));
+			epr.addErrorPages(new ErrorPage(HttpStatus.METHOD_NOT_ALLOWED, "/error/405"));
+			epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
 		};
 	}
 
