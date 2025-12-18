@@ -110,7 +110,14 @@
 							#macro(navbarspaces)
 								<li>
 										<a class="dropdown-trigger scoold-spaces-dropdown" title="Spaces" href="#!" data-target="spaces-dropdown">
-											<i class="fa fa-th-large"></i> $!lang.get('spaces.title')
+											<i class="fa fa-th-large"></i>
+											#if($currentSpace.isEmpty() || $scooldUtils.isDefaultSpace($currentSpace))
+												$!lang.get('spaces.title')
+											#elseif($scooldUtils.isAllSpaces($currentSpace))
+												$!lang.get('allspaces')
+											#else
+												$utils.abbreviate($scooldUtils.getSpaceName($currentSpace), 30)
+											#end
 											<i class="fa fa-caret-down right"></i>
 										</a>
 								</li>
