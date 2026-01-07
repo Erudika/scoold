@@ -36,7 +36,6 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -69,15 +68,14 @@ public class ReportsController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
-	private QuestionController questionController;
+	private final QuestionController questionController;
 
-	@Inject
-	public ReportsController(ScooldUtils utils) {
+	public ReportsController(ScooldUtils utils, QuestionController questionController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
 		this.reportsLimiter = Para.createRateLimiter(3, 10, 20);
 		this.reportsLimiterAnon = Para.createRateLimiter(1, 3, 5);
+		this.questionController = questionController;
 	}
 
 	@GetMapping({"", "/delete-all"})

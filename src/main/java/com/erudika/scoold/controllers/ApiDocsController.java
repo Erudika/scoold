@@ -22,7 +22,6 @@ import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +44,6 @@ public class ApiDocsController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public ApiDocsController(ScooldUtils utils) {
 		this.utils = utils;
 	}

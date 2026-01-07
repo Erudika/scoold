@@ -42,10 +42,8 @@ import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.Produces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +61,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,7 +85,6 @@ public class QuestionController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public QuestionController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
@@ -481,8 +479,7 @@ public class QuestionController {
 		return "redirect:" + targetPost.getPostLinkForRedirect();
 	}
 
-	@GetMapping("/find/{q}")
-	@Produces("application/json")
+	@GetMapping(path = "/find/{q}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ParaObject>> findAjax(@PathVariable String q, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			res.setStatus(401);

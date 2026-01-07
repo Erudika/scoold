@@ -30,7 +30,6 @@ import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
 import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -62,7 +61,6 @@ public class SettingsController {
 	private final AvatarRepository avatarRepository;
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
-	@Inject
 	public SettingsController(ScooldUtils utils, AvatarRepositoryProxy avatarRepository) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

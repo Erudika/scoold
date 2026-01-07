@@ -21,7 +21,6 @@ import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.PRIVACYLINK;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -41,7 +40,6 @@ public class PrivacyController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public PrivacyController(ScooldUtils utils) {
 		this.utils = utils;
 	}

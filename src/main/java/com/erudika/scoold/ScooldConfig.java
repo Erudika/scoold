@@ -24,7 +24,6 @@ import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import static com.erudika.scoold.ScooldServer.SIGNOUTLINK;
 import com.typesafe.config.ConfigObject;
-import jakarta.inject.Named;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Component;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @Component
-@Named
 public class ScooldConfig extends Config {
 
 	@Override

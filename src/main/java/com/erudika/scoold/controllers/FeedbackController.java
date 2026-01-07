@@ -32,7 +32,6 @@ import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -60,7 +59,6 @@ public class FeedbackController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public FeedbackController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

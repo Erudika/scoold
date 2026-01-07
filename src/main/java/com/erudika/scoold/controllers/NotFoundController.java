@@ -18,7 +18,6 @@
 package com.erudika.scoold.controllers;
 
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -36,7 +35,6 @@ public class NotFoundController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public NotFoundController(ScooldUtils utils) {
 		this.utils = utils;
 	}

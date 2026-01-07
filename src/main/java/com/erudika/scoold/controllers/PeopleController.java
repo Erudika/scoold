@@ -32,7 +32,6 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -70,7 +69,6 @@ public class PeopleController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public PeopleController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

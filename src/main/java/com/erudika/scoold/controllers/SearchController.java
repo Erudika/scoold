@@ -37,7 +37,6 @@ import com.erudika.scoold.core.Sticky;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -84,7 +83,6 @@ public class SearchController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public SearchController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

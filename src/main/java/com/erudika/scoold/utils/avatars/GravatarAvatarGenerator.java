@@ -20,13 +20,11 @@ package com.erudika.scoold.utils.avatars;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Component;
 
 @Component
-@Singleton
 public class GravatarAvatarGenerator {
 	private static final String URL_BASE = "https://www.gravatar.com/avatar/";
 

@@ -23,7 +23,6 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -43,7 +42,6 @@ public class RevisionsController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public RevisionsController(ScooldUtils utils) {
 		this.utils = utils;
 	}

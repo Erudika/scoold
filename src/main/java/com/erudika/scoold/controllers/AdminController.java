@@ -50,7 +50,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nimbusds.jwt.SignedJWT;
 import com.typesafe.config.ConfigValueFactory;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.FilterInputStream;
@@ -109,7 +108,6 @@ public class AdminController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public AdminController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

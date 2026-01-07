@@ -20,7 +20,6 @@ package com.erudika.scoold.controllers;
 import static com.erudika.scoold.ScooldServer.LANGUAGESLINK;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
@@ -44,7 +43,6 @@ public class LanguagesController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public LanguagesController(ScooldUtils utils) {
 		this.utils = utils;
 	}

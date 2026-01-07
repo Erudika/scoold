@@ -22,7 +22,6 @@ import com.erudika.para.core.utils.Para;
 import static com.erudika.scoold.ScooldServer.ABOUTLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -42,7 +41,6 @@ public class AboutController {
 
 	private final ScooldUtils utils;
 
-	@Inject
 	public AboutController(ScooldUtils utils) {
 		this.utils = utils;
 	}

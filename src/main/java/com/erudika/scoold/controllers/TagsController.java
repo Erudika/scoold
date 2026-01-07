@@ -28,10 +28,8 @@ import static com.erudika.scoold.ScooldServer.TAGSLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +68,6 @@ public class TagsController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public TagsController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
@@ -213,7 +211,7 @@ public class TagsController {
 	}
 
 	@ResponseBody
-	@GetMapping(path = "/{keyword}", produces = MediaType.APPLICATION_JSON)
+	@GetMapping(path = "/{keyword}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<?> findTags(@PathVariable String keyword) {
 		return pc.findTags(keyword, new Pager(10));
 	}

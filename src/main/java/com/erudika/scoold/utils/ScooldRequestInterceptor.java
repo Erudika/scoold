@@ -23,8 +23,6 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.*;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Report.ReportType;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.ConnectException;
@@ -43,14 +41,12 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @Component
-@Named
 public class ScooldRequestInterceptor implements HandlerInterceptor {
 
 	public static final Logger logger = LoggerFactory.getLogger(ScooldRequestInterceptor.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 
-	@Inject
 	public ScooldRequestInterceptor(ScooldUtils utils) {
 		this.utils = utils;
 		ScooldUtils.setInstance(utils);

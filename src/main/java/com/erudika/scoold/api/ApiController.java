@@ -57,7 +57,6 @@ import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.Version;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueFactory;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -120,31 +119,35 @@ public class ApiController {
 	private final ParaClient pc;
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
-	@Inject
-	private QuestionsController questionsController;
-	@Inject
-	private QuestionController questionController;
-	@Inject
-	private VoteController voteController;
-	@Inject
-	private CommentController commentController;
-	@Inject
-	private PeopleController peopleController;
-	@Inject
-	private ProfileController profileController;
-	@Inject
-	private RevisionsController revisionsController;
-	@Inject
-	private TagsController tagsController;
-	@Inject
-	private ReportsController reportsController;
-	@Inject
-	private AdminController adminController;
+	private final QuestionsController questionsController;
+	private final QuestionController questionController;
+	private final VoteController voteController;
+	private final CommentController commentController;
+	private final PeopleController peopleController;
+	private final ProfileController profileController;
+	private final RevisionsController revisionsController;
+	private final TagsController tagsController;
+	private final ReportsController reportsController;
+	private final AdminController adminController;
 
-	@Inject
-	public ApiController(ScooldUtils utils) {
+	public ApiController(ScooldUtils utils, ParaClient pc, QuestionsController questionsController,
+			QuestionController questionController, VoteController voteController,
+			CommentController commentController, PeopleController peopleController,
+			ProfileController profileController, RevisionsController revisionsController,
+			TagsController tagsController, ReportsController reportsController,
+			AdminController adminController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.questionsController = questionsController;
+		this.questionController = questionController;
+		this.voteController = voteController;
+		this.commentController = commentController;
+		this.peopleController = peopleController;
+		this.profileController = profileController;
+		this.revisionsController = revisionsController;
+		this.tagsController = tagsController;
+		this.reportsController = reportsController;
+		this.adminController = adminController;
 	}
 
 	@GetMapping

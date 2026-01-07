@@ -29,7 +29,6 @@ import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
-import jakarta.inject.Named;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -145,7 +144,7 @@ public class ScooldServer extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public WebMvcConfigurer baseConfigurerBean(@Named final ScooldRequestInterceptor sri) {
+	public WebMvcConfigurer baseConfigurerBean(final ScooldRequestInterceptor sri) {
 		return new WebMvcConfigurer() {
 			public void addInterceptors(InterceptorRegistry registry) {
 				registry.addInterceptor(sri);

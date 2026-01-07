@@ -31,7 +31,6 @@ import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -57,7 +56,6 @@ public class CommentController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public CommentController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

@@ -44,7 +44,6 @@ import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.avatars.*;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -83,7 +82,6 @@ public class ProfileController {
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private final AvatarRepository avatarRepository;
 
-	@Inject
 	public ProfileController(ScooldUtils utils, GravatarAvatarGenerator gravatarAvatarGenerator, AvatarRepositoryProxy avatarRepository) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

@@ -21,8 +21,6 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Translation;
 import com.erudika.para.core.utils.Para;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +44,6 @@ import org.springframework.stereotype.Component;
  * @see Translation
  */
 @Component
-@Singleton
 public class LanguageUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(LanguageUtils.class);
@@ -76,7 +73,6 @@ public class LanguageUtils {
 	 * Default constructor.
 	 * @param pc ParaClient
 	 */
-	@Inject
 	public LanguageUtils(ParaClient pc) {
 		this.pc = pc;
 	}

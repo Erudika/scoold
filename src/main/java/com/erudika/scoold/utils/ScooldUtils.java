@@ -59,8 +59,6 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -114,7 +112,6 @@ import org.springframework.stereotype.Component;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @Component
-@Named
 public final class ScooldUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldUtils.class);
@@ -181,15 +178,15 @@ public final class ScooldUtils {
 	private final GravatarAvatarGenerator gravatarAvatarGenerator;
 	private static ScooldUtils instance;
 	private Sysprop customTheme;
-	@Inject private Emailer emailer;
+	private final Emailer emailer;
 
 	public static final int MAX_SPACES = 10; // Hey! It's cool to edit this, but please consider buying Scoold Pro! :)
 
-	@Inject
-	public ScooldUtils(ParaClient pc, LanguageUtils langutils, AvatarRepositoryProxy avatarRepository,
-			GravatarAvatarGenerator gravatarAvatarGenerator) {
+	public ScooldUtils(ParaClient pc, LanguageUtils langutils, Emailer emailer,
+			AvatarRepositoryProxy avatarRepository, GravatarAvatarGenerator gravatarAvatarGenerator) {
 		this.pc = pc;
 		this.langutils = langutils;
+		this.emailer = emailer;
 		this.avatarRepository = avatarRepository;
 		this.gravatarAvatarGenerator = gravatarAvatarGenerator;
 		this.pcThrows = new ParaClient(CONF.paraAccessKey(), CONF.paraSecretKey());

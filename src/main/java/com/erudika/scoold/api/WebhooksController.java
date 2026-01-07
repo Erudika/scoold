@@ -25,7 +25,6 @@ import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.api.ApiController.logger;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -48,7 +47,6 @@ public class WebhooksController {
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private static String lastConfigUpdate = null;
 
-	@Inject
 	public WebhooksController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

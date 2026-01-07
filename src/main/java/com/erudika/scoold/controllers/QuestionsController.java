@@ -37,7 +37,6 @@ import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -73,13 +72,12 @@ public class QuestionsController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
-	private QuestionController questionController;
+	private final QuestionController questionController;
 
-	@Inject
-	public QuestionsController(ScooldUtils utils) {
+	public QuestionsController(ScooldUtils utils, QuestionController questionController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.questionController = questionController;
 	}
 
 	@GetMapping({"/", "/questions"})

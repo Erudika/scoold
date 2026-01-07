@@ -32,7 +32,6 @@ import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -61,7 +60,6 @@ public class SigninController {
 	private final ScooldUtils utils;
 	private final ParaClient pc;
 
-	@Inject
 	public SigninController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

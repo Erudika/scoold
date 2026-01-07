@@ -33,7 +33,6 @@ import static com.erudika.scoold.core.Profile.Badge.SUPPORTER;
 import static com.erudika.scoold.core.Profile.Badge.VOTER;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.ScooldUtils;
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +59,6 @@ public class VoteController {
 	private final Integer expiresAfterSec;
 	private final Integer lockedAfterSec;
 
-	@Inject
 	public VoteController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();

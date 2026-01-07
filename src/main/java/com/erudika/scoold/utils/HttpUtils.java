@@ -183,7 +183,7 @@ public final class HttpUtils {
 		if (!StringUtils.isBlank(sameSite)) {
 			sb.append("SameSite=").append(sameSite);
 		}
-		res.addHeader(jakarta.ws.rs.core.HttpHeaders.SET_COOKIE, sb.toString());
+		res.addHeader(HttpHeaders.SET_COOKIE, sb.toString());
 	}
 
 	/**
