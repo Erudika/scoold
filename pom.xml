@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.51.5-SNAPSHOT</version>
+			<version>1.51.4</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -338,6 +338,7 @@
 			<properties>
 				<packaging.type>jar</packaging.type>
 				<M_ARCH>native</M_ARCH>
+				<finalName>scoold-native-${project.version}</finalName>
 			</properties>
 			<dependencies>
 				<dependency>
@@ -416,7 +417,7 @@
 									<goal>single</goal>
 								</goals>
 								<configuration>
-									<finalName>function</finalName>
+									<finalName>${finalName}</finalName>
 									<descriptors>
 										<descriptor>src/assembly/zip.xml</descriptor>
 									</descriptors>

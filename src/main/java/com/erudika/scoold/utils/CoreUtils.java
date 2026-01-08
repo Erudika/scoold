@@ -73,7 +73,7 @@ public final class CoreUtils {
 	}
 
 	public static void registerCoreClasses() {
-		Para.registerCoreClasses(Set.of(
+		Para.registerCoreClasses(
 				Badge.class,
 				Comment.class,
 				Feedback.class,
@@ -84,7 +84,7 @@ public final class CoreUtils {
 				Revision.class,
 				Sticky.class,
 				UnapprovedQuestion.class,
-				UnapprovedReply.class));
+				UnapprovedReply.class);
 	}
 
 	public static Set<String> getCoreTypes() {
