@@ -7,6 +7,9 @@
       "type": "boolean[]"
     },
     {
+      "type": "byte[]"
+    },
+    {
       "type": "ch.qos.logback.classic.LoggerContext"
     },
     {
@@ -210,19 +213,1729 @@
       ]
     },
     {
+      "type": "char[]"
+    },
+    {
+      "type": "com.ctc.wstx.stax.WstxInputFactory"
+    },
+    {
+      "type": "com.ctc.wstx.stax.WstxOutputFactory"
+    },
+    {
       "type": "com.erudika.para.client.ParaClient"
+    },
+    {
+      "type": "com.erudika.para.core.Address",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAddress",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCity",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCountry",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLatlng",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPhone",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAddress",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCountry",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCreatorid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setLatlng",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setParentid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpdated",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.AddressBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.AddressCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.Linkable"
+    },
+    {
+      "type": "com.erudika.para.core.ParaObject",
+      "methods": [
+        {
+          "name": "getName",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.Sysprop",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "addProperty",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getProperties",
+          "parameterTypes": []
+        },
+        {
+          "name": "getProperty",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreatorid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setParentid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setProperties",
+          "parameterTypes": [
+            "java.util.Map"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTags",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpdated",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.SyspropBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.SyspropCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.Tag",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCount",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDescription",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTag",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCount",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setDescription",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTag",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpdated",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.TagBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.TagCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.Translation",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getApproved",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAuthorName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLocale",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getThekey",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getValue",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setApproved",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setAuthorName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreatorid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setLocale",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setThekey",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setValue",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.TranslationBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.TranslationCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.User",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getActive",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCurrency",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEmail",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGroups",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdentifier",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdentityProvider",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdpAccessToken",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdpAccessTokenPayload",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdpIdToken",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdpIdTokenPayload",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIdpRefreshToken",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPassword",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPicture",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTokenSecret",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTwoFA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTwoFAbackupKeyHash",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTwoFAkey",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "isAdmin",
+          "parameterTypes": []
+        },
+        {
+          "name": "isAmazonUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isFacebookUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isGitHubUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isGooglePlusUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isLDAPUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isLinkedInUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isMattermostUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isMicrosoftUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isModerator",
+          "parameterTypes": []
+        },
+        {
+          "name": "isOAuth2User",
+          "parameterTypes": []
+        },
+        {
+          "name": "isPasswordlessUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSAMLUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSlackUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "isTwitterUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "setActive",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreatorid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCurrency",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setEmail",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setGroups",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIdentifier",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIdpAccessToken",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIdpIdToken",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIdpRefreshToken",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPicture",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setTokenSecret",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTwoFA",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTwoFAbackupKeyHash",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTwoFAkey",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpdated",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.UserBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.UserCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.Votable"
+    },
+    {
+      "type": "com.erudika.para.core.Vote",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAppid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCached",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreatorid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getExpiresAfter",
+          "parameterTypes": []
+        },
+        {
+          "name": "getId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIndexed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLockedAfter",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getObjectURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getParentid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPlural",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStored",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getValue",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVersion",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "isAmendable",
+          "parameterTypes": []
+        },
+        {
+          "name": "isDownvote",
+          "parameterTypes": []
+        },
+        {
+          "name": "isExpired",
+          "parameterTypes": []
+        },
+        {
+          "name": "isUpvote",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAppid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCached",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreatorid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setExpiresAfter",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIndexed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setLockedAfter",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setParentid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStored",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setValue",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setVersion",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.VoteBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.VoteCustomizer"
+    },
+    {
+      "type": "com.erudika.para.core.Webhook",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getActive",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreate",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCreateAll",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCustomEvents",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCustomPayload",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDelete",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDeleteAll",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPropertyFilter",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRepeatedDeliveryAttempts",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSecret",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTargetUrl",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTooManyFailures",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTriggeredEvent",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTypeFilter",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdate",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpdateAll",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUrlEncoded",
+          "parameterTypes": []
+        },
+        {
+          "name": "setActive",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreate",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCreateAll",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCustomEvents",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setCustomPayload",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "setDelete",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setDeleteAll",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setPropertyFilter",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setRepeatedDeliveryAttempts",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setSecret",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTargetUrl",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTooManyFailures",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTriggeredEvent",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTypeFilter",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpdate",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setUpdateAll",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setUrlEncoded",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.WebhookBeanInfo"
+    },
+    {
+      "type": "com.erudika.para.core.WebhookCustomizer"
     },
     {
       "type": "com.erudika.para.core.annotations.Documented"
     },
     {
+      "type": "com.erudika.para.core.annotations.Locked"
+    },
+    {
+      "type": "com.erudika.para.core.annotations.Stored"
+    },
+    {
       "type": "com.erudika.para.core.email.Emailer"
     },
     {
-      "type": "com.erudika.para.core.utils.Config"
+      "type": "com.erudika.para.core.utils.Config",
+      "methods": [
+        {
+          "name": "getConfigValue",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.utils.HumanTime",
+      "methods": [
+        {
+          "name": "approximately",
+          "parameterTypes": [
+            "long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.para.core.utils.Pager",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCount",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLastKey",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLimit",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPage",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSelect",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSortby",
+          "parameterTypes": []
+        },
+        {
+          "name": "isDesc",
+          "parameterTypes": []
+        },
+        {
+          "name": "setCount",
+          "parameterTypes": [
+            "long"
+          ]
+        },
+        {
+          "name": "setDesc",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setLastKey",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLimit",
+          "parameterTypes": [
+            "int"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPage",
+          "parameterTypes": [
+            "long"
+          ]
+        },
+        {
+          "name": "setSelect",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setSortby",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "com.erudika.para.core.utils.ParaConfig"
+    },
+    {
+      "type": "com.erudika.para.core.utils.Utils",
+      "methods": [
+        {
+          "name": "abbreviate",
+          "parameterTypes": [
+            "java.lang.String",
+            "int"
+          ]
+        },
+        {
+          "name": "abbreviateInt",
+          "parameterTypes": [
+            "java.lang.Number",
+            "int"
+          ]
+        },
+        {
+          "name": "formatDate",
+          "parameterTypes": [
+            "java.lang.Long",
+            "java.lang.String",
+            "java.util.Locale"
+          ]
+        },
+        {
+          "name": "formatMessage",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.Object[]"
+          ]
+        },
+        {
+          "name": "generateSecurityToken",
+          "parameterTypes": [
+            "int",
+            "boolean"
+          ]
+        },
+        {
+          "name": "getHumanTime",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSystemProperty",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "markdownToHtml",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "markdownToHtml",
+          "parameterTypes": [
+            "java.lang.String",
+            "boolean"
+          ]
+        },
+        {
+          "name": "noSpaces",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "stripHtml",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "urlEncode",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "com.erudika.scoold.ScooldConfig",
@@ -230,6 +1943,36 @@
         {
           "name": "<init>",
           "parameterTypes": []
+        },
+        {
+          "name": "configEditingEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "dataImportExportEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "downvotesEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "modsAccessAllSpaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "postsNeedApproval",
+          "parameterTypes": []
+        },
+        {
+          "name": "tagCreationAllowed",
+          "parameterTypes": []
+        },
+        {
+          "name": "usersDiscoverabilityEnabled",
+          "parameterTypes": [
+            "boolean"
+          ]
         }
       ]
     },
@@ -247,6 +1990,12 @@
           "parameterTypes": []
         },
         {
+          "name": "localMatermostAuthFilterRegistrationBean",
+          "parameterTypes": [
+            "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        },
+        {
           "name": "main",
           "parameterTypes": [
             "java.lang.String[]"
@@ -261,6 +2010,14 @@
           "parameterTypes": [
             "org.springframework.mail.javamail.JavaMailSender"
           ]
+        },
+        {
+          "name": "slackVerificationFilterRegistrationBean",
+          "parameterTypes": []
+        },
+        {
+          "name": "storageService",
+          "parameterTypes": []
         },
         {
           "name": "velocityConfigBean",
@@ -340,7 +2097,8 @@
             "com.erudika.scoold.controllers.RevisionsController",
             "com.erudika.scoold.controllers.TagsController",
             "com.erudika.scoold.controllers.ReportsController",
-            "com.erudika.scoold.controllers.AdminController"
+            "com.erudika.scoold.controllers.AdminController",
+            "com.erudika.scoold.controllers.UploadController"
           ]
         }
       ]
@@ -373,7 +2131,40 @@
         {
           "name": "<init>",
           "parameterTypes": [
-            "com.erudika.scoold.utils.ScooldUtils"
+            "com.erudika.scoold.utils.ScooldUtils",
+            "com.erudika.scoold.upload.StorageService"
+          ]
+        },
+        {
+          "name": "backup",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
+          ]
+        },
+        {
+          "name": "generateAPIKey",
+          "parameterTypes": [
+            "java.lang.Integer",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "restore",
+          "parameterTypes": [
+            "org.springframework.web.multipart.MultipartFile",
+            "java.lang.Boolean",
+            "java.lang.Boolean",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
           ]
         }
       ]
@@ -396,6 +2187,23 @@
           "name": "<init>",
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        },
+        {
+          "name": "createAjax",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "deleteAjax",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
           ]
         }
       ]
@@ -441,6 +2249,14 @@
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
           ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
         }
       ]
     },
@@ -451,6 +2267,16 @@
           "name": "<init>",
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
           ]
         }
       ]
@@ -476,6 +2302,32 @@
             "com.erudika.scoold.utils.avatars.GravatarAvatarGenerator",
             "com.erudika.scoold.utils.avatars.AvatarRepositoryProxy"
           ]
+        },
+        {
+          "name": "edit",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
         }
       ]
     },
@@ -486,6 +2338,51 @@
           "name": "<init>",
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        },
+        {
+          "name": "deprecate",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest"
+          ]
+        },
+        {
+          "name": "edit",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "reply",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.Boolean",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
           ]
         }
       ]
@@ -499,6 +2396,74 @@
             "com.erudika.scoold.utils.ScooldUtils",
             "com.erudika.scoold.controllers.QuestionController"
           ]
+        },
+        {
+          "name": "applyFilter",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "ask",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "getSorted",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "post",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "saveTemplate",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "setSpace",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
         }
       ]
     },
@@ -510,6 +2475,38 @@
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils",
             "com.erudika.scoold.controllers.QuestionController"
+          ]
+        },
+        {
+          "name": "create",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "deleteAll",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "getReportForm",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "org.springframework.ui.Model"
           ]
         }
       ]
@@ -545,6 +2542,47 @@
             "com.erudika.scoold.utils.ScooldUtils",
             "com.erudika.scoold.utils.avatars.AvatarRepositoryProxy"
           ]
+        },
+        {
+          "name": "generate2FAQRCode",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "post",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.lang.String",
+            "java.util.List",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse"
+          ]
         }
       ]
     },
@@ -556,6 +2594,24 @@
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
           ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "signinSuccess",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
         }
       ]
     },
@@ -566,6 +2622,29 @@
           "name": "<init>",
           "parameterTypes": [
             "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        },
+        {
+          "name": "create",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "jakarta.servlet.http.HttpServletResponse",
+            "org.springframework.ui.Model"
+          ]
+        },
+        {
+          "name": "findTags",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest",
+            "org.springframework.ui.Model"
           ]
         }
       ]
@@ -582,6 +2661,18 @@
       ]
     },
     {
+      "type": "com.erudika.scoold.controllers.UploadController",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "com.erudika.scoold.utils.ScooldUtils",
+            "com.erudika.scoold.upload.StorageService"
+          ]
+        }
+      ]
+    },
+    {
       "type": "com.erudika.scoold.controllers.VoteController",
       "methods": [
         {
@@ -591,6 +2682,1281 @@
           ]
         }
       ]
+    },
+    {
+      "type": "com.erudika.scoold.core.Badge",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDescription",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIcon",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStyle",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTag",
+          "parameterTypes": []
+        },
+        {
+          "name": "setDescription",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIcon",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setStyle",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setTag",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.BadgeBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.BadgeCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Comment",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAuthorName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getComment",
+          "parameterTypes": []
+        },
+        {
+          "name": "getHidden",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAuthorName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setComment",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setHidden",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.CommentBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.CommentCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Feedback",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.FeedbackBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.FeedbackCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Post",
+      "fields": [
+        {
+          "name": "tags"
+        },
+        {
+          "name": "title"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getAddress",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAnswercount",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAnswerid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getApprovalTimestamp",
+          "parameterTypes": []
+        },
+        {
+          "name": "getApprovedby",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAuthor",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBody",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCloserid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCommentIds",
+          "parameterTypes": []
+        },
+        {
+          "name": "getComments",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDeletereportid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDeprecated",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFollowers",
+          "parameterTypes": []
+        },
+        {
+          "name": "getItemcount",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLastEditor",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLastactivity",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLasteditby",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLastedited",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLatlng",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLocation",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMentions",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPostLink",
+          "parameterTypes": [
+            "boolean",
+            "boolean"
+          ]
+        },
+        {
+          "name": "getPostLinkForRedirect",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRevisionid",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSpace",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTagsString",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTitle",
+          "parameterTypes": []
+        },
+        {
+          "name": "getViewcount",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVote",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWiki",
+          "parameterTypes": []
+        },
+        {
+          "name": "isClosed",
+          "parameterTypes": []
+        },
+        {
+          "name": "isFeedback",
+          "parameterTypes": []
+        },
+        {
+          "name": "isQuestion",
+          "parameterTypes": []
+        },
+        {
+          "name": "isReply",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSpam",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSticky",
+          "parameterTypes": []
+        },
+        {
+          "name": "isUnapprovedQuestion",
+          "parameterTypes": []
+        },
+        {
+          "name": "isUnapprovedReply",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAddress",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setAnswercount",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setAnswerid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setApprovalTimestamp",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setApprovedby",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "setAuthor",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "setBody",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCloserid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCommentIds",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setComments",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setDeletereportid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setDeprecated",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setFollowers",
+          "parameterTypes": [
+            "java.util.Map"
+          ]
+        },
+        {
+          "name": "setItemcount",
+          "parameterTypes": [
+            "com.erudika.para.core.utils.Pager"
+          ]
+        },
+        {
+          "name": "setLastEditor",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "setLastactivity",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setLasteditby",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLastedited",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setLatlng",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLocation",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setMentions",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setRevisionid",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setSpace",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setSpam",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setTags",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setTitle",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setViewcount",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setVote",
+          "parameterTypes": [
+            "com.erudika.para.core.Vote"
+          ]
+        },
+        {
+          "name": "setWiki",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.PostBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.PostCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Profile",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "countNewReports",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAboutme",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAcceptedAnswerDMsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAllSpaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAnonymityEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBadges",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBadgesMap",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBannedUntil",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCommentEmailsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getComments",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCommentsDMsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCurrentSpace",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCustomBadges",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDarkmodeEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDownvotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEditorRoleEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFavorites",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFavspaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFavtags",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFavtagsEmailsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFavtagsString",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGroups",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLastseen",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLatlng",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLatlngLabel",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLocation",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMattermostUserId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMicrosoftUserId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getModspaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMonthlyVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getNewbadges",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOriginalName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOriginalPicture",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPendingEmail",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPicture",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPreferredSpace",
+          "parameterTypes": []
+        },
+        {
+          "name": "getProfileLink",
+          "parameterTypes": []
+        },
+        {
+          "name": "getQuarterlyVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getQuestionsDMsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRepliesDMsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getReplyEmailsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSlackUserId",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSpaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStatus",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTotalVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUpvotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUser",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWebsite",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWeeklyVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getYearlyVotes",
+          "parameterTypes": []
+        },
+        {
+          "name": "hasSpaces",
+          "parameterTypes": []
+        },
+        {
+          "name": "isComplete",
+          "parameterTypes": []
+        },
+        {
+          "name": "isModInCurrentSpace",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAboutme",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setAcceptedAnswerDMsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setAnonymityEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setBadges",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setBannedUntil",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setCommentEmailsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setComments",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setCommentsDMsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setCurrentSpace",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setCustomBadges",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setDarkmodeEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setDownvotes",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setEditorRoleEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setFavorites",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setFavspaces",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setFavtags",
+          "parameterTypes": [
+            "java.util.List"
+          ]
+        },
+        {
+          "name": "setFavtagsEmailsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setGroups",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLastseen",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setLatlng",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLatlngLabel",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLocation",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setMattermostUserId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setMicrosoftUserId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setModspaces",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setMonthlyVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setNewbadges",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setOriginalName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setOriginalPicture",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPendingEmail",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPicture",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPreferredSpace",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setQuarterlyVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setQuestionsDMsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setRepliesDMsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setReplyEmailsEnabled",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setSlackUserId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setSpaces",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setStatus",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setUpvotes",
+          "parameterTypes": [
+            "java.lang.Long"
+          ]
+        },
+        {
+          "name": "setWebsite",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setWeeklyVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        },
+        {
+          "name": "setYearlyVotes",
+          "parameterTypes": [
+            "java.lang.Integer"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.ProfileBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.ProfileCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Question",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.QuestionBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.QuestionCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Reply",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.ReplyBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.ReplyCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Report",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAuthorName",
+          "parameterTypes": []
+        },
+        {
+          "name": "getClosed",
+          "parameterTypes": []
+        },
+        {
+          "name": "getContent",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDescription",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLink",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSolution",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSubType",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAuthorName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setClosed",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setContent",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setDescription",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLink",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setSubType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.Report$ReportType",
+      "methods": [
+        {
+          "name": "toString",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.ReportBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.ReportCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Revision",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getAuthor",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBody",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDescription",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOriginal",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTitle",
+          "parameterTypes": []
+        },
+        {
+          "name": "setBody",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setOriginal",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setTitle",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.RevisionBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.RevisionCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.core.Sticky",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.core.StickyBeanInfo"
+    },
+    {
+      "type": "com.erudika.scoold.core.StickyCustomizer"
+    },
+    {
+      "type": "com.erudika.scoold.mattermost.MattermostAuthFilter"
+    },
+    {
+      "type": "com.erudika.scoold.mattermost.MattermostController",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBot",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBotConfiguration",
+      "methods": [
+        {
+          "name": "getBotFrameworkHttpAdaptor",
+          "parameterTypes": [
+            "com.microsoft.bot.integration.Configuration"
+          ]
+        },
+        {
+          "name": "getConfiguration",
+          "parameterTypes": []
+        },
+        {
+          "name": "getStorage",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBotConfiguration$$SpringCGLIB$$0",
+      "fields": [
+        {
+          "name": "$$beanFactory"
+        },
+        {
+          "name": "CGLIB$CALLBACK_FILTER"
+        },
+        {
+          "name": "CGLIB$FACTORY_DATA"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "CGLIB$SET_STATIC_CALLBACKS",
+          "parameterTypes": [
+            "org.springframework.cglib.proxy.Callback[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBotConfiguration$$SpringCGLIB$$FastClass$$0",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBotConfiguration$$SpringCGLIB$$FastClass$$1",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsBotConfiguration$1"
+    },
+    {
+      "type": "com.erudika.scoold.msteams.TeamsController",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "com.microsoft.bot.integration.BotFrameworkHttpAdapter",
+            "com.microsoft.bot.builder.Bot",
+            "com.microsoft.bot.integration.Configuration"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.scim.ScimConfiguration$OnScimEnabled",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.slack.SlackController",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "com.erudika.scoold.utils.ScooldUtils"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.erudika.scoold.slack.SlackVerificationFilter"
+    },
+    {
+      "type": "com.erudika.scoold.upload.LocalStorageService"
+    },
+    {
+      "type": "com.erudika.scoold.upload.StorageService"
     },
     {
       "type": "com.erudika.scoold.utils.LanguageUtils",
@@ -628,6 +3994,11 @@
     },
     {
       "type": "com.erudika.scoold.utils.ScooldUtils",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true, 
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true,
       "methods": [
         {
           "name": "<init>",
@@ -635,9 +4006,283 @@
             "com.erudika.para.client.ParaClient",
             "com.erudika.scoold.utils.LanguageUtils",
             "com.erudika.para.core.email.Emailer",
+            "com.erudika.scoold.upload.StorageService",
             "com.erudika.scoold.utils.avatars.AvatarRepositoryProxy",
             "com.erudika.scoold.utils.avatars.GravatarAvatarGenerator"
           ]
+        },
+        {
+          "name": "alwaysHideCommentForms",
+          "parameterTypes": []
+        },
+        {
+          "name": "canAccessSpace",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "canApproveReply",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Post",
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "canDelete",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Post",
+            "com.erudika.scoold.core.Profile",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "canEdit",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Post",
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "getAmazonLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getConfig",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDefaultAvatar",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDefaultSpace",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFacebookLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFooterHTML",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFullAvatarURL",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile",
+            "com.erudika.scoold.utils.avatars.AvatarFormat"
+          ]
+        },
+        {
+          "name": "getGitHubLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGoogleLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLinkedInLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMacroCode",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getMattermostLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMicrosoftLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOAuth2LoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSlackLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSpaceId",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getSpaceName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getTwitterLoginURL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getValidSpaceIdExcludingAll",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile",
+            "java.lang.String",
+            "jakarta.servlet.http.HttpServletRequest"
+          ]
+        },
+        {
+          "name": "getWelcomeMessage",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "getWelcomeMessageOnLogin",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "getWelcomeMessagePreLogin",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile",
+            "jakarta.servlet.http.HttpServletRequest"
+          ]
+        },
+        {
+          "name": "isAdmin",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "isAjaxRequest",
+          "parameterTypes": [
+            "jakarta.servlet.http.HttpServletRequest"
+          ]
+        },
+        {
+          "name": "isAllSpaces",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "isAnonymityEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isAnonymousUser",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "isApiEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isAutoAssignedSpace",
+          "parameterTypes": [
+            "com.erudika.para.core.Sysprop"
+          ]
+        },
+        {
+          "name": "isAutoAssignedSpaceInConfig",
+          "parameterTypes": [
+            "com.erudika.para.core.Sysprop"
+          ]
+        },
+        {
+          "name": "isAvatarUploadsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isBanned",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "isDarkModeEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isDefaultSpace",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "isFeedbackEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isFooterLinksEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isGravatarEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isMediaRecordingAllowed",
+          "parameterTypes": []
+        },
+        {
+          "name": "isMentionEmailsControlledByAdmins",
+          "parameterTypes": []
+        },
+        {
+          "name": "isMod",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "isModAnywhere",
+          "parameterTypes": [
+            "com.erudika.scoold.core.Profile"
+          ]
+        },
+        {
+          "name": "isNavbarLink1Enabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isNavbarLink2Enabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isNavbarMenuLink1Enabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isNavbarMenuLink2Enabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isNearMeFeatureEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSummaryEmailControlledByAdmins",
+          "parameterTypes": []
+        },
+        {
+          "name": "isUploadsEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "isWebhooksEnabled",
+          "parameterTypes": []
+        },
+        {
+          "name": "summaryEmailPeriodDays",
+          "parameterTypes": []
         }
       ]
     },
@@ -683,10 +4328,25 @@
       "type": "com.erudika.scoold.velocity.VelocityEngineFactory"
     },
     {
+      "type": "com.erudika.scoold.velocity.VelocityView",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.erudika.scoold.velocity.VelocityViewResolver"
     },
     {
       "type": "com.fasterxml.jackson.annotation.JacksonAnnotation"
+    },
+    {
+      "type": "com.fasterxml.jackson.annotation.JsonAnyGetter"
+    },
+    {
+      "type": "com.fasterxml.jackson.annotation.JsonAnySetter"
     },
     {
       "type": "com.fasterxml.jackson.annotation.JsonIgnore"
@@ -737,10 +4397,37 @@
       "type": "com.fasterxml.jackson.dataformat.yaml.YAMLFactory"
     },
     {
-      "type": "com.fasterxml.jackson.datatype.jdk8.Jdk8Module"
+      "type": "com.fasterxml.jackson.datatype.jdk8.Jdk8Module",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule"
+    },
+    {
+      "type": "com.fasterxml.jackson.module.jakarta.xmlbind.deser.DataHandlerDeserializer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.fasterxml.jackson.module.jakarta.xmlbind.ser.DataHandlerSerializer",
       "methods": [
         {
           "name": "<init>",
@@ -759,6 +4446,45 @@
     },
     {
       "type": "com.google.gson.Gson"
+    },
+    {
+      "type": "com.microsoft.bot.builder.ActivityHandler"
+    },
+    {
+      "type": "com.microsoft.bot.builder.Bot"
+    },
+    {
+      "type": "com.microsoft.bot.builder.BotAdapter"
+    },
+    {
+      "type": "com.microsoft.bot.builder.BotFrameworkAdapter"
+    },
+    {
+      "type": "com.microsoft.bot.builder.ConnectorClientBuilder"
+    },
+    {
+      "type": "com.microsoft.bot.builder.MemoryStorage"
+    },
+    {
+      "type": "com.microsoft.bot.builder.Storage"
+    },
+    {
+      "type": "com.microsoft.bot.builder.UserTokenProvider"
+    },
+    {
+      "type": "com.microsoft.bot.builder.integration.AdapterIntegration"
+    },
+    {
+      "type": "com.microsoft.bot.builder.teams.TeamsActivityHandler"
+    },
+    {
+      "type": "com.microsoft.bot.integration.BotFrameworkHttpAdapter"
+    },
+    {
+      "type": "com.microsoft.bot.integration.ClasspathPropertiesConfiguration"
+    },
+    {
+      "type": "com.microsoft.bot.integration.Configuration"
     },
     {
       "type": "com.rometools.rome.feed.WireFeed"
@@ -827,7 +4553,27 @@
       ]
     },
     {
+      "type": "com.sun.crypto.provider.HKDFKeyDerivation$HKDFSHA384",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "javax.crypto.KDFParameters"
+          ]
+        }
+      ]
+    },
+    {
       "type": "com.sun.crypto.provider.HmacCore$HmacSHA256",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.HmacCore$HmacSHA384",
       "methods": [
         {
           "name": "<init>",
@@ -845,15 +4591,6 @@
       ]
     },
     {
-      "type": "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
       "methods": [
         {
@@ -863,7 +4600,25 @@
       ]
     },
     {
+      "type": "com.vladsch.flexmark.util.ast.TextContainer$Flags"
+    },
+    {
+      "type": "com.vladsch.flexmark.util.sequence.BasedOptionsHolder$Options"
+    },
+    {
       "type": "com.vladsch.flexmark.util.sequence.LineAppendable$Options"
+    },
+    {
+      "type": "com.vladsch.flexmark.util.sequence.LineInfo$Flags"
+    },
+    {
+      "type": "com.vladsch.flexmark.util.sequence.builder.ISegmentBuilder$Options"
+    },
+    {
+      "type": "double[]"
+    },
+    {
+      "type": "float[]"
     },
     {
       "type": "groovy.lang.MetaClass"
@@ -926,6 +4681,9 @@
       "type": "jakarta.json.bind.Jsonb"
     },
     {
+      "type": "jakarta.mail.Provider"
+    },
+    {
       "type": "jakarta.mail.Session"
     },
     {
@@ -971,6 +4729,9 @@
       "type": "jakarta.servlet.http.HttpServlet"
     },
     {
+      "type": "jakarta.servlet.http.HttpServletRequest"
+    },
+    {
       "type": "jakarta.servlet.jsp.jstl.core.Config"
     },
     {
@@ -983,13 +4744,84 @@
       "type": "jakarta.validation.bootstrap.GenericBootstrap"
     },
     {
+      "type": "jakarta.validation.constraints.NotBlank",
+      "methods": [
+        {
+          "name": "groups",
+          "parameterTypes": []
+        },
+        {
+          "name": "message",
+          "parameterTypes": []
+        },
+        {
+          "name": "payload",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "jakarta.validation.constraints.NotEmpty",
+      "methods": [
+        {
+          "name": "groups",
+          "parameterTypes": []
+        },
+        {
+          "name": "message",
+          "parameterTypes": []
+        },
+        {
+          "name": "payload",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "jakarta.validation.constraints.Size",
+      "methods": [
+        {
+          "name": "groups",
+          "parameterTypes": []
+        },
+        {
+          "name": "max",
+          "parameterTypes": []
+        },
+        {
+          "name": "message",
+          "parameterTypes": []
+        },
+        {
+          "name": "min",
+          "parameterTypes": []
+        },
+        {
+          "name": "payload",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "jakarta.ws.rs.Produces"
+    },
+    {
       "type": "jakarta.xml.bind.Binder"
     },
     {
       "type": "jakarta.xml.ws.WebServiceRef"
     },
     {
+      "type": "java.beans.PropertyVetoException"
+    },
+    {
       "type": "java.io.Closeable"
+    },
+    {
+      "type": "java.io.Externalizable"
+    },
+    {
+      "type": "java.io.File[]"
     },
     {
       "type": "java.io.Serializable"
@@ -1013,13 +4845,29 @@
       ]
     },
     {
+      "type": "java.lang.Boolean[]"
+    },
+    {
+      "type": "java.lang.Byte[]"
+    },
+    {
+      "type": "java.lang.CharSequence"
+    },
+    {
       "type": "java.lang.CharSequence[]"
+    },
+    {
+      "type": "java.lang.Character[]"
     },
     {
       "type": "java.lang.Class",
       "methods": [
         {
           "name": "getModule",
+          "parameterTypes": []
+        },
+        {
+          "name": "isRecord",
           "parameterTypes": []
         }
       ]
@@ -1036,7 +4884,54 @@
       "type": "java.lang.Class[]"
     },
     {
+      "type": "java.lang.Cloneable"
+    },
+    {
+      "type": "java.lang.Comparable"
+    },
+    {
       "type": "java.lang.Comparable[]"
+    },
+    {
+      "type": "java.lang.Double"
+    },
+    {
+      "type": "java.lang.Double[]"
+    },
+    {
+      "type": "java.lang.Enum",
+      "methods": [
+        {
+          "name": "name",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Float[]"
+    },
+    {
+      "type": "java.lang.Integer",
+      "methods": [
+        {
+          "name": "parseInt",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Integer[]"
+    },
+    {
+      "type": "java.lang.Iterable"
+    },
+    {
+      "type": "java.lang.Long"
+    },
+    {
+      "type": "java.lang.Long[]"
     },
     {
       "type": "java.lang.Module",
@@ -1048,13 +4943,102 @@
       ]
     },
     {
+      "type": "java.lang.Number"
+    },
+    {
       "type": "java.lang.Object"
+    },
+    {
+      "type": "java.lang.ObjectBeanInfo"
+    },
+    {
+      "type": "java.lang.ObjectCustomizer"
     },
     {
       "type": "java.lang.Object[]"
     },
     {
-      "type": "java.lang.String"
+      "type": "java.lang.Short[]"
+    },
+    {
+      "type": "java.lang.String",
+      "methods": [
+        {
+          "name": "contains",
+          "parameterTypes": [
+            "java.lang.CharSequence"
+          ]
+        },
+        {
+          "name": "endsWith",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "equals",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "isBlank",
+          "parameterTypes": []
+        },
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        },
+        {
+          "name": "length",
+          "parameterTypes": []
+        },
+        {
+          "name": "replaceAll",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "replaceFirst",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "startsWith",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "substring",
+          "parameterTypes": [
+            "int"
+          ]
+        },
+        {
+          "name": "substring",
+          "parameterTypes": [
+            "int",
+            "int"
+          ]
+        },
+        {
+          "name": "toLowerCase",
+          "parameterTypes": []
+        },
+        {
+          "name": "toUpperCase",
+          "parameterTypes": []
+        },
+        {
+          "name": "trim",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "java.lang.String[]"
@@ -1093,16 +5077,31 @@
       "type": "java.lang.constant.Constable[]"
     },
     {
+      "type": "java.lang.constant.ConstantDesc"
+    },
+    {
       "type": "java.lang.constant.ConstantDesc[]"
     },
     {
       "type": "java.lang.invoke.TypeDescriptor$OfField"
     },
     {
+      "type": "java.lang.reflect.AccessibleObject",
+      "methods": [
+        {
+          "name": "trySetAccessible",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "java.lang.reflect.AnnotatedElement"
     },
     {
       "type": "java.lang.reflect.GenericDeclaration"
+    },
+    {
+      "type": "java.lang.reflect.Method"
     },
     {
       "type": "java.lang.reflect.ParameterizedType",
@@ -1116,6 +5115,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "java.lang.reflect.RecordComponent"
     },
     {
       "type": "java.lang.reflect.Type"
@@ -1134,13 +5136,46 @@
       ]
     },
     {
+      "type": "java.math.BigDecimal[]"
+    },
+    {
+      "type": "java.math.BigInteger[]"
+    },
+    {
+      "type": "java.net.URL[]"
+    },
+    {
       "type": "java.security.AlgorithmParametersSpi"
     },
     {
       "type": "java.security.KeyStoreSpi"
     },
     {
+      "type": "java.security.interfaces.ECPrivateKey"
+    },
+    {
+      "type": "java.security.interfaces.ECPublicKey"
+    },
+    {
+      "type": "java.security.interfaces.RSAPrivateKey"
+    },
+    {
+      "type": "java.security.interfaces.RSAPublicKey"
+    },
+    {
+      "type": "java.sql.Date"
+    },
+    {
+      "type": "java.sql.Date[]"
+    },
+    {
       "type": "java.sql.DriverManager"
+    },
+    {
+      "type": "java.sql.Time[]"
+    },
+    {
+      "type": "java.sql.Timestamp[]"
     },
     {
       "type": "java.text.ListFormat"
@@ -1149,22 +5184,237 @@
       "type": "java.time.DurationEditor"
     },
     {
-      "type": "java.util.ArrayList"
+      "type": "java.util.AbstractCollection",
+      "methods": [
+        {
+          "name": "toString",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.AbstractList"
+    },
+    {
+      "type": "java.util.AbstractMap"
+    },
+    {
+      "type": "java.util.AbstractSequentialList"
+    },
+    {
+      "type": "java.util.AbstractSet"
+    },
+    {
+      "type": "java.util.ArrayList",
+      "methods": [
+        {
+          "name": "get",
+          "parameterTypes": [
+            "int"
+          ]
+        },
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        },
+        {
+          "name": "size",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.Calendar[]"
+    },
+    {
+      "type": "java.util.Collection",
+      "methods": [
+        {
+          "name": "contains",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "size",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.Collections$EmptyList"
+    },
+    {
+      "type": "java.util.Collections$UnmodifiableMap"
+    },
+    {
+      "type": "java.util.Date[]"
+    },
+    {
+      "type": "java.util.Deque"
     },
     {
       "type": "java.util.Enumeration"
     },
     {
-      "type": "java.util.HashSet"
+      "type": "java.util.HashMap",
+      "methods": [
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "getOrDefault",
+          "parameterTypes": [
+            "java.lang.Object",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        },
+        {
+          "name": "keySet",
+          "parameterTypes": []
+        },
+        {
+          "name": "size",
+          "parameterTypes": []
+        },
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
     },
     {
-      "type": "java.util.List"
+      "type": "java.util.HashSet",
+      "methods": [
+        {
+          "name": "contains",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.LinkedHashMap",
+      "methods": [
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "keySet",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.LinkedHashSet"
+    },
+    {
+      "type": "java.util.LinkedList"
+    },
+    {
+      "type": "java.util.List",
+      "methods": [
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.Locale",
+      "methods": [
+        {
+          "name": "getDisplayLanguage",
+          "parameterTypes": [
+            "java.util.Locale"
+          ]
+        },
+        {
+          "name": "getLanguage",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.util.Map",
+      "methods": [
+        {
+          "name": "containsKey",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "isEmpty",
+          "parameterTypes": []
+        },
+        {
+          "name": "put",
+          "parameterTypes": [
+            "java.lang.Object",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.util.NavigableMap"
+    },
+    {
+      "type": "java.util.Queue"
+    },
+    {
+      "type": "java.util.RandomAccess"
     },
     {
       "type": "java.util.SequencedCollection"
     },
     {
+      "type": "java.util.SequencedMap"
+    },
+    {
+      "type": "java.util.SequencedSet"
+    },
+    {
       "type": "java.util.Set"
+    },
+    {
+      "type": "java.util.SortedMap"
+    },
+    {
+      "type": "java.util.TreeMap",
+      "methods": [
+        {
+          "name": "get",
+          "parameterTypes": [
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.util.concurrent.Callable",
+      "methods": [
+        {
+          "name": "call",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "java.util.concurrent.Executor"
@@ -1231,6 +5481,32 @@
     },
     {
       "type": "kotlinx.serialization.protobuf.ProtoBuf"
+    },
+    {
+      "type": "long[]"
+    },
+    {
+      "type": "org.apache.catalina.connector.RequestFacade",
+      "methods": [
+        {
+          "name": "getParameter",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getQueryString",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRequestURI",
+          "parameterTypes": []
+        },
+        {
+          "name": "getServletPath",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.apache.catalina.core.ApplicationContextFacade"
@@ -1772,10 +6048,58 @@
       "type": "org.crac.Core"
     },
     {
+      "type": "org.eclipse.angus.activation.MailcapRegistryProviderImpl"
+    },
+    {
       "type": "org.eclipse.angus.activation.MimeTypeRegistryProviderImpl"
     },
     {
+      "type": "org.eclipse.angus.mail.handlers.text_html",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.angus.mail.imap.IMAPProvider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.imap.IMAPSSLProvider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.pop3.POP3Provider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.pop3.POP3SSLProvider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.smtp.SMTPProvider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.smtp.SMTPSSLProvider"
+    },
+    {
+      "type": "org.eclipse.angus.mail.smtp.SMTPTransport",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "jakarta.mail.Session",
+            "jakarta.mail.URLName"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.angus.mail.util.MailStreamProvider"
+    },
+    {
       "type": "org.eclipse.core.runtime.FileLocator"
+    },
+    {
+      "type": "org.glassfish.hk2.osgiresourcelocator.ServiceLoader"
     },
     {
       "type": "org.graalvm.nativeimage.ImageInfo",
@@ -1788,6 +6112,42 @@
     },
     {
       "type": "org.hibernate.validator.HibernateValidator"
+    },
+    {
+      "type": "org.hibernate.validator.internal.constraintvalidators.bv.NotBlankValidator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.hibernate.validator.internal.constraintvalidators.bv.notempty.NotEmptyValidatorForCollection",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.hibernate.validator.internal.constraintvalidators.bv.size.SizeValidatorForCharSequence",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.hibernate.validator.internal.constraintvalidators.bv.size.SizeValidatorForCollection",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.hibernate.validator.internal.engine.AbstractConfigurationImpl",
@@ -3668,6 +8028,9 @@
       ]
     },
     {
+      "type": "org.springframework.boot.web.servlet.AbstractFilterRegistrationBean"
+    },
+    {
       "type": "org.springframework.boot.web.servlet.DynamicRegistrationBean"
     },
     {
@@ -4305,7 +8668,16 @@
       "type": "org.springframework.web.bind.annotation.PutMapping"
     },
     {
+      "type": "org.springframework.web.bind.annotation.RequestBody"
+    },
+    {
+      "type": "org.springframework.web.bind.annotation.RequestHeader"
+    },
+    {
       "type": "org.springframework.web.bind.annotation.RequestMapping"
+    },
+    {
+      "type": "org.springframework.web.bind.annotation.RequestMethod"
     },
     {
       "type": "org.springframework.web.bind.annotation.RequestMethod[]"
@@ -4365,7 +8737,13 @@
       "type": "org.springframework.web.method.support.UriComponentsContributor"
     },
     {
+      "type": "org.springframework.web.multipart.MultipartFile"
+    },
+    {
       "type": "org.springframework.web.multipart.MultipartResolver"
+    },
+    {
+      "type": "org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile"
     },
     {
       "type": "org.springframework.web.multipart.support.StandardServletMultipartResolver"
@@ -4411,6 +8789,9 @@
     },
     {
       "type": "org.springframework.web.servlet.RequestToViewNameTranslator"
+    },
+    {
+      "type": "org.springframework.web.servlet.SmartView"
     },
     {
       "type": "org.springframework.web.servlet.View"
@@ -4618,7 +8999,16 @@
       "type": "org.springframework.web.servlet.view.AbstractCachingViewResolver"
     },
     {
+      "type": "org.springframework.web.servlet.view.AbstractTemplateView"
+    },
+    {
       "type": "org.springframework.web.servlet.view.AbstractTemplateViewResolver"
+    },
+    {
+      "type": "org.springframework.web.servlet.view.AbstractUrlBasedView"
+    },
+    {
+      "type": "org.springframework.web.servlet.view.AbstractView"
     },
     {
       "type": "org.springframework.web.servlet.view.BeanNameViewResolver"
@@ -4631,6 +9021,9 @@
     },
     {
       "type": "org.springframework.web.servlet.view.InternalResourceViewResolver"
+    },
+    {
+      "type": "org.springframework.web.servlet.view.RedirectView"
     },
     {
       "type": "org.springframework.web.servlet.view.UrlBasedViewResolver"
@@ -4655,6 +9048,9 @@
     },
     {
       "type": "reactor.core.scheduler.Schedulers"
+    },
+    {
+      "type": "short[]"
     },
     {
       "type": "sun.management.VMManagementImpl",
@@ -4715,6 +9111,24 @@
     },
     {
       "type": "sun.security.provider.DSA$SHA256withDSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.JavaKeyStore$DualFormatJKS",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.JavaKeyStore$JKS",
       "methods": [
         {
           "name": "<init>",
@@ -4788,7 +9202,25 @@
       ]
     },
     {
+      "type": "sun.security.provider.SecureRandom",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "sun.security.provider.X509Factory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.certpath.PKIXCertPathValidator",
       "methods": [
         {
           "name": "<init>",
@@ -4825,6 +9257,33 @@
     },
     {
       "type": "sun.security.rsa.RSASignature$SHA224withRSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSASignature$SHA256withRSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.ssl.KeyManagerFactoryImpl$SunX509",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.ssl.SSLContextImpl$DefaultSSLContext",
       "methods": [
         {
           "name": "<init>",
@@ -4959,6 +9418,18 @@
       ]
     },
     {
+      "type": "sun.security.x509.SubjectAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
       "type": "sun.security.x509.SubjectKeyIdentifierExtension",
       "methods": [
         {
@@ -4971,6 +9442,15 @@
       ]
     },
     {
+      "type": "sun.text.resources.FormatData"
+    },
+    {
+      "type": "sun.text.resources.FormatData_en"
+    },
+    {
+      "type": "sun.text.resources.JavaTimeSupplementary"
+    },
+    {
       "type": "sun.text.resources.cldr.FormatData"
     },
     {
@@ -4980,7 +9460,28 @@
       "type": "sun.text.resources.cldr.FormatData_en_US"
     },
     {
+      "type": "sun.util.resources.CurrencyNames"
+    },
+    {
       "type": "sun.util.resources.cldr.CalendarData"
+    },
+    {
+      "type": "sun.util.resources.cldr.CurrencyNames"
+    },
+    {
+      "type": "sun.util.resources.cldr.CurrencyNames_en"
+    },
+    {
+      "type": "sun.util.resources.cldr.CurrencyNames_en_US"
+    },
+    {
+      "type": "sun.util.resources.cldr.CurrencyNames_en_US_POSIX"
+    },
+    {
+      "type": "sun.util.resources.cldr.LocaleNames"
+    },
+    {
+      "type": "sun.util.resources.cldr.LocaleNames_en"
     },
     {
       "type": "sun.util.resources.cldr.TimeZoneNames"
@@ -5088,6 +9589,13 @@
     {
       "type": {
         "proxy": [
+          "org.springframework.web.bind.annotation.RequestHeader"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
           "org.springframework.web.bind.annotation.RequestMapping"
         ]
       }
@@ -5142,7 +9650,28 @@
   ],
   "resources": [
     {
+      "glob": "EmojiReference.txt"
+    },
+    {
       "glob": "META-INF/build-info.properties"
+    },
+    {
+      "glob": "META-INF/jakarta.address.map"
+    },
+    {
+      "glob": "META-INF/jakarta.charset.map"
+    },
+    {
+      "glob": "META-INF/jakarta.default.address.map"
+    },
+    {
+      "glob": "META-INF/jakarta.default.providers"
+    },
+    {
+      "glob": "META-INF/jakarta.mailcap"
+    },
+    {
+      "glob": "META-INF/jakarta.mailcap.default"
     },
     {
       "glob": "META-INF/jakarta.mime.types"
@@ -5151,10 +9680,109 @@
       "glob": "META-INF/jakarta.mimetypes.default"
     },
     {
+      "glob": "META-INF/jakarta.providers"
+    },
+    {
       "glob": "META-INF/mime.types"
     },
     {
+      "glob": "META-INF/resources/fonts/fontawesome-webfont.woff2"
+    },
+    {
+      "glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
+    },
+    {
+      "glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
+    },
+    {
+      "glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
+    },
+    {
+      "glob": "META-INF/resources/images/amazon.svg"
+    },
+    {
+      "glob": "META-INF/resources/images/anon.svg"
+    },
+    {
+      "glob": "META-INF/resources/images/favicon.ico"
+    },
+    {
+      "glob": "META-INF/resources/images/google.svg"
+    },
+    {
+      "glob": "META-INF/resources/images/logo.svg"
+    },
+    {
+      "glob": "META-INF/resources/images/logowhite.png"
+    },
+    {
+      "glob": "META-INF/resources/images/mattermost.svg"
+    },
+    {
+      "glob": "META-INF/resources/images/teams.svg"
+    },
+    {
       "glob": "META-INF/resources/index.html"
+    },
+    {
+      "glob": "META-INF/resources/scripts/cities.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/codemirror-4.inline-attachment.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/diff_match_patch.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/easymde.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/emoji-picker.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/emojibase/data.json"
+    },
+    {
+      "glob": "META-INF/resources/scripts/emojibase/messages.json"
+    },
+    {
+      "glob": "META-INF/resources/scripts/inline-attachment.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/jquery.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/materialize.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/picmo-popup.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/picmo.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/prism.min.js"
+    },
+    {
+      "glob": "META-INF/resources/scripts/scoold.js"
+    },
+    {
+      "glob": "META-INF/resources/service-worker.js"
+    },
+    {
+      "glob": "META-INF/resources/styles/easymde.min.css"
+    },
+    {
+      "glob": "META-INF/resources/styles/font-awesome.min.css"
+    },
+    {
+      "glob": "META-INF/resources/styles/highlighting.css"
+    },
+    {
+      "glob": "META-INF/resources/styles/materialize.min.css"
+    },
+    {
+      "glob": "META-INF/resources/styles/style.css"
     },
     {
       "glob": "META-INF/services/ch.qos.logback.classic.spi.Configurator"
@@ -5163,10 +9791,19 @@
       "glob": "META-INF/services/com.fasterxml.jackson.databind.Module"
     },
     {
+      "glob": "META-INF/services/jakarta.activation.spi.MailcapRegistryProvider"
+    },
+    {
       "glob": "META-INF/services/jakarta.activation.spi.MimeTypeRegistryProvider"
     },
     {
       "glob": "META-INF/services/jakarta.el.ExpressionFactory"
+    },
+    {
+      "glob": "META-INF/services/jakarta.mail.Provider"
+    },
+    {
+      "glob": "META-INF/services/jakarta.mail.util.StreamProvider"
     },
     {
       "glob": "META-INF/services/jakarta.validation.ConstraintValidator"
@@ -5199,7 +9836,10 @@
       "glob": "META-INF/services/javax.xml.parsers.SAXParserFactory"
     },
     {
-      "glob": "META-INF/services/javax.xml.transform.TransformerFactory"
+      "glob": "META-INF/services/javax.xml.stream.XMLInputFactory"
+    },
+    {
+      "glob": "META-INF/services/javax.xml.stream.XMLOutputFactory"
     },
     {
       "glob": "META-INF/services/org.apache.commons.logging.LogFactory"
@@ -5349,7 +9989,25 @@
       "glob": "com/erudika/scoold/controllers/TermsController.class"
     },
     {
+      "glob": "com/erudika/scoold/controllers/UploadController.class"
+    },
+    {
       "glob": "com/erudika/scoold/controllers/VoteController.class"
+    },
+    {
+      "glob": "com/erudika/scoold/mattermost/MattermostController.class"
+    },
+    {
+      "glob": "com/erudika/scoold/msteams/TeamsBot.class"
+    },
+    {
+      "glob": "com/erudika/scoold/msteams/TeamsBotConfiguration.class"
+    },
+    {
+      "glob": "com/erudika/scoold/msteams/TeamsController.class"
+    },
+    {
+      "glob": "com/erudika/scoold/slack/SlackController.class"
     },
     {
       "glob": "com/erudika/scoold/utils/LanguageUtils.class"
@@ -5371,6 +10029,18 @@
     },
     {
       "glob": "com/erudika/scoold/utils/avatars/GravatarAvatarGenerator.class"
+    },
+    {
+      "glob": "com/microsoft/bot/builder/ActivityHandler$InvokeResponseException.class"
+    },
+    {
+      "glob": "com/microsoft/bot/builder/ActivityHandler.class"
+    },
+    {
+      "glob": "com/microsoft/bot/builder/Bot.class"
+    },
+    {
+      "glob": "com/microsoft/bot/builder/teams/TeamsActivityHandler.class"
     },
     {
       "glob": "commons-logging.properties"
@@ -5400,7 +10070,19 @@
       "glob": "config/application.yml"
     },
     {
+      "glob": "emails/notify.html"
+    },
+    {
       "glob": "git.properties"
+    },
+    {
+      "glob": "jakarta/servlet/LocalStrings.properties"
+    },
+    {
+      "glob": "jakarta/servlet/LocalStrings_en.properties"
+    },
+    {
+      "glob": "jakarta/servlet/LocalStrings_en_US.properties"
     },
     {
       "glob": "jakarta/servlet/http/LocalStrings.properties"
@@ -5413,6 +10095,9 @@
     },
     {
       "glob": "jndi.properties"
+    },
+    {
+      "glob": "lang_en.properties"
     },
     {
       "glob": "log4j2.StatusLogger.properties"
@@ -5440,6 +10125,9 @@
     },
     {
       "glob": "org/apache/catalina/authenticator/LocalStrings.properties"
+    },
+    {
+      "glob": "org/apache/catalina/authenticator/jaspic/LocalStrings.properties"
     },
     {
       "glob": "org/apache/catalina/connector/LocalStrings.properties"
@@ -5500,6 +10188,9 @@
     },
     {
       "glob": "org/apache/coyote/http11/LocalStrings.properties"
+    },
+    {
+      "glob": "org/apache/coyote/http11/filters/LocalStrings.properties"
     },
     {
       "glob": "org/apache/hc/client5/version.properties"
@@ -5865,6 +10556,9 @@
       "glob": "org/springframework/boot/web/server/autoconfigure/servlet/ServletWebServerConfiguration.class"
     },
     {
+      "glob": "org/springframework/boot/web/server/mime-mappings.properties"
+    },
+    {
       "glob": "org/springframework/boot/webmvc/autoconfigure/DispatcherServletAutoConfiguration$DefaultDispatcherServletCondition.class"
     },
     {
@@ -6003,29 +10697,288 @@
       "glob": "reference.conf"
     },
     {
+      "glob": "resources/fonts/fontawesome-webfont.woff2"
+    },
+    {
+      "glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
+    },
+    {
+      "glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
+    },
+    {
+      "glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
+    },
+    {
+      "glob": "resources/images/amazon.svg"
+    },
+    {
+      "glob": "resources/images/anon.svg"
+    },
+    {
+      "glob": "resources/images/favicon.ico"
+    },
+    {
+      "glob": "resources/images/google.svg"
+    },
+    {
+      "glob": "resources/images/logo.svg"
+    },
+    {
+      "glob": "resources/images/logowhite.png"
+    },
+    {
+      "glob": "resources/images/mattermost.svg"
+    },
+    {
+      "glob": "resources/images/teams.svg"
+    },
+    {
       "glob": "resources/index.html"
+    },
+    {
+      "glob": "resources/scripts/cities.js"
+    },
+    {
+      "glob": "resources/scripts/codemirror-4.inline-attachment.min.js"
+    },
+    {
+      "glob": "resources/scripts/diff_match_patch.js"
+    },
+    {
+      "glob": "resources/scripts/easymde.min.js"
+    },
+    {
+      "glob": "resources/scripts/emoji-picker.js"
+    },
+    {
+      "glob": "resources/scripts/emojibase/data.json"
+    },
+    {
+      "glob": "resources/scripts/emojibase/messages.json"
+    },
+    {
+      "glob": "resources/scripts/inline-attachment.min.js"
+    },
+    {
+      "glob": "resources/scripts/jquery.min.js"
+    },
+    {
+      "glob": "resources/scripts/materialize.min.js"
+    },
+    {
+      "glob": "resources/scripts/picmo-popup.min.js"
+    },
+    {
+      "glob": "resources/scripts/picmo.min.js"
+    },
+    {
+      "glob": "resources/scripts/prism.min.js"
+    },
+    {
+      "glob": "resources/scripts/scoold.js"
+    },
+    {
+      "glob": "resources/service-worker.js"
+    },
+    {
+      "glob": "resources/styles/easymde.min.css"
+    },
+    {
+      "glob": "resources/styles/font-awesome.min.css"
+    },
+    {
+      "glob": "resources/styles/highlighting.css"
+    },
+    {
+      "glob": "resources/styles/materialize.min.css"
+    },
+    {
+      "glob": "resources/styles/style.css"
     },
     {
       "glob": "spring.properties"
     },
     {
+      "glob": "static/fonts/fontawesome-webfont.woff2"
+    },
+    {
+      "glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
+    },
+    {
+      "glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
+    },
+    {
+      "glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
+    },
+    {
+      "glob": "static/images/amazon.svg"
+    },
+    {
+      "glob": "static/images/anon.svg"
+    },
+    {
+      "glob": "static/images/favicon.ico"
+    },
+    {
+      "glob": "static/images/google.svg"
+    },
+    {
+      "glob": "static/images/logo.svg"
+    },
+    {
+      "glob": "static/images/logowhite.png"
+    },
+    {
+      "glob": "static/images/mattermost.svg"
+    },
+    {
+      "glob": "static/images/teams.svg"
+    },
+    {
       "glob": "static/index.html"
+    },
+    {
+      "glob": "static/scripts/cities.js"
+    },
+    {
+      "glob": "static/scripts/codemirror-4.inline-attachment.min.js"
+    },
+    {
+      "glob": "static/scripts/diff_match_patch.js"
+    },
+    {
+      "glob": "static/scripts/easymde.min.js"
+    },
+    {
+      "glob": "static/scripts/emoji-picker.js"
+    },
+    {
+      "glob": "static/scripts/emojibase/data.json"
+    },
+    {
+      "glob": "static/scripts/emojibase/messages.json"
+    },
+    {
+      "glob": "static/scripts/inline-attachment.min.js"
+    },
+    {
+      "glob": "static/scripts/jquery.min.js"
+    },
+    {
+      "glob": "static/scripts/materialize.min.js"
+    },
+    {
+      "glob": "static/scripts/picmo-popup.min.js"
+    },
+    {
+      "glob": "static/scripts/picmo.min.js"
+    },
+    {
+      "glob": "static/scripts/prism.min.js"
+    },
+    {
+      "glob": "static/scripts/scoold.js"
+    },
+    {
+      "glob": "static/service-worker.js"
+    },
+    {
+      "glob": "static/styles/easymde.min.css"
+    },
+    {
+      "glob": "static/styles/font-awesome.min.css"
+    },
+    {
+      "glob": "static/styles/highlighting.css"
+    },
+    {
+      "glob": "static/styles/materialize.min.css"
+    },
+    {
+      "glob": "static/styles/style.css"
     },
     {
       "glob": "templates"
     },
     {
+      "glob": "templates/admin.vm"
+    },
+    {
+      "glob": "templates/base.vm"
+    },
+    {
+      "glob": "templates/blank.vm"
+    },
+    {
+      "glob": "templates/comment.vm"
+    },
+    {
       "glob": "templates/macro.vm"
+    },
+    {
+      "glob": "templates/notfound.vm"
+    },
+    {
+      "glob": "templates/people.vm"
+    },
+    {
+      "glob": "templates/profile.vm"
+    },
+    {
+      "glob": "templates/question.vm"
+    },
+    {
+      "glob": "templates/questions.vm"
+    },
+    {
+      "glob": "templates/reply.vm"
+    },
+    {
+      "glob": "templates/reports.vm"
+    },
+    {
+      "glob": "templates/settings.vm"
+    },
+    {
+      "glob": "templates/signin.vm"
+    },
+    {
+      "glob": "templates/tags.vm"
+    },
+    {
+      "glob": "themes/default.css"
+    },
+    {
+      "module": "java.base",
+      "glob": "java/util/currency.data"
+    },
+    {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
+    },
+    {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt76b/uprops.icu"
+    },
+    {
+      "module": "java.base",
+      "glob": "sun/net/idn/uidna.spp"
     },
     {
       "module": "java.base",
       "glob": "sun/net/www/content-types.properties"
     },
     {
+      "bundle": "jakarta.servlet.LocalStrings"
+    },
+    {
       "bundle": "jakarta.servlet.http.LocalStrings"
     },
     {
       "bundle": "org.apache.catalina.authenticator.LocalStrings"
+    },
+    {
+      "bundle": "org.apache.catalina.authenticator.jaspic.LocalStrings"
     },
     {
       "bundle": "org.apache.catalina.connector.LocalStrings"
@@ -6068,6 +11021,9 @@
     },
     {
       "bundle": "org.apache.coyote.http11.LocalStrings"
+    },
+    {
+      "bundle": "org.apache.coyote.http11.filters.LocalStrings"
     },
     {
       "bundle": "org.apache.naming.LocalStrings"
