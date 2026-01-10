@@ -384,7 +384,6 @@
 						</executions>
 						<configuration>
 							<buildArgs>
-								<!--THIS CAUSES SOME CONFLICTS WITH AZURE CORE WHERE IT'S INITIALIZED AT BUILD TIME-->
 								<buildArg>-march=${M_ARCH}</buildArg>
 								<buildArg>-R:MaxHeapSize=800m</buildArg>
 								<buildArg>-H:+UnlockExperimentalVMOptions</buildArg>

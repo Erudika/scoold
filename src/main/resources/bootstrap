@@ -3,4 +3,4 @@
 cd ${LAMBDA_TASK_ROOT:-.}
 export SCOOLD_VERSION
 
-./scoold -Dconfig.file=application.conf -Dspring.main.banner-mode=off -Dserver.port=8000
+./scoold -Dspring.main.banner-mode=off -Dserver.port=8000 $JAVA_OPTS

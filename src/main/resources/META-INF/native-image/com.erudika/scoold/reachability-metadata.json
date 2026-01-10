@@ -4723,13 +4723,27 @@
       "type": "jakarta.servlet.ServletRegistration"
     },
     {
-      "type": "jakarta.servlet.ServletRequest"
+      "type": "jakarta.servlet.ServletRequest",
+      "methods": [
+        {
+          "name": "getParameter",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "jakarta.servlet.http.HttpServlet"
     },
     {
-      "type": "jakarta.servlet.http.HttpServletRequest"
+      "type": "jakarta.servlet.http.HttpServletRequest",
+      "methods": [
+        {
+          "name": "getServletPath",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "jakarta.servlet.jsp.jstl.core.Config"
