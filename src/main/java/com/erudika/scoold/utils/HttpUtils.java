@@ -27,7 +27,6 @@ import com.erudika.scoold.core.Profile;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -257,7 +255,7 @@ public final class HttpUtils {
 			res.setContentType("image/svg+xml");
 			res.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=" + TimeUnit.HOURS.toSeconds(24));
 			res.setHeader(HttpHeaders.ETAG, Utils.md5(DEFAULT_AVATAR));
-			IOUtils.copy(new ByteArrayInputStream(DEFAULT_AVATAR.getBytes()), res.getOutputStream());
+			res.getOutputStream().write(DEFAULT_AVATAR.getBytes());
 		} catch (IOException e) {
 			LoggerFactory.getLogger(HttpUtils.class).
 					debug("Failed to set default user avatar. {}", e.getMessage());

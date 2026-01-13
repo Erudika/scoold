@@ -79,7 +79,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -1065,7 +1064,7 @@ public class ApiController {
 		com.typesafe.config.Config modifiedConf = com.typesafe.config.ConfigFactory.empty();
 		if ("application/hocon".equals(req.getContentType())) {
 			try {
-				String config = IOUtils.toString(req.getInputStream(), "utf-8");
+				String config = new String(req.getInputStream().readAllBytes(), "utf-8");
 				for (Map.Entry<String, ConfigValue> entry : Config.parseStringWithoutIncludes(config).entrySet()) {
 					modifiedConf = modifiedConf.withoutPath(entry.getKey()).withValue(entry.getKey(), entry.getValue());
 					System.setProperty(entry.getKey(), entry.getValue().unwrapped().toString());
