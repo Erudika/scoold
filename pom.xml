@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.51.4</version>
+			<version>1.52.0</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -96,7 +96,7 @@
 
 		<!--==============================================-->
 		<!-- PLEASE READ BEFORE ENABLING DEVTOOLS: -->
-		<!-- First, you MUST enable fork mode for the Spring Boot Maven plugin below. -->
+		<!-- You MUST enable fork mode for the Spring Boot Maven plugin below -->
 		<!--
 			When you run the project with spring-boot:run you MUST ALSO set the following system property:
 			-Dspring-boot.run.jvmArguments="-Dconfig.file=src/main/resources/application.conf"
