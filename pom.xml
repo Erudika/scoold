@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0</version>
+		<version>4.0.1</version>
 	</parent>
 
 	<organization>
@@ -387,6 +387,7 @@
 								<buildArg>-march=${M_ARCH}</buildArg>
 								<buildArg>-R:MaxHeapSize=800m</buildArg>
 								<buildArg>-H:+UnlockExperimentalVMOptions</buildArg>
+								<buildArg>--exact-reachability-metadata</buildArg>
 								<buildArg>--initialize-at-run-time=org.slf4j.LoggerFactory</buildArg>
 								<buildArg>-H:+IncludeAllLocales</buildArg>
 								<buildArg>-H:ConfigurationFileDirectories=src/main/resources/META-INF/native-image/com.erudika/scoold/</buildArg>

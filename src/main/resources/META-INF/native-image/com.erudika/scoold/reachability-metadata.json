@@ -1852,6 +1852,11 @@
     },
     {
       "type": "com.erudika.para.core.utils.Utils",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true,
       "methods": [
         {
           "name": "abbreviate",
@@ -1874,6 +1879,14 @@
             "java.lang.String",
             "java.util.Locale"
           ]
+        },
+				{
+					"name": "formatDate",
+					"parameterTypes":
+					[
+							"java.lang.String",
+							"java.util.Locale"
+					]
         },
         {
           "name": "formatMessage",
@@ -3995,7 +4008,7 @@
     {
       "type": "com.erudika.scoold.utils.ScooldUtils",
       "allDeclaredMethods": true,
-      "allDeclaredFields": true, 
+      "allDeclaredFields": true,
       "allPublicMethods": true,
       "allPublicFields": true,
       "allPublicConstructors": true,
@@ -4724,26 +4737,38 @@
     },
     {
       "type": "jakarta.servlet.ServletRequest",
-      "methods": [
-        {
-          "name": "getParameter",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "jakarta.servlet.http.HttpServlet"
     },
     {
       "type": "jakarta.servlet.http.HttpServletRequest",
-      "methods": [
-        {
-          "name": "getServletPath",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+    {
+      "type": "jakarta.servlet.ServletRequestWrapper",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+    {
+      "type": "jakarta.servlet.http.HttpServletRequestWrapper",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "jakarta.servlet.jsp.jstl.core.Config"
@@ -4849,14 +4874,11 @@
     {
       "type": "java.lang.Boolean",
       "jniAccessible": true,
-      "methods": [
-        {
-          "name": "getBoolean",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.lang.Boolean[]"
@@ -4875,16 +4897,11 @@
     },
     {
       "type": "java.lang.Class",
-      "methods": [
-        {
-          "name": "getModule",
-          "parameterTypes": []
-        },
-        {
-          "name": "isRecord",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.lang.ClassLoader",
@@ -4976,83 +4993,11 @@
     },
     {
       "type": "java.lang.String",
-      "methods": [
-        {
-          "name": "contains",
-          "parameterTypes": [
-            "java.lang.CharSequence"
-          ]
-        },
-        {
-          "name": "endsWith",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "equals",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "isBlank",
-          "parameterTypes": []
-        },
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        },
-        {
-          "name": "length",
-          "parameterTypes": []
-        },
-        {
-          "name": "replaceAll",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "replaceFirst",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "startsWith",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "substring",
-          "parameterTypes": [
-            "int"
-          ]
-        },
-        {
-          "name": "substring",
-          "parameterTypes": [
-            "int",
-            "int"
-          ]
-        },
-        {
-          "name": "toLowerCase",
-          "parameterTypes": []
-        },
-        {
-          "name": "toUpperCase",
-          "parameterTypes": []
-        },
-        {
-          "name": "trim",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.lang.String[]"
@@ -5220,171 +5165,131 @@
     },
     {
       "type": "java.util.ArrayList",
-      "methods": [
-        {
-          "name": "get",
-          "parameterTypes": [
-            "int"
-          ]
-        },
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        },
-        {
-          "name": "size",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "java.util.Calendar[]"
+      "type": "java.util.Calendar[]",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.Collection",
-      "methods": [
-        {
-          "name": "contains",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "size",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+    },
+    {
+      "type": "java.util.Arrays$ArrayList"
     },
     {
       "type": "java.util.Collections$EmptyList"
     },
     {
+      "type": "java.util.Collections$EmptyMap"
+    },
+    {
+      "type": "java.util.Collections$EmptySet"
+    },
+    {
       "type": "java.util.Collections$UnmodifiableMap"
+    },
+    {
+      "type": "java.util.Collections$SingletonMap"
+    },
+    {
+      "type": "java.util.Collections$SingletonList"
     },
     {
       "type": "java.util.Date[]"
     },
     {
-      "type": "java.util.Deque"
+      "type": "java.util.Deque",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "java.util.Enumeration"
+      "type": "java.util.Enumeration",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.HashMap",
-      "methods": [
-        {
-          "name": "get",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "getOrDefault",
-          "parameterTypes": [
-            "java.lang.Object",
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        },
-        {
-          "name": "keySet",
-          "parameterTypes": []
-        },
-        {
-          "name": "size",
-          "parameterTypes": []
-        },
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "java.util.HashSet",
-      "methods": [
-        {
-          "name": "contains",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "java.util.LinkedHashMap",
-      "methods": [
-        {
-          "name": "get",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "keySet",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "java.util.LinkedHashSet"
+      "type": "java.util.LinkedHashSet",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "java.util.LinkedList"
+      "type": "java.util.LinkedList",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.List",
-      "methods": [
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "java.util.Locale",
-      "methods": [
-        {
-          "name": "getDisplayLanguage",
-          "parameterTypes": [
-            "java.util.Locale"
-          ]
-        },
-        {
-          "name": "getLanguage",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.Map",
-      "methods": [
-        {
-          "name": "containsKey",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "isEmpty",
-          "parameterTypes": []
-        },
-        {
-          "name": "put",
-          "parameterTypes": [
-            "java.lang.Object",
-            "java.lang.Object"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.NavigableMap"
@@ -5412,14 +5317,11 @@
     },
     {
       "type": "java.util.TreeMap",
-      "methods": [
-        {
-          "name": "get",
-          "parameterTypes": [
-            "java.lang.Object"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "java.util.concurrent.Callable",
@@ -5932,6 +5834,22 @@
           "name": "VM_PERM_INLINE_LOCAL"
         }
       ]
+    },
+    {
+      "type": "org.apache.velocity.runtime.directive.Scope",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+    {
+      "type": "org.apache.velocity.runtime.directive.ForeachScope",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "org.apache.velocity.runtime.directive.Break",
@@ -9667,6 +9585,12 @@
       "glob": "EmojiReference.txt"
     },
     {
+      "glob": "META-INF/resources/**"
+    },
+    {
+      "glob": "resources/**"
+    },
+    {
       "glob": "META-INF/build-info.properties"
     },
     {
@@ -9889,16 +9813,16 @@
       "glob": "META-INF/validation.xml"
     },
     {
-      "glob": "application-development.properties"
+      "glob": "application-*.properties"
     },
     {
-      "glob": "application-development.xml"
+      "glob": "application-*.xml"
     },
     {
-      "glob": "application-development.yaml"
+      "glob": "application-*.yaml"
     },
     {
-      "glob": "application-development.yml"
+      "glob": "application-*.yml"
     },
     {
       "glob": "application.conf"
@@ -10060,16 +9984,16 @@
       "glob": "commons-logging.properties"
     },
     {
-      "glob": "config/application-development.properties"
+      "glob": "config/application-*.properties"
     },
     {
-      "glob": "config/application-development.xml"
+      "glob": "config/application-*.xml"
     },
     {
-      "glob": "config/application-development.yaml"
+      "glob": "config/application-*.yaml"
     },
     {
-      "glob": "config/application-development.yml"
+      "glob": "config/application-*.yml"
     },
     {
       "glob": "config/application.properties"
@@ -10111,7 +10035,7 @@
       "glob": "jndi.properties"
     },
     {
-      "glob": "lang_en.properties"
+      "glob": "lang_*.properties"
     },
     {
       "glob": "log4j2.StatusLogger.properties"
