@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -360,6 +359,7 @@ public class QuestionsController {
 		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req));
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
+		String unapprovedType = Utils.type(UnapprovedQuestion.class);
 		Profile authUser = utils.getAuthUser(req);
 		String currentSpace = utils.getSpaceIdFromCookie(authUser, req);
 		String query = getQuestionsQuery(req, authUser, sortby, currentSpace, itemcount);
@@ -387,16 +387,13 @@ public class QuestionsController {
 			model.addAttribute("tagFilterOn", "favtags".equals(filter));
 			model.addAttribute("filter", "/" + Utils.stripAndTrim(filter));
 		} else {
-			questionslist = pc.findQuery(type, query, itemcount);
-		}
-
-		if (utils.postsNeedApproval(req) && utils.isMod(authUser)) {
-			Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
-			List<UnapprovedQuestion> uquestionslist = pc.findQuery(Utils.type(UnapprovedQuestion.class), query, p);
-			List<Question> qlist = new LinkedList<>(uquestionslist);
-			itemcount.setCount(itemcount.getCount() + p.getCount());
-			qlist.addAll(questionslist);
-			questionslist = qlist;
+			String andQuery = query.equals("*") ? "" : " AND " + query;
+			String typeFilter = "type:(" +  type + ")";
+			if (utils.postsNeedApproval(req) && utils.isMod(authUser)) {
+				typeFilter = "type:(" +  type + " OR " + unapprovedType + ")";
+			}
+			questionslist = pc.findQuery(null, typeFilter + andQuery, itemcount);
+			questionslist.sort((p1, p2) -> p1.getType().equals(unapprovedType) ? -1 : 1);
 		}
 
 		utils.getProfiles(questionslist);

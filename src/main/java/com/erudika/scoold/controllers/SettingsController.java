@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.logicsquad.qr4j.QrCode;
 import org.apache.commons.codec.binary.Base32;
@@ -72,10 +73,13 @@ public class SettingsController {
 		if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + SETTINGSLINK;
 		}
+		Profile authUser = utils.getAuthUser(req);
+		Map<String, Set<String>> channels = utils.getNotificationSubscribers();
+		String authUserEmail = authUser.getUser().getEmail();
 		model.addAttribute("path", "settings.vm");
 		model.addAttribute("title", utils.getLang(req).get("settings.title"));
-		model.addAttribute("newpostEmailsEnabled", utils.isSubscribedToNewPosts(req));
-		model.addAttribute("newreplyEmailsEnabled", utils.isSubscribedToNewReplies(req));
+		model.addAttribute("newpostEmailsEnabled", utils.isSubscribedToNewPosts(authUserEmail, channels));
+		model.addAttribute("newreplyEmailsEnabled", utils.isSubscribedToNewReplies(authUserEmail, channels));
 		model.addAttribute("emailsAllowed", utils.isNotificationsAllowed());
 		model.addAttribute("newpostEmailsAllowed", utils.isNewPostNotificationAllowed());
 		model.addAttribute("favtagsEmailsAllowed", utils.isFavTagsNotificationAllowed());
@@ -86,14 +90,21 @@ public class SettingsController {
 	}
 
 	@PostMapping
-	public String post(@RequestParam(required = false) String tags, @RequestParam(required = false) String latlng,
-			@RequestParam(required = false) String replyEmailsOn, @RequestParam(required = false) String commentEmailsOn,
-			@RequestParam(required = false) String oldpassword, @RequestParam(required = false) String newpassword,
-			@RequestParam(required = false) String newpostEmailsOn, @RequestParam(required = false) String favtagsEmailsOn,
-			@RequestParam(required = false) List<String> favspaces, @RequestParam(required = false) String newreplyEmailsOn,
+	public String post(
+			@RequestParam(required = false) List<String> favspaces,
+			@RequestParam(required = false) String tags,
+			@RequestParam(required = false) String latlng,
+			@RequestParam(required = false) String oldpassword,
+			@RequestParam(required = false) String newpassword,
+			@RequestParam(required = false, defaultValue = "false") Boolean replyEmailsOn,
+			@RequestParam(required = false, defaultValue = "false") Boolean commentEmailsOn,
+			@RequestParam(required = false, defaultValue = "false") Boolean newpostEmailsOn,
+			@RequestParam(required = false, defaultValue = "false") Boolean favtagsEmailsOn,
+			@RequestParam(required = false, defaultValue = "false") Boolean newreplyEmailsOn,
 			HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
+			String authUserEmail = authUser.getUser().getEmail();
 			setFavTags(authUser, tags);
 			setFavSpaces(authUser, favspaces);
 			if (!StringUtils.isBlank(latlng)) {
@@ -103,21 +114,22 @@ public class SettingsController {
 			setAnonymity(authUser, req.getParameter("anon"));
 			setDarkMode(authUser, req.getParameter("dark"));
 			authUser.setPreferredSpace(req.getParameter("preferredSpace"));
-			authUser.setReplyEmailsEnabled(Boolean.valueOf(replyEmailsOn) && utils.isReplyNotificationAllowed());
-			authUser.setCommentEmailsEnabled(Boolean.valueOf(commentEmailsOn) && utils.isCommentNotificationAllowed());
-			authUser.setFavtagsEmailsEnabled(Boolean.valueOf(favtagsEmailsOn) && utils.isFavTagsNotificationAllowed());
+			authUser.setReplyEmailsEnabled(replyEmailsOn && utils.isReplyNotificationAllowed());
+			authUser.setCommentEmailsEnabled(commentEmailsOn && utils.isCommentNotificationAllowed());
+			authUser.setFavtagsEmailsEnabled(favtagsEmailsOn && utils.isFavTagsNotificationAllowed());
 			authUser.update();
 
-			if (Boolean.valueOf(newpostEmailsOn) && utils.isNewPostNotificationAllowed()) {
-				utils.subscribeToNewPosts(authUser.getUser());
-			} else {
-				utils.unsubscribeFromNewPosts(authUser.getUser());
+			Map<String, Set<String>> channels = utils.getNotificationSubscribers();
+
+			if (utils.isMod(authUser)) {
+				utils.toggleSubscriptionToNotifications(authUserEmail, newreplyEmailsOn &&
+						utils.isReplyNotificationAllowed(), "new_reply_subscribers", channels);
 			}
-			if ("on".equals(newreplyEmailsOn) && utils.isReplyNotificationAllowed() && utils.isMod(authUser)) {
-				utils.subscribeToNewReplies(authUser.getUser());
-			} else {
-				utils.unsubscribeFromNewReplies(authUser.getUser());
-			}
+
+			utils.toggleSubscriptionToNotifications(authUserEmail, newpostEmailsOn
+					&& utils.isNewPostNotificationAllowed(), "new_post_subscribers", channels);
+
+			utils.setNotificationSubscribers(channels); // save all notification settings
 
 			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
 				utils.clearSession(req, res);
@@ -257,7 +269,6 @@ public class SettingsController {
 	private void setDarkMode(Profile authUser, String darkParam) {
 		if (utils.isDarkModeEnabled()) {
 			authUser.setDarkmodeEnabled("true".equalsIgnoreCase(darkParam));
-			pc.update(authUser);
 		}
 	}
 

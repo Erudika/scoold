@@ -135,7 +135,6 @@ public class AdminController {
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
 		model.addAttribute("configMap", CONF);
 		model.addAttribute("configMetadata", configMetadata);
-		model.addAttribute("version", pc.getServerVersion());
 		model.addAttribute("endpoint", CONF.redirectUri());
 		model.addAttribute("paraapp", CONF.paraAccessKey());
 		model.addAttribute("spaces", getSpaces(itemcount));
@@ -143,8 +142,10 @@ public class AdminController {
 		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("customHookEvents", utils.getCustomHookEvents());
-		model.addAttribute("apiKeys", utils.getApiKeys());
-		model.addAttribute("apiKeysExpirations", utils.getApiKeysExpirations());
+		if (CONF.apiEnabled()) {
+			model.addAttribute("apiKeys", utils.getApiKeys());
+			model.addAttribute("apiKeysExpirations", utils.getApiKeysExpirations());
+		}
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("itemcount1", itemcount1);
 		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
@@ -163,6 +164,11 @@ public class AdminController {
 		model.addAttribute("selectedTheme", theme.getName());
 		model.addAttribute("customTheme", StringUtils.isBlank(themeCSS) ? utils.getDefaultTheme() : themeCSS);
 		return "base";
+	}
+
+	@GetMapping(path = "/para-version", produces = "text/plain")
+	public ResponseEntity<String> paraVersion(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		return ResponseEntity.ok(pc.getServerVersion());
 	}
 
 	@PostMapping("/add-space")

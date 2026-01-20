@@ -416,6 +416,17 @@ $(function () {
 		}, 3000);
 	});
 
+	var paraVersion = null;
+
+	$("#showParaVersion").on("click", function () {
+		if (!paraVersion) {
+			$.get(CONTEXT_PATH + "/admin/para-version", function (data) {
+				paraVersion = data;
+				$("#paraVersion").text(paraVersion);
+			});
+		}
+	});
+
 	/****************************************************
      *                    REPORTS
      ****************************************************/

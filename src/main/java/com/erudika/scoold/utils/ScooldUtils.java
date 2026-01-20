@@ -118,7 +118,6 @@ public final class ScooldUtils {
 	private static final Map<String, String> FILE_CACHE = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
-	private static final String EMAIL_ALERTS_PREFIX = "email-alerts" + Para.getConfig().separator();
 
 	private static final Profile API_USER;
 	private static final Set<String> HOOK_EVENTS;
@@ -128,7 +127,9 @@ public final class ScooldUtils {
 	private Set<Sysprop> allSpaces;
 	private Set<String> autoAssignedSpacesFromConfig;
 	private long lastSpacesCountTimestamp;
+	private long lastReportsCountTimestamp;
 	private int spacesCount = 0;
+	private int newReportsCount = 0;
 
 	private static final ScooldConfig CONF = new ScooldConfig();
 
@@ -484,114 +485,86 @@ public final class ScooldUtils {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void subscribeToNotifications(String email, String channelId) {
-		if (!StringUtils.isBlank(email) && !StringUtils.isBlank(channelId)) {
-			Sysprop s = pc.read(channelId);
-			if (s == null || !s.hasProperty("emails")) {
-				s = new Sysprop(channelId);
-				s.addProperty("emails", new LinkedList<>());
-			}
-			Set<String> emails = new HashSet<>((List<String>) s.getProperty("emails"));
-			if (emails.add(email)) {
-				s.addProperty("emails", emails);
-				pc.create(s);
-			}
-		}
+	public String getNotificationChannelId(String shortId) {
+		return "email-alerts" + Para.getConfig().separator() + shortId;
+	}
+
+	private List<String> getNotificationChannelShortIds() {
+		return List.of("new_post_subscribers", "new_reply_subscribers");
 	}
 
 	@SuppressWarnings("unchecked")
-	public void unsubscribeFromNotifications(String email, String channelId) {
-		if (!StringUtils.isBlank(email) && !StringUtils.isBlank(channelId)) {
-			Sysprop s = pc.read(channelId);
-			if (s == null || !s.hasProperty("emails")) {
-				s = new Sysprop(channelId);
-				s.addProperty("emails", new LinkedList<>());
-			}
-			Set<String> emails = new HashSet<>((List<String>) s.getProperty("emails"));
-			if (emails.remove(email)) {
-				s.addProperty("emails", emails);
-				pc.create(s);
-			}
+	public Map<String, Set<String>> getNotificationSubscribers() {
+		List<String> channelIds = getNotificationChannelShortIds();
+		Map<String, Set<String>> map = new HashMap<>();
+		List<Sysprop> channels = pc.readAll(channelIds.stream().map(c -> {
+			map.put(getNotificationChannelId(c), new HashSet<String>());
+			return getNotificationChannelId(c);
+		}).toList());
+		for (Sysprop channel : channels) {
+			map.get(channel.getId()).addAll((List<String>) channel.getProperties().
+					getOrDefault("emails", Collections.emptyList()));
 		}
+		return map;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<String> getNotificationSubscribers(String channelId) {
-		return ((List<String>) Optional.ofNullable(((Sysprop) pc.read(channelId))).
+	private Set<String> getNotificationSubscribers(String channelId) {
+		return ((List<String>) Optional.ofNullable(((Sysprop) pc.read(getNotificationChannelId(channelId)))).
 				orElse(new Sysprop()).getProperties().getOrDefault("emails", Collections.emptyList())).
 				stream().collect(Collectors.toSet());
+	}
+
+	public void setNotificationSubscribers(Map<String, Set<String>> channels) {
+		List<String> channelIds = getNotificationChannelShortIds();
+		List<Sysprop> chanList = new ArrayList<>(10);
+		for (String channelId : channelIds) {
+			Sysprop s = new Sysprop(getNotificationChannelId(channelId));
+			s.addProperty("emails", channels.get(getNotificationChannelId(channelId)));
+			chanList.add(s);
+		}
+		pc.updateAll(chanList);
 	}
 
 	public void unsubscribeFromAllNotifications(Profile p) {
 		User u = p.getUser();
 		if (u != null) {
-			unsubscribeFromNewPosts(u);
+			Map<String, Set<String>> channels = getNotificationSubscribers();
+			toggleSubscriptionToNotifications(u.getEmail(), false, "new_post_subscribers", channels);
+			toggleSubscriptionToNotifications(u.getEmail(), false, "new_reply_subscribers", channels);
+			setNotificationSubscribers(channels);
 		}
 	}
 
-	public boolean isEmailDomainApproved(String email) {
-		if (StringUtils.isBlank(email)) {
-			return false;
+	public void toggleSubscriptionToNotifications(String email, Boolean subscribe, String shortId, Map<String, Set<String>> channels) {
+		if (channels != null && channels.containsKey(getNotificationChannelId(shortId))) {
+			Set<String> s = channels.get(getNotificationChannelId(shortId));
+			if (s != null) {
+				if (subscribe && !s.contains(email)) {
+					s.add(email);
+				} else if (!subscribe && s.contains(email)) {
+					s.remove(email);
+				}
+			}
 		}
-		if (!APPROVED_DOMAINS.isEmpty() && !APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@").toLowerCase())) {
-			logger.warn("Attempted signin from an unknown domain - email {} is part of an unapproved domain.", email);
-			return false;
-		}
-		return true;
 	}
 
-	public Object isSubscribedToNewPosts(HttpServletRequest req) {
-		if (!isNewPostNotificationAllowed()) {
-			return false;
-		}
-
-		Profile authUser = getAuthUser(req);
-		if (authUser != null) {
-			User u = authUser.getUser();
-			if (u != null) {
-				return getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers").contains(u.getEmail());
+	public boolean isEmailSubscribedToChannel(String email, String shortId, Map<String, Set<String>> channels) {
+		if (channels != null && channels.containsKey(getNotificationChannelId(shortId))) {
+			Set<String> s = channels.get(getNotificationChannelId(shortId));
+			if (s != null && (s.contains(email) || s.contains("*"))) {
+				return true;
 			}
 		}
 		return false;
 	}
 
-	public void subscribeToNewPosts(User u) {
-		if (u != null) {
-			subscribeToNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_post_subscribers");
-		}
+	public Object isSubscribedToNewPosts(String email, Map<String, Set<String>> channels) {
+		return isNewPostNotificationAllowed() && isEmailSubscribedToChannel(email, "new_post_subscribers", channels);
 	}
 
-	public void unsubscribeFromNewPosts(User u) {
-		if (u != null) {
-			unsubscribeFromNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_post_subscribers");
-		}
-	}
-
-	public Object isSubscribedToNewReplies(HttpServletRequest req) {
-		if (!isReplyNotificationAllowed()) {
-			return false;
-		}
-		Profile authUser = getAuthUser(req);
-		if (authUser != null) {
-			User u = authUser.getUser();
-			if (u != null) {
-				return getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_reply_subscribers").contains(u.getEmail());
-			}
-		}
-		return false;
-	}
-
-	public void subscribeToNewReplies(User u) {
-		if (u != null) {
-			subscribeToNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_reply_subscribers");
-		}
-	}
-
-	public void unsubscribeFromNewReplies(User u) {
-		if (u != null) {
-			unsubscribeFromNotifications(u.getEmail(), EMAIL_ALERTS_PREFIX + "new_reply_subscribers");
-		}
+	public Object isSubscribedToNewReplies(String email, Map<String, Set<String>> channels) {
+		return isReplyNotificationAllowed() && isEmailSubscribedToChannel(email, "new_reply_subscribers", channels);
 	}
 
 	private Map<String, Profile> buildProfilesMap(List<User> users) {
@@ -627,6 +600,17 @@ public final class ScooldUtils {
 							!isIgnoredSpaceForNotifications(e.getValue(), space)).
 					map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
 		}
+	}
+
+	public boolean isEmailDomainApproved(String email) {
+		if (StringUtils.isBlank(email)) {
+			return false;
+		}
+		if (!APPROVED_DOMAINS.isEmpty() && !APPROVED_DOMAINS.contains(StringUtils.substringAfter(email, "@").toLowerCase())) {
+			logger.warn("Attempted signin from an unknown domain - email {} is part of an unapproved domain.", email);
+			return false;
+		}
+		return true;
 	}
 
 	private Set<String> getFavTagsSubscribers(List<String> tags) {
@@ -711,7 +695,7 @@ public final class ScooldUtils {
 		model.put("body", Utils.formatMessage("<h2><a href='{0}'>{1}</a></h2><div>{2}</div><br>{3}",
 				postURL, escapeHtml(question.getTitle()), body, tagsString));
 
-		Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_post_subscribers"));
+		Set<String> emails = new HashSet<String>(getNotificationSubscribers("new_post_subscribers"));
 		emails.addAll(getFavTagsSubscribers(question.getTags()));
 		sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		if (!isMod(postAuthor)) {
@@ -770,7 +754,7 @@ public final class ScooldUtils {
 					emailer.sendEmail(new ArrayList<String>(parentPost.getFollowers().values()), subject, compileEmailTemplate(model));
 				}
 				// also notify all mods/admins who wish to monitor all answers
-				Set<String> emails = new HashSet<String>(getNotificationSubscribers(EMAIL_ALERTS_PREFIX + "new_reply_subscribers"));
+				Set<String> emails = new HashSet<String>(getNotificationSubscribers("new_reply_subscribers"));
 				sendEmailsToSubscribersInSpace(emails, parentPost.getSpace(), subject, compileEmailTemplate(model));
 			}
 		}
@@ -1375,15 +1359,27 @@ public final class ScooldUtils {
 	}
 
 	public Set<Sysprop> getAllSpacesAdmin() {
-		if (Utils.timestamp() - lastSpacesCountTimestamp > TimeUnit.SECONDS.toMillis(30)) {
+		Pager p = new Pager(Config.DEFAULT_LIMIT);
+		if (Utils.timestamp() - lastSpacesCountTimestamp > TimeUnit.SECONDS.toMillis(60) && spacesCount > 0) {
 			lastSpacesCountTimestamp = Utils.timestamp();
 			spacesCount = pc.getCount("scooldspace").intValue();
 		}
 		if (allSpaces == null || spacesCount != allSpaces.size()) { // caching issue on >1 nodes
-			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT)));
+			allSpaces = new LinkedHashSet<>(pc.findQuery("scooldspace", "*", p));
+			spacesCount = (int) p.getCount();
+			lastSpacesCountTimestamp = Utils.timestamp();
 		}
 		return allSpaces.stream().sorted((s1, s2) -> getSpaceName(s1.getName()).compareToIgnoreCase(getSpaceName(s2.getName()))).
 				collect(Collectors.toCollection(LinkedHashSet::new));
+	}
+
+	public int countNewReports() {
+		Pager p = new Pager(Config.DEFAULT_LIMIT);
+		if (Utils.timestamp() - lastReportsCountTimestamp > TimeUnit.SECONDS.toMillis(60)) {
+			newReportsCount = pc.getCount(Utils.type(Report.class), Collections.singletonMap("properties.closed", false)).intValue();
+			lastReportsCountTimestamp = Utils.timestamp();
+		}
+		return newReportsCount;
 	}
 
 	public void addSpaceToCachedList(Sysprop space) {

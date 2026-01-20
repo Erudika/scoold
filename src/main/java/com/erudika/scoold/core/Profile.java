@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.IsoFields;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -84,7 +83,6 @@ public class Profile extends Sysprop {
 
 	private transient String currentSpace;
 	private transient String newbadges;
-	private transient Integer newreports;
 	private transient User user;
 
 	public enum Badge {
@@ -756,11 +754,7 @@ public class Profile extends Sysprop {
 	}
 
 	public int countNewReports() {
-		if (newreports == null) {
-			newreports = client().getCount(Utils.type(Report.class),
-					Collections.singletonMap("properties.closed", false)).intValue();
-		}
-		return newreports;
+		return ScooldUtils.getInstance().countNewReports();
 	}
 
 	public String getProfileLink() {
