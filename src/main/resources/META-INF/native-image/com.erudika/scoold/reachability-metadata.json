@@ -2698,1141 +2698,299 @@
     },
     {
       "type": "com.erudika.scoold.core.Badge",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDescription",
-          "parameterTypes": []
-        },
-        {
-          "name": "getIcon",
-          "parameterTypes": []
-        },
-        {
-          "name": "getStyle",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTag",
-          "parameterTypes": []
-        },
-        {
-          "name": "setDescription",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setIcon",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setStyle",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setTag",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.BadgeBeanInfo"
+      "type": "com.erudika.scoold.core.BadgeBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.BadgeCustomizer"
+      "type": "com.erudika.scoold.core.BadgeCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Comment",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAuthorName",
-          "parameterTypes": []
-        },
-        {
-          "name": "getComment",
-          "parameterTypes": []
-        },
-        {
-          "name": "getHidden",
-          "parameterTypes": []
-        },
-        {
-          "name": "setAuthorName",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setComment",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setHidden",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.CommentBeanInfo"
+      "type": "com.erudika.scoold.core.CommentBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.CommentCustomizer"
+      "type": "com.erudika.scoold.core.CommentCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Feedback",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.FeedbackBeanInfo"
+      "type": "com.erudika.scoold.core.FeedbackBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.FeedbackCustomizer"
+      "type": "com.erudika.scoold.core.FeedbackCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Post",
-      "fields": [
-        {
-          "name": "tags"
-        },
-        {
-          "name": "title"
-        }
-      ],
-      "methods": [
-        {
-          "name": "getAddress",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAnswercount",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAnswerid",
-          "parameterTypes": []
-        },
-        {
-          "name": "getApprovalTimestamp",
-          "parameterTypes": []
-        },
-        {
-          "name": "getApprovedby",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAuthor",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBody",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCloserid",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCommentIds",
-          "parameterTypes": []
-        },
-        {
-          "name": "getComments",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDeletereportid",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDeprecated",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFollowers",
-          "parameterTypes": []
-        },
-        {
-          "name": "getItemcount",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLastEditor",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLastactivity",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLasteditby",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLastedited",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLatlng",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLocation",
-          "parameterTypes": []
-        },
-        {
-          "name": "getMentions",
-          "parameterTypes": []
-        },
-        {
-          "name": "getPostLink",
-          "parameterTypes": [
-            "boolean",
-            "boolean"
-          ]
-        },
-        {
-          "name": "getPostLinkForRedirect",
-          "parameterTypes": []
-        },
-        {
-          "name": "getRevisionid",
-          "parameterTypes": []
-        },
-        {
-          "name": "getSpace",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTags",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTagsString",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTitle",
-          "parameterTypes": []
-        },
-        {
-          "name": "getViewcount",
-          "parameterTypes": []
-        },
-        {
-          "name": "getVote",
-          "parameterTypes": []
-        },
-        {
-          "name": "getWiki",
-          "parameterTypes": []
-        },
-        {
-          "name": "isClosed",
-          "parameterTypes": []
-        },
-        {
-          "name": "isFeedback",
-          "parameterTypes": []
-        },
-        {
-          "name": "isQuestion",
-          "parameterTypes": []
-        },
-        {
-          "name": "isReply",
-          "parameterTypes": []
-        },
-        {
-          "name": "isSpam",
-          "parameterTypes": []
-        },
-        {
-          "name": "isSticky",
-          "parameterTypes": []
-        },
-        {
-          "name": "isUnapprovedQuestion",
-          "parameterTypes": []
-        },
-        {
-          "name": "isUnapprovedReply",
-          "parameterTypes": []
-        },
-        {
-          "name": "setAddress",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setAnswercount",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setAnswerid",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setApprovalTimestamp",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setApprovedby",
-          "parameterTypes": [
-            "com.erudika.scoold.core.Profile"
-          ]
-        },
-        {
-          "name": "setAuthor",
-          "parameterTypes": [
-            "com.erudika.scoold.core.Profile"
-          ]
-        },
-        {
-          "name": "setBody",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setCloserid",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setCommentIds",
-          "parameterTypes": [
-            "java.util.List"
-          ]
-        },
-        {
-          "name": "setComments",
-          "parameterTypes": [
-            "java.util.List"
-          ]
-        },
-        {
-          "name": "setDeletereportid",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setDeprecated",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setFollowers",
-          "parameterTypes": [
-            "java.util.Map"
-          ]
-        },
-        {
-          "name": "setItemcount",
-          "parameterTypes": [
-            "com.erudika.para.core.utils.Pager"
-          ]
-        },
-        {
-          "name": "setLastEditor",
-          "parameterTypes": [
-            "com.erudika.scoold.core.Profile"
-          ]
-        },
-        {
-          "name": "setLastactivity",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setLasteditby",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLastedited",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setLatlng",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLocation",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setMentions",
-          "parameterTypes": [
-            "java.util.Set"
-          ]
-        },
-        {
-          "name": "setRevisionid",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setSpace",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setSpam",
-          "parameterTypes": [
-            "boolean"
-          ]
-        },
-        {
-          "name": "setTags",
-          "parameterTypes": [
-            "java.util.List"
-          ]
-        },
-        {
-          "name": "setTitle",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setViewcount",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setVote",
-          "parameterTypes": [
-            "com.erudika.para.core.Vote"
-          ]
-        },
-        {
-          "name": "setWiki",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.PostBeanInfo"
+      "type": "com.erudika.scoold.core.PostBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.PostCustomizer"
+      "type": "com.erudika.scoold.core.PostCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Profile",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        },
-        {
-          "name": "countNewReports",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAboutme",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAcceptedAnswerDMsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAllSpaces",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAnonymityEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBadges",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBadgesMap",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBannedUntil",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCommentEmailsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getComments",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCommentsDMsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCurrentSpace",
-          "parameterTypes": []
-        },
-        {
-          "name": "getCustomBadges",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDarkmodeEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDownvotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getEditorRoleEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFavorites",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFavspaces",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFavtags",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFavtagsEmailsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getFavtagsString",
-          "parameterTypes": []
-        },
-        {
-          "name": "getGroups",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLastseen",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLatlng",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLatlngLabel",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLocation",
-          "parameterTypes": []
-        },
-        {
-          "name": "getMattermostUserId",
-          "parameterTypes": []
-        },
-        {
-          "name": "getMicrosoftUserId",
-          "parameterTypes": []
-        },
-        {
-          "name": "getModspaces",
-          "parameterTypes": []
-        },
-        {
-          "name": "getMonthlyVotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getNewbadges",
-          "parameterTypes": []
-        },
-        {
-          "name": "getOriginalName",
-          "parameterTypes": []
-        },
-        {
-          "name": "getOriginalPicture",
-          "parameterTypes": []
-        },
-        {
-          "name": "getPendingEmail",
-          "parameterTypes": []
-        },
-        {
-          "name": "getPicture",
-          "parameterTypes": []
-        },
-        {
-          "name": "getPreferredSpace",
-          "parameterTypes": []
-        },
-        {
-          "name": "getProfileLink",
-          "parameterTypes": []
-        },
-        {
-          "name": "getQuarterlyVotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getQuestionsDMsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getRepliesDMsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getReplyEmailsEnabled",
-          "parameterTypes": []
-        },
-        {
-          "name": "getSlackUserId",
-          "parameterTypes": []
-        },
-        {
-          "name": "getSpaces",
-          "parameterTypes": []
-        },
-        {
-          "name": "getStatus",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTotalVotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getUpvotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getUser",
-          "parameterTypes": []
-        },
-        {
-          "name": "getWebsite",
-          "parameterTypes": []
-        },
-        {
-          "name": "getWeeklyVotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getYearlyVotes",
-          "parameterTypes": []
-        },
-        {
-          "name": "hasSpaces",
-          "parameterTypes": []
-        },
-        {
-          "name": "isComplete",
-          "parameterTypes": []
-        },
-        {
-          "name": "isModInCurrentSpace",
-          "parameterTypes": []
-        },
-        {
-          "name": "setAboutme",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setAcceptedAnswerDMsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setAnonymityEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setBadges",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setBannedUntil",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setCommentEmailsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setComments",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setCommentsDMsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setCurrentSpace",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setCustomBadges",
-          "parameterTypes": [
-            "java.util.List"
-          ]
-        },
-        {
-          "name": "setDarkmodeEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setDownvotes",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setEditorRoleEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setFavorites",
-          "parameterTypes": [
-            "java.util.Set"
-          ]
-        },
-        {
-          "name": "setFavspaces",
-          "parameterTypes": [
-            "java.util.Set"
-          ]
-        },
-        {
-          "name": "setFavtags",
-          "parameterTypes": [
-            "java.util.List"
-          ]
-        },
-        {
-          "name": "setFavtagsEmailsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setGroups",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLastseen",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setLatlng",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLatlngLabel",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLocation",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setMattermostUserId",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setMicrosoftUserId",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setModspaces",
-          "parameterTypes": [
-            "java.util.Set"
-          ]
-        },
-        {
-          "name": "setMonthlyVotes",
-          "parameterTypes": [
-            "java.lang.Integer"
-          ]
-        },
-        {
-          "name": "setNewbadges",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setOriginalName",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setOriginalPicture",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setPendingEmail",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setPicture",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setPreferredSpace",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setQuarterlyVotes",
-          "parameterTypes": [
-            "java.lang.Integer"
-          ]
-        },
-        {
-          "name": "setQuestionsDMsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setRepliesDMsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setReplyEmailsEnabled",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setSlackUserId",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setSpaces",
-          "parameterTypes": [
-            "java.util.Set"
-          ]
-        },
-        {
-          "name": "setStatus",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setUpvotes",
-          "parameterTypes": [
-            "java.lang.Long"
-          ]
-        },
-        {
-          "name": "setWebsite",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setWeeklyVotes",
-          "parameterTypes": [
-            "java.lang.Integer"
-          ]
-        },
-        {
-          "name": "setYearlyVotes",
-          "parameterTypes": [
-            "java.lang.Integer"
-          ]
-        }
-      ]
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ProfileBeanInfo"
+      "type": "com.erudika.scoold.core.ProfileBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ProfileCustomizer"
+      "type": "com.erudika.scoold.core.ProfileCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Question",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.QuestionBeanInfo"
+      "type": "com.erudika.scoold.core.QuestionBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.QuestionCustomizer"
+      "type": "com.erudika.scoold.core.QuestionCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+		{
+			"type": "com.erudika.scoold.core.UnapprovedQuestion",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+		},
+		{
+      "type": "com.erudika.scoold.core.UnapprovedQuestionBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+    {
+      "type": "com.erudika.scoold.core.UnapprovedQuestionCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Reply",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ReplyBeanInfo"
+      "type": "com.erudika.scoold.core.ReplyBeanInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ReplyCustomizer"
+      "type": "com.erudika.scoold.core.ReplyCustomizer",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+    },
+		{
+			"type": "com.erudika.scoold.core.UnapprovedReply",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+		},
+		{
+      "type": "com.erudika.scoold.core.UnapprovedReplyBeanInfo",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
+    },
+    {
+      "type": "com.erudika.scoold.core.UnapprovedReplyCustomizer",
+			"allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allPublicMethods": true,
+      "allPublicFields": true,
+      "allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Report",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAuthorName",
-          "parameterTypes": []
-        },
-        {
-          "name": "getClosed",
-          "parameterTypes": []
-        },
-        {
-          "name": "getContent",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDescription",
-          "parameterTypes": []
-        },
-        {
-          "name": "getLink",
-          "parameterTypes": []
-        },
-        {
-          "name": "getSolution",
-          "parameterTypes": []
-        },
-        {
-          "name": "getSubType",
-          "parameterTypes": []
-        },
-        {
-          "name": "setAuthorName",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setClosed",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setContent",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setDescription",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setLink",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setSubType",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Report$ReportType",
-      "methods": [
-        {
-          "name": "toString",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ReportBeanInfo"
+      "type": "com.erudika.scoold.core.ReportBeanInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.ReportCustomizer"
+      "type": "com.erudika.scoold.core.ReportCustomizer",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Revision",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        },
-        {
-          "name": "getAuthor",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBody",
-          "parameterTypes": []
-        },
-        {
-          "name": "getDescription",
-          "parameterTypes": []
-        },
-        {
-          "name": "getOriginal",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTitle",
-          "parameterTypes": []
-        },
-        {
-          "name": "setBody",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "setOriginal",
-          "parameterTypes": [
-            "java.lang.Boolean"
-          ]
-        },
-        {
-          "name": "setTitle",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.RevisionBeanInfo"
+      "type": "com.erudika.scoold.core.RevisionBeanInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.RevisionCustomizer"
+      "type": "com.erudika.scoold.core.RevisionCustomizer",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.core.Sticky",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.StickyBeanInfo"
+      "type": "com.erudika.scoold.core.StickyBeanInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
-      "type": "com.erudika.scoold.core.StickyCustomizer"
+      "type": "com.erudika.scoold.core.StickyCustomizer",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
     },
     {
       "type": "com.erudika.scoold.mattermost.MattermostAuthFilter"
@@ -5476,6 +4634,10 @@
     {
       "type": "org.apache.coyote.AbstractProtocol",
       "methods": [
+				{
+					"name": "getName",
+					"parameterTypes": []
+				},
         {
           "name": "getAddress",
           "parameterTypes": []
@@ -6256,6 +5418,12 @@
     },
     {
       "type": "org.springframework.beans.factory.support.NullBean"
+    },
+		{
+      "type": "org.springframework.boot.Banner"
+    },
+    {
+      "type": "org.springframework.boot.Banner$ModeEditor"
     },
     {
       "type": "org.springframework.boot.ApplicationContextFactory"
@@ -10631,6 +9799,12 @@
     {
       "glob": "public/index.html"
     },
+		{
+      "glob": "public/offline.html"
+    },
+		{
+			"glob": "public/.git/config"
+		},
     {
       "glob": "reference.conf"
     },
