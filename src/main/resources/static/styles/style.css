@@ -302,6 +302,12 @@ i.close:before {
 blockquote { border-left: 5px solid #888888; }
 pre { overflow: auto; }
 
+.edit-post-form [type=checkbox]:not(:checked), [type=checkbox]:checked,
+.postbody [type=checkbox]:not(:checked), [type=checkbox]:checked {
+	position: inherit;
+	opacity: 1;
+}
+
 .editor-preview ul>li {
 	list-style-type: disc;
 }

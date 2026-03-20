@@ -37,19 +37,8 @@
 					</div>
 				</div>
 
-				#if($scooldUtils.isNearMeFeatureEnabled())
-				<div class="mll pll">
-					<a href="#" class="next-div-toggle click2hide">
-						<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
-					</a>
-					<div class="input-field hide">
-						<i class="fa fa-map-marker ptm prefix grey-text"></i>
-						<input id="location_text" name="location" class="locationbox validate" type="text" value=""
-									 placeholder="$!{lang.get('profile.about.location')}">
-						<input type="hidden" name="latlng" value="">
-						<input type="hidden" name="address" value="">
-					</div>
-				</div>
+				#if($authenticated)
+					#uploadmediabtns("mll pll")
 				#end
 
 				<div>

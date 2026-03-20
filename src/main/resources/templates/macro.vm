@@ -1065,6 +1065,22 @@
 		</div>
 	#end
 #end
+
+###################################
+#macro(uploadmediabtns $classes)
+	#if($scooldUtils.isNearMeFeatureEnabled())
+		<a href="#" class="next-div-toggle click2hide $!{classes}">
+			<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
+		</a>
+		<div class="input-field hide">
+			<i class="fa fa-map-marker ptm prefix grey-text"></i>
+			<input id="location_text" name="location" class="locationbox validate" type="text" value=""
+						 placeholder="$!{lang.get('profile.about.location')}">
+			<input type="hidden" name="latlng" value="">
+			<input type="hidden" name="address" value="">
+		</div>
+	#end
+#end
 ###################################
 #macro(formatdate $date $format)
 #if ($date && !$format.trim().isEmpty())
