@@ -13,10 +13,12 @@
 <div align="center">
 
 **Scoold** is a Q&A and a knowledge sharing platform for teams, inspired by Stack Overflow.
+<br>
 Scoold is enterprise-ready, super customizable and lightweight. 
 
 **Scoold Pro**, the premium version of Scoold, is the perfect knowledge sharing platform 
 for your company or team. The pricing is flat, without limits, the license - perpetual.
+<br><br>
 Are you still paying per seat in 2026? **Scoold Pro** is the knowledge sharing platform **to migrate to!**
 
 [Compare Features](https://scoold.com/pricing/)
@@ -42,7 +44,7 @@ Are you still paying per seat in 2026? **Scoold Pro** is the knowledge sharing p
 **Scoold** is a Q&A and a knowledge sharing platform for teams. The project was created back in 2008, released in 2012 as
 social network for schools inspired by Stack Overflow. In 2017 it was refactored, repackaged and open-sourced.
 
-Scoold can run anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight (~7000 LOC),
+Scoold can be deployed anywhere - Heroku, DigitalOcean, AWS, Azure or any VPS hosting provider. It's lightweight,
 the backend is handled by a separate service called [Para](https://github.com/Erudika/para). All the heavy lifting is
 delegated to Para which can also be configured to store the data in any of the popular databases. This makes the Scoold
 code base easy to read and can be learned quickly, even by junior developers.
@@ -127,6 +129,9 @@ sent to Para to the location `POST /v1/questions`. Here are a few key points abo
 - Scoold talks to Para via HTTP(S) so Para must be directly accessible from Scoold, but can also be hosted on a private network.
 
 Head over to the [documentation](https://scoold.com/documentation/intro/architecture/) for detailed explanation of the Scoold architecture.
+
+## Scoold Pro cloud hosting
+
 
 ## Support
 
@@ -251,13 +256,14 @@ mvn validate
 For more information, see [CONTRIBUTING.md](https://github.com/Erudika/para/blob/master/CONTRIBUTING.md)
 
 ## License
+
 [Apache 2.0](LICENSE)
 
-<center>
+<div align="center">
 
 ![Scoold Q&A](https://raw.githubusercontent.com/Erudika/scoold/master/assets/header.png)
 
 Stack Overflow in a JAR
 
 Made in the EU 🇪🇺 by Erudika
-</center>
+</div>
