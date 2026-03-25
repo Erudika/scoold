@@ -1230,6 +1230,130 @@ $utils.formatDate($date, $format, $currentLocale)
 	#end
 #end
 #####################################
+#macro(renderJSONLD)
+	#if($path == "questions.vm" && !$askSelected && $questionslist && !$questionslist.isEmpty())
+		#foreach($question in $questionslist)
+			#set($questionUrl = "$!scooldUtils.config.serverUrl()$!question.getPostLinkForRedirect()")
+			<script nonce="$cspNonce" type="application/ld+json">
+				{
+				"@context": "https://schema.org",
+				"@type": "Question",
+				"@id": "$!scooldUtils.getJsonLdValue($!questionUrl)",
+				"url": "$!scooldUtils.getJsonLdValue($!questionUrl)",
+				"name": "$!scooldUtils.getJsonLdValue($!question.title)",
+				"text": "$!scooldUtils.getJsonLdText($!question.body)",
+				"answerCount": $!question.answercount,
+				"upvoteCount": $!question.votes,
+				"dateCreated": "$!scooldUtils.getJsonLdDate($!question.timestamp)",
+				"dateModified": "$!scooldUtils.getJsonLdDate($!question.lastedited)"#if($question.author),
+				"author": #jsonldAuthor($question.author)#end
+				}
+			</script>
+		#end
+	#elseif($path == "question.vm" && $showPost && !$showPost.isReply())
+		#set($questionUrl = "$!scooldUtils.config.serverUrl()$!showPost.getPostLinkForRedirect()")
+		#set($acceptedAnswerPresent = false)
+		#set($suggestedAnswerCount = 0)
+		#if($answerslist && !$answerslist.isEmpty())
+			#foreach($answer in $answerslist)
+				#if($showPost.answerid && !$showPost.answerid.isEmpty() && $answer.id == $showPost.answerid)
+					#set($acceptedAnswerPresent = true)
+				#else
+					#set($suggestedAnswerCount = $suggestedAnswerCount + 1)
+				#end
+			#end
+		#end
+		<script nonce="$cspNonce" type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "QAPage",
+				"mainEntity": {
+					"@type": "Question",
+					"@id": "$!scooldUtils.getJsonLdValue($!questionUrl)",
+					"url": "$!scooldUtils.getJsonLdValue($!questionUrl)",
+					"name": "$!scooldUtils.getJsonLdValue($!showPost.title)",
+					"text": "$!scooldUtils.getJsonLdText($!showPost.body)",
+					"answerCount": $!showPost.answercount,
+					"upvoteCount": $!showPost.votes,
+					"datePublished": "$!scooldUtils.getJsonLdDate($!showPost.timestamp)",
+					"dateModified": "$!scooldUtils.getJsonLdDate($!showPost.lastedited)"
+					#if($showPost.author),
+					"author": #jsonldAuthor($showPost.author)
+					#end
+					#if($acceptedAnswerPresent),
+						"acceptedAnswer":
+						#foreach($answer in $answerslist)
+							#if($answer.id == $showPost.answerid)
+								#jsonldAnswer($answer $questionUrl)
+							#end
+						#end
+					#end
+					#if($suggestedAnswerCount > 0),
+					"suggestedAnswer": [
+						#foreach($answer in $answerslist)
+							#if($answer.id != $showPost.answerid)
+								#jsonldAnswer($answer $questionUrl)#if($foreach.hasNext),#end
+							#end
+						#end
+					]
+					#end
+				}
+			}
+		</script>
+	#elseif($path == "profile.vm" && $showUser)
+		#set($profileUrl = "$!scooldUtils.config.serverUrl()$!showUser.getProfileLink()")
+		#set($profileImage = "#profilepic($showUser, 'Profile')")
+		#set($postsCount = $itemcount1.count + $itemcount2.count)
+		<script nonce="$cspNonce" type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "ProfilePage",
+			"@id": "$!scooldUtils.getJsonLdValue($!profileUrl)",
+			"url": "$!scooldUtils.getJsonLdValue($!profileUrl)",
+			"dateCreated": "$!scooldUtils.getJsonLdDate($!showUser.timestamp)",
+			"mainEntity": {
+				"@type": "Person",
+				"@id": "$!scooldUtils.getJsonLdValue($!profileUrl)#main-entity",
+				"url": "$!scooldUtils.getJsonLdValue($!profileUrl)",
+				"identifier": "$!scooldUtils.getJsonLdValue($!showUser.creatorid)",
+				"name": "$!scooldUtils.getJsonLdValue($!showUser.name)"#if($showUser.aboutme && !$showUser.aboutme.isEmpty() && !$showUser.anonymityEnabled),
+				"description": "$!scooldUtils.getJsonLdText($!showUser.aboutme)"#end#if($showUser.picture && !$showUser.picture.isEmpty()),
+				"image": "$!scooldUtils.getJsonLdValue($!profileImage)"#end#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled),
+				"sameAs": ["$!scooldUtils.getJsonLdValue($!showUser.website)"]#end#if($postsCount > 0),
+				"agentInteractionStatistic": {
+					"@type": "InteractionCounter",
+					"interactionType": "https://schema.org/WriteAction",
+					"userInteractionCount": $postsCount
+				}#end
+			}
+		}
+		</script>
+	#end
+#end
+#####################################
+#macro(jsonldAuthor $author)
+	#set($authorUrl = "$!scooldUtils.config.serverUrl()$!author.getProfileLink()")
+				{
+					"@type": "Person",
+					"name": "$!scooldUtils.getJsonLdValue($!author.name)"#if($author.getProfileLink() && !$author.getProfileLink().isEmpty()),
+					"url": "$!scooldUtils.getJsonLdValue($!authorUrl)"#end
+				}
+#end
+#####################################
+#macro(jsonldAnswer $answer $questionUrl)
+	#set($answerUrl = "${questionUrl}#post-$!answer.id")
+		{
+			"@type": "Answer",
+			"@id": "$!scooldUtils.getJsonLdValue($!answerUrl)",
+			"url": "$!scooldUtils.getJsonLdValue($!answerUrl)",
+			"text": "$!scooldUtils.getJsonLdText($!answer.body)",
+			"datePublished": "$!scooldUtils.getJsonLdDate($!answer.timestamp)",
+			"dateModified": "$!scooldUtils.getJsonLdDate($!answer.lastedited)",
+			"upvoteCount": $!answer.votes#if($answer.author),
+			"author": #jsonldAuthor($answer.author)#end
+		}
+#end
+#####################################
 #macro(stripstr $str )$!utils.urlEncode($!utils.noSpaces($!utils.stripAndTrim($str, " "), "-"))#end
 #####################################
 #macro(setsortbyselection $paramMap $defkey )

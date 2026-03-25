@@ -2447,4 +2447,22 @@ public final class ScooldUtils {
 		}
 		return SIGNINLINK + "?code=3&error=true";
 	}
+
+	public String getJsonLdValue(String value) {
+		if (value == null) {
+			return "-";
+		}
+		return StringEscapeUtils.escapeJson(value).replace("</", "<\\/");
+	}
+
+	public String getJsonLdText(String value) {
+		return getJsonLdValue(Utils.stripAndTrim(StringUtils.defaultString(value), " "));
+	}
+
+	public String getJsonLdDate(Long timestamp) {
+		if (timestamp == null || timestamp <= 0) {
+			return "";
+		}
+		return Utils.formatDate(timestamp, "yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
+	}
 }

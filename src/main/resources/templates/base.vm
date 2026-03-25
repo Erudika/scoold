@@ -61,6 +61,9 @@
 			$!{_inlineCSS}
 		</style>
 		#end
+		#if($scooldUtils.config.isDefaultSpacePublic())
+			#renderJSONLD()
+		#end
 	</head>
 	<body>
 		<div class="scoold-wrapper">
