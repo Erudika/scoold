@@ -3377,7 +3377,7 @@ public class ScooldConfig extends Config {
 			category = "Miscellaneous",
 			description = "Enable/disable the generation of `/sitemap.xml`.")
 	public boolean sitemapEnabled() {
-		return getConfigBoolean("sitemap_enabled", true);
+		return getConfigBoolean("sitemap_enabled", isDefaultSpacePublic());
 	}
 
 	@Documented(position = 3050,
