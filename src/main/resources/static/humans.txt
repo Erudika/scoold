@@ -22,12 +22,10 @@
 /* SITE */
 
    Backend: Para - https://paraio.com
-   Standards: HTML5, CSS3, OpenSearch, RSS
-   Components: ParaIO.com, JS, CSS, HTML5 (clientside), Java (serverside)
-   Software: Spring, Amazon DynamoDB, Elasticsearch, Heroku, jQuery
-   Fonts: FontAwesome
-
-
+   Standards: HTML, CSS, ECMAScript, OpenSearch, RSS
+   Components: ParaIO.com, JS, CSS, HTML, Java (serverside)
+   Software: Spring Boot, Lucene, H2
+   
     ___________
    |.--.   .--.|
    | || |-| () |

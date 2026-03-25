@@ -8,50 +8,52 @@
 <html lang="$!currentLocale.language" dir="$!langDirection">
 	<head>
 		<title>$!APPNAME | $!title</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black">
-		<meta name="description" content="$!description">
-		<meta name="keywords" content="$!keywords">
-		<meta name="generator" content="Scoold">
-		<meta property="fb:app_id" content="$!FB_APP_ID">
-		<meta property="og:title" content="$!title">
-		<meta property="og:type" content="article">
-		<meta property="og:url" content="$!CANONICAL_URL">
-		<meta property="og:image" content="$!ogimage">
-		<meta property="og:description" content="$!description">
-		<meta name="twitter:card" content="summary">
-		<meta name="twitter:site" content="@getscoold">
-		<meta name="twitter:title" content="$!title">
-		<meta name="twitter:description" content="$!description">
-		<meta name="twitter:image" content="$!ogimage">
-		<link rel="manifest" href="$!{CONTEXT_PATH}/manifest.webmanifest">
-		<link href="$!{CONTEXT_PATH}/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search">
-		<link href="$!{CONTEXT_PATH}/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed">
-		<link href="$!ogimage" rel="image_src">
-		<link href="$!ogimage" rel="apple-touch-icon">
-		<link href="$!faviconUrl" rel="icon" sizes="any">
-		<link href="$!styleslink/materialize.min.css?r=$!rev" rel="stylesheet">
-		<link href="$!styleslink/font-awesome.min.css?r=$!rev" rel="stylesheet">
-		<link href="$!styleslink/easymde.min.css?r=$!rev" rel="stylesheet">
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="white"/>
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black"/>
+		<meta name="description" content="$!description"/>
+		<meta name="keywords" content="$!keywords"/>
+		<meta name="generator" content="Scoold"/>
+		<meta name="apple-mobile-web-app-title" content="$!title"/>
+		<meta property="fb:app_id" content="$!FB_APP_ID"/>
+		<meta property="og:title" content="$!title"/>
+		<meta property="og:type" content="article"/>
+		<meta property="og:url" content="$!CANONICAL_URL"/>
+		<meta property="og:image" content="$!ogimage"/>
+		<meta property="og:description" content="$!description"/>
+		<meta name="twitter:card" content="summary"/>
+		<meta name="twitter:site" content="@getscoold"/>
+		<meta name="twitter:title" content="$!title"/>
+		<meta name="twitter:description" content="$!description"/>
+		<meta name="twitter:image" content="$!ogimage"/>
+		<link rel="manifest" href="$!{CONTEXT_PATH}/manifest.webmanifest"/>
+		<link href="$!{CONTEXT_PATH}/opensearch.xml" title="$!APPNAME" type="application/opensearchdescription+xml" rel="search"/>
+		<link href="$!{CONTEXT_PATH}/feed.xml" rel="alternate" type="application/atom+xml" title="New questions feed"/>
+		<link href="$!ogimage" rel="image_src"/>
+		<link href="$!ogimage" rel="apple-touch-icon" sizes="180x180"/>
+		<link href="$!faviconUrl" rel="shortcut icon" sizes="any"/>
+		<link rel="icon" type="image/png" href="$imageslink/favicon-96x96.png" sizes="96x96"/>
+		<link href="$!styleslink/materialize.min.css?r=$!rev" rel="stylesheet"/>
+		<link href="$!styleslink/font-awesome.min.css?r=$!rev" rel="stylesheet"/>
+		<link href="$!styleslink/easymde.min.css?r=$!rev" rel="stylesheet"/>
 		#if ($includeHighlightJS)
-		<link href="$!styleslink/highlighting.css?r=$!rev" rel="stylesheet">
+		<link href="$!styleslink/highlighting.css?r=$!rev" rel="stylesheet"/>
 		#end
 		#if($scooldUtils.isApiEnabled() && $request.getServletPath() == "/apidocs")
-		<link rel="stylesheet" type="text/css" href="$!styleslink/swagger-ui.css?r=$!rev">
-		<link rel="stylesheet" href="$!styleslink/api.css?r=$!rev">
+		<link rel="stylesheet" type="text/css" href="$!styleslink/swagger-ui.css?r=$!rev"/>
+		<link rel="stylesheet" href="$!styleslink/api.css?r=$!rev"/>
 		#end
-		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet" media="screen">
+		<link href="$!{stylesheetUrl}?r=$!rev" rel="stylesheet" media="screen"/>
 		#if($darkModeEnabled)
-		<link href="$!{darkStylesheetUrl}?r=$!rev" rel="stylesheet">
+		<link href="$!{darkStylesheetUrl}?r=$!rev" rel="stylesheet"/>
 		#end
 		#if($!langDirection == "RTL")
-		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet">
+		<link href="$!styleslink/rtl.css?r=$!rev" rel="stylesheet"/>
 		#end
 		#externalScripts(true)
 		#foreach($externalStyle in $externalStyles)
-		<link href="$!externalStyle" rel="stylesheet">
+		<link href="$!externalStyle" rel="stylesheet"/>
 		#end
 		#if($inlineUserCSS)
 		#set($_inlineCSS = $inlineUserCSS)
