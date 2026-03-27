@@ -38,7 +38,7 @@
 				</div>
 
 				#if($authenticated)
-					#uploadmediabtns("mll pll")
+					#locationbox("mll pll")
 				#end
 
 				<div>

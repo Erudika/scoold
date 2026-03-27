@@ -596,6 +596,13 @@ public abstract class Post extends Sysprop {
 				|| !Objects.equals(getTags(), beforeUpdate.getTags());
 	}
 
+	public boolean hasUpdatedLocation(Post beforeUpdate) {
+		if (beforeUpdate == null) {
+			return false;
+		}
+		return !Strings.CS.equals(getLocation(), beforeUpdate.getLocation());
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;

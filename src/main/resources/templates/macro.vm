@@ -917,15 +917,7 @@
 
 				#spaceselect($showpost)
 
-				#if($scooldUtils.isNearMeFeatureEnabled())
-					<div class="input-field">
-						<i class="fa fa-map-marker ptm prefix grey-text"></i>
-						<input id="location_text" name="location" class="locationbox validate" type="text" value="$!showpost.location"
-									 placeholder="$!{lang.get('profile.about.location')}">
-						<input type="hidden" name="latlng" value="">
-						<input type="hidden" name="address" value="">
-					</div>
-				#end
+				#locationbox()
 			#end
 
 			<div class="mtl ptm mbl">
@@ -1067,14 +1059,14 @@
 #end
 
 ###################################
-#macro(uploadmediabtns $classes)
-	#if($scooldUtils.isNearMeFeatureEnabled())
-		<a href="#" class="next-div-toggle click2hide $!{classes}">
+#macro(locationbox $classes)
+	#if($scooldUtils.isNearMeFeatureEnabled() && !$showpost.isReply())
+		<a href="#" class="next-div-toggle click2hide $!{classes} #if($showpost.location)hide#end">
 			<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
 		</a>
-		<div class="input-field hide">
+		<div class="input-field #if($showpost.location) show #else hide #end">
 			<i class="fa fa-map-marker ptm prefix grey-text"></i>
-			<input id="location_text" name="location" class="locationbox validate" type="text" value=""
+			<input id="location_text" name="location" class="locationbox validate" type="text" value="$!showpost.location"
 						 placeholder="$!{lang.get('profile.about.location')}">
 			<input type="hidden" name="latlng" value="">
 			<input type="hidden" name="address" value="">

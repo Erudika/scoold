@@ -188,7 +188,7 @@ public class QuestionController {
 				Revision.createRevisionFromPost(showPost, false);
 			}
 			updatePost(showPost, authUser, req);
-			updateLocation(showPost, authUser, location, latlng);
+			updateLocation(showPost, beforeUpdate, authUser, location, latlng);
 			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
 			if (req.getParameter("notificationsDisabled") == null) {
 				utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
@@ -571,15 +571,19 @@ public class QuestionController {
 		}
 	}
 
-	private void updateLocation(Post showPost, Profile authUser, String location, String latlng) {
-		if (!showPost.isReply() && !StringUtils.isBlank(latlng)) {
+	private void updateLocation(Post showPost, Post beforeUpdate, Profile authUser, String location, String latlng) {
+		if (showPost.hasUpdatedLocation(beforeUpdate) && !showPost.isReply()) {
 			Address addr = new Address(showPost.getId() + Para.getConfig().separator() + Utils.type(Address.class));
-			addr.setAddress(location);
-			addr.setCountry(location);
-			addr.setLatlng(latlng);
-			addr.setParentid(showPost.getId());
-			addr.setCreatorid(authUser.getId());
-			pc.create(addr);
+			if (!StringUtils.isBlank(latlng) && latlng.matches("(-?\\d+(\\.\\d+)?),\\s*(-?\\d+(\\.\\d+)?)")) {
+				addr.setAddress(location);
+				addr.setCountry(location);
+				addr.setLatlng(latlng);
+				addr.setParentid(showPost.getId());
+				addr.setCreatorid(authUser.getId());
+				pc.create(addr);
+			} else if (StringUtils.isBlank(location) && StringUtils.isBlank(latlng)) {
+				pc.delete(addr);
+			}
 		}
 	}
 
