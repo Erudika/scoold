@@ -1216,7 +1216,8 @@ $(function () {
 	}
 
 	// small fix for custom checkbox rendering of GFM task lists
-	$(".task-list-item>input[type=checkbox]").addClass("filled-in").after("<label style='height:15px'></label>");
+	$(".task-list-item>input[type=checkbox]").addClass("filled-in").wrap("<label></label>").
+			after("<span>&nbsp;</span>").removeAttr("disabled");
 
 	var qfb = $("#question-filter-btn");
 	qfb.click(function () {
