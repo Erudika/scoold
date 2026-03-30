@@ -220,16 +220,16 @@ public class FeedbackController {
 	}
 
 	@PostMapping("/{id}/delete")
-	public String deleteAjax(@PathVariable String id, HttpServletRequest req) {
+	public String deleteAjax(@PathVariable String id, HttpServletRequest req, Model model) {
 		if (!utils.isFeedbackEnabled()) {
 			return "redirect:" + HOMEPAGE;
 		}
-		if (utils.isAuthenticated(req)) {
-			Feedback showPost = pc.read(id);
-			if (showPost != null) {
-				showPost.delete();
-			}
+		Feedback showPost = pc.read(id);
+		if (showPost == null || !utils.canEdit(showPost, utils.getAuthUser(req))) {
+			model.addAttribute("post", showPost);
+			return "redirect:" + req.getRequestURI();
 		}
+		showPost.delete();
 		return "redirect:" + FEEDBACKLINK;
 	}
 

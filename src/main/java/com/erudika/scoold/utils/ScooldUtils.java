@@ -1728,7 +1728,12 @@ public final class ScooldUtils {
 	}
 
 	public boolean canEdit(Post showPost, Profile authUser) {
-		return authUser != null ? (authUser.hasBadge(TEACHER) || isMod(authUser) || isMine(showPost, authUser)) : false;
+		return authUser != null ? !isFeedback(showPost) &&
+				(authUser.hasBadge(TEACHER) || isMod(authUser) || isMine(showPost, authUser)) : false;
+	}
+
+	public boolean isFeedback(Post showPost) {
+		return showPost != null && showPost.isFeedback();
 	}
 
 	public boolean canDelete(Post showPost, Profile authUser) {
