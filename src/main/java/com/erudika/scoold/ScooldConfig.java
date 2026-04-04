@@ -3619,7 +3619,7 @@ public class ScooldConfig extends Config {
 				+ " api.imgur.com api.cloudinary.com accounts.google.com " + cspConnectSources() + "; "
 				+ "frame-src 'self' *.google.com " + cspFrameSources() + "; "
 				+ "frame-ancestors 'self'; "
-				+ "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
+				+ "font-src 'self' fonts.gstatic.com fonts.googleapis.com " + cspFontSources() + "; "
 				// unsafe-inline required by MathJax!
 				+ "style-src 'self' 'unsafe-inline' fonts.googleapis.com accounts.google.com "
 				+ (cdnUrl().startsWith("/") ? "" : cdnUrl() + " ") + cspStyleSources() + "; "
