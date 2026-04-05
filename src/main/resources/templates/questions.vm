@@ -211,12 +211,14 @@
 							#if($questionsTypeFilter == $prop)selected#end
 							#end
 							#set($unacceptedQuery = $utils.urlEncode("properties.answercount:[1 TO *] NOT properties.answerid:[* TO *]") )
+							#set($acceptedQuery = $utils.urlEncode("properties.answercount:[1 TO *] AND properties.answerid:[* TO *]") )
 							<select name="typeFilter">
 								<option value="" #filterselected("")>$!lang.get('showall')</option>
 								<option value="type:question" #filterselected("type:question")>$!lang.get('questions.title')</option>
 								<option value="type:sticky" #filterselected("type:sticky")>$!lang.get('posts.sticky')</option>
 								<option value="type:unapprovedquestion" #filterselected("type:unapprovedquestion")>$!lang.get('posts.unapprovedq')</option>
 								<option value="$unacceptedQuery" #filterselected($unacceptedQuery)>$!lang.get('posts.unaccepted')</option>
+								<option value="$acceptedQuery" #filterselected($acceptedQuery)>$!lang.get('posts.accepted')</option>
 							</select>
 						</div>
 					</div>
