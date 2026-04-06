@@ -81,7 +81,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -104,6 +103,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 /**
  * Scoold REST API
+ *
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @RestController
@@ -112,7 +112,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 public class ApiController {
 
 	public static final Logger logger = LoggerFactory.getLogger(ApiController.class);
-	private static final String[] POST_TYPES = new String[] {Utils.type(Question.class), Utils.type(Reply.class)};
+	private static final String[] POST_TYPES = new String[]{Utils.type(Question.class), Utils.type(Reply.class)};
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
@@ -212,7 +212,7 @@ public class ApiController {
 			@RequestParam(required = false) String sortby,
 			@RequestParam(required = false) String filter,
 			@RequestParam(required = false, defaultValue = "false") Boolean includeReplies,
-					HttpServletRequest req) {
+			HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
 		questionsController.getQuestions(sortby, filter, req, model);
 		return ((List<Question>) model.getAttribute("questionslist")).stream().map(p -> {
@@ -364,7 +364,7 @@ public class ApiController {
 
 	@PutMapping("/posts/{id}/voteup")
 	public void upvotePost(@PathVariable String id, @RequestParam(required = false) String userid,
-			HttpServletRequest req, HttpServletResponse res) {
+			HttpServletRequest req) {
 		if (!voteRequest(true, id, userid, req)) {
 			badReq("Vote request failed.");
 		}
@@ -391,20 +391,20 @@ public class ApiController {
 
 	@GetMapping("/posts/{id}/comments")
 	public List<Comment> getPostComments(@PathVariable String id,
-			@RequestParam(required = false, defaultValue = "5") String limit,
-			@RequestParam(required = false, defaultValue = "1") String page,
+			@RequestParam(required = false, defaultValue = "5") Integer limit,
+			@RequestParam(required = false, defaultValue = "1") Integer page,
 			@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
-			@RequestParam(required = false, defaultValue = "false") String desc,
+			@RequestParam(required = false, defaultValue = "false") Boolean desc,
 			HttpServletRequest req, HttpServletResponse res) {
 		Post post = pc.read(id);
 		if (post == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
-		post.getItemcount().setLimit(NumberUtils.toInt(limit));
-		post.getItemcount().setPage(NumberUtils.toInt(page));
+		post.getItemcount().setLimit(limit);
+		post.getItemcount().setPage(page);
 		post.getItemcount().setSortby(sortby);
-		post.getItemcount().setDesc(Boolean.parseBoolean(desc));
+		post.getItemcount().setDesc(desc);
 		utils.reloadFirstPageOfComments(post);
 		return post.getComments();
 	}
@@ -449,8 +449,8 @@ public class ApiController {
 		if (errors.length == 0) {
 			// generic and password providers are identical but this was fixed in Para 1.37.1 (backwards compatibility)
 			String provider = "generic".equals(newUser.getIdentityProvider()) ? "password" : newUser.getIdentityProvider();
-			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Para.getConfig().separator() +
-					newUser.getName() + Para.getConfig().separator() + newUser.getPassword(), false);
+			User createdUser = pc.signIn(provider, newUser.getIdentifier() + Para.getConfig().separator()
+					+ newUser.getName() + Para.getConfig().separator() + newUser.getPassword(), false);
 			// user is probably active:false so activate them
 			List<User> created = pc.findTerms(newUser.getType(), Collections.singletonMap(Config._EMAIL, newUser.getEmail()), true);
 			if (createdUser == null && !created.isEmpty()) {
@@ -477,7 +477,7 @@ public class ApiController {
 				payload.put("user", createdUser);
 				utils.triggerHookEvent("user.signup", payload);
 				logger.info("Created new user through API '{}' with id={}, groups={}, spaces={}.",
-					createdUser.getName(), profile.getId(), profile.getGroups(), profile.getSpaces());
+						createdUser.getName(), profile.getId(), profile.getGroups(), profile.getSpaces());
 				Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
 				result.put("user", createdUser);
 				return result;
@@ -553,7 +553,7 @@ public class ApiController {
 		boolean update = false;
 		if (entity.containsKey("spaces")) {
 			profile.setSpaces(new HashSet<>(readSpaces(((List<String>) entity.getOrDefault("spaces",
-						Collections.emptyList())).toArray(new String[0]))));
+					Collections.emptyList())).toArray(new String[0]))));
 			update = true;
 		}
 		if (entity.containsKey("replyEmailsEnabled")) {
@@ -603,23 +603,37 @@ public class ApiController {
 	}
 
 	@GetMapping("/users/{id}/questions")
-	public List<? extends Post> getUserQuestions(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public List<? extends Post> getUserQuestions(@PathVariable String id,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req, HttpServletResponse res) {
 		Profile p = pc.read(Profile.id(id));
 		if (p == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
-		return profileController.getQuestions(utils.getAuthUser(req), p, true, utils.pagerFromParams(req));
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		return profileController.getQuestions(utils.getAuthUser(req), p, true, pager);
 	}
 
 	@GetMapping("/users/{id}/replies")
-	public List<? extends Post> getUserReplies(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public List<? extends Post> getUserReplies(@PathVariable String id,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req, HttpServletResponse res) {
 		Profile p = pc.read(Profile.id(id));
 		if (p == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
-		return profileController.getAnswers(utils.getAuthUser(req), p, true, utils.pagerFromParams(req));
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		return profileController.getAnswers(utils.getAuthUser(req), p, true, pager);
 	}
 
 	@GetMapping("/users/{id}/favorites")
@@ -635,7 +649,9 @@ public class ApiController {
 	}
 
 	@PutMapping("/users/{id}/ban")
-	public void banUser(@PathVariable String id, @RequestParam(defaultValue = "0") String banuntil,
+	public void banUser(@PathVariable String id,
+			@RequestParam(defaultValue = "0") String banuntil,
+			@RequestParam(defaultValue = "false") Boolean permaBan,
 			HttpServletRequest req, HttpServletResponse res) {
 		badReq("Not supported");
 	}
@@ -864,8 +880,15 @@ public class ApiController {
 	}
 
 	@GetMapping("/spaces")
-	public List<Sysprop> listSpaces(HttpServletRequest req, HttpServletResponse res) {
-		return pc.findQuery("scooldspace", "*", utils.pagerFromParams(req));
+	public List<Sysprop> listSpaces(
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req, HttpServletResponse res) {
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		return pc.findQuery("scooldspace", "*", pager);
 	}
 
 	@GetMapping("/spaces/{id}")
@@ -909,12 +932,19 @@ public class ApiController {
 	}
 
 	@GetMapping("/webhooks")
-	public List<Webhook> listWebhooks(HttpServletRequest req, HttpServletResponse res) {
+	public List<Webhook> listWebhooks(
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isWebhooksEnabled()) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
-		return pc.findQuery(Utils.type(Webhook.class), "*", utils.pagerFromParams(req));
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		return pc.findQuery(Utils.type(Webhook.class), "*", pager);
 	}
 
 	@GetMapping("/webhooks/{id}")
@@ -970,11 +1000,17 @@ public class ApiController {
 	}
 
 	@GetMapping("/search/{type}/{query}")
-	public Map<String, Object> search(@PathVariable String type, @PathVariable String query, HttpServletRequest req) {
+	public Map<String, Object> search(@PathVariable String type, @PathVariable String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req) {
 		if ("answer".equals(type)) {
 			type = Utils.type(Reply.class);
 		}
-		Pager pager = utils.pagerFromParams(req);
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
 		Map<String, Object> result = new HashMap<>();
 		result.put("items", pc.findQuery(type, query, pager));
 		result.put("page", pager.getPage());
@@ -1004,17 +1040,18 @@ public class ApiController {
 		try {
 			Map<String, Number> typesCount = pc.typesCount();
 			qcount = typesCount.getOrDefault(Utils.type(Question.class), 0).longValue();
-			acount =  typesCount.getOrDefault(Utils.type(Reply.class), 0).longValue();
-			scount =  typesCount.getOrDefault("scooldspace", 0).longValue();
-			ucount =  typesCount.getOrDefault(Utils.type(Profile.class), 0).longValue();
-			tcount =  typesCount.getOrDefault(Utils.type(Tag.class), 0).longValue();
-			rcount =  typesCount.getOrDefault(Utils.type(Report.class), 0).longValue();
-			ccount =  typesCount.getOrDefault(Utils.type(Comment.class), 0).longValue();
+			acount = typesCount.getOrDefault(Utils.type(Reply.class), 0).longValue();
+			scount = typesCount.getOrDefault("scooldspace", 0).longValue();
+			ucount = typesCount.getOrDefault(Utils.type(Profile.class), 0).longValue();
+			tcount = typesCount.getOrDefault(Utils.type(Tag.class), 0).longValue();
+			rcount = typesCount.getOrDefault(Utils.type(Report.class), 0).longValue();
+			ccount = typesCount.getOrDefault(Utils.type(Comment.class), 0).longValue();
 			recount = typesCount.getOrDefault(Utils.type(Revision.class), 0).longValue();
 			uqcount = typesCount.getOrDefault(Utils.type(UnapprovedQuestion.class), 0).longValue();
 			uacount = typesCount.getOrDefault(Utils.type(UnapprovedReply.class), 0).longValue();
 			paraVer = pc.getServerVersion();
-		} catch (Exception e) { }
+		} catch (Exception e) {
+		}
 		stats.put("questions", qcount);
 		stats.put("replies", acount);
 		stats.put("spaces", scount);
@@ -1108,7 +1145,8 @@ public class ApiController {
 		Object value = null;
 		try {
 			value = CONF.getConfigValue(key, null);
-		} catch (Exception e) {	}
+		} catch (Exception e) {
+		}
 		return Collections.singletonMap("value", value);
 	}
 
@@ -1247,8 +1285,8 @@ public class ApiController {
 				badReq((String) err);
 			} else if (err instanceof Map) {
 				Map<String, String> error = (Map<String, String>) err;
-				badReq(error.entrySet().stream().map(e -> "'" + e.getKey() + "' " +
-						e.getValue()).collect(Collectors.joining("; ")));
+				badReq(error.entrySet().stream().map(e -> "'" + e.getKey() + "' "
+						+ e.getValue()).collect(Collectors.joining("; ")));
 			}
 		}
 	}
