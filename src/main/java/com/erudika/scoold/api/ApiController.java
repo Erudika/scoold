@@ -173,8 +173,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/posts")
-	public Map<String, Object> createPost(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Map<String, Object> createPost(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (!entity.containsKey(Config._TYPE)) {
 			entity.put(Config._TYPE, POST_TYPES[0]);
 		} else if (!Strings.CI.equalsAny((CharSequence) entity.get(Config._TYPE), POST_TYPES)) {
@@ -255,8 +255,9 @@ public class ApiController {
 	}
 
 	@PatchMapping("/posts/{id}")
-	public Post updatePost(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Post updatePost(@PathVariable String id, Map<String, Object> override,
+			HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -295,10 +296,10 @@ public class ApiController {
 	}
 
 	@PatchMapping("/posts/{id}/tags")
-	public Post updatePostTags(@PathVariable String id, @RequestParam(required = false) String sortby,
+	public Post updatePostTags(@PathVariable String id, Map<String, Object> override,
 			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
-		Map<String, Object> entity = readEntity(req);
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -309,7 +310,7 @@ public class ApiController {
 				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
 			}
 		}
-		questionController.get(id, "", sortby, req, res, model);
+		questionController.get(id, "", "", req, res, model);
 		Post post = (Post) model.getAttribute("showPost");
 		if (post == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
@@ -427,8 +428,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/users")
-	public Map<String, Object> createUser(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Map<String, Object> createUser(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -528,8 +529,9 @@ public class ApiController {
 
 	@PatchMapping("/users/{id}")
 	@SuppressWarnings("unchecked")
-	public Profile updateUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Profile updateUser(@PathVariable String id, Map<String, Object> override,
+			HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -657,8 +659,8 @@ public class ApiController {
 	}
 
 	@PutMapping("/users/spaces")
-	public void bulkEditSpaces(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public void bulkEditSpaces(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -674,8 +676,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/tags")
-	public Tag createTag(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Tag createTag(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -711,8 +713,9 @@ public class ApiController {
 	}
 
 	@PatchMapping("/tags/{id}")
-	public Tag updateTag(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Tag updateTag(@PathVariable String id, Map<String, Object> override,
+			HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -743,8 +746,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/comments")
-	public Comment createComment(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Comment createComment(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -789,8 +792,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/reports")
-	public Report createReport(HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public Report createReport(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -833,16 +836,17 @@ public class ApiController {
 	}
 
 	@PutMapping("/reports/{id}/close")
-	public void closeReport(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
-		String solution = (String) entity.getOrDefault("solution", "Closed via API.");
-		reportsController.close(id, solution, req, res);
+	public void closeReport(@PathVariable String id,
+			@RequestParam(required = false, defaultValue = "Closed via API.") String solution,
+			HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(null, req);
+		reportsController.close(id, (String) entity.getOrDefault("solution", solution), req, res);
 	}
 
 	@PostMapping("/spaces")
 	public Sysprop createSpace(@RequestParam(required = false, defaultValue = "false") Boolean assigntoall,
-			HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+			Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -867,8 +871,8 @@ public class ApiController {
 	public void updateSpace(@PathVariable String id,
 			@RequestParam(required = false, defaultValue = "false") Boolean assigntoall,
 			@RequestParam(required = false, defaultValue = "false") Boolean needsapproval,
-			HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+			Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -907,12 +911,12 @@ public class ApiController {
 	}
 
 	@PostMapping("/webhooks")
-	public Webhook createWebhook(HttpServletRequest req, HttpServletResponse res) {
+	public Webhook createWebhook(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isWebhooksEnabled()) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
-		Map<String, Object> entity = readEntity(req);
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 			return null;
@@ -962,7 +966,8 @@ public class ApiController {
 	}
 
 	@PatchMapping("/webhooks/{id}")
-	public Webhook updateWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public Webhook updateWebhook(@PathVariable String id, Map<String, Object> override,
+			HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isWebhooksEnabled()) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
@@ -972,7 +977,7 @@ public class ApiController {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
-		Map<String, Object> entity = readEntity(req);
+		Map<String, Object> entity = readEntity(override, req);
 		return pc.update(ParaObjectUtils.setAnnotatedFields(webhook, entity, Locked.class));
 	}
 
@@ -1108,7 +1113,7 @@ public class ApiController {
 	}
 
 	@PutMapping("/config")
-	public String configSet(HttpServletRequest req, HttpServletResponse res) {
+	public String configSet(Map<String, Object> override, HttpServletRequest req, HttpServletResponse res) {
 		com.typesafe.config.Config modifiedConf = com.typesafe.config.ConfigFactory.empty();
 		String format;
 		if ("application/hocon".equals(req.getContentType())) {
@@ -1124,7 +1129,7 @@ public class ApiController {
 			}
 		} else {
 			format = "json";
-			Map<String, Object> entity = readEntity(req);
+			Map<String, Object> entity = readEntity(override, req);
 			if (entity.isEmpty()) {
 				badReq("Missing or invalid request body.");
 			}
@@ -1151,8 +1156,9 @@ public class ApiController {
 	}
 
 	@PutMapping("/config/set/{key}")
-	public void configSet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
-		Map<String, Object> entity = readEntity(req);
+	public void configSet(@PathVariable String key, Map<String, Object> override,
+			HttpServletRequest req, HttpServletResponse res) {
+		Map<String, Object> entity = readEntity(override, req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
 		}
@@ -1265,10 +1271,14 @@ public class ApiController {
 		return healthObj;
 	}
 
-	private Map<String, Object> readEntity(HttpServletRequest req) {
+	private Map<String, Object> readEntity(Map<String, Object> override, HttpServletRequest req) {
 		try {
-			Map<String, Object> entity = ParaObjectUtils.getJsonReader(Map.class).readValue(req.getInputStream());
+			Map<String, Object> entity = new HashMap<>(ParaObjectUtils.getJsonReader(Map.class).
+					readValue(req.getInputStream()));
 			req.setAttribute(REST_ENTITY_ATTRIBUTE, entity);
+			if (override != null && !override.isEmpty()) {
+				entity.putAll(override);
+			}
 			return entity;
 		} catch (IOException ex) {
 			badReq("Expected 'application/json' body but got '" + req.getContentType() + "' in request body.");
