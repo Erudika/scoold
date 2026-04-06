@@ -208,13 +208,17 @@ public class ApiController {
 	}
 
 	@GetMapping("/posts")
-	public List<Map<String, Object>> listQuestions(HttpServletRequest req) {
+	public List<Map<String, Object>> listQuestions(
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String filter,
+			@RequestParam(required = false, defaultValue = "false") Boolean includeReplies,
+					HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
-		questionsController.getQuestions(req.getParameter("sortby"), req.getParameter("filter"), req, model);
+		questionsController.getQuestions(sortby, filter, req, model);
 		return ((List<Question>) model.getAttribute("questionslist")).stream().map(p -> {
 			Map<String, Object> post = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
 			post.put("author", p.getAuthor());
-			if (Boolean.parseBoolean(req.getParameter("includeReplies"))) {
+			if (includeReplies) {
 				Pager itemcount = utils.getPager("pageReplies", req);
 				post.put("children", questionController.getAllAnswers(utils.getSystemUser(), p, itemcount, req));
 			}
@@ -223,9 +227,10 @@ public class ApiController {
 	}
 
 	@GetMapping("/posts/{id}")
-	public Map<String, Object> getPost(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public Map<String, Object> getPost(@PathVariable String id, @RequestParam(required = false) String sortby,
+			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
-		questionController.get(id, "", req.getParameter("sortby"), req, res, model);
+		questionController.get(id, "", sortby, req, res, model);
 		Post showPost = (Post) model.getAttribute("showPost");
 		List<Post> answers = (List<Post>) model.getAttribute("answerslist");
 		List<Post> similar = (List<Post>) model.getAttribute("similarquestions");
@@ -290,7 +295,8 @@ public class ApiController {
 	}
 
 	@PatchMapping("/posts/{id}/tags")
-	public Post updatePostTags(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public Post updatePostTags(@PathVariable String id, @RequestParam(required = false) String sortby,
+			HttpServletRequest req, HttpServletResponse res) {
 		Model model = new ExtendedModelMap();
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
@@ -303,7 +309,7 @@ public class ApiController {
 				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
 			}
 		}
-		questionController.get(id, "", req.getParameter("sortby"), req, res, model);
+		questionController.get(id, "", sortby, req, res, model);
 		Post post = (Post) model.getAttribute("showPost");
 		if (post == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
@@ -482,10 +488,12 @@ public class ApiController {
 	}
 
 	@GetMapping("/users")
-	public List<Map<String, Object>> listUsers(@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
+	public List<Map<String, Object>> listUsers(
+			@RequestParam(required = false) String tag,
+			@RequestParam(required = false, defaultValue = Config._TIMESTAMP) String sortby,
 			@RequestParam(required = false, defaultValue = "*") String q, HttpServletRequest req) {
 		Model model = new ExtendedModelMap();
-		peopleController.get(req.getParameter("tag"), sortby, q, req, model);
+		peopleController.get(tag, sortby, q, req, model);
 		List<Profile> profiles = (List<Profile>) model.getAttribute("userlist");
 		List<Map<String, Object>> results = new LinkedList<>();
 		Map<String, User> usersMap = new HashMap<>();
@@ -816,7 +824,8 @@ public class ApiController {
 	}
 
 	@PostMapping("/spaces")
-	public Sysprop createSpace(HttpServletRequest req, HttpServletResponse res) {
+	public Sysprop createSpace(@RequestParam(required = false, defaultValue = "false") Boolean assigntoall,
+			HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
@@ -831,7 +840,7 @@ public class ApiController {
 			return null;
 		}
 		Model model = new ExtendedModelMap();
-		adminController.addSpace(name, "true".equals(req.getParameter("assigntoall")), req, res, model);
+		adminController.addSpace(name, assigntoall, req, res, model);
 		checkForErrorsAndThrow(model);
 		Sysprop s = (Sysprop) model.getAttribute("space");
 		res.setStatus(HttpStatus.CREATED.value());
@@ -839,7 +848,10 @@ public class ApiController {
 	}
 
 	@PatchMapping("/spaces/{id}")
-	public void updateSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+	public void updateSpace(@PathVariable String id,
+			@RequestParam(required = false, defaultValue = "false") Boolean assigntoall,
+			@RequestParam(required = false, defaultValue = "false") Boolean needsapproval,
+			HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
@@ -848,8 +860,7 @@ public class ApiController {
 		if (StringUtils.isBlank(newName)) {
 			badReq("Property 'name' cannot be blank.");
 		}
-		adminController.renameSpace(id, "true".equals(req.getParameter("assigntoall")),
-				"true".equals(req.getParameter("needsapproval")), newName, req, res);
+		adminController.renameSpace(id, assigntoall, needsapproval, newName, req, res);
 	}
 
 	@GetMapping("/spaces")
@@ -975,7 +986,9 @@ public class ApiController {
 	}
 
 	@GetMapping("/stats")
-	public Map<String, Object> stats(HttpServletRequest req) {
+	public Map<String, Object> stats(
+			@RequestParam(required = false, defaultValue = "false") Boolean includeLogs,
+			@RequestParam(required = false, defaultValue = "10000") Integer maxLogLines) {
 		Map<String, Object> stats = new LinkedHashMap<>();
 		long qcount = 0L;
 		long acount = 0L;
@@ -1016,15 +1029,14 @@ public class ApiController {
 		stats.put("scoold_version", Optional.ofNullable(Version.getVersion()).
 				orElse(Optional.ofNullable(System.getenv("SCOOLD_VERSION")).orElse("unknown")));
 
-		if ("true".equals(req.getParameter("includeLogs"))) {
+		if (includeLogs) {
 			try {
-				int maxLines = NumberUtils.toInt(req.getParameter("maxLogLines"), 10000);
 				String logFile = System.getProperty("para.logs_dir", System.getProperty("user.dir"))
 						+ "/" + System.getProperty("para.logs_name", "scoold") + ".log";
 				Path path = Paths.get(logFile);
 				try (Stream<String> lines = Files.lines(path)) {
 					List<String> linez = lines.collect(Collectors.toList());
-					stats.put("log", linez.subList(Math.max(0, linez.size() - maxLines), linez.size()).
+					stats.put("log", linez.subList(Math.max(0, linez.size() - maxLogLines), linez.size()).
 							stream().collect(Collectors.joining("\n")));
 				}
 			} catch (Exception e) {
@@ -1048,8 +1060,7 @@ public class ApiController {
 	}
 
 	@GetMapping(path = "/config", produces = {"application/hocon", "application/json"})
-	public String config(HttpServletRequest req, HttpServletResponse res) {
-		String format = req.getParameter("format");
+	public String config(@RequestParam(required = false, defaultValue = "json") String format, HttpServletResponse res) {
 		if ("hocon".equalsIgnoreCase(format)) {
 			res.setContentType("application/hocon");
 			return CONF.render(false);
@@ -1062,7 +1073,9 @@ public class ApiController {
 	@PutMapping("/config")
 	public String configSet(HttpServletRequest req, HttpServletResponse res) {
 		com.typesafe.config.Config modifiedConf = com.typesafe.config.ConfigFactory.empty();
+		String format;
 		if ("application/hocon".equals(req.getContentType())) {
+			format = "hocon";
 			try {
 				String config = new String(req.getInputStream().readAllBytes(), "utf-8");
 				for (Map.Entry<String, ConfigValue> entry : Config.parseStringWithoutIncludes(config).entrySet()) {
@@ -1073,6 +1086,7 @@ public class ApiController {
 				badReq("Missing or invalid request body.");
 			}
 		} else {
+			format = "json";
 			Map<String, Object> entity = readEntity(req);
 			if (entity.isEmpty()) {
 				badReq("Missing or invalid request body.");
@@ -1086,7 +1100,7 @@ public class ApiController {
 		CONF.overwriteConfig(modifiedConf).store();
 		pc.setAppSettings(CONF.getParaAppSettings());
 		triggerConfigUpdateEvent(CONF.getConfigMap());
-		return config(req, res);
+		return config(format, res);
 	}
 
 	@GetMapping("/config/get/{key}")
@@ -1122,9 +1136,9 @@ public class ApiController {
 	}
 
 	@GetMapping(path = "/config/options", produces = {"text/markdown", "application/hocon", "application/json"})
-	public ResponseEntity<Object> configOptions(HttpServletRequest req, HttpServletResponse res) {
-		String format = req.getParameter("format");
-		String groupby = req.getParameter("groupby");
+	public ResponseEntity<Object> configOptions(
+			@RequestParam(required = false, defaultValue = "json") String format,
+			@RequestParam(required = false, defaultValue = "") String groupby, HttpServletResponse res) {
 		if ("markdown".equalsIgnoreCase(format)) {
 			res.setContentType("text/markdown");
 		} else if ("hocon".equalsIgnoreCase(format)) {
