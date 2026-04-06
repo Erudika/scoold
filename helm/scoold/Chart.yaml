@@ -1,6 +1,6 @@
 apiVersion: v2
 type: application
-appVersion: 1.66.1
+appVersion: 1.66.2
 description: Scoold - Stack Overflow in a JAR
 name: scoold
 home: https://scoold.com
