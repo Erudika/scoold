@@ -255,7 +255,7 @@ public class QuestionsController {
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			q = handleSpam(q, authUser, error, req);
 			if (error.isEmpty()) {
-				String qid = StringUtils.isBlank(postId) ? Utils.getNewId() : postId;
+				String qid = validateNewPostId(postId, req);
 				q.setId(qid);
 				q.setLocation(location);
 				q.create();
@@ -512,5 +512,14 @@ public class QuestionsController {
 			return spamq;
 		}
 		return q;
+	}
+
+	private String validateNewPostId(String postId, HttpServletRequest req) {
+		// 1. don't overwrite existing content!
+		// 2. security risk: clients must not set postId
+		if (req.getParameter("postId") != null || (!StringUtils.isBlank(postId) && pc.read(postId) != null)) {
+			return Utils.getNewId();
+		}
+		return postId;
 	}
 }
