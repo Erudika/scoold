@@ -134,6 +134,7 @@ public class ReportsController {
 				rep.create();
 				model.addAttribute("newreport", rep);
 				res.setStatus(200);
+				utils.updateNewReportsCount();
 			} else {
 				model.addAttribute("error", "Too many requests.");
 				res.setStatus(400);
@@ -228,6 +229,7 @@ public class ReportsController {
 			Report rep = pc.read(id);
 			if (rep != null && utils.isAdmin(authUser)) {
 				rep.delete();
+				utils.updateNewReportsCount();
 			}
 		}
 		if (!utils.isAjaxRequest(req)) {
@@ -273,6 +275,7 @@ public class ReportsController {
 					return reports;
 				});
 				pc.deleteAll(toDelete);
+				utils.updateNewReportsCount();
 			}
 		}
 		return "redirect:" + REPORTSLINK;

@@ -1380,10 +1380,14 @@ public final class ScooldUtils {
 	public int countNewReports() {
 		Pager p = new Pager(Config.DEFAULT_LIMIT);
 		if (Utils.timestamp() - lastReportsCountTimestamp > TimeUnit.SECONDS.toMillis(60)) {
-			newReportsCount = pc.getCount(Utils.type(Report.class), Collections.singletonMap("properties.closed", false)).intValue();
-			lastReportsCountTimestamp = Utils.timestamp();
+			updateNewReportsCount();
 		}
 		return newReportsCount;
+	}
+
+	public void updateNewReportsCount() {
+		newReportsCount = pc.getCount(Utils.type(Report.class), Collections.singletonMap("properties.closed", false)).intValue();
+		lastReportsCountTimestamp = Utils.timestamp();
 	}
 
 	public void addSpaceToCachedList(Sysprop space) {
