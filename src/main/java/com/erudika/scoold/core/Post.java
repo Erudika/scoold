@@ -441,7 +441,7 @@ public abstract class Post extends Sysprop {
 	}
 
 	public String getSpace() {
-		if (StringUtils.isBlank(space)) {
+		if (StringUtils.isBlank(space) || ScooldUtils.getInstance().isDefaultSpace(space)) {
 			space = DEFAULT_SPACE;
 		}
 		return space;
