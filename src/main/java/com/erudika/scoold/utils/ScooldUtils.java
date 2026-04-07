@@ -18,6 +18,7 @@
 package com.erudika.scoold.utils;
 
 import com.erudika.para.client.ParaClient;
+import com.erudika.para.core.App;
 import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.Tag;
@@ -1813,6 +1814,7 @@ public final class ScooldUtils {
 		}
 		if (!data.isEmpty()) {
 			ParaObjectUtils.setAnnotatedFields(pobj, data, null);
+			pobj.setAppid(App.identifier(CONF.paraAccessKey())); // mainly to prevent confusion in API responses
 		}
 		return pobj;
 	}
