@@ -96,6 +96,7 @@ public abstract class Post extends Sysprop {
 	public Post() {
 		this.answercount = 0L;
 		this.viewcount = 0L;
+		this.body = "";
 	}
 
 	private ParaClient client() {

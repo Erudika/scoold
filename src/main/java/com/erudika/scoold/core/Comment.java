@@ -40,7 +40,7 @@ public class Comment extends Sysprop {
 	@Stored private String authorName;
 
 	public Comment() {
-		this(null, null, null);
+		this(null, "", null);
 	}
 
 	public Comment(String creatorid, String comment, String parentid) {
