@@ -48,7 +48,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.nimbusds.jwt.SignedJWT;
 import com.typesafe.config.ConfigValueFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,7 +58,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -69,7 +67,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -508,20 +505,9 @@ public class AdminController {
 	public ResponseEntity<Map<String, Object>> generateAPIKey(@RequestParam Integer validityHours,
 			HttpServletRequest req, Model model) throws ParseException {
 		Profile authUser = utils.getAuthUser(req);
-		if (utils.isAdmin(authUser)) {
-			String jti = UUID.randomUUID().toString();
-			Map<String, Object> claims = Collections.singletonMap("jti", jti);
-			SignedJWT jwt = utils.generateJWToken(claims, TimeUnit.HOURS.toSeconds(validityHours));
-			if (jwt != null) {
-				String jwtString = jwt.serialize();
-				Date exp = jwt.getJWTClaimsSet().getExpirationTime();
-				utils.registerApiKey(jti, jwtString);
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put("jti", jti);
-				data.put("jwt", jwtString);
-				data.put("exp", exp == null ? 0L : Utils.formatDate(exp.getTime(), "YYYY-MM-dd HH:mm", Locale.UK));
-				return ResponseEntity.ok().body(data);
-			}
+		Map<String, Object> data = utils.generateApiKey(authUser, validityHours, false);
+		if (!data.isEmpty()) {
+			return ResponseEntity.ok().body(data);
 		}
 		return ResponseEntity.status(403).build();
 	}

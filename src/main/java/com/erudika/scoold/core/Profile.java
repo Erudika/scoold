@@ -80,6 +80,7 @@ public class Profile extends Sysprop {
 	@Stored private String pendingEmail;
 	@Stored private Boolean editorRoleEnabled;
 	@Stored private String preferredSpace;
+	@Stored private String personalApiToken;
 
 	private transient String currentSpace;
 	private transient String newbadges;
@@ -388,6 +389,14 @@ public class Profile extends Sysprop {
 
 	public void setPreferredSpace(String preferredSpace) {
 		this.preferredSpace = preferredSpace;
+	}
+
+	public String getPersonalApiToken() {
+		return personalApiToken;
+	}
+
+	public void setPersonalApiToken(String personalApiToken) {
+		this.personalApiToken = personalApiToken;
 	}
 
 	public boolean isModInCurrentSpace() {

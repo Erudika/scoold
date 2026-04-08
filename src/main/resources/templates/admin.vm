@@ -89,7 +89,7 @@
 									<option value="$!event">$!event</option>
 									#end
 								</select>
-								<label for="webhook-events">Event triggers</label>
+								<label for="webhook-events">$!lang.get('admin.eventtriggers')</label>
 							</div>
 						</div>
 						<div class="col s12 m3">
@@ -100,7 +100,7 @@
 									<option value="$!type">$!type</option>
 									#end
 								</select>
-								<label for="webhook-types">Type filter</label>
+								<label for="webhook-types">$!lang.get('admin.typefilter')</label>
 							</div>
 						</div>
 					</div>
@@ -108,14 +108,14 @@
 					<div class="row mvn">
 						<div class="col s12 m7">
 							<div class="input-field">
-								<label for="targetUrl">Destination URL</label>
+								<label for="targetUrl">$!lang.get('admin.destinationurl')</label>
 								<input type="url" id="targetUrl" name="targetUrl" class="validate" minlength="7" placeholder="https://" required>
 								<span class="helper-text" data-error="Please enter a valid URL"></span>
 							</div>
 						</div>
 						<div class="col s12 m2">
 							<div class="input-field">
-								<label for="filter">Property filter</label>
+								<label for="filter">$!lang.get('admin.propfilter')</label>
 								<input type="text" id="filter" name="filter" placeholder="tags:tag1,tag2">
 							</div>
 						</div>
@@ -125,7 +125,7 @@
 									<option value="true" selected="selected">json</option>
 									<option value="false">x-www-form-urlencoded</option>
 								</select>
-								<label for="webhook-json">Payload format</label>
+								<label for="webhook-json">$!lang.get('admin.payloadformat')</label>
 							</div>
 						</div>
 					</div>
@@ -139,7 +139,7 @@
 				#paginate("webhooks" $itemcount1 "" "page1" )
 			</div>
 			#else
-			<h4 class="em3v card-panel center-align">Webhooks are disabled.</h4>
+			<h4 class="em3v card-panel center-align">$!lang.get('admin.webhooksdisabled')</h4>
 			#end
 		</div>
 
@@ -277,65 +277,9 @@
 
 		<div id="api-tab" class="col s12">
 			#if($scooldUtils.isApiEnabled())
-			<form action="$adminlink/generate-api-key" method="post" id="api-key-form" class="lightborder pal">
-				<p>API keys are in the JSON Web Token format. Changing <code>app_secret_key</code> would revoke all keys at once.
-					Validity period of 0 hours means the key never expires.</p>
-				<div class="row mbn">
-					<div class="col s6 m2">
-						<div class="input-field">
-							<label>Validity period (hours)</label>
-							<input type="number" name="validityHours" value="0" min="0">
-						</div>
-					</div>
-					<div class="col s4 m2">
-						<div class="input-field">
-							<button type="submit" class="btn waves-effect waves-light">Generate</button>
-						</div>
-					</div>
-				</div>
-				<div>
-					#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
-					<table class="striped api-key-table ${hideTable}">
-						#macro(apikeyrow $key $value)
-							#if(!$key)#set($hideRow = "hide")#else#set($hideRow = "")#end
-							<tr class="api-key-row ${hideRow}">
-								<td>
-									<a href="$adminlink/revoke-api-key?jti=$!key" class="api-key-revoke red-text right">
-										<i class="fa fa-times"></i> Revoke
-									</a>
-									<div>
-										<strong>Expires:</strong>
-										<span class="api-key-expires">
-											#if($key)
-												#if($apiKeysExpirations.get($key) == 0)
-													never
-												#else
-													#formatdate($apiKeysExpirations.get($key), "YYYY-MM-dd HH:mm")
-													#if($apiKeysExpirations.get($key) < $utils.timestamp())
-														<strong class="red-text">expired</strong>
-													#end
-												#end
-											#end
-										</span>
-										<a href="#" class="api-key-show next-div-toggle mhm right"><i class="fa fa-eye"></i> Show</a>
-										<div class="hide">
-											<input type="text" value="$!value" class="api-key">
-											<span class="green-text"></span><span>&nbsp;</span>
-										</div>
-									</div>
-								</td>
-							</tr>
-						#end
-
-						#apikeyrow("")
-						#foreach($key in $apiKeys.keySet())
-							#apikeyrow($key $apiKeys.get($key))
-						#end
-					</table>
-				</div>
-			</form>
+				#apikeyspage($adminlink $apiKeys $apiKeysExpirations)
 			#else
-			<h4 class="lightborder pal center-align"><div class="em3v">$!lang.get('admin.apidisabled')</div></h4>
+				<h4 class="lightborder pal center-align"><div class="em3v">$!lang.get('admin.apidisabled')</div></h4>
 			#end
 		</div>
 

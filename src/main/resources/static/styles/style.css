@@ -816,7 +816,7 @@ a, .dropdown-content li>a, .dropdown-content li>span { color: #039be5; }
 /* nav bar and footer */
 main { background-color: white; }
 body, footer.page-footer { background-color: #444444; }
-footer.page-footer { margin-top: 20px; }
+footer.page-footer { margin: 20px 0; }
 .page-footer a { font-weight: 400;}
 .navbar-color { background-color: #03a9f4; }
 nav { background-color: inherit; color: inherit; height: 64px; line-height: 64px;}

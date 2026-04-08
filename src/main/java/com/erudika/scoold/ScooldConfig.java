@@ -192,6 +192,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("api_enabled", false);
 	}
 
+	@Documented(position = 131,
+			identifier = "api_user_access_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Core",
+			description = "Enable/disable the ability for users to get personal access tokens"
+					+ " for accessing the Scoold API or MCP server. Disabled by default.")
+	public boolean apiUserAccessEnabled() {
+		return getConfigBoolean("api_user_access_enabled", false);
+	}
+
 	@Documented(position = 140,
 			identifier = "feedback_enabled",
 			value = "false",

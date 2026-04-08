@@ -890,6 +890,10 @@ public final class ScooldUtils {
 		return CONF.apiEnabled();
 	}
 
+	public boolean isApiUserAccessEnabled() {
+		return CONF.apiUserAccessEnabled();
+	}
+
 	public boolean isFooterLinksEnabled() {
 		return CONF.footerLinksEnabled();
 	}
@@ -2081,7 +2085,7 @@ public final class ScooldUtils {
 		return !API_KEYS.containsKey(jti);
 	}
 
-	public void registerApiKey(String jti, String jwt) {
+	private void registerApiKey(String jti, String jwt) {
 		if (StringUtils.isBlank(jti) || StringUtils.isBlank(jwt)) {
 			return;
 		}
@@ -2096,25 +2100,62 @@ public final class ScooldUtils {
 		saveApiKeysObject();
 	}
 
+	public Map<String, Object> generateApiKey(Profile authUser, Integer validityHours, boolean isPersonal)
+			throws ParseException {
+		if (isAdmin(authUser) || (authUser != null && isPersonal && CONF.apiUserAccessEnabled())) {
+			String jti = UUID.randomUUID().toString();
+			long validity = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
+			Map<String, Object> claims = new HashMap<>();
+			claims.put("jti", jti);
+			if (isPersonal) {
+				claims.put("sub", authUser.getCreatorid());
+				claims.put(Config._GROUPS, authUser.getGroups());
+				validity = Math.max(168, validity); // personal tokens have max lifetime of 1 week
+			}
+			SignedJWT jwt = generateJWToken(claims, validity);
+			if (jwt != null) {
+				String jwtString = jwt.serialize();
+				Date exp = jwt.getJWTClaimsSet().getExpirationTime();
+				if (isPersonal) {
+					authUser.setPersonalApiToken(jwtString);
+					authUser.update();
+				} else {
+					registerApiKey(jti, jwtString);
+				}
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put("jti", jti);
+				data.put("jwt", jwtString);
+				data.put("exp", exp == null ? 0L : Utils.formatDate(exp.getTime(), "YYYY-MM-dd HH:mm", Locale.UK));
+				return data;
+			}
+		}
+		return Collections.emptyMap();
+	}
+
 	public Map<String, Object> getApiKeys() {
 		return loadApiKeysObject();
 	}
 
-	public Map<String, Long> getApiKeysExpirations() {
-		return API_KEYS.keySet().stream().collect(Collectors.toMap(k -> k, k -> {
-			String jwt = (String) API_KEYS.get(k);
-			try {
-				if (!StringUtils.isBlank(jwt)) {
-					Date exp = SignedJWT.parse(jwt).getJWTClaimsSet().getExpirationTime();
-					if (exp != null) {
-						return exp.getTime();
-					}
+	public long getApiKeyExpiration(String jwt) {
+		String jti = "";
+		try {
+			if (!StringUtils.isBlank(jwt)) {
+				JWTClaimsSet claims = SignedJWT.parse(jwt).getJWTClaimsSet();
+				jti = claims.getJWTID();
+				Date exp = SignedJWT.parse(jwt).getJWTClaimsSet().getExpirationTime();
+				if (exp != null) {
+					return exp.getTime();
 				}
-			} catch (Exception ex) {
-				logger.error("Failed to parse API key " + k + " - key doesn't seem to be in JWT format. {}", ex.getMessage());
 			}
-			return 0L;
-		}));
+		} catch (Exception ex) {
+			logger.error("Failed to parse API key " + jti + " - key doesn't seem to be in JWT format. {}", ex.getMessage());
+		}
+		return 0L;
+	}
+
+	public Map<String, Long> getApiKeysExpirations() {
+		return API_KEYS.keySet().stream().
+				collect(Collectors.toMap(k -> k, k -> getApiKeyExpiration((String) API_KEYS.get(k))));
 	}
 
 	private void saveApiKeysObject() {

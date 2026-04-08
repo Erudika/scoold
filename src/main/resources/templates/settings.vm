@@ -330,9 +330,16 @@
 		<br>
 		<br>
 		<div class="mvl">
+			<a href="#" class="right next-div-toggle click2hide">$!lang.get('admin.mytokens')</a>
 			<a href="${settingslink}?delete=true" title="Delete my account" class="red-text">
 				<strong>$!lang.get("settings.delete")</strong>
 			</a>
+			#if($scooldUtils.isApiUserAccessEnabled())
+			<div class="mvl pvl hide">
+				<h3>$!lang.get('admin.mytokens')</h3>
+				#apikeyspage($settingslink $apiKeys $apiKeysExpirations)
+			</div>
+			#end
 		</div>
 	#end
 </div>

@@ -32,6 +32,7 @@ import com.erudika.scoold.utils.avatars.AvatarRepository;
 import com.erudika.scoold.utils.avatars.AvatarRepositoryProxy;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -42,12 +43,15 @@ import net.logicsquad.qr4j.QrCode;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -86,6 +90,11 @@ public class SettingsController {
 		model.addAttribute("replyEmailsAllowed", utils.isReplyNotificationAllowed());
 		model.addAttribute("commentEmailsAllowed", utils.isCommentNotificationAllowed());
 		model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
+		if (CONF.apiUserAccessEnabled()) {
+			String token = authUser.getPersonalApiToken();
+			model.addAttribute("apiKeys", StringUtils.isBlank(token) ? Map.of() : Map.of(authUser.getCreatorid(), token));
+			model.addAttribute("apiKeysExpirations", Map.of(authUser.getCreatorid(), utils.getApiKeyExpiration(token)));
+		}
 		return "base";
 	}
 
@@ -213,6 +222,32 @@ public class SettingsController {
 		} catch (Exception ex) {
 			return;
 		}
+	}
+
+	@ResponseBody
+	@PostMapping(path = "/generate-api-key", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> generateAPIKey(@RequestParam Integer validityHours,
+			HttpServletRequest req, Model model) throws ParseException {
+		Profile authUser = utils.getAuthUser(req);
+		if (StringUtils.isBlank(authUser.getPersonalApiToken())) {
+			Map<String, Object> data = utils.generateApiKey(authUser, 168, true);
+			if (!data.isEmpty()) {
+				return ResponseEntity.ok().body(data);
+			}
+		}
+		return ResponseEntity.status(403).build();
+	}
+
+	@ResponseBody
+	@PostMapping(path = "/revoke-api-key", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> revokeAPIKey(@RequestParam String jti, HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser != null) {
+			authUser.setPersonalApiToken("");
+			authUser.update();
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(403).build();
 	}
 
 	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {

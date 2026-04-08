@@ -15,7 +15,7 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED: false */
+/*global window: false, jQuery: false, $: false, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED, document, console, localStorage, navigator: false */
 "use strict";
 $(function () {
 	var rusuremsg = CONFIRM_MSG;
@@ -249,13 +249,20 @@ $(function () {
 	});
 
 	$(document).on("click", ".permalink",  function() {
-		navigator.clipboard.writeText(this.href);
-		var that = $(this).find("i");
-		var attr = that.attr("class");
-		that.text("Copied!").attr("class", "green-text smallText");
-		setTimeout(function () {
-			that.text("").attr("class", attr);
-		}, 2000);
+		// NOTE: these two props return different values:
+		// this.href = http://localhost:8000/question/1564952241587097600#post-1949119440205385728
+		// this.getAttribute("href") = /question/1564952241587097600#post-1949119440205385728
+		var value = this.getAttribute("href").length <= 1 ? this.getAttribute("data-value") : this.href; // <<!
+		navigator.clipboard.writeText(value);
+		var that = $(this);
+		var origText = that.html();
+		var origClass = that.attr("class");
+		if (that.text().indexOf("✓") < 0) { // prevents buggy behavior!
+			that.text("✓ Copied").addClass("green-text");
+			setTimeout(function () {
+				that.html(origText).attr("class", origClass).removeClass("green-text");
+			}, 2000);
+		}
 		return false;
 	});
 
@@ -365,19 +372,16 @@ $(function () {
 		}
 	});
 
-	$(document).on("click", "input.api-key", function () {
-		$(this).focus();
-		$(this).select();
-		document.execCommand("copy");
-		$(this).next("span").text("Copied!").show().fadeOut(3000);
-	});
-
 	submitFormBind("#api-key-form", function (data, status, xhr, form) {
 		var table = $(form).find(".api-key-table");
 		var row = table.find(".api-key-row:first").clone().removeClass("hide");
-		row.find("input.api-key").val(data.jwt);
+		var key = row.find(".api-key");
+		var keyCopyBtn = row.find(".api-key-copy");
+		keyCopyBtn.attr("href", "#");
+		keyCopyBtn.attr("data-value", data.jwt);
+		key.text(key.text() + data.jwt.substring(data.jwt.length - 6));
 		row.find(".api-key-expires").text(data.exp || "never");
-		row.find("a").attr("href", function (i, href) {
+		row.find("a:last").attr("href", function (i, href) {
 			return href + data.jti;
 		});
 		table.append(row).removeClass("hide");
@@ -386,6 +390,7 @@ $(function () {
 
 	$(document).on("click", ".api-key-revoke", function () {
 		var elem = $(this);
+		elem.closest("form").find("button[disabled]").removeAttr("disabled");
 		return areYouSure(function () {
 			elem.closest(".api-key-row").fadeOut("fast", function () {
 				elem.remove();
@@ -395,7 +400,7 @@ $(function () {
 	});
 
 	$(".adminpage .tab").on("click", function () {
-		history.pushState("", document.title, window.location.pathname + window.location.search);
+		history.pushState({}, document.title, $(this).find("a")[0].href);
 	});
 
 	$(".configuration-form .filled-in").on("click", function () {

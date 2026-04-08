@@ -243,6 +243,86 @@
 		#webhookbox($webhook)
 	#end
 #end
+####################################
+#macro(apikeyrow $key $value $formActionBase $apiKeysExpirations)
+	#set($keyExpired = $key && ($apiKeysExpirations.get($key) > 0 && $apiKeysExpirations.get($key) < $utils.timestamp()))
+	#if(!$key)#set($hideRow = "hide")#else#set($hideRow = "")#end
+	<tr class="api-key-row ${hideRow}">
+		<td colspan="3">
+			<span class="api-key-expires">
+				#if($key)
+					#if($apiKeysExpirations.get($key) == 0)
+						$!lang.get('admin.neverexpires')
+					#else
+						<span class="#if($keyExpired)red-text tooltipped#end" #if($keyExpired)data-tooltip="Expired"#end>
+							#formatdate($apiKeysExpirations.get($key), "YYYY-MM-dd HH:mm")
+						</span>
+					#end
+				#end
+			</span>
+		</td>
+		<td colspan="7">
+			#set($prefix = "eyJh*******.*******************.*********")
+			#if($value && $value.length() > 10)
+				<code class="api-key #if($keyExpired)red-text#end">$prefix$!value.substring($value.length() - 6)</code>
+			#else
+				<code class="api-key">$prefix</code>
+			#end
+		</td>
+		<td colspan="2" class="right-align">
+			<a href="#" data-value="$value" class="mhm permalink api-key-copy"><i class="fa fa-copy"></i> Copy</a>
+			<a href="$formActionBase/revoke-api-key?jti=$!key" class="api-key-revoke red-text">$!lang.get('revoke')</a>
+		</td>
+	</tr>
+#end
+#macro(apikeyspage $formActionBase $apiKeys $apiKeysExpirations)
+	<form action="$formActionBase/generate-api-key" method="post" id="api-key-form" class="lightborder pal">
+		#if($formActionBase == $adminlink)
+			#set($_text1 = $utils.markdownToHtml($!lang.get('admin.apikeys.text1'))) $_text1
+		#else
+			<p>$!lang.get('admin.apikeys.text2')</p>
+		#end
+		<div>
+			#if($apiKeys.isEmpty())#set($hideTable = "hide")#else#set($hideTable = "")#end
+			<table class="striped api-key-table ${hideTable}">
+				<thead>
+					<tr>
+						<th colspan="3" class="capitalize">$!lang.get('admin.expires')</th>
+						<th colspan="7" class="">$!lang.get('admin.apikey') (Bearer token)</th>
+						<th colspan="2" class="right-align">&nbsp;</th>
+					</tr>
+				</thead>
+				#apikeyrow("" "" $formActionBase $apiKeysExpirations)
+				#foreach($key in $apiKeys.keySet())
+					#apikeyrow($key $apiKeys.get($key) $formActionBase $apiKeysExpirations)
+				#end
+			</table>
+		</div>
+		<div class="row mvm">
+			<div class="col s6 offset-s3 m3 offset-m4 center-align">
+				<div class="input-field #if($formActionBase != $adminlink)hide#end">
+					<select id="validity-period" name="validityHours" required>
+						<option value="1">1 hour</option>
+						<option value="12" selected="selected">12 hours</option>
+						<option value="24">24 hours</option>
+						<option value="48">2 days</option>
+						<option value="72">3 days</option>
+						<option value="168">One week</option>
+						<option value="720">One month</option>
+						<option value="0">$!lang.get('admin.neverexpires')</option>
+					</select>
+					<label for="validity-period">$!lang.get('admin.validity')</label>
+				</div>
+				#set($disabled = $formActionBase != $adminlink && $apiKeys.size() >= 1)
+				<button type="submit" class="btn waves-effect waves-light" #if($disabled)disabled="disabled"#end>$!lang.get('admin.generate')</button>
+			</div>
+			<div class="col s6 m9">
+				<div class="input-field">
+				</div>
+			</div>
+		</div>
+	</form>
+#end
 ################# QUESTIONS MACROS #####################
 #macro(tagsbox $post $link)
 	#set($tags = $post.tags)
