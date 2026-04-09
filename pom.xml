@@ -93,6 +93,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<!-- SPRING MCP -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
+			<version>2.0.0-M4</version>
+		</dependency>
 
 		<!--==============================================-->
 		<!-- PLEASE READ BEFORE ENABLING DEVTOOLS: -->

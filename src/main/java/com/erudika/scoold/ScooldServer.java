@@ -29,10 +29,12 @@ import com.erudika.scoold.utils.ScooldRequestInterceptor;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.velocity.VelocityConfigurer;
 import com.erudika.scoold.velocity.VelocityViewResolver;
+import jakarta.servlet.DispatcherType;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
@@ -45,11 +47,16 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.error.ErrorPage;
 import org.springframework.boot.web.error.ErrorPageRegistrar;
 import org.springframework.boot.web.error.ErrorPageRegistry;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -141,6 +148,25 @@ public class ScooldServer extends SpringBootServletInitializer {
 		System.setProperty("spring.mail.properties.mail.smtp.starttls.enable", Boolean.toString(CONF.mailTLSEnabled()));
 		System.setProperty("spring.mail.properties.mail.smtp.ssl.enable", Boolean.toString(CONF.mailSSLEnabled()));
 		System.setProperty("spring.mail.properties.mail.debug", Boolean.toString(CONF.mailDebugEnabled()));
+		// MCP Server configuration properties
+		boolean isMcpEnabled = !CONF.mcpServerMode().equalsIgnoreCase("off");
+		boolean isMcpReadOnly = CONF.mcpServerMode().equalsIgnoreCase("r");
+		System.setProperty("spring.ai.mcp.server.enabled", String.valueOf(isMcpEnabled));
+		System.setProperty("spring.ai.mcp.server.name", "scoold-mcp-server");
+		System.setProperty("spring.ai.mcp.server.type", "SYNC");
+		System.setProperty("spring.ai.mcp.server.protocol", "STREAMABLE");
+		System.setProperty("spring.ai.mcp.server.streamable-http.mcp-endpoint", "/api/mcp");
+		System.setProperty("spring.ai.mcp.server.streamable-http.disallow-delete", String.valueOf(isMcpReadOnly));
+		System.setProperty("spring.ai.mcp.server.capabilities.tool", "true");
+		System.setProperty("spring.ai.mcp.server.capabilities.resource", "true");
+		System.setProperty("spring.ai.mcp.server.capabilities.prompt", "false");
+		System.setProperty("spring.ai.mcp.server.capabilities.completion", "false");
+		System.setProperty("spring.ai.mcp.server.instructions", "The Scoold MCP server provides Q&A and knowledge "
+				+ "management, basic CRUD endpoints for data management and full-text search. "
+				+ "Browse resources (scoold:///) to explore available context, documentation, and server health. "
+				+ "Use tools for specific operations like searching, creating, updating, or deleting objects. "
+				+ "IMPORTANT: When tools return errors requesting additional information from the user, you MUST ask the "
+				+ "user to provide that information. Never generate, guess, or infer values that should come from the user.");
 	}
 
 	@Bean
@@ -150,6 +176,39 @@ public class ScooldServer extends SpringBootServletInitializer {
 				registry.addInterceptor(sri);
 			}
 		};
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		if (CONF.corsEnabled()) {
+			source.registerCorsConfiguration("/api/**", apiCorsConfiguration());
+		}
+		return source;
+	}
+
+	@Bean
+	public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean(CorsConfigurationSource corsConfigurationSource) {
+		FilterRegistrationBean<CorsFilter> frb = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
+		frb.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
+		frb.setName("corsFilter");
+		frb.setAsyncSupported(true);
+		frb.addUrlPatterns("/api/*");
+		frb.setMatchAfter(false);
+		frb.setEnabled(CONF.corsEnabled());
+		frb.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return frb;
+	}
+
+	private CorsConfiguration apiCorsConfiguration() {
+		CorsConfiguration cors = new CorsConfiguration();
+		cors.addAllowedOriginPattern("*");
+		cors.addAllowedMethod("*");
+		cors.addAllowedHeader("*");
+		cors.setExposedHeaders(Arrays.asList("Mcp-Protocol-Version", "Mcp-Session-Id"));
+		cors.setAllowCredentials(true);
+		cors.setMaxAge(3600L);
+		return cors;
 	}
 
 	@Bean

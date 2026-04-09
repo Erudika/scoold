@@ -712,6 +712,17 @@ public class ScooldConfig extends Config {
 				externalStyles().replaceAll(",", ""));
 	}
 
+	@Documented(position = 631,
+			identifier = "cors_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Security",
+			tags = {"requires restart"},
+			description = "Enable/disable the CORS filter. It adds CORS headers to API responses.")
+	public boolean corsEnabled() {
+		return Boolean.parseBoolean(getConfigParam("cors_enabled", "false"));
+	}
+
 	/* **************************************************************************************************************
 	 * Basic Authentication                                                                    Basic Authentication *
 	 ****************************************************************************************************************/
@@ -3502,6 +3513,15 @@ public class ScooldConfig extends Config {
 			description = "Enable/disable permission for AI training on content from the website, using the new RSL standard.")
 	public boolean aiTrainingAllowed() {
 		return getConfigBoolean("ai_training_allowed", false);
+	}
+
+	@Documented(position = 3150,
+			identifier = "mcp_server_mode",
+			value = "off",
+			category = "Miscellaneous",
+			description = "Enable/disable the MCP server. Possible values: `off`, `r` - read-only, `rw` - full access.")
+	public String mcpServerMode() {
+		return getConfigParam("mcp_server_mode", "off");
 	}
 
 	/* **********************************************************************************************************/
