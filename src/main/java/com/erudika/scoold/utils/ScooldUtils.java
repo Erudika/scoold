@@ -319,10 +319,10 @@ public final class ScooldUtils {
 			return API_USER;
 		} else if (req.getServletPath().startsWith("/api/config") && isValidJWToken(apiKeyJWT)) {
 			return API_USER;
-		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) || !isValidJWToken(apiKeyJWT)) {
+		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT)) {
 			throw new UnauthorizedException();
 		}
-		return API_USER;
+		return validateTokenOrThrow(apiKeyJWT);
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
@@ -1959,10 +1959,38 @@ public final class ScooldUtils {
 	public boolean isValidJWToken(String jwt) {
 		String appSecretKey = CONF.appSecretKey();
 		String masterSecretKey = CONF.paraSecretKey();
-		return isValidJWToken(appSecretKey, jwt) || isValidJWToken(masterSecretKey, jwt);
+		return isValidJWToken(appSecretKey, jwt) != null || isValidJWToken(masterSecretKey, jwt) != null;
 	}
 
-	boolean isValidJWToken(String secret, String jwt) {
+	Profile getProfileFromClaims(String jwt, JWTClaimsSet claims, Profile defaultProfile) {
+		if (!StringUtils.isBlank(claims.getSubject())) {
+			Profile user = getParaClient().read(Utils.type(Profile.class), Profile.id(claims.getSubject()));
+			if (user == null || !user.getUser().getActive()) {
+				throw new UnauthorizedException("User is " + ((user == null) ? "null." : "banned."));
+			}
+			if (!Strings.CS.equals(jwt, user.getPersonalApiToken())) {
+				throw new UnauthorizedException("Token has been revoked.");
+			}
+			return user;
+		}
+		return defaultProfile;
+	}
+
+	Profile validateTokenOrThrow(String jwt) {
+		JWTClaimsSet claims1 = isValidJWToken(CONF.appSecretKey(), jwt); // appSecretKey
+		if (claims1 == null) {
+			JWTClaimsSet claims2 = isValidJWToken(CONF.paraSecretKey(), jwt); // masterSecretKey
+			if (claims2 == null) {
+				throw new UnauthorizedException();
+			} else {
+				return getProfileFromClaims(jwt, claims2, API_USER);
+			}
+		} else {
+			return getProfileFromClaims(jwt, claims1, API_USER);
+		}
+	}
+
+	JWTClaimsSet isValidJWToken(String secret, String jwt) {
 		try {
 			if (secret != null && jwt != null) {
 				JWSVerifier verifier = new MACVerifier(secret);
@@ -1973,11 +2001,12 @@ public final class ScooldUtils {
 
 					Date expirationTime = claims.getExpirationTime();
 					Date notBeforeTime = claims.getNotBeforeTime();
-					String jti = claims.getJWTID();
 					boolean expired = expirationTime != null && expirationTime.before(referenceTime);
 					boolean notYetValid = notBeforeTime != null && notBeforeTime.after(referenceTime);
-					boolean jtiRevoked = isApiKeyRevoked(jti, expired);
-					return !(expired || notYetValid || jtiRevoked);
+					boolean jtiRevoked = isApiKeyRevoked(claims, expired);
+					if (!(expired || notYetValid || jtiRevoked) && !claims.getClaims().isEmpty()) {
+						return claims;
+					}
 				}
 			}
 		} catch (JOSEException e) {
@@ -1985,7 +2014,7 @@ public final class ScooldUtils {
 		} catch (ParseException ex) {
 			logger.warn(null, ex);
 		}
-		return false;
+		return null;
 	}
 
 	public SignedJWT generateJWToken(Map<String, Object> claims) {
@@ -2074,8 +2103,10 @@ public final class ScooldUtils {
 		return truncatedHash;
 	}
 
-	public boolean isApiKeyRevoked(String jti, boolean expired) {
-		if (StringUtils.isBlank(jti)) {
+	public boolean isApiKeyRevoked(JWTClaimsSet claims, boolean expired) {
+		String jti = claims.getJWTID();
+		String sub = claims.getSubject();
+		if (StringUtils.isBlank(jti) || jti.equals(sub)) { // jti = sub means personal token
 			return false;
 		}
 		loadApiKeysObject(); // prevent overwriting the API keys object
@@ -2107,12 +2138,13 @@ public final class ScooldUtils {
 			long validity = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
 			long personalTokenValidity = TimeUnit.HOURS.toSeconds(Math.abs(CONF.personalTokenExpiresAfterSec()));
 			Map<String, Object> claims = new HashMap<>();
-			claims.put("jti", jti);
 			if (isPersonal) {
-				claims.put("sub", authUser.getCreatorid());
+				jti = authUser.getCreatorid();
+				claims.put("sub", jti);
 				claims.put(Config._GROUPS, authUser.getGroups());
 				validity = Math.max(personalTokenValidity, validity); // personal tokens have max lifetime of 1 week
 			}
+			claims.put("jti", jti);
 			SignedJWT jwt = generateJWToken(claims, validity);
 			if (jwt != null) {
 				String jwtString = jwt.serialize();

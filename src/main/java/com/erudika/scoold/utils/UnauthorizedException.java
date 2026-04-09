@@ -29,4 +29,8 @@ public class UnauthorizedException extends RuntimeException {
 		super("401 Unauthorized");
 	}
 
+	public UnauthorizedException(String msg) {
+		super(msg);
+	}
+
 }
