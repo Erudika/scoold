@@ -39,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import net.logicsquad.qr4j.QrCode;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
@@ -230,7 +231,8 @@ public class SettingsController {
 			HttpServletRequest req, Model model) throws ParseException {
 		Profile authUser = utils.getAuthUser(req);
 		if (StringUtils.isBlank(authUser.getPersonalApiToken())) {
-			Map<String, Object> data = utils.generateApiKey(authUser, 168, true);
+			Long personalTokenValidityHours = TimeUnit.SECONDS.toHours(CONF.personalTokenExpiresAfterSec());
+			Map<String, Object> data = utils.generateApiKey(authUser, personalTokenValidityHours.intValue(), true);
 			if (!data.isEmpty()) {
 				return ResponseEntity.ok().body(data);
 			}

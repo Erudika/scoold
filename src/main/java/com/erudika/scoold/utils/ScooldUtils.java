@@ -2105,12 +2105,13 @@ public final class ScooldUtils {
 		if (isAdmin(authUser) || (authUser != null && isPersonal && CONF.apiUserAccessEnabled())) {
 			String jti = UUID.randomUUID().toString();
 			long validity = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
+			long personalTokenValidity = TimeUnit.HOURS.toSeconds(Math.abs(CONF.personalTokenExpiresAfterSec()));
 			Map<String, Object> claims = new HashMap<>();
 			claims.put("jti", jti);
 			if (isPersonal) {
 				claims.put("sub", authUser.getCreatorid());
 				claims.put(Config._GROUPS, authUser.getGroups());
-				validity = Math.max(168, validity); // personal tokens have max lifetime of 1 week
+				validity = Math.max(personalTokenValidity, validity); // personal tokens have max lifetime of 1 week
 			}
 			SignedJWT jwt = generateJWToken(claims, validity);
 			if (jwt != null) {

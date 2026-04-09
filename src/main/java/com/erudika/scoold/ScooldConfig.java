@@ -507,6 +507,16 @@ public class ScooldConfig extends Config {
 		return getConfigInt("jwt_expires_after", Para.getConfig().jwtExpiresAfterSec());
 	}
 
+	@Documented(position = 431,
+			identifier = "personal_token_expires_after",
+			value = "604800",
+			type = Integer.class,
+			category = "Security",
+			description = "The validity period of personal API keys (Bearer tokens) for use with API/MCP. Default is 168h.")
+	public int personalTokenExpiresAfterSec() {
+		return getConfigInt("personal_token_expires_after", 168 * 60 * 60);
+	}
+
 	@Documented(position = 440,
 			identifier = "security.one_session_per_user",
 			value = "true",
