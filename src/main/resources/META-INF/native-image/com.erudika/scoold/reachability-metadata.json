@@ -3798,7 +3798,16 @@
       "type": "int[]"
     },
     {
+      "type": "io.micrometer.context.ContextRegistry"
+    },
+    {
       "type": "io.micrometer.context.ContextSnapshot"
+    },
+    {
+      "type": "io.micrometer.context.ContextSnapshotFactory"
+    },
+    {
+      "type": "io.micrometer.context.ThreadLocalAccessor"
     },
     {
       "type": "io.micrometer.core.instrument.MeterRegistry"
@@ -3810,7 +3819,56 @@
       "type": "io.micrometer.observation.Observation"
     },
     {
-      "type": "io.micrometer.observation.ObservationRegistry"
+      "type": "io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor"
+    },
+    {
+      "type": "io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapperSupplier"
+    },
+    {
+      "type": "io.modelcontextprotocol.json.schema.jackson3.JacksonJsonSchemaValidatorSupplier"
+    },
+    {
+      "type": "io.modelcontextprotocol.server.McpSyncServer",
+      "methods": [
+        {
+          "name": "close",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "io.modelcontextprotocol.spec.McpSchema"
+    },
+    {
+      "type": "io.modelcontextprotocol.spec.McpSchema$JsonSchema",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.Map",
+            "java.util.List",
+            "java.lang.Boolean",
+            "java.util.Map",
+            "java.util.Map"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "io.modelcontextprotocol.spec.McpSchema$ServerCapabilities$Builder"
+    },
+    {
+      "type": "io.modelcontextprotocol.spec.McpServerTransportProviderBase"
+    },
+    {
+      "type": "io.modelcontextprotocol.spec.McpStreamableServerTransportProvider",
+      "methods": [
+        {
+          "name": "close",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "io.reactivex.rxjava3.core.Flowable"
@@ -4558,6 +4616,9 @@
     },
     {
       "type": "long[]"
+    },
+    {
+      "type": "org.apache.catalina.Manager"
     },
     {
       "type": "org.apache.catalina.connector.RequestFacade",
@@ -5308,6 +5369,387 @@
     },
     {
       "type": "org.slf4j.spi.LocationAwareLogger"
+    },
+    {
+      "type": "org.springframework.ai.mcp.annotation.context.DefaultMetaProvider",
+			"methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.annotation.spring.scan.AbstractAnnotatedMethodBeanFactoryInitializationAotProcessor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.annotation.spring.scan.AbstractAnnotatedMethodBeanPostProcessor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.annotation.spring.scan.AbstractMcpAnnotatedBeans"
+    },
+    {
+      "type": "org.springframework.ai.mcp.annotation.spring.scan.AnnotatedMethodDiscovery"
+    },
+    {
+      "type": "org.springframework.ai.mcp.customizer.McpSyncServerCustomizer"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "capabilitiesBuilder",
+          "parameterTypes": []
+        },
+        {
+          "name": "mcpSyncServer",
+          "parameterTypes": [
+            "io.modelcontextprotocol.spec.McpServerTransportProviderBase",
+            "io.modelcontextprotocol.spec.McpSchema$ServerCapabilities$Builder",
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties",
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerChangeNotificationProperties",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "java.util.Optional"
+          ]
+        },
+        {
+          "name": "servletMcpSyncServerCustomizer",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration$EnabledSseServerCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration$EnabledStreamableServerCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration$NonStatelessServerCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerJsonMapperAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "mcpServerJsonMapper",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerStatelessAutoConfiguration$EnabledStatelessServerCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.McpServerStdioDisabledCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.StatelessToolCallbackConverterAutoConfiguration$ToolCallbackConverterCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.ToolCallbackConverterAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "syncTools",
+          "parameterTypes": [
+            "org.springframework.beans.factory.ObjectProvider",
+            "java.util.List",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.beans.factory.ObjectProvider",
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.ToolCallbackConverterAutoConfiguration$ToolCallbackConverterCondition",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "serverAnnotatedBeanFactoryInitializationAotProcessor",
+          "parameterTypes": []
+        },
+        {
+          "name": "serverAnnotatedBeanRegistry",
+          "parameterTypes": []
+        },
+        {
+          "name": "serverAnnotatedMethodBeanPostProcessor",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans",
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerProperties"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$AnnotationHints"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerAnnotatedBeanFactoryInitializationAotProcessor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerAnnotatedMethodBeanPostProcessor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerProperties",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerSpecificationFactoryAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerSpecificationFactoryAutoConfiguration$SyncServerSpecificationConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "completionSpecs",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+          ]
+        },
+        {
+          "name": "promptSpecs",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+          ]
+        },
+        {
+          "name": "resourceSpecs",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+          ]
+        },
+        {
+          "name": "resourceTemplateSpecs",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+          ]
+        },
+        {
+          "name": "toolSpecs",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerChangeNotificationProperties",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCapabilities",
+          "parameterTypes": []
+        },
+        {
+          "name": "setEnabled",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setInstructions",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setProtocol",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$ServerProtocol"
+          ]
+        },
+        {
+          "name": "setType",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$ApiType"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$ApiTypeEditor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$Capabilities",
+      "methods": [
+        {
+          "name": "setCompletion",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setPrompt",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setResource",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setTool",
+          "parameterTypes": [
+            "boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties$ServerProtocolEditor"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setDisallowDelete",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setMcpEndpoint",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.webmvc.autoconfigure.McpServerStreamableHttpWebMvcAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "webMvcStreamableServerRouterFunction",
+          "parameterTypes": [
+            "org.springframework.ai.mcp.server.webmvc.transport.WebMvcStreamableServerTransportProvider"
+          ]
+        },
+        {
+          "name": "webMvcStreamableServerTransportProvider",
+          "parameterTypes": [
+            "tools.jackson.databind.json.JsonMapper",
+            "org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.webmvc.transport.WebMvcSseServerTransportProvider"
+    },
+    {
+      "type": "org.springframework.ai.mcp.server.webmvc.transport.WebMvcStreamableServerTransportProvider"
     },
     {
       "type": "org.springframework.aop.framework.AopInfrastructureBean"
@@ -6359,6 +6801,9 @@
       ]
     },
     {
+      "type": "org.springframework.boot.http.converter.autoconfigure.HttpMessageConvertersAutoConfiguration$StringHttpMessageConvertersCustomizer"
+    },
+    {
       "type": "org.springframework.boot.http.converter.autoconfigure.HttpMessageConvertersProperties",
       "methods": [
         {
@@ -6402,12 +6847,15 @@
           "parameterTypes": []
         },
         {
-          "name": "jacksonJsonHttpMessageConverter",
+          "name": "jacksonJsonHttpMessageConvertersCustomizer",
           "parameterTypes": [
             "tools.jackson.databind.json.JsonMapper"
           ]
         }
       ]
+    },
+    {
+      "type": "org.springframework.boot.http.converter.autoconfigure.JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConvertersCustomizer"
     },
     {
       "type": "org.springframework.boot.http.converter.autoconfigure.JsonbHttpMessageConvertersConfiguration"
@@ -6683,6 +7131,9 @@
       ]
     },
     {
+      "type": "org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties"
+    },
+    {
       "type": "org.springframework.boot.servlet.autoconfigure.HttpEncodingAutoConfiguration",
       "methods": [
         {
@@ -6891,6 +7342,15 @@
       "type": "org.springframework.boot.tomcat.autoconfigure.WebSocketTomcatWebServerFactoryCustomizer"
     },
     {
+      "type": "org.springframework.boot.tomcat.autoconfigure.metrics.TomcatMetricsAutoConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.springframework.boot.tomcat.autoconfigure.servlet.TomcatServletWebServerAutoConfiguration",
       "methods": [
         {
@@ -6969,6 +7429,9 @@
       ]
     },
     {
+      "type": "org.springframework.boot.web.error.ErrorPageRegistry"
+    },
+    {
       "type": "org.springframework.boot.web.server.AbstractConfigurableWebServerFactory"
     },
     {
@@ -6996,6 +7459,9 @@
     },
     {
       "type": "org.springframework.boot.web.server.ConfigurableWebServerFactory"
+    },
+    {
+      "type": "org.springframework.boot.web.server.WebServerFactory"
     },
     {
       "type": "org.springframework.boot.web.server.WebServerFactoryCustomizer"
@@ -7119,6 +7585,9 @@
       ]
     },
     {
+      "type": "org.springframework.boot.web.server.servlet.WebListenerRegistry"
+    },
+    {
       "type": "org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContextFactory",
       "methods": [
         {
@@ -7156,6 +7625,15 @@
     },
     {
       "type": "org.springframework.boot.web.servlet.support.SpringBootServletInitializer$WebEnvironmentPropertySourceInitializer"
+    },
+    {
+      "type": "org.springframework.boot.webmvc.WebMvcWebApplicationTypeDeducer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.springframework.boot.webmvc.autoconfigure.DispatcherServletAutoConfiguration",
@@ -7298,6 +7776,9 @@
           ]
         }
       ]
+    },
+    {
+      "type": "org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration$MvcValidatorRuntimeHints"
     },
     {
       "type": "org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter",
@@ -7477,10 +7958,16 @@
       "type": "org.springframework.context.EnvironmentAware"
     },
     {
+      "type": "org.springframework.context.Lifecycle"
+    },
+    {
       "type": "org.springframework.context.LifecycleProcessor"
     },
     {
       "type": "org.springframework.context.MessageSourceAware"
+    },
+    {
+      "type": "org.springframework.context.Phased"
     },
     {
       "type": "org.springframework.context.ResourceLoaderAware"
@@ -7597,6 +8084,12 @@
       "type": "org.springframework.core.annotation.Order"
     },
     {
+      "type": "org.springframework.core.convert.ConversionService"
+    },
+    {
+      "type": "org.springframework.core.convert.converter.ConverterRegistry"
+    },
+    {
       "type": "org.springframework.core.convert.support.ConfigurableConversionService"
     },
     {
@@ -7609,10 +8102,16 @@
       "type": "org.springframework.core.task.AsyncTaskExecutor"
     },
     {
+      "type": "org.springframework.core.task.TaskExecutor"
+    },
+    {
       "type": "org.springframework.core.type.classreading.CachingMetadataReaderFactory"
     },
     {
       "type": "org.springframework.core.type.classreading.MetadataReaderFactory"
+    },
+    {
+      "type": "org.springframework.dao.DataAccessException"
     },
     {
       "type": "org.springframework.data.rest.webmvc.alps.AlpsJacksonJsonHttpMessageConverter"
@@ -7669,6 +8168,9 @@
       "type": "org.springframework.mail.javamail.JavaMailSenderImpl"
     },
     {
+      "type": "org.springframework.messaging.MessagingException"
+    },
+    {
       "type": "org.springframework.scheduling.SchedulingTaskExecutor"
     },
     {
@@ -7712,6 +8214,9 @@
     },
     {
       "type": "org.springframework.validation.SmartValidator"
+    },
+    {
+      "type": "org.springframework.validation.Validator"
     },
     {
       "type": "org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
@@ -8021,6 +8526,15 @@
       "type": "org.springframework.web.servlet.config.annotation.WebMvcConfigurer"
     },
     {
+      "type": "org.springframework.web.servlet.function.RouterFunction"
+    },
+    {
+      "type": "org.springframework.web.servlet.function.RouterFunctionBuilder$BuiltRouterFunction"
+    },
+    {
+      "type": "org.springframework.web.servlet.function.RouterFunctions$AbstractRouterFunction"
+    },
+    {
       "type": "org.springframework.web.servlet.function.support.HandlerFunctionAdapter"
     },
     {
@@ -8147,7 +8661,13 @@
       "type": "reactor.core.publisher.Flux"
     },
     {
+      "type": "reactor.core.publisher.LambdaMonoSubscriber"
+    },
+    {
       "type": "reactor.core.scheduler.Schedulers"
+    },
+    {
+      "type": "reactor.util.context.ReactorContextAccessor"
     },
     {
       "type": "short[]"
@@ -8652,6 +9172,15 @@
     {
       "type": {
         "proxy": [
+          "java.lang.reflect.TypeVariable",
+          "org.springframework.core.SerializableTypeWrapper$SerializableTypeProxy",
+          "java.io.Serializable"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
           "java.lang.reflect.WildcardType",
           "org.springframework.core.SerializableTypeWrapper$SerializableTypeProxy",
           "java.io.Serializable"
@@ -8897,6 +9426,18 @@
       "glob": "META-INF/services/com.fasterxml.jackson.databind.Module"
     },
     {
+      "glob": "META-INF/services/io.micrometer.context.ContextAccessor"
+    },
+    {
+      "glob": "META-INF/services/io.micrometer.context.ThreadLocalAccessor"
+    },
+    {
+      "glob": "META-INF/services/io.modelcontextprotocol.json.McpJsonMapperSupplier"
+    },
+    {
+      "glob": "META-INF/services/io.modelcontextprotocol.json.schema.JsonSchemaValidatorSupplier"
+    },
+    {
       "glob": "META-INF/services/jakarta.activation.spi.MailcapRegistryProvider"
     },
     {
@@ -9014,6 +9555,12 @@
       "glob": "banner.txt"
     },
     {
+      "glob": "ch/qos/logback/classic/logback-classic-version.properties"
+    },
+    {
+      "glob": "ch/qos/logback/core/logback-core-version.properties"
+    },
+    {
       "glob": "com/erudika/para/core/utils/Config$NoopConfigIncluder.class"
     },
     {
@@ -9102,6 +9649,18 @@
     },
     {
       "glob": "com/erudika/scoold/mattermost/MattermostController.class"
+    },
+    {
+      "glob": "com/erudika/scoold/mcp/MCPResources.class"
+    },
+    {
+      "glob": "com/erudika/scoold/mcp/MCPTools.class"
+    },
+    {
+      "glob": "com/erudika/scoold/mcp/MCPUtils$ConfigEntry.class"
+    },
+    {
+      "glob": "com/erudika/scoold/mcp/MCPUtils.class"
     },
     {
       "glob": "com/erudika/scoold/msteams/TeamsBot.class"
@@ -9311,6 +9870,9 @@
       "glob": "org/apache/naming/LocalStrings_en_US.properties"
     },
     {
+      "glob": "org/apache/tomcat/jni/AprStatus.class"
+    },
+    {
       "glob": "org/apache/tomcat/util/LocalStrings.properties"
     },
     {
@@ -9354,6 +9916,147 @@
     },
     {
       "glob": "org/publicsuffix/list/effective_tld_names.dat"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerSseWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerSseWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerStatelessWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerStatelessWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerStreamableHttpWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure$McpServerStreamableHttpWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerSseWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerSseWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerStatelessWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerStatelessWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerStreamableHttpWebFluxAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/autoconfigure/McpServerStreamableHttpWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledSseServerCondition$McpServerEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledSseServerCondition$SseEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledSseServerCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledStreamableServerCondition$McpServerEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledStreamableServerCondition$StreamableEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$EnabledStreamableServerCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$NonStatelessServerCondition$SseEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$NonStatelessServerCondition$StreamableEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration$NonStatelessServerCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerJsonMapperAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStatelessAutoConfiguration$EnabledStatelessServerCondition$McpServerEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStatelessAutoConfiguration$EnabledStatelessServerCondition$StatelessEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStatelessAutoConfiguration$EnabledStatelessServerCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStatelessAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStdioDisabledCondition$McpServerEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStdioDisabledCondition$StdioDisabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/McpServerStdioDisabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/StatelessToolCallbackConverterAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/ToolCallbackConverterAutoConfiguration$ToolCallbackConverterCondition$McpServerEnabledCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/ToolCallbackConverterAutoConfiguration$ToolCallbackConverterCondition$ToolCallbackConvertCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/ToolCallbackConverterAutoConfiguration$ToolCallbackConverterCondition.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/ToolCallbackConverterAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerAnnotationScannerAutoConfiguration$AnnotationHints.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerAnnotationScannerAutoConfiguration$ServerAnnotatedBeanFactoryInitializationAotProcessor.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerAnnotationScannerAutoConfiguration$ServerAnnotatedMethodBeanPostProcessor.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerAnnotationScannerAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerSpecificationFactoryAutoConfiguration$AsyncServerSpecificationConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerSpecificationFactoryAutoConfiguration$SyncServerSpecificationConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/McpServerSpecificationFactoryAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/common/autoconfigure/annotations/StatelessServerSpecificationFactoryAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/webmvc/autoconfigure/McpServerSseWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/webmvc/autoconfigure/McpServerStatelessWebMvcAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/ai/mcp/server/webmvc/autoconfigure/McpServerStreamableHttpWebMvcAutoConfiguration.class"
     },
     {
       "glob": "org/springframework/aot/hint/annotation/Reflective.class"
@@ -9506,7 +10209,16 @@
       "glob": "org/springframework/boot/http/converter/autoconfigure/HttpMessageConvertersAutoConfiguration$StringHttpMessageConverterConfiguration.class"
     },
     {
+      "glob": "org/springframework/boot/http/converter/autoconfigure/HttpMessageConvertersAutoConfiguration$StringHttpMessageConvertersCustomizer.class"
+    },
+    {
       "glob": "org/springframework/boot/http/converter/autoconfigure/HttpMessageConvertersAutoConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/boot/http/converter/autoconfigure/Jackson2HttpMessageConvertersConfiguration$Jackson2JsonMessageConvertersCustomizer.class"
+    },
+    {
+      "glob": "org/springframework/boot/http/converter/autoconfigure/Jackson2HttpMessageConvertersConfiguration$Jackson2XmlMessageConvertersCustomizer.class"
     },
     {
       "glob": "org/springframework/boot/http/converter/autoconfigure/Jackson2HttpMessageConvertersConfiguration$MappingJackson2HttpMessageConverterConfiguration.class"
@@ -9530,7 +10242,13 @@
       "glob": "org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConverterConfiguration.class"
     },
     {
+      "glob": "org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConvertersCustomizer.class"
+    },
+    {
       "glob": "org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonXmlHttpMessageConverterConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonXmlHttpMessageConvertersCustomizer.class"
     },
     {
       "glob": "org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration.class"
@@ -9647,6 +10365,9 @@
       "glob": "org/springframework/boot/tomcat/autoconfigure/TomcatWebServerConfiguration.class"
     },
     {
+      "glob": "org/springframework/boot/tomcat/autoconfigure/metrics/TomcatMetricsAutoConfiguration.class"
+    },
+    {
       "glob": "org/springframework/boot/tomcat/autoconfigure/servlet/TomcatServletWebServerAutoConfiguration.class"
     },
     {
@@ -9681,6 +10402,9 @@
     },
     {
       "glob": "org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class"
+    },
+    {
+      "glob": "org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$MvcValidatorRuntimeHints.class"
     },
     {
       "glob": "org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$ProblemDetailsErrorHandlingConfiguration.class"
@@ -9799,7 +10523,7 @@
     {
       "glob": "public/index.html"
     },
-		{
+    {
       "glob": "public/offline.html"
     },
 		{
