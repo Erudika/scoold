@@ -859,7 +859,7 @@ public final class ScooldUtils {
 	}
 
 	public Profile getAuthUser(HttpServletRequest req) {
-		return (Profile) req.getAttribute(AUTH_USER_ATTRIBUTE);
+		return req != null ? (Profile) req.getAttribute(AUTH_USER_ATTRIBUTE) : null;
 	}
 
 	public boolean isAuthenticated(HttpServletRequest req) {
@@ -1444,6 +1444,9 @@ public final class ScooldUtils {
 	}
 
 	public String getSpaceIdFromCookie(Profile authUser, HttpServletRequest req) {
+		if (req == null) {
+			return Post.DEFAULT_SPACE;
+		}
 		if (isAdmin(authUser) && req.getParameter("space") != null) {
 			Sysprop s = pc.read(getSpaceId(req.getParameter("space"))); // API override
 			if (s != null) {
@@ -2106,7 +2109,11 @@ public final class ScooldUtils {
 	public boolean isApiKeyRevoked(JWTClaimsSet claims, boolean expired) {
 		String jti = claims.getJWTID();
 		String sub = claims.getSubject();
-		if (StringUtils.isBlank(jti) || jti.equals(sub)) { // jti = sub means personal token
+		if (StringUtils.isBlank(jti)) {
+			// don't allow blank jti values
+			return true;
+		}
+		if (Strings.CS.equals(jti, sub)) { // jti = sub means personal token
 			return false;
 		}
 		loadApiKeysObject(); // prevent overwriting the API keys object

@@ -92,7 +92,7 @@ public class MCPTools {
 	public McpSchema.CallToolResult getStats(
 			@McpToolParam(description = "Include server logs in the response.", required = false) Boolean includeLogs,
 			@McpToolParam(description = "Maximum log lines when includeLogs=true.", required = false) Integer maxLogLines) {
-		return utils.asStructuredResult(api.stats(includeLogs, maxLogLines));
+		return utils.asStructuredResult(api.stats(includeLogs, maxLogLines, request()));
 	}
 
 	@McpTool(name = "config_search",
@@ -175,7 +175,7 @@ public class MCPTools {
 			@McpToolParam(description = "Optional page size limit. Max. 30.", required = false) Integer limit,
 			@McpToolParam(description = "Optional sort field.", required = false) String sortby,
 			@McpToolParam(description = "Optional sort order - descending if true.", required = false) Boolean desc) {
-		return utils.asStructuredResult(api.search(safe(type), safe(queryText), page, limit, desc,
+		return utils.asStructuredResult(api.search(safe(type), safe(queryText), "", page, limit, desc,
 				sortby, sortby, request()));
 	}
 
@@ -964,7 +964,7 @@ public class MCPTools {
 					idempotentHint = true, openWorldHint = false))
 	public McpSchema.CallToolResult getConfig(
 			@McpToolParam(description = "Configuration format - hocon or json.", required = false) String format) {
-		return utils.asStructuredResult(api.config(format, response()));
+		return utils.asStructuredResult(api.config(format, request(), response()));
 	}
 
 	@McpTool(

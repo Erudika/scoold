@@ -41,6 +41,7 @@ import com.erudika.scoold.controllers.QuestionController;
 import com.erudika.scoold.controllers.QuestionsController;
 import com.erudika.scoold.controllers.ReportsController;
 import com.erudika.scoold.controllers.RevisionsController;
+import com.erudika.scoold.controllers.SearchController;
 import com.erudika.scoold.controllers.TagsController;
 import com.erudika.scoold.controllers.VoteController;
 import com.erudika.scoold.core.Comment;
@@ -83,6 +84,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
@@ -96,6 +98,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -128,13 +131,14 @@ public class ApiController {
 	private final TagsController tagsController;
 	private final ReportsController reportsController;
 	private final AdminController adminController;
+	private final SearchController searchController;
 
 	public ApiController(ScooldUtils utils, ParaClient pc, QuestionsController questionsController,
 			QuestionController questionController, VoteController voteController,
 			CommentController commentController, PeopleController peopleController,
 			ProfileController profileController, RevisionsController revisionsController,
 			TagsController tagsController, ReportsController reportsController,
-			AdminController adminController) {
+			AdminController adminController, SearchController searchController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
 		this.questionsController = questionsController;
@@ -147,6 +151,7 @@ public class ApiController {
 		this.tagsController = tagsController;
 		this.reportsController = reportsController;
 		this.adminController = adminController;
+		this.searchController = searchController;
 	}
 
 	@GetMapping
@@ -182,12 +187,7 @@ public class ApiController {
 		}
 		Post post = ParaObjectUtils.setAnnotatedFields(entity);
 
-		if (!StringUtils.isBlank(post.getCreatorid())) {
-			Profile authUser = pc.read(Profile.id(post.getCreatorid()));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(post.getCreatorid(), req);
 		Model model = new ExtendedModelMap();
 		List<String> spaces = readSpaces(post.getSpace());
 		post.setSpace(spaces.iterator().hasNext() ? spaces.iterator().next() : null);
@@ -261,12 +261,7 @@ public class ApiController {
 			badReq("Missing or invalid request body.");
 		}
 		String editorid = (String) entity.get("lasteditby");
-		if (!StringUtils.isBlank(editorid)) {
-			Profile authUser = pc.read(Profile.id(editorid));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(editorid, req);
 		String space = (String) entity.get("space");
 		String title = (String) entity.get("title");
 		String body = (String) entity.get("body");
@@ -302,12 +297,7 @@ public class ApiController {
 			badReq("Missing or invalid request body.");
 		}
 		String editorid = (String) entity.get("lasteditby");
-		if (!StringUtils.isBlank(editorid)) {
-			Profile authUser = pc.read(Profile.id(editorid));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(editorid, req);
 		questionController.get(id, "", "", req, res, model);
 		Post post = (Post) model.getAttribute("showPost");
 		if (post == null) {
@@ -396,7 +386,8 @@ public class ApiController {
 			@RequestParam(required = false, defaultValue = "false") Boolean desc,
 			HttpServletRequest req, HttpServletResponse res) {
 		Post post = pc.read(id);
-		if (post == null) {
+		Profile authUser = utils.getAuthUser(req);
+		if (post == null || !utils.canAccessSpace(authUser, post.getSpace())) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
@@ -414,7 +405,8 @@ public class ApiController {
 		Model model = new ExtendedModelMap();
 		revisionsController.get(id, req, res, model);
 		Post post = (Post) model.getAttribute("showPost");
-		if (post == null) {
+		Profile authUser = utils.getAuthUser(req);
+		if (post == null || !utils.canAccessSpace(authUser, post.getSpace())) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
@@ -430,6 +422,10 @@ public class ApiController {
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
+		}
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
 		}
 		Map<String, Object> userEntity = new HashMap<>();
 		userEntity.put(Config._TYPE, Utils.type(User.class));
@@ -594,7 +590,8 @@ public class ApiController {
 	@DeleteMapping("/users/{id}")
 	public void deleteUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile profile = pc.read(Profile.id(id));
-		if (profile == null) {
+		Profile authUser = utils.getAuthUser(req);
+		if (profile == null || !utils.isAdmin(authUser) || authUser.getId().equals(profile.getId())) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return;
 		}
@@ -761,12 +758,7 @@ public class ApiController {
 			badReq("Parent object not found. Provide a valid parentid.");
 			return null;
 		}
-		if (!StringUtils.isBlank(creatorid)) {
-			Profile authUser = pc.read(Profile.id(creatorid));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(creatorid, req);
 		Model model = new ExtendedModelMap();
 		commentController.createAjax(comment, parentid, req, model);
 		Comment created = (Comment) model.getAttribute("showComment");
@@ -800,12 +792,7 @@ public class ApiController {
 			badReq("Missing or invalid request body.");
 		}
 		String creatorid = (String) entity.get(Config._CREATORID);
-		if (!StringUtils.isBlank(creatorid)) {
-			Profile authUser = pc.read(Profile.id(creatorid));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(creatorid, req);
 		Model model = new ExtendedModelMap();
 		reportsController.create(req, res, model);
 		checkForErrorsAndThrow(model);
@@ -945,7 +932,8 @@ public class ApiController {
 			@RequestParam(required = false) String sortby,
 			@RequestParam(required = false) String lastKey,
 			HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isWebhooksEnabled()) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
@@ -955,7 +943,8 @@ public class ApiController {
 
 	@GetMapping("/webhooks/{id}")
 	public Webhook getWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isWebhooksEnabled()) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
@@ -969,7 +958,8 @@ public class ApiController {
 
 	@PatchMapping("/webhooks/{id}")
 	public Webhook updateWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isWebhooksEnabled()) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
@@ -984,7 +974,8 @@ public class ApiController {
 
 	@DeleteMapping("/webhooks/{id}")
 	public void deleteWebhook(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isWebhooksEnabled()) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 		}
 		Webhook webhook = pc.read(id);
@@ -1006,7 +997,9 @@ public class ApiController {
 	}
 
 	@GetMapping("/search/{type}/{query}")
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> search(@PathVariable String type, @PathVariable String query,
+			@RequestParam(required = false) String q,
 			@RequestParam(required = false) Integer page,
 			@RequestParam(required = false) Integer limit,
 			@RequestParam(required = false) Boolean desc,
@@ -1016,9 +1009,17 @@ public class ApiController {
 		if ("answer".equals(type)) {
 			type = Utils.type(Reply.class);
 		}
-		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
 		Map<String, Object> result = new HashMap<>();
-		result.put("items", pc.findQuery(type, query, pager));
+		Model model = new ExtendedModelMap();
+		searchController.get(type, query, q, req, model);
+		Pager pager = (Pager) model.getAttribute("itemcount");
+		List<ParaObject> items = new LinkedList<>();
+		items.addAll((Collection<? extends ParaObject>) model.getAttribute("userlist"));
+		items.addAll((Collection<? extends ParaObject>) model.getAttribute("questionslist"));
+		items.addAll((Collection<? extends ParaObject>) model.getAttribute("answerslist"));
+		items.addAll((Collection<? extends ParaObject>) model.getAttribute("feedbacklist"));
+		items.addAll((Collection<? extends ParaObject>) model.getAttribute("commentslist"));
+		result.put("items", items);
 		result.put("page", pager.getPage());
 		result.put("totalHits", pager.getCount());
 		if (!StringUtils.isBlank(pager.getLastKey())) {
@@ -1030,7 +1031,11 @@ public class ApiController {
 	@GetMapping("/stats")
 	public Map<String, Object> stats(
 			@RequestParam(required = false, defaultValue = "false") Boolean includeLogs,
-			@RequestParam(required = false, defaultValue = "10000") Integer maxLogLines) {
+			@RequestParam(required = false, defaultValue = "10000") Integer maxLogLines, HttpServletRequest req) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
+		}
 		Map<String, Object> stats = new LinkedHashMap<>();
 		long qcount = 0L;
 		long acount = 0L;
@@ -1102,8 +1107,28 @@ public class ApiController {
 		adminController.restore(file, isso, deleteall, req, res);
 	}
 
+	@PostMapping("/files")
+	@ResponseBody
+	public Map<String, Object> uploadFile(@RequestParam("file") MultipartFile file,
+			HttpServletRequest req, HttpServletResponse res) throws IOException {
+		badReq("Not supported");
+		return null;
+	}
+
+	@GetMapping("/files/{filename:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpServletRequest req) {
+		badReq("Not supported");
+		return null;
+	}
+
 	@GetMapping(path = "/config", produces = {"application/hocon", "application/json"})
-	public String config(@RequestParam(required = false, defaultValue = "json") String format, HttpServletResponse res) {
+	public String config(@RequestParam(required = false, defaultValue = "json") String format,
+			HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
+		}
 		if ("hocon".equalsIgnoreCase(format)) {
 			res.setContentType("application/hocon");
 			return CONF.render(false);
@@ -1115,6 +1140,10 @@ public class ApiController {
 
 	@PutMapping("/config")
 	public String configSet(HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
+		}
 		com.typesafe.config.Config modifiedConf = com.typesafe.config.ConfigFactory.empty();
 		String format;
 		if ("application/hocon".equals(req.getContentType())) {
@@ -1143,11 +1172,15 @@ public class ApiController {
 		CONF.overwriteConfig(modifiedConf).store();
 		pc.setAppSettings(CONF.getParaAppSettings());
 		triggerConfigUpdateEvent(CONF.getConfigMap());
-		return config(format, res);
+		return config(format, req, res);
 	}
 
 	@GetMapping("/config/get/{key}")
 	public Map<String, Object> configGet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
+		}
 		Object value = null;
 		try {
 			value = CONF.getConfigValue(key, null);
@@ -1158,6 +1191,10 @@ public class ApiController {
 
 	@PutMapping("/config/set/{key}")
 	public void configSet(@PathVariable String key, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser)) {
+			badReq("Not allowed.");
+		}
 		Map<String, Object> entity = readEntity(req);
 		if (entity.isEmpty()) {
 			badReq("Missing or invalid request body.");
@@ -1195,12 +1232,7 @@ public class ApiController {
 	}
 
 	private boolean voteRequest(boolean isUpvote, String id, String userid, HttpServletRequest req) {
-		if (!StringUtils.isBlank(userid)) {
-			Profile authUser = pc.read(Profile.id(userid));
-			if (authUser != null) {
-				req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-			}
-		}
+		switchAuthContext(userid, req);
 		return isUpvote ? voteController.voteup(null, id, req) : voteController.votedown(null, id, req);
 	}
 
@@ -1252,8 +1284,20 @@ public class ApiController {
 		}
 		res.setStatus(code);
 		error.put("code", code);
-		error.put("message", ex.getMessage());
+		error.put("message", ex != null ? ex.getMessage() : "-");
 		return error;
+	}
+
+	private void switchAuthContext(String targetUserId, HttpServletRequest req) {
+		// this should be possible only if the current user is API_USER (admin)
+		// if personal access tokens are used, always return authUser (current authenticated user)
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser) && !StringUtils.isBlank(targetUserId)) {
+			Profile targetUser = pc.read(Profile.id(targetUserId));
+			if (targetUser != null) {
+				req.setAttribute(AUTH_USER_ATTRIBUTE, targetUser);
+			}
+		}
 	}
 
 	private Map<String, Object> healthCheck() {
