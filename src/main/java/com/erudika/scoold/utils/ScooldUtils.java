@@ -1967,6 +1967,9 @@ public final class ScooldUtils {
 
 	Profile getProfileFromClaims(String jwt, JWTClaimsSet claims, Profile defaultProfile) {
 		if (!StringUtils.isBlank(claims.getSubject())) {
+			if (!CONF.apiUserAccessEnabled()) {
+				throw new UnauthorizedException("PAT feature is disabled.");
+			}
 			Profile user = getParaClient().read(Utils.type(Profile.class), Profile.id(claims.getSubject()));
 			if (user == null || !user.getUser().getActive()) {
 				throw new UnauthorizedException("User is " + ((user == null) ? "null." : "banned."));
@@ -2114,6 +2117,13 @@ public final class ScooldUtils {
 			return true;
 		}
 		if (Strings.CS.equals(jti, sub)) { // jti = sub means personal token
+			return false;
+		}
+		// jti = hmac(apiSecret) special case - used for short-lived service tokens
+		// in Scoold Cloud for checking health and stats.
+		long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
+		if (Strings.CS.equals(jti, Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey())) &&
+				timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
 			return false;
 		}
 		loadApiKeysObject(); // prevent overwriting the API keys object
