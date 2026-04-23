@@ -10559,154 +10559,19 @@
 			"glob": "spring.properties"
 		},
 		{
-			"glob": "static/fonts/fontawesome-webfont.woff2"
+			"glob": "emails/*"
 		},
 		{
-			"glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
+			"glob": "msteams/*"
 		},
 		{
-			"glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
+			"glob": "static/*"
 		},
 		{
-			"glob": "static/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
+			"glob": "templates/*"
 		},
 		{
-			"glob": "static/images/amazon.svg"
-		},
-		{
-			"glob": "static/images/anon.svg"
-		},
-		{
-			"glob": "static/images/favicon.ico"
-		},
-		{
-			"glob": "static/images/google.svg"
-		},
-		{
-			"glob": "static/images/logo.svg"
-		},
-		{
-			"glob": "static/images/logowhite.png"
-		},
-		{
-			"glob": "static/images/mattermost.svg"
-		},
-		{
-			"glob": "static/images/teams.svg"
-		},
-		{
-			"glob": "static/index.html"
-		},
-		{
-			"glob": "static/scripts/cities.js"
-		},
-		{
-			"glob": "static/scripts/codemirror-4.inline-attachment.min.js"
-		},
-		{
-			"glob": "static/scripts/diff_match_patch.js"
-		},
-		{
-			"glob": "static/scripts/easymde.min.js"
-		},
-		{
-			"glob": "static/scripts/emoji-picker.js"
-		},
-		{
-			"glob": "static/scripts/emojibase/data.json"
-		},
-		{
-			"glob": "static/scripts/emojibase/messages.json"
-		},
-		{
-			"glob": "static/scripts/inline-attachment.min.js"
-		},
-		{
-			"glob": "static/scripts/jquery.min.js"
-		},
-		{
-			"glob": "static/scripts/materialize.min.js"
-		},
-		{
-			"glob": "static/scripts/picmo-popup.min.js"
-		},
-		{
-			"glob": "static/scripts/picmo.min.js"
-		},
-		{
-			"glob": "static/scripts/prism.min.js"
-		},
-		{
-			"glob": "static/scripts/scoold.js"
-		},
-		{
-			"glob": "static/service-worker.js"
-		},
-		{
-			"glob": "static/styles/easymde.min.css"
-		},
-		{
-			"glob": "static/styles/font-awesome.min.css"
-		},
-		{
-			"glob": "static/styles/highlighting.css"
-		},
-		{
-			"glob": "static/styles/materialize.min.css"
-		},
-		{
-			"glob": "static/styles/style.css"
-		},
-		{
-			"glob": "templates"
-		},
-		{
-			"glob": "templates/admin.vm"
-		},
-		{
-			"glob": "templates/base.vm"
-		},
-		{
-			"glob": "templates/blank.vm"
-		},
-		{
-			"glob": "templates/comment.vm"
-		},
-		{
-			"glob": "templates/macro.vm"
-		},
-		{
-			"glob": "templates/notfound.vm"
-		},
-		{
-			"glob": "templates/people.vm"
-		},
-		{
-			"glob": "templates/profile.vm"
-		},
-		{
-			"glob": "templates/question.vm"
-		},
-		{
-			"glob": "templates/questions.vm"
-		},
-		{
-			"glob": "templates/reply.vm"
-		},
-		{
-			"glob": "templates/reports.vm"
-		},
-		{
-			"glob": "templates/settings.vm"
-		},
-		{
-			"glob": "templates/signin.vm"
-		},
-		{
-			"glob": "templates/tags.vm"
-		},
-		{
-			"glob": "themes/default.css"
+			"glob": "themes/*"
 		},
 		{
 			"module": "java.base",
