@@ -3288,7 +3288,7 @@ public class ScooldConfig extends Config {
 			category = "Miscellaneous",
 			description = "Maximum batch size for the Para client pagination requests.")
 	public int batchRequestSize() {
-		return getConfigInt("batch_request_size", 0);
+		return getConfigInt("batch_request_size", 200);
 	}
 
 	@Documented(position = 2940,

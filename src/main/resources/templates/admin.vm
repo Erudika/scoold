@@ -202,7 +202,9 @@
 			#if($scooldimports && !$scooldimports.isEmpty())
 			<div class="row">
 				<div class="col s12">
-					<h4>$!lang.get('admin.importlog')</h4>
+					<h4>$!lang.get('admin.importlog')
+						<a href="$adminlink/clear-import-log"class="smallText post-refresh">$!lang.get('clear').toLowerCase()</a>
+					</h4>
 					<table class="responsive-table">
 						<thead>
 							<tr>

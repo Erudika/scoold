@@ -67,7 +67,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -104,10 +109,17 @@ public class AdminController {
 	private final String soDateFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final Pattern uploadsRegex;
+	private final Pattern stackoverflowLinksRegex;
+	private final Pattern refImageLinkRegex;
 
 	public AdminController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.uploadsRegex = Pattern.compile("(http.*?)\\/upload\\/files\\/", Pattern.MULTILINE);
+		this.stackoverflowLinksRegex = Pattern.compile("https:\\/\\/(stackoverflow|stackoverflowteams)\\.com"
+				+ "\\/.*?\\/images\\/.*?\\/([^\\)\\s]+)", Pattern.MULTILINE);
+		this.refImageLinkRegex = Pattern.compile("(\\]\\[\\d+\\]\\])(\\[\\d+\\])", Pattern.MULTILINE);
 	}
 
 	@GetMapping
@@ -358,6 +370,28 @@ public class AdminController {
 		return "redirect:" + Optional.ofNullable(req.getParameter("returnto")).orElse(ADMINLINK);
 	}
 
+	@PostMapping("/clear-import-log")
+	public String clearImportLog(HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			logger.info("Clearing import log entries...");
+			List<String> toDelete = new LinkedList<>();
+			pc.readEverything((pager) -> {
+				pager.setSelect(Collections.singletonList(Config._ID));
+				List<Sysprop> objects = pc.findQuery("scooldimport", "*", pager);
+				toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+				return objects;
+			});
+			pc.deleteAll(toDelete);
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + ADMINLINK + "#backup-tab";
+		}
+	}
+
 	@GetMapping(value = "/export", produces = "application/zip")
 	public ResponseEntity<StreamingResponseBody> backup(HttpServletRequest req, HttpServletResponse response) {
 		Profile authUser = utils.getAuthUser(req);
@@ -385,8 +419,10 @@ public class AdminController {
 					writer.writeValue(zipOut, objects);
 					count += objects.size();
 				} while (!objects.isEmpty());
-				logger.info("Exported {} objects to {}. Downloaded by {} (pager.count={})", count, fileName + ".zip",
-						authUser.getCreatorid() + " " + authUser.getName(), pager.getCount());
+				// also export all uploaded files
+				long ucount = loadBinaryFiles(zipOut);
+				logger.info("Exported {} objects and {} files to {}. Downloaded by {} (pager.count={})", count, ucount,
+						fileName + ".zip", authUser.getCreatorid() + " " + authUser.getName(), pager.getCount());
 			} catch (final IOException e) {
 				logger.error("Failed to export data.", e);
 			}
@@ -430,42 +466,7 @@ public class AdminController {
 					pc.deleteAll(toDelete);
 				}
 				if (Strings.CI.endsWith(filename, ".zip")) {
-					try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
-						ZipEntry zipEntry;
-						List<ParaObject> toCreate = new LinkedList<ParaObject>();
-						long countUpdated = Utils.timestamp();
-						while ((zipEntry = zipIn.getNextEntry()) != null) {
-							if (isso) {
-								importFromSOArchive(zipIn, zipEntry, reader, comments2authors, accounts2emails, si);
-							} else if (zipEntry.getName().endsWith(".json")) {
-								List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
-									public void close() throws IOException {
-										zipIn.closeEntry();
-									}
-								});
-								objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
-								if (toCreate.size() >= CONF.importBatchSize()) {
-									pc.createAll(toCreate);
-									toCreate.clear();
-								}
-								si.addProperty("count", ((int) si.getProperty("count")) + objects.size());
-							} else {
-								logger.error("Expected JSON but found unknown file type to import: {}", zipEntry.getName());
-							}
-							if (Utils.timestamp() > countUpdated + TimeUnit.SECONDS.toMillis(5)) {
-								pc.update(si);
-								countUpdated = Utils.timestamp();
-							}
-						}
-						if (!toCreate.isEmpty()) {
-							pc.createAll(toCreate);
-						}
-						if (isso) {
-							// apply additional fixes to data
-							updateSOCommentAuthors(comments2authors);
-							updateSOUserAccounts(accounts2emails);
-						}
-					}
+					importZipEntries(inputStream, reader, comments2authors, accounts2emails, si, isso);
 				} else if (Strings.CI.endsWith(filename, ".json")) {
 					if (isso) {
 						List<Map<String, Object>> objs = reader.readValue(inputStream);
@@ -564,8 +565,84 @@ public class AdminController {
 		}
 	}
 
+	private void importZipEntries(InputStream inputStream, ObjectReader reader, Map<String, String> comments2authors,
+			Map<String, User> accounts2emails, Sysprop si, boolean isso) throws IOException, ParseException {
+		ExecutorService uploadPool = Executors.newFixedThreadPool(20);
+		try (ZipInputStream zipIn = new ZipInputStream(inputStream)) {
+			ZipEntry zipEntry;
+			List<ParaObject> toCreate = new LinkedList<ParaObject>();
+			List<CompletableFuture<Void>> pendingUploads = new ArrayList<>();
+			long countUpdated = Utils.timestamp();
+			while ((zipEntry = zipIn.getNextEntry()) != null) {
+				if (isso) {
+					importFromSOArchive(zipIn, zipEntry, reader, comments2authors, accounts2emails, si, uploadPool);
+				} else if (zipEntry.getName().endsWith(".json")) {
+					List<Map<String, Object>> objects = reader.readValue(new FilterInputStream(zipIn) {
+						public void close() throws IOException {
+							zipIn.closeEntry();
+						}
+					});
+					objects.forEach(o -> toCreate.add(rewriteUploadUrls(ParaObjectUtils.setAnnotatedFields(o))));
+					if (toCreate.size() >= CONF.importBatchSize()) {
+						pc.createAll(toCreate);
+						toCreate.clear();
+					}
+					si.addProperty("count", ((int) si.getProperty("count")) + objects.size());
+				} else {
+					pendingUploads.add(storeBinaryFile(zipIn, zipEntry, uploadPool));
+					if (pendingUploads.size() >= 20) {
+						CompletableFuture.allOf(pendingUploads.toArray(CompletableFuture[]::new)).join();
+						pendingUploads.clear();
+					}
+				}
+				if (Utils.timestamp() > countUpdated + TimeUnit.SECONDS.toMillis(5)) {
+					pc.update(si);
+					countUpdated = Utils.timestamp();
+				}
+			}
+			if (!toCreate.isEmpty()) {
+				pc.createAll(toCreate);
+			}
+			if (!pendingUploads.isEmpty()) {
+				CompletableFuture.allOf(pendingUploads.toArray(CompletableFuture[]::new)).join();
+			}
+			if (isso) {
+				// apply additional fixes to data
+				updateSOCommentAuthors(comments2authors);
+				updateSOUserAccounts(accounts2emails);
+			}
+		} finally {
+			uploadPool.shutdown();
+		}
+	}
+
+	private CompletableFuture<Void> storeBinaryFile(ZipInputStream zipIn, ZipEntry zipEntry, ExecutorService uploadPool)
+			throws IOException {
+		// IN PRO: store files in ./uploads
+		logger.info("Unable to import file {} - this feature is available only in Scoold Pro.", zipEntry.getName());
+		return CompletableFuture.completedFuture(null);
+	}
+
+	private long loadBinaryFiles(ZipOutputStream zipOut) throws IOException {
+		return 0;
+	}
+
+	private ParaObject rewriteUploadUrls(ParaObject po) {
+		if (po instanceof Post && Strings.CS.contains(((Post) po).getBody(), "/upload/files/")) {
+			Matcher m = uploadsRegex.matcher(((Post) po).getBody());
+			StringBuffer sb = new StringBuffer(((Post) po).getBody().length()); // StringBuilder is Java 9+
+			while (m.find()) {
+				m.appendReplacement(sb, Matcher.quoteReplacement(CONF.serverUrl()
+						+ CONF.serverContextPath() + "/upload/files/"));
+			}
+			m.appendTail(sb);
+			((Post) po).setBody(sb.toString());
+		}
+		return po;
+	}
+
 	private List<ParaObject> importFromSOArchive(ZipInputStream zipIn, ZipEntry zipEntry, ObjectReader mapReader,
-			Map<String, String> comments2authors, Map<String, User> accounts2emails, Sysprop si)
+			Map<String, String> comments2authors, Map<String, User> accounts2emails, Sysprop si, ExecutorService uploadPool)
 			throws IOException, ParseException {
 		if (zipEntry.getName().endsWith(".json")) {
 			List<Map<String, Object>> objs = mapReader.readValue(new FilterInputStream(zipIn) {
@@ -573,10 +650,9 @@ public class AdminController {
 					zipIn.closeEntry();
 				}
 			});
-			// IN PRO: rewrite all image links to relative local URLs
 			return importFromSOArchiveSingle(zipEntry.getName(), objs, comments2authors, accounts2emails, si);
 		} else {
-			// IN PRO: store files in ./uploads
+			storeBinaryFile(zipIn, zipEntry, uploadPool);
 			return Collections.emptyList();
 		}
 	}
@@ -611,6 +687,7 @@ public class AdminController {
 
 	private void importPostsFromSO(List<Map<String, Object>> objs, List<ParaObject> toImport, Sysprop si)
 			throws ParseException {
+		// IN PRO: rewrite all image links to relative local URLs
 		logger.info("Importing {} posts...", objs.size());
 		int imported = 0;
 		for (Map<String, Object> obj : objs) {
@@ -635,6 +712,29 @@ public class AdminController {
 			p.setId("post_" + (Integer) obj.getOrDefault("id", Utils.getNewId()));
 			p.setBody((String) obj.get("bodyMarkdown"));
 			p.setSpace((String) obj.getOrDefault("space", Post.DEFAULT_SPACE)); // optional
+
+			// Rewrite all links to https://stackoverflowteams.com to /upload/files/...
+			Matcher m = stackoverflowLinksRegex.matcher(p.getBody());
+			StringBuffer sb = new StringBuffer(p.getBody().length());
+			while (m.find()) {
+				String g2 = Optional.ofNullable(m.group(2)).orElse("");
+				String fileName = StringUtils.substringBeforeLast(g2.replaceAll("-", ""), ".");
+				String ext = StringUtils.substringAfterLast(g2, ".");
+				ext = StringUtils.isBlank(ext) ? "" : "." + ext;
+				m.appendReplacement(sb, Matcher.quoteReplacement(CONF.serverUrl() + CONF.serverContextPath() +
+						"/upload/files/" + fileName + ext));
+			}
+			m.appendTail(sb);
+			// convert [![Title][N]][N] → [![Title][N]](N) so inline images render correctly
+			Matcher rm = refImageLinkRegex.matcher(sb.toString());
+			StringBuffer sb2 = new StringBuffer(sb.length());
+			while (rm.find()) {
+				rm.appendReplacement(sb2, Matcher.quoteReplacement(rm.group(1) +
+						rm.group(2).replace('[', '(').replace(']', ')')));
+			}
+			rm.appendTail(sb2);
+
+			p.setBody(sb2.toString());
 			p.setVotes((Integer) obj.getOrDefault("score", 0));
 			p.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			Integer creatorId = (Integer) obj.getOrDefault("ownerUserId", null);
@@ -689,9 +789,14 @@ public class AdminController {
 			c.setParentid(parentId != null ? "post_" + parentId : null);
 			c.setTimestamp(DateUtils.parseDate((String) obj.get("creationDate"), soDateFormat1, soDateFormat2).getTime());
 			Integer creatorId = (Integer) obj.getOrDefault("userId", null);
-			String userid = "user_" + creatorId;
-			c.setCreatorid(creatorId != null ? Profile.id(userid) : utils.getSystemUser().getId());
-			comments2authors.put(c.getId(), userid);
+			String creatorDisplayName = (String) obj.getOrDefault("userDisplayName", null);
+			if (creatorId == null && !StringUtils.isBlank(creatorDisplayName)) {
+				c.setAuthorName(creatorDisplayName);
+			} else {
+				String userid = "user_" + creatorId;
+				c.setCreatorid(creatorId != null ? Profile.id(userid) : utils.getSystemUser().getId());
+				comments2authors.put(c.getId(), userid);
+			}
 			toImport.add(c);
 			imported++;
 			if (toImport.size() >= CONF.importBatchSize()) {
@@ -788,9 +893,11 @@ public class AdminController {
 	}
 
 	private void updateSOCommentAuthors(Map<String, String> comments2authors) {
+		logger.info("Importing {} comment authors...", comments2authors.size());
 		if (!comments2authors.isEmpty()) {
 			// fetch & update comment author names
-			Map<String, ParaObject> authors = pc.readAll(new ArrayList<>(comments2authors.values())).stream().
+			Map<String, ParaObject> authors = pc.readAll(new ArrayList<>(comments2authors.values().
+					stream().filter(id -> !id.equals("user_null")).distinct().toList())).stream().
 					collect(Collectors.toMap(k -> k.getId(), v -> v));
 			List<Map<String, String>> toPatch = new LinkedList<>();
 			for (Map.Entry<String, String> entry : comments2authors.entrySet()) {
@@ -813,6 +920,7 @@ public class AdminController {
 	}
 
 	private void updateSOUserAccounts(Map<String, User> accounts2emails) {
+		logger.info("Importing {} account details...", accounts2emails.size());
 		List<Map<String, String>> toPatch = new LinkedList<>();
 		for (Map.Entry<String, User> entry : accounts2emails.entrySet()) {
 			User u = entry.getValue();
