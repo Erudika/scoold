@@ -14,11 +14,13 @@
 
 	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${para.logs_dir:-.}/${para.logs_name:-scoold}.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<!-- rollover monthly -->
-			<fileNamePattern>${para.logs_name:-scoold}-%d{yyyy-MM}.log.zip</fileNamePattern>
-			<maxHistory>12</maxHistory>
-			<totalSizeCap>3GB</totalSizeCap>
+			<fileNamePattern>${para.logs_name:-scoold}-%d{yyyy-MM}.%i.zip</fileNamePattern>
+			<maxHistory>3</maxHistory>
+			<maxFileSize>50MB</maxFileSize>
+			<totalSizeCap>200MB</totalSizeCap>
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
 		</rollingPolicy>
 		<encoder>
 			<pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
@@ -48,6 +50,8 @@
 	<logger name="org.elasticsearch" level="INFO"/>
 	<logger name="org.springframework" level="WARN"/>
 	<logger name="org.springframework.ldap" level="WARN"/>
+	<logger name="org.springframework.ai" level="ERROR"/>
+	<logger name="org.springframework.context.support" level="ERROR"/>
 	<logger name="org.eclipse.jetty" level="WARN"/>
 	<logger name="com.erudika" level="INFO"/>
 	<logger name="com.amazonaws" level="INFO"/>
