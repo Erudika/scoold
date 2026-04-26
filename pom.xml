@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.5</version>
+		<version>4.0.6</version>
 	</parent>
 
 	<organization>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.53.0</version>
+			<version>1.54.1</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -148,6 +148,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+			<version>3.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
