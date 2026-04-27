@@ -450,45 +450,43 @@ public class AdminController {
 		s.addProperty("file", filename);
 		Sysprop si = pc.create(s);
 
-		Para.asyncExecute(() -> {
-			Map<String, String> comments2authors = new LinkedHashMap<>();
-			Map<String, User> accounts2emails = new LinkedHashMap<>();
-			try (InputStream inputStream = file.getInputStream()) {
-				if (deleteall) {
-					logger.info("Deleting all existing objects before import...");
-					List<String> toDelete = new LinkedList<>();
-					pc.readEverything((pager) -> {
-						pager.setSelect(Collections.singletonList(Config._ID));
-						List<Sysprop> objects = pc.findQuery("", "*", pager);
-						toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
-						return objects;
-					});
-					pc.deleteAll(toDelete);
-				}
-				if (Strings.CI.endsWith(filename, ".zip")) {
-					importZipEntries(inputStream, reader, comments2authors, accounts2emails, si, isso);
-				} else if (Strings.CI.endsWith(filename, ".json")) {
-					if (isso) {
-						List<Map<String, Object>> objs = reader.readValue(inputStream);
-						importFromSOArchiveSingle(filename, objs, comments2authors, accounts2emails, si);
-					} else {
-						List<Map<String, Object>> objects = reader.readValue(inputStream);
-						List<ParaObject> toCreate = new LinkedList<ParaObject>();
-						objects.forEach(o -> toCreate.add(ParaObjectUtils.setAnnotatedFields(o)));
-						si.addProperty("count", objects.size());
-						pc.createAll(toCreate);
-					}
-				}
-				logger.info("Imported {} objects to {}. Executed by {}", si.getProperty("count"),
-						CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
-				si.addProperty("status", "done");
-			} catch (Exception e) {
-				logger.error("Failed to import " + filename, e);
-				si.addProperty("status", "failed");
-			} finally {
-				pc.update(si);
+		Map<String, String> comments2authors = new LinkedHashMap<>();
+		Map<String, User> accounts2emails = new LinkedHashMap<>();
+		try (InputStream inputStream = file.getInputStream()) {
+			if (deleteall) {
+				logger.info("Deleting all existing objects before import...");
+				List<String> toDelete = new LinkedList<>();
+				pc.readEverything((pager) -> {
+					pager.setSelect(Collections.singletonList(Config._ID));
+					List<Sysprop> objects = pc.findQuery("", "*", pager);
+					toDelete.addAll(objects.stream().map(r -> r.getId()).collect(Collectors.toList()));
+					return objects;
+				});
+				pc.deleteAll(toDelete);
 			}
-		});
+			if (Strings.CI.endsWith(filename, ".zip")) {
+				importZipEntries(inputStream, reader, comments2authors, accounts2emails, si, isso);
+			} else if (Strings.CI.endsWith(filename, ".json")) {
+				if (isso) {
+					List<Map<String, Object>> objs = reader.readValue(inputStream);
+					importFromSOArchiveSingle(filename, objs, comments2authors, accounts2emails, si);
+				} else {
+					List<Map<String, Object>> objects = reader.readValue(inputStream);
+					List<ParaObject> toCreate = new LinkedList<ParaObject>();
+					objects.forEach(o -> toCreate.add(rewriteUploadUrls(ParaObjectUtils.setAnnotatedFields(o))));
+					si.addProperty("count", objects.size());
+					pc.createAllAsync(toCreate);
+				}
+			}
+			logger.info("Imported {} objects to {}. Executed by {}", si.getProperty("count"),
+					CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
+			si.addProperty("status", "done");
+		} catch (Exception e) {
+			logger.error("Failed to import " + filename, e);
+			si.addProperty("status", "failed");
+		} finally {
+			pc.updateAsync(si);
+		}
 		return "redirect:" + ADMINLINK + "?success=true&imported=1#backup-tab";
 	}
 
@@ -527,7 +525,7 @@ public class AdminController {
 	@PostMapping("/reindex")
 	public String reindex(HttpServletRequest req, Model model) {
 		if (utils.isAdmin(utils.getAuthUser(req))) {
-			Para.asyncExecute(() -> pc.rebuildIndex());
+			pc.rebuildIndexAsync();
 			logger.info("Started rebuilding the search index for '{}'...", CONF.paraAccessKey());
 		}
 		return "redirect:" + ADMINLINK;
@@ -584,7 +582,7 @@ public class AdminController {
 					});
 					objects.forEach(o -> toCreate.add(rewriteUploadUrls(ParaObjectUtils.setAnnotatedFields(o))));
 					if (toCreate.size() >= CONF.importBatchSize()) {
-						pc.createAll(toCreate);
+						pc.createAllAsync(List.copyOf(toCreate));
 						toCreate.clear();
 					}
 					si.addProperty("count", ((int) si.getProperty("count")) + objects.size());
@@ -596,12 +594,12 @@ public class AdminController {
 					}
 				}
 				if (Utils.timestamp() > countUpdated + TimeUnit.SECONDS.toMillis(5)) {
-					pc.update(si);
+					pc.updateAsync(si);
 					countUpdated = Utils.timestamp();
 				}
 			}
 			if (!toCreate.isEmpty()) {
-				pc.createAll(toCreate);
+				pc.createAllAsync(List.copyOf(toCreate));
 			}
 			if (!pendingUploads.isEmpty()) {
 				CompletableFuture.allOf(pendingUploads.toArray(CompletableFuture[]::new)).join();
@@ -746,12 +744,12 @@ public class AdminController {
 			toImport.add(p);
 			imported++;
 			if (toImport.size() >= CONF.importBatchSize()) {
-				pc.createAll(toImport);
+				pc.createAllAsync(List.copyOf(toImport));
 				toImport.clear();
 			}
 		}
 		if (!toImport.isEmpty()) {
-			pc.createAll(toImport);
+			pc.createAllAsync(List.copyOf(toImport));
 			toImport.clear();
 		}
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
@@ -766,12 +764,12 @@ public class AdminController {
 			toImport.add(t);
 			imported++;
 			if (toImport.size() >= CONF.importBatchSize()) {
-				pc.createAll(toImport);
+				pc.createAllAsync(List.copyOf(toImport));
 				toImport.clear();
 			}
 		}
 		if (!toImport.isEmpty()) {
-			pc.createAll(toImport);
+			pc.createAllAsync(List.copyOf(toImport));
 			toImport.clear();
 		}
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
@@ -800,12 +798,12 @@ public class AdminController {
 			toImport.add(c);
 			imported++;
 			if (toImport.size() >= CONF.importBatchSize()) {
-				pc.createAll(toImport);
+				pc.createAllAsync(List.copyOf(toImport));
 				toImport.clear();
 			}
 		}
 		if (!toImport.isEmpty()) {
-			pc.createAll(toImport);
+			pc.createAllAsync(List.copyOf(toImport));
 			toImport.clear();
 		}
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
@@ -863,12 +861,12 @@ public class AdminController {
 			}
 
 			if (toImport.size() >= CONF.importBatchSize()) {
-				pc.createAll(toImport);
+				pc.createAllAsync(List.copyOf(toImport));
 				toImport.clear();
 			}
 		}
 		if (!toImport.isEmpty()) {
-			pc.createAll(toImport);
+			pc.createAllAsync(List.copyOf(toImport));
 			toImport.clear();
 		}
 		si.addProperty("count", ((int) si.getProperty("count")) + imported);
@@ -908,12 +906,12 @@ public class AdminController {
 				}
 				toPatch.add(user);
 				if (toPatch.size() >= CONF.importBatchSize()) {
-					pc.invokePatch("_batch", toPatch, Map.class);
+					pc.invokePatchAsync("_batch", List.copyOf(toPatch), Map.class);
 					toPatch.clear();
 				}
 			}
 			if (!toPatch.isEmpty()) {
-				pc.invokePatch("_batch", toPatch, Map.class);
+				pc.invokePatchAsync("_batch", List.copyOf(toPatch), Map.class);
 				toPatch.clear();
 			}
 		}
@@ -930,12 +928,12 @@ public class AdminController {
 			user.put(Config._IDENTIFIER, u.getEmail());
 			toPatch.add(user);
 			if (toPatch.size() >= CONF.importBatchSize()) {
-				pc.invokePatch("_batch", toPatch, Map.class);
+				pc.invokePatchAsync("_batch", List.copyOf(toPatch), Map.class);
 				toPatch.clear();
 			}
 		}
 		if (!toPatch.isEmpty()) {
-			pc.invokePatch("_batch", toPatch, Map.class);
+			pc.invokePatchAsync("_batch", List.copyOf(toPatch), Map.class);
 			toPatch.clear();
 		}
 	}

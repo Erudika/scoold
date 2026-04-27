@@ -1637,18 +1637,16 @@ public final class ScooldUtils {
 		if (space == null) {
 			return;
 		}
-		Para.asyncExecute(() -> {
-			pc.updateAllPartially((toUpdate, pager) -> {
-				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
-				profiles.stream().forEach(p -> {
-					Map<String, Object> profile = new HashMap<>();
-					profile.put(Config._ID, p.getId());
-					p.getSpaces().add(space.getId() + Para.getConfig().separator() + space.getName());
-					profile.put("spaces", p.getSpaces());
-					toUpdate.add(profile);
-				});
-				return profiles;
+		pc.updateAllPartially((toUpdate, pager) -> {
+			List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
+			profiles.stream().forEach(p -> {
+				Map<String, Object> profile = new HashMap<>();
+				profile.put(Config._ID, p.getId());
+				p.getSpaces().add(space.getId() + Para.getConfig().separator() + space.getName());
+				profile.put("spaces", p.getSpaces());
+				toUpdate.add(profile);
 			});
+			return profiles;
 		});
 	}
 
@@ -2230,12 +2228,10 @@ public final class ScooldUtils {
 
 	public void triggerHookEvent(String eventName, Object payload) {
 		if (isWebhooksEnabled() && HOOK_EVENTS.contains(eventName)) {
-			Para.asyncExecute(() -> {
-				Webhook trigger = new Webhook();
-				trigger.setTriggeredEvent(eventName);
-				trigger.setCustomPayload(payload);
-				pc.create(trigger);
-			});
+			Webhook trigger = new Webhook();
+			trigger.setTriggeredEvent(eventName);
+			trigger.setCustomPayload(payload);
+			pc.createAsync(trigger);
 		}
 	}
 

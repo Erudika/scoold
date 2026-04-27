@@ -51,21 +51,19 @@ public class ScooldEmailer implements Emailer {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
-		Para.asyncExecute(() -> {
-			emails.forEach(email -> {
-				try {
-					mailSender.send((MimeMessage mimeMessage) -> {
-						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-						msg.setTo(email);
-						msg.setSubject(subject);
-						msg.setFrom(CONF.supportEmail(), CONF.appName());
-						msg.setText(body, true); // body is assumed to be HTML
-					});
-					logger.debug("Email sent to {}, {}", email, subject);
-				} catch (MailException ex) {
-					logger.error("Failed to send email to {} with body [{}]. {}", email, body, ex.getMessage());
-				}
-			});
+		emails.forEach(email -> {
+			try {
+				mailSender.send((MimeMessage mimeMessage) -> {
+					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+					msg.setTo(email);
+					msg.setSubject(subject);
+					msg.setFrom(CONF.supportEmail(), CONF.appName());
+					msg.setText(body, true); // body is assumed to be HTML
+				});
+				logger.debug("Email sent to {}, {}", email, subject);
+			} catch (MailException ex) {
+				logger.error("Failed to send email to {} with body [{}]. {}", email, body, ex.getMessage());
+			}
 		});
 		return true;
 	}
@@ -76,28 +74,26 @@ public class ScooldEmailer implements Emailer {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
-		Para.asyncExecute(() -> {
-			MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-				Iterator<String> emailz = emails.iterator();
-				msg.setTo(emailz.next());
-				while (emailz.hasNext()) {
-					msg.addBcc(emailz.next());
-				}
-				msg.setSubject(subject);
-				msg.setFrom(Para.getConfig().supportEmail());
-				msg.setText(body, true); // body is assumed to be HTML
-				if (attachment != null) {
-					msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
-				}
-			};
-			try {
-				mailSender.send(preparator);
-				logger.debug("Email sent to {}, {}", emails, subject);
-			} catch (MailException ex) {
-				logger.error("Failed to send email. {}", ex.getMessage());
+		MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
+			MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+			Iterator<String> emailz = emails.iterator();
+			msg.setTo(emailz.next());
+			while (emailz.hasNext()) {
+				msg.addBcc(emailz.next());
 			}
-		});
+			msg.setSubject(subject);
+			msg.setFrom(Para.getConfig().supportEmail());
+			msg.setText(body, true); // body is assumed to be HTML
+			if (attachment != null) {
+				msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
+			}
+		};
+		try {
+			mailSender.send(preparator);
+			logger.debug("Email sent to {}, {}", emails, subject);
+		} catch (MailException ex) {
+			logger.error("Failed to send email. {}", ex.getMessage());
+		}
 		return true;
 	}
 }
