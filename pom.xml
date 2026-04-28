@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.54.3</version>
+			<version>1.54.4</version>
 		</dependency>
 
 		<!-- VELOCITY -->
