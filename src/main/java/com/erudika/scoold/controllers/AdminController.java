@@ -67,6 +67,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -836,7 +837,7 @@ public class AdminController {
 			s.setId(u.getIdentifier());
 			s.setName(Config._IDENTIFIER);
 			s.setCreatorid(u.getId());
-			String password = (String) obj.getOrDefault("passwordHash", Utils.bcrypt(Utils.generateSecurityToken(10)));
+			String password = (String) obj.getOrDefault("passwordHash", UUID.randomUUID().toString()); // bcrypt too slow here!
 			if (!StringUtils.isBlank(password)) {
 				s.addProperty(Config._PASSWORD, password);
 				u.setPassword(password);
