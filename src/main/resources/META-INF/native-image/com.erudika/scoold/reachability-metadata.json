@@ -4500,7 +4500,12 @@
 			"type": "javax.naming.InitialContext"
 		},
 		{
-			"type": "javax.net.ssl.SSLParameters"
+			"type": "javax.net.ssl.SSLParameters",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
 			"type": "javax.security.auth.Subject"
