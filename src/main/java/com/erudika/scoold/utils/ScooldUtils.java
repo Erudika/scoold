@@ -84,6 +84,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
@@ -1051,7 +1052,7 @@ public final class ScooldUtils {
 
 		Integer page = Math.min(NumberUtils.toInt(req.getParameter(pageParamName), 1), CONF.maxPages());
 		Integer lim = NumberUtils.toInt(limit, CONF.maxItemsPerPage());
-		Boolean descending = Boolean.valueOf(desc);
+		Boolean descending = Boolean.valueOf(Objects.requireNonNullElse(desc, "true"));
 		return pagerFromParams(page, sort, lim, descending, lastKey);
 	}
 
