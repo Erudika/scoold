@@ -185,6 +185,7 @@ public class QuestionController {
 		if (!showPost.equals(beforeUpdate)) {
 			// create revision manually
 			if (showPost.hasUpdatedContent(beforeUpdate)) {
+				Revision.checkForMissingOriginalRevision(beforeUpdate);
 				Revision.createRevisionFromPost(showPost, false);
 			}
 			updatePost(showPost, authUser, req);

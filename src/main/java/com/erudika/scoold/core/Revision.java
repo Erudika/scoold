@@ -21,9 +21,13 @@ package com.erudika.scoold.core;
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.annotations.Stored;
+import com.erudika.para.core.utils.Pager;
+import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -93,22 +97,41 @@ public class Revision extends Sysprop {
 		this.author = author;
 	}
 
-	public static void createRevisionFromPost(Post post, boolean orig) {
+	public static Revision fromPost(Post post, boolean isOriginal) {
 		if (post != null && post.getId() != null) {
-			String revUserid = post.getLasteditby();
-			if (revUserid == null) {
-				revUserid = post.getCreatorid();
+			String revUserid = post.getCreatorid();
+			if (post.getAuthor() != null) {
+				revUserid = post.getAuthor().getId(); // this will point to the last author (not OP!)
 			}
-			Revision postrev = new Revision();
+			Revision postrev = new Revision(Utils.getNewId());
 			postrev.setCreatorid(revUserid);
 			postrev.setParentid(post.getId());
 			postrev.setTitle(post.getTitle());
 			postrev.setBody(post.getBody());
 			postrev.setTags(post.getTags());
-			postrev.setOriginal(orig);
-			String rid = postrev.create();
-			if (rid != null) {
-				post.setRevisionid(rid);
+			postrev.setOriginal(isOriginal);
+			post.setRevisionid(postrev.getId());
+			return postrev;
+		}
+		return null;
+	}
+
+	public static void createRevisionFromPost(Post post, boolean isOriginal) {
+		Revision postrev = fromPost(post, isOriginal);
+		if (postrev != null) {
+			post.setRevisionid(postrev.create());
+		}
+	}
+
+	public static void checkForMissingOriginalRevision(Post beforeUpdate) {
+		if (beforeUpdate != null &&
+				StringUtils.isBlank(beforeUpdate.getRevisionid()) &&
+				StringUtils.isBlank(beforeUpdate.getLasteditby())) {
+			// probably missing the original revision - usually happens to imported posts in bulk
+			List<Revision> revs = beforeUpdate.getRevisions(new Pager(1));
+			if (revs.isEmpty()) {
+				createRevisionFromPost(beforeUpdate, true);
+				beforeUpdate.update();
 			}
 		}
 	}

@@ -316,7 +316,6 @@ public abstract class Post extends Sysprop {
 		this.body = Utils.abbreviate(this.body, ScooldUtils.getConfig().maxPostLength());
 		Post p = client().create(this);
 		if (p != null) {
-			Revision.createRevisionFromPost(p, true);
 			setId(p.getId());
 			setTimestamp(p.getTimestamp());
 			return p.getId();

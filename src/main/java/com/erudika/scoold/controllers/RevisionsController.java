@@ -59,6 +59,10 @@ public class RevisionsController {
 		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Revision> revisionslist = showPost.getRevisions(itemcount);
+		if (revisionslist.isEmpty()) {
+			itemcount.setCount(1);
+			revisionslist = List.of(Revision.fromPost(showPost, true));
+		}
 		// we need the first revision on the next page for diffing
 		List<Revision> nextPage = showPost.getRevisions(new Pager(itemcount.getPage() + 1, itemcount.getLimit()));
 		utils.getProfiles(revisionslist);

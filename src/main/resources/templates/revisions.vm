@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="col m3 s6">
 				<div class="mbl">
-					#if ($showpost.revisionid == $showrev.id)
+					#if (!$showpost.revisionid || $showpost.revisionid == $showrev.id)
 					<i class="fa fa-check-circle green-text fa-3x tooltipped" data-tooltip="$!lang.get('revisions.current')"></i>
 					#elseif ($canrestore)
 					<form method="post" action="$!actionlink/$showrev.parentid/restore/$!showrev.id">
@@ -27,28 +27,31 @@
 				</div>
 			</div>
 			<div class="col m6 s6 center-align">
-				<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
-				<div class="grey-text largeText">#if ($showrev.original) $!lang.get("original") #end </div>
+				#if ($showrev.original)
+					<strong class="grey-text">$!lang.get("original")</strong>
+				#else
+					<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
+				#end
 			</div>
 			<div class="col m3 s12">
 				#smallpersonbox($showrev.author)
 			</div>
 		</div>
 		<div>
-			#if ($showrev.title)
+			#if ($showrev.title != $showorigrev.title || $showrev.original)
 				<div class="newrev largeText">$showrev.title</div>
 				#if ($showorigrev.title)
 				<span class="hide oldrev">$!showorigrev.title</span>
 				#end
 				<hr>
 			#end
-			#if ($showrev.body)
+			#if ($showrev.body != $!showorigrev.body || $showrev.original)
 				<div class="newrev mtl">$!showrev.body</div>
 				#if ($showorigrev.body)
 					<span class="hide oldrev">$!showorigrev.body</span>
 				#end
 			#end
-			#if ($showrev.tags)
+			#if ($showrev.tags != $showorigrev.tags || $showrev.original)
 				<div class="newrev tagsdiff mtm">
 					#tagbox($showrev.tags)
 				</div>
