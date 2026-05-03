@@ -476,6 +476,11 @@
 		<script nonce="$cspNonce" type="module" src="$!scriptslink/emoji-picker.js"></script>
 		#end
 
+		#if($includeMermaid && $includeEmojiPicker)
+		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js"></script>
+		<script nonce="$cspNonce">mermaid.initialize({ startOnLoad: true });</script>
+		#end
+
 		#externalScripts(false)
 	</body>
 </html>

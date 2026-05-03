@@ -102,6 +102,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("RTL_ENABLED", utils.isLanguageRTL(utils.getCurrentLocale(utils.getLanguageCode(request)).getLanguage()));
 		modelAndView.addObject("MAX_TAGS_PER_POST", CONF.maxTagsPerPost());
 		modelAndView.addObject("includeHighlightJS", CONF.codeHighlightingEnabled());
+		modelAndView.addObject("includeMermaid", CONF.mermaidEnabled());
 		modelAndView.addObject("isAjaxRequest", utils.isAjaxRequest(request));
 		modelAndView.addObject("reportTypes", ReportType.values());
 		modelAndView.addObject("returnto", Strings.CS.removeStart(request.getRequestURI(), CONF.serverContextPath()));

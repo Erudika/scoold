@@ -2304,9 +2304,19 @@ public class ScooldConfig extends Config {
 			type = Boolean.class,
 			category = "Customization",
 			tags = {"Pro"},
-			description = "Enable/disable support for MathJax and LaTeX for scientific expressions in Markdown.")
+			description = "Enable/disable support for MathJax/KaTeX/LaTeX for scientific expressions in Markdown.")
 	public boolean mathjaxEnabled() {
 		return getConfigBoolean("mathjax_enabled", false);
+	}
+
+	@Documented(position = 2091,
+			identifier = "mermaid_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Customization",
+			description = "Enable/disable support for Mermaid diagrams in Markdown.")
+	public boolean mermaidEnabled() {
+		return getConfigBoolean("mermaid_enabled", false);
 	}
 
 	@Documented(position = 2100,
