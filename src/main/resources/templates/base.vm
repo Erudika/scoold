@@ -432,6 +432,9 @@
 		#if ($includeHighlightJS)
 		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js?r=$!rev"></script>
 		#end
+		#if($includeMermaid && $includeEmojiPicker)
+		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js"></script>
+		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev"></script>
 		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath().startsWith($profilelink))
 		#if($avatarUploadsEnabledBool)
@@ -473,11 +476,6 @@
 		<script nonce="$cspNonce" src="$!scriptslink/picmo.min.js?r=$!rev"></script>
 		<script nonce="$cspNonce" src="$!scriptslink/picmo-popup.min.js?r=$!rev"></script>
 		<script nonce="$cspNonce" type="module" src="$!scriptslink/emoji-picker.js"></script>
-		#end
-
-		#if($includeMermaid && $includeEmojiPicker)
-		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js"></script>
-		<script nonce="$cspNonce">mermaid.initialize({ startOnLoad: true });</script>
 		#end
 
 		#externalScripts(false)

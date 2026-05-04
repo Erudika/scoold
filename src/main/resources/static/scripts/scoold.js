@@ -15,11 +15,11 @@
  *
  * For issues and patches go to: https://github.com/erudika
  */
-/*global window: false, jQuery: false, $: false, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED, document, console, localStorage, navigator: false */
+/*global window: false, jQuery: false, $: false, hljs, RTL_ENABLED, CONTEXT_PATH, M, CONFIRM_MSG, WELCOME_MESSAGE, WELCOME_MESSAGE_ONLOGIN, MAX_TAGS_PER_POST, MIN_PASS_LENGTH, AVATAR_UPLOADS_ENABLED, IMGUR_CLIENT_ID, IMGUR_ENABLED, CLOUDINARY_ENABLED, MAX_FAVORITE_TAGS, TAG_CREATION_ALLOWED, document, console, localStorage, navigator, mermaid: false */
 "use strict";
 $(function () {
 	var rusuremsg = CONFIRM_MSG;
-	var hostURL = window.location.protocol + "//" + window.location.host;
+	var hostURL = window.location.protocol + "//" + window.location.host + CONTEXT_PATH;
 	var imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif',
 		'image/svg+xml', 'image/webp', 'image/bmp', 'image/tiff'];
 
@@ -43,6 +43,7 @@ $(function () {
 	}
 
 	initMaterialize();
+	initMermaid();
 
 	/****************************************************
      *					MISC FUNCTIONS
@@ -925,6 +926,21 @@ $(function () {
 		});
 	}
 
+	function initMermaid() {
+		if (typeof mermaid !== "undefined") {
+			$.ready(function () {
+				mermaid.initialize({startOnLoad: false});
+				renderMermaid($(".mermaid").toArray());
+			});
+		}
+	}
+
+	function renderMermaid(elements) {
+		if (typeof mermaid !== "undefined") {
+			mermaid.run({nodes: elements});
+		}
+	}
+
 	updateMentionsWithLinks();
 
 	$(document).on("event:page", function() {
@@ -945,6 +961,7 @@ $(function () {
 		}
 	});
 
+	var previewMarkdownDelayTimer;
 	function initPostEditor(elem) {
 		var mde = new EasyMDE({
 			element: elem,
@@ -959,8 +976,18 @@ $(function () {
 				className: "fa fa-smile-o emoji-button empty",
 				title: "Insert emoji"
 			},  "|", "preview", "side-by-side", "fullscreen", "|", "guide"],
-			previewRender: function (plainText) {
-				return this.parent.markdown(replaceMentionsWithMarkdownLinks(plainText));
+			previewRender: function (plainText, preview) {
+				clearTimeout(previewMarkdownDelayTimer);
+				previewMarkdownDelayTimer = setTimeout(function () {
+					$.post(hostURL + "/questions/render-markdown", replaceMentionsWithMarkdownLinks(plainText), function (html) {
+						preview.innerHTML = html;
+						renderMermaid($(preview).find(".mermaid").toArray());
+						$(preview).find("pre code").each(function (i, block) {
+							hljs.highlightBlock(block);
+						});
+					});
+				}, 400);
+				return null;
 			},
 			status: [{
 				className: "saved",
