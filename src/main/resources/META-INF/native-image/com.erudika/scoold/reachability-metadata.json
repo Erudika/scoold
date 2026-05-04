@@ -9211,12 +9211,6 @@
 			"glob": "EmojiReference.txt"
 		},
 		{
-			"glob": "META-INF/resources/**"
-		},
-		{
-			"glob": "resources/**"
-		},
-		{
 			"glob": "META-INF/build-info.properties"
 		},
 		{
@@ -9248,189 +9242,6 @@
 		},
 		{
 			"glob": "META-INF/mime.types"
-		},
-		{
-			"glob": "META-INF/resources/fonts/fontawesome-webfont.woff2"
-		},
-		{
-			"glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
-		},
-		{
-			"glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
-		},
-		{
-			"glob": "META-INF/resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
-		},
-		{
-			"glob": "META-INF/resources/images/amazon.svg"
-		},
-		{
-			"glob": "META-INF/resources/images/anon.svg"
-		},
-		{
-			"glob": "META-INF/resources/images/favicon.ico"
-		},
-		{
-			"glob": "META-INF/resources/images/google.svg"
-		},
-		{
-			"glob": "META-INF/resources/images/logo.svg"
-		},
-		{
-			"glob": "META-INF/resources/images/logowhite.png"
-		},
-		{
-			"glob": "META-INF/resources/images/mattermost.svg"
-		},
-		{
-			"glob": "META-INF/resources/images/teams.svg"
-		},
-		{
-			"glob": "META-INF/resources/index.html"
-		},
-		{
-			"glob": "META-INF/resources/scripts/cities.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/codemirror-4.inline-attachment.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/diff_match_patch.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/easymde.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/emoji-picker.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/emojibase/data.json"
-		},
-		{
-			"glob": "META-INF/resources/scripts/emojibase/messages.json"
-		},
-		{
-			"glob": "META-INF/resources/scripts/inline-attachment.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/jquery.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/materialize.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/picmo-popup.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/picmo.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/prism.min.js"
-		},
-		{
-			"glob": "META-INF/resources/scripts/scoold.js"
-		},
-		{
-			"glob": "META-INF/resources/service-worker.js"
-		},
-		{
-			"glob": "META-INF/resources/styles/easymde.min.css"
-		},
-		{
-			"glob": "META-INF/resources/styles/font-awesome.min.css"
-		},
-		{
-			"glob": "META-INF/resources/styles/highlighting.css"
-		},
-		{
-			"glob": "META-INF/resources/styles/materialize.min.css"
-		},
-		{
-			"glob": "META-INF/resources/styles/style.css"
-		},
-		{
-			"glob": "META-INF/services/ch.qos.logback.classic.spi.Configurator"
-		},
-		{
-			"glob": "META-INF/services/com.fasterxml.jackson.databind.Module"
-		},
-		{
-			"glob": "META-INF/services/io.micrometer.context.ContextAccessor"
-		},
-		{
-			"glob": "META-INF/services/io.micrometer.context.ThreadLocalAccessor"
-		},
-		{
-			"glob": "META-INF/services/io.modelcontextprotocol.json.McpJsonMapperSupplier"
-		},
-		{
-			"glob": "META-INF/services/io.modelcontextprotocol.json.schema.JsonSchemaValidatorSupplier"
-		},
-		{
-			"glob": "META-INF/services/jakarta.activation.spi.MailcapRegistryProvider"
-		},
-		{
-			"glob": "META-INF/services/jakarta.activation.spi.MimeTypeRegistryProvider"
-		},
-		{
-			"glob": "META-INF/services/jakarta.el.ExpressionFactory"
-		},
-		{
-			"glob": "META-INF/services/jakarta.mail.Provider"
-		},
-		{
-			"glob": "META-INF/services/jakarta.mail.util.StreamProvider"
-		},
-		{
-			"glob": "META-INF/services/jakarta.validation.ConstraintValidator"
-		},
-		{
-			"glob": "META-INF/services/jakarta.validation.spi.ValidationProvider"
-		},
-		{
-			"glob": "META-INF/services/jakarta.validation.valueextraction.ValueExtractor"
-		},
-		{
-			"glob": "META-INF/services/java.net.spi.InetAddressResolverProvider"
-		},
-		{
-			"glob": "META-INF/services/java.net.spi.URLStreamHandlerProvider"
-		},
-		{
-			"glob": "META-INF/services/java.nio.channels.spi.SelectorProvider"
-		},
-		{
-			"glob": "META-INF/services/java.sql.Driver"
-		},
-		{
-			"glob": "META-INF/services/java.time.zone.ZoneRulesProvider"
-		},
-		{
-			"glob": "META-INF/services/java.util.spi.ResourceBundleControlProvider"
-		},
-		{
-			"glob": "META-INF/services/javax.xml.parsers.SAXParserFactory"
-		},
-		{
-			"glob": "META-INF/services/javax.xml.stream.XMLInputFactory"
-		},
-		{
-			"glob": "META-INF/services/javax.xml.stream.XMLOutputFactory"
-		},
-		{
-			"glob": "META-INF/services/org.apache.commons.logging.LogFactory"
-		},
-		{
-			"glob": "META-INF/services/org.apache.juli.logging.Log"
-		},
-		{
-			"glob": "META-INF/services/org.apache.logging.log4j.util.PropertySource"
-		},
-		{
-			"glob": "META-INF/services/org.slf4j.spi.SLF4JServiceProvider"
-		},
-		{
-			"glob": "META-INF/services/tools.jackson.databind.JacksonModule"
 		},
 		{
 			"glob": "META-INF/spring-autoconfigure-metadata.properties"
@@ -9490,139 +9301,7 @@
 			"glob": "ch/qos/logback/core/logback-core-version.properties"
 		},
 		{
-			"glob": "com/erudika/para/core/utils/Config$NoopConfigIncluder.class"
-		},
-		{
-			"glob": "com/erudika/para/core/utils/Config.class"
-		},
-		{
-			"glob": "com/erudika/scoold"
-		},
-		{
-			"glob": "com/erudika/scoold/ScooldConfig.class"
-		},
-		{
-			"glob": "com/erudika/scoold/ScooldServer.class"
-		},
-		{
-			"glob": "com/erudika/scoold/api/ApiController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/api/WebhooksController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/AboutController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/AdminController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/ApiDocsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/CommentController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/ErrorController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/FeedbackController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/LanguagesController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/NotFoundController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/PeopleController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/PrivacyController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/ProfileController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/QuestionController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/QuestionsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/ReportsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/RevisionsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/SearchController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/SettingsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/SigninController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/TagsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/TermsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/UploadController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/controllers/VoteController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/mattermost/MattermostController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/mcp/MCPResources.class"
-		},
-		{
-			"glob": "com/erudika/scoold/mcp/MCPTools.class"
-		},
-		{
-			"glob": "com/erudika/scoold/mcp/MCPUtils$ConfigEntry.class"
-		},
-		{
-			"glob": "com/erudika/scoold/mcp/MCPUtils.class"
-		},
-		{
-			"glob": "com/erudika/scoold/msteams/TeamsBot.class"
-		},
-		{
-			"glob": "com/erudika/scoold/msteams/TeamsBotConfiguration.class"
-		},
-		{
-			"glob": "com/erudika/scoold/msteams/TeamsController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/slack/SlackController.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/LanguageUtils.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/RequestNotSupportedExceptionHandler.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/ScooldRequestInterceptor.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/ScooldUtils.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/avatars/AvatarRepository.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/avatars/AvatarRepositoryProxy.class"
-		},
-		{
-			"glob": "com/erudika/scoold/utils/avatars/GravatarAvatarGenerator.class"
+			"glob": "com/erudika/**/*.class"
 		},
 		{
 			"glob": "com/microsoft/bot/builder/ActivityHandler$InvokeResponseException.class"
@@ -10456,127 +10135,58 @@
 			"glob": "public/offline.html"
 		},
 		{
-			"glob": "public/.git/config"
-		},
-		{
 			"glob": "reference.conf"
 		},
 		{
-			"glob": "resources/fonts/fontawesome-webfont.woff2"
+			"glob": "META-INF/resources/**"
 		},
 		{
-			"glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-300.woff2"
+			"glob": "META-INF/resources/**/*.*"
 		},
 		{
-			"glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-700.woff2"
+			"glob": "META-INF/services/**"
 		},
 		{
-			"glob": "resources/fonts/roboto-v20-vietnamese_greek-ext_cyrillic-ext_latin-ext_latin_greek_cyrillic-regular.woff2"
+			"glob": "META-INF/services/**/*.*"
 		},
 		{
-			"glob": "resources/images/amazon.svg"
+			"glob": "resources/**"
 		},
 		{
-			"glob": "resources/images/anon.svg"
+			"glob": "resources/**/*.*"
 		},
 		{
-			"glob": "resources/images/favicon.ico"
+			"glob": "META-INF/emails/**/*.*"
 		},
 		{
-			"glob": "resources/images/google.svg"
+			"glob": "emails/**/*.*"
 		},
 		{
-			"glob": "resources/images/logo.svg"
+			"glob": "META-INF/msteams/**/*.*"
 		},
 		{
-			"glob": "resources/images/logowhite.png"
+			"glob": "msteams/**/*.*"
 		},
 		{
-			"glob": "resources/images/mattermost.svg"
+			"glob": "META-INF/static/**/*.*"
 		},
 		{
-			"glob": "resources/images/teams.svg"
+			"glob": "static/**/*.*"
 		},
 		{
-			"glob": "resources/index.html"
+			"glob": "META-INF/templates/**/*.*"
 		},
 		{
-			"glob": "resources/scripts/cities.js"
+			"glob": "templates/**/*.*"
 		},
 		{
-			"glob": "resources/scripts/codemirror-4.inline-attachment.min.js"
+			"glob": "META-INF/themes/**/*.*"
 		},
 		{
-			"glob": "resources/scripts/diff_match_patch.js"
-		},
-		{
-			"glob": "resources/scripts/easymde.min.js"
-		},
-		{
-			"glob": "resources/scripts/emoji-picker.js"
-		},
-		{
-			"glob": "resources/scripts/emojibase/data.json"
-		},
-		{
-			"glob": "resources/scripts/emojibase/messages.json"
-		},
-		{
-			"glob": "resources/scripts/inline-attachment.min.js"
-		},
-		{
-			"glob": "resources/scripts/jquery.min.js"
-		},
-		{
-			"glob": "resources/scripts/materialize.min.js"
-		},
-		{
-			"glob": "resources/scripts/picmo-popup.min.js"
-		},
-		{
-			"glob": "resources/scripts/picmo.min.js"
-		},
-		{
-			"glob": "resources/scripts/prism.min.js"
-		},
-		{
-			"glob": "resources/scripts/scoold.js"
-		},
-		{
-			"glob": "resources/service-worker.js"
-		},
-		{
-			"glob": "resources/styles/easymde.min.css"
-		},
-		{
-			"glob": "resources/styles/font-awesome.min.css"
-		},
-		{
-			"glob": "resources/styles/highlighting.css"
-		},
-		{
-			"glob": "resources/styles/materialize.min.css"
-		},
-		{
-			"glob": "resources/styles/style.css"
+			"glob": "themes/**/*.*"
 		},
 		{
 			"glob": "spring.properties"
-		},
-		{
-			"glob": "emails/*"
-		},
-		{
-			"glob": "msteams/*"
-		},
-		{
-			"glob": "static/*"
-		},
-		{
-			"glob": "templates/*"
-		},
-		{
-			"glob": "themes/*"
 		},
 		{
 			"module": "java.base",
