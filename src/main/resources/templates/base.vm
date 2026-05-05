@@ -433,7 +433,7 @@
 		<script nonce="$cspNonce" src="$!scriptslink/highlight.min.js?r=$!rev"></script>
 		#end
 		#if($includeMermaid && $includeEmojiPicker)
-		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js" defer></script>
 		#end
 		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev"></script>
 		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath().startsWith($profilelink))
@@ -441,7 +441,7 @@
 			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev"></script>
 		#end
 		#if ($includeLocatorScripts && $includeLocatorScripts == true)
-		<script nonce="$cspNonce" src="$!scriptslink/cities.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/cities.js?r=$!rev" defer></script>
 		#end
 
 		#set($_welcomeMsg = $scooldUtils.getWelcomeMessage($authUser))
