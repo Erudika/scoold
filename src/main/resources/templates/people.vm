@@ -7,7 +7,7 @@
 	<div class="chips-container">
 		#set($sortarr = {'votes': "", 'newest': "", 'name': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.monthlyVotes': "", 'properties.weeklyVotes': ""} )
 		#setsortbyselection($sortarr 'newest')
-		<a href="$peoplelink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon() $!lang.get("newest")</a>
+		<a href="$peoplelink#sortorderparam('?' '')" class="chip $sortarr.newest">#sortordericon('') $!lang.get("newest")</a>
 		<a href="$peoplelink?sortby=votes#sortorderparam('&' 'votes')" class="chip $sortarr.votes">#sortordericon("votes") $!lang.get("reputation")</a>
 		<a href="$peoplelink?sortby=name#sortorderparamasc('&' 'name')" class="chip $sortarr.name">#sortordericon("name") $!lang.get("name")</a>
 		<a href="$peoplelink?sortby=properties.yearlyVotes#sortorderparam('&' 'properties.yearlyVotes')" class="chip $sortarr['properties.yearlyVotes']">#sortordericon("properties.yearlyVotes") $!lang.get('year')</a>
@@ -30,9 +30,9 @@
 			#set($filterActiveTooltip = $!lang.get('posts.filtered'))
 		#end
 		#if($isMod)
-			<a href="#" id="user-filter-btn" class="next-div-toggle chip tooltipped ${filterActiveClass}"
+			<a href="#" id="user-filter-btn" class="chip tooltipped ${filterActiveClass}"
 				 data-tooltip="${filterActiveTooltip}" title="${filterActiveTooltip}">
-				<i class="fa fa-filter"></i><span class="hide">Filter</span>
+				#ico("filter" "")<span class="hide">Filter</span>
 			</a>
 		#end
 	</div>
@@ -42,7 +42,7 @@
 	#if($isMod)
 		<form method="get">
 			<div class="input-field">
-				<i class="fa fa-search fa-2x prefix grey-text"></i>
+				#ico("search" "grey-text mediumText prefix")
 				<input type="search" name="q" value="$!request.getParameter('q')" placeholder="$!lang.get('search.title')">
 				<input type="hidden" name="bulkedit" value="true">
 			</div>

@@ -12,7 +12,7 @@
 				#spaceselect()
 
 				<div class="input-field">
-					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					#ico("paragraph" "pvm prefix grey-text")
 					<label for="title_text">$!lang.get('posts.title')</label>
 					<input type="text" id="title_text" name="title" value="$!draftQuestion.title"
 								 class="validate" maxlength="255" minlength="2" required>
@@ -22,14 +22,14 @@
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>
 
-				<i class="fa fa-pencil fa-2x left grey-text"></i>
+				#ico("pencil" "grey-text left width-14")
 				<div class="pll mll emoji-picker-container">
 					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10">$!draftQuestion.body</textarea>
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
 				<div class="input-field">
-					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					#ico("tag" "grey-text prefix ptm")
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
 					<input type="hidden" name="tags" value="$!defaultTag$!draftQuestion.getTagsString()">
 					<div class="pll mll">
@@ -38,17 +38,17 @@
 				</div>
 
 				#if($authenticated)
+					#if($isAdmin)
+					<span class="save-question-template right">
+						<a href="$questionslink/save-template">🖫 Save as template</a>
+					</span>
+					#end
 					#locationbox("mll pll")
 				#end
 
 				<div>
-					#if($isAdmin)
-					<small class="save-question-template right mll pvl">
-						<a href="$questionslink/save-template"><i class="fa fa-save"></i> Save as template</a>
-					</small>
-					#end
-					<button class="btn mtl waves-effect waves-light" type="submit">
-						<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+					<button class="btn mtl waves-effect waves-light btn-large" type="submit">
+						#ico("paper-plane" "mhs") $!lang.get('post')
 					</button>
 				</div>
 			</form>
@@ -86,13 +86,13 @@
 				#if($scooldUtils.isNearMeFeatureEnabled())
 					#if ($localFilterOn)#set($filterSelected1 = "grey darken-2 white-text")#else#set($filterPath1 = "/local")#end
 					<a href="$questionslink$!{filterPath1}$!{sortby}" class="chip $!{filterSelected1}">
-						<i class="fa fa-map-marker"></i> $!lang.get("posts.locationfilter")
+						#ico("map-marker" "") $!lang.get("posts.locationfilter")
 					</a>
 				#end
 
 				#if ($tagFilterOn)#set($filterSelected2 = "grey darken-2 white-text")#else#set($filterPath2 = "/favtags")#end
 				<a href="$questionslink$!{filterPath2}$!{sortby}" class="chip $!{filterSelected2}">
-					<i class="fa fa-filter"></i> $!lang.get("posts.tagfilter")
+					#ico("filter" "") $!lang.get("posts.tagfilter")
 				</a>
 			#end
 
@@ -103,9 +103,9 @@
 				#set($filterActiveClass = "filter-active")
 				#set($filterActiveTooltip = $!lang.get('posts.filtered'))
 			#end
-			<a href="#" id="question-filter-btn" class="next-div-toggle chip tooltipped ${filterActiveClass}"
+			<a href="#" id="question-filter-btn" class="chip tooltipped ${filterActiveClass}"
 				 data-tooltip="${filterActiveTooltip}" title="${filterActiveTooltip}">
-				<i class="fa fa-filter"></i><span class="hide">Filter</span>
+				#ico("filter" "")<span class="hide">Filter</span>
 			</a>
 		</div>
 

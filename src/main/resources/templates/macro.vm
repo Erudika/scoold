@@ -13,7 +13,7 @@
 				<div class="input-field mvn">
 					#set($maxplus1 = $!maxCommentLength + 1)
 					<label for="new-comment-$!{parentid}">$!lang.get('comment.title')
-						<span class="grey-text mhs"><i class="fa fa-info-circle"></i> $!lang.get('comments.markdown'), e.g.
+						<span class="grey-text mhs">#ico("info-circle" "") $!lang.get('comments.markdown'), e.g.
 						<span>[link](http://url.com)</span> <code>`code`</code> <b>**bold**</b> <i>*italic*</i></small>
 					</label>
 					<input id="new-comment-$!{parentid}" type="text" name="comment" value=""
@@ -48,7 +48,7 @@
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
+		<span class="comment-timestamp mrs grey-text">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
 		#if ($showcomment == "")
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
 			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
@@ -60,7 +60,7 @@
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "noicon")
 		#end
 		<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Copy permalink" class="permalink phs">
-			<i class="fa fa-share-square"></i>
+			#ico("share" "")
 		</a>
 	</div>
 </div>
@@ -81,7 +81,7 @@
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text right"><i class="fa fa-clock-o"></i> #formatdate($showcomment.timestamp '')</span>
+		<span class="comment-timestamp mrs grey-text right">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
 	</div>
 </div>
 #end
@@ -98,9 +98,9 @@
 		<div class="row mbn viewbox valign-wrapper">
 			<div class="col s12 m11 columns ">
 				#if($isDefaultSpacePublic && $scooldUtils.isDefaultSpace($space.name))
-				<i class="fa fa-unlock green-text tooltipped" data-tooltip="This space is public"></i>
+				<span class="tooltipped" data-tooltip="This space is public">#ico("unlock" "green-text")</span>
 				#else
-				<i class="fa fa-lock grey-text tooltipped" data-tooltip="This space is private"></i>
+				<span class="tooltipped" data-tooltip="This space is private">#ico("lock" "grey-text")</span>
 				#end
 				#if($scooldUtils.isDefaultSpace($space.name))
 					#set($spaceName = $!lang.get('defaultspace'))
@@ -108,13 +108,15 @@
 					#set($spaceName = $!space.name)
 				#end
 				#if($scooldUtils.isAutoAssignedSpace($space))
-					<i class="fa fa-users grey-text tooltipped" data-tooltip="Assigned to all users"></i>
+					<span class="grey-text tooltipped" data-tooltip="Assigned to all users">
+						#icon('<path d="M19 17V19H7V17S7 13 13 13 19 17 19 17M16 8A3 3 0 1 0 13 11A3 3 0 0 0 16 8M19.2 13.06A5.6 5.6 0 0 1 21 17V19H24V17S24 13.55 19.2 13.06M18 5A2.91 2.91 0 0 0 17.11 5.14A5 5 0 0 1 17.11 10.86A2.91 2.91 0 0 0 18 11A3 3 0 0 0 18 5M7.34 8.92L8.5 10.33L3.75 15.08L1 12.08L2.16 10.92L3.75 12.5L7.34 8.92" />' '')
+					</span>
 				#end
 				<a href="$questionslink/space/$!space.id" class="space-name-box" title="$!{spaceName}">$!{spaceName}</a>
 			</div>
 			<div class="col s12 m1 columns right-align">
 				#if(!$scooldUtils.isDefaultSpace($space.name))
-				<a href="#" title="$!lang.get('edit')" class="editlink"><i class="fa fa-pencil-square orange-text"></i></a>
+				<a href="#" title="$!lang.get('edit')" class="editlink">#ico("pencil" "orange-text")</a>
 				#end
 			</div>
 		</div>
@@ -163,15 +165,16 @@
 ####################################
 #macro(spacelabel $currentSpace)
 <div class="spacelabel bookmark-spaceurl valign-wrapper">
+	#define($_homeIcon)#icon('<path d="M9,13H15V19H18V10L12,5.5L6,10V19H9V13M4,21V9L12,3L20,9V21H4Z" />' '')#end
 	#if($scooldUtils.canAccessSpace($authUser, "default"))
-		<a href="$questionslink/space?returnto=$!returnto" title="$!lang.get('defaultspace')"><i class="fa fa-home grey-text mrm"></i></a>
+		<a href="$questionslink/space?returnto=$!returnto" title="$!lang.get('defaultspace')"><span class="grey-text mrm">$_homeIcon</span></a>
 	#else
-		<i class="fa fa-home grey-text mrm"></i>
+		<span class="grey-text mrm">$_homeIcon</span>
 	#end
-	<i class="fa fa-angle-right grey-text mrm"></i>
+	#ico("chevron-right" "grey-text mrm")
 	#if(!$scooldUtils.isAllSpaces($currentSpace))
 		<a href="$questionslink/space/all?returnto=$!returnto" title="All Spaces" class="grey-text smallText mrm">$!lang.get('allspaces')</a>
-		<i class="fa fa-angle-right grey-text mrm"></i>
+		#ico("chevron-right" "grey-text mrm")
 	#end
 	#if($scooldUtils.isAllSpaces($currentSpace))
 		$!lang.get('allspaces')
@@ -179,7 +182,7 @@
 		$scooldUtils.getSpaceName($!currentSpace)
 	#end
 	<a href="$questionslink/space/$scooldUtils.getSpaceId($!currentSpace)"
-		 class="hide tooltipped mhs" data-tooltip="Copy link"><i class="fa fa-share-square-o"></i></a>
+		 class="hide tooltipped mhs permalink" data-tooltip="Copy link">#ico("share" "")</a>
 </div>
 #end
 ####################################
@@ -187,50 +190,51 @@
 <div class="col s12 webhookbox">
 	<div class="card-panel">
 		<a href="$adminlink/delete-webhook?id=$!webhook.id" class="red-text right tooltipped pts delete-webhook"
-			 data-tooltip="$!lang.get('delete')"><i class="fa fa-times fa-lg"></i></a>
+			 data-tooltip="$!lang.get('delete')">#ico("close" "")</a>
 		<div class="mediumText">
 			#if($webhook.active)#set($showActiveWebhook = "")#else #set($showActiveWebhook = "hide")#end
 			#if(!$webhook.active)#set($showInactiveWebhook = "")#else #set($showInactiveWebhook = "hide")#end
-			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showActiveWebhook}" data-tooltip="Deactivate"><i class="fa fa-circle green-text"></i></a>
-			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showInactiveWebhook}" data-tooltip="Activate"><i class="fa fa-circle red-text"></i></a>
+			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showActiveWebhook}" data-tooltip="Deactivate"><span class="green-text">⏺</span></a>
+			<a href="$adminlink/toggle-webhook?id=$!webhook.id" class="tooltipped toggle-webhook ${showInactiveWebhook}" data-tooltip="Activate"><span class="red-text">⏺</span></a>
 			<span class="mrm">$!webhook.targetUrl</span>
 			#if($webhook.create)
-				<span class="chip"><code>create</code></span>
+				<code class="chip">create</code>
 			#end
 			#if($webhook.update)
-				<span class="chip"><code>update</code></span>
+				<code class="chip">update</code>
 			#end
 			#if($webhook.delete)
-				<span class="chip"><code>delete</code></span>
+				<code class="chip">delete</code>
 			#end
 			#if($webhook.createAll)
-				<span class="chip"><code>createAll</code></span>
+				<code class="chip">createAll</code>
 			#end
 			#if($webhook.updateAll)
-				<span class="chip"><code>updateAll</code></span>
+				<code class="chip">updateAll</code>
 			#end
 			#if($webhook.deleteAll)
-				<span class="chip"><code>deleteAll</code></span>
+				<code class="chip">deleteAll</code>
 			#end
 			#if($webhook.typeFilter)
-				<span class="chip"><code><i class="fa fa-filter gray"></i> $!webhook.typeFilter</code></span>
+				<code class="chip">#ico("filter" "grey-text") $!webhook.typeFilter</code>
 			#end
 			#if($webhook.propertyFilter)
-				<span class="chip"><code><i class="fa fa-filter gray"></i> $!webhook.propertyFilter</code></span>
+				<code class="chip">#ico("filter" "grey-text") $!webhook.propertyFilter</code>
 			#end
 			#foreach($event in $webhook.customEvents)
-				<span class="chip"><code>$!event</code></span>
+				<code class="chip">$!event</code>
 			#end
 			#if(!$webhook.urlEncoded)
-				<span class="chip" title="application/json"><code>{JSON}</code></span>
+				<code class="chip" title="application/json">{JSON}</code>
 			#end
 			<span class="chip">
-				<a href="#" class="next-span-toggle click2hide"><i class="fa fa-key"></i></a>
-				<span class="hide"><i class="fa fa-key"></i> <code>$!webhook.secret</code></span>
+				<a href="#" class="permalink" data-value="$!webhook.secret" title="Copy verification key">
+					#icon('<path d="M7 14C5.9 14 5 13.1 5 12S5.9 10 7 10 9 10.9 9 12 8.1 14 7 14M12.6 10C11.8 7.7 9.6 6 7 6C3.7 6 1 8.7 1 12S3.7 18 7 18C9.6 18 11.8 16.3 12.6 14H16V18H20V14H23V10H12.6Z" />' '')
+				</a>
 			</span>
 			#if($webhook.tooManyFailures)
 				<div class="red-text">
-					<i class="fa fa-exclamation-circle"></i> Webhook was disabled due to too many failed delivery attempts.
+					#ico("exclamation-circle" "") Webhook was disabled due to too many failed delivery attempts.
 				</div>
 			#end
 		</div>
@@ -270,7 +274,7 @@
 			#end
 		</td>
 		<td colspan="2" class="right-align">
-			<a href="#" data-value="$value" class="mhm permalink api-key-copy"><i class="fa fa-copy"></i> Copy</a>
+			<a href="#" data-value="$value" class="mhm permalink api-key-copy">$!lang.get('copy')</a>
 			<a href="$formActionBase/revoke-api-key?jti=$!key" class="api-key-revoke red-text">$!lang.get('revoke')</a>
 		</td>
 	</tr>
@@ -328,7 +332,7 @@
 	#set($tags = $post.tags)
 	#if($post.answerid)
 	<a href="$questionslink?sortby=answered" title="Posts with approved answer" class="chip mrs light-green white-text">
-		<i class="fa fa-check-circle"></i> $!lang.get('posts.answered')
+		#ico("check-circle" "") $!lang.get('posts.answered')
 	</a>
 	#end
 	#foreach($showtag in $tags)
@@ -373,7 +377,7 @@
 				#if($pageCount > $MAX_PAGES)#set($pageCount = $MAX_PAGES)#end
 				#if ($pager.page >= $pageCount) #set($next = 1) #else #set($next = $pager.page + 1) #end
 				<ul class="pagination ptl">
-					<li><a href="${_rpath}${paramseparator}${pageparam}=$!prev$!hashSuffix"><i class="fa fa-chevron-left grey-text"></i></a></li>
+					<li><a href="${_rpath}${paramseparator}${pageparam}=$!prev$!hashSuffix"><span class="grey-text">◀</span></a></li>
 					#if($pager.page <= $maxPageLinks)
 						#set($startPage = 1)
 						#if($pageCount < $maxPageLinks)#set($endPage = $pageCount)#else#set($endPage = $maxPageLinks)#end
@@ -382,7 +386,7 @@
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page$!hashSuffix">$!page</a></li>
 						#end
 						#if($pageCount > $maxPageLinks)
-							<i class="fa fa-ellipsis-h pvm phm"></i>
+							<span class="pvm phm">…</span>
 							#if($pageCount == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$pageCount$!hashSuffix">$pageCount</a></li>
 						#end
@@ -391,18 +395,18 @@
 						#set($endPage = $pager.page + ($maxPageLinks / 2))
 						#if(1 == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=1$!hashSuffix">1</a></li>
-						<i class="fa fa-ellipsis-h pvm phm"></i>
+						<span class="pvm phm">…</span>
 						#foreach($page in [$startPage..$endPage])
 							#if($page == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page$!hashSuffix">$!page</a></li>
 						#end
-						<i class="fa fa-ellipsis-h pvm phm"></i>
+						<span class="pvm phm">…</span>
 						#if($pageCount == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$pageCount$!hashSuffix">$pageCount</a></li>
 					#else
 						#if(1 == $pager.page)#set($currPage = $activeClass)#else#set($currPage = "")#end
 						<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=1$!hashSuffix">1</a></li>
-						<i class="fa fa-ellipsis-h pvm phm"></i>
+						<span class="pvm phm">…</span>
 						#set($startPage = $pageCount - $maxPageLinks)
 						#set($endPage = $pageCount)
 						#foreach($page in [$startPage..$endPage])
@@ -410,7 +414,7 @@
 							<li class="waves-effect ${currPage}"><a href="${_rpath}${paramseparator}${pageparam}=$!page$!hashSuffix">$!page</a></li>
 						#end
 					#end
-					<li><a href="${_rpath}${paramseparator}${pageparam}=$!next$!hashSuffix"><i class="fa fa-chevron-right grey-text"></i></a></li>
+					<li><a href="${_rpath}${paramseparator}${pageparam}=$!next$!hashSuffix"><span class="grey-text">▶</span></a></li>
 				</ul>
 			#else
 				#set($next = $pager.page + 1)
@@ -440,7 +444,7 @@
 			#if($showu && $showu.id)
 				#set($contextboxid = $utils.generateSecurityToken(10, true))
 				<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid" title="More">
-					<i class="fa fa-ellipsis-v"></i><span class="hide">More</span></a>
+					⠿<span class="hide">More</span></a>
 				<ul id="${contextboxid}" class="dropdown-content">
 					<li>#getreportlink($showu "$profilelink/$!showu.id" "")</li>
 				</ul>
@@ -456,13 +460,13 @@
 				<br>
 				<strong class="">$!utils.abbreviateInt($!showu.votes, 0)</strong>
 				#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
-					<i class="fa fa-star yellow-text text-darken-3"></i> <small>&times; $showu.badgesMap.size()</small>
+					#ico("star" "yellow-text text-darken-3") <small>&times; $showu.badgesMap.size()</small>
 				#end
 				#if ($showu.groups == "admins")
-					<small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small>
+					<small class="chip badgebox admin-badge">$!lang.get('admin')</small>
 				#end
 				#if ($showu.groups == "mods")
-					<small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small>
+					<small class="chip badgebox mod-badge">$!lang.get('mod')</small>
 				#end
 				#foreach($badge in $showu.customBadges)
 					#custombadgebox($badge "small")
@@ -495,12 +499,12 @@
 	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
 		#if ($showu.groups == "admins")
 		<small class="chip badgebox">
-			<i class="fa fa-asterisk orange-text tooltipped" data-position="top" data-tooltip="$!lang.get('admin')"></i>
+			<span class="admin-badge tooltipped" data-position="top" data-tooltip="$!lang.get('admin')"></span>
 		</small>
 		#end
 		#if ($showu.groups == "mods")
 		<small class="chip badgebox">
-			<i class="fa fa-dot-circle-o orange-text tooltipped" data-position="top" data-tooltip="$!lang.get('mod')"></i>
+			<span class="mod-badge tooltipped" data-position="top" data-tooltip="$!lang.get('mod')"></span>
 		</small>
 		#end
 		#foreach($badge in $showu.customBadges)
@@ -532,7 +536,7 @@
 					<div class="right prm ${ptmClass}">
 						#set($contextboxid = $utils.generateSecurityToken(10, true))
 						<a class="dropdown-trigger grey-text" href="#" data-target="$contextboxid" title="More">
-							<i class="fa fa-ellipsis-v"></i><span class="hide">More</span></a>
+							⠿<span class="hide">More</span></a>
 						<ul id="${contextboxid}" class="dropdown-content">
 							<li>#getreportlink($showFriend "$profilelink/$!showFriend.id" "")</li>
 						</ul>
@@ -555,7 +559,7 @@
 					</div>
 					#if($isAdmin && $request.getParameter("bulkedit") && !$hideSpacesForMods)
 						<div class="smallText">
-							<i class="fa fa-th-large grey-text"></i>
+							#ico("th-large" "grey-text")
 							#if(!$showFriend.hasSpaces() || $showFriend.getSpaces().contains($scooldUtils.getDefaultSpace()))
 								$!lang.get('defaultspace')#if($showFriend.hasSpaces()),#end
 							#end
@@ -585,16 +589,16 @@
 						#end
 					</strong>
 					#if($showFriend.badges && $showFriend.badgesMap && $showFriend.badgesMap.size() > 0)
-						<i class="fa fa-star yellow-text text-darken-3"></i> <small>&times; $showFriend.badgesMap.size()</small>
+						#ico("star" "yellow-text text-darken-3") <small>&times; $showFriend.badgesMap.size()</small>
 					#end
 
 					#if(!$compactUsersViewEnabled)<div>#end
 
 						#if ($showFriend.groups == "admins")
-						<a href="$peoplelink/tag/groups:admins"><small class="chip badgebox"><i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')</small></a>
+						<a href="$peoplelink/tag/groups:admins"><small class="chip badgebox admin-badge">$!lang.get('admin')</small></a>
 						#end
 						#if ($showFriend.groups == "mods")
-						<a href="$peoplelink/tag/groups:mods"><small class="chip badgebox"><i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')</small></a>
+						<a href="$peoplelink/tag/groups:mods"><small class="chip badgebox mod-badge">$!lang.get('mod')</small></a>
 						#end
 						#foreach($badge in $showFriend.customBadges)
 							#custombadgebox($badge "small")
@@ -602,7 +606,7 @@
 					</div>
 					#if($showFriend.lastseen)
 					<div class="grey-text r prm tooltipped lastseen" data-position="top" data-tooltip="$!{lang.get('profile.about.lastseen')}">
-						<i class="fa fa-clock-o"></i> #formatdate($!{showFriend.lastseen} "")
+						#ico("clock-o" "") #formatdate($!{showFriend.lastseen} "")
 					</div>
 					#end
 				</div>
@@ -621,7 +625,8 @@
 		#end
 		#if ($clazz.contains("notext")) #set($_showtxt = "" ) #else #set($_showtxt = " $!lang.get('report')") #end
 		<a href="#main-modal" title="Report a problem" data-fetch="$!{_href}" class="modal-trigger $!{clazz}">
-			#if(!$clazz.contains("noicon"))<i class="fa fa-flag"></i>#end $!_showtxt
+			#if(!$clazz.contains("noicon"))#icon('<path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M10,16V19.08L13.08,16H20V4H4V16H10M13,10H11V6H13V10M13,14H11V12H13V14Z" />' '')#end
+			$!_showtxt
 		</a>
 	#end
 #end
@@ -683,31 +688,24 @@
 
 			<div class="col s12">
 				<div class="pvm">
-					#set($firstLink = $scooldUtils.getFirstLinkInPost($!showpost.body))
-					#set($isFirstLinkImage = $firstLink.endsWith(".gif") || $firstLink.endsWith(".svg") ||
-						$firstLink.endsWith(".png") || $firstLink.endsWith(".jpg") ||
-						$firstLink.endsWith(".jpeg") || $firstLink.endsWith(".webp"))
-					#if($isFirstLinkImage)
-						<img src="$!firstLink" width="80" alt="image" class="mrm mbm left">
-					#end
 					<div>
 						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
 						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
 						#if($showpost.deprecated)
-						<i class="fa fa-exclamation-circle orange-text tooltipped mrs" data-tooltip="$!lang.get('deprecated')"></i>
+						<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
 						#end
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
-						<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
+						<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 						#end
 						#if($showpost.type == "unapprovedquestion")
-						<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+						<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
 						#end
-						<a href="$!actionlink" class="mediumText">
+						<a href="$!actionlink" class="">
 							#if($showSpaceLabel)
 								#set($spaceLabel = "$!scooldUtils.getSpaceName($!showpost.space)")
 								#if(!$spaceLabel.trim().isEmpty())
-									<small class="grey-text"><strong class="mrs">$spaceLabel</strong><i class="fa fa-angle-right"></i></small>
+									<span class="grey-text"><strong class="mrs">$spaceLabel</strong>#ico("chevron-right" "")</span>
 								#end
 							#end
 							$!showpost.title
@@ -717,19 +715,16 @@
 						#foreach($showtag in $showpost.tags)
 							#if ($showtag && $showtag.trim() != "")
 								<a href="$questionslink/tag/$!utils.urlEncode($showtag)" title="Posts tagged $!showtag" class="mrm">
-									<strong class="grey-text">#</strong>$!showtag
+									<strong class="grey-text">#</strong>&nbsp;$!showtag
 								</a>
 							#end
 						#end
 
-						#if($firstLink && !$isFirstLinkImage)
-						<i class="fa fa-link grey-text"></i> <a href="$!firstLink">$firstLink</a>
-						#end
 						<span class="right">
 							#if(!$request.requestURI.startsWith("$!CONTEXT_PATH/profile"))
 								#personlink($showpost.author)
 							#end
-							<span class="grey-text"><i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")</span>
+							<span class="grey-text">#ico("clock-o" "")	#formatdate($showpost.timestamp "")</span>
 						</span>
 					</div>
 				</div>
@@ -761,10 +756,10 @@
 						#end
 						<div class="mediumText">
 							#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
-								<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showpost.location"></i>
+								<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 							#end
 							#if($showpost.type == "unapprovedquestion")
-								<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+								<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
 							#end
 							<a href="$!actionlink" class="mediumText">$!showpost.title</a>
 						</div>
@@ -789,7 +784,7 @@
 						<div>#tagsbox($showpost $actionlink2)</div>
 					</div>
 					<div class="col m2 s12 grey-text r">
-						<i class="fa fa-clock-o"></i>	#formatdate($showpost.timestamp "")
+						#ico("clock-o" "")	#formatdate($showpost.timestamp "")
 					</div>
 				</div>
 			</div>
@@ -809,7 +804,7 @@
 					<span class="lightborder phm mrm">$!answer.votes</span>
 					<span>
 						#if($answer.type == "unapprovedreply")
-							<i class="fa fa-exclamation-circle grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')"></i>
+							<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
 						#end
 						<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">$!answer.title</a>
 					</span>
@@ -825,7 +820,7 @@
 						</div>
 					#end
 					<div class="grey-text r">
-						<i class="fa fa-clock-o"></i> #formatdate($answer.timestamp "")
+						#ico("clock-o" "") #formatdate($answer.timestamp "")
 					</div>
 				</div>
 			</div>
@@ -855,25 +850,25 @@
 
 		<div class="row mbn">
 			<div class="col s4 m4 l4">
-				<div class="left mtm mrl approve-answer-btn">
+				#votebox($showpost "hugeText mtm")
+				<span class="approve-answer-btn hugeText mtm">
 					#set($approvedAnswer = $showpost.id.equals($parentpost.answerid))
 					#if ($approvedAnswer)	#set($onclass = "green-text text-lighten-1") #else #set($onclass = "") #end
 					#if ($authenticated && $showpost.isReply() && $scooldUtils.canApproveReply($parentpost, $authUser))
 						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
-							 title="Approve answer"><i class="fa fa-check-circle fa-3x"></i></a>
+							 title="Approve answer">#ico("check-circle" "")</a>
 					#elseif ($approvedAnswer)
-						<span class="green-text"><i class="fa fa-check-circle fa-3x"
-						#if($showPost.approvalTimestamp)title="Accepted #formatdate($showpost.approvalTimestamp 'dd MMMM yyyy, HH:mm')"#end></i>
+						<span class="green-text largeText"#if($showPost.approvalTimestamp) title="Accepted #formatdate($showpost.approvalTimestamp 'dd MMMM yyyy, HH:mm')" #end >
+							#ico("check-circle" "")
 						</span>
 					#end
-				</div>
-				#votebox($showpost "hugeText mtm")
+				</span>
 			</div>
 			<div class="col s8 m3 l4">
 				<div class="mtm right-align">
 					<div>$!lang.get("posts.posted") #formatdate($showpost.timestamp "")</div>
 					#if($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion")
-					<div><small class="orange-text"><i class="fa fa-exclamation-circle"></i> $!lang.get('posts.unapproved')</small></div>
+					<div><small class="orange-text">#ico("exclamation-circle" "") $!lang.get('posts.unapproved')</small></div>
 					#end
 					#if ($showpost.lasteditby)
 						#if($showpost.revisionid)
@@ -902,54 +897,56 @@
 				<div class="lightborder pam post-actions">
 					<div class="right">
 						#if($authenticated && $showpost.isQuestion())
-						<a href="#post-$!showpost.id" title="$!lang.get('posts.emailme')" class="follow-thread-bell">
-							<i class="fa fa-bell-o"></i>
-						</a> &nbsp;
+						<a href="#post-$!showpost.id" title="$!lang.get('posts.emailme')" class="follow-thread-bell mhs">
+							#icon('<path d="M10 21H14C14 22.1 13.1 23 12 23S10 22.1 10 21M21 19V20H3V19L5 17V11C5 7.9 7 5.2 10 4.3V4C10 2.9 10.9 2 12 2S14 2.9 14 4V4.3C17 5.2 19 7.9 19 11V17L21 19M17 11C17 8.2 14.8 6 12 6S7 8.2 7 11V18H17V11Z" />' '')
+							#icon('<path d="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21M19.75,3.19L18.33,4.61C20.04,6.3 21,8.6 21,11H23C23,8.07 21.84,5.25 19.75,3.19M1,11H3C3,8.6 3.96,6.3 5.67,4.61L4.25,3.19C2.16,5.25 1,8.07 1,11Z" />' 'hide')
+						</a>
 						#end
 						<a href="$!actionlink/#if($showpost.parentid)$!{showpost.parentid}#else$!{showpost.id}#end#post-$!showpost.id" title="Copy permalink" class="permalink">
-							<i class="fa fa-share-square"></i>
+							#ico("share" "")
 						</a>
 					</div>
 
 					#if ($scooldUtils.isMod($authUser) && ($showpost.type == "unapprovedreply" || $showpost.type == "unapprovedquestion"))
-						<a href="$!actionlink/$showpost.id/approve" title="Approve" class="post-refresh green-text prm"><i class="fa fa-check"></i> $!lang.get("posts.approve")</a>
+						<a href="$!actionlink/$showpost.id/approve" title="Approve" class="post-refresh green-text prm">#ico("thumbs-up" "") $!lang.get("posts.approve")</a>
 					#end
 
 					#if ($scooldUtils.canEdit($showpost, $authUser))
-						<a href="#" title="Edit" class="editlink prm"><i class="fa fa-pencil-square"></i> $!lang.get("edit")</a>
+						<a href="#" title="Edit" class="editlink prm">#ico("pencil" "") $!lang.get("edit")</a>
 					#end
 
 					#if ($scooldUtils.canDelete($showpost, $authUser, $parentpost.answerid) || $scooldUtils.isMod($authUser))
-						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete"><i class="fa fa-times"></i> $!lang.get("delete")</a>
+						<a href="$!actionlink/$showpost.id/delete" class="delete-post red-text prm" title="Delete">#ico("close" "") $!lang.get("delete")</a>
 					#end
 
 					#if ($canComment && !$showpost.isFeedback() && $scooldUtils.alwaysHideCommentForms())
-						<a href="#" title="Add a comment" class="next-div-toggle prm add-comment-link"><i class="fa fa-commenting"></i> $!lang.get("comments.write")</a>
+						<a href="#" title="Add a comment" class="next-div-toggle prm add-comment-link">#ico("comment" "") $!lang.get("comments.write")</a>
 					#end
 
-					#if ($showpost.lasteditby)
-					<a href="$revisionslink/$!showpost.id" title="Revision history" class="prm"><i class="fa fa-th-list"></i> $!lang.get("revisions.title")</a>
-					#end
+					##if ($showpost.lasteditby)
+					##<a href="$revisionslink/$!showpost.id" title="Revision history" class="prm">$!lang.get("revisions.title")</a>
+					##end
 
 					#if ($scooldUtils.isMod($authUser) && $showpost.isQuestion())
 						#if ($parentpost.isClosed())
-						<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm"><i class="fa fa-unlock"></i> $!lang.get("reopen")</a>
+						<a href="$!actionlink/$showpost.id/close" title="Reopen" class="post-refresh prm">#ico("unlock" "") $!lang.get("reopen")</a>
 						#else
-						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm"><i class="fa fa-lock"></i> $!lang.get("close")</a>
+						<a href="$!actionlink/$showpost.id/close" title="Close" class="post-refresh-ask prm">#ico("lock" "") $!lang.get("close")</a>
 						#end
 
 						#if ($parentpost.deprecated)
 						<a href="$!actionlink/$showpost.id/deprecate" title="Revert" class="post-refresh-ask prm">
-							<i class="fa fa-undo"></i> $!lang.get("undeprecate")</a>
+							↶ $!lang.get("undeprecate")</a>
 						#else
 						<a href="$!actionlink/$showpost.id/deprecate" title="Deprecate" class="post-refresh-ask prm">
-							<i class="fa fa-exclamation-circle"></i> $!lang.get("deprecate")</a>
+							#ico("exclamation-circle" "") $!lang.get("deprecate")</a>
 						#end
 					#end
 
 					#if ($scooldUtils.isMod($authUser) && $showpost.isReply())
 						<a href="$!actionlink/$showpost.parentid/make-comment/$showpost.id" title="Convert to comment" class="post-refresh-ask prm">
-							<i class="fa fa-level-up"></i> $!lang.get('posts.makecomment')
+							#icon('<path d="M21 6H19V12.1C20.2 12.3 21.2 12.8 22 13.5V7C22 6.5 21.5 6 21 6M6 17C6 17.5 6.5 18 7 18H12C12 16.9 12.3 15.9 12.8 15H6V17M16 2H3C2.5 2 2 2.5 2 3V17L6 13H14.7C15.4 12.5 16.2 12.2 17 12.1V3C17 2.5 16.5 2 16 2M15 11H5.2L4 12.2V4H15V11M17 14H19V17H22V19H19V22H17V19H14V17H17V14Z" />' '')
+							$!lang.get('posts.makecomment')
 						</a>
 					#end
 
@@ -972,7 +969,7 @@
 
 			#if(!$showpost.isReply())
 				<div class="input-field">
-					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					#ico("paragraph" "pvm prefix grey-text")
 					<label for="title_text">$!lang.get('posts.title')</label>
 					<input type="text" name="title" class="validate" maxlength="255" minlength="2"
 								 value="$!showpost.title" id="edit-$!{showpost.id}-title" required>
@@ -980,7 +977,7 @@
 				</div>
 			#end
 
-			<i class="fa fa-pencil fa-2x left grey-text"></i>
+			#ico("pencil" "grey-text left width-14")
 			<div class="pll mll emoji-picker-container">
 				<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"
 									id="edit-$!{showpost.id}-body">$!showpost.body</textarea>
@@ -989,7 +986,7 @@
 
 			#if(!$showpost.isReply())
 				<div class="input-field">
-					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					#ico("tag" "grey-text prefix ptm")
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
 					<input type="hidden" name="tags" value="$!showpost.tagsString" id="edit-$!{showpost.id}-tags">
 					#getmessagebox("red white-text" $error.get("tags"))
@@ -1001,13 +998,14 @@
 			#end
 
 			<div class="mtl ptm mbl">
-				<button class="btn waves-effect waves-light" type="submit">
-					<i class="fa fa-save left"></i> $!lang.get('save')
-				</button> &nbsp;
+				<button class="btn waves-effect waves-light" type="submit">$!lang.get('save')</button> &nbsp;
 				<button class="btn waves-effect waves-light canceledit">$!lang.get('close')</button>
 				#if(!$showpost.isReply() && $isMod)
 				<span class="right">
-					<a href="#" class="canceledit open-merge-window"><i class="fa fa-compress"></i> $!lang.get('posts.mergeinto')</a>
+					<a href="#" class="canceledit open-merge-window">
+						#icon('<path d="M8 17L12 13H15.2C15.6 14.2 16.7 15 18 15C19.7 15 21 13.7 21 12S19.7 9 18 9C16.7 9 15.6 9.8 15.2 11H12L8 7V3H3V8H6L10.2 12L6 16H3V21H8V17Z" />' '')
+						$!lang.get('posts.mergeinto')
+					</a>
 				</span>
 				#end
 			</div>
@@ -1019,7 +1017,7 @@
 			#sectoken(false "MERGE_POST_$!showpost.id")
 
 			<div class="input-field">
-				<i class="fa fa-search pvm prefix grey-text"></i>
+				#ico("search" "grey-text pvm prefix")
 				<input type="text" class="autocomplete" placeholder="$!lang.get('search.questions')">
 				<input type="hidden" name="id2" value="">
 				#getmessagebox("red white-text" $error.get("title"))
@@ -1027,7 +1025,8 @@
 
 			<div class="mtl ptm mbl">
 				<button class="btn waves-effect waves-light rusure" type="submit">
-					<i class="fa fa-compress left"></i> $!lang.get('posts.mergedelete')
+					#icon('<path d="M8 17L12 13H15.2C15.6 14.2 16.7 15 18 15C19.7 15 21 13.7 21 12S19.7 9 18 9C16.7 9 15.6 9.8 15.2 11H12L8 7V3H3V8H6L10.2 12L6 16H3V21H8V17Z" />' '')
+					$!lang.get('posts.mergedelete')
 				</button> &nbsp;
 				<button type="button" class="btn waves-effect waves-light close-merge-window">$!lang.get('close')</button>
 			</div>
@@ -1041,7 +1040,7 @@
 #macro(spaceselect $post )
 	#if($authUser.hasSpaces() || $isMod)
 		<div class="input-field">
-			<i class="fa fa-th-large fa-2x prefix grey-text"></i>
+			#ico("th-large" "prefix grey-text")
 			<div class="mll pll">
 				<select name="space" class="pll #if(!$post)select-space-template#end">
 					#if($post)
@@ -1069,7 +1068,7 @@
 #macro(badgebox $showbadge $num)
 #set($badgeinfo = $!lang.get("about.badges.$showbadge") )
 <span class="chip" title="$!badgeinfo">
-	<span class="fa fa-star yellow-text text-darken-3"></span>
+	#ico("star" "yellow-text text-darken-3")
 	#if ($num && $num > 1)<b>$num</b> &times; $!lang.get("$showbadge") #else $!lang.get("$showbadge") #end
 </span>
 #end
@@ -1078,16 +1077,18 @@
 #if($badge)
 	#set($style = "$badge.style" )
 	#if(!$isMod && ($clazz == "add" || $clazz == "remove")) #set($clazz = "" )	#end
-	<span class="chip custom-badge $!{clazz}" title="$!badge.description" style="$style"
+	<a href="$peoplelink/tag/$!badge.tag" class="chip custom-badge $!{clazz}" title="$!badge.description" style="$style"
 				data-url="$profilelink/$!showUser.creatorid/toggle-badge/$!badge.tag">
-		<i class="fa fa-minus hide tooltipped" data-tooltip="$!lang.get('removebadge')"></i>
-		<i class="fa fa-plus hide tooltipped" data-tooltip="$!lang.get('addbadge')"></i>
+		<span class="hide tooltipped remove-badge" data-tooltip="$!lang.get('removebadge')">-</span>
+		<span class="hide tooltipped add-badge" data-tooltip="$!lang.get('addbadge')">+</span>
 		#if($badge.icon)<span class="badge-icon">$!badge.icon</span>#end
-		<a href="$peoplelink/tag/$!badge.tag"><b>$!badge.name</b></a>
-		<a href="$profilelink/delete-badge/$!badge.tag" class="post-refresh-ask #if(!$isMod)hide#end" style="$style">
-			<i class="fa fa-close tooltipped mhs" data-tooltip="$!lang.get('deletebadge')"></i>
+		<b>$!badge.name</b>
+		#if($isMod)
+		<a href="$profilelink/delete-badge/$!badge.tag" class="post-refresh-ask hide" style="$style">
+			<span class="tooltipped mhs" data-tooltip="$!lang.get('deletebadge')">#ico("close" "")</span>
 		</a>
-	</span>
+		#end
+	</a>
 #end
 #end
 ###################################
@@ -1099,7 +1100,7 @@
 ################# MISC MACROS #####################
 #macro(votebox $votable $sizeClass)
 	#if ($votable)
-		<div class="votebox ${sizeClass}">
+		<span class="votebox ${sizeClass}">
 			#set($upvoteCastClass = "")
 			#set($downvoteCastClass = "")
 			#if($votable.vote)
@@ -1111,41 +1112,39 @@
 				#end
 			#end
 			#if($scooldUtils.config.downvotesEnabled())#set($hideDownvoteClass = "")#else#set($hideDownvoteClass = "hide")#end
-			#if($votable.votes && $votable.votes != 0)#set($_vvotes = $votable.votes)#else#set($_vvotes = "&nbsp;&nbsp;")#end
+			#if($votable.votes && $votable.votes != 0)#set($vvotes = $votable.votes)#else#set($vvotes = 0)#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
+					<span class="upvote grey-text mrs" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				</a>
-				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
+				<span class="votecount">$!vvotes</span>
 				<a href="${signinlink}?returnto=$!{returnto}" class="${hideDownvoteClass}">
-					<i class="fa fa-chevron-down downvote grey-text mrs" title="$!lang.get('votedown.tooltip')"></i>
+					<span class="downvote grey-text mrs" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
-				<i class="fa fa-chevron-up upvote grey-text mrs" title="$!lang.get('voteup.tooltip')"></i>
-				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
-				<i class="fa fa-chevron-down downvote grey-text mrs ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')"></i>
+				<span class="upvote grey-text mrs" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
+				<span class="votecount">$!vvotes</span>
+				<span class="downvote grey-text mrs ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
-					<i class="fa fa-chevron-up upvote mrs ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')"></i>
+					<span class="upvote ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				</a>
-				<div class="votecount hide-on-med-and-up tooltipped" data-tooltip="$votable.votes">$!_vvotes</div>
+				<span class="votecount">$!vvotes</span>
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">
-					<i class="fa fa-chevron-down downvote mrs ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')"></i>
+					<span class="downvote mrm ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 				</a>
 			#end
-			<span class="votecount hide-on-small-only tooltipped" data-tooltip="$votable.votes">$!_vvotes</span>
-		</div>
+		</span>
 	#end
 #end
-
 ###################################
 #macro(locationbox $classes)
 	#if($scooldUtils.isNearMeFeatureEnabled() && !$showpost.isReply())
 		<a href="#" class="next-div-toggle click2hide $!{classes} #if($showpost.location)hide#end">
-			<i class="fa fa-map-marker"></i> $!lang.get("posts.location")
+			#ico("map-marker" "") $!lang.get("posts.location")
 		</a>
 		<div class="input-field #if($showpost.location) show #else hide #end">
-			<i class="fa fa-map-marker ptm prefix grey-text"></i>
+			#ico("map-marker" "grey-text prefix ptm")
 			<input id="location_text" name="location" class="locationbox validate" type="text" value="$!showpost.location"
 						 placeholder="$!{lang.get('profile.about.location')}">
 			<input type="hidden" name="latlng" value="">
@@ -1207,7 +1206,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #macro(getmessagebox $class $text)
 #if($text && !$text.isEmpty())
 	<div class="chip phl ${class}">
-		<i class="fa fa-close close"></i>
+		#ico("close" "close")
 		<div class="msg mrl left-align">#if($text == "") &nbsp; #else $text #end</div>
 	</div>
 #end
@@ -1254,12 +1253,12 @@ $utils.formatDate($date, $format, $currentLocale)
 
 	<noscript>
 		<div class="infostrip errorBox pvm center">
-			<i class="fa fa-warning"></i> $!{lang.get("nojavascript")}
+			#ico("warning" "") $!{lang.get("nojavascript")}
 		</div>
 	</noscript>
 	<div class="card-panel infostrip ${hideInfoStrip} ${infoStripClass}">
 		#if(!$hideInfoStrip.contains("click2hide"))
-			<a href="#" class="right close-infostrip"><i class="fa fa-times"></i></a>
+			<a href="#" class="right close-infostrip">#ico("close" "")</a>
 		#end
 		#set($_infoStripMsg = $infoStripMsg )
 		<div class="infostrip-content">
@@ -1274,7 +1273,7 @@ $utils.formatDate($date, $format, $currentLocale)
 
 	#if(!$scooldUtils.getWelcomeMessagePreLogin($authUser, $request).isEmpty())
 	<div class="card-panel infostrip2 click2hide hide">
-			<a href="#" class="right close-infostrip"><i class="fa fa-times"></i></a>
+			<a href="#" class="right close-infostrip">#ico("close" "")</a>
 			<div class="infostrip2-content"></div>
 	</div>
 	#end
@@ -1388,9 +1387,9 @@ $utils.formatDate($date, $format, $currentLocale)
 				"@id": "$!scooldUtils.getJsonLdValue($!profileUrl)#main-entity",
 				"url": "$!scooldUtils.getJsonLdValue($!profileUrl)",
 				"identifier": "$!scooldUtils.getJsonLdValue($!showUser.creatorid)",
-				"name": "$!scooldUtils.getJsonLdValue($!showUser.name)"#if($showUser.aboutme && !$showUser.aboutme.isEmpty() && !$showUser.anonymityEnabled),
-				"description": "$!scooldUtils.getJsonLdText($!showUser.aboutme)"#end#if($showUser.picture && !$showUser.picture.isEmpty()),
-				"image": "$!scooldUtils.getJsonLdValue($!profileImage)"#end#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled),
+				"name": "$!scooldUtils.getJsonLdValue($!showUser.name)" #if($showUser.aboutme && !$showUser.aboutme.isEmpty() && !$showUser.anonymityEnabled),
+				"description": "$!scooldUtils.getJsonLdText($!showUser.aboutme)" #end#if($showUser.picture && !$showUser.picture.isEmpty()),
+				"image": "$!scooldUtils.getJsonLdValue($!profileImage)" #end#if($showUser.website && !$showUser.website.isEmpty() && !$showUser.anonymityEnabled),
 				"sameAs": ["$!scooldUtils.getJsonLdValue($!showUser.website)"]#end#if($postsCount > 0),
 				"agentInteractionStatistic": {
 					"@type": "InteractionCounter",
@@ -1442,11 +1441,101 @@ $utils.formatDate($date, $format, $currentLocale)
 #end
 #####################################
 #macro(sortordericon $sortparam)
-#if ("false" == $request.getParameter("desc") && $sortparam == $request.getParameter("sortby"))<i class="fa fa-sort-amount-asc phs" title="Ascending order"></i>#end
+#if ("false" == $request.getParameter("desc") && $sortparam == $request.getParameter("sortby"))<span title="Ascending order">#icon('<path d="M19 17H22L18 21L14 17H17V3H19M2 17H12V19H2M6 5V7H2V5M2 11H9V13H2V11Z" />' '')</span>#end
 #end
 #####################################
 #macro(sectoken $bare $formId)
 ## RESERVED FOR FUTURE USE
+#end
+#####################################
+#macro(icon $_paths $classes)<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor">$!_paths</svg>#end
+#####################################
+#macro(ico $id $classes)
+#if($id == "close" || $id == "times")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+#elseif($id == "pencil-square-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19C21,20.11 20.1,21 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M16.7,9.35L15.7,10.35L13.65,8.3L14.65,7.3C14.86,7.08 15.21,7.08 15.42,7.3L16.7,8.58C16.92,8.79 16.92,9.14 16.7,9.35M7,14.94L13.06,8.88L15.12,10.94L9.06,17H7V14.94Z" /></svg>
+#elseif($id == "download")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12H4V17H20V12H22V17C22 18.11 21.11 19 20 19H4C2.9 19 2 18.11 2 17V12M12 15L17.55 9.54L16.13 8.13L13 11.25V2H11V11.25L7.88 8.13L6.46 9.55L12 15Z" /></svg>
+#elseif($id == "info-circle")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7V9H13V7H11M14 17V15H13V11H10V13H11V15H10V17H14M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12M20 12C20 7.58 16.42 4 12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12Z" /></svg>
+#elseif($id == "file-zip-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17V15H14V17H12M14 13V11H12V13H14M14 9V7H12V9H14M10 11H12V9H10V11M10 15H12V13H10V15M21 5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5M19 5H12V7H10V5H5V19H19V5Z" /></svg>
+#elseif($id == "warning")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M13 14H11V9H13M13 18H11V16H13M1 21H23L12 2L1 21Z" /></svg>
+#elseif($id == "upload")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12H4V17H20V12H22V17C22 18.11 21.11 19 20 19H4C2.9 19 2 18.11 2 17V12M12 2L6.46 7.46L7.88 8.88L11 5.75V15H13V5.75L16.13 8.88L17.55 7.45L12 2Z" /></svg>
+#elseif($id == "spinner")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 19C13.1 19 14 19.9 14 21S13.1 23 12 23 10 22.1 10 21 10.9 19 12 19M12 1C13.1 1 14 1.9 14 3S13.1 5 12 5 10 4.1 10 3 10.9 1 12 1M6 16C7.1 16 8 16.9 8 18S7.1 20 6 20 4 19.1 4 18 4.9 16 6 16M3 10C4.1 10 5 10.9 5 12S4.1 14 3 14 1 13.1 1 12 1.9 10 3 10M6 4C7.1 4 8 4.9 8 6S7.1 8 6 8 4 7.1 4 6 4.9 4 6 4M18 16C19.1 16 20 16.9 20 18S19.1 20 18 20 16 19.1 16 18 16.9 16 18 16M21 10C22.1 10 23 10.9 23 12S22.1 14 21 14 19 13.1 19 12 19.9 10 21 10M18 4C19.1 4 20 4.9 20 6S19.1 8 18 8 16 7.1 16 6 16.9 4 18 4Z" /></svg>
+#elseif($id == "exclamation-circle")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+#elseif($id == "check-circle")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
+#elseif($id == "chevron-right")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+#elseif($id == "chevron-left")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>
+#elseif($id == "chevron-up")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M7.4,15.4L12,10.8L16.6,15.4L18,14L12,8L6,14L7.4,15.4Z" /></svg>
+#elseif($id == "chevron-down")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M6,10L12,16L18,10L16.6,8.6L12,13.2L7.4,8.6L6,10Z" /></svg>
+#elseif($id == "cog")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" /></svg>
+#elseif($id == "bars")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+#elseif($id == "th-large")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z" /></svg>
+#elseif($id == "caret-down")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M7,10L12,15L17,10H7Z" /></svg>
+#elseif($id == "caret-right")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M10,17L15,12L10,7V17Z" /></svg>
+#elseif($id == "search")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+#elseif($id == "paragraph")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M10,11A4,4 0 0,1 6,7A4,4 0 0,1 10,3H18V5H16V21H14V5H12V21H10V11Z" /></svg>
+#elseif($id == "pencil" || $id == "pencil-square")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M10 21H5C3.89 21 3 20.11 3 19V5C3 3.89 3.89 3 5 3H19C20.11 3 21 3.89 21 5V10.33C20.7 10.21 20.37 10.14 20.04 10.14C19.67 10.14 19.32 10.22 19 10.37V5H5V19H10.11L10 19.11V21M7 9H17V7H7V9M7 17H12.11L14 15.12V15H7V17M7 13H16.12L17 12.12V11H7V13M21.7 13.58L20.42 12.3C20.21 12.09 19.86 12.09 19.65 12.3L18.65 13.3L20.7 15.35L21.7 14.35C21.91 14.14 21.91 13.79 21.7 13.58M12 22H14.06L20.11 15.93L18.06 13.88L12 19.94V22Z" /></svg>
+#elseif($id == "tag" || $id == "tags")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58L12.41 2.58A2 2 0 0 0 11 2H4A2 2 0 0 0 2 4V11A2 2 0 0 0 2.59 12.42L11.59 21.42A2 2 0 0 0 13 22A2 2 0 0 0 14.41 21.41L21.41 14.41A2 2 0 0 0 22 13A2 2 0 0 0 21.41 11.58M13 20L4 11V4H11L20 13M6.5 5A1.5 1.5 0 1 1 5 6.5A1.5 1.5 0 0 1 6.5 5Z" /></svg>
+#elseif($id == "paper-plane")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6.03L11.5 9.25L4 8.25L4 6.03M11.5 14.75L4 17.97V15.75L11.5 14.75M2 3L2 10L17 12L2 14L2 21L23 12L2 3Z" /></svg>
+#elseif($id == "clock-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z" /></svg>
+#elseif($id == "map-marker")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2C15.31,2 18,4.66 18,7.95C18,12.41 12,19 12,19C12,19 6,12.41 6,7.95C6,4.66 8.69,2 12,2M12,6A2,2 0 0,0 10,8A2,2 0 0,0 12,10A2,2 0 0,0 14,8A2,2 0 0,0 12,6M20,19C20,21.21 16.42,23 12,23C7.58,23 4,21.21 4,19C4,17.71 5.22,16.56 7.11,15.83L7.75,16.74C6.67,17.19 6,17.81 6,18.5C6,19.88 8.69,21 12,21C15.31,21 18,19.88 18,18.5C18,17.81 17.33,17.19 16.25,16.74L16.89,15.83C18.78,16.56 20,17.71 20,19Z" /></svg>
+#elseif($id == "share" || $id == "share-square" || $id == "share-square-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M21,12L14,5V9C7,10 4,15 3,20C5.5,16.5 9,14.9 14,14.9V19L21,12Z" /></svg>
+#elseif($id == "unlock")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M9 5.82L7.36 4.16C8.09 2.31 9.89 1 12 1C14.76 1 17 3.24 17 6V8H18C19.11 8 20 8.9 20 10V16.8L18 14.8V10H13.2L11.2 8H15V6C15 4.34 13.66 3 12 3C10.41 3 9.11 4.25 9 5.82M22.11 21.46L20.84 22.73L19.46 21.35C19.1 21.75 18.58 22 18 22H6C4.89 22 4 21.1 4 20V10C4 8.89 4.89 8 6 8H6.11L1.11 3L2.39 1.73L22.11 21.46M18 19.89L13.85 15.74C13.56 16.5 12.84 17 12 17C10.89 17 10 16.1 10 15C10 14.15 10.5 13.44 11.26 13.15L8.11 10H6V20H18V19.89Z" /></svg>
+#elseif($id == "lock")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,17C10.89,17 10,16.1 10,15C10,13.89 10.89,13 12,13A2,2 0 0,1 14,15A2,2 0 0,1 12,17M18,20V10H6V20H18M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" /></svg>
+#elseif($id == "heart")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M9.75,7.82C10.62,7.82 11.45,8.23 12,8.87C12.55,8.23 13.38,7.82 14.25,7.82C15.79,7.82 17,9.03 17,10.57C17,12.46 15.3,14 12.72,16.34L12,17L11.28,16.34C8.7,14 7,12.46 7,10.57C7,9.03 8.21,7.82 9.75,7.82Z" /></svg>
+#elseif($id == "heart-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M9.75,7.82C8.21,7.82 7,9.03 7,10.57C7,12.46 8.7,14 11.28,16.34L12,17L12.72,16.34C15.3,14 17,12.46 17,10.57C17,9.03 15.79,7.82 14.25,7.82C13.38,7.82 12.55,8.23 12,8.87C11.45,8.23 10.62,7.82 9.75,7.82Z" /></svg>
+#elseif($id == "filter")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M14,12V19.88C14.04,20.18 13.94,20.5 13.71,20.71C13.32,21.1 12.69,21.1 12.3,20.71L10.29,18.7C10.06,18.47 9.96,18.16 10,17.87V12H9.97L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L14.03,12H14Z" /></svg>
+#elseif($id == "star")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M20,2H4V4L9.81,8.36C6.14,9.57 4.14,13.53 5.35,17.2C6.56,20.87 10.5,22.87 14.19,21.66C17.86,20.45 19.86,16.5 18.65,12.82C17.95,10.71 16.3,9.05 14.19,8.36L20,4V2M14.94,19.5L12,17.78L9.06,19.5L9.84,16.17L7.25,13.93L10.66,13.64L12,10.5L13.34,13.64L16.75,13.93L14.16,16.17L14.94,19.5Z" /></svg>
+#elseif($id == "thumb-tack")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" /></svg>
+#elseif($id == "comment" || $id == "commenting" || $id == "comments-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M10,16V19.08L13.08,16H20V4H4V16H10M6,7H18V9H6V7M6,11H15V13H6V11Z" /></svg>
+#elseif($id == "minus")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+#elseif($id == "plus")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+#elseif($id == "user-circle")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z" /></svg>
+#elseif($id == "thumbs-down")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19,15H23V3H19M15,3H6C5.17,3 4.46,3.5 4.16,4.22L1.14,11.27C1.05,11.5 1,11.74 1,12V14A2,2 0 0,0 3,16H9.31L8.36,20.57C8.34,20.67 8.33,20.77 8.33,20.88C8.33,21.3 8.5,21.67 8.77,21.94L9.83,23L16.41,16.41C16.78,16.05 17,15.55 17,15V5C17,3.89 16.1,3 15,3Z" /></svg>
+#elseif($id == "thumbs-up")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" /></svg>
+#elseif($id == "trash-o")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
+#elseif($id == "sign-in")
+<svg class="$!classes ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" /></svg>
+#end
 #end
 ################# END MACROS ###################################################
 

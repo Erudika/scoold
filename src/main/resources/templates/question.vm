@@ -3,7 +3,7 @@
 		<div class="col s12 l9">
 			<span class="grey-text">
 			#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
-				<i class="fa fa-map-marker grey-text tooltipped mrs" data-tooltip="$showPost.location"></i>
+				<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 			#end
 
 			#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
@@ -11,7 +11,7 @@
 			#end
 			#if ($showPost.answercount > 0)
 				#if ($showPost.answerid && !$showPost.answerid.isEmpty())
-					<i class="fa fa-check-circle tooltipped" data-tooltip="Approved answer"></i>
+					<span class="tooltipped" data-tooltip="Approved answer">#ico("check-circle" "")</span>
 				#end
 				$!lang.get("posts.answered")
 			#else
@@ -24,13 +24,13 @@
 			<div id="post-title" class="largeText">
 				#if($showPost.isReply())
 					<a href="$!showPost.getPostLinkForRedirect()" class="tooltipped" data-tooltip="⮪ $!lang.get('backtopost')">
-						<i class="fa fa-reply smallText grey-text"></i> $!{showPost.title}
+						<b class="smallText grey-text">&larr;</b> $!{showPost.title}
 					</a>
 				#else
 					$!{showPost.title}
 				#end
 			</div>
-			<hr>
+			#if(!$showPost.isReply())<hr>#end
 			#ajaxloading(true)
 			<div class="mbl pbl">
 				#postbox($showPost $showPost)
@@ -39,7 +39,7 @@
 			#if ($showPost.deprecated)
 			<div class="center card pvs phl mediumText">
 				<p class="grey-text text-darken-2">
-					<i class="fa fa-exclamation-circle orange-text"></i> <strong>$!lang.get('deprecated'):</strong> $!lang.get("posts.deprecated")
+					#ico("exclamation-circle" "orange-text") <strong>$!lang.get('deprecated'):</strong> $!lang.get("posts.deprecated")
 				</p>
 			</div>
 			#end
@@ -50,8 +50,8 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$!showPost.getPostLinkForRedirect()#sortorderparam('?')" title="Most voted answers"
-							 class="chip $sortarr.votes">#sortordericon() $!lang.get("votes")</a>
+						<a href="$!showPost.getPostLinkForRedirect()#sortorderparam('?' '')" title="Most voted answers"
+							 class="chip $sortarr.votes">#sortordericon('') $!lang.get("votes")</a>
 						<a href="$!showPost.getPostLinkForRedirect()?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
 							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
@@ -72,11 +72,11 @@
 
 					<div class="mvl pvl center $!{showAnswerBoxClass}">
 						#if ($authenticated)
-							<a href="#write-post" class="btn waves-effect waves-light show-answer-question-form"
-								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+							<a href="#write-post" class="btn waves-effect waves-light show-answer-question-form btn-large"
+								 title="Answer this question">#ico("pencil" "") $!lang.get("posts.writeanswer")</a>
 						#else
-							<a href="$signinlink?returnto=$!{returnto.replaceAll('/write', '')}/write" rel="nofollow" class="btn waves-effect waves-light"
-								 title="Answer this question"><i class="fa fa-pencil"></i> $!lang.get("posts.writeanswer")</a>
+							<a href="$signinlink?returnto=$!{returnto.replaceAll('/write', '')}/write" rel="nofollow" class="btn waves-effect waves-light btn-large"
+								 title="Answer this question">#ico("pencil" "") $!lang.get("posts.writeanswer")</a>
 						#end
 					</div>
 
@@ -109,7 +109,7 @@
 								</div>
 
 								<button class="btn mtl waves-effect waves-light" type="submit">
-									<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+									#ico("paper-plane" "mhs")$!lang.get('post')
 								</button>
 							</form>
 						</div>
@@ -119,7 +119,7 @@
 				#if ($showPost.isClosed())
 					<div class="center mvm">
 						<h3 class="grey-text">
-								<i class="fa fa-lock"></i> $!lang.get("posts.closed")
+								#ico("lock" "") $!lang.get("posts.closed")
 							</h3>
 					</div>
 				#end
@@ -128,30 +128,36 @@
 
 		<div class="col m12 l3 s12">
 			<div class="card-panel">
-				<div class="mediumText pvs"><b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')</div>
-				<div class="mediumText pvs"><b>$!showPost.answercount</b>
-					#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</div>
+				<div class="mediumText pvs">
+					#icon('<path d="M6 8C6 5.79 7.79 4 10 4S14 5.79 14 8 12.21 12 10 12 6 10.21 6 8M9.14 19.75L8.85 19L9.14 18.25C9.84 16.5 11.08 15.14 12.61 14.22C11.79 14.08 10.92 14 10 14C5.58 14 2 15.79 2 18V20H9.27C9.23 19.91 9.18 19.83 9.14 19.75M17 18C16.44 18 16 18.44 16 19S16.44 20 17 20 18 19.56 18 19 17.56 18 17 18M23 19C22.06 21.34 19.73 23 17 23S11.94 21.34 11 19C11.94 16.66 14.27 15 17 15S22.06 16.66 23 19M19.5 19C19.5 17.62 18.38 16.5 17 16.5S14.5 17.62 14.5 19 15.62 21.5 17 21.5 19.5 20.38 19.5 19Z" />' 'grey-text')
+					<b>$!utils.abbreviateInt($!showPost.viewcount, 0)</b> $!lang.get('posts.views')
+				</div>
+				<div class="mediumText pvs">
+					#icon('<path d="M15,4V11H5.17L4,12.17V4H15M16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12V3A1,1 0 0,0 16,2M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z" />' 'grey-text')
+					<b>$!showPost.answercount</b>
+					#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end
+				</div>
 				#if($showPost.type == "unapprovedquestion")
-					<div class="mediumText pvs orange-text"><i class="fa fa-exclamation-circle"></i>&nbsp; $!lang.get('posts.unapproved')</div>
+					<div class="mediumText pvs orange-text">#ico("exclamation-circle" "")$!lang.get('posts.unapproved')</div>
 				#end
 				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
-					<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
+					#ico("clock-o" "grey-text") #formatdate($showPost.timestamp "")
 				</div>
 				#if($showPost.lastactivity)
 					<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('profile.about.lastseen')">
-						<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.lastactivity "")
+						#ico("pencil" "grey-text") #formatdate($showPost.lastactivity "")
 					</div>
 				#end
 				#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
-					<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
+					<div class="mediumText pvs">#ico("map-marker" "grey-text")$!showPost.location</div>
 				#end
 				#if($showPost.space && !$scooldUtils.isDefaultSpace($showPost.space))
-					<div class="mediumText pvs"><i class="fa fa-th-large grey-text"></i>&nbsp;
+					<div class="mediumText pvs">#ico("th-large" "grey-text")
 						$scooldUtils.getSpaceName($!showPost.space)
 					</div>
 				#end
 				#if ($showPost.tags && !$showPost.tags.isEmpty() && !$showPost.tags.get(0).isEmpty())
-					<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
+					<div class="mediumText pvs">#ico("tag" "grey-text") $!lang.get('tags.title')</div>
 					<div class="mtm tags-aside">#tagsbox($showPost $questionslink)</div>
 				#end
 			</div>
@@ -161,7 +167,7 @@
 					<div class="mbl">$!lang.get("posts.similar")</div>
 					#foreach($showSimilar in $similarquestions)
 						<div>
-							<small><i class="fa fa-caret-right grey-text"></i></small>
+							<small>#ico("caret-right" "grey-text")</small>
 							<a href="#getpostlink($showSimilar false false)" class="smallText">$!showSimilar.title</a>
 						</div>
 					#end

@@ -4,10 +4,10 @@
 	<div class="chips-container">
 		#set($sortarr = {'popular': "", 'tag': ""} )
 		#setsortbyselection($sortarr 'popular')
-		<a href="$tagslink#sortorderparam('?')" title="Most used tags" class="chip $sortarr.popular">#sortordericon() $!lang.get("posts.mostpopular")</a>
+		<a href="$tagslink#sortorderparam('?' '')" title="Most used tags" class="chip $sortarr.popular">#sortordericon('') $!lang.get("posts.mostpopular")</a>
 		<a href="$tagslink?sortby=tag#sortorderparamasc('&' 'tag')" title="Tags by name" class="chip $sortarr.tag">#sortordericon("tag") $!lang.get("name")</a>
 		#if($isMod)
-		<a href="#" title="Add tag" class="chip orange-text next-div-toggle"><i class="fa fa-plus-circle"></i> <b>$!lang.get('add')</b></a>
+		<a href="#" title="Add tag" class="chip next-div-toggle">#ico("plus" "")<b>$!lang.get('add')</b></a>
 		#end
 	</div>
 
@@ -45,13 +45,13 @@
 				<div class="card-panel pvl tagbox">
 					<div class="row mbn viewbox">
 						<div class="col s12">
-							<strong class="right tag-count">&times; $!showtag.count</strong>
-							<i class="fa fa-tag grey-text"></i>&nbsp;
+							<strong class="right tag-count">&nbsp;&times; $!showtag.count</strong>
+							#ico("tag" "grey-text")
 							<a href="$questionslink/tag/$!utils.urlEncode($showtag.tag)" title="Posts tagged $!showtag.tag" class="mrs">
 								$!showtag.tag
 							</a>
 							#if($isMod)
-								<a href="#" title="Rename" class="editlink"><i class="fa fa-pencil-square orange-text"></i></a>
+								<a href="#" title="Rename" class="editlink orange-text right"><b>$!lang.get('edit').toLowerCase()</b></a>
 							#end
 							#if($showtag.description)
 								<div class="tag-description-box">$showtag.description</div>

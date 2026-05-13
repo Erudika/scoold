@@ -15,12 +15,12 @@
 			<div class="col m3 s6">
 				<div class="mbl">
 					#if (!$showpost.revisionid || $showpost.revisionid == $showrev.id)
-					<i class="fa fa-check-circle green-text fa-3x tooltipped" data-tooltip="$!lang.get('revisions.current')"></i>
+					<span class="green-text largeText tooltipped" data-tooltip="$!lang.get('revisions.current')">#ico("check-circle" "")</span>
 					#elseif ($canrestore)
 					<form method="post" action="$!actionlink/$showrev.parentid/restore/$!showrev.id">
 						#sectoken(false)
 						<button type="submit" class="btn waves-effect waves-light" title="Restore">
-							<i class="fa fa-undo"></i> $!lang.get("restore")
+							↶ $!lang.get("restore")
 						</button>
 					</form>
 					#end
@@ -30,7 +30,7 @@
 				#if ($showrev.original)
 					<strong class="grey-text">$!lang.get("original")</strong>
 				#else
-					<span class="grey-text"><i class="fa fa-clock-o"></i> #formatdate($showrev.timestamp "")</span>
+					<span class="grey-text">#ico("clock-o" "") #formatdate($showrev.timestamp "")</span>
 				#end
 			</div>
 			<div class="col m3 s12">
@@ -83,8 +83,7 @@
 	#end
 #end
 
-<i class="fa fa-arrow-left grey-text"></i>
-<a href="#getpostlink($showPost false false)" title="Go back">$!lang.get("backtopost")</a>
+<a href="#getpostlink($showPost false false)" title="Go back">&larr; $!lang.get("backtopost")</a>
 <div class="">
 	<h2>$!lang.get("revisions.title") #showcount($itemcount.count)</h2>
 

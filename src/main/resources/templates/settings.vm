@@ -45,8 +45,8 @@
 								#end
 								<div class="col l6 m6 s12">
 									#if($backupCode)
-									<p class="green-text"><i class="fa fa-check-circle"></i> $!lang.get('settings.twofaon')</p>
-									<p class="orange-text"><i class="fa fa-warning"></i> <b>$!lang.get('settings.savecode')</b></p>
+									<p class="green-text">#ico("check-circle" "") $!lang.get('settings.twofaon')</p>
+									<p class="orange-text">#ico("warning" "") <b>$!lang.get('settings.savecode')</b></p>
 									<code class="lightborder pam">$backupCode</code>
 									#else
 									<form method="post" action="$settingslink/toggle-twofa" class="mtl">
@@ -137,7 +137,7 @@
 					<div class="lightborder pal center-align">
 						<h3>$!lang.get('password')
 							#if($request.getParameter("passChanged"))
-							<small class="green-text"><i class="fa fa-check"></i></small>
+							<small class="green-text">#ico("check-circle" "")</small>
 							#end
 						</h3>
 						<div class="mvl pvm">
@@ -161,7 +161,6 @@
 						<h3>$!lang.get('settings.preferredspace')</h3>
 						<div class="mvl phl">
 							<div class="input-field">
-								<!--<i class="fa fa-th-large pvm prefix grey-text"></i>-->
 								<select name="preferredSpace" >
 									<option value="scooldspace:*" #if($authUser.preferredSpace.isBlank())selected="selected"#end>$!lang.get('allspaces')</option>
 									<option value="scooldspace:default" #if($authUser.preferredSpace == "scooldspace:default")selected="selected"#end>$!lang.get('defaultspace')</option>
@@ -180,7 +179,6 @@
 						<h3>$!lang.get('posts.locationfilter')</h3>
 						<div class="mbn">
 							<div class="input-field phl">
-								<!--<i class="fa fa-map-marker fa-2x grey-text prefix"></i>-->
 								<input type="text" name="location" value="$!authUser.latlngLabel" class="locationbox autocomplete"
 											 placeholder="$!lang.get('profile.about.location')">
 							</div>
@@ -198,7 +196,7 @@
 					#sectoken(false)
 					<div class="mbn">
 						<div class="input-field">
-							<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+							#ico("tag" "grey-text prefix ptm")
 							<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
 							<input type="hidden" name="tags" value="$!authUser.favtagsString">
 						</div>
@@ -230,7 +228,7 @@
 						#set($hideFilterToggleClass = "hide" )
 					#end
 					<a	href="#" id="newpostEmailsFilterToggle" class="${hideFilterToggleClass} mlm">
-						<i class="fa fa-filter"></i> $!lang.get('filter')
+						#ico("filter" "") $!lang.get('filter')
 					</a>
 				</div>
 				#if($authUser.favspaces && !$authUser.favspaces.isEmpty())

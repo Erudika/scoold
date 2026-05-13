@@ -424,8 +424,13 @@ public class QuestionsController {
 	private String getSpaceFilteredFavtagsQuery(String currentSpace, Profile authUser) {
 		StringBuilder sb = new StringBuilder(utils.getSpaceFilter(authUser, currentSpace));
 		if (authUser.hasFavtags()) {
-			// should we specify the tags property here? like: tags:(tag1 OR tag2)
-			sb.append(" AND (").append(authUser.getFavtags().stream().collect(Collectors.joining(" OR "))).append(")");
+			String favTagsPart = Config._TAGS + ":\"" + authUser.getFavtags().stream()
+					.collect(Collectors.joining("\" OR " + Config._TAGS + ":\"")) + "\"";
+			if (!sb.isEmpty() && sb.charAt(0) == '*') {
+				return favTagsPart;
+			} else {
+				sb.append(" AND (").append(favTagsPart).append(")");
+			}
 		}
 		return sb.toString();
 	}

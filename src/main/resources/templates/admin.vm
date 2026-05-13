@@ -150,7 +150,7 @@
 					<div class="lightborder pal center-align">
 						<div class="input-field em5v">
 							<a href="$adminlink/export" class="btn waves-effect waves-light mvs">
-								<i class="fa fa-download"></i> &nbsp;$!lang.get('admin.export')
+								#ico("download" "") &nbsp;$!lang.get('admin.export')
 							</a>
 						</div>
 					</div>
@@ -163,14 +163,13 @@
 									<div class="file-field input-field">
 										<div class="btn">
 											<span>
-												<i class="fa fa-file-zip-o"></i>
+												#ico("file-zip-o" "") ZIP / JSON
 											</span>
 											<input type="file" name="file" accept=".json,.zip">
 										</div>
 										<div class="file-path-wrapper">
 											<input class="file-path validate" type="text" placeholder="$!lang.get('admin.import.text')" required>
 										</div>
-										<strong class="hide red-text"><i class="fa fa-warning"></i> $!lang.get('admin.import.warn')</strong>
 									</div>
 									<label>
 										<input type="checkbox" name="isso" class="filled-in">
@@ -179,6 +178,7 @@
 									<label class="mll">
 										<input type="checkbox" name="deleteall" class="filled-in">
 										<span>$!lang.get('admin.cleanimport')</span>
+										<span class="hide red-text center" id="import-warning-label">#ico("warning" "") $!lang.get('admin.import.warn')</span>
 									</label>
 								</div>
 							</div>
@@ -189,7 +189,7 @@
 											#set($disabledImportBtn = 'disabled="disabled"')
 										#end
 										<button type="submit" class="btn waves-effect waves-light rusure" $!disabledImportBtn>
-											<i class="fa fa-upload"></i> &nbsp;$!lang.get('admin.import')
+											#ico("upload" "") &nbsp;$!lang.get('admin.import')
 										</button>
 									</div>
 								</div>
@@ -223,11 +223,11 @@
 									<td class="right-align">
 										$!import.getProperty("count")
 										#if($!import.getProperty("status") == "pending")
-											<i class="fa fa-spinner fa-spin orange-text tooltipped" data-tooltip="in progress"></i>
+											<span class="orange-text tooltipped" data-tooltip="in progress"> #ico("spinner" "fa-spin") </span>
 										#elseif($!import.getProperty("status") == "failed")
-											<i class="fa fa-exclamation-circle red-text tooltipped" data-tooltip="with errors"></i>
+											<span class="red-text tooltipped" data-tooltip="with errors"> #ico("exclamation-circle" "") </span>
 										#else
-											<i class="fa fa-check-circle green-text tooltipped" data-tooltip="completed"></i>
+											<span class="green-text tooltipped" data-tooltip="completed">#ico("check-circle" "")</span>
 										#end
 									</td>
 								</tr>
@@ -290,7 +290,7 @@
 			<ul class="collapsible" data-collapsible="expandable">
 			#foreach($key in $configMetadata.keySet())
 				<li #if($key == "Core")class="active"#end>
-					<div class="collapsible-header"><i class="fa fa-chevron-right"></i> <b>$key</b></div>
+					<div class="collapsible-header">▶ &nbsp; <b>$key</b></div>
 					<div class="collapsible-body">
 						<table class="highlight">
 						#foreach($pkey in $configMetadata.get($key).keySet())
@@ -356,7 +356,9 @@
 	<div class="ptl">
 		<ul class="collapsible" data-collapsible="expandable">
 			<li>
-				<div class="collapsible-header" id="showParaVersion"><i class="fa fa-info-circle grey-text"></i>$!lang.get('admin.environment')</div>
+				<div class="collapsible-header" id="showParaVersion">
+					#ico("info-circle" "grey-text mediumText mrm")$!lang.get('admin.environment')
+				</div>
 				<div class="collapsible-body">
 					<table class="highlight">
 						<tr><td><h4>Scoold</h4></td>
@@ -374,7 +376,7 @@
 				</div>
 			</li>
 			<li>
-				<div class="collapsible-header"><i class="fa fa-cog grey-text"></i>$!lang.get('admin.system')</div>
+				<div class="collapsible-header">#ico("cog" "grey-text mrm")$!lang.get('admin.system')</div>
 				<div class="collapsible-body">
 					<table class="highlight">
 							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "user.timezone", "os.name", "os.arch", "os.version", "file.encoding"])

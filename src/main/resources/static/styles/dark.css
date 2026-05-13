@@ -42,6 +42,7 @@ tr { border-bottom: 1px solid #777; }
 .autocomplete-content li .highlight { color: white; background-color: #202020; }
 .select-wrapper .caret { fill: white; }
 table.striped>tbody>tr:nth-child(odd) { background-color: #333; }
+table.highlight>tbody>tr:hover {background-color: rgb(70 70 70 / 50%);}
 .input-field input[type=search]:focus:not(.browser-default) { background-color: transparent; }
 .filter-active { background-color: #efefef; color: black; }
 .diff-ins { background-color: #9fff9f; color: black; }

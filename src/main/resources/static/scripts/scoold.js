@@ -206,7 +206,7 @@ $(function () {
 	$(document).on("click", "a.votelink",  function() {
 		var dis = $(this);
 		var up = dis.hasClass("upvote");
-		var votes = dis.closest("div.votebox").find(".votecount").filter(':visible');
+		var votes = dis.closest(".votebox").find(".votecount").filter(':visible');
 		if (!dis.data("disabled")) {
 			var selectedVote = dis.closest(".votebox").find(".cast").removeClass("cast");
 			if (!selectedVote.length) {
@@ -363,6 +363,10 @@ $(function () {
 		} else {
 			importForm.find(".import-text").next("strong").removeClass("hide").end().addClass("hide");
 		}
+	});
+
+	importForm.find("input[name=deleteall]").click(function () {
+		$("#import-warning-label").toggleClass("hide");
 	});
 
 	$("#select-theme-form").on("click", "input", function() {
@@ -658,30 +662,34 @@ $(function () {
 	});
 
 	$(document).on("mouseenter", ".custom-badge", function () {
-		var dis = $(this);
-		if (dis.hasClass("add")) {
-			dis.find(".fa-plus").removeClass("hide");
-		} else if ($(this).hasClass("remove")) {
-			dis.find(".fa-minus").removeClass("hide");
+		if ($("#available-badges").is(":visible")) {
+			$(this).attr("href", "#");
 		}
 	});
-	$(document).on("mouseleave", ".custom-badge", function () {
-		var dis = $(this);
-		if (dis.hasClass("add")) {
-			dis.find(".fa-plus").addClass("hide");
-		} else if ($(this).hasClass("remove")) {
-			dis.find(".fa-minus").addClass("hide");
+
+	$(document).on("mouseenter mouseleave", ".custom-badge", function() {
+		if ($("#available-badges").is(":visible")) {
+			var dis = $(this);
+			if (dis.hasClass("add")) {
+				dis.find(".add-badge").toggleClass("hide");
+			} else if ($(this).hasClass("remove")) {
+				dis.find(".remove-badge").toggleClass("hide");
+			}
 		}
 	});
 
 	$(document).on("click", ".custom-badge.add", function () {
-		$.post($(this).hide().children("i").addClass("hide").end().
-				removeClass("add").addClass("remove").show().appendTo("#user-badges").attr("data-url"));
+		if ($("#available-badges").is(":visible")) {
+			$.post($(this).hide().children(".add-badge").addClass("hide").end().
+					removeClass("add").addClass("remove").show().appendTo("#user-badges").attr("data-url"));
+		}
 	});
 
 	$(document).on("click", ".custom-badge.remove", function () {
-		$.post($(this).hide().children("i").addClass("hide").end().
-				removeClass("remove").addClass("add").show().appendTo("#available-badges").attr("data-url"));
+		if ($("#available-badges").is(":visible")) {
+			$.post($(this).hide().children(".remove-badge").addClass("hide").end().
+					removeClass("remove").addClass("add").show().appendTo("#available-badges").attr("data-url"));
+		}
 	});
 
 	/****************************************************
@@ -1233,12 +1241,13 @@ $(function () {
 	});
 
 	if ($("#follow-thread-check").is(":checked")) {
-		$(".follow-thread-bell").find("i").toggleClass("fa-bell-o fa-bell red-text");
+		$(".follow-thread-bell").find("svg").toggleClass("hide red-text");
 	}
 
 	$(".follow-thread-bell").click(function () {
 		$("#follow-thread-check").click();
-		$(this).find("i").toggleClass("fa-bell-o fa-bell red-text");
+		$(this).find("svg").toggleClass("hide red-text");
+		return false;
 	});
 
 	if (typeof hljs !== "undefined") {
@@ -1251,11 +1260,18 @@ $(function () {
 	$(".task-list-item>input[type=checkbox]").addClass("filled-in").wrap("<label></label>").
 			after("<span>&nbsp;</span>").removeAttr("disabled");
 
-	var qfb = $("#question-filter-btn");
-	qfb.click(function () {
-		if (localStorage.getItem("questionFilterOpen")) {
-			localStorage.removeItem("questionFilterOpen");
-			$(this).removeClass("grey darken-2 white-text").blur().children("i").removeClass("fa-times").addClass("fa-filter");
+	var filterBtn = $("#user-filter-btn, #question-filter-btn");
+	var filterDrawer = $("#user-filter-drawer, #question-filter-drawer");
+	var closeIcon = $('<svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>');
+	var origIcon = filterBtn.find('svg').clone();
+	var localStorageFilterKey = filterBtn.length ? (filterBtn.attr("id").indexOf("question") >= 0 ?
+		"questionFilterOpen" : "userFilterOpen") : "";
+
+	filterBtn.click(function () {
+		if (localStorage.getItem(localStorageFilterKey)) {
+			localStorage.removeItem(localStorageFilterKey);
+			$(this).removeClass("grey darken-2 white-text");
+			filterBtn.children("svg").replaceWith(origIcon);
 		} else {
 			var checked = $(".compact-view-checkbox").parent("label").attr("data-compactViewEnabled");
 			if (checked === "true") {
@@ -1263,45 +1279,21 @@ $(function () {
 			} else {
 				$(".compact-view-checkbox").prop("checked", false);
 			}
-			localStorage.setItem("questionFilterOpen", true);
-			$(this).addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+			localStorage.setItem(localStorageFilterKey, true);
+			$(this).addClass("grey darken-2 white-text");
+			filterBtn.children("svg").replaceWith(closeIcon);
 		}
+		filterDrawer.toggleClass("hide");
 	});
 
-	if (localStorage.getItem("questionFilterOpen")) {
-		$("#question-filter-drawer").removeClass("hide");
-		qfb.addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
+	if (localStorage.getItem(localStorageFilterKey)) {
+		filterDrawer.removeClass("hide");
+		filterBtn.addClass("grey darken-2 white-text");
+		filterBtn.children("svg").replaceWith(closeIcon);
 	}
 
-	$("#question-filter-clear-btn").click(function () {
-		qfb.click();
-		return true;
-	});
-
-	var qfb = $("#user-filter-btn");
-	qfb.click(function () {
-		if (localStorage.getItem("userFilterOpen")) {
-			localStorage.removeItem("userFilterOpen");
-			$(this).removeClass("grey darken-2 white-text").blur().children("i").removeClass("fa-times").addClass("fa-filter");
-		} else {
-			var checked = $(".compact-view-checkbox").parent("label").attr("data-compactViewEnabled");
-			if (checked === "true") {
-				$(".compact-view-checkbox").prop("checked", true);
-			} else {
-				$(".compact-view-checkbox").prop("checked", false);
-			}
-			localStorage.setItem("userFilterOpen", true);
-			$(this).addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
-		}
-	});
-
-	if (localStorage.getItem("userFilterOpen")) {
-		$("#user-filter-drawer").removeClass("hide");
-		qfb.addClass("grey darken-2 white-text").children("i").removeClass("fa-filter").addClass("fa-times");
-	}
-
-	$("#user-filter-clear-btn").click(function () {
-		qfb.click();
+	$("#user-filter-clear-btn, #question-filter-clear-btn").click(function () {
+		filterBtn.click();
 		return true;
 	});
 
@@ -1326,11 +1318,7 @@ $(function () {
 	}
 
 	$(".bookmark-spaceurl").hover(function () {
-		$(this).find("a:last").toggleClass("hide").on("click", function (e) {
-			navigator.clipboard.writeText(this.href);
-			$(this).find("i").text("Copied!").attr("class", "green-text smallText").show().fadeOut(3000);
-			return false;
-		});
+		$(this).find("a:last").toggleClass("hide");
 	});
 
 	$(".save-question-template").find("a").on("click", function (e) {

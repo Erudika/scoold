@@ -4,7 +4,7 @@
 		<div class="row mbn">
 			<div class="col m7 mediumText">
 				#if ($showreport.closed)#set($hideCheck = "")#else#set($hideCheck = "hide")#end
-				<div class="left mrl green-text report-closed-icon ${hideCheck}"><i class="fa fa-check"></i></div>
+				<div class="left mrl green-text report-closed-icon ${hideCheck}">#ico("check-circle" "")</div>
 				#if($showreport.description && !$showreport.description.isEmpty())
 					<small class="grey-text"><strong>$!lang.get("reports.$!{showreport.subType.toLowerCase()}")</strong></small>
 					<br>
@@ -15,7 +15,7 @@
 			</div>
 			<div class="col m5 r">
 				#if($showreport.link && $showreport.link.length() > 1)
-				<a href="$!showreport.link" class="btn green darken-1"><i class="fa fa-external-link-square white-text"></i> $!lang.get('reports.goto')</a>
+				<a href="$!showreport.link" class="btn green darken-1"><span class="white-text pas">↗</span>$!lang.get('reports.goto')</a>
 				#end
 			</div>
 		</div>
@@ -40,6 +40,13 @@
 						<span>$_showBody</span>
 					</div>
 					#end
+
+					#if ($showreport.solution && !$showreport.solution.isEmpty())
+					#set($hide = "" )#else#set($hide = "hide" )#end
+					<div class="${hide}">
+						<strong title="$!lang.get('reports.actionstaken')">$!lang.get('reports.actionstaken'):</strong>
+						<span class="report-solution-text">$!showreport.solution</span>
+					</div>
 				</div>
 			</div>
 
@@ -48,48 +55,42 @@
 					<div class="valign-wrapper">
 						#if ($showreport.closed)#set($hideClose = "hide")#else#set($hideClose = "")#end
 						<a href="#" class="btn-flat editlink report-close-btn ${hideClose} pln" title="Close report">
-							<strong><i class="fa fa-check"></i>&nbsp;$!lang.get("close")</strong>
+							<strong>$!lang.get("close")</strong>
 						</a>
 						#if($showreport.parentid && !$showreport.parentid.isEmpty() && $lang.get("reports.awaitingapproval") == $showreport.description)
 							<a href="$reportslink/$!showreport.id/approve" class="btn-flat approve-btn green-text ${hideClose}" title="Approve content">
-								<strong><i class="fa fa-check"></i>&nbsp;$!lang.get("posts.approve")</strong>
+								<strong>#ico("check-circle" "")&nbsp;$!lang.get("posts.approve")</strong>
 							</a>
 						#end
 						#if($showreport.subType.toLowerCase() == "spam")
-							<a href="$reportslink/$!showreport.id/confirm-spam?spam=true" class="btn-flat approve-btn red-text ${hideClose}" title="Confirm Spam">
-								<strong><i class="fa fa-thumbs-down"></i>&nbsp;Confirm Spam</strong>
-							</a>
 							<a href="$reportslink/$!showreport.id/confirm-spam?spam=false" class="btn-flat approve-btn green-text ${hideClose}" title="Not Spam">
-								<strong><i class="fa fa-thumbs-up"></i>&nbsp;Not Spam</strong>
+								<strong>#ico("thumbs-up" "")&nbsp;Not Spam</strong>
+							</a>
+							<a href="$reportslink/$!showreport.id/confirm-spam?spam=true" class="btn-flat approve-btn red-text ${hideClose}" title="Confirm Spam">
+								<strong>#ico("thumbs-down" "")&nbsp;Spam</strong>
 							</a>
 						#end
 						#if ($showreport.closed)#set($hideOpen = "")#else#set($hideOpen = "hide")#end
 						<a href="$reportslink/$!showreport.id/open" class="btn-flat report-open-btn pln ${hideOpen}" title="Reopen report">
-							<strong><i class="fa fa-undo"></i>&nbsp;$!lang.get("reopen")</strong>
+							<strong>↶&nbsp;$!lang.get("reopen")</strong>
 						</a>
 						#if ($isAdmin)
 						<a href="$reportslink/$!showreport.id/delete" title="Delete" class="btn-flat red-text delete-report">
-							<strong><i class="fa fa-trash-o"></i>&nbsp;$!lang.get("delete")</strong>
+							#ico("close" "") $!lang.get("delete")</strong>
 						</a>
 						#end
 					</div>
 				</div>
 				<div class="col m6 s12 r">
-					<strong> <i class="fa fa-user-circle grey-text"></i>
+					<strong>
+						#ico("user-circle" "grey-text")
 						#if ($showreport.creatorid)
 						<a href="$profilelink/$!showreport.creatorid" title="Go to profile">$!showreport.authorName</a>
 						#else
 						<span>$!showreport.authorName</span>
 						#end
 					</strong> &nbsp;
-					<span class="right grey-text"><i class="fa fa-clock-o"></i>#formatdate($!showreport.timestamp "")</span>
-					<br>
-					#if ($showreport.solution && !$showreport.solution.isEmpty())
-					#set($hide = "" )#else#set($hide = "hide" )#end
-					<div class="${hide}">
-						<i class="fa fa-info-circle grey-text" title="$!lang.get('reports.actionstaken')"></i>
-						<span class="report-solution-text">$!showreport.solution</span>
-					</div>
+					<span class="right grey-text">#ico("clock-o" "")#formatdate($!showreport.timestamp "")</span>
 				</div>
 			</div>
 
@@ -123,14 +124,14 @@
 				#if ($isAdmin && $unapprovedCount > 0)
 				<span class="mrm">
 					<a href="$reportslink/cleanup-unapproved" class="red-text post-refresh rusure">
-						<i class="fa fa-trash-o"></i> $!lang.get('reports.cleanup')
+						#ico("trash-o" "") $!lang.get('reports.cleanup')
 					</a>
 				</span>
 				#end
 				#if ($isAdmin && $itemcount.count > 0)
 				<strong>
 					<a href="$reportslink/delete-all" class="red-text post-refresh rusure">
-						<i class="fa fa-trash-o"></i> $!lang.get('deleteall')
+						#ico("close" "") $!lang.get('deleteall')
 					</a>
 				</strong>
 				#end
@@ -141,7 +142,7 @@
 		#if ($itemcount.count == 0)
 			<div class="largeText center-align grey-text">
 				<div class="em5v">
-					<div class="hugeText mvl"><i class="fa fa-check-circle-o"></i></div>
+					<div class="hugeText mvl">#ico("check-circle" "")</div>
 					$!lang.get("about.reports.2")
 				</div>
 			</div>

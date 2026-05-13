@@ -12,13 +12,15 @@
 				#end
 				<div class="phl">
 					#if($nosmtp)
-						<b class="orange-text"><i class="fa fa-warning"></i> $!lang.get('signup.nosmtp1') $!lang.get('signup.nosmtp2')</b>
+						<b class="orange-text">#ico("warning" "") $!lang.get('signup.nosmtp1') $!lang.get('signup.nosmtp2')</b>
 					#end
 					#if($verify)
-						<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
+						<h1>
+							#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text')
+						</h1>
 						<p>$!lang.get('signin.verify.text')</p>
 					#elseif($verified)
-						<h1><i class="fa fa-check-circle fa-2x green-text"></i></h1>
+						<h1>#ico("check-circle" "mediumText green-text")</h1>
 						<p>$!lang.get('signin.verify.done')</p>
 						<a href="$signinlink?email=$!verifiedEmail" class="btn">$!lang.get("signin.title")</a>
 					#else
@@ -56,13 +58,13 @@
 							#end
 							<div class="input-field mvm leaveblank">
 								<label>Leave blank</label>
-								<input type="text" name="leaveblank" value="">
+								<input type="text" name="leaveblank" value="" class="hide">
 								<input type="hidden" name="timestamp" value="$utils.timestamp()">
 							</div>
 							#if($captchakey.isBlank())
-								<button type="submit" class="btn">
+								<button type="submit" class="btn mbl">
 							#else
-								<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn g-recaptcha">
+								<button data-sitekey="$!captchakey" data-callback="onSubmit" data-action="submit" class="btn mbl g-recaptcha">
 							#end
 									#if($resend)$!lang.get('send')#else$!lang.get('signup.title')#end
 								</button>
@@ -81,13 +83,15 @@
 				<h2 class="grey-text text-darken-2 pbl">$!lang.get("iforgot.title")</h2>
 				<div class="pal">
 					#if($nosmtp)
-						<b class="orange-text"><i class="fa fa-warning"></i> $!lang.get('signup.nosmtp1')</b>
+						<b class="orange-text">#ico("warning" "") $!lang.get('signup.nosmtp1')</b>
 					#end
 					#if($verify)
-					<h1><i class="fa fa-envelope-open-o fa-2x green-text"></i></h1>
+					<h1>
+						#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text')
+					</h1>
 					<p>$!lang.get('signin.verify.text')</p>
 					#elseif($verified)
-					<h1><i class="fa fa-check-circle fa-2x green-text"></i></h1>
+					<h1>#ico("check-circle" "mediumText green-text")</h1>
 					<p>$!lang.get('done')</p>
 					<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
 					#else
@@ -253,15 +257,16 @@
 								#if($fbLoginEnabled)
 									<div class="mvl pvs">
 										<a id="fb-login-btn" href="$!scooldUtils.facebookLoginURL" class="btn-large indigo lighten-1 truncate">
-											<i class="fa fa-facebook-official left"></i> $!lang.get("signin.facebook")
+											#icon('<path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />' 'left')
+											$!lang.get("signin.facebook")
 										</a>
 									</div>
 								#end
 
 								#if($gpLoginEnabled)
 									<div class="mvl pvs">
-										<a id="gp-login-btn" href="$!scooldUtils.googleLoginURL" class="btn-large white grey-text text-darken-1 truncate pls prl">
-											<img src="$imageslink/google.svg" width="54" height="54" alt="Google logo" class="left"/>
+										<a id="gp-login-btn" href="$!scooldUtils.googleLoginURL" class="btn-large white grey-text text-darken-4 truncate">
+											#icon('<path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1V11.1Z" />' 'left')
 											$!lang.get("signin.google")
 										</a>
 									</div>
@@ -270,7 +275,8 @@
 								#if($ghLoginEnabled)
 									<div class="mvl pvs">
 										<a id="gh-login-btn" href="$!scooldUtils.gitHubLoginURL" class="btn-large grey darken-3 white-text truncate">
-											<i class="fa fa-github left"></i> $!lang.get("signin.github")
+											#icon('<path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />' 'left')
+											$!lang.get("signin.github")
 										</a>
 									</div>
 								#end
@@ -278,15 +284,17 @@
 								#if($inLoginEnabled)
 									<div class="mvl pvs">
 										<a id="in-login-btn" href="$!scooldUtils.linkedInLoginURL" class="btn-large light-blue darken-3 white-text text-darken-1 truncate">
-											<i class="fa fa-linkedin left"></i> $!lang.get("signin.linkedin")
+											#icon('<path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17A1.4 1.4 0 0 1 15.71 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19A1.69 1.69 0 0 0 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z" />' 'left')
+											$!lang.get("signin.linkedin")
 										</a>
 									</div>
 								#end
 
 								#if($twLoginEnabled)
 									<div class="mvl pvs">
-										<a id="tw-login-btn" href="$!scooldUtils.twitterLoginURL" class="btn-large light-blue white-text lighten-1 truncate">
-											<i class="fa fa-twitter left"></i> $!lang.get("signin.twitter")
+										<a id="tw-login-btn" href="$!scooldUtils.twitterLoginURL" class="btn-large black white-text truncate">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ico left"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 4l11.733 16h4.267l-11.733 -16l-4.267 0" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" /></svg>
+											$!lang.get("signin.twitter")
 										</a>
 									</div>
 								#end
@@ -294,24 +302,25 @@
 								#if($msLoginEnabled)
 									<div class="mvl pvs">
 										<a id="ms-login-btn" href="$!scooldUtils.microsoftLoginURL" class="btn-large blue-grey white-text darken-2 truncate">
-											<i class="fa fa-windows left"></i> $!lang.get("signin.microsoft")
+											#icon('<path d="M2,3H11V12H2V3M11,22H2V13H11V22M21,3V12H12V3H21M21,22H12V13H21V22Z" />' 'left')
+											$!lang.get("signin.microsoft")
 										</a>
 									</div>
 								#end
 
 								#if($slLoginEnabled)
 									<div class="mvl pvs">
-										<a id="sl-login-btn" href="$!scooldUtils.slackLoginURL" class="btn-large truncate pls prl">
-											<img src="https://cdn.brandfolder.io/5H442O3W/as/pl546j-7le8zk-199wkt/Slack_Mark.svg"
-													 width="54" height="54" alt="Slack logo" class="left"/> $!lang.get("signin.slack")
+										<a id="sl-login-btn" href="$!scooldUtils.slackLoginURL" class="btn-large truncate">
+											#icon('<path d="M6,15A2,2 0 0,1 4,17A2,2 0 0,1 2,15A2,2 0 0,1 4,13H6V15M7,15A2,2 0 0,1 9,13A2,2 0 0,1 11,15V20A2,2 0 0,1 9,22A2,2 0 0,1 7,20V15M9,7A2,2 0 0,1 7,5A2,2 0 0,1 9,3A2,2 0 0,1 11,5V7H9M9,8A2,2 0 0,1 11,10A2,2 0 0,1 9,12H4A2,2 0 0,1 2,10A2,2 0 0,1 4,8H9M17,10A2,2 0 0,1 19,8A2,2 0 0,1 21,10A2,2 0 0,1 19,12H17V10M16,10A2,2 0 0,1 14,12A2,2 0 0,1 12,10V5A2,2 0 0,1 14,3A2,2 0 0,1 16,5V10M14,18A2,2 0 0,1 16,20A2,2 0 0,1 14,22A2,2 0 0,1 12,20V18H14M14,17A2,2 0 0,1 12,15A2,2 0 0,1 14,13H19A2,2 0 0,1 21,15A2,2 0 0,1 19,17H14Z" />' 'left')
+											$!lang.get("signin.slack")
 										</a>
 									</div>
 								#end
 
 								#if($azLoginEnabled)
 									<div class="mvl pvs">
-										<a id="az-login-btn" href="$!scooldUtils.amazonLoginURL" class="btn-large truncate pls prl">
-											<img src="$imageslink/amazon.svg" width="50" height="50" alt="Amazon logo" class="left pts phm"/>
+										<a id="az-login-btn" href="$!scooldUtils.amazonLoginURL" class="btn-large truncate">
+											<svg class="left ico" fill="#000000" width="64px" height="64px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>amazon</title> <rect width="24" height="24" fill="none"></rect> <path d="M15.93,17.09a.54.54,0,0,1-.63.06,6.55,6.55,0,0,1-1.54-1.79,5.31,5.31,0,0,1-4.42,1.95,3.8,3.8,0,0,1-4-4.17A4.55,4.55,0,0,1,8.19,8.76a18.39,18.39,0,0,1,5-.93V7.5a3.42,3.42,0,0,0-.33-2,1.79,1.79,0,0,0-1.5-.7A2,2,0,0,0,9.25,6.45a.6.6,0,0,1-.47.49l-2.6-.28a.47.47,0,0,1-.4-.56C6.38,3,9.23,2,11.78,2a6.1,6.1,0,0,1,4,1.33C17.11,4.55,17,6.18,17,8v4.17a3.6,3.6,0,0,0,1,2.48c.17.25.21.54,0,.71l-2.06,1.78h0m-2.7-6.53V10c-1.94,0-4,.39-4,2.67,0,1.16.61,1.95,1.63,1.95a2.19,2.19,0,0,0,1.86-1.22,5.32,5.32,0,0,0,.5-2.84m6.93,9A14.29,14.29,0,0,1,12.1,22a14.59,14.59,0,0,1-9.85-3.76c-.2-.18,0-.43.25-.29a19.68,19.68,0,0,0,9.83,2.61A19.69,19.69,0,0,0,19.84,19c.37-.16.66.24.32.51m.91-1c-.28-.36-1.85-.17-2.57-.08-.19,0-.22-.16,0-.3A3.92,3.92,0,0,1,22,17.79a3.86,3.86,0,0,1-1.24,3.32c-.18.16-.35.07-.26-.11C20.76,20.33,21.35,18.86,21.07,18.5Z"></path> </g></svg>
 											$!lang.get("signin.amazon")
 										</a>
 									</div>
@@ -320,7 +329,7 @@
 								#if($oa2LoginEnabled)
 									<div class="mvl pvs">
 										<a id="oa2-login-btn" href="$!scooldUtils.oAuth2LoginURL" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-sign-in left"></i> $!oa2LoginProvider
+											#ico("sign-in" "") $!oa2LoginProvider
 										</a>
 									</div>
 								#end
@@ -328,7 +337,7 @@
 								#if($oa2secondLoginEnabled)
 									<div class="mvl pvs">
 										<a id="oa2second-login-btn" href="$!scooldUtils.oAuth2SecondLoginURL" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-sign-in left"></i> $!oa2secondLoginProvider
+											#ico("sign-in" "") $!oa2secondLoginProvider
 										</a>
 									</div>
 								#end
@@ -336,7 +345,7 @@
 								#if($oa2thirdLoginEnabled)
 									<div class="mvl pvs">
 										<a id="oa2third-login-btn" href="$!scooldUtils.oAuth2ThirdLoginURL" class="btn-large grey darken-2 truncate">
-											<i class="fa fa-sign-in left"></i> $!oa2thirdLoginProvider
+											#ico("sign-in" "") $!oa2thirdLoginProvider
 										</a>
 									</div>
 								#end

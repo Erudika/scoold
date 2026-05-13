@@ -6,20 +6,20 @@
 			<form method="post" action="$feedbacklink" id="write-feedback-form">
 				#sectoken(false "CREATE_FEEDBACK")
 				<div class="input-field mbl">
-					<i class="fa fa-paragraph pvm prefix grey-text"></i>
+					#ico("paragraph" "pvm prefix grey-text")
 					<label for="title_text">$!lang.get('posts.title')</label>
 					<input type="text" id="title_text" name="title" class="validate" maxlength="255" minlength="2" required>
 					#getmessagebox("red white-text" $error.get("title"))
 				</div>
 
-				<i class="fa fa-pencil fa-2x left grey-text"></i>
+				#ico("pencil" "grey-text left width-14")
 				<div class="pll mll emoji-picker-container">
 					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10"></textarea>
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
 				<div class="input-field">
-					<i class="fa fa-tag fa-2x grey-text prefix ptm"></i>
+					#ico("tag" "grey-text prefix ptm")
 					<div class="chips chips-autocomplete" title="$!lang.get('tags.title')"></div>
 					<input type="hidden" name="tags" value="">
 					<div class="pll mll">
@@ -28,7 +28,7 @@
 				</div>
 
 				<button class="btn mtl waves-effect waves-light" type="submit">
-					<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+					#ico("paper-plane" "mhs")$!lang.get('post')
 				</button>
 			</form>
 		</div>
@@ -45,8 +45,8 @@
 					#set($sortarr = {'votes': "", 'newest': ""} )
 					#setsortbyselection($sortarr 'votes')
 					<span class="right">
-						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)#sortorderparam('?')" title="Most voted answers"
-							 class="chip $sortarr.votes">#sortordericon() $!lang.get("votes")</a>
+						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)#sortorderparam('?' '')" title="Most voted answers"
+							 class="chip $sortarr.votes">#sortordericon('') $!lang.get("votes")</a>
 						<a href="$questionlink/$showPost.id/#stripstr($showPost.title)?sortby=newest#sortorderparam('&' 'newest')" title="Newest answers"
 							 class="chip $sortarr.newest">#sortordericon("newest") $!lang.get("newest")</a>
 					</span>
@@ -69,14 +69,14 @@
 
 						<input type="hidden" name="answer" value="true">
 						<button class="btn mtl waves-effect waves-light" type="submit">
-							<i class="fa fa-paper-plane left"></i>$!lang.get('post')
+							#ico("paper-plane" "mhs")$!lang.get('post')
 						</button>
 					</form>
 				</div>
 				#else
 					<div class="mvl pvl center">
 						<a href="$signinlink?returnto=$!returnto" rel="nofollow" class="btn waves-effect waves-light"
-									 title="Reply"><i class="fa fa-pencil"></i> $!lang.get("feedback.writereply")</a>
+									 title="Reply">#ico("pencil" "") $!lang.get("feedback.writereply")</a>
 					</div>
 				#end
 			</div>
@@ -87,18 +87,18 @@
 					<div class="mediumText pvs"><b>$!showPost.answercount</b>
 						#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end</div>
 					<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
-						<i class="fa fa-clock-o grey-text"></i> #formatdate($showPost.timestamp "")
+						#ico("clock-o" "grey-text") #formatdate($showPost.timestamp "")
 					</div>
 					#if($showPost.updated)
 						<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('profile.about.lastseen')">
-							<i class="fa fa-pencil-square grey-text"></i> #formatdate($showPost.updated "")
+							#ico("pencil" "grey-text") #formatdate($showPost.updated "")
 						</div>
 					#end
 					#if($showPost.location && !$showPost.location.isEmpty())
-						<div class="mediumText pvs"><i class="fa fa-map-marker grey-text"></i>&nbsp; $!showPost.location</div>
+						<div class="mediumText pvs">#ico("map-marker" "grey-text")&nbsp; $!showPost.location</div>
 					#end
 					#if ($showPost.tags && !$showPost.tags.isEmpty())
-						<div class="mediumText pvs"><i class="fa fa-tags grey-text"></i> $!lang.get('tags.title')</div>
+						<div class="mediumText pvs">#ico("tag" "grey-text") $!lang.get('tags.title')</div>
 						<div class="mtm">#tagsbox($showPost $questionslink)</div>
 					#end
 				</div>
@@ -109,7 +109,7 @@
 						#foreach($showSimilar in $similarquestions)
 							#set($plink = "#getpostlink($showSimilar false false)")
 							<div>
-								<small><i class="fa fa-caret-right grey-text"></i></small>
+								<small>#ico("caret-right" "grey-text")</small>
 								<a href="$plink" class="smallText">$!showSimilar.title</a>
 							</div>
 						#end

@@ -7,7 +7,7 @@
 			</div>
 			<div class="card-content center-align">
 				#if ($canEdit && $canEditAvatar)
-				<a id="edit-picture-link" href="#" class="editlink"><i class="fa fa-image"></i> $!lang.get('profile.changepic')</a>
+				<a id="edit-picture-link" href="#" class="editlink">🖼 $!lang.get('profile.changepic')</a>
 				<div class="editbox hide">
 					<form action="$profilelink/$!showUser.creatorid" method="post">
 						#sectoken(false)
@@ -67,7 +67,7 @@
 					#end
 					#if ($showUser.location && !$showUser.location.isEmpty() && !$showUser.anonymityEnabled)
 					<div>
-						<i class="fa fa-map-marker grey-text text-darken-1"></i>&nbsp;
+						#ico("map-marker" "grey-text")&nbsp;
 						<span class="black-text">$!{showUser.location}</span>
 					</div>
 					#end
@@ -80,14 +80,11 @@
 			#end
 			<div class="card-action card-website center-align truncate ${hideBadgePanel}">
 				#if ($showUser.groups == "admins")
-				<span class="chip badgebox black-text">
-					<i class="fa fa-asterisk orange-text"></i> $!lang.get('admin')
-				</span>
-				#end
+				<span class="chip badgebox black-text admin-badge">$!lang.get('admin')</span>
+				#else
 				#if ($scooldUtils.isModAnywhere($showUser))#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
-				<span class="chip badgebox black-text moderator-icon ${hideModIcon}">
-					<i class="fa fa-dot-circle-o orange-text"></i> $!lang.get('mod')
-				</span>
+				<span class="chip badgebox black-text moderator-icon mod-badge ${hideModIcon}">$!lang.get('mod')</span>
+				#end
 			</div>
 		</div>
 	</div>
@@ -97,7 +94,6 @@
 			<div class="row valign-wrapper mvn">
 				<div class="col s9">
 					<div class="mts">
-						<i class="fa fa-comments-o grey-text"></i>
 						<strong>$itemcount1.count</strong>
 						#if($itemcount1.count == 1)$!lang.get('posts.question')#else$!lang.get('questions.title')#end,
 						<strong>$itemcount2.count</strong>
@@ -106,13 +102,14 @@
 					<div class="row">
 						<div class="col m12 l6">
 							#if ($showUser.timestamp)
-							<span class="pvs mrm"><i class="fa fa-birthday-cake grey-text"></i>&nbsp;
+							<span class="pvs mrm">
+								#icon('<path d="M12 6C13.11 6 14 5.1 14 4C14 3.62 13.9 3.27 13.71 2.97L12 0L10.29 2.97C10.1 3.27 10 3.62 10 4C10 5.1 10.9 6 12 6M18 9H13V7H11V9H6C4.34 9 3 10.34 3 12V21C3 21.55 3.45 22 4 22H20C20.55 22 21 21.55 21 21V12C21 10.34 19.66 9 18 9M19 20H5V17C5.9 17 6.76 16.63 7.4 16L8.5 14.92L9.56 16C10.87 17.3 13.15 17.29 14.45 16L15.53 14.92L16.6 16C17.24 16.63 18.1 17 19 17V20M19 15.5C18.5 15.5 18 15.3 17.65 14.93L15.5 12.8L13.38 14.93C12.64 15.67 11.35 15.67 10.61 14.93L8.5 12.8L6.34 14.93C6 15.29 5.5 15.5 5 15.5V12C5 11.45 5.45 11 6 11H18C18.55 11 19 11.45 19 12V15.5Z" />' 'grey-text')
 								$!{lang.get("profile.about.membersince")} #formatdate($!{showUser.timestamp} "dd MMMM yyyy")</span>
 							#end
 						</div>
 						<div class="col m12 l6">
 							#if ($showUser.lastseen)
-							<span class="pvs"><i class="fa fa-clock-o grey-text"></i>&nbsp;
+							<span class="pvs">#ico("clock-o" "grey-text")&nbsp;
 								$!{lang.get("profile.about.lastseen")} #formatdate($!{showUser.lastseen} "")</span>
 							#end
 						</div>
@@ -120,10 +117,10 @@
 				</div>
 				<div class="col s3 r">
 					<a href="$showUser.getProfileLink()"
-						 class="permalink tooltipped mhs" data-tooltip="Copy profile link"><i class="fa fa-share-square-o"></i></a>
+						 class="permalink tooltipped mhs" data-tooltip="Copy profile link">#ico("share" "")</a>
 					#if ($canEdit)
 						<a href="$profilelink/$showUser.creatorid/edit" class="editlink btn">
-							<i class="fa fa-pencil"></i><span class="plm hide-on-med-and-down">$!{lang.get("edit")}</span>
+							#ico("pencil" "")<span class="plm hide-on-med-and-down">$!{lang.get("edit")}</span>
 						</a>
 					#end
 				</div>
@@ -166,8 +163,8 @@
 
 					#if($showUser.upvotes > 0 || $showUser.downvotes > 0)
 					<span class="mediumText">
-						<strong class="tooltipped mhm" data-tooltip="Votes down">$!showUser.downvotes <i class="fa fa-chevron-down red-text text-darken-3"></i></strong>
-						<strong class="tooltipped" data-tooltip="Votes up">$!showUser.upvotes <i class="fa fa-chevron-up green-text text-darken-3"></i></strong>
+						<strong class="tooltipped mhm" data-tooltip="Votes down">$!showUser.downvotes #ico("chevron-down" "red-text text-darken-3")</strong>
+						<strong class="tooltipped" data-tooltip="Votes up">$!showUser.upvotes #ico("chevron-up" "green-text text-darken-3")</strong>
 					</span>
 					#end
 				</div>
@@ -190,7 +187,7 @@
 								#end
 							#end
 						</span>
-						<a href="#" class="next-div-toggle click2hide pvm"><i class="fa fa-plus-square"></i>
+						<a href="#" class="next-div-toggle click2hide">#ico("plus" "")
 							<strong>$!lang.get('createbadge')</strong>
 						</a>
 						<div class="card pam hide">
@@ -279,7 +276,7 @@
 						#if(!$showUser.hasSpaces() || $showUser.getSpaces().contains($scooldUtils.getDefaultSpace()))
 							#if($userSpaces.size() > 5)<div class="col m6 l4">#end
 								<span class="chip #spaceboxclass('default')">
-									<i class="fa fa-th-large grey-text"></i>
+									#ico("th-large" "grey-text")
 									<span class="mhm">$!lang.get('defaultspace')  #makemodlink($scooldUtils.getSpaceId('default'))</span>
 								</span>
 							#if($userSpaces.size() > 5)</div>#end
@@ -293,7 +290,7 @@
 							#end
 							#if($userSpaces.size() > 5)<div class="col m6 l4">#end
 								<span class="chip #spaceboxclass($space)">
-									<i class="fa fa-th-large grey-text"></i>
+									#ico("th-large" "grey-text")
 									<span class="mhs">${spaceString} #makemodlink($scooldUtils.getSpaceId($space))</span>
 								</span>
 							#if($userSpaces.size() > 5)</div>#end
@@ -303,7 +300,7 @@
 				#end
 
 				#if(!$showUser.user && $isMod)
-					<h4 class="grey-text text-darken-1 pvs"><i class="fa fa-warning"></i> &nbsp; $!lang.get("profile.deleted")</h4>
+					<h4 class="grey-text text-darken-1 pvs">#ico("warning" "")  $!lang.get("profile.deleted")</h4>
 				#end
 			</div>
 
@@ -315,7 +312,7 @@
 					<div class="row">
 						<div class="col s12 m6">
 							<div class="input-field">
-								<i class="fa fa-user-circle prefix grey-text"></i>
+								#ico("user-circle" "prefix grey-text")
 								<label for="name_text">$!{lang.get("profile.name")}</label>
 								<input id="name_text" name="name" class="validate" type="text" value="$!{showUser.name}"
 											 #if(!$nameEditsAllowed)disabled="disabled"#end>
@@ -323,7 +320,7 @@
 						</div>
 						<div class="col s12 m6">
 							<div class="input-field">
-								<i class="fa fa-map-marker prefix grey-text mhm"></i>
+								#ico("map-marker" "grey-text prefix mhm")
 								<input type="hidden" name="latlng" value="$!{authUser.latlng}">
 								<input id="location_text" name="location" class="locationbox validate" type="text" value="$!{showUser.location}"
 											 placeholder="$!{lang.get('profile.about.location')}">
@@ -334,7 +331,7 @@
 					<div class="row valign-wrapper">
 						<div class="col s12 m6">
 							<div class="input-field">
-								<i class="fa fa-envelope-o prefix grey-text"></i>
+								<span class="prefix grey-text">@</span>
 								<label for="email_text">$!{lang.get("signup.form.email")}</label>
 								<input type="email" id="email_text" value="#if($showUser.pendingEmail)$!{showUser.pendingEmail}#else$!{showUser.user.email}#end"
 											 #if($showUser.user.identityProvider == "generic") name="email"#else name="na" disabled#end>
@@ -342,23 +339,23 @@
 						</div>
 						<div class="col s12 m6">
 							#if($showUser.pendingEmail)
-								<i class="fa fa-exclamation-circle fa-lg orange-text tooltipped" data-tooltip="Unverified"></i>&nbsp;
+								<span class="orange-text tooltipped" data-tooltip="Unverified">#ico("exclamation-circle" "")</span>&nbsp;
 								<a href="$profilelink/retry-change-email" class="post-refresh">$!lang.get('signup.resend')</a> &nbsp;
 								<a href="$profilelink/cancel-change-email" class="post-refresh red-text">$!lang.get('cancel')</a>
 							#else
-								<i class="fa fa-check-circle-o fa-lg green-text tooltipped" data-tooltip="Verified"></i>
+								<span class="green-text tooltipped" data-tooltip="Verified">#ico("check-circle" "")</span>
 							#end
 						</div>
 					</div>
 
 					<div class="input-field">
-						<i class="fa fa-vcard-o prefix grey-text"></i>
+						#icon('<path d="M22,3H2C0.91,3.04 0.04,3.91 0,5V19C0.04,20.09 0.91,20.96 2,21H22C23.09,20.96 23.96,20.09 24,19V5C23.96,3.91 23.09,3.04 22,3M22,19H2V5H22V19M14,17V15.75C14,14.09 10.66,13.25 9,13.25C7.34,13.25 4,14.09 4,15.75V17H14M9,7A2.5,2.5 0 0,0 6.5,9.5A2.5,2.5 0 0,0 9,12A2.5,2.5 0 0,0 11.5,9.5A2.5,2.5 0 0,0 9,7M14,7V8H20V7H14M14,9V10H20V9H14M14,11V12H18V11H14" />' 'prefix grey-text')
 						<label for="about_text">$!{lang.get("profile.about.aboutme")}</label>
 						<textarea id="about_text" name="aboutme" maxlength="255" class="materialize-textarea">$!{showUser.aboutme}</textarea>
 					</div>
 
 					<div class="input-field">
-						<i class="fa fa-globe prefix grey-text"></i>
+						#icon('<path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />' 'prefix grey-text')
 						<label for="website_text">$!lang.get("website")</label>
 						<input id="website_text" name="website" type="url" value="$!{showUser.website}">
 					</div>
@@ -381,8 +378,8 @@
 							#if(!$scooldUtils.isAdmin($showUser))
 								<a href="$profilelink/$showUser.creatorid/make-mod" class="chip make-mod-btn">
 									#if ($showUser.groups == "mods")#set($hidemakemod = "hide")#else#set($unhidemakemod = "hide")#end
-									<span class="$!{unhidemakemod}"><i class="fa fa-chevron-down"></i> Unmake mod</span>
-									<span class="$!{hidemakemod}"><i class="fa fa-chevron-up "></i> Make mod</span>
+									<span class="$!{unhidemakemod}">#ico("chevron-down" "") Unmake mod</span>
+									<span class="$!{hidemakemod}">#ico("chevron-up" "") Make mod</span>
 								</a>
 							#end
 						#end
@@ -390,7 +387,7 @@
 					<div class="col m6 right-align">
 						#if ($isAdmin)
 							<a href="${adminlink}?delete=profile&id=$showUser.id&returnto=$peoplelink" title="Delete user account" class="red chip white-text">
-								<i class="fa fa-close"></i> $!lang.get("delete")
+								#ico("close" "") $!lang.get("delete")
 							</a>
 						#end
 					</div>
