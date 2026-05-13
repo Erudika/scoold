@@ -313,7 +313,7 @@
 												#set($pk = $pkey.substring(7))
 												#set($propval = $configMap.getConfigValue($pk, ""))
 												#set($isbool = $configMetadata.get($key).get($pkey).type == "Boolean")
-												#if(!$isbool && (!$propval || $propval.isEmpty()))
+												#if(!$propval || $propval.isEmpty())
 													#set($propval = $configMetadata.get($key).get($pkey).defaultValue)
 												#end
 												<input name="key" type="hidden" value="$pkey">
