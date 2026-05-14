@@ -375,14 +375,14 @@
 								#set($_footerHTML = $!scooldUtils.getFooterHTML())
 								$!_footerHTML
 								#if($scooldUtils.isFooterLinksEnabled())
-								<a href="$aboutlink" title="$!lang.get('about.title')">$!lang.get('about.title')</a>&nbsp;&nbsp;
+								<a class="mrm" href="$aboutlink" title="$!lang.get('about.title')">$!lang.get('about.title')</a>
 								#if($scooldUtils.isFeedbackEnabled())
-								<a href="$feedbacklink" title="$!lang.get('feedback.title')">$!lang.get('feedback.title')</a>&nbsp;&nbsp;
+								<a class="mrm" href="$feedbacklink" title="$!lang.get('feedback.title')">$!lang.get('feedback.title')</a>
 								#end
-								<a href="$privacylink" title="$!lang.get('privacy.title')">$!lang.get('privacy.title')</a>&nbsp;&nbsp;
-								<a href="$termslink" title="$!lang.get('terms.title')">$!lang.get('terms.title')</a>&nbsp;&nbsp;
+								<a class="mrm" href="$privacylink" title="$!lang.get('privacy.title')">$!lang.get('privacy.title')</a>
+								<a class="mrm" href="$termslink" title="$!lang.get('terms.title')">$!lang.get('terms.title')</a>
 								#if($scooldUtils.isApiEnabled())
-								<a href="$apidocslink" title="API docs">API</a>
+								<a class="mrm" href="$apidocslink" title="API docs">API</a>
 								#end
 								#end
 							</div>
