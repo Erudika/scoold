@@ -24,7 +24,7 @@
 
 				#ico("pencil" "grey-text left width-14")
 				<div class="pll mll emoji-picker-container">
-					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10">$!draftQuestion.body</textarea>
+					<textarea class="edit-post" name="body" maxlength="$MAX_TEXT_LENGTH" minlength="10" aria-label="Post body">$!draftQuestion.body</textarea>
 					#getmessagebox("red white-text" $error.get("body"))
 				</div>
 
@@ -236,7 +236,7 @@
 		</div>
 
 		#if (!$questionslist || $questionslist.isEmpty())
-			<div class="card-panel hugeText center-align grey-text">
+			<div class="card-panel hugeText center-align grey-text text-darken-2">
 				<div class="em5v">
 					$!{lang.get("profile.posts.noquestions")}
 

@@ -4,9 +4,9 @@
 		<div class="row mbn">
 			<div class="col m7 mediumText">
 				#if ($showreport.closed)#set($hideCheck = "")#else#set($hideCheck = "hide")#end
-				<div class="left mrl green-text report-closed-icon ${hideCheck}">#ico("check-circle" "")</div>
+				<div class="left mrl green-text text-darken-2 report-closed-icon ${hideCheck}">#ico("check-circle" "")</div>
 				#if($showreport.description && !$showreport.description.isEmpty())
-					<small class="grey-text"><strong>$!lang.get("reports.$!{showreport.subType.toLowerCase()}")</strong></small>
+					<small class="grey-text text-darken-2"><strong>$!lang.get("reports.$!{showreport.subType.toLowerCase()}")</strong></small>
 					<br>
 					$showreport.description
 				#else
@@ -15,7 +15,7 @@
 			</div>
 			<div class="col m5 r">
 				#if($showreport.link && $showreport.link.length() > 1)
-				<a href="$!showreport.link" class="btn green darken-1"><span class="white-text pas">↗</span>$!lang.get('reports.goto')</a>
+				<a href="$!showreport.link" class="btn green darken-3"><span class="white-text pas">↗</span>$!lang.get('reports.goto')</a>
 				#end
 			</div>
 		</div>
@@ -58,15 +58,15 @@
 							<strong>$!lang.get("close")</strong>
 						</a>
 						#if($showreport.parentid && !$showreport.parentid.isEmpty() && $lang.get("reports.awaitingapproval") == $showreport.description)
-							<a href="$reportslink/$!showreport.id/approve" class="btn-flat approve-btn green-text ${hideClose}" title="Approve content">
+							<a href="$reportslink/$!showreport.id/approve" class="btn-flat approve-btn green-text text-darken-2 ${hideClose}" title="Approve content">
 								<strong>#ico("check-circle" "")&nbsp;$!lang.get("posts.approve")</strong>
 							</a>
 						#end
 						#if($showreport.subType.toLowerCase() == "spam")
-							<a href="$reportslink/$!showreport.id/confirm-spam?spam=false" class="btn-flat approve-btn green-text ${hideClose}" title="Not Spam">
+							<a href="$reportslink/$!showreport.id/confirm-spam?spam=false" class="btn-flat approve-btn green-text text-darken-2 ${hideClose}" title="Not Spam">
 								<strong>#ico("thumbs-up" "")&nbsp;Not Spam</strong>
 							</a>
-							<a href="$reportslink/$!showreport.id/confirm-spam?spam=true" class="btn-flat approve-btn red-text ${hideClose}" title="Confirm Spam">
+							<a href="$reportslink/$!showreport.id/confirm-spam?spam=true" class="btn-flat approve-btn red-text text-darken-2 ${hideClose}" title="Confirm Spam">
 								<strong>#ico("thumbs-down" "")&nbsp;Spam</strong>
 							</a>
 						#end
@@ -75,7 +75,7 @@
 							<strong>↶&nbsp;$!lang.get("reopen")</strong>
 						</a>
 						#if ($isAdmin)
-						<a href="$reportslink/$!showreport.id/delete" title="Delete" class="btn-flat red-text delete-report">
+						<a href="$reportslink/$!showreport.id/delete" title="Delete" class="btn-flat red-text text-darken-2 delete-report">
 							#ico("close" "") $!lang.get("delete")</strong>
 						</a>
 						#end
@@ -90,7 +90,7 @@
 						<span>$!showreport.authorName</span>
 						#end
 					</strong> &nbsp;
-					<span class="right grey-text">#ico("clock-o" "")#formatdate($!showreport.timestamp "")</span>
+					<span class="right grey-text text-darken-2">#ico("clock-o" "")#formatdate($!showreport.timestamp "")</span>
 				</div>
 			</div>
 
@@ -123,14 +123,14 @@
 			<div class="col m4 right-align">
 				#if ($isAdmin && $unapprovedCount > 0)
 				<span class="mrm">
-					<a href="$reportslink/cleanup-unapproved" class="red-text post-refresh rusure">
+					<a href="$reportslink/cleanup-unapproved" class="red-text text-darken-2 post-refresh rusure">
 						#ico("trash-o" "") $!lang.get('reports.cleanup')
 					</a>
 				</span>
 				#end
 				#if ($isAdmin && $itemcount.count > 0)
 				<strong>
-					<a href="$reportslink/delete-all" class="red-text post-refresh rusure">
+					<a href="$reportslink/delete-all" class="red-text text-darken-2 post-refresh rusure">
 						#ico("close" "") $!lang.get('deleteall')
 					</a>
 				</strong>

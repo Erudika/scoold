@@ -80,10 +80,10 @@
 			#end
 			<div class="card-action card-website center-align truncate ${hideBadgePanel}">
 				#if ($showUser.groups == "admins")
-				<span class="chip badgebox black-text admin-badge">$!lang.get('admin')</span>
+				<span class="chip badgebox admin-badge">$!lang.get('admin')</span>
 				#else
 				#if ($scooldUtils.isModAnywhere($showUser))#set($hideModIcon = "")#else #set($hideModIcon = "hide")#end
-				<span class="chip badgebox black-text moderator-icon mod-badge ${hideModIcon}">$!lang.get('mod')</span>
+				<span class="chip badgebox moderator-icon mod-badge ${hideModIcon}">$!lang.get('mod')</span>
 				#end
 			</div>
 		</div>
@@ -150,7 +150,7 @@
 
 					#if($showUser.monthlyVotes != 0)
 					<span class="mediumText">
-						<strong >
+						<strong class="mhs">
 							#if($showUser.monthlyVotes < 0)
 								<span class="red-text">-</span>
 							#else

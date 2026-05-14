@@ -8,6 +8,8 @@ nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { backgr
 .navbar-color, .spacelabel { background-color: #424242; }
 .page-footer .footer-copyright, .spacelabel { color: white; }
 .page-footer .btn-flat { color: white; }
+.spacelabel a {	color: inherit; }
+a { color: #10b0fe; }
 
 /* switches and inputs */
 
@@ -18,6 +20,7 @@ nav ul a:hover, .dropdown-content li:hover, .dropdown-content li.active { backgr
 /* tabs */
 /*.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a { color: #efefef; }*/
 .tabs .indicator { background-color: #424242; }
+.tabs .tab a:hover, .tabs .tab a.active, .tabs .tab a { color: #efefef; }
 
  /** DARK OVERRIDES **/
 main, .scoold-wrapper, nav, .sidenav, .sidenav li>a { background-color: #202020; color: #efefef; }
@@ -26,7 +29,7 @@ body, footer.page-footer, .footer-copyright, .card-panel, .card, .tabs { backgro
 .chip, .dropdown-content, .collapsible-header, code, select, .modal, .editor-preview { background-color: #333; color: #efefef; }
 .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like { background-color: #333; }
 span.CodeMirror-selectedtext, li.CodeMirror-hint-active, .cm-comment.CodeMirror-selectedtext { background-color: #777; }
-input, textarea, .grey-text.text-darken-1, .btn-flat, .input-field>label, .black-text { color: #efefef !important; }
+input, textarea, .grey-text.text-darken-1, .grey-text.text-darken-2, .grey-text.text-darken-3, .btn-flat, .input-field>label, .black-text { color: #efefef !important; }
 .tabs .tab a:focus, .tabs .tab a:focus.active { background-color: #333; }
 .hljs, .viewbox pre { background: #333; background-color: #333; color: #efefef; border-radius: 3px; }
 .hljs-tag, .hljs-name, .hljs-attribute { color: #9999ff; }
@@ -64,3 +67,5 @@ table.highlight>tbody>tr:hover {background-color: rgb(70 70 70 / 50%);}
 .swagger-ui input[disabled], .swagger-ui select[disabled], .swagger-ui textarea[disabled]
 { background-color: #333; color: #efefef; }
 .swagger-ui section.models .model-container:hover { background-color: black; color: #efefef; }
+.keyboard-focused .collapsible-header:focus {	background-color: inherit; }
+.editor-toolbar button.active, .editor-toolbar button:hover { background-color: inherit; }

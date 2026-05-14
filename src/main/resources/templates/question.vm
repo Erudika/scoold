@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 	<div class="row questionpage">
 		<div class="col s12 l9">
-			<span class="grey-text">
+			<span class="grey-text text-darken-2">
 			#if($showPost.location && !$showPost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 				<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 			#end
@@ -137,9 +137,6 @@
 					<b>$!showPost.answercount</b>
 					#if($showPost.answercount == 1)$!lang.get('posts.answer')#else$!lang.get('answers.title')#end
 				</div>
-				#if($showPost.type == "unapprovedquestion")
-					<div class="mediumText pvs orange-text">#ico("exclamation-circle" "")$!lang.get('posts.unapproved')</div>
-				#end
 				<div class="mediumText pvs tooltipped" data-tooltip="$!lang.get('posts.posted')">
 					#ico("clock-o" "grey-text") #formatdate($showPost.timestamp "")
 				</div>

@@ -243,7 +243,7 @@
 		<div id="themes-tab" class="col s12">
 			<form action="$adminlink/set-theme" method="post" id="select-theme-form" class="lightborder pal">
 				<div class="mbl pbl">
-				#set($themesMap = {	'default': ['light-blue', 'pink lighten-1'],
+				#set($themesMap = {	'default': ['grey darken-3', 'red darken-4'],
 														'red': ['red darken-3', 'blue-grey darken-3'],
 														'green': ['green darken-3', 'brown darken-3'],
 														'blue': ['blue darken-3', 'light-blue lighten-2'],

@@ -70,7 +70,7 @@
 				<div class="${navbarFixedClass}">
 					<nav class="navbar-color">
 						<div class="nav-wrapper container">
-							<a href="#" data-target="mobile-drawer" class="sidenav-trigger">#ico("bars" "largeText")</a>
+							<a href="#" data-target="mobile-drawer" class="sidenav-trigger">#ico("bars" "width-24")</a>
 							#macro(customnavbarlinks)
 								#if($scooldUtils.isNavbarLink1Enabled())
 								<li><a href="$scooldUtils.navbarLink1URL" title="$scooldUtils.navbarLink1Text"
@@ -178,8 +178,8 @@
 											#elseif($authUser.groups == "mods")
 												$!lang.get('admin.toggle2')
 											#end:
-											#if($authUser.editorRoleEnabled)<span class="green-text">$!lang.get('on').toUpperCase()</span>
-											#else<span class="red-text">$!lang.get('off').toUpperCase()</span>#end</a>
+											#if($authUser.editorRoleEnabled)<span class="green darken-4 white-text phs">$!lang.get('on').toUpperCase()</span>
+											#else<span class="red darken-4 white-text phs">$!lang.get('off').toUpperCase()</span>#end</a>
 									</li>
 									<li class="divider"></li>
 								#end
@@ -202,9 +202,10 @@
 
 							<div class="brand-logo">
 								<a href="$!{CONTEXT_PATH}/">
-									<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo">
+									<img src="$logoUrl" class="scoold-logo" width="$logoWidth" alt="scoold logo" aria-label="Scoold logo">
 								</a>
 							</div>
+							<a href="#pageMain" class="skip-link">Skip to content</a>
 
 							<ul class="right hide-on-med-and-down">
 								#if($!langDirection == "LTR")
@@ -252,12 +253,12 @@
 
 							<ul class="sidenav" id="mobile-drawer">
 								<li>
-									<nav class="light-blue z-depth-0">
+									<nav class="z-depth-0">
 										<div class="nav-wrapper">
 											<form action="$searchlink">
 												<div class="input-field">
 													<input id="search-box-mobile" type="search" name="q" placeholder="$!lang.get('search.search')" required>
-													<label class="label-icon" for="search-box-mobile">#ico("search" "mediumText")</label>
+													<label class="label-icon" for="search-box-mobile" arial-label="$!lang.get('search.search')">#ico("search" "mediumText")</label>
 												</div>
 											</form>
 										</div>
@@ -361,7 +362,7 @@
 				</div>
 			</header>
 
-			<main class="container">
+			<main class="container" tabindex="-1" id="pageMain">
 				#infostrip()
 				#parse($path)
 			</main>
@@ -387,7 +388,8 @@
 							</div>
 						</div>
 						<div class="col l5 s12 sTextCenter mtm right-align">
-							<a href="$!languageslink" title="Switch to a different language" class="btn-flat grey capitalize">
+							<a href="$!languageslink" title="Switch to a different language" class="btn-flat white-text capitalize">
+								#icon('<path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />' '')
 								$!currentLocale.getDisplayLanguage($currentLocale)
 							</a>
 						</div>
@@ -404,7 +406,7 @@
 							</div>
 							<div class="col l6 s12 sTextCenter right-align">
 								<span>This website is powered by <a href="https://scoold.com"><b>Scoold</b></a> and <a href="https://paraio.com">
-									<img src="$imageslink/paradark.svg" width="60" alt="Para logo" class="para-logo-footer"></a>
+									<img src="$imageslink/paradark.svg" width="60" alt="Para logo" class="para-logo-footer" aria-label="Para logo"></a>
 								</span>
 							</div>
 						</div>
@@ -432,10 +434,10 @@
 		#if($includeMermaid && $includeEmojiPicker)
 		<script nonce="$cspNonce" src="$!scriptslink/mermaid.min.js" defer></script>
 		#end
-		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/easymde.min.js?r=$!rev" defer></script>
 		#set($avatarUploadsEnabledBool = $scooldUtils.isAvatarUploadsEnabled() && $authenticated && $request.getServletPath().startsWith($profilelink))
 		#if($avatarUploadsEnabledBool)
-			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev"></script>
+			<script nonce="$cspNonce" src="$!scriptslink/inline-attachment.min.js?r=$!rev" defer></script>
 		#end
 		#if ($includeLocatorScripts && $includeLocatorScripts == true)
 		<script nonce="$cspNonce" src="$!scriptslink/cities.js?r=$!rev" defer></script>
