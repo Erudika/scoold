@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.cors.CorsConfiguration;
@@ -59,6 +61,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -66,7 +69,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Alex Bogdanovski [alex@erudika.com]
  */
 @SpringBootApplication
-public class ScooldServer extends SpringBootServletInitializer {
+public class ScooldServer extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	static {
 		System.setProperty("scoold.scoold", "-"); // prevents empty config
@@ -289,6 +292,22 @@ public class ScooldServer extends SpringBootServletInitializer {
 			epr.addErrorPages(new ErrorPage(HttpStatus.METHOD_NOT_ALLOWED, "/error/405"));
 			epr.addErrorPages(new ErrorPage(Exception.class, "/error/500"));
 		};
+	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/styles/**")
+				.addResourceLocations("classpath:/static/styles/")
+				.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().immutable())
+				.resourceChain(true);
+		registry.addResourceHandler("/scripts/**")
+				.addResourceLocations("classpath:/static/scripts/")
+				.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().immutable())
+				.resourceChain(true);
+		registry.addResourceHandler("/images/**")
+				.addResourceLocations("classpath:/static/images/")
+				.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().immutable())
+				.resourceChain(true);
 	}
 
 	private void printGoogleMigrationNotice() {
