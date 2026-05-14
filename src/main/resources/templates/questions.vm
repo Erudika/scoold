@@ -46,8 +46,8 @@
 					#locationbox("mll pll")
 				#end
 
-				<div>
-					<button class="btn mtl waves-effect waves-light btn-large" type="submit">
+				<div class="center pvl">
+					<button class="btn mtl waves-effect waves-light btn-large submit-spinner" type="submit">
 						#ico("paper-plane" "mhs") $!lang.get('post')
 					</button>
 				</div>

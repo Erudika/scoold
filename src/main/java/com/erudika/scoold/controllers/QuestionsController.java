@@ -25,6 +25,7 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.core.utils.RateLimiter;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
@@ -51,6 +52,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,16 +70,19 @@ import org.springframework.web.util.HtmlUtils;
 @Controller
 public class QuestionsController {
 
+	public static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final RateLimiter askLimiter;
 
 	private final QuestionController questionController;
 
 	public QuestionsController(ScooldUtils utils, QuestionController questionController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.askLimiter = Para.createRateLimiter(1, 30, 50);
 		this.questionController = questionController;
 	}
 
@@ -255,7 +261,7 @@ public class QuestionsController {
 			}
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			q = handleSpam(q, authUser, error, req);
-			if (error.isEmpty()) {
+			if (error.isEmpty() && utils.isAllowedToPostOrLimited(askLimiter, authUser, error, req)) {
 				String qid = validateNewPostId(postId, req);
 				q.setId(qid);
 				q.setLocation(location);
@@ -279,8 +285,7 @@ public class QuestionsController {
 				model.addAttribute("path", "questions.vm");
 				model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 				model.addAttribute("askSelected", "navbtn-hover");
-				res.setStatus(400);
-				return "base";
+				return utils.rateLimitErrorHandler(error, req, res);
 			}
 			if (utils.isAjaxRequest(req)) {
 				res.setStatus(200);

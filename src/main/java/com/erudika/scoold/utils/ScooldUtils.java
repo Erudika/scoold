@@ -31,6 +31,7 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.core.utils.RateLimiter;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.para.core.validation.ValidationUtils;
 import com.erudika.scoold.ScooldConfig;
@@ -107,6 +108,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
@@ -1779,6 +1781,39 @@ public final class ScooldUtils {
 			default:
 				return canEdit(showPost, authUser) && (isMine(showPost, authUser) || isMod(authUser));
 		}
+	}
+
+	public boolean isAllowedToPostOrLimited(RateLimiter limiter, Profile authUser,
+			Map<String, String> error, HttpServletRequest req) {
+		boolean isAllowedToAsk = false;
+		String userId = "anon";
+		if (isMod(authUser)) {
+			return true;
+		}
+		if (isAuthenticated(req)) {
+			isAllowedToAsk = limiter.isAllowed(getParaAppId(), authUser.getId());
+			userId = authUser.getId();
+		}
+		if (!isAllowedToAsk) {
+			error.put("error", "Try again later.");
+			error.put("rateLimited", "true");
+			logger.info("User {} is being rate-limited and prevented from posting.", userId);
+		}
+		return isAllowedToAsk;
+	}
+
+	public String rateLimitErrorHandler(Map<String, String> error, HttpServletRequest req, HttpServletResponse res) {
+		if (isAjaxRequest(req)) {
+			res.setStatus(error.containsKey("rateLimited") ?
+					HttpStatus.TOO_MANY_REQUESTS.value() : HttpStatus.BAD_REQUEST.value());
+			res.setContentType("application/json");
+			try {
+				res.getWriter().write(ParaObjectUtils.getJsonWriterNoIdent().writeValueAsString(error));
+			} catch (IOException ex) {
+			}
+			return "blank";
+		}
+		return "base";
 	}
 
 	@SuppressWarnings("unchecked")

@@ -25,6 +25,7 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Para;
 import com.erudika.para.core.utils.ParaObjectUtils;
+import com.erudika.para.core.utils.RateLimiter;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
@@ -84,10 +85,12 @@ public class QuestionController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final RateLimiter replyLimiter;
 
 	public QuestionController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.replyLimiter = Para.createRateLimiter(1, 50, 100);
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}", "/{id}/{title}/*"})
@@ -230,7 +233,8 @@ public class QuestionController {
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
 			Map<String, String> error = utils.validate(answer);
 			answer = handleSpam(answer, authUser, error, req);
-			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
+			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody()) &&
+					utils.isAllowedToPostOrLimited(replyLimiter, authUser, error, req)) {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());
@@ -255,7 +259,7 @@ public class QuestionController {
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("path", "question.vm");
-				res.setStatus(400);
+				utils.rateLimitErrorHandler(error, req, res);
 			}
 			return "reply";
 		} else {

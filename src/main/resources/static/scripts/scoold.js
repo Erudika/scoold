@@ -119,6 +119,18 @@ $(function () {
 
 	function submitFormBind(formname, callbackfn, errorfn) {
 		return $(document).on("submit", formname,  function() {
+			var btn = $("button.submit-spinner");
+			var svg = btn.find("svg");
+			var spinner = '<svg class="ico fa-spin" viewBox="0 0 24 24">\n\
+							<path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" /></svg>';
+			if (btn.length) {
+				btn.attr("disabled", true);
+				if (svg.length) {
+					svg.replaceWith(spinner);
+				} else {
+					btn.html(spinner);
+				}
+			}
 			submitForm(this, "POST", callbackfn, errorfn);
 			return false;
 		});

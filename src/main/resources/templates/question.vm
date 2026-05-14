@@ -95,7 +95,7 @@
 								</div>
 
 								<input type="hidden" name="answer" value="true">
-								<div>
+								<div class="center">
 									<label for="follow-thread-check">
 										#if($showPost.followers && $showPost.followers.containsKey($authUser.user.id))
 											<input type="checkbox" class="filled-in" id="follow-thread-check" checked="checked">
@@ -108,9 +108,11 @@
 									</label>
 								</div>
 
-								<button class="btn mtl waves-effect waves-light" type="submit">
-									#ico("paper-plane" "mhs")$!lang.get('post')
-								</button>
+								<div class="center">
+									<button class="btn btn-large mtl waves-effect waves-light submit-spinner" type="submit">
+										#ico("paper-plane" "mhs")$!lang.get('post')
+									</button>
+								</div>
 							</form>
 						</div>
 					#end
