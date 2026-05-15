@@ -675,6 +675,66 @@ public class ApiController {
 				selectedBadges.toArray(String[]::new), req);
 	}
 
+	@GetMapping("/users/{id}/subscriptions")
+	public Map<String, Object> getUsersubscriptions(@PathVariable String id,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Boolean desc,
+			@RequestParam(required = false) String sortby,
+			@RequestParam(required = false) String lastKey,
+			HttpServletRequest req, HttpServletResponse res) {
+
+		List<ParaObject> userAndProfile = pc.readAll(List.of(Strings.CS.removeEnd(id, ":profile"), Profile.id(id)));
+		User user = (User) userAndProfile.stream().filter(u -> Utils.type(User.class).equals(u.getType())).findFirst().orElse(null);
+		Profile profile = (Profile) userAndProfile.stream().filter(u -> Utils.type(Profile.class).equals(u.getType())).findFirst().orElse(null);
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser) || user == null) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return Map.of();
+		}
+		Map<String, Set<String>> channels = utils.getNotificationSubscribers();
+		Map<String, Object> results = new LinkedHashMap<String, Object>();
+		results.put("email", user.getEmail());
+		if (profile != null) {
+			if (profile.getReplyEmailsEnabled()) {
+				results.put("replies", "User is subscribed to receive notifications for new replies to their questions.");
+			}
+			if (profile.getCommentEmailsEnabled()) {
+				results.put("comments", "User is subscribed to receive notifications for new comments on their posts.");
+			}
+			if (profile.getFavtagsEmailsEnabled()) {
+				results.put("favtags", "User is subscribed to receive notifications when a question with their favorite tags is created.");
+			}
+		}
+		if (utils.isEmailSubscribedToChannel(user.getEmail(), "new_post_subscribers", channels)) {
+			results.put("new_post_subscribers", "User is subscribed to receive notifications for all new posts.");
+		}
+		if (utils.isEmailSubscribedToChannel(user.getEmail(), "new_reply_subscribers", channels)) {
+			results.put("new_reply_subscribers", "User is subscribed to receive notifications for all new answers on the site.");
+		}
+		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		List<Question> followedQuestions = pc.findQuery(Utils.type(Question.class), "\"" + user.getEmail() + "\"", pager);
+		Map<String, Object> posts = new HashMap<String, Object>();
+		posts.put("totalHits", pager.getCount());
+		posts.put("page", pager.getPage());
+		posts.put("items", followedQuestions.stream().map(p -> Map.of(p.getId(), p.getTitle())).toList());
+		results.put("followed_posts", posts);
+		return results;
+	}
+
+	@DeleteMapping("/users/{id}/subscriptions")
+	public void unsubscribeUserFromAll(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		User user = pc.read(Strings.CS.removeEnd(id, ":profile"));
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isAdmin(authUser) || user == null) {
+			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return;
+		}
+		Profile profile = Profile.fromUser(user);
+		utils.unsubscribeFromAllNotifications(profile);
+		profile.update();
+	}
+
 	@PostMapping("/tags")
 	public Tag createTag(HttpServletRequest req, HttpServletResponse res) {
 		Map<String, Object> entity = readEntity(req);

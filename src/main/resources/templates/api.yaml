@@ -823,6 +823,49 @@ paths:
       responses:
         '200':
           description: Spaces were updated
+  /api/users/{id}/subscriptions:
+    get:
+      summary: Returns a user's notification subscriptions
+      description: Returns the notification channels a user is subscribed to and their followed posts. Only accessible by administrators.
+      tags:
+        - users
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the user (can be the user id or profile id)
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sortby'
+        - $ref: '#/components/parameters/desc'
+      responses:
+        '200':
+          description: A map of subscription channels and followed posts
+        '403':
+          description: Forbidden - only administrators can access this endpoint
+    delete:
+      summary: Unsubscribe a user from all notifications
+      description: Removes the user from all notification channels and disables all email notification preferences. Only accessible by administrators.
+      tags:
+        - users
+      security:
+      - scoold_auth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the user to unsubscribe
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User was unsubscribed from all notifications
+        '403':
+          description: Forbidden - only administrators can access this endpoint
   /api/tags:
     post:
       summary: Create a new tag

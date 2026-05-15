@@ -1104,8 +1104,7 @@ $(function () {
 	$(".show-answer-question-form").click(function () {
 		$(this).closest("div").next("div").removeClass("hide").end().hide();
 	});
-
-	if (window.location.pathname.match("/write$")) {
+	if (window.location.pathname.match("/write$") && $("#answer-question-form").length) {
 		$("html, body").animate({
 			scrollTop: $("#answer-question-form").first().offset().top
 		});

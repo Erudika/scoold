@@ -330,11 +330,9 @@ i.fa-smile-o {background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://
 i.fa-question-circle {background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="grey"><path d="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z" /></svg>');}
 i.fa-undo {background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="grey"><path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>');}
 i.fa-redo {background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="grey"><path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" /></svg>');}
- /***** EASY MDE FIXES - REMOVE WHEN THEY RELEASE v3 *****/
+/***** EASY MDE FIXES - REMOVE WHEN THEY RELEASE v3 *****/
 
-i.close:before {
-	content: "\f00d";
-}
+i.close:before {content: "⨯";} /*this is for tag chips only - comes from materializecss*/
 .upvote, .downvote {color: #888888;}
 .upvote:hover, .upvote.cast {color: #4CAF50;}
 .downvote:hover, .downvote.cast {color: #F44336;}

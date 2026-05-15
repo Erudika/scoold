@@ -328,7 +328,9 @@
 		<br>
 		<br>
 		<div class="mvl">
+			#if($scooldUtils.isApiUserAccessEnabled())
 			<a href="#" class="right next-div-toggle click2hide">$!lang.get('admin.mytokens')</a>
+			#end
 			<a href="${settingslink}?delete=true" title="Delete my account" class="red-text">
 				<strong>$!lang.get("settings.delete")</strong>
 			</a>

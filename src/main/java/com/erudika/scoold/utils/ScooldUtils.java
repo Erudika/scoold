@@ -490,7 +490,8 @@ public final class ScooldUtils {
 	}
 
 	public String getNotificationChannelId(String shortId) {
-		return "email-alerts" + Para.getConfig().separator() + shortId;
+		String prefix = "email-alerts" + Para.getConfig().separator();
+		return Strings.CS.startsWith(shortId, prefix) ? shortId : prefix + shortId;
 	}
 
 	private List<String> getNotificationChannelShortIds() {
@@ -527,7 +528,7 @@ public final class ScooldUtils {
 			s.addProperty("emails", channels.get(getNotificationChannelId(channelId)));
 			chanList.add(s);
 		}
-		pc.updateAll(chanList);
+		pc.createAll(chanList);
 	}
 
 	public void unsubscribeFromAllNotifications(Profile p) {
@@ -537,6 +538,22 @@ public final class ScooldUtils {
 			toggleSubscriptionToNotifications(u.getEmail(), false, "new_post_subscribers", channels);
 			toggleSubscriptionToNotifications(u.getEmail(), false, "new_reply_subscribers", channels);
 			setNotificationSubscribers(channels);
+			// in case the user is not going to be deleted, turn off these basic flags as well
+			p.setReplyEmailsEnabled(false);
+			p.setCommentEmailsEnabled(false);
+			p.setFavtagsEmailsEnabled(false);
+			// also clean up all the questions that user has followed
+			pc.updateAllPartially((toUpdate, pager) -> {
+				List<Question> posts = pc.findQuery(Utils.type(Question.class), "\"" + u.getEmail() + "\"", pager);
+				for (Question q : posts) {
+					q.removeFollower(u);
+					Map<String, Object> question = new HashMap<>();
+					question.put(Config._ID, q.getId());
+					question.put("followers", q.getFollowers());
+					toUpdate.add(question);
+				}
+				return posts;
+			});
 		}
 	}
 
@@ -1060,9 +1077,9 @@ public final class ScooldUtils {
 
 	public Pager pagerFromParams(Integer page, String sort, Integer limit, Boolean desc, String lastKey) {
 		Pager p = new Pager(CONF.maxItemsPerPage());
-		p.setPage(page);
-		p.setDesc(desc);
-		p.setLimit(limit);
+		p.setPage(page == null ? p.getPage() : page);
+		p.setDesc(desc == null ? p.isDesc() : desc);
+		p.setLimit(limit == null ? p.getLimit() : limit);
 		if (!StringUtils.isBlank(lastKey)) {
 			p.setLastKey(lastKey);
 		}
