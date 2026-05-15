@@ -179,6 +179,26 @@ public class ProfileController {
 		}
 	}
 
+	@PostMapping(path = "/{id}/unsubscribe")
+	public String unsubscribe(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser) && !isMyid(authUser, Profile.id(id))) {
+			Profile showUser = pc.read(Profile.id(id));
+			if (showUser != null) {
+				utils.unsubscribeFromAllNotifications(showUser);
+				showUser.update();
+				logger.info("User {} unsubscribed from all notifications (by admin {}).",
+						showUser.getCreatorid(), authUser.getCreatorid());
+			}
+		}
+		if (utils.isAjaxRequest(req)) {
+			res.setStatus(200);
+			return "base";
+		} else {
+			return "redirect:" + PROFILELINK + "/" + id;
+		}
+	}
+
 	@PostMapping("/{id}")
 	public String edit(@PathVariable(required = false) String id, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,

@@ -871,7 +871,7 @@ table.striped>tbody>tr:nth-child(odd) {
 /* buttons, headings and links */
 a, .dropdown-content li>a, .dropdown-content li>span { color: #0369b6; }
 .btn, .btn-large, .navbtn-hover, footer .btn-flat { background-color: #962828; }
-.btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #ec407a; opacity: 0.7; }
+.btn:focus, .btn-large:focus, .btn-floating:focus { background-color: #962828; }
 .btn:hover, .btn-large:hover,span.badge.new,.sidenav span.badge.new, .collapsible span.badge.new { background-color: #444444; }
 .filter-active { background-color: #0369b6; color: white; }
 .sidenav li>a.navbtn-hover {color: white;}

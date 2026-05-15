@@ -386,6 +386,11 @@
 					</div>
 					<div class="col m6 right-align">
 						#if ($isAdmin)
+							#if(!$scooldUtils.isAdmin($showUser))
+								<a href="$profilelink/$showUser.creatorid/unsubscribe" class="chip post-refresh">
+									<span class="red-text text-darken-4">⏹ Stop notifications</span>
+								</a>
+							#end
 							<a href="${adminlink}?delete=profile&id=$showUser.id&returnto=$peoplelink" title="Delete user account" class="red chip white-text">
 								#ico("close" "") $!lang.get("delete")
 							</a>

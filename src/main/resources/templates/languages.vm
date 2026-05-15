@@ -9,7 +9,7 @@
 			#set($showLangName = $!value.getDisplayName($!value))
 			#set($progress = $!langProgressMap.getOrDefault($!key, 0))
 
-			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green white-text") #else #set($selclass = "") #end
+			#if ($showLangKey.equals($currentLocale.toString())) #set($selclass = "green lighten-1 black-text") #else #set($selclass = "") #end
 				<div class="center-align">
 					<form action="$languageslink/$!showLangKey" method="post">
 						#sectoken(false)

@@ -503,14 +503,10 @@
 	#end
 	#if ($showu && $showu.groups && !$showu.groups.isEmpty())
 		#if ($showu.groups == "admins")
-		<small class="chip badgebox">
-			<span class="admin-badge tooltipped" data-position="top" data-tooltip="$!lang.get('admin')"></span>
-		</small>
+			<small class="badgebox admin-badge">$!lang.get('admin')</small>
 		#end
 		#if ($showu.groups == "mods")
-		<small class="chip badgebox">
-			<span class="mod-badge tooltipped" data-position="top" data-tooltip="$!lang.get('mod')"></span>
-		</small>
+			<small class="badgebox mod-badge">$!lang.get('mod')</small>
 		#end
 		#foreach($badge in $showu.customBadges)
 			#custombadgebox($badge "small")
@@ -697,9 +693,6 @@
 						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
 						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
 						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
-						#if($showpost.deprecated)
-						<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
-						#end
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 						<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 						#end
@@ -757,6 +750,9 @@
 						<div><small class="grey-text text-darken-2"><strong>$scooldUtils.getSpaceName($showpost.space)</strong></small></div>
 						#end
 						<div class="mediumText">
+							#if($showpost.deprecated)
+								<span class="grey-text tooltipped" data-tooltip="$!lang.get('deprecated')">#ico("exclamation-circle" "")</span>
+							#end
 							#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
 								<span class="tooltipped mrs" data-tooltip="$showpost.location">#ico("map-marker" "grey-text")</span>
 							#end
@@ -803,7 +799,7 @@
 					<span class="lightborder phm mrm">$!answer.votes</span>
 					<span>
 						#if($answer.type == "unapprovedreply")
-							<span class="grey-text tooltipped" data-tooltip="$!lang.get('posts.unapproved')">#ico("exclamation-circle" "")</span>
+							<small class="orange black-text pas">#ico("exclamation-circle" "") $!lang.get('posts.unapproved')</small>
 						#end
 						<a href="$questionlink/$answer.parentid#post-$!answer.id" title="View answer">$!answer.title</a>
 					</span>
