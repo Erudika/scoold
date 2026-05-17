@@ -351,6 +351,16 @@ public class ProfileController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/clear-new-badges")
+	public ResponseEntity<?> clearNewBadges(HttpServletRequest req, Model model) {
+		Profile authUser = utils.getAuthUser(req);
+		if (authUser != null) {
+			authUser.setNewbadges("");
+			authUser.update();
+		}
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping(path = "/confirm-email")
 	public String confirmEmail(@RequestParam(name = "id", required = false) String id,
 			@RequestParam(name = "token", required = false) String token,

@@ -81,9 +81,9 @@ public class Profile extends Sysprop {
 	@Stored private Boolean editorRoleEnabled;
 	@Stored private String preferredSpace;
 	@Stored private String personalApiToken;
+	@Stored private String newbadges;
 
 	private transient String currentSpace;
-	private transient String newbadges;
 	private transient User user;
 
 	public enum Badge {
@@ -111,6 +111,7 @@ public class Profile extends Sysprop {
 		DISCIPLINED(0);		//each time user deletes own comment
 
 		private final int reward;
+		private boolean condition;
 
 		Badge(int reward) {
 			this.reward = reward;
@@ -122,6 +123,15 @@ public class Profile extends Sysprop {
 
 		public Integer getReward() {
 			return this.reward;
+		}
+
+		public Badge condition(boolean condition) {
+			this.condition = condition;
+			return this;
+		}
+
+		public boolean  condition() {
+			return this.condition;
 		}
 	}
 

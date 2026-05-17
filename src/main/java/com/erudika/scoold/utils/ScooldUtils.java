@@ -1927,24 +1927,29 @@ public final class ScooldUtils {
 	}
 
 	public boolean addBadgeOnce(Profile authUser, Profile.Badge b, boolean condition) {
-		return addBadge(authUser, b, condition && !authUser.hasBadge(b), false);
+		return addBadges(authUser, List.of(b.condition(condition && !authUser.hasBadge(b))));
 	}
 
-	public boolean addBadgeOnceAndUpdate(Profile authUser, Profile.Badge b, boolean condition) {
-		return addBadgeAndUpdate(authUser, b, condition && authUser != null && !authUser.hasBadge(b));
+	public boolean addBadgesOnce(Profile authUser, List<Profile.Badge> badges) {
+		return addBadges(authUser,  badges.stream().map(b -> b.condition(b.condition() && !authUser.hasBadge(b))).toList());
 	}
 
-	public boolean addBadgeAndUpdate(Profile authUser, Profile.Badge b, boolean condition) {
-		return addBadge(authUser, b, condition, true);
+	public boolean addBadge(Profile authUser, Profile.Badge b, boolean condition) {
+		return addBadges(authUser, List.of(b.condition(condition)));
 	}
 
-	public boolean addBadge(Profile user, Profile.Badge b, boolean condition, boolean update) {
-		if (user != null && condition) {
-			String newb = StringUtils.isBlank(user.getNewbadges()) ? "" : user.getNewbadges().concat(",");
-			newb = newb.concat(b.toString());
-
-			user.addBadge(b);
-			user.setNewbadges(newb);
+	private boolean addBadges(Profile user, List<Profile.Badge> badges) {
+		if (user != null && badges != null && !badges.isEmpty()) {
+			boolean update = false;
+			for (Profile.Badge b : badges) {
+				if (b.condition()) {
+					String newb = StringUtils.isBlank(user.getNewbadges()) ? "" : user.getNewbadges().concat(",");
+					newb = newb.concat(b.toString());
+					user.addBadge(b);
+					user.setNewbadges(newb);
+					update = true;
+				}
+			}
 			if (update) {
 				user.update();
 				return true;
@@ -1954,24 +1959,20 @@ public final class ScooldUtils {
 	}
 
 	public List<String> checkForBadges(Profile authUser, HttpServletRequest req) {
-		List<String> badgelist = new ArrayList<String>();
 		if (authUser != null && !isAjaxRequest(req)) {
 			long oneYear = authUser.getTimestamp() + (365 * 24 * 60 * 60 * 1000);
-			addBadgeOnce(authUser, Profile.Badge.ENTHUSIAST, authUser.getVotes() >= CONF.enthusiastIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.FRESHMAN, authUser.getVotes() >= CONF.freshmanIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.SCHOLAR, authUser.getVotes() >= CONF.scholarIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.TEACHER, authUser.getVotes() >= CONF.teacherIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.PROFESSOR, authUser.getVotes() >= CONF.professorIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.GEEK, authUser.getVotes() >= CONF.geekIfHasRep());
-			addBadgeOnce(authUser, Profile.Badge.SENIOR, (System.currentTimeMillis() - authUser.getTimestamp()) >= oneYear);
-
-			if (!StringUtils.isBlank(authUser.getNewbadges())) {
-				badgelist.addAll(Arrays.asList(authUser.getNewbadges().split(",")));
-				authUser.setNewbadges(null);
-				authUser.update();
-			}
+			addBadgesOnce(authUser, List.of(
+					Profile.Badge.ENTHUSIAST.condition(authUser.getVotes() >= CONF.enthusiastIfHasRep()),
+					Profile.Badge.FRESHMAN.condition(authUser.getVotes() >= CONF.freshmanIfHasRep()),
+					Profile.Badge.SCHOLAR.condition(authUser.getVotes() >= CONF.scholarIfHasRep()),
+					Profile.Badge.TEACHER.condition(authUser.getVotes() >= CONF.teacherIfHasRep()),
+					Profile.Badge.PROFESSOR.condition(authUser.getVotes() >= CONF.professorIfHasRep()),
+					Profile.Badge.GEEK.condition(authUser.getVotes() >= CONF.geekIfHasRep()),
+					Profile.Badge.SENIOR.condition((System.currentTimeMillis() - authUser.getTimestamp()) >= oneYear)));
+			return Arrays.stream(StringUtils.split(StringUtils.trimToEmpty(authUser.getNewbadges()), ",")).
+					filter(b -> !StringUtils.isBlank(b)).toList();
 		}
-		return badgelist;
+		return List.of();
 	}
 
 	private String loadEmailTemplate(String name) {

@@ -117,9 +117,10 @@ public class VoteController {
 			logger.error(null, ex);
 			result = false;
 		}
-		utils.addBadgeOnce(authUser, SUPPORTER, authUser.getUpvotes() >= CONF.supporterIfHasRep());
-		utils.addBadgeOnce(authUser, CRITIC, authUser.getDownvotes() >= CONF.criticIfHasRep());
-		utils.addBadgeOnce(authUser, VOTER, authUser.getTotalVotes() >= CONF.voterIfHasRep());
+		utils.addBadgesOnce(authUser, List.of(
+				SUPPORTER.condition(authUser.getUpvotes() >= CONF.supporterIfHasRep()),
+				CRITIC.condition(authUser.getDownvotes() >= CONF.criticIfHasRep()),
+				VOTER.condition(authUser.getTotalVotes() >= CONF.voterIfHasRep())));
 
 		if (update) {
 			pc.updateAll(Arrays.asList(author, authUser));
@@ -164,10 +165,10 @@ public class VoteController {
 		if (votable instanceof Post) {
 			Post p = (Post) votable;
 			if (p.isReply()) {
-				utils.addBadge(author, GOODANSWER, votes >= CONF.goodAnswerIfHasRep(), false);
+				utils.addBadge(author, GOODANSWER, votes >= CONF.goodAnswerIfHasRep());
 				reward = CONF.answerVoteupRewardAuthor();
 			} else if (p.isQuestion()) {
-				utils.addBadge(author, GOODQUESTION, votes >= CONF.goodQuestionIfHasRep(), false);
+				utils.addBadge(author, GOODQUESTION, votes >= CONF.goodQuestionIfHasRep());
 				reward = CONF.questionVoteupRewardAuthor();
 			} else {
 				reward = CONF.voteupRewardAuthor();

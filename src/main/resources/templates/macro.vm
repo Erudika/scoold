@@ -1231,7 +1231,7 @@ $utils.formatDate($date, $format, $currentLocale)
 		#else
 			#set($infoStripMsg = $!lang.get("newbadge"))
 		#end
-		#set($hideInfoStrip = "click2hide")
+		#set($hideInfoStrip = "click2hide clear-new-badges")
 	#elseif ($request.getParameter("code"))
 		#set($infoStripMsg = $!lang.get("msgcode.${request.getParameter('code')}"))
 		#set($hideInfoStrip = "click2hide")
@@ -1257,7 +1257,7 @@ $utils.formatDate($date, $format, $currentLocale)
 		#end
 		#set($_infoStripMsg = $infoStripMsg )
 		<div class="infostrip-content">
-			$!_infoStripMsg
+			$!_infoStripMsg &nbsp;
 			#if (!$badgelist.isEmpty())
 				#foreach($badge in $badgelist)
 					#badgebox($badge 0)

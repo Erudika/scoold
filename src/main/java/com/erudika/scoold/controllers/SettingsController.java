@@ -141,7 +141,7 @@ public class SettingsController {
 
 			utils.setNotificationSubscribers(channels); // save all notification settings
 
-			if (resetPasswordAndUpdate(authUser.getUser(), oldpassword, newpassword)) {
+			if (resetPassword(authUser.getUser(), oldpassword, newpassword)) {
 				utils.clearSession(req, res);
 				return "redirect:" + SETTINGSLINK + "?passChanged=true";
 			}
@@ -252,7 +252,7 @@ public class SettingsController {
 		return ResponseEntity.status(403).build();
 	}
 
-	private boolean resetPasswordAndUpdate(User u, String pass, String newpass) {
+	private boolean resetPassword(User u, String pass, String newpass) {
 		if (u != null && !StringUtils.isBlank(pass) && !StringUtils.isBlank(newpass) &&
 				u.getIdentityProvider().equals("generic")) {
 			Sysprop s = pc.read(u.getEmail());

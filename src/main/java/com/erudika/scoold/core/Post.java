@@ -553,7 +553,7 @@ public abstract class Post extends Sysprop {
 		return "";
 	}
 
-	public void restoreRevisionAndUpdate(String revisionid) {
+	public void restoreRevision(String revisionid) {
 		Revision rev = client().read(revisionid);
 		if (rev != null) {
 			//copy rev data to post

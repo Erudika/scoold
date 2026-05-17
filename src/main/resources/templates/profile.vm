@@ -146,7 +146,7 @@
 
 				<h4 class="grey-text text-darken-1">$!{lang.get("reputation")}</h4>
 				<div>
-					<span class="chip mediumText phl">$!showUser.votes</span>
+					<span class="badgebox mediumText phl">$!showUser.votes</span>
 
 					#if($showUser.monthlyVotes != 0)
 					<span class="mediumText">

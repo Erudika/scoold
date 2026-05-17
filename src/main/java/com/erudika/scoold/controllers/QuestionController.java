@@ -193,7 +193,7 @@ public class QuestionController {
 			}
 			updatePost(showPost, authUser, req);
 			updateLocation(showPost, beforeUpdate, authUser, location, latlng);
-			utils.addBadgeOnceAndUpdate(authUser, Badge.EDITOR, true);
+			utils.addBadgeOnce(authUser, Badge.EDITOR, true);
 			if (req.getParameter("notificationsDisabled") == null) {
 				utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
 			}
@@ -249,7 +249,7 @@ public class QuestionController {
 				}
 				// update without adding revisions
 				pc.update(showPost);
-				utils.addBadgeAndUpdate(authUser, Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+				utils.addBadge(authUser, Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
 				answer.setAuthor(authUser);
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
@@ -396,8 +396,8 @@ public class QuestionController {
 			return "redirect:" + req.getRequestURI();
 		}
 		if (utils.canEdit(showPost, authUser)) {
-			utils.addBadgeAndUpdate(authUser, Badge.BACKINTIME, true);
-			showPost.restoreRevisionAndUpdate(revisionid);
+			utils.addBadge(authUser, Badge.BACKINTIME, true);
+			showPost.restoreRevision(revisionid);
 		}
 		return "redirect:" + showPost.getPostLinkForRedirect();
 	}

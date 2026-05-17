@@ -302,11 +302,13 @@ $(function () {
 		return false;
 	});
 
+	var infostripContent = $(".infostrip-content");
+
 	if (WELCOME_MESSAGE && WELCOME_MESSAGE.trim().length > 0) {
 		var hidden = "true" === localStorage.getItem("welcome-message-hidden");
 		if (!hidden && window.location.pathname.indexOf(CONTEXT_PATH + "/signin") < 0) {
 			$(".infostrip").removeClass("hide").data("name", "welcome-message");
-			$(".infostrip-content").html(WELCOME_MESSAGE);
+			infostripContent.append(WELCOME_MESSAGE);
 		}
 	}
 
@@ -314,7 +316,7 @@ $(function () {
 		var hidden = "true" === localStorage.getItem("welcome-message-onlogin-hidden");
 		if (!hidden && window.location.pathname.indexOf(CONTEXT_PATH + "/signin") < 0) {
 			$(".infostrip").removeClass("hide").data("name", "welcome-message-onlogin");
-			$(".infostrip-content").html(WELCOME_MESSAGE_ONLOGIN);
+			infostripContent.append((infostripContent.children().length > 0 ? "<br>" : "") + WELCOME_MESSAGE_ONLOGIN);
 		}
 	}
 
@@ -322,7 +324,7 @@ $(function () {
 		var hidden = "true" === localStorage.getItem("welcome-message-prelogin-hidden");
 		if (!hidden) {
 			$(".infostrip2").removeClass("hide").data("name", "welcome-message-prelogin");
-			$(".infostrip2-content").html(WELCOME_MESSAGE_PRELOGIN);
+			infostripContent.append((infostripContent.children().length > 0 ? "<br>" : "") + WELCOME_MESSAGE_PRELOGIN);
 		}
 	}
 
@@ -703,6 +705,17 @@ $(function () {
 					removeClass("remove").addClass("add").show().appendTo("#available-badges").attr("data-url"));
 		}
 	});
+
+	var newBadgesNotification = $(".infostrip.clear-new-badges");
+	if (newBadgesNotification.length) {
+		var timer = setTimeout(function() {
+			newBadgesNotification.click();
+		}, 7000);
+		newBadgesNotification.on("click", function() {
+			clearTimeout(timer);
+			$.post(CONTEXT_PATH + "/profile/clear-new-badges");
+		});
+	}
 
 	/****************************************************
      *                      SETTINGS

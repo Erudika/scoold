@@ -200,7 +200,7 @@ public class FeedbackController {
 				}
 				// update without adding revisions
 				pc.update(showPost);
-				utils.addBadgeAndUpdate(authUser, Profile.Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
+				utils.addBadge(authUser, Profile.Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
 				answer.setAuthor(authUser);
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));

@@ -97,7 +97,7 @@ public class CommentController {
 				// check parent and correct (for multi-parent-object pages)
 				comment.delete();
 				if (!isMod) {
-					utils.addBadgeAndUpdate(authUser, DISCIPLINED, true);
+					utils.addBadge(authUser, DISCIPLINED, true);
 				}
 			}
 		}

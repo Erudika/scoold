@@ -121,7 +121,7 @@ public class ReportsController {
 				rep.setAuthorName(authUser.getName());
 				rep.setCreatorid(authUser.getId());
 				canCreateReport = reportsLimiter.isAllowed(utils.getParaAppId(), authUser.getCreatorid());
-				utils.addBadgeAndUpdate(authUser, REPORTER, canCreateReport);
+				utils.addBadge(authUser, REPORTER, canCreateReport);
 			} else {
 				//allow anonymous reports
 				rep.setAuthorName(utils.getLang(req).get("anonymous"));
