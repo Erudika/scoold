@@ -1076,15 +1076,23 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.ldap.displayname_attribute", "cn");
 	}
 
+	@Documented(position = 1440,
+			identifier = "security.ldap.spaces_attribute_name",
+			value = "ou",
+			category = "LDAP Authentication",
+			description = "LDAP attribute mapping for users' `spaces`. The spaces can be comma-separated.")
+	public String ldapSpacesAttributeName() {
+		return getConfigParam("security.ldap.spaces_attribute_name", "ou");
+	}
+
 	@Documented(position = 1020,
-			identifier = "security.ldap.is_local",
+			identifier = "security.ldap.token_delegation_enabled",
 			value = "false",
 			type = Boolean.class,
 			category = "LDAP Authentication",
-			tags = {"Pro"},
-			description = "Enable/disable local handling of LDAP requests, instead of sending those to Para.")
-	public boolean ldapIsLocal() {
-		return getConfigBoolean("security.ldap.is_local", false);
+			description = "LDAP attributes data delegation to Scoold.")
+	public boolean ldapTokenDelegationEnabled() {
+		return getConfigBoolean("security.ldap.token_delegation_enabled", false);
 	}
 
 	/* **************************************************************************************************************
@@ -3614,6 +3622,7 @@ public class ScooldConfig extends Config {
 		settings.put("security.ldap.mods_group_node", ldapModeratorsGroupNode());
 		settings.put("security.ldap.admins_group_node", ldapAdministratorsGroupNode());
 		settings.put("security.ldap.displayname_attribute", ldapDisplayNameAttribute());
+		settings.put("security.ldap.token_delegation_enabled", ldapTokenDelegationEnabled());
 		if (!ldapComparePasswords().isEmpty()) {
 			settings.put("security.ldap.compare_passwords", ldapComparePasswords());
 		}

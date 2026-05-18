@@ -292,6 +292,8 @@ public final class ScooldUtils {
 				authUser.setUser(u);
 				authUser.setOriginalPicture(u.getPicture());
 				authUser.setCurrentSpace(getSpaceIdFromCookie(authUser, req));
+				JWTClaimsSet jwtClaims = getUnverifiedClaimsFromJWT(jwt);
+				boolean updatedSpacesAndGroups = assignSpacesAndGroupsFromIdentityProvider(authUser, u, jwtClaims, res);
 				boolean updatedRank = promoteOrDemoteUser(authUser, u);
 				boolean updatedProfile = updateProfilePictureAndName(authUser, u);
 				if (updatedRank || updatedProfile) {
@@ -1668,6 +1670,57 @@ public final class ScooldUtils {
 			});
 			return profiles;
 		});
+	}
+
+	// This method can incur significant latency if run on every request!
+	// Thus it's limited to run once on every login.
+	private boolean assignSpacesAndGroupsFromIdentityProvider(Profile authUser, User user, JWTClaimsSet jwtClaims,
+			HttpServletResponse res) throws IOException {
+		boolean update = false;
+		Date loginTime = (jwtClaims != null) ? jwtClaims.getIssueTime() : null;
+		if (loginTime != null && (Utils.timestamp() - loginTime.getTime()) > TimeUnit.SECONDS.toMillis(20)) {
+			return update; // allow this method to be executed within the first 20s of the inital auth event
+		}
+		if (authUser != null && user != null) {
+			// create a dedicated space for each team if needed. channels may also have a space
+			try {
+				Map<String, Object> attributes = new HashMap<>();
+				String accessToken = Utils.base64dec(user.getIdpAccessTokenPayload());
+				// don't assume that access token is present alongside the returned ID token!
+				if (!accessToken.isEmpty()) {
+					attributes.putAll(ParaObjectUtils.getJsonReader(Map.class).readValue(accessToken));
+				}
+				// assign spaces from an OAuth2 claim
+				update = assignSpacesFromIdpToken(authUser, attributes) || update;
+			} catch (Exception e) {
+				logger.warn("Failed to parse IDP access token payload. Must be a Base64-encoded JSON string.");
+			}
+		}
+		return update;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean assignSpacesFromIdpToken(Profile authUser, Map<String, Object> attributes) {
+		boolean update = false;
+		if (CONF.ldapTokenDelegationEnabled()) {
+			update = assignSpacesFromIDP(CONF.ldapSpacesAttributeName(), authUser, attributes) || update;
+		}
+		return update;
+	}
+
+	private boolean assignSpacesFromIDP(String attributeName, Profile authUser, Map<String, Object> attributes) {
+		boolean update = false;
+		if (!StringUtils.isBlank(attributeName) && attributes.containsKey(attributeName)) {
+			Object claim = attributes.get(attributeName); // must be either List or String
+			if (claim instanceof List) {
+				assignSpacesToUser(authUser, ((List<String>) claim).toArray(String[]::new));
+				update = true;
+			} else if (claim instanceof String) {
+				assignSpacesToUser(authUser, ((String) attributes.get(attributeName)).split("\\s*,\\s*"));
+				update = true;
+			}
+		}
+		return update;
 	}
 
 	public String sanitizeQueryString(String query, HttpServletRequest req) {
