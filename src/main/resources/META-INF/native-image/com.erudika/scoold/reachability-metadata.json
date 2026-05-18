@@ -4292,16 +4292,37 @@
 			]
 		},
 		{
-			"type": "java.util.AbstractList"
+			"type": "java.util.AbstractList",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.AbstractMap"
+			"type": "java.util.AbstractMap",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.AbstractSequentialList"
+			"type": "java.util.AbstractSequentialList",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.AbstractSet"
+			"type": "java.util.AbstractSet",
+			"type": "java.util.AbstractMap",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
 			"type": "java.util.ArrayList",
@@ -4328,28 +4349,68 @@
 			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Arrays$ArrayList"
+			"type": "java.util.Arrays$ArrayList",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$EmptyList"
+			"type": "java.util.Collections$EmptyList",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$EmptyMap"
+			"type": "java.util.Collections$EmptyMap",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$EmptySet"
+			"type": "java.util.Collections$EmptySet",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$UnmodifiableMap"
+			"type": "java.util.Collections$UnmodifiableMap",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$SingletonMap"
+			"type": "java.util.Collections$SingletonMap",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Collections$SingletonList"
+			"type": "java.util.Collections$SingletonList",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
-			"type": "java.util.Date[]"
+			"type": "java.util.Date[]",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
 			"type": "java.util.Deque",

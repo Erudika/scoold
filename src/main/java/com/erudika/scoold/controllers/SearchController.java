@@ -299,12 +299,17 @@ public class SearchController {
 	@ResponseBody
 	@GetMapping("/cities.json")
 	public ResponseEntity<InputStreamResource> cities(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		InputStream in = SearchController.class.getClassLoader().getResourceAsStream("static/scripts/data/cities.json.gz");
-		HttpHeaders headers = new HttpHeaders();
-		headers.put(HttpHeaders.CONTENT_TYPE, List.of(MediaType.APPLICATION_JSON_VALUE));
-		headers.put(HttpHeaders.CONTENT_ENCODING, List.of("gzip"));
-		headers.put(HttpHeaders.CACHE_CONTROL, List.of(CacheControl.maxAge(128, TimeUnit.DAYS).getHeaderValue()));
-		return new ResponseEntity<InputStreamResource>(new InputStreamResource(in), headers, HttpStatus.OK);
+		try {
+			InputStream in = SearchController.class.getClassLoader().getResourceAsStream("static/scripts/data/cities.json.gz");
+			HttpHeaders headers = new HttpHeaders();
+			headers.put(HttpHeaders.CONTENT_TYPE, List.of(MediaType.APPLICATION_JSON_VALUE));
+			headers.put(HttpHeaders.CONTENT_ENCODING, List.of("gzip"));
+			headers.put(HttpHeaders.CACHE_CONTROL, List.of(CacheControl.maxAge(128, TimeUnit.DAYS).getHeaderValue()));
+			return new ResponseEntity<InputStreamResource>(new InputStreamResource(in), headers, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("Cities.json file not found! - {}", e.getMessage());
+		}
+		return ResponseEntity.notFound().build();
 	}
 
 	@GetMapping(path = "/feed.xml", produces = "application/rss+xml")
