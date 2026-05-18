@@ -1076,7 +1076,7 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.ldap.displayname_attribute", "cn");
 	}
 
-	@Documented(position = 1440,
+	@Documented(position = 1012,
 			identifier = "security.ldap.spaces_attribute_name",
 			value = "ou",
 			category = "LDAP Authentication",
@@ -1090,7 +1090,7 @@ public class ScooldConfig extends Config {
 			value = "false",
 			type = Boolean.class,
 			category = "LDAP Authentication",
-			description = "LDAP attributes data delegation to Scoold.")
+			description = "Enable/disable LDAP attributes data delegation to Scoold.")
 	public boolean ldapTokenDelegationEnabled() {
 		return getConfigBoolean("security.ldap.token_delegation_enabled", false);
 	}
@@ -1116,9 +1116,6 @@ public class ScooldConfig extends Config {
 			description = "SAML SP endpoint address - e.g. `https://paraio.com/saml_auth/scoold`. The IDP will call "
 					+ "this address for authentication.")
 	public String samlSPEntityId() {
-		if (samlIsLocal()) {
-			return serverUrl() + serverContextPath() + "/saml_auth";
-		}
 		return getConfigParam("security.saml.sp.entityid", "");
 	}
 
@@ -1216,7 +1213,7 @@ public class ScooldConfig extends Config {
 			tags = {"Pro"},
 			description = "SAML ACS URL.")
 	public String samlSPAssertionConsumerServiceUrl() {
-		return getConfigParam("security.saml.sp.assertion_consumer_service.url", samlIsLocal() ? samlSPEntityId() : "");
+		return getConfigParam("security.saml.sp.assertion_consumer_service.url", "");
 	}
 
 	@Documented(position = 1150,
@@ -1364,15 +1361,65 @@ public class ScooldConfig extends Config {
 		return getConfigParam("security.saml.domain", "paraio.com");
 	}
 
+	@Documented(position = 1271,
+			identifier = "security.saml.spaces_attribute_name",
+			value = "spaces",
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "SAML attribute mapping for users' `spaces`. The spaces can be comma-separated.")
+	public String samlSpacesAttributeName() {
+		return getConfigParam("security.saml.spaces_attribute_name", "spaces");
+	}
+
 	@Documented(position = 1280,
-			identifier = "security.saml.is_local",
+			identifier = "security.saml.token_delegation_enabled",
 			value = "false",
 			type = Boolean.class,
 			category = "SAML Authentication",
 			tags = {"Pro"},
-			description = "Enable/disable local handling of SAML requests, instead of sending those to Para.")
-	public boolean samlIsLocal() {
-		return getConfigBoolean("security.saml.is_local", false);
+			description = "Enable/disable SAML attributes data delegation to Scoold.")
+	public boolean samlTokenDelegationEnabled() {
+		return getConfigBoolean("security.saml.token_delegation_enabled", false);
+	}
+
+	@Documented(position = 1281,
+			identifier = "security.saml.groups_attribute_name",
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "SAML attribute mapping for users' `groups`. "
+					+ "Use this for mapping `admin`, `mod` and `user` roles to Scoold users.")
+	public String samlGroupsAttributeName() {
+		return getConfigParam("security.saml.groups_attribute_name", "");
+	}
+
+	@Documented(position = 1282,
+			identifier = "security.saml.mods_equivalent_attribute_value",
+			value = "mod",
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "SAML attribute used for mapping SAML users having it, to moderators on Scoold.")
+	public String samlModeratorsEquivalentAttribute() {
+		return getConfigParam("security.saml.mods_equivalent_attribute_value", "mod");
+	}
+
+	@Documented(position = 1283,
+			identifier = "security.saml.admins_equivalent_attribute_value",
+			value = "admin",
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "SAML attribute used for mapping SAML users having it, to administrators on Scoold.")
+	public String samlAdministratorsEquivalentAttribute() {
+		return getConfigParam("security.saml.admins_equivalent_attribute_value", "admin");
+	}
+
+	@Documented(position = 1284,
+			identifier = "security.saml.users_equivalent_attribute_value",
+			category = "SAML Authentication",
+			tags = {"Pro"},
+			description = "SAML attribute used for **denying access** to SAML users **not** having it, *unless*"
+					+ "they already have the admin or moderator roles assigned.")
+	public String samlUsersEquivalentAttribute() {
+		return getConfigParam("security.saml.users_equivalent_attribute_value", "");
 	}
 
 	/* **************************************************************************************************************
