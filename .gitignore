@@ -16,7 +16,7 @@ nbactions*.xml
 nbactions.xml
 rebel.xml
 deploy*.sh
-docs-src/
+getlinks.sh
 scoold-search/dist/
 scoold-search/build/
 scoold-search/nbproject/
@@ -24,16 +24,18 @@ scoold-search/lib/
 scoold-search/target/
 target/
 tmp/
-src/main/webapp/WEB-INF/lib/**
-src/web/src/main/webapp/WEB-INF/classes/
-src/main/webapp/click/
-data/
-docs-src/
+
 old/
-*.log
+uploads/
+latest.txt
+certs/
+
 demo.conf
 template.yml
 taillogs-demo.sh
+.codex
+.claude
+.agents
 
 AGENTS.md
 /nbproject/
