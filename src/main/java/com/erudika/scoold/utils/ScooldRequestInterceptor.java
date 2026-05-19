@@ -70,6 +70,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 				logger.error("Auth check failed:", e);
 			}
 			if (isApiRequest) {
+				response.setStatus(500);
 				ParaObjectUtils.getJsonWriter().writeValue(response.getWriter(),
 						Collections.singletonMap("error", "Unauthenticated request! " + e.getMessage()));
 				return false;

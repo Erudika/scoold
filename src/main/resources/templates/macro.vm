@@ -496,8 +496,10 @@
 ####################################
 #macro(personlink $showu)
 <span>
-	#if ($showu)
-		<a href="$!showu.getProfileLink()" title="Go to profile">$!showu.name</a>
+	#if ($showu && $showu.id)
+		<a href="$profilelink/$!showu.id.replaceAll(':profile$', '')/#stripstr($!showu.name)" title="Go to profile">$!showu.name</a>
+	#elseif($showu.name)
+		<span title="$!lang.get('profile.deleted')">$!showu.name</span>
 	#else
 		$!lang.get("profile.deleted")
 	#end
