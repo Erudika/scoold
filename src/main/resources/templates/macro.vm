@@ -48,7 +48,7 @@
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
+		<span class="comment-timestamp mrs grey-text text-darken-2">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
 		#if ($showcomment == "")
 			#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
 			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
@@ -1112,16 +1112,16 @@
 			#if($votable.votes && $votable.votes != 0)#set($vvotes = $votable.votes)#else#set($vvotes = 0)#end
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
-					<span class="upvote grey-text mrs" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
+					<span class="upvote grey-text" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				</a>
 				<span class="votecount">$!vvotes</span>
 				<a href="${signinlink}?returnto=$!{returnto}" class="${hideDownvoteClass}">
-					<span class="downvote grey-text mrs" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
+					<span class="downvote grey-text" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
-				<span class="upvote grey-text mrs" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
+				<span class="upvote grey-text" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				<span class="votecount">$!vvotes</span>
-				<span class="downvote grey-text mrs ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
+				<span class="downvote grey-text ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
 					<span class="upvote ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>

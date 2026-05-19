@@ -267,7 +267,7 @@ textarea.simple-editor {
 	min-width: 1em;
 	height: 100%;
 	margin-bottom: 0.1em;
-	font-size: larger;
+	font-size: 1.3rem;
 }
 .ico.material-icons {
 	display: block;
@@ -283,6 +283,7 @@ textarea.simple-editor {
 	from {transform:rotate(0deg);}
 	to {transform:rotate(360deg);}
 }
+.hugeText .ico { font-size: inherit; }
 .badgebox.mod-badge { border: 1px solid orange; }
 .badgebox.admin-badge { border: 1px solid magenta; background-color: #6c126c; color: white; }
 .input-field .prefix, .input-field .suffix { width: 2rem; }
