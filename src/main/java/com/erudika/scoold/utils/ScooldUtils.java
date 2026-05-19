@@ -2323,7 +2323,11 @@ public final class ScooldUtils {
 		if (API_KEYS.isEmpty()) {
 			Sysprop s = pc.read("api_keys");
 			if (s != null) {
-				API_KEYS.putAll(s.getProperties());
+				Map<String, Object> keyz = s.getProperties().entrySet().stream().
+						filter(e -> e.getKey().length() > 10 && e.getKey().contains("-") &&
+								e.getValue() instanceof String).collect(Collectors.
+								toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+				API_KEYS.putAll(keyz);
 			}
 		}
 		return API_KEYS;
