@@ -2226,10 +2226,12 @@ public final class ScooldUtils {
 		}
 		// jti = hmac(apiSecret) special case - used for short-lived service tokens
 		// in Scoold Cloud for checking health and stats.
-		long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
-		if (Strings.CS.equals(jti, Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey())) &&
-				timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
-			return false;
+		if (claims.getExpirationTime() != null) {
+			long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
+			if (Strings.CS.equals(jti, Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey())) &&
+					timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
+				return false;
+			}
 		}
 		loadApiKeysObject(); // prevent overwriting the API keys object
 		if (API_KEYS.containsKey(jti) && expired) {
