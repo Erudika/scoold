@@ -50,14 +50,14 @@
 								</div>
 							</div>
 							<div class="col s12 m5">
-								<div class="input-field valign-wrapper">
+								<div class="input-field valign-wrapper pam">
 									<label>
 										<input type="checkbox" name="assigntoall" class="filled-in">
 										<span>$!lang.get('assignspacetoall')</span>
 									</label>
 								</div>
 							</div>
-							<div class="col s12 m1">
+							<div class="col s12 m1 center-align">
 								<button class="btn waves-effect waves-light mtl" type="submit">$!lang.get('add')</button>
 							</div>
 						</div>

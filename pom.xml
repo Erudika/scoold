@@ -212,6 +212,7 @@
 				<configuration>
 					<revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+					<shortRevisionLength>8</shortRevisionLength>
 				</configuration>
 				<executions>
 					<execution>
