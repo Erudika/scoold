@@ -12,7 +12,7 @@ fullnameOverride: ""
 #########################################
 image:
   repository: erudikaltd/scoold
-  tag: "1.67.1"
+  tag: "1.68.0"
   pullPolicy: IfNotPresent
   pullSecrets: []
 
