@@ -690,9 +690,14 @@ table.striped>tbody>tr:nth-child(odd) {
 }
 .emoji-picker-container header svg {
 	margin-top: 10px;
+	fill: white;
 }
-.emoji-picker-container [class*="popupPicker"] {
+.emoji-picker-container .autoTheme {
 	z-index: 10;
+	background-color: #333;
+	color: white;
+	border-radius: 5px;
+	border: 1px solid #888;
 }
 
 .lang-button {

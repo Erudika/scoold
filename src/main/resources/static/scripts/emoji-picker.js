@@ -11,6 +11,7 @@ $(document).on("click", ".emoji-button", function () {
 			var picker = picmoPopup.createPopup({
 				emojiData: emojiData,
 				messages: messages,
+				theme: "autoTheme",
 				rootElement: cont.get(0),
 				showCloseButton: false,
 				showPreview: false,
