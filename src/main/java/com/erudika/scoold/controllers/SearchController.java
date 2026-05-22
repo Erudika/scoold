@@ -119,7 +119,7 @@ public class SearchController {
 			questionslist = utils.fullQuestionsSearch(qs);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			if (utils.isFeedbackEnabled()) {
-				feedbacklist = pc.findQuery(Utils.type(Feedback.class), queryString);
+				feedbacklist = pc.findQuery(Utils.type(Feedback.class), qs);
 			}
 			if (usersPublic) {
 				userlist = searchUsers(queryString, req);

@@ -48,26 +48,8 @@ public class ScooldEmailer implements Emailer {
 
 	@Override
 	public boolean sendEmail(final List<String> emails, final String subject, final String body) {
-		if (emails == null || emails.isEmpty()) {
-			return false;
-		}
-		emails.forEach(email -> {
-			try {
-				mailSender.send((MimeMessage mimeMessage) -> {
-					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
-					msg.setTo(email);
-					msg.setSubject(subject);
-					msg.setFrom(CONF.supportEmail(), CONF.appName());
-					msg.setText(body, true); // body is assumed to be HTML
-				});
-				logger.debug("Email sent to {}, {}", email, subject);
-			} catch (MailException ex) {
-				logger.error("Failed to send email to {} with body [{}]. {}", email, body, ex.getMessage());
-			}
-		});
-		return true;
+		return sendEmail(emails, subject, body, null, null, null);
 	}
-
 
 	@Override
 	public boolean sendEmail(List<String> emails, String subject, String body, InputStream attachment, String mimeType, String fileName) {
@@ -82,14 +64,14 @@ public class ScooldEmailer implements Emailer {
 				msg.addBcc(emailz.next());
 			}
 			msg.setSubject(subject);
-			msg.setFrom(Para.getConfig().supportEmail());
+			msg.setFrom(CONF.supportEmail(), CONF.appName());
 			msg.setText(body, true); // body is assumed to be HTML
 			if (attachment != null) {
 				msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
 			}
 		};
 		try {
-			mailSender.send(preparator);
+			Para.asyncExecute(() -> mailSender.send(preparator));
 			logger.debug("Email sent to {}, {}", emails, subject);
 		} catch (MailException ex) {
 			logger.error("Failed to send email. {}", ex.getMessage());

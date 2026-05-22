@@ -294,8 +294,12 @@ textarea.simple-editor {
 .editor-toolbar i {
 	display: block;
 	margin: 0 auto;
-	width: 80%;
-	height: 80%;
+	width: 90%;
+	height: 90%;
+	background-repeat: no-repeat;
+}
+.editor-toolbar button {
+	padding: 0;
 }
 .editor-toolbar {
 	height: 40px;

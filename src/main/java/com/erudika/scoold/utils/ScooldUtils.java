@@ -1730,9 +1730,11 @@ public final class ScooldUtils {
 		if (qf.isEmpty() || qf.length() > 1) {
 			q = q.replaceAll("[\\?<>]", "").trim();
 			q = q.replaceAll("$[\\*]*", "");
-			q = RegExUtils.removeAll(q, "AND");
-			q = RegExUtils.removeAll(q, "OR");
-			q = RegExUtils.removeAll(q, "NOT");
+			// q = RegExUtils.removeAll(q, "AND");
+			// q = RegExUtils.removeAll(q, "OR");
+			// q = RegExUtils.removeAll(q, "NOT");
+			q = RegExUtils.replaceAll(q, ":\\s+", "\\\\: ");
+			q = RegExUtils.replaceAll(q, "[^:]\\((.*)\\)", "\\\\($1\\\\)");
 			q = q.trim();
 			defaultQuery = "";
 		}
@@ -1746,7 +1748,7 @@ public final class ScooldUtils {
 			if (q.isEmpty()) {
 				return qf;
 			} else {
-				return qf + " AND " + q;
+				return qf + " AND (" + q + ")";
 			}
 		}
 	}

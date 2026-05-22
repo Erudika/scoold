@@ -788,6 +788,12 @@ $(function () {
 
 	var commentInput = $("input[name='comment']", "form.new-comment-form");
 	setTimeout(function () { $("input.charcounter").characterCounter(); }, 200);
+
+	$(document).on("click", "form.new-comment-form button[type=submit]", function(){
+		$(this).closest("div.newcommentform").addClass("hide");
+		return true;
+	});
+
 	submitFormBind("form.new-comment-form", function(data, status, xhr, form) {
 		var textbox = commentInput;
 		var that = $(form);
@@ -798,7 +804,7 @@ $(function () {
 		} else {
 			commentsbox.append(replaceMentionsWithHtmlLinks(data));
 		}
-		that.closest("div.newcommentform").addClass("hide");
+		//that.closest("div.newcommentform").addClass("hide");
 		textbox.val("");
 	});
 
@@ -1012,7 +1018,9 @@ $(function () {
 			previewRender: function (plainText, preview) {
 				clearTimeout(previewMarkdownDelayTimer);
 				previewMarkdownDelayTimer = setTimeout(function () {
-					$.post(hostURL + "/questions/render-markdown", replaceMentionsWithMarkdownLinks(plainText), function (html) {
+					$.post(hostURL + "/questions/render-markdown", {
+						md: replaceMentionsWithMarkdownLinks(plainText)
+					}, function (html) {
 						preview.innerHTML = html;
 						renderMermaid($(preview).find(".mermaid").toArray());
 						$(preview).find("pre code").each(function (i, block) {
