@@ -40,6 +40,7 @@ public class ScooldEmailer implements Emailer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldEmailer.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
+	private static final int MAX_RECIPIENTS_PER_MESSAGE = 100;
 	private JavaMailSender mailSender;
 
 	public ScooldEmailer(JavaMailSender mailSender) {
@@ -52,10 +53,21 @@ public class ScooldEmailer implements Emailer {
 	}
 
 	@Override
-	public boolean sendEmail(List<String> emails, String subject, String body, InputStream attachment, String mimeType, String fileName) {
+	public boolean sendEmail(List<String> emails, String subject, String body,
+			InputStream attachment, String mimeType, String fileName) {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
+		for (int i = 0; i < emails.size(); i += MAX_RECIPIENTS_PER_MESSAGE) {
+			List<String> batch = emails.subList(i,
+					Math.min(i + MAX_RECIPIENTS_PER_MESSAGE, emails.size()));
+			sendSingleBatch(batch, subject, body, attachment, mimeType, fileName);
+		}
+		return true;
+	}
+
+	private void sendSingleBatch(List<String> emails, String subject, String body,
+			InputStream attachment, String mimeType, String fileName) {
 		MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
 			MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 			Iterator<String> emailz = emails.iterator();
@@ -76,6 +88,5 @@ public class ScooldEmailer implements Emailer {
 		} catch (MailException ex) {
 			logger.error("Failed to send email. {}", ex.getMessage());
 		}
-		return true;
 	}
 }

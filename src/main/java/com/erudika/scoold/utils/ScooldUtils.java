@@ -602,26 +602,24 @@ public final class ScooldUtils {
 		return Collections.emptyMap();
 	}
 
-	private void sendEmailsToSubscribersInSpace(Set<String> emails, String space, String subject, String html) {
-		int i = 0;
-		int max = CONF.maxItemsPerPage();
-		List<String> terms = new ArrayList<>(max);
-		for (String email : emails) {
-			terms.add(email);
-			if (++i == max) {
-				emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
-						entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space) &&
-								!isIgnoredSpaceForNotifications(e.getValue(), space)).
-						map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
-				i = 0;
-				terms.clear();
-			}
+	void sendEmailsToSubscribersInSpace(Set<String> emails, String space, String subject, String html) {
+		if (emails == null || emails.isEmpty()) {
+			return;
 		}
-		if (!terms.isEmpty()) {
-			emailer.sendEmail(buildProfilesMap(pc.findTermInList(Utils.type(User.class), Config._EMAIL, terms)).
-					entrySet().stream().filter(e -> canAccessSpace(e.getValue(), space) &&
-							!isIgnoredSpaceForNotifications(e.getValue(), space)).
-					map(e -> e.getKey()).collect(Collectors.toList()), subject, html);
+		List<String> emailList = new ArrayList<>(emails);
+		int max = CONF.maxItemsPerPage();
+		Map<String, Profile> allProfiles = new HashMap<>(emails.size());
+		for (int i = 0; i < emailList.size(); i += max) {
+			List<String> batch = emailList.subList(i, Math.min(i + max, emailList.size()));
+			allProfiles.putAll(buildProfilesMap(
+					pc.findTermInList(Utils.type(User.class), Config._EMAIL, batch)));
+		}
+		List<String> recipients = allProfiles.entrySet().stream().
+				filter(e -> canAccessSpace(e.getValue(), space) &&
+						!isIgnoredSpaceForNotifications(e.getValue(), space)).
+				map(e -> e.getKey()).collect(Collectors.toList());
+		if (!recipients.isEmpty()) {
+			emailer.sendEmail(recipients, subject, html);
 		}
 	}
 
