@@ -119,21 +119,30 @@ $(function () {
 
 	function submitFormBind(formname, callbackfn, errorfn) {
 		return $(document).on("submit", formname,  function() {
-			var btn = $("button.submit-spinner");
+			submitSpinner($("button.submit-spinner"));
+			submitForm(this, "POST", callbackfn, errorfn);
+			return false;
+		});
+	}
+
+	function submitSpinner(btn) {
+		if (btn && btn.closest("form").find(":invalid").length === 0) {
 			var svg = btn.find("svg");
 			var spinner = '<svg class="ico fa-spin" viewBox="0 0 24 24">\n\
-							<path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" /></svg>';
+								<path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" /></svg>';
 			if (btn.length) {
-				btn.attr("disabled", true);
+				setTimeout(function() {
+					btn.attr("disabled", true).delay(5000).queue(function(){
+						$(this).removeAttr("disabled").find("svg").addClass("hide");
+					});
+				});
 				if (svg.length) {
 					svg.replaceWith(spinner);
 				} else {
 					btn.html(spinner);
 				}
 			}
-			submitForm(this, "POST", callbackfn, errorfn);
-			return false;
-		});
+		}
 	}
 
 	function areYouSure(func, msg, returns) {
@@ -1108,16 +1117,13 @@ $(function () {
 				}
 			});
 
-			submitFormBind("#ask-question-form", function (data, status, xhr, form) {
+			askForm.find("button[type=submit]").click(function(e) {
+				submitSpinner($(this));
 				clearInterval(saveDraftInterval1);
 				localStorage.removeItem("ask-form-title");
 				localStorage.removeItem("ask-form-body");
 				localStorage.removeItem("ask-form-tags");
-				window.location.href = data.url || "";
-			}, function (xhr, status, error) {
-				clearInterval(saveDraftInterval1);
-				$(document).off("submit"); // turn off this handler and prevent infinite redirect loop
-				askForm.submit(); // retry normal POST submit (non-AJAX) to see validation errors
+				return true;
 			});
 		} catch (exception) {}
 	}

@@ -250,6 +250,10 @@ textarea.simple-editor {
 	padding-top: 0.4em;
 	float: right;
 }
+.chip .close {
+	padding-left: 2px;
+	margin: 0 5px;
+}
 .input-field > .chip.red {
 	width: 100%;
 }

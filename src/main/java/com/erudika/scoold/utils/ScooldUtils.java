@@ -688,7 +688,7 @@ public final class ScooldUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendNewPostNotifications(Post question, boolean needApproval, HttpServletRequest req) {
+	public void sendNewPostEmailNotifications(Post question, boolean needApproval, HttpServletRequest req) {
 		if (question == null || req.getParameter("notificationsDisabled") != null) {
 			return;
 		}
@@ -734,6 +734,12 @@ public final class ScooldUtils {
 			rep.setAuthorName(postAuthor.getName());
 			rep.addProperty(lang.get("spaces.title"), getSpaceName(question.getSpace()));
 			rep.create();
+		}
+	}
+
+	public void sendNewPostNotifications(Post question, boolean needsApproval, HttpServletRequest req) {
+		if (req != null && question != null && req.getParameter("notificationsDisabled") == null) {
+			Para.asyncExecute(() -> sendNewPostEmailNotifications(question, needsApproval, req));
 		}
 	}
 
@@ -1865,7 +1871,7 @@ public final class ScooldUtils {
 			userId = authUser.getId();
 		}
 		if (!isAllowedToAsk) {
-			error.put("error", "Try again later.");
+			error.put("error", getLang(req).get("posts.error1"));
 			error.put("rateLimited", "true");
 			logger.info("User {} is being rate-limited and prevented from posting.", userId);
 		}

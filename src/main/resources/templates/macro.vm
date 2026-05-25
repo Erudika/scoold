@@ -1202,7 +1202,7 @@ $utils.formatDate($date, $format, $currentLocale)
 #####################################
 #macro(getmessagebox $class $text)
 #if($text && !$text.isEmpty())
-	<div class="chip phl ${class}">
+	<div class="chip ${class}">
 		#ico("close" "close")
 		<div class="msg mrl left-align">#if($text == "") &nbsp; #else $text #end</div>
 	</div>
@@ -1220,9 +1220,9 @@ $utils.formatDate($date, $format, $currentLocale)
 #####################################
 #macro(infostrip )
 	#if ($request.getParameter("success"))
-		#set($infoStripClass = "green white-text")
-	#elseif ($request.getParameter("error"))
-		#set($infoStripClass = "red white-text")
+		#set($infoStripClass = "green darken-3 white-text")
+	#elseif ($request.getParameter("error") || ($error && $error.size() > 0))
+		#set($infoStripClass = "red darken-3 white-text")
 	#else
 		#set($infoStripClass = "")
 	#end
@@ -1242,6 +1242,7 @@ $utils.formatDate($date, $format, $currentLocale)
 		#end
 	#else
 		#set($hideInfoStrip = "")
+		#set($infoStripMsg = $!error.get('error'))
 	#end
 
 	#if (!$infoStripMsg || $infoStripMsg.trim().isEmpty())

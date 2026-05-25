@@ -136,7 +136,7 @@ public class ReportsController {
 				res.setStatus(200);
 				utils.updateNewReportsCount();
 			} else {
-				model.addAttribute("error", "Too many requests.");
+				model.addAttribute("error", Map.of("error", utils.getLang(req).get("posts.error1")));
 				res.setStatus(400);
 			}
 		} else {

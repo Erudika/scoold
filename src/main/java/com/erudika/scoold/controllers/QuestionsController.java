@@ -82,7 +82,7 @@ public class QuestionsController {
 	public QuestionsController(ScooldUtils utils, QuestionController questionController) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		this.askLimiter = Para.createRateLimiter(1, 30, 50);
+		this.askLimiter = Para.createRateLimiter(2, 30, 50);
 		this.questionController = questionController;
 	}
 
@@ -261,7 +261,7 @@ public class QuestionsController {
 			}
 			Map<String, String> error = utils.validateQuestionTags(q, utils.validate(q), req);
 			q = handleSpam(q, authUser, error, req);
-			if (error.isEmpty() && utils.isAllowedToPostOrLimited(askLimiter, authUser, error, req)) {
+			if (utils.isAllowedToPostOrLimited(askLimiter, authUser, error, req) && error.isEmpty()) {
 				String qid = validateNewPostId(postId, req);
 				q.setId(qid);
 				q.setLocation(location);

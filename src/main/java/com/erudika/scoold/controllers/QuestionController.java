@@ -231,10 +231,9 @@ public class QuestionController {
 			//create new answer
 			boolean needsApproval = CONF.answersNeedApproval() && utils.postsNeedApproval(req) && utils.userNeedsApproval(authUser);
 			Reply answer = utils.populate(req, needsApproval ? new UnapprovedReply() : new Reply(), "body");
-			Map<String, String> error = utils.validate(answer);
+			Map<String, String> error = validateReply(answer, req);
 			answer = handleSpam(answer, authUser, error, req);
-			if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody()) &&
-					utils.isAllowedToPostOrLimited(replyLimiter, authUser, error, req)) {
+			if (utils.isAllowedToPostOrLimited(replyLimiter, authUser, error, req) && error.isEmpty()) {
 				answer.setTitle(showPost.getTitle());
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());
@@ -263,7 +262,7 @@ public class QuestionController {
 			}
 			return "reply";
 		} else {
-			model.addAttribute("error", "Parent post doesn't exist or cannot have children.");
+			model.addAttribute("error", Map.of("error", "Parent post doesn't exist or cannot have children."));
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
@@ -701,5 +700,15 @@ public class QuestionController {
 			return spama;
 		}
 		return a;
+	}
+
+	private Map<String, String> validateReply(Reply answer, HttpServletRequest req) {
+		Map<String, String> error = utils.validate(answer);
+		error.remove("tags"); // blank for answers
+		error.remove("title"); // blank for answers
+		if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
+			error.put("body", utils.getLang(req).get("requiredfield"));
+		}
+		return error;
 	}
 }
