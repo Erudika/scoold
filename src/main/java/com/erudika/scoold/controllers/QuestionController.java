@@ -90,7 +90,7 @@ public class QuestionController {
 	public QuestionController(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
-		this.replyLimiter = Para.createRateLimiter(1, 50, 100);
+		this.replyLimiter = Para.createRateLimiter(2, 50, 100);
 	}
 
 	@GetMapping({"/{id}", "/{id}/{title}", "/{id}/{title}/*"})

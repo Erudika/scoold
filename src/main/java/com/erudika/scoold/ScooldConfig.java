@@ -1750,6 +1750,17 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("delete_protection_enabled", true);
 	}
 
+	@Documented(position = 1551,
+			identifier = "rate_limited_posting_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Posts",
+			description = "Enable/disable rate limiting for new posts - 2 per min., 30 per hour, 50 per day (for questions) "
+					+ " and 2 per min., 50 per hour, 100 per day (for answers), per authenticated user.")
+	public boolean rateLimitedPostingEnabled() {
+		return getConfigBoolean("rate_limited_posting_enabled", true);
+	}
+
 	@Documented(position = 1560,
 			identifier = "max_text_length",
 			value = "20000",

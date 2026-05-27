@@ -1861,21 +1861,21 @@ public final class ScooldUtils {
 
 	public boolean isAllowedToPostOrLimited(RateLimiter limiter, Profile authUser,
 			Map<String, String> error, HttpServletRequest req) {
-		boolean isAllowedToAsk = false;
+		boolean isAllowedToPost = false;
 		String userId = "anon";
-		if (isMod(authUser)) {
+		if (isMod(authUser) || !CONF.rateLimitedPostingEnabled()) {
 			return true;
 		}
 		if (isAuthenticated(req)) {
-			isAllowedToAsk = limiter.isAllowed(getParaAppId(), authUser.getId());
+			isAllowedToPost = limiter.isAllowed(getParaAppId(), authUser.getId());
 			userId = authUser.getId();
 		}
-		if (!isAllowedToAsk) {
+		if (!isAllowedToPost) {
 			error.put("error", getLang(req).get("posts.error1"));
 			error.put("rateLimited", "true");
 			logger.info("User {} is being rate-limited and prevented from posting.", userId);
 		}
-		return isAllowedToAsk;
+		return isAllowedToPost;
 	}
 
 	public String rateLimitErrorHandler(Map<String, String> error, HttpServletRequest req, HttpServletResponse res) {
