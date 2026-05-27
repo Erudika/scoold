@@ -44,24 +44,26 @@
 	<div class="mbs ${hidden} #if($request.getParameter('commentid') == $showcomment.id)sticky-post card-panel mediumText#end">
 		#votebox($showcomment "left mrm pbs")
 		#set($_commentHtml = $utils.markdownToHtml($!showcomment.comment))
-		<div class="comment-text">$!{_commentHtml}</div>
-		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
-		&mdash;
-		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text text-darken-2">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
-		#if ($showcomment == "")
-			#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
-			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
-				 class="delete-comment red-text">$!lang.get('delete')</a>
-		#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $scooldUtils.isMod($authUser)))
-			<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
-				 class="delete-comment red-text">$!lang.get('delete')</a>
-		#else
-			#getreportlink($showcomment "$commentlink/$!showcomment.id" "noicon")
-		#end
-		<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Copy permalink" class="permalink phs">
-			#ico("share" "")
-		</a>
+		<div class="comment-text">
+			$!{_commentHtml}
+			#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
+			&mdash;
+			<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
+			<span class="comment-timestamp mrs grey-text text-darken-2">#formatdate($showcomment.timestamp '')</span>
+			#if ($showcomment == "")
+				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
+				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
+					 class="delete-comment red-text">$!lang.get('delete')</a>
+			#elseif ($authenticated && ($showcomment.creatorid == $authUser.id || $scooldUtils.isMod($authUser)))
+				<a href="$commentlink/$!showcomment.id/delete" title="$!lang.get('delete')"
+					 class="delete-comment red-text">$!lang.get('delete')</a>
+			#else
+				#getreportlink($showcomment "$commentlink/$!showcomment.id" "notext")
+			#end
+			<a href="$questionlink/$!showcomment.parentid?commentid=$!showcomment.id" title="Copy permalink" class="permalink phs">
+				#ico("share" "")
+			</a>
+		</div>
 	</div>
 </div>
 #end
@@ -81,7 +83,7 @@
 		#set($commentAuthor = {'name': $!showcomment.authorName, 'id': $showcomment.creatorid})
 		&mdash;
 		<span class="comment-author">#personlink($commentAuthor)</span>&nbsp;
-		<span class="comment-timestamp mrs grey-text text-darken-2 right">#ico("clock-o" "") #formatdate($showcomment.timestamp '')</span>
+		<span class="comment-timestamp mrs grey-text text-darken-2 right">#formatdate($showcomment.timestamp '')</span>
 	</div>
 </div>
 #end
@@ -855,7 +857,7 @@
 						<a href="$questionlink/$!parentpost.id/approve/$!showpost.id" class="approve-answer $!{onclass}"
 							 title="Approve answer">#ico("check-circle" "")</a>
 					#elseif ($approvedAnswer)
-						<span class="green-text largeText"#if($showPost.approvalTimestamp) title="Accepted #formatdate($showpost.approvalTimestamp 'dd MMMM yyyy, HH:mm')" #end >
+						<span class="green-text"#if($showPost.approvalTimestamp) title="Accepted #formatdate($showpost.approvalTimestamp 'dd MMMM yyyy, HH:mm')" #end >
 							#ico("check-circle" "")
 						</span>
 					#end

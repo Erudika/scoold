@@ -476,13 +476,14 @@ img.profile-pic:before {
 }
 .comment-text {
 	display: inline-block;
+	max-width: 84%;
 }
 .comment-text * {
 	font-size: inherit;
-	/*display: inline;*/
 }
 .comment-text p:first-child {
 	margin: 0;
+	display: inline;
 }
 .comment-text img {
     max-height: 32px;
