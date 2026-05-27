@@ -5,7 +5,7 @@
   (__  ) /__/ /_/ / /_/ / / /_/ /
  /____/\___/\____/\____/_/\__,_/  https://scoold.com
 -->
-<html lang="$!currentLocale.language" dir="$!langDirection">
+<html lang="$!currentLocale.language" dir="$!langDirection" #if($darkModeEnabled)data-theme="dark"#end>
 	<head>
 		<title>$!APPNAME | $!title</title>
 		<meta charset="utf-8"/>
@@ -64,10 +64,10 @@
 			#renderJSONLD()
 		#end
 	</head>
-	<body>
+	<body #if($onboarding)class="onboarding"#end>
 		<div class="scoold-wrapper">
 			<header>
-				<div class="${navbarFixedClass}">
+				<div class="${navbarFixedClass} #hidenav()">
 					<nav class="navbar-color">
 						<div class="nav-wrapper container">
 							<a href="#" data-target="mobile-drawer" class="sidenav-trigger">#ico("bars" "width-24")</a>
@@ -367,7 +367,7 @@
 				#parse($path)
 			</main>
 
-			<footer class="page-footer">
+			<footer class="page-footer #hidenav()">
 				<div class="container">
 					<div class="row mbn">
 						<div class="col l7 s12 sTextCenter">

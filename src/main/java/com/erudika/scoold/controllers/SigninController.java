@@ -26,12 +26,15 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
 import static com.erudika.scoold.ScooldServer.HOMEPAGE;
+import static com.erudika.scoold.ScooldServer.ONBOARDINGLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
+import static com.erudika.scoold.utils.ScooldUtils.isConnectedToPara;
+import static com.erudika.scoold.utils.ScooldUtils.isSetupRequired;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -70,6 +73,9 @@ public class SigninController {
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			return "redirect:" + (Strings.CI.startsWith(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
+		}
+		if ((CONF.onboardingEnabled() && !isConnectedToPara()) || isSetupRequired()) {
+			return "redirect:" + ONBOARDINGLINK;
 		}
 		if (!HOMEPAGE.equals(returnto) && !Strings.CS.startsWith(returnto, SIGNINLINK)) {
 			HttpUtils.setStateParam("returnto", Utils.urlEncode(getBackToUrl(req)), req, res);

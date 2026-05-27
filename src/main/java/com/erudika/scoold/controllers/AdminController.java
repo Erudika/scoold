@@ -48,7 +48,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.typesafe.config.ConfigValueFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.FilterInputStream;
@@ -544,7 +543,7 @@ public class AdminController {
 			}
 			com.typesafe.config.Config modifiedConf = CONF.getConfig();
 			if (value != null && !StringUtils.isBlank(value)) {
-				modifiedConf = modifiedConf.withValue(key, ConfigValueFactory.fromAnyRef(value));
+				modifiedConf = modifiedConf.withValue(key, CONF.parseConfigValue(key, value));
 				System.setProperty(key, value);
 			} else {
 				modifiedConf = modifiedConf.withoutPath(key);

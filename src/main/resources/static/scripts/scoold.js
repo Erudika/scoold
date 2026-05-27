@@ -1588,57 +1588,150 @@ $(function () {
 		});
 	}
 
-	if (window.location.pathname.indexOf(CONTEXT_PATH + '/signin/') >= 0) {
-		var passwordInput = $('#passw, #newpassword');
-		var scoreMessage = $('#pass-meter-message');
-		var messagesList = ['Too simple', 'Weak', 'Good', 'Strong', 'Very strong'];
-		passwordInput.on('keyup', function () {
-			var score = 0;
-			var val = passwordInput.val();
-			if (val.length >= (MIN_PASS_LENGTH || 8)) {
-				++score;
-			}
-			if (val.match(/(?=.*[a-z])/)) {
-				++score;
-			}
-			if (val.match(/(?=.*[A-Z])/)) {
-				++score;
-			}
-			if (val.match(/(?=.*[0-9])/)) {
-				++score;
-			}
-			if (val.match(/(?=.*[^\w\s\n\t])/)) {
-				++score;
-			}
-			if (val.length === 0) {
-				score = -1;
-			}
-			switch (score) {
-				case 0:
-				case 1:
-					passwordInput.attr('class', 'pass-meter');
-					scoreMessage.text(messagesList[0]);
-					break;
-				case 2:
-					passwordInput.attr('class', 'pass-meter psms-25');
-					scoreMessage.text(messagesList[1]);
-					break;
-				case 3:
-					passwordInput.attr('class', 'pass-meter psms-50');
-					scoreMessage.text(messagesList[2]);
-					break;
-				case 4:
-					passwordInput.attr('class', 'pass-meter psms-75');
-					scoreMessage.text(messagesList[3]);
-					break;
-				case 5:
-					passwordInput.attr('class', 'pass-meter psms-100');
-					scoreMessage.text(messagesList[4]);
-					break;
-				default:
-					passwordInput.attr('class', '');
-					scoreMessage.text('');
-			}
+	var passwordInput = $('#passw, #newpassword');
+	var scoreMessage = $('#pass-meter-message');
+	var messagesList = ['Too simple', 'Weak', 'Good', 'Strong', 'Very strong'];
+	passwordInput.on('keyup', function () {
+		var score = 0;
+		var val = passwordInput.val();
+		if (val.length >= (MIN_PASS_LENGTH || 8)) {
+			++score;
+		}
+		if (val.match(/(?=.*[a-z])/)) {
+			++score;
+		}
+		if (val.match(/(?=.*[A-Z])/)) {
+			++score;
+		}
+		if (val.match(/(?=.*[0-9])/)) {
+			++score;
+		}
+		if (val.match(/(?=.*[^\w\s\n\t])/)) {
+			++score;
+		}
+		if (val.length === 0) {
+			score = -1;
+		}
+		switch (score) {
+			case 0:
+			case 1:
+				passwordInput.attr('class', 'pass-meter');
+				scoreMessage.text(messagesList[0]);
+				break;
+			case 2:
+				passwordInput.attr('class', 'pass-meter psms-25');
+				scoreMessage.text(messagesList[1]);
+				break;
+			case 3:
+				passwordInput.attr('class', 'pass-meter psms-50');
+				scoreMessage.text(messagesList[2]);
+				break;
+			case 4:
+				passwordInput.attr('class', 'pass-meter psms-75');
+				scoreMessage.text(messagesList[3]);
+				break;
+			case 5:
+				passwordInput.attr('class', 'pass-meter psms-100');
+				scoreMessage.text(messagesList[4]);
+				break;
+			default:
+				passwordInput.attr('class', '');
+				scoreMessage.text('');
+		}
+	});
+
+	/****************************************************
+	 *                    ONBOARDING
+	 ****************************************************/
+	if ($("#onboarding-language-form").length || $("#onboarding-para-form").length ||
+			$("#onboarding-site-form").length || $("#onboarding-smtp-form").length) {
+
+		var onboardingStep = parseInt(localStorage.getItem("scoold_onboarding_step") || "1", 10);
+		var urlStep = parseInt(new URLSearchParams(window.location.search).get("step") || "0", 10);
+
+		if (urlStep > 0) {
+			localStorage.setItem("scoold_onboarding_step", urlStep);
+		}
+
+		$("form[id^='onboarding-']").on("submit", function () {
+			var nextStep = parseInt(
+				localStorage.getItem("scoold_onboarding_step") || "1", 10) + 1;
+			localStorage.setItem("scoold_onboarding_step", nextStep);
+		});
+
+		// Test Para connection
+		$("#test-para-btn").on("click", function () {
+			var btn = $(this);
+			var result = $("#para-test-result");
+			btn.prop("disabled", true);
+			result.text("...").removeClass("green-text red-text");
+			$.get(btn.attr("data-url"), {
+				paraEndpoint: $("#para-endpoint").val(),
+				paraAccessKey: $("#para-access-key").val(),
+				paraSecretKey: $("#para-secret-key").val()
+			}, function (data) {
+				if (data.connected) {
+					result.text(" ✓ Connected!").addClass("green-text text-darken-3");
+				} else {
+					result.text(" ✗ " + (data.error || "No connection"))
+						.addClass("red-text");
+				}
+			}).fail(function () {
+				result.text(" ✗ Connection failed").addClass("red-text");
+			}).always(function () {
+				btn.prop("disabled", false);
+			});
+		});
+
+		// Test SMTP connection
+		$("#test-smtp-btn").on("click", function () {
+			var btn = $(this);
+			var result = $("#smtp-test-result");
+			btn.prop("disabled", true);
+			result.text("...").removeClass("green-text red-text");
+			$.get(btn.attr("data-url"), {
+				mailHost: $("#mail-host").val(),
+				mailPort: $("#mail-port").val(),
+				mailUsername: $("#mail-username").val(),
+				mailPassword: $("#mail-password").val(),
+				mailTLS: $("input[name='mailTLS']").is(":checked"),
+				mailSSL: $("input[name='mailSSL']").is(":checked"),
+				testRecipient: $("#admin-email").val() || ""
+			}, function (data) {
+				if (data.connected) {
+					result.text(" ✓ Connected!").addClass("green-text text-darken-3");
+				} else {
+					result.text(" ✗ " + (data.error || "No connection"))
+						.addClass("red-text");
+				}
+			}).fail(function () {
+				result.text(" ✗ Connection failed").addClass("red-text");
+			}).always(function () {
+				btn.prop("disabled", false);
+			});
+		});
+
+		// Auth method toggle for step 3
+		$("#auth-method-select").on("change", function () {
+			var method = $(this).val();
+			$("#auth-password-fields").toggleClass("hide", method !== "password");
+			$("#auth-social-fields").toggleClass("hide", method === "password");
+			$("#social-google-fields").toggleClass("hide", method !== "google");
+			$("#social-facebook-fields").toggleClass("hide", method !== "facebook");
+			$("#social-microsoft-fields").toggleClass("hide", method !== "microsoft");
+		}).trigger("change");
+
+		// Handle skip SMTP button
+		$("#onboarding-smtp-form button[name='skipSmtp']").on("click", function () {
+			$(this).closest("form").find("input[name='skipSmtp']").remove();
+			$("<input>").attr({
+				type: "hidden", name: "skipSmtp", value: $(this).val()
+			}).appendTo($(this).closest("form"));
+		});
+
+		// Clear onboarding state on finish
+		$("#onboarding-smtp-form").on("submit", function () {
+			localStorage.removeItem("scoold_onboarding_step");
 		});
 	}
 

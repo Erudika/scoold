@@ -17,7 +17,7 @@
 		<h2>$!lang.get("error.title")</h2>
 		#end
 
-		#if($code == "500" && ($reason.contains("ConnectException") || $reason.contains("Connection refused")))
+		#if($code == "500" && $scooldUtils.looksLikeNotConnectedToPara($reason))
 			<h4 class="red-text">No connection to Para backend.</h4>
 		#else
 			$!status $!reason

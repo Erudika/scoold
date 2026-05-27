@@ -122,6 +122,8 @@ public final class ScooldUtils {
 	private static final Map<String, String> FILE_CACHE = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
+	private static boolean connected = false;
+	private static boolean setupRequired = false;
 
 	private static final Profile API_USER;
 	private static final Set<String> HOOK_EVENTS;
@@ -220,6 +222,34 @@ public final class ScooldUtils {
 		return CONF;
 	}
 
+	public static boolean isConnectedToPara() {
+		return connected;
+	}
+
+	public static boolean isSetupRequired() {
+		return setupRequired;
+	}
+
+	public static void setSetupRequired(boolean required) {
+		setupRequired = required;
+	}
+
+	public void reconnectParaClient(String endpoint, String accessKey, String secretKey) {
+		try {
+			pc.setAccessKey(accessKey);
+			pc.setSecretKey(secretKey);
+			pc.setEndpoint(endpoint);
+			pcThrows.setAccessKey(accessKey);
+			pcThrows.setSecretKey(secretKey);
+			pcThrows.setEndpoint(endpoint);
+			connected = true;
+			logger.info("Reconnected to Para on {} with credentials for '{}'.", endpoint, accessKey);
+		} catch (Exception e) {
+			connected = false;
+			logger.error("Failed to reconnect to Para: {}", e.getMessage());
+		}
+	}
+
 	static {
 		// multiple domains/admins are allowed only in Scoold PRO
 		String approvedDomain = StringUtils.substringBefore(CONF.approvedDomainsForSignups(), ",");
@@ -254,11 +284,13 @@ public final class ScooldUtils {
 
 	private static void retryConnection(Callable<Boolean> callable, int retryCount) {
 		try {
-			if (!callable.call()) {
+			if (!callable.call() && !connected) {
+				connected = false;
 				throw new Exception();
 			} else if (retryCount > 0) {
 				logger.info("Connected to Para backend.");
 			}
+			connected = true;
 		} catch (Exception e) {
 			int maxRetries = CONF.paraConnectionRetryAttempts();
 			int retryInterval = CONF.paraConnectionRetryIntervalSec();
@@ -277,6 +309,11 @@ public final class ScooldUtils {
 				});
 			}
 		}
+	}
+
+	public boolean looksLikeNotConnectedToPara(String exceptionReason) {
+		String reason = StringUtils.trimToEmpty(exceptionReason);
+		return reason.contains("Connection refused") || reason.contains("ConnectException") || reason.contains("Invalid signature");
 	}
 
 	public ParaObject checkAuth(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

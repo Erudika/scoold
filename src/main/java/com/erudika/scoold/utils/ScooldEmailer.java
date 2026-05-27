@@ -22,11 +22,8 @@ import com.erudika.para.core.utils.Para;
 import com.erudika.scoold.ScooldConfig;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -38,9 +35,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
  */
 public class ScooldEmailer implements Emailer {
 
-	private static final Logger logger = LoggerFactory.getLogger(ScooldEmailer.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
-	private static final int MAX_RECIPIENTS_PER_MESSAGE = 100;
 	private JavaMailSender mailSender;
 
 	public ScooldEmailer(JavaMailSender mailSender) {
@@ -48,26 +43,7 @@ public class ScooldEmailer implements Emailer {
 	}
 
 	@Override
-	public boolean sendEmail(final List<String> emails, final String subject, final String body) {
-		return sendEmail(emails, subject, body, null, null, null);
-	}
-
-	@Override
-	public boolean sendEmail(List<String> emails, String subject, String body,
-			InputStream attachment, String mimeType, String fileName) {
-		if (emails == null || emails.isEmpty()) {
-			return false;
-		}
-		for (int i = 0; i < emails.size(); i += MAX_RECIPIENTS_PER_MESSAGE) {
-			List<String> batch = emails.subList(i,
-					Math.min(i + MAX_RECIPIENTS_PER_MESSAGE, emails.size()));
-			sendSingleBatch(batch, subject, body, attachment, mimeType, fileName);
-		}
-		return true;
-	}
-
-	private void sendSingleBatch(List<String> emails, String subject, String body,
-			InputStream attachment, String mimeType, String fileName) {
+	public void sendSingleBatch(List<String> emails, String subject, String body, ByteArrayDataSource attachment, String fileName) {
 		MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
 			MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 			Iterator<String> emailz = emails.iterator();
@@ -79,7 +55,7 @@ public class ScooldEmailer implements Emailer {
 			msg.setFrom(CONF.supportEmail(), CONF.appName());
 			msg.setText(body, true); // body is assumed to be HTML
 			if (attachment != null) {
-				msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
+				msg.addAttachment(fileName, attachment);
 			}
 		};
 		try {

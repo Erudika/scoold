@@ -28,6 +28,7 @@ import com.erudika.para.core.utils.ParaObjectUtils;
 import com.erudika.para.core.utils.RateLimiter;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
+import static com.erudika.scoold.ScooldServer.ONBOARDINGLINK;
 import static com.erudika.scoold.ScooldServer.QUESTIONSLINK;
 import static com.erudika.scoold.ScooldServer.SIGNINLINK;
 import com.erudika.scoold.core.Post;
@@ -37,6 +38,8 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import static com.erudika.scoold.utils.ScooldUtils.isConnectedToPara;
+import static com.erudika.scoold.utils.ScooldUtils.isSetupRequired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -90,6 +93,9 @@ public class QuestionsController {
 	public String get(@RequestParam(required = false) String sortby, HttpServletRequest req, Model model) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK;
+		}
+		if ((CONF.onboardingEnabled() && !isConnectedToPara()) || isSetupRequired()) {
+			return "redirect:" + ONBOARDINGLINK;
 		}
 		getQuestions(sortby, null, req, model);
 		model.addAttribute("path", "questions.vm");

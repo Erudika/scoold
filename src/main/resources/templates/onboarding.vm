@@ -1,0 +1,372 @@
+<div class="page-wrapper">
+	<div class="row">
+		<div class="col s12 m8 offset-m2 l6 offset-l3">
+			<div class="center em3v">
+				<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" width="266px" viewBox="0 80.5 1465 400" aria-label="Scoold logo" class="responsive-img mbm" xmlns:bx="https://boxy-svg.com"><defs id="defs6"><bx:export><bx:file format="svg"/></bx:export></defs><g id="g10" transform="matrix(1.293756, 0, 0, -1.293756, 10.502501, 633.943484)" style=""><g id="g12" transform="scale(0.1)" style="fill:#03a9f4;fill-opacity:1"><g id="g4515" transform="translate(207.08505,1265.7305)"><path id="path26" style="fill:#03a9f4;fill-opacity:1;fill-rule:nonzero;stroke:none" d="m 675.883,830 h 250 v 870 h -250 z"/><path id="path28" style="fill:#03a9f4;fill-opacity:1;fill-rule:nonzero;stroke:none" d="m 2929.06,654.859 c -335.29,0 -608.05,272.77 -608.05,608.051 0,335.28 272.76,608.05 608.05,608.05 335.28,0 608.04,-272.77 608.04,-608.05 0,-335.281 -272.76,-608.051 -608.04,-608.051 z m -2117.29,0 c -335.286,0 -608.047,272.77 -608.047,608.051 0,335.28 272.761,608.05 608.047,608.05 335.28,0 608.04,-272.77 608.04,-608.05 0,-335.281 -272.76,-608.051 -608.04,-608.051 z M 2929.06,2059.68 c -406.46,0 -742.57,-305.99 -790.64,-699.68 h -536.01 c -48.07,393.69 -384.18,699.68 -790.64,699.68 C 372.426,2059.68 15,1702.26 15,1262.91 15,823.57 372.426,466.141 811.77,466.141 c 407.9,0 744.99,308.168 791.17,703.859 h 534.95 c 46.18,-395.691 383.27,-703.859 791.17,-703.859 439.34,0 796.77,357.429 796.77,796.769 0,439.35 -357.43,796.77 -796.77,796.77"/><path id="path30" style="fill:#03a9f4;fill-opacity:1;fill-rule:nonzero;stroke:none" d="m 2914.06,1077.7 c -102.13,0 -185.22,83.08 -185.22,185.21 0,102.13 83.09,185.22 185.22,185.22 102.13,0 185.21,-83.09 185.21,-185.22 0,-102.13 -83.08,-185.21 -185.21,-185.21 z m 0,622.06 c -240.88,0 -436.85,-195.98 -436.85,-436.85 0,-240.88 195.97,-436.84 436.85,-436.84 240.88,0 436.84,195.96 436.84,436.84 0,240.87 -195.96,436.85 -436.84,436.85"/></g></g></g><path d="M 657.514 388.5 Q 638.065 388.5 626.144 385.049 Q 614.223 381.598 609.518 379.402 L 614.851 360.58 Q 619.243 362.149 629.908 365.913 Q 640.574 369.678 658.141 369.678 Q 675.709 369.678 686.531 363.874 Q 697.354 358.071 697.354 344.582 Q 697.354 336.112 693.59 330.779 Q 689.825 325.446 681.355 320.897 Q 672.885 316.349 657.828 310.388 Q 644.966 305.369 634.771 299.566 Q 624.576 293.762 618.458 285.136 Q 612.341 276.509 612.341 263.333 Q 612.341 249.844 619.243 239.963 Q 626.144 230.081 638.535 224.591 Q 650.926 219.102 668.18 219.102 Q 683.865 219.102 695.158 221.768 Q 706.451 224.435 711.47 226.944 L 706.451 245.452 Q 702.059 243.257 692.805 240.433 Q 683.551 237.61 667.866 237.61 Q 653.75 237.61 643.868 243.413 Q 633.987 249.217 633.987 261.451 Q 633.987 269.921 637.908 275.254 Q 641.829 280.587 650.142 284.822 Q 658.455 289.057 671.003 294.076 Q 685.12 299.723 695.942 305.683 Q 706.765 311.643 713.039 320.427 Q 719.313 329.21 719.313 343.641 Q 719.313 358.384 711.941 368.423 Q 704.569 378.461 690.766 383.48 Q 676.963 388.5 657.514 388.5 Z M 813.461 388.186 Q 788.051 388.186 770.955 377.834 Q 753.858 367.482 745.075 348.503 Q 736.291 329.524 736.291 304.428 Q 736.291 278.705 745.388 259.569 Q 754.486 240.433 771.425 229.767 Q 788.365 219.102 811.579 219.102 Q 824.441 219.102 835.734 221.298 Q 847.027 223.493 853.615 226.944 L 848.282 245.139 Q 842.008 242.002 833.852 240.12 Q 825.695 238.237 813.147 238.237 Q 786.483 238.237 772.523 255.648 Q 758.564 273.058 758.564 304.428 Q 758.564 323.877 764.524 338.465 Q 770.484 353.052 783.189 361.051 Q 795.894 369.05 816.598 369.05 Q 828.205 369.05 837.773 366.227 Q 847.341 363.404 852.046 360.894 L 856.438 379.402 Q 850.478 382.539 838.243 385.363 Q 826.009 388.186 813.461 388.186 Z M 941.976 388.5 Q 920.453 388.5 903.608 377.991 Q 886.764 367.482 877.353 348.503 Q 867.942 329.524 867.942 303.801 Q 867.942 278.077 877.353 259.255 Q 886.764 240.433 903.704 229.767 Q 920.643 219.102 942.133 219.102 Q 963.934 219.102 980.673 229.711 Q 997.413 240.32 1006.867 259.199 Q 1016.322 278.077 1016.322 303.801 Q 1016.322 329.524 1006.911 348.503 Q 997.5 367.482 980.812 377.991 Q 964.123 388.5 941.976 388.5 Z M 942.111 369.364 Q 958.254 369.364 969.878 361.208 Q 981.501 353.052 987.775 338.354 Q 994.049 323.657 994.049 303.847 Q 994.049 284.038 987.775 269.294 Q 981.501 254.55 969.878 246.394 Q 958.254 238.237 942.111 238.237 Q 926.29 238.237 914.683 246.394 Q 903.076 254.55 896.645 269.261 Q 890.215 283.972 890.215 303.801 Q 890.215 323.564 896.552 338.4 Q 902.89 353.237 914.59 361.301 Q 926.29 369.364 942.111 369.364 Z M 1112.06 388.5 Q 1090.537 388.5 1073.692 377.991 Q 1056.848 367.482 1047.437 348.503 Q 1038.026 329.524 1038.026 303.801 Q 1038.026 278.077 1047.437 259.255 Q 1056.848 240.433 1073.788 229.767 Q 1090.728 219.102 1112.217 219.102 Q 1134.018 219.102 1150.758 229.711 Q 1167.497 240.32 1176.952 259.199 Q 1186.406 278.077 1186.406 303.801 Q 1186.406 329.524 1176.995 348.503 Q 1167.584 367.482 1150.896 377.991 Q 1134.207 388.5 1112.06 388.5 Z M 1112.195 369.364 Q 1128.339 369.364 1139.962 361.208 Q 1151.585 353.052 1157.859 338.354 Q 1164.133 323.657 1164.133 303.847 Q 1164.133 284.038 1157.859 269.294 Q 1151.585 254.55 1139.962 246.394 Q 1128.339 238.237 1112.195 238.237 Q 1096.374 238.237 1084.767 246.394 Q 1073.16 254.55 1066.73 269.261 Q 1060.299 283.972 1060.299 303.801 Q 1060.299 323.564 1066.636 338.4 Q 1072.974 353.237 1084.674 361.301 Q 1096.374 369.364 1112.195 369.364 Z M 1259.557 387.559 Q 1245.127 386.931 1235.716 382.539 Q 1226.305 378.148 1221.756 369.05 Q 1217.208 359.953 1217.208 345.209 L 1217.208 145.382 L 1238.853 141.618 L 1238.853 343.641 Q 1238.853 358.384 1244.186 363.09 Q 1249.519 367.795 1262.694 369.678 Z M 1355.592 388.5 Q 1331.75 388.5 1313.713 378.304 Q 1295.675 368.109 1285.793 349.287 Q 1275.912 330.465 1275.912 304.114 Q 1275.912 279.018 1284.539 259.883 Q 1293.165 240.747 1309.635 230.081 Q 1326.104 219.415 1349.004 219.415 Q 1363.748 219.415 1375.355 223.65 Q 1386.962 227.885 1393.549 232.591 L 1393.549 145.382 L 1414.567 141.618 L 1414.567 379.716 Q 1408.607 381.912 1399.823 383.951 Q 1391.04 385.99 1380.06 387.245 Q 1369.081 388.5 1355.592 388.5 Z M 1356.533 369.364 Q 1369.708 369.364 1378.962 367.952 Q 1388.216 366.541 1393.549 364.972 L 1393.549 252.668 Q 1387.275 247.648 1376.139 243.1 Q 1365.003 238.551 1351.2 238.551 Q 1337.083 238.551 1326.888 243.413 Q 1316.693 248.276 1310.419 257.216 Q 1304.145 266.157 1301.165 278.077 Q 1298.185 289.998 1298.185 303.801 Q 1298.185 324.505 1305.4 339.092 Q 1312.615 353.679 1325.633 361.521 Q 1338.652 369.364 1356.533 369.364 Z" id="scoold" fill="#404040"/>
+				<style>[data-theme="dark"] #scoold {fill: #FFFFFF;}</style>
+				</svg>
+			</div>
+			<div class="onboarding-progress em3v">
+				#foreach ($s in [1..$totalSteps])
+					<div class="progress-step #if($step == $s)active#elseif($step > $s)complete#end">
+						<a href="$onboardinglink/$s" class="progress-circle">$s</a>
+						#if($s < $totalSteps)<div class="progress-line"></div>#end
+					</div>
+				#end
+			</div>
+			<div class="logo-bg">
+				<div class="inset-gradient"></div>
+			</div>
+
+			#if ($step == 1)
+			<div class="card-panel mvl">
+				<div class="card z-depth-0 pal mtl">
+					<h3 class="center">$!lang.get("onboarding.title")</h3>
+					<p class="center">$!lang.get("onboarding.step1.desc")</p>
+
+					<form method="post" action="$onboardinglink/language" id="onboarding-language-form">
+						<div class="row">
+							<div class="col s10 m8 offset-m2 l6 offset-l3 offset-s1">
+								<div class="input-field mtl">
+									<select name="locale" id="locale-select">
+										#foreach ($locale in $availableLocales)
+											<option value="$locale.language" #if($locale.language == 'en')selected#end>$!locale.getDisplayName($!locale)</option>
+										#end
+									</select>
+									<label>$!lang.get("translate.select")</label>
+								</div>
+							</div>
+						</div>
+						<div class="center pvl">
+							<button class="lightborder btn-flat waves-effect waves-light" type="submit">
+								$!lang.get('next') &rarr;
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			#end
+			#if ($step == 2)
+			<div class="card-panel mvl">
+				<div class="row">
+					<div class="col s12 m8 offset-m2 l8 offset-l2">
+						<h3 class="center">$!lang.get("onboarding.backend")</h3>
+
+						<ul class="collapsible z-depth-0 mtl">
+							<li>
+								<div class="collapsible-header">
+										#icon('<path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />' 'mhs')
+										$!lang.get("onboarding.copyconfig")
+								</div>
+								<div class="collapsible-body">
+									<div class="input-field">
+										<label for="raw-config">$!lang.get("onboarding.rawconfig")</label>
+										<textarea id="raw-config" name="rawConfig" class="materialize-textarea monospace" placeholder="scoold.host_url = ..."></textarea>
+									</div>
+									<p class="small">
+											$!lang.get("onboarding.rawconfig.hint")
+									</p>
+								</div>
+							</li>
+						</ul>
+
+						<p class="center pvl">$!lang.get("onboarding.backend.hint")</p>
+						<form method="post" action="$onboardinglink/para-setup" id="onboarding-para-form">
+							<div class="input-field mtl">
+								<label for="para-endpoint">$!lang.get("onboarding.para.endpoint")</label>
+								<input type="url" id="para-endpoint" name="paraEndpoint" value="$!paraEndpoint" class="validate" required>
+							</div>
+							<div class="input-field mtm">
+								<label for="para-access-key">$!lang.get("onboarding.para.accesskey")</label>
+								<input type="text" id="para-access-key" name="paraAccessKey" value="$!paraAccessKey" class="validate" required>
+							</div>
+							<div class="input-field mtm">
+								<label for="para-secret-key">$!lang.get("onboarding.para.secretkey")</label>
+								<input type="password" id="para-secret-key" name="paraSecretKey" value="$!paraSecretKey" class="validate" required>
+							</div>
+							<div class="center mtl">
+								<button type="button" id="test-para-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-para-connection">
+									$!lang.get("onboarding.testconnection")
+								</button>
+								<div id="para-test-result" class="mtm">&nbsp;
+									#if ($isConnectedToPara)
+										<span class="green-text text-darken-3 center mvl pvl">
+											#ico("check-circle" "") $!lang.get("onboarding.para.connected")
+										</span>
+									#end
+								</div>
+							</div>
+
+							<div class="center pvl">
+								<button class="lightborder btn-flat waves-effect waves-light" type="submit">
+									$!lang.get('next') &rarr;
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			#end
+			#if ($step == 3)
+			<div class="card-panel mvl">
+				<div class="row">
+					<div class="col s12 m10 offset-m1 l10 offset-l1">
+						<h3 class="center">$!lang.get("onboarding.sitesetup")</h3>
+						<p class="center">$!lang.get("onboarding.sitesetup.hint")</p>
+
+						<form method="post" action="$onboardinglink/site-setup" id="onboarding-site-form">
+							<div class="card z-depth-0 pal mtl">
+								<div class="input-field mtm">
+									<label for="app-name">$!lang.get("onboarding.sitename", "Site Name")</label>
+									<input type="text" id="app-name" name="appName" value="$!appName" maxlength="255">
+								</div>
+								<div class="input-field mtm">
+									<label for="host-url">$!lang.get("onboarding.siteurl")</label>
+									<input type="url" id="host-url" name="hostUrl" value="$!hostUrl" placeholder="https://">
+									<span>$!lang.get("onboarding.siteurl.hint")</span>
+								</div>
+								<p class="mtm">
+									<label>
+										<input type="checkbox" name="isDefaultSpacePublic" class="filled-in" #if($isDefaultSpacePublic)checked#end value="true">
+										<span>$!lang.get("onboarding.publicsite")</span>
+									</label>
+								</p>
+								<div class="switch">
+									<label>
+										<input type="checkbox" name="darkMode" class="filled-in" value="true">
+										<span>#icon('<path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />' '')
+										$!lang.get('settings.darkmode.text')</span>
+									</label>
+								</div>
+							</div>
+							<hr />
+							<div class="card z-depth-0 pal mtl">
+								<h4 class="center mbl">$!lang.get("onboarding.admin")</h4>
+
+								<div class="input-field mtm">
+									<label for="admin-name">$!lang.get('name')</label>
+									<input type="text" id="admin-name" name="adminName" maxlength="255" value="$!adminName">
+								</div>
+								<div class="input-field pbl">
+									<label for="admin-email">$!lang.get('onboarding.admin.email')</label>
+									<input type="email" id="admin-email" name="adminEmail" class="validate" value="$!adminEmail">
+									<span>$!lang.get("onboarding.admin.email.hint")</span>
+								</div>
+
+								<div class="input-field">
+									<select name="authMethod" id="auth-method-select">
+										<option value="password" #if($passwordAuthEnabled)selected#end>$!lang.get('password')</option>
+										<option value="google">Google</option>
+										<option value="facebook">Facebook</option>
+										<option value="microsoft">Microsoft</option>
+									</select>
+									<label>$!lang.get("onboarding.auth.method")</label>
+								</div>
+
+								<div id="auth-password-fields">
+									<div class="input-field mvm">
+										<label for="passw">$!lang.get('password')</label>
+										<input id="passw" type="password" name="adminPassword" value="" minlength="$MIN_PASS_LENGTH">
+										<div><small id="pass-meter-message" class="grey-text"></small></div>
+									</div>
+								</div>
+
+								<div id="auth-social-fields" class="hide">
+									<div id="social-google-fields" class="hide">
+										<div class="lightborder pas mvl">
+											<ol>
+												<li> $!lang.get('onboarding.auth.hint1')</li>
+												<li> $!lang.get('onboarding.auth.hint2') </br> <small><code>$!paraEndpoint/google_auth</code></small></li>
+												<li> $!lang.get('onboarding.auth.hint3')</li>
+											</ol>
+										</div>
+										<div class="input-field mtm">
+											<label for="gp-app-id">Google Client ID</label>
+											<input type="text" id="gp-app-id" name="gpAppId" value="$!gpAppId">
+										</div>
+										<div class="input-field mtm">
+											<label for="gp-secret">Google Client Secret</label>
+											<input type="password" id="gp-secret" name="gpSecret" value="$!gpSecret">
+										</div>
+									</div>
+									<div id="social-facebook-fields" class="hide">
+										<div class="lightborder pas mvl">
+											<ol>
+													<li> $!lang.get('onboarding.auth.hint1')</li>
+													<li> $!lang.get('onboarding.auth.hint2') </br> <small><code>$!paraEndpoint/facebook_auth</code></small></li>
+													<li> $!lang.get('onboarding.auth.hint3')</li>
+											</ol>
+										</div>
+										<div class="input-field mtm">
+											<label for="fb-app-id">Facebook App ID</label>
+											<input type="text" id="fb-app-id" name="fbAppId" value="$!fbAppId">
+										</div>
+										<div class="input-field mtm">
+											<label for="fb-secret">Facebook App Secret</label>
+											<input type="password" id="fb-secret" name="fbSecret" value="$!fbSecret">
+										</div>
+									</div>
+									<div id="social-microsoft-fields" class="hide">
+										<div class="lightborder pas mvl">
+											<ol>
+													<li> $!lang.get('onboarding.auth.hint1')</li>
+													<li> $!lang.get('onboarding.auth.hint2') </br> <small><code>$!paraEndpoint/microsoft_auth</code></small></li>
+													<li> $!lang.get('onboarding.auth.hint3')</li>
+											</ol>
+										</div>
+										<div class="input-field mtm">
+											<label for="ms-app-id">Microsoft Application ID</label>
+											<input type="text" id="ms-app-id" name="msAppId" value="$!msAppId">
+										</div>
+										<div class="input-field mtm">
+											<label for="ms-secret">Microsoft Client Secret</label>
+											<input type="password" id="ms-secret" name="msSecret" value="$!msSecret">
+										</div>
+										<div class="input-field mtm">
+											<label for="ms-tenant">Microsoft Tenant ID</label>
+											<input type="password" id="ms-tenant" name="msTenant" value="$!msTenant">
+										</div>
+									</div>
+
+									<p class="mtm">
+										<label>
+											<input type="checkbox" name="redirectToIdp" class="filled-in" #if($redirectToIdp)checked#end value="true">
+											<span>$!lang.get("onboarding.auth.redirect")</span>
+										</label>
+									</p>
+								</div>
+
+								<div class="center pvl">
+									<button class="lightborder btn-flat waves-effect waves-light" type="submit">
+										$!lang.get('next') &rarr;
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			#end
+			#if ($step == 4)
+			<div class="card-panel mvl">
+				<div class="card z-depth-0 pal mtl">
+					<h3 class="center">$!lang.get("onboarding.smtp")</h3>
+					<p class="center">$!lang.get("onboarding.smtp.hint")</p>
+
+					<form method="post" action="$onboardinglink/smtp-setup" id="onboarding-smtp-form">
+						<div id="smtp-fields">
+							<div class="input-field mtl">
+								<label for="mail-host">$!lang.get("onboarding.smtp.host")</label>
+								<input type="text" id="mail-host" name="mailHost" value="$mailHost">
+							</div>
+							<div class="input-field mtm">
+								<label for="mail-port">$!lang.get("onboarding.smtp.port")</label>
+								<input type="number" id="mail-port" name="mailPort" value="587" value="$mailPort">
+							</div>
+							<div class="input-field mtm">
+								<label for="mail-username">$!lang.get("onboarding.smtp.username")</label>
+								<input type="text" id="mail-username" name="mailUsername" value="$mailUsername">
+							</div>
+							<div class="input-field mtm">
+								<label for="mail-password">$!lang.get("onboarding.smtp.password")</label>
+								<input type="password" id="mail-password" name="mailPassword" value="$mailPassword">
+							</div>
+							<p class="mtm center">
+								<label class="mhs">
+									<input type="checkbox" name="mailTLS" class="filled-in" #if($mailTls)checked value="true"#end>
+									<span>TLS</span>
+								</label>
+								<label class="mhs">
+									<input type="checkbox" name="mailSSL" class="filled-in" #if($mailSsl)checked value="true"#end>
+									<span>SSL</span>
+								</label>
+							</p>
+							<div class="center mtl">
+								<button type="button" id="test-smtp-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-smtp-connection">
+									$!lang.get("onboarding.testconnection")
+								</button>
+								<div id="smtp-test-result" class="mtm">&nbsp;
+									#if ($smtpConfigured)
+										<span class="green-text text-darken-3 center mvl pvl">
+											#ico("check-circle" "") $!lang.get("onboarding.smtp.configured")
+										</span>
+									#end
+								</div>
+							</div>
+						</div>
+						<div class="center pvl">
+							<button class="lightborder btn-flat waves-effect waves-light" type="submit" name="skipSmtp" value="false">
+								$!lang.get("onboarding.finish")
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			#end
+		</div>
+	</div>
+</div>
+
+<style>
+.logo-bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 250px;
+	width: 100%;
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nODQnIGhlaWdodD0nNDgnIHZpZXdCb3g9JzAgMCA4NCA0OCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cGF0aCBkPSdNMCAwaDEydjZIMFYwem0yOCA4aDEydjZIMjhWOHptMTQtOGgxMnY2SDQyVjB6bTE0IDBoMTJ2Nkg1NlYwem0wIDhoMTJ2Nkg1NlY4ek00MiA4aDEydjZINDJWOHptMCAxNmgxMnY2SDQydi02em0xNC04aDEydjZINTZ2LTZ6bTE0IDBoMTJ2Nkg3MHYtNnptMC0xNmgxMnY2SDcwVjB6TTI4IDMyaDEydjZIMjh2LTZ6TTE0IDE2aDEydjZIMTR2LTZ6TTAgMjRoMTJ2Nkgwdi02em0wIDhoMTJ2Nkgwdi02em0xNCAwaDEydjZIMTR2LTZ6bTE0IDhoMTJ2NkgyOHYtNnptLTE0IDBoMTJ2NkgxNHYtNnptMjggMGgxMnY2SDQydi02em0xNC04aDEydjZINTZ2LTZ6bTAtOGgxMnY2SDU2di02em0xNCA4aDEydjZINzB2LTZ6bTAgOGgxMnY2SDcwdi02ek0xNCAyNGgxMnY2SDE0di02em0xNC04aDEydjZIMjh2LTZ6TTE0IDhoMTJ2NkgxNFY4ek0wIDhoMTJ2NkgwVjh6JyBmaWxsPScjMGVhNGY2JyBmaWxsLW9wYWNpdHk9JzAuMScgZmlsbC1ydWxlPSdldmVub2RkJy8+PC9zdmc+");
+}
+.inset-gradient {
+	inset: 0px;
+	height: 100%;
+	position: relative;
+	background: #ffffff;
+	background: linear-gradient(180deg,rgba(255, 255, 255, 0) 56%, rgba(255, 255, 255, 1) 92%, rgba(255, 255, 255, 1) 100%);
+}
+[data-theme='dark'] .inset-gradient {
+	background: #202020;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 56%, rgba(32, 32, 32, 1) 92%, rgba(32, 32, 32, 1) 100%);
+}
+.onboarding-progress {
+	display: flex;
+	z-index: 100;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+}
+.progress-step {
+	display: flex;
+	align-items: center;
+}
+.progress-circle {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	border: 2px solid #ccc;
+	color: #333;
+	background: #fff;
+	transition: all 0.3s;
+}
+[data-theme='dark'] .progress-circle {
+	color: #fff;
+	background: #333;
+}
+.progress-step.active .progress-circle {
+	border-color: #0075ad;
+	color: #0075ad;
+}
+[data-theme='dark'] .progress-step.active .progress-circle {
+	border-color: #57c8ff;
+	color: #57c8ff;
+}
+.progress-line {
+	width: 30px;
+	height: 2px;
+	background: #ccc;
+	margin: 0 4px;
+}
+</style>
