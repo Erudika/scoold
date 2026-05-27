@@ -706,7 +706,7 @@ public class QuestionController {
 		Map<String, String> error = utils.validate(answer);
 		error.remove("tags"); // blank for answers
 		error.remove("title"); // blank for answers
-		if (!error.containsKey("body") && !StringUtils.isBlank(answer.getBody())) {
+		if (error.containsKey("body") || StringUtils.isBlank(answer.getBody())) {
 			error.put("body", utils.getLang(req).get("requiredfield"));
 		}
 		return error;
