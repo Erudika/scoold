@@ -278,7 +278,7 @@ public class AdminController {
 
 			s.addProperty("posts_need_approval", needsapproval && CONF.postsNeedApproval());
 			pc.update(s);
-			utils.getAllSpacesAdmin().parallelStream().
+			utils.getAllSpacesAdmin().stream().
 					filter(ss -> ss.getId().equals(s.getId())).
 					forEach(e -> {
 						e.setName(s.getName());
