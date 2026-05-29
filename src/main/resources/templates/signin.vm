@@ -16,13 +16,15 @@
 					#end
 					#if($verify)
 						<h1>
-							#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text')
+							#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text width-48')
 						</h1>
 						<p>$!lang.get('signin.verify.text')</p>
 					#elseif($verified)
-						<h1>#ico("check-circle" "mediumText green-text")</h1>
+						<h1>#ico("check-circle" "mediumText green-text width-48")</h1>
 						<p>$!lang.get('signin.verify.done')</p>
-						<a href="$signinlink?email=$!verifiedEmail" class="btn">$!lang.get("signin.title")</a>
+						<div class="mvl">
+							<a href="$signinlink?email=$!verifiedEmail" class="btn">$!lang.get("signin.title")</a>
+						</div>
 					#else
 						#if($resend)
 							#set($action = "$signinlink/register/resend" )
@@ -80,20 +82,22 @@
 	<div class="row ptl">
 		<div class="col s12 m12 l6 offset-l3 center">
 			<div class="card-panel lighten-4">
-				<h2 class="grey-text text-darken-2 pbl">$!lang.get("iforgot.title")</h2>
+				<h2 class="grey-text text-darken-2">$!lang.get("iforgot.title")</h2>
 				<div class="pal">
 					#if($nosmtp)
 						<b class="orange-text">#ico("warning" "") $!lang.get('signup.nosmtp1')</b>
 					#end
 					#if($verify)
 					<h1>
-						#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text')
+						#icon('<path d="M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 16.5H9V9.17L15.5 12.5L22 9.17V16.5M15.5 10.81L9 7.5H22L15.5 10.81M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z" />' 'green-text width-48')
 					</h1>
 					<p>$!lang.get('signin.verify.text')</p>
 					#elseif($verified)
-					<h1>#ico("check-circle" "mediumText green-text")</h1>
+					<h1>#ico("check-circle" "mediumText green-text width-48")</h1>
 					<p>$!lang.get('done')</p>
-					<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
+					<div class="mvl">
+						<a href="$signinlink" class="btn">$!lang.get("signin.title")</a>
+					</div>
 					#else
 					<form method="post" action="$signinlink/iforgot" id="captcha-form">
 						#sectoken(false "FORGOTTEN_PASS")

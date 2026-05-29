@@ -293,6 +293,7 @@ textarea.simple-editor {
 .input-field .prefix, .input-field .suffix { width: 2rem; }
 .width-14{ width: 1.4em; }
 .width-24{ width: 2.4em; }
+.width-48{ width: 4.8em; }
 
  /***** EASY MDE FIXES - REMOVE WHEN THEY RELEASE v3 *****/
 .editor-toolbar i {
