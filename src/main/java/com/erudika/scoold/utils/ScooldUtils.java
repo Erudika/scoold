@@ -739,7 +739,7 @@ public final class ScooldUtils {
 
 	public void sendNewPostNotifications(Post question, boolean needsApproval, HttpServletRequest req) {
 		if (req != null && question != null && req.getParameter("notificationsDisabled") == null) {
-			Para.asyncExecute(() -> sendNewPostEmailNotifications(question, needsApproval, req));
+			sendNewPostEmailNotifications(question, needsApproval, req);
 		}
 	}
 

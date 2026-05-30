@@ -22,7 +22,10 @@ import com.erudika.para.core.utils.Para;
 import com.erudika.scoold.ScooldConfig;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -40,7 +43,7 @@ public class ScooldEmailer implements Emailer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScooldEmailer.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
-	private static final int MAX_RECIPIENTS_PER_MESSAGE = 100;
+	private static final int MAX_RECIPIENTS_PER_MESSAGE = 50;
 	private JavaMailSender mailSender;
 
 	public ScooldEmailer(JavaMailSender mailSender) {
@@ -58,16 +61,33 @@ public class ScooldEmailer implements Emailer {
 		if (emails == null || emails.isEmpty()) {
 			return false;
 		}
+		byte[] attachmentBytes = null;
+		if (attachment != null) {
+			try {
+				attachmentBytes = attachment.readAllBytes();
+			} catch (Exception e) {
+				logger.error("Failed to read attachment: {}", e.getMessage());
+			}
+		}
 		for (int i = 0; i < emails.size(); i += MAX_RECIPIENTS_PER_MESSAGE) {
-			List<String> batch = emails.subList(i,
-					Math.min(i + MAX_RECIPIENTS_PER_MESSAGE, emails.size()));
-			sendSingleBatch(batch, subject, body, attachment, mimeType, fileName);
+			List<String> batch = new ArrayList<>(emails.subList(i,
+					Math.min(i + MAX_RECIPIENTS_PER_MESSAGE, emails.size())));
+			ByteArrayDataSource dataSource = null;
+			if (attachmentBytes != null) {
+				try {
+					dataSource = new ByteArrayDataSource(new ByteArrayInputStream(attachmentBytes), mimeType);
+				} catch (IOException ex) {
+					logger.error("Failed to send email '{}' with attachment to {} recipients: {}",
+							subject, emails.size(), ex.getMessage());
+				}
+			}
+			sendSingleBatch(batch, subject, body, dataSource, fileName);
 		}
 		return true;
 	}
 
 	private void sendSingleBatch(List<String> emails, String subject, String body,
-			InputStream attachment, String mimeType, String fileName) {
+			ByteArrayDataSource attachment, String fileName) {
 		MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
 			MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 			Iterator<String> emailz = emails.iterator();
@@ -79,12 +99,12 @@ public class ScooldEmailer implements Emailer {
 			msg.setFrom(CONF.supportEmail(), CONF.appName());
 			msg.setText(body, true); // body is assumed to be HTML
 			if (attachment != null) {
-				msg.addAttachment(fileName, new ByteArrayDataSource(attachment, mimeType));
+				msg.addAttachment(fileName, attachment);
 			}
 		};
 		try {
+			logger.debug("Sending email '{}' to {} recipients, {}", subject, emails.size());
 			Para.asyncExecute(() -> mailSender.send(preparator));
-			logger.debug("Email sent to {}, {}", emails, subject);
 		} catch (MailException ex) {
 			logger.error("Failed to send email. {}", ex.getMessage());
 		}
