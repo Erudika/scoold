@@ -2939,6 +2939,214 @@
 			]
 		},
 		{
+			"type": "com.erudika.scoold.msteams.TurnContext",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.Activity",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.AppBasedLinkQuery",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.Attachment",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.ChannelInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.ChannelAccount",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.ConversationAccount",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.ConversationParameters",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.Mention",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MessageActionsPayload",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MessageAttachment",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MessageBody",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionAction",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionActionResponse",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionAttachment",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionParameter",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionQuery",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionResponse",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.MissingExtensionResult",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TaskModuleContinueResponse",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TaskModuleRequest",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TaskModuleResponse",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TeamInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TeamsChannelAccount",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TeamsChannelData",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
+			"type": "com.erudika.scoold.msteams.dto.TenantInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
 			"type": "com.erudika.scoold.msteams.TeamsBot",
 			"methods": [
 				{
