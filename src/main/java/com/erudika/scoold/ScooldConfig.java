@@ -3096,6 +3096,17 @@ public class ScooldConfig extends Config {
 		return getConfigParam("teams.bot_service_url", "https://smba.trafficmanager.net/emea/");
 	}
 
+	@Documented(position = 2711,
+			identifier = "teams.bot_tenant_id",
+			value = "common",
+			category = "Microsoft Teams Integration",
+			tags = {"Pro"},
+			description = "Teams bot tenant ID - this is separate from `ms_tenant_id` as that one is in conflict "
+					+ "with some bot requests.")
+	public String teamsBotTenantId() {
+		return getConfigParam("teams.bot_tenant_id", "common");
+	}
+
 	@Documented(position = 2720,
 			identifier = "teams.notify_on_new_answer",
 			value = "true",
