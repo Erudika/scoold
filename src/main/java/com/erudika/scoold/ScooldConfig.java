@@ -3697,6 +3697,21 @@ public class ScooldConfig extends Config {
 		return settings;
 	}
 
+	public Map<String, Object> emailerSettings() {
+		Map<String, Object> settings = new LinkedHashMap<>();
+		if (!StringUtils.isBlank(mailHost())) {
+			settings.put("mail.from", supportEmail());
+			settings.put("mail.host", mailHost());
+			settings.put("mail.port", mailPort());
+			settings.put("mail.username", mailUsername());
+			settings.put("mail.password", mailPassword());
+			settings.put("mail.tls", mailTLSEnabled());
+			settings.put("mail.ssl", mailSSLEnabled());
+			settings.put("mail.debug", mailDebugEnabled());
+		}
+		return settings;
+	}
+
 	public Map<String, Object> getParaAppSettings() {
 		Map<String, Object> settings = new LinkedHashMap<String, Object>();
 		settings.put("gp_app_id", googleAppId());
@@ -3730,6 +3745,8 @@ public class ScooldConfig extends Config {
 		// sessions
 		settings.put("security.one_session_per_user", oneSessionPerUser());
 		settings.put("session_timeout", sessionTimeoutSec());
+		// emailer settings
+		settings.putAll(emailerSettings());
 
 		// URLs for success and failure
 		settings.put("security.hosturl_aliases", hostUrlAliases());
