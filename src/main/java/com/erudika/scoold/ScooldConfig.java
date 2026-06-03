@@ -3600,6 +3600,16 @@ public class ScooldConfig extends Config {
 		return getConfigParam("mcp_server_mode", "off");
 	}
 
+	@Documented(position = 3160,
+			identifier = "onboarding_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable the onboarding wizard when Scoold is initially started without any data.")
+	public boolean onboardingEnabled() {
+		return getConfigBoolean("onboarding_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {

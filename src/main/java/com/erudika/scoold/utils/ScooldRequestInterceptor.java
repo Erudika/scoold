@@ -61,7 +61,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		try {
 			request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
 		} catch (Exception e) {
-			if (e.getCause() instanceof ConnectException || StringUtils.trimToEmpty(e.getMessage()).contains("Connection refused")) {
+			if (e.getCause() instanceof ConnectException || utils.looksLikeNotConnectedToPara(e.getMessage())) {
 				//response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()); // breaks site
 				logger.error("No connection to Para backend.", e.getMessage());
 			} else if (e instanceof UnauthorizedException && isApiRequest) {
@@ -163,6 +163,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		modelAndView.addObject("feedbacklink", CONF.serverContextPath() + FEEDBACKLINK);
 		modelAndView.addObject("languageslink", CONF.serverContextPath() + LANGUAGESLINK);
 		modelAndView.addObject("apidocslink", CONF.serverContextPath() + APIDOCSLINK);
+		modelAndView.addObject("onboardinglink", CONF.serverContextPath() + ONBOARDINGLINK);
 		// Visual customization
 		modelAndView.addObject("navbarFixedClass", CONF.fixedNavEnabled() ? "navbar-fixed" : "none");
 		modelAndView.addObject("showBranding", CONF.scooldBrandingEnabled());
