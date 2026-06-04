@@ -2184,6 +2184,18 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("uploads_require_auth", !isDefaultSpacePublic());
 	}
 
+	@Documented(position = 1911,
+			identifier = "presigned_uploads_ttl_sec",
+			value = "600",
+			type = Boolean.class,
+			category = "File Storage",
+			tags = {"Pro"},
+			description = "Validity period for presigned links to uploaded files, in seconds. If set to 0, "
+					+ "the feature is essentially disabled. If set to -1, presigned links never expire. Defaults is 600s.")
+	public int presignedUploadsUrlTTLSeconds() {
+		return getConfigInt("presigned_uploads_ttl_sec", 10 * 60);
+	}
+
 	@Documented(position = 1920,
 			identifier = "allowed_upload_formats",
 			category = "File Storage",
