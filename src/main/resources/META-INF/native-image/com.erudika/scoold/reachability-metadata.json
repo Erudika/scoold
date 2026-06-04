@@ -3115,6 +3115,14 @@
 			"allPublicConstructors": true
 		},
 		{
+			"type": "com.erudika.scoold.msteams.dto.TaskModuleTaskInfo",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
 			"type": "com.erudika.scoold.msteams.dto.TeamInfo",
 			"allDeclaredMethods": true,
 			"allDeclaredFields": true,
