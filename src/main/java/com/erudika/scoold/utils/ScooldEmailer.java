@@ -17,6 +17,7 @@
  */
 package com.erudika.scoold.utils;
 
+import com.erudika.para.core.App;
 import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Para;
 import com.erudika.scoold.ScooldConfig;
@@ -43,7 +44,7 @@ public class ScooldEmailer implements Emailer {
 	}
 
 	@Override
-	public void sendSingleBatch(List<String> emails, String subject, String body, ByteArrayDataSource attachment, String fileName) {
+	public void sendSingleBatch(App app, List<String> emails, String subject, String body, ByteArrayDataSource attachment, String fileName) {
 		MimeMessagePreparator preparator = (MimeMessage mimeMessage) -> {
 			MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 			Iterator<String> emailz = emails.iterator();
