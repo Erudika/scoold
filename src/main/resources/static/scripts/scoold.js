@@ -813,6 +813,7 @@ $(function () {
 		} else {
 			commentsbox.append(replaceMentionsWithHtmlLinks(data));
 		}
+		commentsbox.find("img").materialbox();
 		//that.closest("div.newcommentform").addClass("hide");
 		textbox.val("");
 	});
@@ -1735,4 +1736,5 @@ $(function () {
 		});
 	}
 
+	$('.postbox img').materialbox();
 });

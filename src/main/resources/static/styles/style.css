@@ -478,6 +478,17 @@ img.profile-pic:before {
 .post-actions a {
 	display: inline-block;
 }
+.material-placeholder {
+	display: contents;
+	cursor: zoom-in;
+}
+.commentbox {
+	min-height: 30px;
+	padding: 1px 0;
+}
+.commentbox img {
+	vertical-align: top;
+}
 .comment-text {
 	display: inline-block;
 	max-width: 84%;
