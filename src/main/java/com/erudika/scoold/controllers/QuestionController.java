@@ -217,7 +217,7 @@ public class QuestionController {
 			HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
-		if (authUser == null || showPost == null) {
+		if (authUser == null || showPost == null || !utils.canAccessSpace(authUser, showPost.getSpace())) {
 			if (utils.isAjaxRequest(req)) {
 				res.setStatus(400);
 				return "base";

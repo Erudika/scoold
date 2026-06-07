@@ -370,7 +370,7 @@ public class ApiController {
 	@GetMapping("/posts/{id}/answers")
 	public List<Reply> getPostReplies(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Post post = pc.read(id);
-		if (post == null) {
+		if (post == null || !utils.canAccessSpace(utils.getAuthUser(req), post.getSpace())) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
@@ -820,7 +820,7 @@ public class ApiController {
 		}
 		switchAuthContext(creatorid, req);
 		Model model = new ExtendedModelMap();
-		commentController.createAjax(comment, parentid, req, model);
+		commentController.createAjax(comment, parentid, req, res, model);
 		Comment created = (Comment) model.getAttribute("showComment");
 		if (created == null || StringUtils.isBlank(comment)) {
 			badReq("Failed to create comment.");
