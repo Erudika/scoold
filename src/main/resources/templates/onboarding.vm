@@ -52,26 +52,26 @@
 					<div class="col s12 m8 offset-m2 l8 offset-l2">
 						<h3 class="center">$!lang.get("onboarding.backend")</h3>
 
-						<ul class="collapsible z-depth-0 mtl">
-							<li>
-								<div class="collapsible-header">
-										#icon('<path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />' 'mhs')
-										$!lang.get("onboarding.copyconfig")
-								</div>
-								<div class="collapsible-body">
-									<div class="input-field">
-										<label for="raw-config">$!lang.get("onboarding.rawconfig")</label>
-										<textarea id="raw-config" name="rawConfig" class="materialize-textarea monospace" placeholder="scoold.host_url = ..."></textarea>
-									</div>
-									<p class="small">
-											$!lang.get("onboarding.rawconfig.hint")
-									</p>
-								</div>
-							</li>
-						</ul>
-
-						<p class="center pvl">$!lang.get("onboarding.backend.hint")</p>
 						<form method="post" action="$onboardinglink/para-setup" id="onboarding-para-form">
+							<ul class="collapsible z-depth-0 mtl">
+								<li>
+									<div class="collapsible-header">
+											#icon('<path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />' 'mhs')
+											$!lang.get("onboarding.copyconfig")
+									</div>
+									<div class="collapsible-body">
+										<div class="input-field">
+											<label for="raw-config">$!lang.get("onboarding.rawconfig")</label>
+											<textarea id="raw-config" name="rawConfig" class="materialize-textarea monospace" placeholder="scoold.host_url = ..."></textarea>
+										</div>
+										<p class="small">
+												$!lang.get("onboarding.rawconfig.hint")
+										</p>
+									</div>
+								</li>
+							</ul>
+
+							<p class="center pvl">$!lang.get("onboarding.backend.hint")</p>
 							<div class="input-field mtl">
 								<label for="para-endpoint">$!lang.get("onboarding.para.endpoint")</label>
 								<input type="url" id="para-endpoint" name="paraEndpoint" value="$!paraEndpoint" class="validate" required>

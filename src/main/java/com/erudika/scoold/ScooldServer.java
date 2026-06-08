@@ -19,7 +19,6 @@ package com.erudika.scoold;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.App;
-import com.erudika.para.core.User;
 import com.erudika.para.core.email.Emailer;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Para;
@@ -235,8 +234,7 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 			// update the Scoold App settings through the Para App settings API.
 			pc.setAppSettings(CONF.getParaAppSettings());
 			pc.throwExceptionOnHTTPError(false);
-			// check if a users exists
-			ScooldUtils.setSetupRequired(CONF.onboardingEnabled() && pc.getCount(Utils.type(User.class)) == 0);
+			ScooldUtils.checkIfSetupRequired(pc);
 			boolean connected = pc.getTimestamp() > 0; // finally, check if app actually exists
 			if (connected) {
 				logger.info("Connected to Para on {} with credentials for '{}'.", CONF.paraEndpoint(), accessKey);

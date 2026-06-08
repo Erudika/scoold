@@ -234,6 +234,11 @@ public final class ScooldUtils {
 		setupRequired = required;
 	}
 
+	public static void checkIfSetupRequired(ParaClient pc) {
+		boolean isForced = "true".equals(ScooldUtils.getConfig().getConfigValue("onboarding_required", "false")); // force flag
+		setSetupRequired(ScooldUtils.getConfig().onboardingEnabled() && (isForced || pc.getCount(Utils.type(User.class)) == 0));
+	}
+
 	public void reconnectParaClient(String endpoint, String accessKey, String secretKey) {
 		try {
 			pc.setAccessKey(accessKey);
@@ -1364,6 +1369,12 @@ public final class ScooldUtils {
 			return false;
 		}
 		return ScooldUtils.getConfig().modsAccessAllSpaces() ? isMod(authUser) : !authUser.getModspaces().isEmpty();
+	}
+
+	public void addFirstAdmin(String adminEmail, ScooldConfig config) {
+		if (config.onboardingEnabled()) {
+			ADMINS.add(adminEmail);
+		}
 	}
 
 	public boolean isRecognizedAsAdmin(User u) {

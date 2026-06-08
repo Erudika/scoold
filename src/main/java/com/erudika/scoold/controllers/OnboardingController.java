@@ -26,8 +26,10 @@ import static com.erudika.scoold.ScooldServer.HOMEPAGE;
 import static com.erudika.scoold.ScooldServer.ONBOARDINGLINK;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
+import static com.erudika.scoold.utils.HttpUtils.setRawCookie;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigValueFactory;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -142,7 +144,8 @@ public class OnboardingController {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!StringUtils.isBlank(rawConfig)) {
-			Config c = com.typesafe.config.ConfigFactory.parseString(rawConfig);
+			Config c = com.typesafe.config.ConfigFactory.parseString(rawConfig).getConfig(config.getConfigRootPrefix());
+			c = c.withValue("onboarding_enabled", ConfigValueFactory.fromAnyRef(true)); // ignore this property until setup is done
 			ScooldConfig conf = (ScooldConfig) config.overwriteConfig(c);
 			conf.store();
 			paraEndpoint = conf.paraEndpoint();
@@ -314,15 +317,18 @@ public class OnboardingController {
 
 						pc().throwExceptionOnHTTPError(false);
 						if (u != null && u.getActive()) {
+							String jwt = u.getPassword();
+							u.setGroups(User.Groups.ADMINS.toString());
 							Profile authUser = Profile.fromUser(u);
 							authUser.setDarkmodeEnabled(darkMode);
 							authUser.setGroups(User.Groups.ADMINS.toString());
 							authUser.create();
-							if (!u.getIdentityProvider().equals("generic")) {
+							if (!StringUtils.isBlank(config.mailHost())) {
 								utils.sendWelcomeEmail(u, false, req);
 							}
 							req.setAttribute(AUTH_USER_ATTRIBUTE, authUser);
-							HttpUtils.setAuthCookie(u, req, res);
+							setRawCookie(config.authCookie(), jwt, req, res, "Lax", config.sessionTimeoutSec());
+							utils.addFirstAdmin(adminEmail, config);
 						}
 					} catch (Exception e) {
 						logger.error("Failed to create admin account: {}", e.getMessage());
