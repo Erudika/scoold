@@ -71,6 +71,7 @@
 								</li>
 							</ul>
 
+							#if (!$isConnectedToPara)
 							<p class="center pvl">$!lang.get("onboarding.backend.hint")</p>
 							<div class="input-field mtl">
 								<label for="para-endpoint">$!lang.get("onboarding.para.endpoint")</label>
@@ -84,10 +85,13 @@
 								<label for="para-secret-key">$!lang.get("onboarding.para.secretkey")</label>
 								<input type="password" id="para-secret-key" name="paraSecretKey" value="$!paraSecretKey" class="validate" required>
 							</div>
+							#end
 							<div class="center mtl">
+								#if (!$isConnectedToPara)
 								<button type="button" id="test-para-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-para-connection">
 									$!lang.get("onboarding.testconnection")
 								</button>
+								#end
 								<div id="para-test-result" class="mtm">&nbsp;
 									#if ($isConnectedToPara)
 										<span class="green-text text-darken-3 center mvl pvl">
@@ -149,7 +153,7 @@
 								</div>
 								<div class="input-field pbl">
 									<label for="admin-email">$!lang.get('onboarding.admin.email')</label>
-									<input type="email" id="admin-email" name="adminEmail" class="validate" value="$!adminEmail">
+									<input type="text" id="admin-email" name="adminEmail" class="validate" value="$!adminEmail" required>
 									<span>$!lang.get("onboarding.admin.email.hint")</span>
 								</div>
 
@@ -251,10 +255,11 @@
 			<div class="card-panel mvl">
 				<div class="card z-depth-0 pal mtl">
 					<h3 class="center">$!lang.get("onboarding.smtp")</h3>
-					<p class="center">$!lang.get("onboarding.smtp.hint")</p>
 
 					<form method="post" action="$onboardinglink/smtp-setup" id="onboarding-smtp-form">
 						<div id="smtp-fields">
+							#if (!$smtpConfigured)
+							<p class="center">$!lang.get("onboarding.smtp.hint")</p>
 							<div class="input-field mtl">
 								<label for="mail-host">$!lang.get("onboarding.smtp.host")</label>
 								<input type="text" id="mail-host" name="mailHost" value="$mailHost">
@@ -281,10 +286,13 @@
 									<span>SSL</span>
 								</label>
 							</p>
+							#end
 							<div class="center mtl">
+								#if (!$smtpConfigured)
 								<button type="button" id="test-smtp-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-smtp-connection">
 									$!lang.get("onboarding.testconnection")
 								</button>
+								#end
 								<div id="smtp-test-result" class="mtm">&nbsp;
 									#if ($smtpConfigured)
 										<span class="green-text text-darken-3 center mvl pvl">

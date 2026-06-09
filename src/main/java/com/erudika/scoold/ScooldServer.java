@@ -234,7 +234,6 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 			// update the Scoold App settings through the Para App settings API.
 			pc.setAppSettings(CONF.getParaAppSettings());
 			pc.throwExceptionOnHTTPError(false);
-			ScooldUtils.checkIfSetupRequired(pc);
 			boolean connected = pc.getTimestamp() > 0; // finally, check if app actually exists
 			if (connected) {
 				logger.info("Connected to Para on {} with credentials for '{}'.", CONF.paraEndpoint(), accessKey);

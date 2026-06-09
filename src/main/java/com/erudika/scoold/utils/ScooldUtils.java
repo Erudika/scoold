@@ -122,8 +122,6 @@ public final class ScooldUtils {
 	private static final Map<String, String> FILE_CACHE = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
-	private static boolean connected = false;
-	private static boolean setupRequired = false;
 
 	private static final Profile API_USER;
 	private static final Set<String> HOOK_EVENTS;
@@ -216,6 +214,9 @@ public final class ScooldUtils {
 
 	static void setInstance(ScooldUtils instance) {
 		ScooldUtils.instance = instance;
+		if (instance != null) {
+			instance.checkIfSetupRequired();
+		}
 	}
 
 	public static ScooldConfig getConfig() {
@@ -223,20 +224,20 @@ public final class ScooldUtils {
 	}
 
 	public static boolean isConnectedToPara() {
-		return connected;
+		return Boolean.parseBoolean(System.getProperty("scoold.connected", "false"));
 	}
 
 	public static boolean isSetupRequired() {
-		return setupRequired;
+		return Boolean.parseBoolean(System.getProperty("scoold.setuprequired", "false"));
 	}
 
 	public static void setSetupRequired(boolean required) {
-		setupRequired = required;
+		System.setProperty("scoold.setuprequired", String.valueOf(required));
 	}
 
-	public static void checkIfSetupRequired(ParaClient pc) {
-		boolean isForced = "true".equals(ScooldUtils.getConfig().getConfigValue("onboarding_required", "false")); // force flag
-		setSetupRequired(ScooldUtils.getConfig().onboardingEnabled() && (isForced || pc.getCount(Utils.type(User.class)) == 0));
+	private void checkIfSetupRequired() {
+		boolean isForced = "true".equals(System.getProperty("scoold.onboarding_required", "false")); // force flag
+		setSetupRequired(CONF.onboardingEnabled() && (isForced || pc.getCount(Utils.type(User.class)) == 0));
 	}
 
 	public void reconnectParaClient(String endpoint, String accessKey, String secretKey) {
@@ -247,10 +248,10 @@ public final class ScooldUtils {
 			pcThrows.setAccessKey(accessKey);
 			pcThrows.setSecretKey(secretKey);
 			pcThrows.setEndpoint(endpoint);
-			connected = true;
+			System.setProperty("scoold.connected", "true");
 			logger.info("Reconnected to Para on {} with credentials for '{}'.", endpoint, accessKey);
 		} catch (Exception e) {
-			connected = false;
+			System.setProperty("scoold.connected", "false");
 			logger.error("Failed to reconnect to Para: {}", e.getMessage());
 		}
 	}
@@ -289,13 +290,13 @@ public final class ScooldUtils {
 
 	private static void retryConnection(Callable<Boolean> callable, int retryCount) {
 		try {
-			if (!callable.call() && !connected) {
-				connected = false;
+			if (!callable.call() && !isConnectedToPara()) {
+				System.setProperty("scoold.connected", "false");
 				throw new Exception();
 			} else if (retryCount > 0) {
 				logger.info("Connected to Para backend.");
 			}
-			connected = true;
+			System.setProperty("scoold.connected", "true");
 		} catch (Exception e) {
 			int maxRetries = CONF.paraConnectionRetryAttempts();
 			int retryInterval = CONF.paraConnectionRetryIntervalSec();

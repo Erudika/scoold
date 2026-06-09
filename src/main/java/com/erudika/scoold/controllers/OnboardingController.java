@@ -79,7 +79,7 @@ public class OnboardingController {
 
 	@GetMapping("/{step}")
 	public String get(@PathVariable(required = false) Integer step, HttpServletRequest req, Model model) {
-		if (!config.onboardingEnabled()) {
+		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
 		List<Locale> locales = utils.getLangutils().getTranslationProgressMap().entrySet().stream().
@@ -124,7 +124,7 @@ public class OnboardingController {
 
 	@PostMapping("/language")
 	public String saveLanguage(@RequestParam String locale, HttpServletRequest req, HttpServletResponse res) {
-		if (!config.onboardingEnabled()) {
+		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!StringUtils.isBlank(locale)) {
@@ -136,11 +136,11 @@ public class OnboardingController {
 	@PostMapping("/para-setup")
 	public String saveParaSetup(
 			@RequestParam(required = false, defaultValue = "") String rawConfig,
-			@RequestParam String paraEndpoint,
-			@RequestParam String paraAccessKey,
-			@RequestParam String paraSecretKey,
+			@RequestParam(required = false, defaultValue = "") String paraEndpoint,
+			@RequestParam(required = false, defaultValue = "") String paraAccessKey,
+			@RequestParam(required = false, defaultValue = "") String paraSecretKey,
 			HttpServletRequest req, HttpServletResponse res) {
-		if (!config.onboardingEnabled() || !config.inDevelopment()) {
+		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!StringUtils.isBlank(rawConfig)) {
@@ -153,16 +153,19 @@ public class OnboardingController {
 			paraSecretKey = conf.paraSecretKey();
 			config = conf;
 		}
-		if (!connectedToPara(paraEndpoint, paraAccessKey, paraSecretKey)) {
+		if (!connectedToPara(config.paraEndpoint(), config.paraAccessKey(), config.paraSecretKey())) {
 			return "redirect:" + ONBOARDINGLINK + "/2?test";
 		}
-		saveConfigKey("para_endpoint", paraEndpoint, req, res);
-		saveConfigKey("para_access_key", paraAccessKey, req, res);
-		saveConfigKey("para_secret_key", paraSecretKey, req, res);
-		System.setProperty("scoold.para_endpoint", paraEndpoint);
-		System.setProperty("scoold.para_access_key", paraAccessKey);
-		System.setProperty("scoold.para_secret_key", paraSecretKey);
-		utils.reconnectParaClient(paraEndpoint, paraAccessKey, paraSecretKey);
+		if (!StringUtils.isBlank(paraEndpoint)) {
+			saveConfigKey("para_endpoint", paraEndpoint, req, res);
+		}
+		if (!StringUtils.isBlank(paraAccessKey)) {
+			saveConfigKey("para_access_key", paraAccessKey, req, res);
+		}
+		if (!StringUtils.isBlank(paraSecretKey)) {
+			saveConfigKey("para_secret_key", paraSecretKey, req, res);
+		}
+		utils.reconnectParaClient(config.paraEndpoint(), config.paraAccessKey(), config.paraSecretKey());
 		return "redirect:" + ONBOARDINGLINK + "/3";
 	}
 
@@ -201,7 +204,7 @@ public class OnboardingController {
 			@RequestParam(required = false, defaultValue = "common") String msTenant,
 			HttpServletRequest req,
 			HttpServletResponse res) {
-		if (!config.onboardingEnabled()) {
+		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!StringUtils.isBlank(appName)) {
@@ -234,7 +237,8 @@ public class OnboardingController {
 		if (!config.onboardingEnabled()) {
 			return "redirect:" + HOMEPAGE;
 		}
-		if (!skipSmtp && !StringUtils.isBlank(mailHost)) {
+		if (!skipSmtp && !StringUtils.isBlank(mailHost) &&
+				!StringUtils.isBlank(mailUsername) && !StringUtils.isBlank(mailPassword)) {
 			saveConfigKey("mail.host", mailHost, req, res);
 			saveConfigKey("mail.port", String.valueOf(mailPort), req, res);
 			saveConfigKey("mail.username", mailUsername, req, res);
