@@ -542,17 +542,19 @@ public class AdminController {
 				value = "false";
 			}
 			com.typesafe.config.Config modifiedConf = CONF.getConfig();
+			String keyWithoutPrefix = Strings.CS.removeStart(key, CONF.getConfigRootPrefix() + ".");
+			String keyWithPrefix = CONF.getConfigRootPrefix() + "." + keyWithoutPrefix;
 			if (value != null && !StringUtils.isBlank(value)) {
-				modifiedConf = modifiedConf.withValue(key, CONF.parseConfigValue(key, value));
-				System.setProperty(key, value);
+				modifiedConf = modifiedConf.withValue(keyWithoutPrefix, CONF.parseConfigValue(keyWithoutPrefix, value));
+				System.setProperty(keyWithPrefix, value);
 			} else {
-				modifiedConf = modifiedConf.withoutPath(key);
-				System.clearProperty(key);
+				modifiedConf = modifiedConf.withoutPath(keyWithoutPrefix);
+				System.clearProperty(keyWithPrefix);
 			}
 			logger.info("Configuration property '{}' was modified by user {}.", key, authUser.getCreatorid());
 			CONF.overwriteConfig(modifiedConf).store();
-			if (CONF.getParaAppSettings().containsKey(key)) {
-				pc.addAppSetting(key, value);
+			if (CONF.getParaAppSettings().containsKey(keyWithoutPrefix)) {
+				pc.addAppSetting(keyWithoutPrefix, value);
 			}
 		}
 		if (utils.isAjaxRequest(req)) {
