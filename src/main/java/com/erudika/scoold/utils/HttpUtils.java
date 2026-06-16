@@ -334,20 +334,48 @@ public final class HttpUtils {
 		String backto = Optional.ofNullable(StringUtils.stripToNull(req.getParameter("returnto"))).
 				orElse(Utils.urlDecode(HttpUtils.getStateParam("returnto", req)));
 		String serverUrl = CONF.serverUrl() + CONF.serverContextPath();
-		String resolved = "";
+		URI backtoURI = URI.create("");
 		try {
-			resolved = URI.create(serverUrl).resolve(Optional.ofNullable(backto).orElse("")).toString();
+			backtoURI = URI.create(serverUrl).resolve(Optional.ofNullable(backto).orElse(""));
 		} catch (Exception e) {
 			logger.warn("Invalid return-to URI: {}", e.getMessage());
 		}
-		if (!Strings.CI.startsWith(resolved, serverUrl)) {
+		if (!isSameOrigin(backtoURI, URI.create(CONF.serverUrl()))) {
 			backto = "";
 		} else {
-			backto = resolved;
+			backto = backtoURI.toString();
 		}
 		if (relative) {
 			backto = "/" + URI.create(CONF.serverUrl()).relativize(URI.create(backto)).toString();
 		}
 		return (StringUtils.isBlank(backto) ? HOMEPAGE : backto);
+	}
+
+	static boolean isSameOrigin(URI backtoURI, URI origin) {
+		try {
+			if (backtoURI.getHost() == null || origin.getHost() == null) {
+				return false;
+			}
+			if (backtoURI.getRawUserInfo() != null) {
+				return false;
+			}
+			int uriPort = backtoURI.getPort() < 0 ? getDefaultPort(backtoURI.getScheme()) : backtoURI.getPort();
+			int basePort = origin.getPort() < 0 ? getDefaultPort(origin.getScheme()) : origin.getPort();
+			return Strings.CI.equals(backtoURI.getHost(), origin.getHost())
+					&& Strings.CI.equals(backtoURI.getScheme(), origin.getScheme())
+					&& uriPort == basePort;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	static int getDefaultPort(String scheme) {
+		if ("https".equalsIgnoreCase(scheme)) {
+			return 443;
+		}
+		if ("http".equalsIgnoreCase(scheme)) {
+			return 80;
+		}
+		return -1;
 	}
 }
