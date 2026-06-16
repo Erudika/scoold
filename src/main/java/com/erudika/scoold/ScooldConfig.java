@@ -723,6 +723,17 @@ public class ScooldConfig extends Config {
 		return Boolean.parseBoolean(getConfigParam("cors_enabled", "false"));
 	}
 
+	@Documented(position = 632,
+			identifier = "cors_allowed_origins",
+			value = "",
+			type = String.class,
+			category = "Security",
+			tags = {"requires restart"},
+			description = "Comma-separated list of allowed origins for CORS. Leave empty to allow the same origin only.")
+	public String corsAllowedOrigins() {
+		return getConfigParam("cors_allowed_origins", "");
+	}
+
 	/* **************************************************************************************************************
 	 * Basic Authentication                                                                    Basic Authentication *
 	 ****************************************************************************************************************/

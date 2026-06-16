@@ -206,7 +206,12 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 
 	private CorsConfiguration apiCorsConfiguration() {
 		CorsConfiguration cors = new CorsConfiguration();
-		cors.addAllowedOriginPattern("*");
+		String origins = CONF.corsAllowedOrigins();
+		if (!StringUtils.isBlank(origins)) {
+			cors.setAllowedOrigins(Arrays.stream(origins.split("\\s*,\\s*")).filter(StringUtils::isNotBlank).distinct().toList());
+		} else {
+			cors.addAllowedOrigin(CONF.serverUrl());
+		}
 		cors.addAllowedMethod("*");
 		cors.addAllowedHeader("*");
 		cors.setExposedHeaders(Arrays.asList("Mcp-Protocol-Version", "Mcp-Session-Id"));
