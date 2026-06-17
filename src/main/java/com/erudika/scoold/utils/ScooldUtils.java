@@ -363,11 +363,8 @@ public final class ScooldUtils {
 		String apiKeyJWT = Strings.CS.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
 		if (req.getServletPath().equals("/api/ping")) {
 			return API_USER;
-		} else if (req.getServletPath().equals("/api/stats") && isValidJWToken(apiKeyJWT)) {
-			return API_USER;
-		} else if (req.getServletPath().startsWith("/api/config") && isValidJWToken(apiKeyJWT)) {
-			return API_USER;
-		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT)) {
+		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) ||
+				(req.getServletPath().startsWith("/api/config") && !CONF.configEditingEnabled())) {
 			throw new UnauthorizedException();
 		}
 		return validateTokenOrThrow(apiKeyJWT);
