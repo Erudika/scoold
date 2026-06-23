@@ -265,7 +265,8 @@ public class MCPUtils {
 	}
 
 	static McpSchema.ReadResourceResult textResource(String uri, String mimeType, String body) {
-		return new McpSchema.ReadResourceResult(List.of(new McpSchema.TextResourceContents(uri, mimeType, body)));
+		return McpSchema.ReadResourceResult.builder(List.of(McpSchema.TextResourceContents.
+				builder(uri, body).mimeType(mimeType).build())).build();
 	}
 
 	String buildUnknownKeyMessage(String key) {
