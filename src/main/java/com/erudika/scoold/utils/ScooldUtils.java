@@ -363,11 +363,18 @@ public final class ScooldUtils {
 		String apiKeyJWT = Strings.CS.removeStart(req.getHeader(HttpHeaders.AUTHORIZATION), "Bearer ");
 		if (req.getServletPath().equals("/api/ping")) {
 			return API_USER;
-		} else if (!isApiEnabled() || StringUtils.isBlank(apiKeyJWT) ||
-				(req.getServletPath().startsWith("/api/config") && !CONF.configEditingEnabled())) {
+		} else if (isDeniedAccessToAPI(apiKeyJWT, req)) {
 			throw new UnauthorizedException();
 		}
 		return validateTokenOrThrow(apiKeyJWT);
+	}
+
+	private boolean isDeniedAccessToAPI(String apiKeyJWT, HttpServletRequest req) {
+		if (apiKeyIsServiceToken(isValidJWToken(CONF.appSecretKey(), apiKeyJWT))) {
+			return !req.getServletPath().equals("/api/stats");
+		}
+		return !isApiEnabled() || StringUtils.isBlank(apiKeyJWT) ||
+				(req.getServletPath().startsWith("/api/config") && !CONF.configEditingEnabled());
 	}
 
 	private boolean promoteOrDemoteUser(Profile authUser, User u) {
@@ -2273,23 +2280,28 @@ public final class ScooldUtils {
 			// don't allow blank jti values
 			return true;
 		}
-		if (Strings.CS.equals(jti, sub)) { // jti = sub means personal token
+		// jti = sub means personal token, jti = hmac(apiSecret) means service token
+		if (Strings.CS.equals(jti, sub) || apiKeyIsServiceToken(claims)) {
 			return false;
-		}
-		// jti = hmac(apiSecret) special case - used for short-lived service tokens
-		// in Scoold Cloud for checking health and stats.
-		if (claims.getExpirationTime() != null) {
-			long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
-			if (Strings.CS.equals(jti, Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey())) &&
-					timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
-				return false;
-			}
 		}
 		loadApiKeysObject(); // prevent overwriting the API keys object
 		if (API_KEYS.containsKey(jti) && expired) {
 			revokeApiKey(jti);
 		}
 		return !API_KEYS.containsKey(jti);
+	}
+
+	private boolean apiKeyIsServiceToken(JWTClaimsSet claims) {
+		// jti = hmac(apiSecret) special case - used for short-lived service tokens
+		// in Scoold Cloud for checking health and stats.
+		if (claims.getExpirationTime() != null) {
+			long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
+			if (Strings.CS.equals(claims.getJWTID(), Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey()))
+					&& timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void registerApiKey(String jti, String jwt) {
