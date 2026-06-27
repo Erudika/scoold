@@ -66,6 +66,19 @@ public class GravatarAvatarRepositoryTest {
 	}
 
 	@Test
+	public void getLink_should_delegate_to_next_if_picture_is_not_gravatar() {
+		AvatarRepository nextRepo = mock(AvatarRepository.class);
+		GravatarAvatarRepository repo = new GravatarAvatarRepository(gravatarGenerator, nextRepo);
+		profile.setPicture("https://example.com/avatar.png");
+		when(nextRepo.getLink(profile, AvatarFormat.Square32)).thenReturn("https://example.com/avatar.png");
+
+		String avatar = repo.getLink(profile, AvatarFormat.Square32);
+
+		assertEquals("https://example.com/avatar.png", avatar);
+		verify(nextRepo, times(1)).getLink(profile, AvatarFormat.Square32);
+	}
+
+	@Test
 	public void getLink_should_configure_link_if_picture_is_a_gravatar() {
 		profile.getUser().setEmail("toto@example.com");
 		profile.setPicture(gravatarGenerator.getRawLink("titi@example.com"));
