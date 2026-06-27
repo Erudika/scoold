@@ -104,4 +104,75 @@ public class ImgurAvatarRepositoryTest {
 		assertNotEquals(avatar, profile.getOriginalPicture());
 	}
 
+	@Test
+	public void getLink_should_return_picture_for_valid_imgur_link() {
+		String imgurUrl = "https://i.imgur.com/abc123.png";
+		profile.setPicture(imgurUrl);
+
+		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+
+		assertEquals(imgurUrl, avatar);
+	}
+
+	@Test
+	public void getLink_should_return_picture_for_valid_imgur_i_link() {
+		String imgurUrl = "https://i.imgur.com/xyz789.jpg";
+		profile.setPicture(imgurUrl);
+
+		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+
+		assertEquals(imgurUrl, avatar);
+	}
+
+	@Test
+	public void getLink_should_call_next_repository_when_profile_is_null() {
+		AvatarRepository nextRepo = mock(AvatarRepository.class);
+		when(nextRepo.getLink(null, AvatarFormat.Profile)).thenReturn("https://default");
+		AvatarRepository repository = new ImgurAvatarRepository(nextRepo);
+
+		String avatar = repository.getLink(null, AvatarFormat.Profile);
+
+		verify(nextRepo).getLink(null, AvatarFormat.Profile);
+		assertEquals("https://default", avatar);
+	}
+
+	@Test
+	public void getLink_should_call_next_repository_when_picture_is_blank() {
+		AvatarRepository nextRepo = mock(AvatarRepository.class);
+		when(nextRepo.getLink(profile, AvatarFormat.Profile)).thenReturn("https://default");
+		AvatarRepository repository = new ImgurAvatarRepository(nextRepo);
+		profile.setPicture("");
+
+		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+
+		verify(nextRepo).getLink(profile, AvatarFormat.Profile);
+		assertEquals("https://default", avatar);
+	}
+
+	@Test
+	public void store_should_return_true_for_non_imgur_url_when_next_repository_succeeds() {
+		AvatarRepository nextRepo = mock(AvatarRepository.class);
+		AvatarRepository repository = new ImgurAvatarRepository(nextRepo);
+		String url = "https://example.com/avatar.png";
+		when(nextRepo.store(profile, url)).thenReturn(true);
+
+		boolean result = repository.store(profile, url);
+
+		verify(nextRepo).store(profile, url);
+		assertEquals(true, result);
+	}
+
+	@Test
+	public void store_should_call_next_repository_for_non_imgur_url() {
+		AvatarRepository nextRepo = mock(AvatarRepository.class);
+		AvatarRepository repository = new ImgurAvatarRepository(nextRepo);
+		String url = "https://example.com/avatar.png";
+		when(nextRepo.store(profile, url)).thenReturn(false);
+
+		boolean result = repository.store(profile, url);
+
+		verify(nextRepo).store(profile, url);
+		assertEquals(false, result);
+	}
+
 }

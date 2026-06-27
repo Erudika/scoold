@@ -101,4 +101,26 @@ public class CloudinaryAvatarRepositoryTest {
 		assertNotEquals(avatar, profile.getPicture());
 		assertNotEquals(avatar, profile.getUser().getPicture());
 	}
+
+	@Test
+	public void getLink_should_return_original_link_for_non_cloudinary_url_with_upload_path() {
+		profile.setPicture("https://example.com/upload/avatar.jpg");
+
+		String avatar = repository.getLink(profile, AvatarFormat.Profile);
+
+		assertEquals("https://example.com/upload/avatar.jpg", avatar);
+	}
+
+	@Test
+	public void store_should_return_true_when_next_repository_stores_non_cloudinary_url() {
+		AvatarRepository defaultRepository = mock(AvatarRepository.class);
+		AvatarRepository repository = new CloudinaryAvatarRepository(defaultRepository);
+		String avatar = "https://avatar";
+		when(defaultRepository.store(profile, avatar)).thenReturn(true);
+
+		boolean result = repository.store(profile, avatar);
+
+		verify(defaultRepository).store(profile, avatar);
+		assertTrue(result);
+	}
 }

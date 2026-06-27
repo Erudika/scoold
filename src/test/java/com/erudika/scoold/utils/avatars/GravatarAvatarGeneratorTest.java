@@ -22,6 +22,7 @@ import com.erudika.scoold.core.Profile;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class GravatarAvatarGeneratorTest {
 	private GravatarAvatarGenerator generator;
@@ -101,6 +102,35 @@ public class GravatarAvatarGeneratorTest {
 	public void isLink_should_be_true_if_gravatar_domain() {
 		assertTrue(generator.isLink("https://www.gravatar.com/avatar/1ac9dec7bfff4aeb9bc9e625bfb9a4ce?s=50&r=g&d=identicon"));
 		assertFalse(generator.isLink("https://avatar.com"));
+	}
+
+	@Test
+	public void getRawLink_should_produce_same_hash_for_uppercase_email() {
+		String urlLower = generator.getRawLink("toto@example.com");
+		String urlUpper = generator.getRawLink("TOTO@EXAMPLE.COM");
+
+		assertEquals(urlLower, urlUpper);
+	}
+
+	@Test
+	public void configureLink_should_use_ampersand_when_url_already_ends_with_question_mark() {
+		String rawLink = generator.getRawLink("toto@example.com");
+		String urlWithQuestion = rawLink + "?";
+
+		String configured = generator.configureLink(urlWithQuestion, AvatarFormat.Square32);
+
+		assertTrue(configured.contains("&s=32"));
+		assertFalse(configured.contains("??s=32"));
+	}
+
+	@Test
+	public void getRawLink_should_return_empty_url_when_profile_has_no_user() {
+		Profile profile = Mockito.mock(Profile.class);
+		Mockito.when(profile.getUser()).thenReturn(null);
+
+		String url = generator.getRawLink(profile);
+
+		assertEquals(generator.getRawLink(""), url);
 	}
 
 	private Profile getProfileWithEmail(String email) {
