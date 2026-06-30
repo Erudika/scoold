@@ -2294,7 +2294,7 @@ public final class ScooldUtils {
 	private boolean apiKeyIsServiceToken(JWTClaimsSet claims) {
 		// jti = hmac(apiSecret) special case - used for short-lived service tokens
 		// in Scoold Cloud for checking health and stats.
-		if (claims.getExpirationTime() != null) {
+		if (claims != null && claims.getExpirationTime() != null) {
 			long timeToExpiration = claims.getExpirationTime().getTime() - Utils.timestamp();
 			if (Strings.CS.equals(claims.getJWTID(), Utils.hmacSHA256(CONF.appSecretKey(), CONF.appSecretKey()))
 					&& timeToExpiration > 0 && timeToExpiration < TimeUnit.SECONDS.toMillis(60)) {
