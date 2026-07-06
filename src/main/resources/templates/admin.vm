@@ -311,14 +311,11 @@
 										<div class="row mbn valign-wrapper">
 											<div class="col s12 m10">
 												#set($pk = $pkey.substring(7))
-												#set($propval = $configMap.getConfigValue($pk, ""))
-												#set($isbool = $configMetadata.get($key).get($pkey).type == "Boolean")
-												#if(!$propval || $propval.isEmpty())
-													#set($propval = $configMetadata.get($key).get($pkey).defaultValue)
-												#end
+												#set($propval = $configMap.getConfigValue($pk, $configMetadata.get($key).get($pkey).defaultValue))
+
 												<input name="key" type="hidden" value="$pkey">
 
-												#if($isbool)
+												#if($configMetadata.get($key).get($pkey).type == "Boolean")
 												<label>
 													<input name="value" type="checkbox" #if($propval == "true")checked="checked"#end class="filled-in">
 													<span data-on="$!lang.get('on')" data-off="$!lang.get('off')">#if($propval == "true")$!lang.get('on')#else$!lang.get('off')#end</span>
