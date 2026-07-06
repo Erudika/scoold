@@ -2122,7 +2122,7 @@ public class ScooldConfig extends Config {
 	@Documented(position = 1850,
 			identifier = "scholar_ifhas",
 			value = "500",
-			type = Boolean.class,
+			type = Integer.class,
 			category = "Reputation and Rewards",
 			description = "Reputation points needed for earning the `scholar` badge.")
 	public int scholarIfHasRep() {
