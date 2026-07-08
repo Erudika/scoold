@@ -322,13 +322,31 @@ public class MCPUtils {
 	}
 
 	/**
+	 * Config keys that match the sensitive-keyword heuristic but are not actually secrets (booleans, URLs,
+	 * durations). Kept visible instead of being redacted.
+	 */
+	private static final Set<String> NON_SENSITIVE_KEY_OVERRIDES = Set.of(
+			"personal_token_expires_after",
+			"security.ldap.token_delegation_enabled",
+			"security.saml.token_delegation_enabled",
+			"security.oauth.token_url",
+			"security.oauth.token_delegation_enabled",
+			"security.oauth.send_scope_to_token_endpoint");
+
+	/**
 	 * Simple heuristic for determining if a config key contains sensistive data.
 	 *
 	 * @param configKey config key
-	 * @return true if key name contains: "secret", "credential", "sensitive", "password", "pass", "privatekey".
+	 * @return true if key name contains: "secret", "credential", "sensitive", "password", "pass", "privatekey",
+	 * "token", "api_key", "apikey", "access_key", "accesskey" - unless it's a known-safe override.
+	 *
 	 */
 	public static boolean isSensitiveData(String configKey) {
-		return Strings.CI.containsAny(configKey, "secret", "credential", "sensitive", "password", "pass", "privatekey");
+		if (configKey != null && NON_SENSITIVE_KEY_OVERRIDES.contains(configKey.toLowerCase(Locale.ROOT))) {
+			return false;
+		}
+		return Strings.CI.containsAny(configKey, "secret", "credential", "sensitive", "password", "pass",
+				"privatekey", "token", "api_key", "apikey", "access_key", "accesskey");
 	}
 
 	private int normalizeLimit(Integer limit) {
