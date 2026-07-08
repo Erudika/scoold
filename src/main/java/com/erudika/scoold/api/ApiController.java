@@ -837,6 +837,12 @@ public class ApiController {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
+		Post parentPost = pc.read(comment.getParentid());
+		Profile authUser = utils.getAuthUser(req);
+		if (parentPost != null && !utils.canAccessSpace(authUser, parentPost.getSpace())) {
+			res.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
 		return comment;
 	}
 
@@ -871,6 +877,10 @@ public class ApiController {
 
 	@GetMapping("/reports/{id}")
 	public Report getReport(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isMod(authUser)) {
+			badReq("Not allowed.");
+		}
 		Report report = pc.read(id);
 		if (report == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
