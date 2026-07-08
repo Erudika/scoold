@@ -2324,7 +2324,7 @@ public final class ScooldUtils {
 		if (isAdmin(authUser) || (authUser != null && isPersonal && CONF.apiUserAccessEnabled())) {
 			String jti = UUID.randomUUID().toString();
 			long validity = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
-			long personalTokenValidity = TimeUnit.HOURS.toSeconds(Math.abs(CONF.personalTokenExpiresAfterSec()));
+			long personalTokenValidity = Math.abs(CONF.personalTokenExpiresAfterSec());
 			Map<String, Object> claims = new HashMap<>();
 			if (isPersonal) {
 				jti = authUser.getCreatorid();
