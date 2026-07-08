@@ -22,6 +22,7 @@ import com.erudika.scoold.core.Profile;
 import static com.erudika.scoold.mcp.MCPException.ErrorType.INTERNAL_ERROR;
 import static com.erudika.scoold.mcp.MCPException.ErrorType.INVALID_INPUT;
 import static com.erudika.scoold.mcp.MCPException.ErrorType.NOT_FOUND;
+import static com.erudika.scoold.mcp.MCPUtils.requireAdmin;
 import static com.erudika.scoold.mcp.MCPUtils.requireWritePermission;
 import com.erudika.scoold.utils.ScooldUtils;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -110,6 +111,7 @@ public class MCPTools {
 			@McpToolParam(description = "Maximum number of matches to return (default 10, max 30).") Integer limit) {
 		try {
 			Profile authUser = utils.authUser();
+			requireAdmin(authUser);
 			logger.debug("[MCP] Config search by user={} query={} limit={}", authUser.getId(), query, limit);
 
 			List<Map<String, Object>> results = utils.searchConfig(query, limit);
@@ -140,6 +142,7 @@ public class MCPTools {
 			@McpToolParam(description = "Configuration property key (e.g., 'para.mcp_server_mode').", required = true) String key) {
 		try {
 			Profile authUser = utils.authUser();
+			requireAdmin(authUser);
 			String normalizedKey = StringUtils.trimToEmpty(key);
 
 			if (StringUtils.isBlank(normalizedKey)) {
@@ -964,6 +967,7 @@ public class MCPTools {
 					idempotentHint = true, openWorldHint = false))
 	public McpSchema.CallToolResult getConfig(
 			@McpToolParam(description = "Configuration format - hocon or json.", required = false) String format) {
+		requireAdmin(utils.authUser());
 		return utils.asStructuredResult(api.config(format, request(), response()));
 	}
 
@@ -977,6 +981,7 @@ public class MCPTools {
 	public McpSchema.CallToolResult updateConfig(
 			@McpToolParam(description = "Body object with properties.", required = true) Map<String, Object> data) {
 		requireWritePermission();
+		requireAdmin(utils.authUser());
 		McpSchema.CallToolResult result = utils.asStructuredResult(api.configSet(request(data), response()));
 		logger.info("[MCP] Successfully updated '{}' configuration keys.", data.size());
 		return result;
@@ -990,6 +995,7 @@ public class MCPTools {
 					idempotentHint = true, openWorldHint = false))
 	public McpSchema.CallToolResult getConfigKey(
 			@McpToolParam(description = "Config key.", required = true) String key) {
+		requireAdmin(utils.authUser());
 		return utils.asStructuredResult(api.configGet(safe(key), request(), response()));
 	}
 
@@ -1003,6 +1009,7 @@ public class MCPTools {
 			@McpToolParam(description = "Config key.", required = true) String key,
 			@McpToolParam(description = "Body object with properties.", required = true) Map<String, Object> data) {
 		requireWritePermission();
+		requireAdmin(utils.authUser());
 		api.configSet(safe(key), request(data), response());
 		logger.info("[MCP] Successfully updated configuration key '{}'.", key);
 		return McpSchema.CallToolResult.builder().addTextContent("Configuration updated.").build();

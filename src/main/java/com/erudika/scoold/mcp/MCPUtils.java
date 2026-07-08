@@ -158,6 +158,12 @@ public class MCPUtils {
 		}
 	}
 
+	static void requireAdmin(Profile authUser) {
+		if (authUser == null || !ScooldUtils.getInstance().isAdmin(authUser)) {
+			throw new MCPException(MCPException.ErrorType.INVALID_INPUT, "Operation not allowed.");
+		}
+	}
+
 	String getMcpMode() {
 		return CONF.mcpServerMode();
 	}
