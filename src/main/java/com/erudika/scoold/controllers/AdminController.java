@@ -504,6 +504,11 @@ public class AdminController {
 	public ResponseEntity<Map<String, Object>> generateAPIKey(@RequestParam Integer validityHours,
 			HttpServletRequest req, Model model) throws ParseException {
 		Profile authUser = utils.getAuthUser(req);
+		if (validityHours < 0) {
+			validityHours = 0;
+		} else if (validityHours > 2200) {
+			validityHours = 2200;
+		}
 		Map<String, Object> data = utils.generateApiKey(authUser, validityHours, false);
 		if (!data.isEmpty()) {
 			return ResponseEntity.ok().body(data);

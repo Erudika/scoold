@@ -308,7 +308,8 @@
 		</div>
 		<div class="row mvm">
 			<div class="col s6 offset-s3 m3 offset-m4 center-align">
-				<div class="input-field #if($formActionBase != $adminlink)hide#end">
+				#set($disabled = $formActionBase != $adminlink && $apiKeys.size() >= 1)
+				<div class="input-field #if($scooldUtils.config.personalTokenExpiresAfterSec != 0 || $disabled)hide#end">
 					<select id="validity-period" name="validityHours" required>
 						<option value="1">1 hour</option>
 						<option value="12" selected="selected">12 hours</option>
@@ -321,7 +322,6 @@
 					</select>
 					<label for="validity-period">$!lang.get('admin.validity')</label>
 				</div>
-				#set($disabled = $formActionBase != $adminlink && $apiKeys.size() >= 1)
 				<button type="submit" class="btn waves-effect waves-light" #if($disabled)disabled="disabled"#end>$!lang.get('admin.generate')</button>
 			</div>
 			<div class="col s6 m9">

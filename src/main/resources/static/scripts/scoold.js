@@ -414,6 +414,9 @@ $(function () {
 		});
 		table.append(row).removeClass("hide");
 		row.find(".api-key-show").click();
+		if (window.location.pathname.match("/settings$")) {
+			$(form).find("button").attr("disabled", "disabled").prev("div").addClass("hide");
+		}
 	});
 
 	$(document).on("click", ".api-key-revoke", function () {

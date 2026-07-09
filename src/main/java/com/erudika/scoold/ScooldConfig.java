@@ -512,7 +512,8 @@ public class ScooldConfig extends Config {
 			value = "604800",
 			type = Integer.class,
 			category = "Security",
-			description = "The validity period of personal API keys (Bearer tokens) for use with API/MCP. Default is 168h.")
+			description = "The validity period of personal API keys (Bearer tokens) for use with API/MCP. "
+					+ "Setting this to 0 will show a select combobox in the UI. Default is 168h.")
 	public int personalTokenExpiresAfterSec() {
 		return getConfigInt("personal_token_expires_after", 168 * 60 * 60);
 	}

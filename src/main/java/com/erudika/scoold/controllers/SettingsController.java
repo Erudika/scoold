@@ -232,7 +232,16 @@ public class SettingsController {
 		Profile authUser = utils.getAuthUser(req);
 		if (StringUtils.isBlank(authUser.getPersonalApiToken())) {
 			Long personalTokenValidityHours = TimeUnit.SECONDS.toHours(CONF.personalTokenExpiresAfterSec());
-			Map<String, Object> data = utils.generateApiKey(authUser, personalTokenValidityHours.intValue(), true);
+			if (validityHours < 0) {
+				validityHours = 0;
+			} else if (validityHours > 2200) {
+				validityHours = 2200;
+			}
+			// allow users to select validity period from the web UI
+			if (personalTokenValidityHours != 0) {
+				validityHours = personalTokenValidityHours.intValue();
+			}
+			Map<String, Object> data = utils.generateApiKey(authUser, validityHours, true);
 			if (!data.isEmpty()) {
 				return ResponseEntity.ok().body(data);
 			}
