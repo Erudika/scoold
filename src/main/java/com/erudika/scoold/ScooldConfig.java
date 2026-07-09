@@ -136,7 +136,7 @@ public class ScooldConfig extends Config {
 			identifier = "app_secret_key",
 			category = "Core",
 			description = "A random secret string, min. 32 chars long. *Must be different from the secret key of "
-					+ "the Para app*. Used for generating JWTs and passwordless authentication tokens.")
+					+ "the Para app*. Used for generating API tokens (JWT) and passwordless authentication tokens.")
 	public String appSecretKey() {
 		return getConfigParam("app_secret_key", "");
 	}
