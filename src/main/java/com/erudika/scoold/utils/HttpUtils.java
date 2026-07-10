@@ -213,7 +213,8 @@ public final class HttpUtils {
 
 	public static String getFullUrl(HttpServletRequest req, boolean relative) {
 		String queryString = StringUtils.isBlank(req.getQueryString()) ? "" : "?" + req.getQueryString();
-		URI currentUri = URI.create(CONF.serverContextPath() + req.getServletPath() + queryString);
+		// don't use req.getServletPath() here - path must be URL-encoded!
+		URI currentUri = URI.create(req.getRequestURI() + queryString);
 		URI base = URI.create(CONF.serverUrl());
 		return relative ? base.relativize(currentUri).toString() : base.resolve(currentUri).toString();
 	}
