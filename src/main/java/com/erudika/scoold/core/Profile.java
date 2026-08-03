@@ -646,7 +646,7 @@ public class Profile extends Sysprop {
 	}
 
 	private void updateVoteGains(int rep) {
-		Long updated = Optional.ofNullable(getUpdated()).orElse(getTimestamp());
+		Long updated = Optional.ofNullable(getUpdated()).orElse(Utils.timestamp());
 		LocalDateTime lastUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZoneId.systemDefault());
 		LocalDate now = LocalDate.now();
 		if (now.getYear() != lastUpdate.getYear()) {

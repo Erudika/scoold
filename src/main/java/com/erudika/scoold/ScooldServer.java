@@ -82,7 +82,6 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		CoreUtils.registerCoreClasses();
 		System.setProperty("server.port", String.valueOf(CONF.serverPort()));
 		System.setProperty("server.servlet.context-path", CONF.serverContextPath());
-		System.setProperty("server.use-forward-headers", String.valueOf(CONF.inProduction()));
 		System.setProperty("para.logs_name", CONF.getConfigRootPrefix());
 		if (CONF.accessLogEnabled()) {
 			System.setProperty("server.jetty.accesslog.append", "true");
