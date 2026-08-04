@@ -439,9 +439,13 @@
 <div class="row mbn userbox user-${userboxid}">
 	<div class="col s4 m5 l3">
 		#if ($showu)
-			<a href="$!showu.getProfileLink()" title="$!showu.name">
-				<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="pic">
-			</a>
+			#if($scooldUtils.isAnonymousUser($showu))
+					<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="pic">
+			#else
+				<a href="$!showu.getProfileLink()" title="$!showu.name">
+					<img src="#profilepic($!showu, 'Square50')" width="50" class="profile-pic responsive-img" alt="pic">
+				</a>
+			#end
 		#else
 			<img src="$!imageslink/anon.svg" width="50" class="responsive-img" alt="pic">
 		#end
@@ -459,15 +463,21 @@
 		</div>
 		<div class="userbox-body">
 			#if ($showu)
-				<a href="$!showu.getProfileLink()" class="userbox-name">$showu.name</a>
+				#if($scooldUtils.isAnonymousUser($showu))
+					<span class="mediumText grey-text">$showu.name</span>
+				#else
+					<a href="$!showu.getProfileLink()" class="userbox-name">$showu.name</a>
+				#end
 			#else
 				<span class="grey-text">$!lang.get("profile.deleted")</span>
 			#end
 			#if ($showu)
 				<br>
-				<strong class="">$!utils.abbreviateInt($!showu.votes, 0)</strong>
-				#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
-					#ico("star" "yellow-text text-darken-3") <small>&times; $showu.badgesMap.size()</small>
+				#if(!$scooldUtils.isAnonymousUser($showu))
+					<strong class="">$!utils.abbreviateInt($!showu.votes, 0)</strong>
+					#if($showu.badges && $showu.badgesMap && $showu.badgesMap.size() > 0)
+						#ico("star" "yellow-text text-darken-3") <small>&times; $showu.badgesMap.size()</small>
+					#end
 				#end
 				#if ($showu.groups == "admins")
 					<small class="chip badgebox admin-badge">$!lang.get('admin')</small>

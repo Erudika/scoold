@@ -213,10 +213,14 @@ public class QuestionController {
 
 	@PostMapping({"/{id}", "/{id}/{title}", "/{id}/{title}/write"})
 	public String reply(@PathVariable String id, @PathVariable(required = false) String title,
-			@RequestParam(required = false) Boolean emailme, HttpServletRequest req,
-			HttpServletResponse res, Model model) {
+			@RequestParam(required = false) Boolean emailme,
+			@RequestParam(required = false, defaultValue = "false") Boolean anonymous,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		Post showPost = pc.read(id);
 		Profile authUser = utils.getAuthUser(req);
+		if (anonymous) {
+			authUser = utils.getAnonAuthUser();
+		}
 		if (authUser == null || showPost == null || !utils.canAccessSpace(authUser, showPost.getSpace())) {
 			if (utils.isAjaxRequest(req)) {
 				res.setStatus(400);
@@ -238,6 +242,8 @@ public class QuestionController {
 				answer.setCreatorid(authUser.getId());
 				answer.setParentid(showPost.getId());
 				answer.setSpace(showPost.getSpace());
+				answer.setAuthor(authUser);
+				answer.setAnonymous(anonymous && utils.isAuthenticated(req) && utils.isAnonymityEnabled());
 				addRepOnReplyOnce(showPost, authUser, false);
 				answer.create();
 
@@ -249,7 +255,7 @@ public class QuestionController {
 				// update without adding revisions
 				pc.update(showPost);
 				utils.addBadge(authUser, Badge.EUREKA, answer.getCreatorid().equals(showPost.getCreatorid()));
-				answer.setAuthor(authUser);
+				//answer.setAuthor(authUser);
 				model.addAttribute("showPost", showPost);
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author

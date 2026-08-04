@@ -84,6 +84,7 @@ public abstract class Post extends Sysprop {
 	@Stored private Map<String, String> followers;
 	@Stored private Boolean deprecated;
 	@Stored private Long approvalTimestamp;
+	@Stored private Boolean anonymous;
 
 	private transient Profile author;
 	private transient Profile lastEditor;
@@ -128,6 +129,17 @@ public abstract class Post extends Sysprop {
 
 	public void setDeprecated(Boolean deprecated) {
 		this.deprecated = deprecated;
+	}
+
+	public Boolean getAnonymous() {
+		if (anonymous == null) {
+			anonymous = false;
+		}
+		return anonymous;
+	}
+
+	public void setAnonymous(Boolean anonymous) {
+		this.anonymous = anonymous;
 	}
 
 	public Long getLastactivity() {

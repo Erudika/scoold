@@ -194,9 +194,10 @@ public class ApiController {
 
 		if (post.isQuestion()) {
 			questionsController.post(post.getLocation(), post.getLatlng(), post.getAddress(), post.getSpace(), post.getId(),
+					post.getAnonymous(),
 					req, res, model);
 		} else if (post.isReply()) {
-			questionController.reply(post.getParentid(), "", null, req, res, model);
+			questionController.reply(post.getParentid(), "", null, post.getAnonymous(), req, res, model);
 		} else {
 			badReq("Invalid post type - could be one of " + Arrays.toString(POST_TYPES));
 		}

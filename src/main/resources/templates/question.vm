@@ -104,8 +104,14 @@
 										#else
 											<input type="checkbox" class="filled-in" id="follow-thread-check">
 										#end
-										<span><strong class="">$!lang.get('posts.emailme')</strong></span>
+										<span>$!lang.get('posts.emailme')</span>
 									</label>
+									#if($scooldUtils.isAnonymityEnabled() && !$authUser.anonymityEnabled)
+									<label for="post-anon-check" class="mll">
+										<input type="checkbox" name="anonymous" value="true" class="filled-in" id="post-anon-check">
+										<span>$!lang.get('posts.postanonymously')</span>
+									</label>
+									#end
 								</div>
 
 								<div class="center">

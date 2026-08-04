@@ -122,7 +122,7 @@ public final class ScooldUtils {
 	private static final Map<String, String> FILE_CACHE = new ConcurrentHashMap<String, String>();
 	private static final Set<String> APPROVED_DOMAINS = new HashSet<>();
 	private static final Set<String> ADMINS = new HashSet<>();
-
+	private static final String ANON_UID = "-";
 	private static final Profile API_USER;
 	private static final Set<String> HOOK_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
@@ -959,6 +959,18 @@ public final class ScooldUtils {
 		return CONF.profileAnonimityEnabled();
 	}
 
+	public Profile getAnonAuthUser() {
+		return new Profile(ANON_UID, "Anonymous");
+	}
+
+	public boolean isAnonymizedPost(Post p) {
+		return p != null && Boolean.TRUE.equals(p.getAnonymous());
+	}
+
+	public boolean isAnonymousUser(Profile p) {
+		return p == null || Strings.CS.equals(Profile.id(ANON_UID), p.getId());
+	}
+
 	public boolean isApiEnabled() {
 		return CONF.apiEnabled();
 	}
@@ -1199,7 +1211,14 @@ public final class ScooldUtils {
 		// set author object for each post
 		for (ParaObject obj : objects) {
 			if (obj instanceof Post) {
-				((Post) obj).setAuthor(authors.get(authorids.get(obj.getId())));
+				Post post = (Post) obj;
+				// Per-post anonymity: mask the displayed author while preserving the real creatorid
+				// (so reputation, badges, ownership and moderation still work against the real user).
+				if (post.getAnonymous()) {
+					post.setAuthor(getAnonAuthUser());
+				} else {
+					post.setAuthor(authors.get(authorids.get(obj.getId())));
+				}
 			} else if (obj instanceof Revision) {
 				((Revision) obj).setAuthor(authors.get(authorids.get(obj.getId())));
 			}

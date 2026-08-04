@@ -252,6 +252,7 @@ public class QuestionsController {
 	@PostMapping("/questions/ask")
 	public String post(@RequestParam(required = false) String location, @RequestParam(required = false) String latlng,
 			@RequestParam(required = false) String address, String space, String postId,
+			@RequestParam(required = false, defaultValue = "false") Boolean anonymous,
 			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (utils.isAuthenticated(req)) {
 			Profile authUser = utils.getAuthUser(req);
@@ -262,6 +263,7 @@ public class QuestionsController {
 			q.setCreatorid(authUser.getId());
 			q.setAuthor(authUser);
 			q.setSpace(currentSpace);
+			q.setAnonymous(anonymous && utils.isAuthenticated(req) && utils.isAnonymityEnabled());
 			if (StringUtils.isBlank(q.getTagsString())) {
 				q.setTags(Arrays.asList(CONF.defaultQuestionTag().isBlank() ? "" : CONF.defaultQuestionTag()));
 			}

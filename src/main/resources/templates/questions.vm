@@ -46,6 +46,15 @@
 					#locationbox("mll pll")
 				#end
 
+				#if($authenticated && $scooldUtils.isAnonymityEnabled() && !$authUser.anonymityEnabled)
+				<div class="mvm center">
+					<label for="post-anon-check">
+						<input type="checkbox" name="anonymous" value="true" class="filled-in" id="post-anon-check">
+						<span>$!lang.get('posts.postanonymously')</span>
+					</label>
+				</div>
+				#end
+
 				<div class="center pvl">
 					<button class="btn mtl waves-effect waves-light btn-large submit-spinner" type="submit">
 						#ico("paper-plane" "mhs") $!lang.get('post')
