@@ -1546,13 +1546,21 @@ public final class ScooldUtils {
 			return Post.DEFAULT_SPACE;
 		}
 		if (isAdmin(authUser) && req.getParameter("space") != null) {
-			Sysprop s = pc.read(getSpaceId(req.getParameter("space"))); // API override
+			String spaceParam = req.getParameter("space");
+			if ("all".equalsIgnoreCase(spaceParam) || isAllSpaces(spaceParam) || "*".equals(spaceParam)) {
+				return ALL_MY_SPACES;
+			}
+			Sysprop s = pc.read(getSpaceId(spaceParam)); // API override
 			if (s != null) {
 				return s.getId() + Para.getConfig().separator() + s.getName();
 			}
 		}
 		String spaceAttr = (String) req.getAttribute(CONF.spaceCookie());
 		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, CONF.spaceCookie())) : spaceAttr;
+		// fix for https://github.com/Erudika/scoold/issues/475
+		if (StringUtils.isBlank(spaceValue) && authUser.equals(API_USER)) {
+			spaceValue = ALL_MY_SPACES;
+		}
 		String space = getValidSpaceId(authUser, spaceValue);
 		return verifyExistingSpace(authUser, space);
 	}
