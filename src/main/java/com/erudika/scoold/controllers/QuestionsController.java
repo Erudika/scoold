@@ -116,7 +116,7 @@ public class QuestionsController {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + req.getRequestURI();
 		}
-		Pager itemcount = utils.getPager("page", req);
+		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
 		String qf = utils.getSpaceFilteredQuery(req);
@@ -388,7 +388,7 @@ public class QuestionsController {
 	}
 
 	public List<Question> getQuestions(String sortby, String filter, HttpServletRequest req, Model model) {
-		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req));
+		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", Config._TIMESTAMP, req));
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
 		String unapprovedType = Utils.type(UnapprovedQuestion.class);

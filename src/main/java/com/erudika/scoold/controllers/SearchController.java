@@ -102,11 +102,12 @@ public class SearchController {
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.trimToEmpty(StringUtils.isBlank(q) ? query : q);
 		// [space query filter] + original query string
-		String qs = utils.sanitizeQueryString(queryString, req);
+		ScooldUtils.SanitizedQuery sanitizedQ = utils.sanitizeQueryString(queryString, req);
+		String qs = sanitizedQ.queryString();
 		boolean usersPublic = CONF.usersDiscoverabilityEnabled(utils.isAdmin(utils.getAuthUser(req)));
 
 		if ("questions".equals(type)) {
-			questionslist = utils.fullQuestionsSearch(qs, itemcount);
+			questionslist = utils.fullQuestionsSearch(sanitizedQ, itemcount);
 		} else if ("answers".equals(type)) {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
@@ -116,7 +117,7 @@ public class SearchController {
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
-			questionslist = utils.fullQuestionsSearch(qs);
+			questionslist = utils.fullQuestionsSearch(sanitizedQ);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), qs);
@@ -149,7 +150,7 @@ public class SearchController {
 	}
 
 	private String getUsersSearchQuery(String qs, HttpServletRequest req) {
-		String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
+		String spaceFilter = utils.sanitizeQueryString("", req).queryString().replaceAll("properties\\.space:", "properties.spaces:");
 		return utils.getUsersSearchQuery(qs, spaceFilter);
 	}
 
@@ -315,9 +316,9 @@ public class SearchController {
 	@GetMapping(path = "/feed.xml", produces = "application/rss+xml")
 	public String feed(Model model, HttpServletRequest req, HttpServletResponse res) {
 		// [space query filter] + original query string
-		String qs = utils.sanitizeQueryString("*", req);
+		ScooldUtils.SanitizedQuery sanitizedQ = utils.sanitizeQueryString("*", req);
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
-		List<Post> questions = canList ? utils.fullQuestionsSearch(qs) : Collections.emptyList();
+		List<Post> questions = canList ? utils.fullQuestionsSearch(sanitizedQ) : Collections.emptyList();
 		List<Map<String, String>> entriez = new LinkedList<>();
 		Map<String, String> lang = utils.getLang(req);
 		String baseurl = CONF.serverUrl() + CONF.serverContextPath();

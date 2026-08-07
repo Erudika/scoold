@@ -951,7 +951,7 @@ public class ApiController {
 			@RequestParam(required = false) String sortby,
 			@RequestParam(required = false) String lastKey,
 			HttpServletRequest req, HttpServletResponse res) {
-		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		Pager pager = utils.pagerFromParams(page, StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby, limit, desc, lastKey);
 		return pc.findQuery("scooldspace", "*", pager);
 	}
 
@@ -1008,7 +1008,7 @@ public class ApiController {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
-		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
+		Pager pager = utils.pagerFromParams(page, StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby, limit, desc, lastKey);
 		return pc.findQuery(Utils.type(Webhook.class), "*", pager);
 	}
 

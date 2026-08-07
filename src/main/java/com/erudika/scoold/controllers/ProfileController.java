@@ -119,8 +119,8 @@ public class ProfileController {
 			return "redirect:" + PEOPLELINK;
 		}
 
-		Pager itemcount1 = utils.getPager("page1", req);
-		Pager itemcount2 = utils.getPager("page2", req);
+		Pager itemcount1 = utils.getPager("page1", Config._TIMESTAMP, req);
+		Pager itemcount2 = utils.getPager("page2", Config._TIMESTAMP, req);
 		List<? extends Post> questionslist = getQuestions(authUser, showUser, isMyProfile, itemcount1);
 		List<? extends Post> answerslist = getAnswers(authUser, showUser, isMyProfile, itemcount2);
 
@@ -133,7 +133,8 @@ public class ProfileController {
 		model.addAttribute("isMyProfile", isMyProfile);
 		model.addAttribute("badgesCount", showUser.getBadgesMap().size() + showUser.getTags().size());
 		model.addAttribute("tagsSet", new HashSet<>(showUser.getTags()));
-		model.addAttribute("customBadgesMap", pc.findQuery(Utils.type(Badge.class), "*", new Pager(100)).stream().
+		model.addAttribute("customBadgesMap",
+				pc.findQuery(Utils.type(Badge.class), "*", new Pager(1, Config._TIMESTAMP, true, 100)).stream().
 				collect(Collectors.toMap(k -> ((Badge) k).getTag(), v -> v)));
 		model.addAttribute("canEdit", isMyProfile || canEditProfile(authUser, id));
 		model.addAttribute("canEditAvatar", CONF.avatarEditsEnabled());

@@ -19,7 +19,6 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Address;
-import com.erudika.para.core.ParaObject;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
@@ -490,14 +489,13 @@ public class QuestionController {
 	}
 
 	@GetMapping(path = "/find/{q}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ParaObject>> findAjax(@PathVariable String q, HttpServletRequest req, HttpServletResponse res) {
+	public ResponseEntity<List<Post>> findAjax(@PathVariable String q, HttpServletRequest req, HttpServletResponse res) {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			res.setStatus(401);
 			return ResponseEntity.status(401).body(Collections.emptyList());
 		}
-		String qs = utils.sanitizeQueryString(q + "*", req);
 		Pager pager = new Pager(1, "votes", true, 10);
-		return ResponseEntity.ok(pc.findQuery(Utils.type(Question.class), qs, pager));
+		return ResponseEntity.ok(utils.fullQuestionsSearch(utils.sanitizeQueryString(q + "*", req), pager));
 	}
 
 	private void changeSpaceForAllAnswers(Post showPost, String space) {

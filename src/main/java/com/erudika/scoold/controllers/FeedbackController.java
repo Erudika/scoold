@@ -140,7 +140,7 @@ public class FeedbackController {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + FEEDBACKLINK;
 		}
-		Pager itemcount = utils.getPager("page", req);
+		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
 		List<Post> feedbacklist = pc.findTagged(Utils.type(Feedback.class), new String[]{tag}, itemcount);
 		model.addAttribute("path", "feedback.vm");
 		model.addAttribute("title", utils.getLang(req).get("feedback.title"));

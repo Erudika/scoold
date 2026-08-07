@@ -86,8 +86,7 @@ public class ReportsController {
 		} else if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + REPORTSLINK;
 		}
-		Pager itemcount = utils.getPager("page", req);
-		itemcount.setSortby(sortby);
+		Pager itemcount = utils.getPager("page", sortby, req);
 		List<Report> reportslist = pc.findQuery(Utils.type(Report.class), "*", itemcount);
 		model.addAttribute("path", "reports.vm");
 		model.addAttribute("title", utils.getLang(req).get("reports.title"));

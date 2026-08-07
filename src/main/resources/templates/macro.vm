@@ -534,7 +534,7 @@
 
 	#if($compactUsersViewEnabled)#set($cardClass = "user-card-compact")#else#set($cardClass = "user-card")#end
 	#if($compactUsersViewEnabled)#set($personboxClass = "compact")#else#set($personboxClass = "")#end
-	#if($compactUsersViewEnabled)#set($ptmClass = "pts")#else#set($ptmClass = "ptm")#end
+	#if($compactUsersViewEnabled)#set($ptmClass = "pts prs")#else#set($ptmClass = "ptm prm")#end
 	#if($compactUsersViewEnabled)#set($cardCol1Class = "s3 m1")#else#set($cardCol1Class = "s3 m4")#end
 	#if($compactUsersViewEnabled)#set($cardCol2Class = "s9 m11")#else#set($cardCol2Class = "s9 m8")#end
 

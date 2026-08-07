@@ -96,9 +96,11 @@ public class PeopleController {
 		model.addAttribute("peopleSelected", "navbtn-hover");
 
 		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
-			List<ParaObject> spaces = pc.findQuery("scooldspace", "*", new Pager(Config.DEFAULT_LIMIT));
+			Pager spacesPager = new Pager(1, Config._TIMESTAMP, true, Config.DEFAULT_LIMIT);
+			List<ParaObject> spaces = pc.findQuery("scooldspace", "*", spacesPager);
 			model.addAttribute("spaces", spaces);
-			model.addAttribute("customBadgesMap", pc.findQuery(Utils.type(Badge.class), "*", new Pager(100)).stream().
+			Pager badgesPager = new Pager(1, Config._TIMESTAMP, true, 100);
+			model.addAttribute("customBadgesMap", pc.findQuery(Utils.type(Badge.class), "*", badgesPager).stream().
 				collect(Collectors.toMap(k -> ((Badge) k).getTag(), v -> v)));
 		}
 		return "base";
@@ -182,9 +184,9 @@ public class PeopleController {
 	@SuppressWarnings("unchecked")
 	public List<Profile> getUsers(String q, String sortby, String tag, Profile authUser, HttpServletRequest req, Model model) {
 		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req), model);
-		itemcount.setSortby(sortby);
+		itemcount.setSortby(StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby);
 		// [space query filter] + original query string
-		String qs = utils.sanitizeQueryString(q, req);
+		String qs = utils.sanitizeQueryString(q, req).queryString();
 		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
 			qs = q;
 		} else {
@@ -196,7 +198,7 @@ public class PeopleController {
 		}
 
 		if (!Strings.CS.equalsAny(q.trim(), "", "*")) {
-			String spaceFilter = utils.sanitizeQueryString("", req).replaceAll("properties\\.space:", "properties.spaces:");
+			String spaceFilter = utils.sanitizeQueryString("", req).queryString().replaceAll("properties\\.space:", "properties.spaces:");
 			qs = utils.getUsersSearchQuery(q, spaceFilter);
 		}
 

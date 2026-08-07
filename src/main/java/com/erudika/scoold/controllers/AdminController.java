@@ -137,8 +137,8 @@ public class AdminController {
 			} catch (IOException ex) { }
 		}
 
-		Pager itemcount = utils.getPager("page", req);
-		Pager itemcount1 = utils.getPager("page1", req);
+		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
+		Pager itemcount1 = utils.getPager("page1", Config._TIMESTAMP, req);
 		itemcount.setLimit(40);
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("title", utils.getLang(req).get("administration.title"));
@@ -148,7 +148,7 @@ public class AdminController {
 		model.addAttribute("paraapp", CONF.paraAccessKey());
 		model.addAttribute("spaces", getSpaces(itemcount));
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
-		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(7)));
+		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(1, Config._TIMESTAMP, true, 7)));
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("customHookEvents", utils.getCustomHookEvents());
 		if (CONF.apiEnabled()) {
