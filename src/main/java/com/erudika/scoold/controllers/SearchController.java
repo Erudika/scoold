@@ -35,6 +35,8 @@ import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import com.erudika.scoold.core.Sticky;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.SearchUtils;
+import com.erudika.scoold.utils.SearchUtils.SanitizedQuery;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -102,12 +104,12 @@ public class SearchController {
 		Pager itemcount = utils.getPager("page", req);
 		String queryString = StringUtils.trimToEmpty(StringUtils.isBlank(q) ? query : q);
 		// [space query filter] + original query string
-		ScooldUtils.SanitizedQuery sanitizedQ = utils.sanitizeQueryString(queryString, req);
+		SanitizedQuery sanitizedQ = SearchUtils.getInstance().sanitizeQueryString(queryString, req);
 		String qs = sanitizedQ.queryString();
 		boolean usersPublic = CONF.usersDiscoverabilityEnabled(utils.isAdmin(utils.getAuthUser(req)));
 
 		if ("questions".equals(type)) {
-			questionslist = utils.fullQuestionsSearch(sanitizedQ, itemcount);
+			questionslist = SearchUtils.getInstance().fullQuestionsSearch(sanitizedQ, itemcount);
 		} else if ("answers".equals(type)) {
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs, itemcount);
 		} else if ("feedback".equals(type) && utils.isFeedbackEnabled()) {
@@ -117,7 +119,7 @@ public class SearchController {
 		} else if ("comments".equals(type)) {
 			commentslist = pc.findQuery(Utils.type(Comment.class), qs, itemcount);
 		} else {
-			questionslist = utils.fullQuestionsSearch(sanitizedQ);
+			questionslist = SearchUtils.getInstance().fullQuestionsSearch(sanitizedQ);
 			answerslist = pc.findQuery(Utils.type(Reply.class), qs);
 			if (utils.isFeedbackEnabled()) {
 				feedbacklist = pc.findQuery(Utils.type(Feedback.class), qs);
@@ -149,11 +151,6 @@ public class SearchController {
 		return "base";
 	}
 
-	private String getUsersSearchQuery(String qs, HttpServletRequest req) {
-		String spaceFilter = utils.sanitizeQueryString("", req).queryString().replaceAll("properties\\.space:", "properties.spaces:");
-		return utils.getUsersSearchQuery(qs, spaceFilter);
-	}
-
 	private List<Profile> searchUsers(String queryString, HttpServletRequest req, Pager... pager) {
 		if (isEmailQuery(queryString)) {
 			List<String> uids = pc.findTerms(Utils.type(User.class),
@@ -161,7 +158,8 @@ public class SearchController {
 					stream().map(u -> Profile.id(u.getId())).collect(Collectors.toList());
 			return pc.findByIds(uids);
 		} else {
-			return pc.findQuery(Utils.type(Profile.class), getUsersSearchQuery(queryString, req), pager);
+			String qs = SearchUtils.getInstance().getUsersSearchQuery(queryString, req);
+			return pc.findQuery(Utils.type(Profile.class), qs, pager);
 		}
 	}
 
@@ -316,9 +314,9 @@ public class SearchController {
 	@GetMapping(path = "/feed.xml", produces = "application/rss+xml")
 	public String feed(Model model, HttpServletRequest req, HttpServletResponse res) {
 		// [space query filter] + original query string
-		ScooldUtils.SanitizedQuery sanitizedQ = utils.sanitizeQueryString("*", req);
+		SanitizedQuery sanitizedQ = SearchUtils.getInstance().sanitizeQueryString("*", req);
 		boolean canList = utils.isDefaultSpacePublic() || utils.isAuthenticated(req);
-		List<Post> questions = canList ? utils.fullQuestionsSearch(sanitizedQ) : Collections.emptyList();
+		List<Post> questions = canList ? SearchUtils.getInstance().fullQuestionsSearch(sanitizedQ) : Collections.emptyList();
 		List<Map<String, String>> entriez = new LinkedList<>();
 		Map<String, String> lang = utils.getLang(req);
 		String baseurl = CONF.serverUrl() + CONF.serverContextPath();

@@ -46,13 +46,13 @@ public class ScooldUtilsSearchTest {
 	}
 
 	/**
-	 * Invokes the private sanitizeQueryString(String qf, String query) with a
-	 * given space-filter string. Common values: "*", "", "properties.space:\"...\"".
+	 * Invokes the private SearchUtils.sanitizeQueryString(String qf, String query)
+	 * with a given space-filter string. Common values: "*", "", "properties.space:\"...\"".
 	 */
 	private String sanitize(String qf, String query) throws Exception {
-		Method m = ScooldUtils.class.getDeclaredMethod("sanitizeQueryString", String.class, String.class);
+		Method m = SearchUtils.class.getDeclaredMethod("sanitizeQueryString", String.class, String.class);
 		m.setAccessible(true);
-		return ((ScooldUtils.SanitizedQuery) m.invoke(utils, qf, query)).queryString();
+		return ((SearchUtils.SanitizedQuery) m.invoke(SearchUtils.getInstance(), qf, query)).queryString();
 	}
 
 	@Test
@@ -203,45 +203,48 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testIsSimpleQuery_singleWord() {
-		assertTrue(new ScooldUtils.SanitizedQuery("", "Post").isSimpleTermQuery());
-		assertTrue(new ScooldUtils.SanitizedQuery("", "hello").isSimpleTermQuery());
+		assertTrue(new SearchUtils.SanitizedQuery("", "Post").isSimpleTermQuery());
+		assertTrue(new SearchUtils.SanitizedQuery("", "hello").isSimpleTermQuery());
 	}
 
 	@Test
 	public void testIsSimpleQuery_multiWord() {
-		assertTrue(new ScooldUtils.SanitizedQuery("", "Post Now").isSimpleTermQuery());
-		assertTrue(new ScooldUtils.SanitizedQuery("", "hello world").isSimpleTermQuery());
+		assertTrue(new SearchUtils.SanitizedQuery("", "Post Now").isSimpleTermQuery());
+		assertTrue(new SearchUtils.SanitizedQuery("", "hello world").isSimpleTermQuery());
 	}
 
 	@Test
 	public void testIsSimpleQuery_quotedPhrase() {
-		assertTrue(new ScooldUtils.SanitizedQuery("", "\"My Awesome Title\"").isSimpleTermQuery());
+		assertTrue(new SearchUtils.SanitizedQuery("", "\"My Awesome Title\"").isSimpleTermQuery());
 	}
 
 	@Test
 	public void testIsSimpleQuery_luceneSyntax_notSimple() {
-		assertFalse(new ScooldUtils.SanitizedQuery("", "properties.title:foo").isSimpleTermQuery());
-		assertFalse(new ScooldUtils.SanitizedQuery("", "foo AND bar").isSimpleTermQuery());
-		assertFalse(new ScooldUtils.SanitizedQuery("", "foo OR bar").isSimpleTermQuery());
-		assertFalse(new ScooldUtils.SanitizedQuery("", "(foo bar)").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "properties.title:foo").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "foo AND bar").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "foo OR bar").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "(foo bar)").isSimpleTermQuery());
 	}
 
 	@Test
 	public void testIsSimpleQuery_emptyOrBlank_notSimple() {
-		assertFalse(new ScooldUtils.SanitizedQuery("", "").isSimpleTermQuery());
-		assertFalse(new ScooldUtils.SanitizedQuery("", null).isSimpleTermQuery());
-		assertFalse(new ScooldUtils.SanitizedQuery("", "   ").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "").isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", null).isSimpleTermQuery());
+		assertFalse(new SearchUtils.SanitizedQuery("", "   ").isSimpleTermQuery());
 	}
 
 	// ---- fullQuestionsSearch query construction ----
 
-	/**
+/**
 	 * Calls fullQuestionsSearch with a mock ParaClient that captures the query
 	 * string passed to findQuery, and returns the captured query for assertion.
+	 * Uses a dedicated ScooldUtils instance (set as the global singleton) whose
+	 * ParaClient is the mock, so that SearchUtils.getInstance() resolves to it.
 	 */
-	private String captureSearchQuery(String queryFilter, String query, boolean isSimple) throws Exception {
+	private String captureSearchQuery(String queryFilter, String query) throws Exception {
 		ParaClient pc = mock(ParaClient.class);
 		when(pc.findQuery(anyString(), anyString(), any())).thenReturn(java.util.Collections.emptyList());
+		when(pc.readAll(anyList())).thenReturn(java.util.Collections.emptyList());
 		LanguageUtils langutils = mock(LanguageUtils.class);
 		Emailer emailer = mock(Emailer.class);
 		AvatarRepositoryProxy avatarRepo = mock(AvatarRepositoryProxy.class);
@@ -252,7 +255,7 @@ public class ScooldUtilsSearchTest {
 		instanceField.setAccessible(true);
 		instanceField.set(null, localUtils);
 
-		localUtils.fullQuestionsSearch(new ScooldUtils.SanitizedQuery(queryFilter, query));
+		SearchUtils.getInstance().fullQuestionsSearch(new SearchUtils.SanitizedQuery(queryFilter, query));
 
 		org.mockito.ArgumentCaptor<String> typeCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
 		org.mockito.ArgumentCaptor<String> queryCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
@@ -262,8 +265,7 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testFullQuestionsSearch_singleWord_boostedTitleAndBody() throws Exception {
-		String qs = captureSearchQuery("*", "Post", true);
-		System.out.println(">>>1 " + qs);
+		String qs = captureSearchQuery("*", "Post");
 		assertTrue("should target title with 3x boost: " + qs, qs.contains("properties.title:Post^3"));
 		assertTrue("should target body with 2x boost: " + qs, qs.contains("properties.body:Post^2"));
 		assertTrue("should include untargeted fallback: " + qs, qs.contains(" OR Post)"));
@@ -272,8 +274,7 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testFullQuestionsSearch_phraseQuoted_boostedTitleAndBody() throws Exception {
-		String qs = captureSearchQuery("*", "\"My Awesome Title\"", true);
-		System.out.println(">>>2 " + qs);
+		String qs = captureSearchQuery("*", "\"My Awesome Title\"");
 		assertTrue("should target title with phrase and 3x boost: " + qs,
 				qs.contains("properties.title:\"My Awesome Title\"^3"));
 		assertTrue("should target body with phrase and 2x boost: " + qs,
@@ -284,7 +285,7 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testFullQuestionsSearch_luceneSyntax_notBoosted() throws Exception {
-		String qs = captureSearchQuery("*", "properties.title:foo AND bar", false);
+		String qs = captureSearchQuery("*", "properties.title:foo AND bar");
 		assertFalse("Lucene syntax should NOT be boosted: " + qs, qs.contains("^3"));
 		assertFalse("Lucene syntax should NOT be boosted: " + qs, qs.contains("^2"));
 		assertTrue("should be passed through with type filter: " + qs,
@@ -293,21 +294,21 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testFullQuestionsSearch_blankQuery_typeFilterOnly() throws Exception {
-		String qs = captureSearchQuery("*", "", false);
+		String qs = captureSearchQuery("*", "");
 		assertFalse("blank query should NOT have field targeting: " + qs, qs.contains("properties.title"));
 		assertTrue("blank query should be type filter only: " + qs, qs.startsWith("type:("));
 	}
 
 	@Test
 	public void testFullQuestionsSearch_starQuery_typeFilterOnly() throws Exception {
-		String qs = captureSearchQuery("*", "*", false);
+		String qs = captureSearchQuery("*", "*");
 		assertFalse("star query should NOT have field targeting: " + qs, qs.contains("properties.title"));
 		assertTrue("star query should be type filter only: " + qs, qs.startsWith("type:("));
 	}
 
 	@Test
 	public void testFullQuestionsSearch_booleanQuery_notBoosted() throws Exception {
-		String qs = captureSearchQuery("*", "foo OR bar", false);
+		String qs = captureSearchQuery("*", "foo OR bar");
 		assertFalse("OR query should NOT be boosted: " + qs, qs.contains("^3"));
 		assertTrue("should be passed through: " + qs, qs.contains("foo OR bar AND type:("));
 	}
@@ -318,7 +319,7 @@ public class ScooldUtilsSearchTest {
 		// query as "<space_filter> AND (\"phrase\")". The boost must apply to
 		// the inner phrase, and the space filter prefix must be preserved.
 		String qs = captureSearchQuery("properties.space:\"scooldspace:default\"",
-				"\"Developer Laptop Setup\"", true);
+				"\"Developer Laptop Setup\"");
 		assertTrue("should preserve space filter prefix: " + qs,
 				qs.contains("properties.space:\"scooldspace:default\" AND "));
 		assertTrue("should boost title with phrase: " + qs,
@@ -332,7 +333,7 @@ public class ScooldUtilsSearchTest {
 
 	@Test
 	public void testFullQuestionsSearch_spaceFilterPrefix_singleWordBoosted() throws Exception {
-		String qs = captureSearchQuery("properties.space:\"scooldspace:default\"", "Developer", true);
+		String qs = captureSearchQuery("properties.space:\"scooldspace:default\"", "Developer");
 		assertTrue("should preserve space filter prefix: " + qs,
 				qs.contains("properties.space:\"scooldspace:default\" AND "));
 		assertTrue("should boost title with single word: " + qs,
@@ -345,7 +346,7 @@ public class ScooldUtilsSearchTest {
 	public void testFullQuestionsSearch_spaceFilterPrefix_notSimple_passesThrough() throws Exception {
 		// A Lucene-syntax query inside the space-filter prefix must NOT be
 		// boosted - it's passed through untouched.
-		String qs = captureSearchQuery("properties.space:\"scooldspace:default\"", "properties.name:foo", false);
+		String qs = captureSearchQuery("properties.space:\"scooldspace:default\"", "properties.name:foo");
 		assertFalse("Lucene-syntax inner should NOT be boosted: " + qs, qs.contains("^3"));
 		assertTrue("should pass query through: " + qs,
 				qs.contains("properties.space:\"scooldspace:default\" AND (properties.name:foo) AND type:("));

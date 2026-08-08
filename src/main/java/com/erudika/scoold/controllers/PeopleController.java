@@ -31,6 +31,7 @@ import com.erudika.scoold.core.Badge;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.SearchUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -185,52 +186,9 @@ public class PeopleController {
 	public List<Profile> getUsers(String q, String sortby, String tag, Profile authUser, HttpServletRequest req, Model model) {
 		Pager itemcount = getPagerFromCookie(req, utils.getPager("page", req), model);
 		itemcount.setSortby(StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby);
-		// [space query filter] + original query string
-		String qs = utils.sanitizeQueryString(q, req).queryString();
-		if (req.getParameter("bulkedit") != null && utils.isAdmin(authUser)) {
-			qs = q;
-		} else {
-			qs = qs.replaceAll("properties\\.space:", "properties.spaces:");
-		}
-
-		if (!qs.endsWith("*") && q.equals("*")) {
-			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
-		}
-
-		if (!Strings.CS.equalsAny(q.trim(), "", "*")) {
-			String spaceFilter = utils.sanitizeQueryString("", req).queryString().replaceAll("properties\\.space:", "properties.spaces:");
-			qs = utils.getUsersSearchQuery(q, spaceFilter);
-		}
-
 		Set<String> havingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("havingSpaces")).orElse(Set.of());
 		Set<String> notHavingSpaces = Optional.ofNullable((Set<String>) model.getAttribute("notHavingSpaces")).orElse(Set.of());
-		String havingSpacesFilter = "";
-		String notHavingSpacesFilter = "";
-		if (!havingSpaces.isEmpty()) {
-			havingSpacesFilter = "+\"" + String.join("\" +\"", havingSpaces) + "\" ";
-		}
-		if (!notHavingSpaces.isEmpty()) {
-			notHavingSpacesFilter = "-\"" + String.join("\" -\"", notHavingSpaces) + "\"";
-			if (havingSpaces.isEmpty()) {
-				// at least one + keyword is needed otherwise no search results are returned
-				havingSpacesFilter = "+\"" + utils.getDefaultSpace() + "\"";
-			}
-		}
-		if (utils.isMod(authUser) && (!havingSpaces.isEmpty() || !notHavingSpaces.isEmpty())) {
-			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
-			sb.append("properties.spaces").append(":(").append(havingSpacesFilter).append(notHavingSpacesFilter).append(")");
-			qs = sb.toString();
-		}
-		if (!StringUtils.isBlank(tag)) {
-			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
-			if (tag.startsWith("groups:")) {
-				sb.append("properties.").append(tag);
-			} else {
-				sb.append(Config._TAGS).append(":(\"").append(tag).append("\")");
-			}
-			qs = sb.toString();
-		}
-
+		String qs = SearchUtils.getInstance().getUserQuery(q, havingSpaces, notHavingSpaces, tag, req);
 		List<Profile> userlist = pc.findQuery(Utils.type(Profile.class), qs, itemcount);
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("userlist", userlist);

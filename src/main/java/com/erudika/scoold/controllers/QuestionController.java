@@ -41,6 +41,7 @@ import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.erudika.scoold.utils.SearchUtils;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -495,7 +496,8 @@ public class QuestionController {
 			return ResponseEntity.status(401).body(Collections.emptyList());
 		}
 		Pager pager = new Pager(1, "votes", true, 10);
-		return ResponseEntity.ok(utils.fullQuestionsSearch(utils.sanitizeQueryString(q + "*", req), pager));
+		return ResponseEntity.ok(SearchUtils.getInstance().
+				fullQuestionsSearch(SearchUtils.getInstance().sanitizeQueryString(q + "*", req), pager));
 	}
 
 	private void changeSpaceForAllAnswers(Post showPost, String space) {
