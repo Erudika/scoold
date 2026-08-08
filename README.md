@@ -38,7 +38,7 @@ Are you still paying per seat in 2026? **Scoold Pro** is the knowledge sharing p
   <a href="https://scoold.com/pricing/">Compare Features</a> &nbsp;-&nbsp; 
   <a href="https://scoold.com/documentation/reference/scoold-api/">API</a>
 
-  <img alt="Scoold Screenshot" width="80%" src="https://scoold.com/screen.png"/>
+  <img alt="Scoold Screenshot" width="90%" src="https://scoold.com/screen.png"/>
 </div>
 
 
