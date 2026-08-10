@@ -1,5 +1,5 @@
 #if ($request.getParameter("delete"))
-	#set($confirmlink = "$adminlink?confirmdelete=true&id=$request.getParameter('id')")
+	#set($confirmlink = "$adminlink?confirmdelete=true&id=$!request.getParameter('id')")
 
 	<div class="pvl center">
 		<h2 class="black-text">$!lang.get("areyousure")</h2>
@@ -16,24 +16,33 @@
 #else
 	<div class="row">
 		<div class="col s12">
-			<h2>$!lang.get('administration.title')</h2>
+			<h1 class="largeText">
+				$!lang.get('administration.title') #ico("chevron-right" "grey-text mhm")
+				<a class='dropdown-trigger' href='#' data-target='admin-dropdown'>$section #ico("caret-down" "")</a>
+				<ul id='admin-dropdown' class='dropdown-content'>
+					<li><a href="$adminlink/dashboard"> $!lang.get('admin.dashboard')</a></li>
+					<li><a href="$adminlink/spaces">$!lang.get("spaces.title")</a></li>
+					<li><a href="$adminlink/webhooks">Webhooks</a></li>
+					#if($scooldUtils.config.dataImportExportEnabled())
+					<li><a href="$adminlink/backup-and-restore">$!lang.get("backups.title")</a></li>
+					#end
+					<li><a href="$adminlink/themes">$!lang.get("admin.themes")</a></li>
+					#if($scooldUtils.isApiEnabled())
+					<li><a href="$adminlink/api-keys">$!lang.get('admin.apikeys')</a></li>
+					#end
+					#if($scooldUtils.config.configEditingEnabled())
+					<li><a href="$adminlink/configuration">$!lang.get('admin.configuration')</a></li>
+					#end
+					<li class="divider" tabindex="-1"></li>
+					<li><a href="$adminlink/environment">#ico("info-circle" "grey-text mediumText mrm")$!lang.get('admin.environment')</a></li>
+					<li><a href="$adminlink/system">#ico("cog" "grey-text mrm")$!lang.get('admin.system')</a></li>
+				</ul>
+			</h1>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col s12 mbl">
-			<ul class="tabs adminpage">
-				<li class="tab col s2"><a href="#spaces-tab">$!{lang.get("spaces.title")} #showcount($itemcount.count)</a></li>
-				<li class="tab col s2"><a href="#webhooks-tab">Webhooks #showcount($itemcount1.count)</a></li>
-				#if($scooldUtils.config.dataImportExportEnabled())
-				<li class="tab col s2"><a href="#backup-tab">$!{lang.get("backups.title")} </a></li>
-				#end
-				<li class="tab col s2"><a href="#themes-tab">$!{lang.get("admin.themes")} </a></li>
-				<li class="tab col s2"><a href="#api-tab">API keys </a></li>
-				#if($scooldUtils.config.configEditingEnabled())
-				<li class="tab col s2"><a href="#configuration-tab">$!lang.get('admin.configuration') </a></li>
-				#end
-			</ul>
-		</div>
+
+		#if($request.servletPath.endsWith("/spaces"))
 
 		<div id="spaces-tab" class="col s12">
 			<div class="mbl">
@@ -69,6 +78,8 @@
 				#paginate("spaces" $itemcount "" "page" )
 			</div>
 		</div>
+
+		#elseif($request.servletPath.endsWith("/webhooks"))
 
 		<div id="webhooks-tab" class="col s12">
 			#if($scooldUtils.isWebhooksEnabled())
@@ -143,7 +154,8 @@
 			#end
 		</div>
 
-		#if($scooldUtils.config.dataImportExportEnabled())
+		#elseif($request.servletPath.endsWith("/backup-and-restore") && $scooldUtils.config.dataImportExportEnabled())
+
 		<div id="backup-tab" class="col s12">
 			<div class="row">
 				<div class="col s12 m3">
@@ -238,11 +250,20 @@
 			</div>
 			#end
 		</div>
-		#end
+
+		#elseif($request.servletPath.endsWith("/themes"))
 
 		<div id="themes-tab" class="col s12">
 			<form action="$adminlink/set-theme" method="post" id="select-theme-form" class="lightborder pal">
-				<div class="mbl pbl">
+				<div class="center">
+					<img
+						src="$imageslink/${selectedTheme}_theme.png"
+						id="theme-preview"
+						class="responsive-img lightborder "
+						width="60%" alt="Scoold theme $selectedTheme"
+					/>
+				</div>
+				<div class="mbl pvl">
 				#set($themesMap = {	'default': ['grey darken-3', 'red darken-4'],
 														'red': ['red darken-3', 'blue-grey darken-3'],
 														'green': ['green darken-3', 'brown darken-3'],
@@ -277,15 +298,14 @@
 			</form>
 		</div>
 
+		#elseif($request.servletPath.endsWith("/api-keys") && $scooldUtils.isApiEnabled())
+
 		<div id="api-tab" class="col s12">
-			#if($scooldUtils.isApiEnabled())
-				#apikeyspage($adminlink $apiKeys $apiKeysExpirations)
-			#else
-				<h4 class="lightborder pal center-align"><div class="em3v">$!lang.get('admin.apidisabled')</div></h4>
-			#end
+			#apikeyspage($adminlink $apiKeys $apiKeysExpirations)
 		</div>
 
-		#if($scooldUtils.config.configEditingEnabled())
+		#elseif($request.servletPath.endsWith("/configuration") && $scooldUtils.config.configEditingEnabled())
+
 		<div id="configuration-tab" class="col s12">
 			<ul class="collapsible" data-collapsible="expandable">
 			#foreach($key in $configMetadata.keySet())
@@ -347,45 +367,48 @@
 			#end
 			</ul>
 		</div>
+
+		#elseif($request.servletPath.endsWith("/environment"))
+
+		<div id="environment-tab" class="col s12">
+			<table class="highlight">
+				<tr><td><h4>Scoold</h4></td>
+					<td>version <code>$!scooldVersion</code> <small>(rev. <code>$!scooldRevision</code>)</small></td></tr>
+				<tr><td><h4>Production mode</h4></td> <td><code>$!IN_PRODUCTION</code></td></tr>
+				<tr><td><h4>Para app</h4></td> <td><code>$!paraapp</code></td></tr>
+				<tr><td><h4>Para version</h4></td> <td><code>$!paraver</code></td></tr>
+				<tr><td><h4>Para endpoint</h4></td> <td><code>$!endpoint</code></td></tr>
+				<tr><td><h4>Client IP</h4></td><td><code>$request.getRemoteAddr()</code></td></tr>
+				<tr><td><h4>Client Host</h4></td><td><code>$request.getRemoteHost()</code></td></tr>
+			</table>
+			<div class="mvl">
+				<form method="post" action="$adminlink/reindex">
+					<input type="submit" class="btn waves-effect waves-light darken-2 white-text orange rusure" value="Rebuild search index">
+				</form>
+			</div>
+		</div>
+
+		#elseif($request.servletPath.endsWith("/system"))
+
+		<div id="system-tab" class="col s12">
+			<table class="highlight">
+				#foreach($key in ["java.vm.name", "java.version", "java.vendor", "user.timezone", "os.name", "os.arch", "os.version", "file.encoding"])
+					<tr>
+						<td><code>$key</code></td>
+						<td><code class="">$!utils.getSystemProperty($key)</code></td>
+					</tr>
+				#end
+			</table>
+		</div>
+
+		#else
+
+		<div id="dashboard-tab" class="col s12">
+
+			## todo: add dashboard here
+
+		</div>
+
 		#end
 	</div>
-
-	<div class="ptl">
-		<ul class="collapsible" data-collapsible="expandable">
-			<li>
-				<div class="collapsible-header" id="showParaVersion">
-					#ico("info-circle" "grey-text mediumText mrm")$!lang.get('admin.environment')
-				</div>
-				<div class="collapsible-body">
-					<table class="highlight">
-						<tr><td><h4>Scoold</h4></td>
-							<td>version <code>$!scooldVersion</code> <small>(rev. <code>$!scooldRevision</code>)</small></td></tr>
-						<tr><td><h4>Production mode</h4></td> <td><code>$!IN_PRODUCTION</code></td></tr>
-						<tr><td><h4>Para app</h4></td> <td><code>$!paraapp</code></td></tr>
-						<tr><td><h4>Para version</h4></td> <td><code id="paraVersion">$!version</code></td></tr>
-						<tr><td><h4>Para endpoint</h4></td> <td><code>$!endpoint</code></td></tr>
-					</table>
-					<div class="mvl">
-						<form method="post" action="$adminlink/reindex">
-							<input type="submit" class="btn waves-effect waves-light darken-2 white-text orange rusure" value="Rebuild search index">
-						</form>
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="collapsible-header">#ico("cog" "grey-text mrm")$!lang.get('admin.system')</div>
-				<div class="collapsible-body">
-					<table class="highlight">
-							#foreach($key in ["java.vm.name", "java.version", "java.vendor", "user.timezone", "os.name", "os.arch", "os.version", "file.encoding"])
-								<tr>
-									<td><code>$key</code></td>
-									<td><code class="">$!utils.getSystemProperty($key)</code></td>
-								</tr>
-							#end
-					</table>
-				</div>
-			</li>
-		</ul>
-	</div>
-
 #end

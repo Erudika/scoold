@@ -393,11 +393,14 @@ $(function () {
 	});
 
 	$("#select-theme-form").on("click", "input", function() {
+		var that = $(this);
 		if (this.value === "custom") {
-			$(this).closest("form").find("textarea").parent("div").removeClass("hide");
+			that.closest("form").find("textarea").parent("div").removeClass("hide");
 		} else {
-			$(this).closest("form").find("textarea").parent("div").addClass("hide");
+			that.closest("form").find("textarea").parent("div").addClass("hide");
 		}
+		that.closest("form").find("img#theme-preview").
+				attr("src", CONTEXT_PATH + "/images/" + (this.value || "default") + "_theme.png");
 	});
 
 	submitFormBind("#api-key-form", function (data, status, xhr, form) {
@@ -430,10 +433,6 @@ $(function () {
 		}, rusuremsg, false);
 	});
 
-	$(".adminpage .tab").on("click", function () {
-		history.pushState({}, document.title, $(this).find("a")[0].href);
-	});
-
 	$(".configuration-form .filled-in").on("click", function () {
 		var next = $(this).next("span");
 		if (next.text() === next.attr("data-on")) {
@@ -450,17 +449,6 @@ $(function () {
 		setTimeout(function () {
 			btn.removeClass("disabled").html(txt);
 		}, 3000);
-	});
-
-	var paraVersion = null;
-
-	$("#showParaVersion").on("click", function () {
-		if (!paraVersion) {
-			$.get(CONTEXT_PATH + "/admin/para-version", function (data) {
-				paraVersion = data;
-				$("#paraVersion").text(paraVersion);
-			});
-		}
 	});
 
 	/****************************************************

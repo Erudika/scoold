@@ -122,44 +122,76 @@ public class AdminController {
 		this.refImageLinkRegex = Pattern.compile("(\\]\\[\\d+\\]\\])(\\[\\d+\\])", Pattern.MULTILINE);
 	}
 
-	@GetMapping
+	@GetMapping({"", "/dashboard"})
 	public String get(HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
 			return "redirect:" + HOMEPAGE;
 		} else if (!utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
-		Map<String, Object> configMetadata = new LinkedHashMap<String, Object>();
-		if (CONF.configEditingEnabled()) {
-			try {
-				configMetadata = ParaObjectUtils.getJsonReader(Map.class).
-						readValue(CONF.renderConfigDocumentation("json", true));
-			} catch (IOException ex) { }
+		String section = utils.getLang(req).get("admin.dashboard");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+		// TODO
+		return "base";
+	}
+
+	@GetMapping("/spaces")
+	public String spaces(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
+		String section = utils.getLang(req).get("spaces.title");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
 
 		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
-		Pager itemcount1 = utils.getPager("page1", Config._TIMESTAMP, req);
 		itemcount.setLimit(40);
-		model.addAttribute("path", "admin.vm");
-		model.addAttribute("title", utils.getLang(req).get("administration.title"));
-		model.addAttribute("configMap", CONF);
-		model.addAttribute("configMetadata", configMetadata);
-		model.addAttribute("endpoint", CONF.redirectUri());
-		model.addAttribute("paraapp", CONF.paraAccessKey());
 		model.addAttribute("spaces", getSpaces(itemcount));
+		model.addAttribute("itemcount", itemcount);
+		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
+		return "base";
+	}
+
+	@GetMapping("/webhooks")
+	public String webhooks(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = "Webhooks";
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
+		Pager itemcount1 = utils.getPager("page1", Config._TIMESTAMP, req);
 		model.addAttribute("webhooks", pc.findQuery(Utils.type(Webhook.class), "*", itemcount1));
-		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(1, Config._TIMESTAMP, true, 7)));
+		model.addAttribute("itemcount1", itemcount1);
+
 		model.addAttribute("coreScooldTypes", utils.getCoreScooldTypes());
 		model.addAttribute("customHookEvents", utils.getCustomHookEvents());
-		if (CONF.apiEnabled()) {
-			model.addAttribute("apiKeys", utils.getApiKeys());
-			model.addAttribute("apiKeysExpirations", utils.getApiKeysExpirations());
+		return "base";
+	}
+
+	@GetMapping("/backup-and-restore")
+	public String backups(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
 		}
-		model.addAttribute("itemcount", itemcount);
-		model.addAttribute("itemcount1", itemcount1);
-		model.addAttribute("isDefaultSpacePublic", utils.isDefaultSpacePublic());
-		model.addAttribute("scooldVersion", Version.getVersion());
-		model.addAttribute("scooldRevision", Version.getRevision());
+		String section = utils.getLang(req).get("backups.title");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
+		model.addAttribute("scooldimports", pc.findQuery("scooldimport", "*", new Pager(1, Config._TIMESTAMP, true, 7)));
+
 		String importedCount = req.getParameter("imported");
 		if (importedCount != null) {
 			if (req.getParameter("success") != null) {
@@ -168,6 +200,21 @@ public class AdminController {
 				model.addAttribute("infoStripMsg", "Data import task failed! The archive was partially imported.");
 			}
 		}
+		return "base";
+	}
+
+	@GetMapping("/themes")
+	public String themes(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = utils.getLang(req).get("admin.themes");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
 		Sysprop theme = utils.getCustomTheme();
 		String themeCSS = (String) theme.getProperty("theme");
 		model.addAttribute("selectedTheme", theme.getName());
@@ -175,9 +222,82 @@ public class AdminController {
 		return "base";
 	}
 
-	@GetMapping(path = "/para-version", produces = "text/plain")
-	public ResponseEntity<String> paraVersion(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		return ResponseEntity.ok(pc.getServerVersion());
+	@GetMapping("/api-keys")
+	public String apikeys(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = utils.getLang(req).get("admin.apikeys");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
+		if (CONF.apiEnabled()) {
+			model.addAttribute("apiKeys", utils.getApiKeys());
+			model.addAttribute("apiKeysExpirations", utils.getApiKeysExpirations());
+		}
+		return "base";
+	}
+
+	@GetMapping("/configuration")
+	public String config(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = utils.getLang(req).get("admin.configuration");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
+		Map<String, Object> configMetadata = new LinkedHashMap<String, Object>();
+		if (CONF.configEditingEnabled()) {
+			try {
+				configMetadata = ParaObjectUtils.getJsonReader(Map.class).
+						readValue(CONF.renderConfigDocumentation("json", true));
+			} catch (IOException ex) { }
+		}
+
+		model.addAttribute("configMap", CONF);
+		model.addAttribute("configMetadata", configMetadata);
+		return "base";
+	}
+
+	@GetMapping("/environment")
+	public String environment(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = utils.getLang(req).get("admin.environment");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+
+		model.addAttribute("scooldVersion", Version.getVersion());
+		model.addAttribute("scooldRevision", Version.getRevision());
+		model.addAttribute("endpoint", CONF.redirectUri());
+		model.addAttribute("paraapp", CONF.paraAccessKey());
+		model.addAttribute("paraver", pc.getServerVersion());
+		return "base";
+	}
+
+	@GetMapping("/system")
+	public String system(HttpServletRequest req, Model model) {
+		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
+			return "redirect:" + HOMEPAGE;
+		} else if (!utils.isAuthenticated(req)) {
+			return "redirect:" + SIGNINLINK + "?returnto=" + ADMINLINK;
+		}
+		String section = utils.getLang(req).get("admin.system");
+		model.addAttribute("path", "admin.vm");
+		model.addAttribute("section", section);
+		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
+		return "base";
 	}
 
 	@PostMapping("/add-space")
@@ -319,7 +439,7 @@ public class AdminController {
 			model.addAttribute("error", Collections.singletonMap("targetUrl", utils.getLang(req).get("requiredfield")));
 			return "base";
 		}
-		return "redirect:" + ADMINLINK + "#webhooks-tab";
+		return "redirect:" + ADMINLINK + "/webhooks";
 	}
 
 	@PostMapping("/toggle-webhook")
@@ -336,7 +456,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK + "#webhooks-tab";
+			return "redirect:" + ADMINLINK + "/webhooks";
 		}
 	}
 
@@ -352,7 +472,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK + "#webhooks-tab";
+			return "redirect:" + ADMINLINK + "/webhooks";
 		}
 	}
 
@@ -388,7 +508,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK + "#backup-tab";
+			return "redirect:" + ADMINLINK + "/backup-and-restore";
 		}
 	}
 
@@ -487,7 +607,7 @@ public class AdminController {
 		} finally {
 			pc.updateAsync(si);
 		}
-		return "redirect:" + ADMINLINK + "?success=true&imported=1#backup-tab";
+		return "redirect:" + ADMINLINK + "/backup-and-restore?success=true&imported=1";
 	}
 
 	@PostMapping("/set-theme")
@@ -496,7 +616,7 @@ public class AdminController {
 		if (utils.isAdmin(authUser)) {
 			utils.setCustomTheme(Utils.stripAndTrim(theme, "", true), css);
 		}
-		return "redirect:" + ADMINLINK + "#themes-tab";
+		return "redirect:" + ADMINLINK + "/themes";
 	}
 
 	@ResponseBody
@@ -566,7 +686,7 @@ public class AdminController {
 			res.setStatus(200);
 			return "base";
 		} else {
-			return "redirect:" + ADMINLINK + "#configuration-tab";
+			return "redirect:" + ADMINLINK + "/configuration";
 		}
 	}
 
