@@ -3320,6 +3320,14 @@
 			"allPublicConstructors": true
 		},
 		{
+			"type": "com.erudika.scoold.utils.SearchUtils",
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
+		},
+		{
 			"type": "com.erudika.scoold.utils.avatars.AvatarRepository"
 		},
 		{
