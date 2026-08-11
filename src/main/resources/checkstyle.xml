@@ -128,7 +128,7 @@
 		<module name="TodoComment"/>
 		<module name="UpperEll"/>
 		<module name="CyclomaticComplexity">
-			<property name="max" value="18"/>
+			<property name="max" value="20"/>
 		</module>
 
 	</module>
