@@ -38,6 +38,7 @@ import com.erudika.scoold.core.Post;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
+import com.erudika.scoold.utils.DashboardService;
 import com.erudika.scoold.utils.ScooldUtils;
 import static com.erudika.scoold.utils.ScooldUtils.MAX_SPACES;
 import com.erudika.scoold.utils.Version;
@@ -109,12 +110,14 @@ public class AdminController {
 	private final String soDateFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final DashboardService dashboardService;
 	private final Pattern uploadsRegex;
 	private final Pattern stackoverflowLinksRegex;
 	private final Pattern refImageLinkRegex;
 
-	public AdminController(ScooldUtils utils) {
+	public AdminController(ScooldUtils utils, DashboardService dashboardService) {
 		this.utils = utils;
+		this.dashboardService = dashboardService;
 		this.pc = utils.getParaClient();
 		this.uploadsRegex = Pattern.compile("(http.*?)\\/upload\\/files\\/", Pattern.MULTILINE);
 		this.stackoverflowLinksRegex = Pattern.compile("https:\\/\\/(stackoverflow|stackoverflowteams)\\.com"
@@ -133,8 +136,44 @@ public class AdminController {
 		model.addAttribute("path", "admin.vm");
 		model.addAttribute("section", section);
 		model.addAttribute("title", utils.getLang(req).get("administration.title") + " - " + section);
-		// TODO
+		String period = DashboardService.normalizePeriod(req.getParameter("period"));
+		Map<String, Object> dashboard = dashboardService.getDashboard(period);
+		model.addAttribute("dashboard", dashboard);
+		model.addAttribute("dashboardSummary", dashboard.get("summary"));
+		model.addAttribute("dashboardPeriod", period);
+		model.addAttribute("trackingEnabled", CONF.activityTrackingEnabled());
+		model.addAttribute("includeChartJS", true);
+		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
+		itemcount.setLimit(20);
+		model.addAttribute("activities", pc.findQuery("scooldactivity", "*", itemcount));
+		model.addAttribute("itemcount", itemcount);
 		return "base";
+	}
+
+	@GetMapping("/dashboard/data")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> dashboardData(HttpServletRequest req) {
+		if (!utils.isAuthenticated(req) || !utils.isAdmin(utils.getAuthUser(req))) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+		String period = DashboardService.normalizePeriod(req.getParameter("period"));
+		return ResponseEntity.ok(dashboardService.getDashboard(period));
+	}
+
+	@PostMapping("/clear-activity-log")
+	public String clearActivityLog(HttpServletRequest req) {
+		if (utils.isAdmin(utils.getAuthUser(req)) && CONF.activityTrackingEnabled()) {
+			List<String> ids = new ArrayList<>();
+			pc.readEverything(pager -> {
+				pager.setSelect(Collections.singletonList(Config._ID));
+				List<ParaObject> entries = pc.findQuery("scooldactivity", "*", pager);
+				ids.addAll(entries.stream().map(a -> a.getId()).collect(Collectors.toList()));
+				return entries;
+			});
+			pc.deleteAll(ids);
+			dashboardService.clearCache();
+		}
+		return "redirect:" + ADMINLINK;
 	}
 
 	@GetMapping("/spaces")

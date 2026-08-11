@@ -403,10 +403,181 @@
 
 		#else
 
-		<div id="dashboard-tab" class="col s12">
+		<div id="dashboard-tab" class="col s12" data-dashboard-url="$adminlink/dashboard/data" data-period="$!dashboardPeriod">
+			<div class="dashboard-header">
+				<h2 class="dashboard-title">$scooldUtils.config.appName() - $!lang.get('admin.dashboard')</h2>
+				<div class="dashboard-period">
+					<a class="dashboard-period-btn #if($dashboardPeriod == '7d')active#end" href="$adminlink?period=7d">7d</a>
+					<a class="dashboard-period-btn #if($dashboardPeriod == '30d')active#end" href="$adminlink?period=30d">30d</a>
+					<a class="dashboard-period-btn #if($dashboardPeriod == '12w')active#end" href="$adminlink?period=12w">12w</a>
+					<a class="dashboard-period-btn #if($dashboardPeriod == '12m')active#end" href="$adminlink?period=12m">12m</a>
+				</div>
+			</div>
 
-			## todo: add dashboard here
+			<div class="dashboard-cards">
+				#foreach($key in ['questions', 'answers', 'users', 'views', 'averageAge', 'clickRate', 'abandonment'])
+				#set($metric = $dashboardSummary.get($key))
+				<div class="dashboard-card">
+					<div class="dashboard-card-label">
+						#if($key == 'views')$!lang.get('posts.views')
+						#elseif($key == 'questions')$!lang.get('questions.title')
+						#elseif($key == 'answers')$!lang.get('answers.title')
+						#else $!lang.get("admin.dashboard.$key")#end
+					</div>
+					<div class="dashboard-card-value">$!metric.get('value')#if($key == 'abandonment')%#end</div>
+					#if($metric.get('change') && $metric.get('change') != 0)
+						<div class="dashboard-card-change #if($metric.get('change') > 0)positive#else negative#end">$!metric.get('change')% $!lang.get('admin.dashboard.previous')</div>
+					#end
+				</div>
+				#end
+			</div>
 
+			<div class="row dashboard-grid">
+				<div class="col s12 m8">
+					<div class="dashboard-panel">
+						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.questionsAnswers')</h4>
+						<div class="dashboard-chart-wrap"><canvas id="questions-chart"></canvas></div>
+					</div>
+					<div class="dashboard-panel">
+						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.traffic')</h4>
+						<div class="dashboard-chart-wrap"><canvas id="traffic-chart"></canvas></div>
+					</div>
+					<!--<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.reputation')</h4><div class="dashboard-chart-wrap"><canvas id="reputation-chart"></canvas></div></div>-->
+					<div class="dashboard-panel">
+						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.trending')</h4>
+						<table class="highlight responsive-table dashboard-table">
+							<thead>
+								<tr>
+									<th>$!lang.get('posts.question')</th>
+									<th class="right-align">$!lang.get('posts.views')</th>
+									<th class="right-align">$!lang.get('answers.title')</th>
+								</tr>
+							</thead>
+							<tbody>
+							#foreach($question in $dashboard.get('trending'))
+								<tr>
+									<td><a href="$questionlink/$!question.get('id')">$!question.get('title')</a></td>
+									<td class="right-align">$!question.get('views')</td>
+									<td class="right-align">$!question.get('answers')</td>
+								</tr>
+							#end
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col s12 m4">
+					<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.topTopics')</h4>
+						<div class="dashboard-chart-wrap"><canvas id="topics-chart"></canvas></div>
+					</div>
+					<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.leaderboard')</h4>
+						#if($trackingEnabled)
+						<table class="highlight dashboard-table">
+							<thead>
+								<tr>
+									<th>$!lang.get('admin.importlog.user')</th>
+									<th class="right-align">$!lang.get('admin.dashboard.visits')</th>
+								</tr>
+							</thead>
+							<tbody>
+							#foreach($user in $dashboard.get('leaderboard'))
+								<tr>
+									#set($topauthor = {'name': $!user.get('name'), 'id': $!user.get('id')})
+									<td>#personlink($topauthor)</td>
+									<td class="right-align">$!user.get('visits')</td>
+								</tr>
+							#end
+							</tbody>
+						</table>
+						#else
+						<p class="grey-text dashboard-empty">$!lang.get('admin.dashboard.trackingDisabled')</p>
+						#end
+					</div>
+					<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.contributors')</h4>
+						<table class="highlight dashboard-table">
+							<thead>
+								<tr>
+									<th>$!lang.get('admin.importlog.user')</th>
+									<th class="right-align">$!lang.get('posts')</th>
+								</tr>
+							</thead>
+							<tbody>
+							#foreach($user in $dashboard.get('contributors'))
+								<tr>
+									#set($topauthor = {'name': $!user.get('name'), 'id': $!user.get('id')})
+									<td>#personlink($topauthor)</td>
+									<td class="right-align">$!user.get('posts')</td>
+								</tr>
+							#end
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="dashboard-panel">
+				<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.unanswered')</h4>
+				<table class="highlight responsive-table dashboard-table">
+					<thead>
+						<tr>
+							<th>$!lang.get('admin.dashboard.title')</th>
+							<th class="right-align">$!lang.get('posts.posted')</th>
+						</tr>
+					</thead>
+					<tbody>
+					#foreach($question in $dashboard.get('oldestUnanswered'))
+						<tr>
+							<td><a href="$questionlink/$!question.get('id')">$!question.get('title')</a></td>
+							<td class="right-align">$!question.get('date')</td>
+						</tr>
+					#end
+					</tbody>
+				</table>
+			</div>
+
+			#macro(activitypage $param )
+				<table class="highlight responsive-table dashboard-table">
+					<thead>
+						<tr>
+							<th>User ID</th>
+							<th>Req Method</th>
+							<th>Req IP</th>
+							<th>$!lang.get('date')</th>
+							<th>Request URI</th>
+						</tr>
+					</thead>
+					<tbody>
+						#foreach($activity in $activities)
+							<tr>
+								<td>
+								#if($activity.getCreatorid() == 'anonymous')
+									<code class="dashboard-code">$!activity.getCreatorid()</code>
+								#else
+									<a href="$profilelink/$!activity.getCreatorid().replaceAll(':profile$', '')">
+										<code class="dashboard-code">$!activity.getCreatorid().substring(0, $!activity.getCreatorid().indexOf(":"))</code>
+									</a>
+								#end
+								</td>
+								<td><code class="dashboard-code">$!activity.properties.method</code></td>
+								<td><code class="dashboard-code">$!activity.properties.ip</code></td>
+								<td>#formatdate($!activity.timestamp, "YYYY-MM-dd HH:mm:ss")</td>
+								<td><code class="dashboard-code">$!activity.properties.path</code></td>
+							</tr>
+						#end
+					</tbody>
+				</table>
+			#end
+
+			<div class="dashboard-panel">
+				<div class="dashboard-panel-heading">
+					<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.auditLog')</h4>
+					<a href="$adminlink/clear-activity-log" class="post-refresh-ask">$!lang.get('clear')</a>
+				</div>
+				#if($trackingEnabled)
+					#paginate("activity" $itemcount "" "page")
+				#else
+					<p class="grey-text dashboard-empty">$!lang.get('admin.dashboard.trackingDisabled')</p>
+				#end
+			</div>
 		</div>
 
 		#end

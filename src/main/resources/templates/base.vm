@@ -466,6 +466,11 @@
 		</script>
 		<script nonce="$cspNonce" src="$!scriptslink/scoold.js?r=$!rev"></script>
 
+		#if($includeChartJS)
+		<script nonce="$cspNonce" src="$!scriptslink/chart.umd.min.js?r=$!rev"></script>
+		<script nonce="$cspNonce" src="$!scriptslink/dashboard.js?r=$!rev"></script>
+		#end
+
 		#if ($captchakey && !$captchakey.isBlank())
 		<script nonce="$cspNonce" src="https://www.google.com/recaptcha/api.js"></script>
 		<script nonce="$cspNonce">function onSubmit() {document.getElementById("captcha-form").submit();}</script>

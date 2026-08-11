@@ -46,9 +46,11 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 	public static final Logger logger = LoggerFactory.getLogger(ScooldRequestInterceptor.class);
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
+	private final DashboardService dashboard;
 
-	public ScooldRequestInterceptor(ScooldUtils utils) {
+	public ScooldRequestInterceptor(ScooldUtils utils, DashboardService dashboard) {
 		this.utils = utils;
+		this.dashboard = dashboard;
 		ScooldUtils.setInstance(utils);
 	}
 
@@ -78,6 +80,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 				return false;
 			}
 		}
+		dashboard.trackActivityIfAllowed(handler, request);
 		return true;
 	}
 

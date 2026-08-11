@@ -3645,6 +3645,16 @@ public class ScooldConfig extends Config {
 		return getConfigBoolean("onboarding_enabled", true);
 	}
 
+	@Documented(position = 3170,
+			identifier = "activity_tracking_enabled",
+			value = "true",
+			type = Boolean.class,
+			category = "Dashboard",
+			description = "Enable/disable request activity tracking used by the administration dashboard.")
+	public boolean activityTrackingEnabled() {
+		return getConfigBoolean("activity_tracking_enabled", true);
+	}
+
 	/* **********************************************************************************************************/
 
 	public boolean inDevelopment() {
