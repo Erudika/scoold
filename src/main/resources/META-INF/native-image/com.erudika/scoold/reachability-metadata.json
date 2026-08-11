@@ -9380,6 +9380,9 @@
 			"glob": "lang_*.properties"
 		},
 		{
+			"glob": "licenses/third-party.txt"
+		},
+		{
 			"glob": "log4j2.StatusLogger.properties"
 		},
 		{

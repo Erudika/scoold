@@ -384,7 +384,26 @@
 			<div class="mvl">
 				<form method="post" action="$adminlink/reindex">
 					<input type="submit" class="btn waves-effect waves-light darken-2 white-text orange rusure" value="Rebuild search index">
+					<a href="#" class="next-div-toggle click2hide right mvm">$!lang.get('admin.environment.licenses')</a>
 				</form>
+				<div class="hide mvl">
+					#if(!$licenses.isEmpty())
+					<ul class="licenses-box">
+						#foreach($entry in $licenses)
+						<li class="licenses-item">
+							<span class="licenses-name">$!entry.name</span>
+							<span class="licenses-license">$!entry.licenses</span>
+							<span class="licenses-gav">$!entry.gav</span>
+							#if(!$entry.url.isEmpty())
+							<a class="licenses-url" href="$!entry.url" target="_blank" rel="noopener noreferrer">$!entry.url</a>
+							#end
+						</li>
+						#end
+					</ul>
+					#else
+					<p class="grey-text">$!lang.get('search.notfound')</p>
+					#end
+				</div>
 			</div>
 		</div>
 

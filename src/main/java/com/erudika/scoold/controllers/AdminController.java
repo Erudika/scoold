@@ -322,6 +322,7 @@ public class AdminController {
 		model.addAttribute("endpoint", CONF.redirectUri());
 		model.addAttribute("paraapp", CONF.paraAccessKey());
 		model.addAttribute("paraver", pc.getServerVersion());
+		model.addAttribute("licenses", readLicenses());
 		return "base";
 	}
 
@@ -692,7 +693,7 @@ public class AdminController {
 			pc.rebuildIndexAsync();
 			logger.info("Started rebuilding the search index for '{}'...", CONF.paraAccessKey());
 		}
-		return "redirect:" + ADMINLINK;
+		return "redirect:" + ADMINLINK + "/environment?code=done&success=true";
 	}
 
 	@PostMapping("/save-config")
@@ -1113,5 +1114,78 @@ public class AdminController {
 			list.addFirst(utils.buildSpaceObject("default"));
 		}
 		return list;
+	}
+
+	/**
+	 * Parses the Maven license plugin output file into structured license entries.
+	 * @return a list of maps with keys: licenses, name, gav, url (all HTML-escaped)
+	 */
+	private List<Map<String, Object>> readLicenses() {
+		List<Map<String, Object>> entries = new ArrayList<>();
+		try (InputStream ins = getClass().getClassLoader().getResourceAsStream("licenses/third-party.txt")) {
+			if (ins == null) {
+				return entries;
+			}
+			String text = new String(ins.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+			for (String line : text.split("\\R")) {
+				String trimmed = line.trim();
+				if (trimmed.isEmpty() || trimmed.charAt(0) != '(') {
+					continue;
+				}
+				// the trailing "(groupId:artifactId:version - url)" block
+				int lastOpen = trimmed.lastIndexOf('(');
+				int lastClose = trimmed.lastIndexOf(')');
+				if (lastOpen < 0 || lastClose < lastOpen) {
+					continue;
+				}
+				String coords = trimmed.substring(lastOpen + 1, lastClose);
+				String remainder = trimmed.substring(0, lastOpen).trim();
+				// collect all leading, balanced "(license)" groups (they may nest)
+				List<String> licenseNames = new ArrayList<>();
+				int pos = 0;
+				while (pos < remainder.length() && remainder.charAt(pos) == '(') {
+					int depth = 0;
+					int j = pos;
+					while (j < remainder.length()) {
+						char c = remainder.charAt(j);
+						if (c == '(') {
+							depth++;
+						} else if (c == ')' && --depth == 0) {
+							j++;
+							break;
+						}
+						j++;
+					}
+					if (depth != 0) {
+						break;
+					}
+					licenseNames.add(remainder.substring(pos + 1, j - 1).trim());
+					pos = j;
+					while (pos < remainder.length() && Character.isWhitespace(remainder.charAt(pos))) {
+						pos++;
+					}
+				}
+				String name = remainder.substring(pos).trim();
+				if (name.isEmpty()) {
+					continue;
+				}
+				String gav = coords;
+				String url = "";
+				int sep = coords.indexOf(" - ");
+				if (sep > 0) {
+					gav = coords.substring(0, sep);
+					url = coords.substring(sep + 3);
+				}
+				Map<String, Object> entry = new HashMap<>();
+				entry.put("licenses", String.join(", ", licenseNames));
+				entry.put("name", name);
+				entry.put("gav", gav);
+				entry.put("url", url);
+				entries.add(entry);
+			}
+		} catch (IOException ex) {
+			logger.warn("Unable to read the third-party licenses file.", ex);
+		}
+		return entries;
 	}
 }
