@@ -173,6 +173,7 @@ public final class ScooldUtils {
 		WHITELISTED_MACROS.put("reports", "#reportspage($reportslist)");
 		WHITELISTED_MACROS.put("revisions", "#revisionspage($revisionslist $showPost)");
 		WHITELISTED_MACROS.put("tags", "#tagspage($tagslist)");
+		WHITELISTED_MACROS.put("activity", "#activitypage($activities)");
 	}
 
 	private final ParaClient pc;
@@ -1563,7 +1564,7 @@ public final class ScooldUtils {
 		String spaceAttr = (String) req.getAttribute(CONF.spaceCookie());
 		String spaceValue = StringUtils.isBlank(spaceAttr) ? Utils.base64dec(getCookieValue(req, CONF.spaceCookie())) : spaceAttr;
 		// fix for https://github.com/Erudika/scoold/issues/475
-		if (StringUtils.isBlank(spaceValue) && authUser.equals(API_USER)) {
+		if (StringUtils.isBlank(spaceValue) && API_USER.equals(authUser)) {
 			spaceValue = ALL_MY_SPACES;
 		}
 		String space = getValidSpaceId(authUser, spaceValue);

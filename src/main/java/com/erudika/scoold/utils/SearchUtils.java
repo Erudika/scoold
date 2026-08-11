@@ -154,7 +154,8 @@ public final class SearchUtils {
 		}
 
 		if (!qs.endsWith("*") && q.equals("*")) {
-			qs += " OR properties.groups:(admins OR mods)"; // admins are members of every space and always visible
+			// admins are members of every space and always visible
+			qs += (qs.isBlank() ? "" : " OR ") + "properties.groups:(admins OR mods)";
 		}
 
 		if (!Strings.CS.equalsAny(q.trim(), "", "*")) {
