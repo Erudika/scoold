@@ -104,6 +104,33 @@ public final class HttpUtils {
 	}
 
 	/////////////////////////////////////////////
+	//    	   IP ADDRESS UTILS
+	/////////////////////////////////////////////
+
+	/**
+	 * If Spring is configured to use `X-Forwarded-*` headers, this resolves the client IP address
+	 * for a request, preferring the leftmost entry of the {@code X-Forwarded-For} header,
+	 * then {@code X-Real-IP}, and finally .
+	 *
+	 * By default, this will return the remote address from {@link HttpServletRequest#getRemoteAddr()}.
+	 * See Spring's {@code ForwardedHeaderFilter} when {@code server.forward-headers-strategy} is configured.
+	 *
+	 * <p><b>Security note:</b> when Scoold is directly internet-facing (no trusted reverse proxy),
+	 * the {@code X-Forwarded-For} header is client-controllable and can be forged. Callers using
+	 * this for access control must ensure a trusted proxy overwrites the header in front of Scoold.
+	 * @param req HTTP request
+	 * @return the resolved client IP, or {@code null} if the request is {@code null}
+	 */
+	public static String getClientIp(HttpServletRequest req) {
+		if (req == null) {
+			return null;
+		}
+		// When system property is set server.forward-headers-strategy = native
+		// this should return the real IP based on X-Forwarded-For header
+		return req.getRemoteAddr();
+	}
+
+	/////////////////////////////////////////////
 	//    	   COOKIE & STATE UTILS
 	/////////////////////////////////////////////
 
