@@ -90,6 +90,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 		if (modelAndView == null || Strings.CS.startsWith(modelAndView.getViewName(), "redirect:")) {
 			return; // skip if redirect
 		}
+		dashboard.trackPageView(handler, request, response, modelAndView);
 		// Misc
 		modelAndView.addObject("HOMEPAGE", HOMEPAGE);
 		modelAndView.addObject("APPNAME", CONF.appName());

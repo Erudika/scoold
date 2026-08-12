@@ -145,7 +145,7 @@ public class AdminController {
 		model.addAttribute("includeChartJS", true);
 		Pager itemcount = utils.getPager("page", Config._TIMESTAMP, req);
 		itemcount.setLimit(20);
-		model.addAttribute("activities", pc.findQuery("scooldactivity", "*", itemcount));
+		model.addAttribute("activities", dashboardService.getAuditLog(itemcount));
 		model.addAttribute("itemcount", itemcount);
 		return "base";
 	}
@@ -166,7 +166,7 @@ public class AdminController {
 			List<String> ids = new ArrayList<>();
 			pc.readEverything(pager -> {
 				pager.setSelect(Collections.singletonList(Config._ID));
-				List<ParaObject> entries = pc.findQuery("scooldactivity", "*", pager);
+				List<ParaObject> entries = dashboardService.getAuditLog(pager);
 				ids.addAll(entries.stream().map(a -> a.getId()).collect(Collectors.toList()));
 				return entries;
 			});

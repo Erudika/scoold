@@ -25,30 +25,43 @@ import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Pager;
 import com.erudika.para.core.utils.Utils;
 import com.erudika.scoold.ScooldConfig;
+import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
 import static com.erudika.scoold.utils.ScooldRequestInterceptor.logger;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 
-/** Computes the bounded, read-only data set rendered by the admin dashboard. */
+/**
+ * Computes the bounded, read-only data set rendered by the admin dashboard.
+ * @author Alex Bogdanovski [alex@erudika.com]
+ */
 @Component
 public class DashboardService {
 
@@ -57,13 +70,26 @@ public class DashboardService {
 	private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("MMM d");
 	private static final DateTimeFormatter DATE_FULL = DateTimeFormatter.ofPattern("MMM d, yyyy");
 	private static final int CACHE_MINUTES = 2;
+	private static final String ACTIVITY_TYPE = "scooldactivity";
+	private static final String TRAFFIC_TYPE = "scooldtraffic";
+	private static final String VISIT_COOKIE = "scooldvisit";
+	private static final long FLUSH_MINUTES = 5;
+	private static final ZoneId ZONE = ZoneId.systemDefault();
+	private final Map<LocalDate, LongAdder> visits = new ConcurrentHashMap<>();
+	private final Map<String, CachedDashboard> cache = new ConcurrentHashMap<>();
+	private long lastCountTimestamp;
+
 	private final ScooldUtils utils;
 	private final ParaClient pc;
-	private final Map<String, CachedDashboard> cache = new ConcurrentHashMap<>();
 
 	public DashboardService(ScooldUtils utils) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+	}
+
+	@EventListener(ContextClosedEvent.class)
+	public void stop() {
+		flushTrackerSafely();
 	}
 
 	public Map<String, Object> getDashboard(String period) {
@@ -82,12 +108,17 @@ public class DashboardService {
 		cache.clear();
 	}
 
+	/**
+	 * Records various events for the security audit log.
+	 * @param handler method handler
+	 * @param request request
+	 */
 	public void trackActivityIfAllowed(Object handler, HttpServletRequest request) {
 		if (CONF.activityTrackingEnabled() && handler instanceof HandlerMethod && isTrackedMethod(request)) {
 			try {
 				Profile user = utils.getAuthUser(request);
 				Sysprop activity = new Sysprop();
-				activity.setType("scooldactivity");
+				activity.setType(ACTIVITY_TYPE);
 				activity.setName(user == null ? "Anonymous" : user.getName());
 				activity.setCreatorid(user == null ? "anonymous" : user.getId());
 				activity.addProperty("method", request.getMethod());
@@ -99,6 +130,37 @@ public class DashboardService {
 				logger.debug("Unable to record dashboard activity.", ex);
 			}
 		}
+	}
+
+	/**
+	 * Records one visit when this request rendered an HTML page for a new daily visitor.
+	 * @param handler method handler
+	 * @param req request
+	 * @param res response
+	 * @param modelAndView model
+	 */
+	public void trackPageView(Object handler, HttpServletRequest req, HttpServletResponse res,
+			ModelAndView modelAndView) {
+		if (!isEligiblePageView(handler, req, modelAndView)) {
+			return;
+		}
+		if (Utils.timestamp() - lastCountTimestamp > TimeUnit.MINUTES.toMillis(FLUSH_MINUTES)) {
+			lastCountTimestamp = Utils.timestamp();
+			flushTrackerSafely();
+		}
+		LocalDate today = LocalDate.now(ZONE);
+		if (today.toString().equals(HttpUtils.getStateParam(VISIT_COOKIE, req))) {
+			return;
+		}
+		visits.computeIfAbsent(today, ignored -> new LongAdder()).increment();
+		long secondsUntilMidnight = Math.max(1, Duration.between(
+				java.time.ZonedDateTime.now(ZONE), today.plusDays(1).atStartOfDay(ZONE)).getSeconds());
+		HttpUtils.setRawCookie(VISIT_COOKIE, today.toString(), req, res, "Lax", (int) Math.min(Integer.MAX_VALUE,
+				secondsUntilMidnight));
+	}
+
+	public List<ParaObject> getAuditLog(Pager pager) {
+		return pc.findQuery(ACTIVITY_TYPE, "*", pager);
 	}
 
 	private boolean isTrackedMethod(HttpServletRequest request) {
@@ -135,7 +197,7 @@ public class DashboardService {
 		data.put("period", period);
 		data.put("questionsTrend", trend(Question.class, start, now));
 		data.put("answersTrend", trend(Reply.class, start, now));
-		data.put("trafficTrend", activityTrend(start, now));
+		data.put("trafficTrend", trafficTrend(start, now));
 //		data.put("reputationTrend", reputationTrend(start, now));
 		data.put("tags", topTags());
 		data.put("contributors", topContributors(start, now));
@@ -168,7 +230,7 @@ public class DashboardService {
 	}
 
 	private long countPosts(Class<? extends ParaObject> type, long start, long end) {
-		return count(type, start, end) + countRange("sticky", start, end);
+		return count(type, start, end);
 	}
 
 	private long countRange(String type, long start, long end) {
@@ -183,19 +245,40 @@ public class DashboardService {
 	}
 
 	private List<Map<String, Object>> trend(Class<? extends ParaObject> type, long start, long end) {
-		List<ParaObject> objects = new ArrayList<>();
-		objects.addAll(fetch(Utils.type(type), start, end, 2000));
-		if (type == Question.class) {
-			objects.addAll(fetch("sticky", start, end, 500));
-		}
+		List<ParaObject> objects = new LinkedList<>();
+		objects.addAll(fetch(Utils.type(type), start, end, 300));
 		return bucket(objects);
 	}
 
-	private List<Map<String, Object>> activityTrend(long start, long end) {
+	private List<Map<String, Object>> trafficTrend(long start, long end) {
 		if (!CONF.activityTrackingEnabled()) {
 			return List.of();
 		}
-		return bucket(fetch("scooldactivity", start, end, 5000));
+		LocalDate from = Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate to = Instant.ofEpochMilli(end).atZone(ZoneId.systemDefault()).toLocalDate();
+		Map<LocalDate, Long> counts = new LinkedHashMap<>();
+		for (YearMonth month = YearMonth.from(from); !month.isAfter(YearMonth.from(to)); month = month.plusMonths(1)) {
+			Sysprop traffic = pc.read(trafficId(month));
+			if (traffic == null) {
+				continue;
+			}
+			traffic.getProperties().forEach((key, value) -> {
+				if (key.startsWith("day_") && value instanceof Number) {
+					LocalDate date = LocalDate.parse(key.substring(4));
+					if (!date.isBefore(from) && !date.isAfter(to)) {
+						counts.merge(date, ((Number) value).longValue(), Long::sum);
+					}
+				}
+			});
+		}
+		pendingVisits().forEach((date, count) -> {
+			if (!date.isBefore(from) && !date.isAfter(to)) {
+				counts.merge(date, count, Long::sum);
+			}
+		});
+		return counts.entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.map(entry -> Map.<String, Object>of("label", dateLabel(entry.getKey().atStartOfDay(ZoneId.systemDefault())
+						.toInstant().toEpochMilli()), "value", entry.getValue())).toList();
 	}
 
 //	private List<Map<String, Object>> reputationTrend(long start, long end) {
@@ -207,15 +290,15 @@ public class DashboardService {
 //			int reward = vote.isUpvote() ? CONF.voteupRewardAuthor() : -CONF.postVotedownPenaltyAuthor();
 //			points.merge(label, reward, Integer::sum);
 //		}
-//		List<Map<String, Object>> result = new ArrayList<>();
+//		List<Map<String, Object>> result = new LinkedList<>();
 //		points.forEach((label, value) -> result.add(Map.of("label", label, "value", value)));
 //		return result;
 //	}
 
 	private List<ParaObject> fetch(String type, long start, long end, int limit) {
 		Pager pager = new Pager(1);
-		pager.setLimit(limit);
-		pager.setSortby(Config._TIMESTAMP);
+		pager.setLimit(limit > 500 ? 500 : limit);
+		pager.setSortby("votes");
 		pager.setDesc(false);
 		return pc.findQuery(type, Config._TIMESTAMP + ":[" + start + " TO " + end + "]", pager);
 	}
@@ -224,7 +307,7 @@ public class DashboardService {
 		Map<String, Integer> counts = new LinkedHashMap<>();
 		objects.stream().sorted(Comparator.comparing(ParaObject::getTimestamp, Comparator.nullsLast(Long::compareTo)))
 				.forEach(object -> counts.merge(dateLabel(object.getTimestamp()), 1, Integer::sum));
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new LinkedList<>();
 		counts.forEach((label, value) -> result.add(Map.of("label", label, "value", value)));
 		return result;
 	}
@@ -232,9 +315,9 @@ public class DashboardService {
 	private List<Map<String, Object>> topTags() {
 		Pager pager = new Pager(1);
 		pager.setLimit(10);
-		pager.setSortby("properties.count");
+		pager.setSortby("count");
 		List<Tag> tags = pc.findQuery(Utils.type(Tag.class), "*", pager);
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new LinkedList<>();
 		for (Tag tag : tags) {
 			result.add(Map.of("name", tag.getTag(), "value", Optional.ofNullable(tag.getCount()).orElse(0)));
 		}
@@ -246,7 +329,7 @@ public class DashboardService {
 		pager.setLimit(6);
 		pager.setSortby("properties.viewcount");
 		List<Question> questions = pc.findQuery(Utils.type(Question.class), "*", pager);
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new LinkedList<>();
 		for (Question question : questions) {
 			result.add(Map.of("id", question.getId(), "title", question.getTitle(),
 					"views", Optional.ofNullable(question.getViewcount()).orElse(0L),
@@ -261,7 +344,7 @@ public class DashboardService {
 		pager.setSortby(Config._TIMESTAMP);
 		pager.setDesc(false);
 		List<Question> questions = pc.findQuery(Utils.type(Question.class), "properties.answercount:0", pager);
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new LinkedList<>();
 		for (Question question : questions) {
 			result.add(Map.of("id", question.getId(), "title", question.getTitle(),
 					"date", dateLabelFull(question.getTimestamp())));
@@ -281,7 +364,7 @@ public class DashboardService {
 			return List.of();
 		}
 		Map<String, Map<String, Object>> users = new HashMap<>();
-		for (ParaObject object : fetch("scooldactivity", start, end, 5000)) {
+		for (ParaObject object : fetch(ACTIVITY_TYPE, start, end, 200)) {
 			Sysprop activity = (Sysprop) object;
 			if ("anonymous".equals(activity.getCreatorid())) {
 				continue;
@@ -301,16 +384,16 @@ public class DashboardService {
 
 	private List<Map<String, Object>> topContributors(long start, long end) {
 		Map<String, Integer> counts = new HashMap<>();
-		for (ParaObject object : fetch(Utils.type(Question.class), start, end, 2000)) {
+		for (ParaObject object : fetch(Utils.type(Question.class), start, end, 300)) {
 			counts.merge(object.getCreatorid(), 1, Integer::sum);
 		}
-		for (ParaObject object : fetch("sticky", start, end, 500)) {
+		for (ParaObject object : fetch(Utils.type(Comment.class), start, end, 300)) {
 			counts.merge(object.getCreatorid(), 1, Integer::sum);
 		}
-		for (ParaObject object : fetch(Utils.type(Reply.class), start, end, 2000)) {
+		for (ParaObject object : fetch(Utils.type(Reply.class), start, end, 300)) {
 			counts.merge(object.getCreatorid(), 1, Integer::sum);
 		}
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new LinkedList<>();
 		counts.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(10)
 				.forEach(entry -> {
 					Map<String, Object> row = new LinkedHashMap<>();
@@ -394,6 +477,79 @@ public class DashboardService {
 			case "12m" -> 365;
 			default -> 30;
 		};
+	}
+
+
+	private boolean isEligiblePageView(Object handler, HttpServletRequest req, ModelAndView modelAndView) {
+		String path = req.getServletPath();
+		String accept = StringUtils.defaultString(req.getHeader("Accept"));
+		return CONF.activityTrackingEnabled() && handler instanceof HandlerMethod
+				&& "GET".equalsIgnoreCase(req.getMethod()) && modelAndView != null
+				&& !Strings.CI.startsWith(modelAndView.getViewName(), "redirect:")
+				&& !utils.isApiRequest(req) && !utils.isAjaxRequest(req)
+				&& Strings.CI.contains(accept, "text/html")
+				&& !Strings.CS.startsWithAny(path, "/admin", "/signin");
+	}
+
+	private void flushTrackerSafely() {
+		Map<LocalDate, Long> pending = drain();
+		if (pending.isEmpty()) {
+			return;
+		}
+		flush(pending);
+	}
+
+	private Map<LocalDate, Long> drain() {
+		Map<LocalDate, Long> pending = new HashMap<>();
+		visits.forEach((date, counter) -> {
+			long count = counter.sumThenReset();
+			if (count > 0) {
+				pending.put(date, count);
+			}
+		});
+		return pending;
+	}
+
+	private void flush(Map<LocalDate, Long> pending) {
+		Map<YearMonth, Map<LocalDate, Long>> byMonth = new HashMap<>();
+		pending.forEach((date, count) -> byMonth.computeIfAbsent(YearMonth.from(date), ignored -> new HashMap<>())
+				.merge(date, count, Long::sum));
+		byMonth.forEach((month, counts) -> {
+			try {
+				String id = trafficId(month);
+				Sysprop traffic = pc.read(id);
+				boolean newObject = traffic == null;
+				if (traffic == null) {
+					traffic = new Sysprop(id);
+					traffic.setType(TRAFFIC_TYPE);
+				}
+				for (Map.Entry<LocalDate, Long> entry : counts.entrySet()) {
+					String key = "day_" + entry.getKey();
+					Object value = traffic.getProperty(key);
+					long existing = value instanceof Number ? ((Number) value).longValue() : 0;
+					traffic.addProperty(key, existing + entry.getValue());
+				}
+				traffic.addProperty("updated", System.currentTimeMillis());
+				if (newObject) {
+					pc.create(traffic);
+				} else {
+					pc.update(traffic);
+				}
+			} catch (Exception ex) {
+				counts.forEach((date, count) -> visits.computeIfAbsent(date, ignored -> new LongAdder()).add(count));
+				ScooldRequestInterceptor.logger.warn("Unable to flush dashboard traffic.", ex);
+			}
+		});
+	}
+
+	static String trafficId(YearMonth month) {
+		return "visits_" + month.getMonthValue() + "_" + month.getYear();
+	}
+
+	public Map<LocalDate, Long> pendingVisits() {
+		Map<LocalDate, Long> pending = new HashMap<>();
+		visits.forEach((date, counter) -> pending.put(date, counter.sum()));
+		return pending;
 	}
 
 	private record CachedDashboard(long created, Map<String, Object> data) { }

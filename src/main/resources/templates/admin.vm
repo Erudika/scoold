@@ -457,10 +457,12 @@
 						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.questionsAnswers')</h4>
 						<div class="dashboard-chart-wrap"><canvas id="questions-chart"></canvas></div>
 					</div>
+					#if($trackingEnabled)
 					<div class="dashboard-panel">
 						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.traffic')</h4>
 						<div class="dashboard-chart-wrap"><canvas id="traffic-chart"></canvas></div>
 					</div>
+					#end
 					<!--<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.reputation')</h4><div class="dashboard-chart-wrap"><canvas id="reputation-chart"></canvas></div></div>-->
 					<div class="dashboard-panel">
 						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.trending')</h4>

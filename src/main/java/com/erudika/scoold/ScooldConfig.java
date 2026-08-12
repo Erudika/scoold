@@ -3650,7 +3650,8 @@ public class ScooldConfig extends Config {
 			value = "true",
 			type = Boolean.class,
 			category = "Dashboard",
-			description = "Enable/disable request activity tracking used by the administration dashboard.")
+			description = "Enable/disable request activity tracking for statistics shown on the admin dashboard. "
+					+ "Also includes tracking security events for the audit log.")
 	public boolean activityTrackingEnabled() {
 		return getConfigBoolean("activity_tracking_enabled", true);
 	}

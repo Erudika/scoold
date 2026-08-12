@@ -17,6 +17,8 @@
  */
 package com.erudika.scoold.utils;
 
+import static com.erudika.scoold.utils.DashboardService.trafficId;
+import java.time.YearMonth;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -39,5 +41,10 @@ public class DashboardServiceTest {
 		assertEquals("30d", DashboardService.normalizePeriod(null));
 		assertEquals("30d", DashboardService.normalizePeriod("year-to-date"));
 		assertEquals("7d", DashboardService.normalizePeriod("7d"));
+	}
+
+	@Test
+	public void trafficIdUsesMonthAndYear() {
+		assertEquals("visits_8_2026", trafficId(YearMonth.of(2026, 8)));
 	}
 }
