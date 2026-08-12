@@ -434,7 +434,7 @@
 			</div>
 
 			<div class="dashboard-cards">
-				#foreach($key in ['questions', 'answers', 'users', 'views', 'averageAge', 'clickRate', 'abandonment'])
+				#foreach($key in ['questions', 'answers', 'users', 'views', 'clickRate', 'abandonment'])
 				#set($metric = $dashboardSummary.get($key))
 				<div class="dashboard-card">
 					<div class="dashboard-card-label">
@@ -485,6 +485,26 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="dashboard-panel">
+						<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.unanswered')</h4>
+						<table class="highlight responsive-table dashboard-table">
+							<thead>
+								<tr>
+									<th>$!lang.get('admin.dashboard.title')</th>
+									<th class="right-align">$!lang.get('posts.posted')</th>
+								</tr>
+							</thead>
+							<tbody>
+							#foreach($question in $dashboard.get('oldestUnanswered'))
+								<tr>
+									<td><a href="$questionlink/$!question.get('id')">$!question.get('title')</a></td>
+									<td class="right-align">$!question.get('date')</td>
+								</tr>
+							#end
+							</tbody>
+						</table>
+					</div>
+
 				</div>
 				<div class="col s12 m4">
 					<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.topTopics')</h4>
@@ -532,27 +552,23 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="dashboard-panel"><h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.staff')</h4>
+						<table class="highlight dashboard-table">
+							<tbody>
+							#foreach($user in $dashboard.get('staff').get('members'))
+								<tr>
+									<td>#smallpersonbox($user)</td>
+								</tr>
+							#end
+							</tbody>
+						</table>
+						#if($dashboard.get('staff').get('hasMore'))
+						<div class="center ptm">
+							<small class="dashboard-pagination"><a href="$peoplelink/tag/groups:(admins%20OR%20mods)">$!lang.get('showall')</a></small>
+						</div>
+						#end
+					</div>
 				</div>
-			</div>
-
-			<div class="dashboard-panel">
-				<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.unanswered')</h4>
-				<table class="highlight responsive-table dashboard-table">
-					<thead>
-						<tr>
-							<th>$!lang.get('admin.dashboard.title')</th>
-							<th class="right-align">$!lang.get('posts.posted')</th>
-						</tr>
-					</thead>
-					<tbody>
-					#foreach($question in $dashboard.get('oldestUnanswered'))
-						<tr>
-							<td><a href="$questionlink/$!question.get('id')">$!question.get('title')</a></td>
-							<td class="right-align">$!question.get('date')</td>
-						</tr>
-					#end
-					</tbody>
-				</table>
 			</div>
 
 			#macro(activitypage $param )

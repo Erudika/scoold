@@ -1324,7 +1324,7 @@ public final class ScooldUtils {
 		return post;
 	}
 
-	public void updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
+	public boolean updateViewCount(Post showPost, HttpServletRequest req, HttpServletResponse res) {
 		//do not count views from author
 		if (showPost != null && !isMine(showPost, getAuthUser(req))) {
 			String postviews = StringUtils.trimToEmpty(HttpUtils.getStateParam("postviews", req));
@@ -1334,8 +1334,10 @@ public final class ScooldUtils {
 				HttpUtils.setStateParam("postviews", (postviews.isEmpty() ? "" : postviews + ".") + showPost.getId(),
 						req, res);
 				pc.update(showPost);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	public List<Post> getSimilarPosts(Post showPost, Pager pager) {

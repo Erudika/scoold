@@ -30,6 +30,7 @@ import static com.erudika.scoold.core.Profile.Badge.COMMENTATOR;
 import static com.erudika.scoold.core.Profile.Badge.DISCIPLINED;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.utils.AntiSpamUtils;
+import com.erudika.scoold.utils.DashboardService;
 import com.erudika.scoold.utils.ScooldUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,10 +56,12 @@ public class CommentController {
 	private static final ScooldConfig CONF = ScooldUtils.getConfig();
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final DashboardService dashboard;
 
-	public CommentController(ScooldUtils utils) {
+	public CommentController(ScooldUtils utils, DashboardService dashboard) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.dashboard = dashboard;
 	}
 
 	@GetMapping("/{id}")
@@ -130,6 +133,7 @@ public class CommentController {
 				showComment.setAuthorName(authUser.getName());
 
 				if (showComment.create() != null) {
+					dashboard.recordContribution(authUser);
 					long commentCount = authUser.getComments();
 					utils.addBadgeOnce(authUser, COMMENTATOR, commentCount >= CONF.commentatorIfHasRep());
 					authUser.setComments(commentCount + 1);

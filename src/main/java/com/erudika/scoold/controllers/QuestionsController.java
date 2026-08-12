@@ -36,6 +36,7 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.utils.AntiSpamUtils;
+import com.erudika.scoold.utils.DashboardService;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
 import static com.erudika.scoold.utils.ScooldUtils.isConnectedToPara;
@@ -81,12 +82,14 @@ public class QuestionsController {
 	private final RateLimiter askLimiter;
 
 	private final QuestionController questionController;
+	private final DashboardService dashboard;
 
-	public QuestionsController(ScooldUtils utils, QuestionController questionController) {
+	public QuestionsController(ScooldUtils utils, QuestionController questionController, DashboardService dashboard) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
 		this.askLimiter = Para.createRateLimiter(2, 30, 50);
 		this.questionController = questionController;
+		this.dashboard = dashboard;
 	}
 
 	@GetMapping({"/", "/questions"})
@@ -274,6 +277,7 @@ public class QuestionsController {
 				q.setId(qid);
 				q.setLocation(location);
 				q.create();
+				dashboard.recordContribution(authUser);
 				utils.sendNewPostNotifications(q, needsApproval, req);
 				if (!StringUtils.isBlank(latlng)) {
 					Address addr = new Address(qid + Para.getConfig().separator() + Utils.type(Address.class));

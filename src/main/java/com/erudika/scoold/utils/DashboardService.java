@@ -40,12 +40,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
@@ -81,6 +83,9 @@ public class DashboardService {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final Map<LocalDate, LongAdder> views = new ConcurrentHashMap<>();
+	private final Map<LocalDate, Set<String>> dailyUsers = new ConcurrentHashMap<>();
+	private final Map<LocalDate, Map<String, LongAdder>> userActivity = new ConcurrentHashMap<>();
 
 	public DashboardService(ScooldUtils utils) {
 		this.utils = utils;
@@ -149,6 +154,12 @@ public class DashboardService {
 			flushTrackerSafely();
 		}
 		LocalDate today = LocalDate.now(ZONE);
+		Profile user = utils.getAuthUser(req);
+		if (user != null && !isStaff(user)
+				&& dailyUsers.computeIfAbsent(today, ignored -> ConcurrentHashMap.newKeySet()).add(user.getId())) {
+			userActivity.computeIfAbsent(today, ignored -> new ConcurrentHashMap<>())
+				.computeIfAbsent(user.getId(), ignored -> new LongAdder()).increment();
+		}
 		if (today.toString().equals(HttpUtils.getStateParam(VISIT_COOKIE, req))) {
 			return;
 		}
@@ -157,6 +168,18 @@ public class DashboardService {
 				java.time.ZonedDateTime.now(ZONE), today.plusDays(1).atStartOfDay(ZONE)).getSeconds());
 		HttpUtils.setRawCookie(VISIT_COOKIE, today.toString(), req, res, "Lax", (int) Math.min(Integer.MAX_VALUE,
 				secondsUntilMidnight));
+	}
+
+	public void recordQuestionView() {
+		views.computeIfAbsent(LocalDate.now(ZONE), ignored -> new LongAdder()).increment();
+	}
+
+	public void recordContribution(Profile user) {
+		if (user == null || isStaff(user)) {
+			return;
+		}
+		userActivity.computeIfAbsent(LocalDate.now(ZONE), ignored -> new ConcurrentHashMap<>())
+				.computeIfAbsent(user.getId(), ignored -> new LongAdder()).increment();
 	}
 
 	public List<ParaObject> getAuditLog(Pager pager) {
@@ -184,13 +207,13 @@ public class DashboardService {
 		long previousUsers = countRange("profile", previousStart, start);
 		long totalQuestions = count(Question.class);
 		long abandoned = countQuery(Utils.type(Question.class), "properties.answercount:0");
+		long periodViews = trafficTotal("views_", start, now);
 
 		summary.put("questions", metric(questions, delta(questions, previousQuestions)));
 		summary.put("answers", metric(answers, delta(answers, previousAnswers)));
 		summary.put("users", metric(users, delta(users, previousUsers)));
-		summary.put("views", metric(totalViews(), 0));
-		summary.put("averageAge", metric(formatDuration(averageQuestionAge()), 0));
-		summary.put("clickRate", metric(formatNumber(averageQuestionViews()), 0));
+		summary.put("views", metric(periodViews, 0));
+		summary.put("clickRate", metric(formatNumber(questions == 0 ? 0 : (double) periodViews / questions), 0));
 		summary.put("abandonment", metric(String.valueOf(
 				totalQuestions == 0 ? 0 : Math.round(abandoned * 10000.0 / totalQuestions) / 100.0), 0));
 		data.put("summary", summary);
@@ -203,7 +226,8 @@ public class DashboardService {
 		data.put("contributors", topContributors(start, now));
 		data.put("trending", trendingQuestions());
 		data.put("oldestUnanswered", oldestUnanswered());
-		data.put("leaderboard", leaderboard(start, now));
+		data.put("leaderboard", leaderboard(start, now, period));
+		data.put("staff", staff());
 		return data;
 	}
 
@@ -239,7 +263,6 @@ public class DashboardService {
 
 	private long countQuery(String type, String query) {
 		Pager pager = new Pager(1);
-		pager.setLimit(1);
 		pc.findQuery(type, query, pager);
 		return pager.getCount();
 	}
@@ -254,8 +277,19 @@ public class DashboardService {
 		if (!CONF.activityTrackingEnabled()) {
 			return List.of();
 		}
-		LocalDate from = Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDate to = Instant.ofEpochMilli(end).atZone(ZoneId.systemDefault()).toLocalDate();
+		Map<LocalDate, Long> counts = trafficCounts("day_", start, end);
+		return counts.entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.map(entry -> Map.<String, Object>of("label", dateLabel(entry.getKey().atStartOfDay(ZoneId.systemDefault())
+						.toInstant().toEpochMilli()), "value", entry.getValue())).toList();
+	}
+
+	private long trafficTotal(String prefix, long start, long end) {
+		return trafficCounts(prefix, start, end).values().stream().mapToLong(Long::longValue).sum();
+	}
+
+	private Map<LocalDate, Long> trafficCounts(String prefix, long start, long end) {
+		LocalDate from = Instant.ofEpochMilli(start).atZone(ZONE).toLocalDate();
+		LocalDate to = Instant.ofEpochMilli(end).atZone(ZONE).toLocalDate();
 		Map<LocalDate, Long> counts = new LinkedHashMap<>();
 		for (YearMonth month = YearMonth.from(from); !month.isAfter(YearMonth.from(to)); month = month.plusMonths(1)) {
 			Sysprop traffic = pc.read(trafficId(month));
@@ -263,22 +297,21 @@ public class DashboardService {
 				continue;
 			}
 			traffic.getProperties().forEach((key, value) -> {
-				if (key.startsWith("day_") && value instanceof Number) {
-					LocalDate date = LocalDate.parse(key.substring(4));
+				if (key.startsWith(prefix) && value instanceof Number) {
+					LocalDate date = LocalDate.parse(key.substring(prefix.length()));
 					if (!date.isBefore(from) && !date.isAfter(to)) {
 						counts.merge(date, ((Number) value).longValue(), Long::sum);
 					}
 				}
 			});
 		}
-		pendingVisits().forEach((date, count) -> {
+		Map<LocalDate, Long> pending = "views_".equals(prefix) ? pendingCounters(views) : pendingCounters(visits);
+		pending.forEach((date, count) -> {
 			if (!date.isBefore(from) && !date.isAfter(to)) {
 				counts.merge(date, count, Long::sum);
 			}
 		});
-		return counts.entrySet().stream().sorted(Map.Entry.comparingByKey())
-				.map(entry -> Map.<String, Object>of("label", dateLabel(entry.getKey().atStartOfDay(ZoneId.systemDefault())
-						.toInstant().toEpochMilli()), "value", entry.getValue())).toList();
+		return counts;
 	}
 
 //	private List<Map<String, Object>> reputationTrend(long start, long end) {
@@ -296,8 +329,7 @@ public class DashboardService {
 //	}
 
 	private List<ParaObject> fetch(String type, long start, long end, int limit) {
-		Pager pager = new Pager(1);
-		pager.setLimit(limit > 500 ? 500 : limit);
+		Pager pager = new Pager(limit > 500 ? 500 : limit);
 		pager.setSortby("votes");
 		pager.setDesc(false);
 		return pc.findQuery(type, Config._TIMESTAMP + ":[" + start + " TO " + end + "]", pager);
@@ -313,8 +345,7 @@ public class DashboardService {
 	}
 
 	private List<Map<String, Object>> topTags() {
-		Pager pager = new Pager(1);
-		pager.setLimit(10);
+		Pager pager = new Pager(10);
 		pager.setSortby("count");
 		List<Tag> tags = pc.findQuery(Utils.type(Tag.class), "*", pager);
 		List<Map<String, Object>> result = new LinkedList<>();
@@ -325,8 +356,7 @@ public class DashboardService {
 	}
 
 	private List<Map<String, Object>> trendingQuestions() {
-		Pager pager = new Pager(1);
-		pager.setLimit(6);
+		Pager pager = new Pager(7);
 		pager.setSortby("properties.viewcount");
 		List<Question> questions = pc.findQuery(Utils.type(Question.class), "*", pager);
 		List<Map<String, Object>> result = new LinkedList<>();
@@ -339,8 +369,7 @@ public class DashboardService {
 	}
 
 	private List<Map<String, Object>> oldestUnanswered() {
-		Pager pager = new Pager(1);
-		pager.setLimit(10);
+		Pager pager = new Pager(10);
 		pager.setSortby(Config._TIMESTAMP);
 		pager.setDesc(false);
 		List<Question> questions = pc.findQuery(Utils.type(Question.class), "properties.answercount:0", pager);
@@ -359,27 +388,105 @@ public class DashboardService {
 		return Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FULL);
 	}
 
-	private List<Map<String, Object>> leaderboard(long start, long end) {
+	private List<Map<String, Object>> leaderboard(long start, long end, String period) {
 		if (!CONF.activityTrackingEnabled()) {
 			return List.of();
 		}
-		Map<String, Map<String, Object>> users = new HashMap<>();
-		for (ParaObject object : fetch(ACTIVITY_TYPE, start, end, 200)) {
-			Sysprop activity = (Sysprop) object;
-			if ("anonymous".equals(activity.getCreatorid())) {
+		Map<String, Integer> counts = new HashMap<>();
+		trafficUserActivity(start, end).forEach((id, count) -> counts.merge(id, count.intValue(), Integer::sum));
+		List<Map<String, Object>> result = new LinkedList<>();
+		if (counts.isEmpty()) {
+			getTopMembersForPeriod(result, period);
+		} else {
+			counts.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(10)
+					.forEach(entry -> {
+						Map<String, Object> row = new LinkedHashMap<>();
+						row.put("id", entry.getKey());
+						row.put("visits", entry.getValue());
+						result.add(row);
+					});
+			Map<String, String> names = userNames(result.stream().map(row -> (String) row.get("id"))
+					.filter(Objects::nonNull).collect(Collectors.toList()));
+			result.forEach(row -> row.put("name", names.getOrDefault(row.get("id"), (String) row.get("id"))));
+		}
+		return result;
+	}
+
+	private void getTopMembersForPeriod(List<Map<String, Object>> result, String period) {
+		Pager pager = new Pager(10);
+		pager.setSortby(reputationField(period));
+		pager.setDesc(true);
+		List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), "*", pager);
+		for (Profile profile : profiles) {
+			Map<String, Object> row = new LinkedHashMap<>();
+			row.put("id", profile.getCreatorid());
+			row.put("name", profile.getName());
+			row.put("visits", reputation(profile, period));
+			result.add(row);
+		}
+	}
+
+	private String reputationField(String period) {
+		return switch (period) {
+			case "7d" -> "properties.weeklyVotes";
+			case "12w" -> "properties.quarterlyVotes";
+			case "12m" -> "properties.yearlyVotes";
+			default -> "properties.monthlyVotes";
+		};
+	}
+
+	private int reputation(Profile profile, String period) {
+		return switch (period) {
+			case "7d" -> Optional.ofNullable(profile.getWeeklyVotes()).orElse(0);
+			case "12w" -> Optional.ofNullable(profile.getQuarterlyVotes()).orElse(0);
+			case "12m" -> Optional.ofNullable(profile.getYearlyVotes()).orElse(0);
+			default -> Optional.ofNullable(profile.getMonthlyVotes()).orElse(0);
+		};
+	}
+
+	private Map<String, Long> trafficUserActivity(long start, long end) {
+		LocalDate from = Instant.ofEpochMilli(start).atZone(ZONE).toLocalDate();
+		LocalDate to = Instant.ofEpochMilli(end).atZone(ZONE).toLocalDate();
+		Map<String, Long> counts = new HashMap<>();
+		for (YearMonth month = YearMonth.from(from); !month.isAfter(YearMonth.from(to)); month = month.plusMonths(1)) {
+			Sysprop traffic = pc.read(trafficId(month));
+			if (traffic == null) {
 				continue;
 			}
-			Map<String, Object> row = users.computeIfAbsent(activity.getCreatorid(), id -> {
-				Map<String, Object> value = new LinkedHashMap<>();
-				value.put("id", id);
-				value.put("name", activity.getName());
-				value.put("visits", 0);
-				return value;
+			traffic.getProperties().forEach((key, value) -> {
+				if (key.startsWith("users_") && value instanceof Map<?, ?>) {
+					LocalDate date = LocalDate.parse(key.substring("users_".length()));
+					if (!date.isBefore(from) && !date.isAfter(to)) {
+						mergeUserCounts(counts, (Map<?, ?>) value);
+					}
+				}
 			});
-			row.put("visits", ((Integer) row.get("visits")) + 1);
 		}
-		return users.values().stream().sorted((a, b) -> Integer.compare((Integer) b.get("visits"), (Integer) a.get("visits")))
-				.limit(10).toList();
+		userActivity.forEach((date, users) -> {
+			if (!date.isBefore(from) && !date.isAfter(to)) {
+				users.forEach((id, count) -> counts.merge(id, count.sum(), Long::sum));
+			}
+		});
+		return counts;
+	}
+
+	private void mergeUserCounts(Map<String, Long> counts, Map<?, ?> users) {
+		users.forEach((id, count) -> {
+			if (id instanceof String && count instanceof Number) {
+				counts.merge((String) id, ((Number) count).longValue(), Long::sum);
+			}
+		});
+	}
+
+	private Map<String, Object> staff() {
+		Pager pager = new Pager(10);
+		pager.setSortby("votes");
+		List<Profile> profiles = pc.findQuery(Utils.type(Profile.class), "properties.groups:(admins OR mods)", pager);
+		return Map.of("members", profiles, "hasMore", pager.getCount() > pager.getLimit());
+	}
+
+	private boolean isStaff(Profile profile) {
+		return profile != null && (utils.isAdmin(profile) || utils.isModAnywhere(profile));
 	}
 
 	private List<Map<String, Object>> topContributors(long start, long end) {
@@ -415,37 +522,6 @@ public class DashboardService {
 			}
 		}
 		return names;
-	}
-
-	private long totalViews() {
-		long views = 0;
-		Pager pager = new Pager(1);
-		pager.setLimit(500);
-		for (ParaObject object : pc.findQuery(Utils.type(Question.class), "*", pager)) {
-			Question question = (Question) object;
-			views += Optional.ofNullable(question.getViewcount()).orElse(0L);
-		}
-		return views;
-	}
-
-	private double averageQuestionViews() {
-		Pager pager = new Pager(1);
-		pager.setLimit(500);
-		List<Question> questions = pc.findQuery(Utils.type(Question.class), "*", pager);
-		return questions.isEmpty() ? 0 : questions.stream().mapToLong(q -> Optional.ofNullable(q.getViewcount()).orElse(0L)).average().orElse(0);
-	}
-
-	private long averageQuestionAge() {
-		Pager pager = new Pager(1);
-		pager.setLimit(500);
-		List<Question> questions = pc.findQuery(Utils.type(Question.class), "*", pager);
-		return Math.round(questions.stream().mapToLong(q -> Math.max(0, System.currentTimeMillis() - Optional.ofNullable(q.getTimestamp()).orElse(System.currentTimeMillis())))
-					.average().orElse(0));
-	}
-
-	private String formatDuration(long millis) {
-		long days = TimeUnit.MILLISECONDS.toDays(millis);
-		return days + "d";
 	}
 
 	private String formatNumber(double value) {
@@ -492,29 +568,49 @@ public class DashboardService {
 	}
 
 	private void flushTrackerSafely() {
-		Map<LocalDate, Long> pending = drain();
+		TrafficPending pending = drain();
 		if (pending.isEmpty()) {
 			return;
 		}
 		flush(pending);
 	}
 
-	private Map<LocalDate, Long> drain() {
-		Map<LocalDate, Long> pending = new HashMap<>();
-		visits.forEach((date, counter) -> {
-			long count = counter.sumThenReset();
-			if (count > 0) {
-				pending.put(date, count);
+	private TrafficPending drain() {
+		Map<LocalDate, Long> visitCounts = drainCounters(visits);
+		Map<LocalDate, Long> viewCounts = drainCounters(views);
+		Map<LocalDate, Map<String, Long>> userCounts = new HashMap<>();
+		userActivity.forEach((date, users) -> {
+			Map<String, Long> counts = new HashMap<>();
+			users.forEach((id, counter) -> {
+				long count = counter.sumThenReset();
+				if (count > 0) {
+					counts.put(id, count);
+				}
+			});
+			if (!counts.isEmpty()) {
+				userCounts.put(date, counts);
 			}
 		});
-		return pending;
+		return new TrafficPending(visitCounts, viewCounts, userCounts);
 	}
 
-	private void flush(Map<LocalDate, Long> pending) {
-		Map<YearMonth, Map<LocalDate, Long>> byMonth = new HashMap<>();
-		pending.forEach((date, count) -> byMonth.computeIfAbsent(YearMonth.from(date), ignored -> new HashMap<>())
-				.merge(date, count, Long::sum));
-		byMonth.forEach((month, counts) -> {
+	private Map<LocalDate, Long> drainCounters(Map<LocalDate, LongAdder> counters) {
+		Map<LocalDate, Long> result = new HashMap<>();
+		counters.forEach((date, counter) -> {
+			long count = counter.sumThenReset();
+			if (count > 0) {
+				result.put(date, count);
+			}
+		});
+		return result;
+	}
+
+	private void flush(TrafficPending pending) {
+		Set<YearMonth> months = new HashSet<>();
+		pending.visits.keySet().forEach(date -> months.add(YearMonth.from(date)));
+		pending.views.keySet().forEach(date -> months.add(YearMonth.from(date)));
+		pending.users.keySet().forEach(date -> months.add(YearMonth.from(date)));
+		months.forEach(month -> {
 			try {
 				String id = trafficId(month);
 				Sysprop traffic = pc.read(id);
@@ -523,11 +619,34 @@ public class DashboardService {
 					traffic = new Sysprop(id);
 					traffic.setType(TRAFFIC_TYPE);
 				}
-				for (Map.Entry<LocalDate, Long> entry : counts.entrySet()) {
-					String key = "day_" + entry.getKey();
-					Object value = traffic.getProperty(key);
-					long existing = value instanceof Number ? ((Number) value).longValue() : 0;
-					traffic.addProperty(key, existing + entry.getValue());
+				for (Map.Entry<LocalDate, Long> entry : pending.visits.entrySet()) {
+					if (YearMonth.from(entry.getKey()).equals(month)) {
+						addCounter(traffic, "day_" + entry.getKey(), entry.getValue());
+					}
+				}
+				for (Map.Entry<LocalDate, Long> entry : pending.views.entrySet()) {
+					if (YearMonth.from(entry.getKey()).equals(month)) {
+						addCounter(traffic, "views_" + entry.getKey(), entry.getValue());
+					}
+				}
+				for (Map.Entry<LocalDate, Map<String, Long>> entry : pending.users.entrySet()) {
+					if (YearMonth.from(entry.getKey()).equals(month)) {
+						String key = "users_" + entry.getKey();
+						Map<String, Object> stored = new HashMap<>();
+						Object value = traffic.getProperty(key);
+						if (value instanceof Map<?, ?>) {
+							((Map<?, ?>) value).forEach((userId, count) -> {
+								if (userId instanceof String && count instanceof Number) {
+									stored.put((String) userId, ((Number) count).longValue());
+								}
+							});
+						}
+						entry.getValue().forEach((userId, count) -> {
+							long existing = stored.get(userId) instanceof Number ? ((Number) stored.get(userId)).longValue() : 0;
+							stored.put(userId, existing + count);
+						});
+						traffic.addProperty(key, stored);
+					}
 				}
 				traffic.addProperty("updated", System.currentTimeMillis());
 				if (newObject) {
@@ -536,20 +655,48 @@ public class DashboardService {
 					pc.update(traffic);
 				}
 			} catch (Exception ex) {
-				counts.forEach((date, count) -> visits.computeIfAbsent(date, ignored -> new LongAdder()).add(count));
+				pending.visits.forEach((date, count) -> {
+					if (YearMonth.from(date).equals(month)) {
+						visits.computeIfAbsent(date, ignored -> new LongAdder()).add(count);
+					}
+				});
+				pending.views.forEach((date, count) -> {
+					if (YearMonth.from(date).equals(month)) {
+						views.computeIfAbsent(date, ignored -> new LongAdder()).add(count);
+					}
+				});
+				pending.users.forEach((date, users) -> {
+					if (YearMonth.from(date).equals(month)) {
+						users.forEach((id, count) -> userActivity.computeIfAbsent(date, ignored -> new ConcurrentHashMap<>())
+								.computeIfAbsent(id, ignored -> new LongAdder()).add(count));
+					}
+				});
 				ScooldRequestInterceptor.logger.warn("Unable to flush dashboard traffic.", ex);
 			}
 		});
+	}
+
+	private void addCounter(Sysprop traffic, String key, long amount) {
+		Object value = traffic.getProperty(key);
+		long existing = value instanceof Number ? ((Number) value).longValue() : 0;
+		traffic.addProperty(key, existing + amount);
 	}
 
 	static String trafficId(YearMonth month) {
 		return "visits_" + month.getMonthValue() + "_" + month.getYear();
 	}
 
-	public Map<LocalDate, Long> pendingVisits() {
+	private Map<LocalDate, Long> pendingCounters(Map<LocalDate, LongAdder> counters) {
 		Map<LocalDate, Long> pending = new HashMap<>();
-		visits.forEach((date, counter) -> pending.put(date, counter.sum()));
+		counters.forEach((date, counter) -> pending.put(date, counter.sum()));
 		return pending;
+	}
+
+	private record TrafficPending(Map<LocalDate, Long> visits, Map<LocalDate, Long> views,
+			Map<LocalDate, Map<String, Long>> users) {
+		private boolean isEmpty() {
+			return visits.isEmpty() && views.isEmpty() && users.isEmpty();
+		}
 	}
 
 	private record CachedDashboard(long created, Map<String, Object> data) { }

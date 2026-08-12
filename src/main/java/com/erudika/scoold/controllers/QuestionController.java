@@ -40,6 +40,7 @@ import com.erudika.scoold.core.Revision;
 import com.erudika.scoold.core.UnapprovedQuestion;
 import com.erudika.scoold.core.UnapprovedReply;
 import com.erudika.scoold.utils.AntiSpamUtils;
+import com.erudika.scoold.utils.DashboardService;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.erudika.scoold.utils.SearchUtils;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
@@ -85,11 +86,13 @@ public class QuestionController {
 
 	private final ScooldUtils utils;
 	private final ParaClient pc;
+	private final DashboardService dashboard;
 	private final RateLimiter replyLimiter;
 
-	public QuestionController(ScooldUtils utils) {
+	public QuestionController(ScooldUtils utils, DashboardService dashboard) {
 		this.utils = utils;
 		this.pc = utils.getParaClient();
+		this.dashboard = dashboard;
 		this.replyLimiter = Para.createRateLimiter(2, 50, 100);
 	}
 
@@ -125,7 +128,9 @@ public class QuestionController {
 		utils.getComments(allPosts);
 		utils.getLinkedComment(showPost, req);
 		utils.getVotes(allPosts, authUser);
-		utils.updateViewCount(showPost, req, res);
+		if (utils.updateViewCount(showPost, req, res)) {
+			dashboard.recordQuestionView();
+		}
 
 		model.addAttribute("path", "question.vm");
 		model.addAttribute("title", showPost.getTitle());
@@ -246,6 +251,7 @@ public class QuestionController {
 				answer.setAnonymous(anonymous && utils.isAuthenticated(req) && utils.isAnonymityEnabled());
 				addRepOnReplyOnce(showPost, authUser, false);
 				answer.create();
+				dashboard.recordContribution(authUser);
 
 				showPost.setAnswercount(showPost.getAnswercount() + 1);
 				showPost.setLastactivity(System.currentTimeMillis());
