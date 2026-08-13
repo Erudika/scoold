@@ -193,7 +193,7 @@ public class VoteController {
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setAuthorName("System");
 			rep.addProperty(utils.getLang(req).get("spaces.title"), utils.getSpaceName(p.getSpace()));
-			rep.create();
+			Report.create(rep, req);
 		}
 	}
 

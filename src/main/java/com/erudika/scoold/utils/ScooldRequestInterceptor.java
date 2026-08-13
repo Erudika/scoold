@@ -80,7 +80,6 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 				return false;
 			}
 		}
-		dashboard.trackActivityIfAllowed(handler, request);
 		return true;
 	}
 

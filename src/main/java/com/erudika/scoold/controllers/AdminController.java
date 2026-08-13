@@ -160,22 +160,6 @@ public class AdminController {
 		return ResponseEntity.ok(dashboardService.getDashboard(period));
 	}
 
-	@PostMapping("/clear-activity-log")
-	public String clearActivityLog(HttpServletRequest req) {
-		if (utils.isAdmin(utils.getAuthUser(req)) && CONF.activityTrackingEnabled()) {
-			List<String> ids = new ArrayList<>();
-			pc.readEverything(pager -> {
-				pager.setSelect(Collections.singletonList(Config._ID));
-				List<ParaObject> entries = dashboardService.getAuditLog(pager);
-				ids.addAll(entries.stream().map(a -> a.getId()).collect(Collectors.toList()));
-				return entries;
-			});
-			pc.deleteAll(ids);
-			dashboardService.clearCache();
-		}
-		return "redirect:" + ADMINLINK;
-	}
-
 	@GetMapping("/spaces")
 	public String spaces(HttpServletRequest req, Model model) {
 		if (utils.isAuthenticated(req) && !utils.isAdmin(utils.getAuthUser(req))) {
@@ -360,6 +344,7 @@ public class AdminController {
 					authUser.update();
 					model.addAttribute("space", spaceObj);
 					utils.addSpaceToCachedList(spaceObj);
+					utils.triggerHookEvent("space.create", spaceObj, req);
 				} else {
 					model.addAttribute("error", Collections.singletonMap("name", utils.getLang(req).get("posts.error1")));
 				}
@@ -384,6 +369,7 @@ public class AdminController {
 			authUser.getSpaces().remove(space);
 			authUser.update();
 			utils.removeSpaceFromCachedList(s);
+			utils.triggerHookEvent("space.delete", s, req);
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
@@ -437,6 +423,7 @@ public class AdminController {
 
 			s.addProperty("posts_need_approval", needsapproval && CONF.postsNeedApproval());
 			pc.update(s);
+			utils.triggerHookEvent("space.rename", s, req);
 			utils.getAllSpacesAdmin().stream().
 					filter(ss -> ss.getId().equals(s.getId())).
 					forEach(e -> {
@@ -475,6 +462,7 @@ public class AdminController {
 			webhook.setPropertyFilter(filter);
 			webhook.resetSecret();
 			pc.create(webhook);
+			utils.triggerHookEvent("webhook.create", webhook, req);
 		} else {
 			model.addAttribute("error", Collections.singletonMap("targetUrl", utils.getLang(req).get("requiredfield")));
 			return "base";
@@ -490,6 +478,7 @@ public class AdminController {
 			if (webhook != null) {
 				webhook.setActive(!webhook.getActive());
 				pc.update(webhook);
+				utils.triggerHookEvent("webhook.toggle", webhook, req);
 			}
 		}
 		if (utils.isAjaxRequest(req)) {
@@ -507,6 +496,7 @@ public class AdminController {
 			Webhook webhook = new Webhook();
 			webhook.setId(id);
 			pc.delete(webhook);
+			utils.triggerHookEvent("webhook.delete", webhook, req);
 		}
 		if (utils.isAjaxRequest(req)) {
 			res.setStatus(200);
@@ -523,6 +513,7 @@ public class AdminController {
 			ParaObject object = pc.read(id);
 			if (object != null) {
 				object.delete();
+				utils.triggerHookEvent("data.admin_delete", object, req);
 				logger.info("{} #{} deleted {} #{}", authUser.getName(), authUser.getId(),
 						object.getClass().getName(), object.getId());
 			}
@@ -559,6 +550,7 @@ public class AdminController {
 			return new ResponseEntity<StreamingResponseBody>(HttpStatus.FORBIDDEN);
 		}
 		String fileName = App.identifier(CONF.paraAccessKey()) + "_" + Utils.formatDate("YYYYMMdd_HHmmss", Locale.US);
+		utils.triggerHookEvent("data.export", null, req);
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".zip");
 		return new ResponseEntity<StreamingResponseBody>(out -> {
@@ -641,6 +633,7 @@ public class AdminController {
 			logger.info("Imported {} objects to {}. Executed by {}", si.getProperty("count"),
 					CONF.paraAccessKey(), authUser.getCreatorid() + " " + authUser.getName());
 			si.addProperty("status", "done");
+			utils.triggerHookEvent("data.import", si, req);
 		} catch (Exception e) {
 			logger.error("Failed to import " + filename, e);
 			si.addProperty("status", "failed");
@@ -655,6 +648,7 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.isAdmin(authUser)) {
 			utils.setCustomTheme(Utils.stripAndTrim(theme, "", true), css);
+			utils.triggerHookEvent("theme.set", null, req);
 		}
 		return "redirect:" + ADMINLINK + "/themes";
 	}
@@ -671,6 +665,7 @@ public class AdminController {
 		}
 		Map<String, Object> data = utils.generateApiKey(authUser, validityHours, false);
 		if (!data.isEmpty()) {
+			utils.triggerHookEvent("api.token_create", authUser, req);
 			return ResponseEntity.ok().body(data);
 		}
 		return ResponseEntity.status(403).build();
@@ -682,6 +677,7 @@ public class AdminController {
 		Profile authUser = utils.getAuthUser(req);
 		if (utils.isAdmin(authUser)) {
 			utils.revokeApiKey(jti);
+			utils.triggerHookEvent("api.token_revoke", null, req);
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(403).build();
@@ -691,6 +687,7 @@ public class AdminController {
 	public String reindex(HttpServletRequest req, Model model) {
 		if (utils.isAdmin(utils.getAuthUser(req))) {
 			pc.rebuildIndexAsync();
+			utils.triggerHookEvent("search.reindex", null, req);
 			logger.info("Started rebuilding the search index for '{}'...", CONF.paraAccessKey());
 		}
 		return "redirect:" + ADMINLINK + "/environment?code=done&success=true";
@@ -717,6 +714,7 @@ public class AdminController {
 				System.clearProperty(keyWithPrefix);
 			}
 			logger.info("Configuration property '{}' was modified by user {}.", key, authUser.getCreatorid());
+			utils.triggerHookEvent("config.change", Map.of("key", key), req);
 			CONF.overwriteConfig(modifiedConf).store();
 			if (CONF.getParaAppSettings().containsKey(keyWithoutPrefix)) {
 				pc.addAppSetting(keyWithoutPrefix, value);

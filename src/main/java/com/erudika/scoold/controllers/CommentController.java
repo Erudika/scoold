@@ -105,6 +105,7 @@ public class CommentController {
 			if (comment != null && (comment.getCreatorid().equals(authUser.getId()) || isMod)) {
 				// check parent and correct (for multi-parent-object pages)
 				comment.delete();
+				utils.triggerHookEvent("comment.delete", comment, req);
 				if (!isMod) {
 					utils.addBadge(authUser, DISCIPLINED, true);
 				}
@@ -163,7 +164,7 @@ public class CommentController {
 			rep.setSubType(Report.ReportType.SPAM);
 			rep.setLink(CONF.serverUrl() + "/comment/" + c.getId());
 			rep.setAuthorName(authUser.getName());
-			rep.create();
+			Report.create(rep, req);
 		}
 	}
 }

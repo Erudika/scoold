@@ -142,6 +142,7 @@ public class SettingsController {
 			utils.setNotificationSubscribers(channels); // save all notification settings
 
 			if (resetPassword(authUser.getUser(), oldpassword, newpassword)) {
+				utils.triggerHookEvent("user.password_change", authUser, req);
 				utils.clearSession(req, res);
 				return "redirect:" + SETTINGSLINK + "?passChanged=true";
 			}
@@ -152,7 +153,9 @@ public class SettingsController {
 	@PostMapping("/goodbye")
 	public String deleteAccount(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
-			utils.getAuthUser(req).delete();
+			Profile authUser = utils.getAuthUser(req);
+			authUser.delete();
+			utils.triggerHookEvent("user.delete", authUser, req);
 			utils.clearSession(req, res);
 		}
 		return "redirect:" + CONF.signoutUrl(4);
@@ -181,6 +184,7 @@ public class SettingsController {
 					}
 					pc.update(user);
 					utils.getAuthUser(req).setUser(user);
+					utils.triggerHookEvent("user.2fa_toggle", user, req);
 					return get(req, model);
 				}
 				return "redirect:" + SETTINGSLINK + "?code=signin.invalidcode&error=true";
@@ -243,6 +247,7 @@ public class SettingsController {
 			}
 			Map<String, Object> data = utils.generateApiKey(authUser, validityHours, true);
 			if (!data.isEmpty()) {
+				utils.triggerHookEvent("api.token_create", authUser, req);
 				return ResponseEntity.ok().body(data);
 			}
 		}
@@ -256,6 +261,7 @@ public class SettingsController {
 		if (authUser != null) {
 			authUser.setPersonalApiToken("");
 			authUser.update();
+			utils.triggerHookEvent("api.token_revoke", authUser, req);
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(403).build();

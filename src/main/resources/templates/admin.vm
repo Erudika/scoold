@@ -575,29 +575,38 @@
 				<table class="highlight responsive-table dashboard-table">
 					<thead>
 						<tr>
-							<th>User ID</th>
-							<th>Req Method</th>
-							<th>Req IP</th>
-							<th>$!lang.get('date')</th>
-							<th>Request URI</th>
+							<th>$!lang.get('admin.importlog.user')</th>
+							<th>Action</th>
+							<th>Resource</th>
+							<th>IP</th>
+							<th class="capitalize">$!lang.get('date')</th>
 						</tr>
 					</thead>
 					<tbody>
 						#foreach($activity in $activities)
 							<tr>
 								<td>
-								#if($activity.getCreatorid() == 'anonymous')
-									<code class="dashboard-code">$!activity.getCreatorid()</code>
-								#else
-									<a href="$profilelink/$!activity.getCreatorid().replaceAll(':profile$', '')">
-										<code class="dashboard-code">$!activity.getCreatorid().substring(0, $!activity.getCreatorid().indexOf(":"))</code>
-									</a>
-								#end
+									#set($activityuser = {'name': $!activity.getName(), 'id': $activity.getCreatorid()})
+									<code class="dashboard-code">#personlink($activityuser)</code>
 								</td>
-								<td><code class="dashboard-code">$!activity.properties.method</code></td>
+								<td>
+									<code class="dashboard-code">
+										<span class="#if($!activity.properties.action.contains('fail'))red-text#end">
+											$!activity.properties.action
+										</span>
+									</code>
+								</td>
+								<td>
+									<code class="dashboard-code">
+										#if($!activity.properties.link)
+										<a href="$!activity.properties.link">$!activity.properties.resource</a>
+										#else
+										$!activity.properties.resource
+										#end
+									</code>
+								</td>
 								<td><code class="dashboard-code">$!activity.properties.ip</code></td>
 								<td>#formatdate($!activity.timestamp, "YYYY-MM-dd HH:mm:ss")</td>
-								<td><code class="dashboard-code">$!activity.properties.path</code></td>
 							</tr>
 						#end
 					</tbody>
@@ -607,7 +616,6 @@
 			<div class="dashboard-panel">
 				<div class="dashboard-panel-heading">
 					<h4 class="dashboard-panel-title">$!lang.get('admin.dashboard.auditLog')</h4>
-					<a href="$adminlink/clear-activity-log" class="post-refresh-ask">$!lang.get('clear')</a>
 				</div>
 				#if($trackingEnabled)
 					#paginate("activity" $itemcount "" "page")

@@ -21,6 +21,7 @@ import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
 import com.erudika.para.core.annotations.Stored;
 import com.erudika.scoold.utils.ScooldUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
@@ -143,10 +144,18 @@ public class Report extends Sysprop {
 	public String create() {
 		Report r = client().create(this);
 		if (r != null) {
-			ScooldUtils.getInstance().triggerHookEvent("report.create", this);
 			setId(r.getId());
 			setTimestamp(r.getTimestamp());
 			return r.getId();
+		}
+		return null;
+	}
+
+	public static String create(Report rep, HttpServletRequest req) {
+		if (rep != null) {
+			rep.create();
+			ScooldUtils.getInstance().triggerHookEvent("report.create", rep, req);
+			return rep.getId();
 		}
 		return null;
 	}

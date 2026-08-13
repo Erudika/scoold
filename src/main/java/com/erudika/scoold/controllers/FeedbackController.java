@@ -246,7 +246,18 @@ public class FeedbackController {
 			rep.setSubType(Report.ReportType.SPAM);
 			rep.setLink(q.getPostLinkForRedirect());
 			rep.setAuthorName(authUser.getName());
-			rep.create();
+			Report.create(rep, req);
+		} else {
+			Report rep = new Report();
+			rep.setName(q.getTitle());
+			rep.setContent(Utils.abbreviate(Utils.markdownToHtml(q.getBody()), 2000));
+			rep.setCreatorid(authUser.getId());
+			rep.setParentid(q.getId());
+			rep.setDescription("New feedback post");
+			rep.setSubType(Report.ReportType.OTHER);
+			rep.setLink(q.getPostLinkForRedirect());
+			rep.setAuthorName(authUser.getName());
+			Report.create(rep, req);
 		}
 	}
 }

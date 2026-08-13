@@ -508,7 +508,7 @@
 ####################################
 #macro(personlink $showu)
 <span>
-	#if($showu && $scooldUtils.anonAuthUser.id == $showu.id)
+	#if($showu && ($scooldUtils.anonAuthUser.id == $showu.id || $scooldUtils.anonAuthUser.id.replaceAll(':profile$', '') == $showu.id))
 		<span class="grey-text">$!lang.get('anonymous')</span>
 	#elseif ($showu && $showu.id)
 		<a href="$profilelink/$!showu.id.replaceAll(':profile$', '')/#stripstr($!showu.name)" title="Go to profile">$!showu.name</a>

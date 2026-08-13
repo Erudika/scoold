@@ -199,6 +199,7 @@ public class QuestionController {
 			updatePost(showPost, authUser, req);
 			updateLocation(showPost, beforeUpdate, authUser, location, latlng);
 			utils.addBadgeOnce(authUser, Badge.EDITOR, true);
+			utils.triggerHookEvent("question.update", showPost, req);
 			if (req.getParameter("notificationsDisabled") == null) {
 				utils.sendUpdatedFavTagsNotifications(showPost, new ArrayList<>(addedTags), req);
 			}
@@ -266,7 +267,7 @@ public class QuestionController {
 				model.addAttribute("answerslist", Collections.singletonList(answer));
 				// send email to the question author
 				utils.sendReplyNotifications(showPost, answer, needsApproval, req);
-				model.addAttribute("newpost", getNewAnswerPayload(answer));
+				model.addAttribute("newpost", getNewAnswerPayload(answer, req));
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("path", "question.vm");
@@ -295,13 +296,13 @@ public class QuestionController {
 				pc.create(showPost);
 				// this notification here is redundant
 				//utils.sendNewPostNotifications(showPost, req);
-				utils.triggerHookEvent("question.approve", showPost);
+				utils.triggerHookEvent("question.approve", showPost, req);
 			} else if (showPost instanceof UnapprovedReply) {
 				showPost.setType(Utils.type(Reply.class));
 				showPost.setApprovedby(authUser);
 				addRepOnReplyOnce(pc.read(showPost.getParentid()), (Profile) pc.read(showPost.getCreatorid()), true);
 				pc.create(showPost);
-				utils.triggerHookEvent("answer.approve", showPost);
+				utils.triggerHookEvent("answer.approve", showPost, req);
 			}
 			utils.deleteReportsAfterModAction(showPost);
 		}
@@ -344,7 +345,7 @@ public class QuestionController {
 							pc.updateAll(Arrays.asList(author, authUser));
 						}
 						utils.triggerHookEvent("answer.accept",
-								getAcceptedAnswerPayload(showPost, answer, authUser, author));
+								getAcceptedAnswerPayload(showPost, answer, authUser, author), req);
 					}
 					showPost.update();
 				}
@@ -365,7 +366,7 @@ public class QuestionController {
 				showPost.setCloserid("");
 			} else {
 				showPost.setCloserid(authUser.getId());
-				utils.triggerHookEvent("question.close", showPost);
+				utils.triggerHookEvent("question.close", showPost, req);
 			}
 			showPost.update();
 		}
@@ -393,6 +394,7 @@ public class QuestionController {
 				question.setAnswercount(question.getAnswercount() - 1);
 				pc.update(question);
 				answer.delete();
+				utils.triggerHookEvent("question.convert", question, req);
 				return "redirect:" + question.getPostLinkForRedirect();
 			}
 		}
@@ -408,7 +410,7 @@ public class QuestionController {
 		}
 		if (utils.canEdit(showPost, authUser)) {
 			utils.addBadge(authUser, Badge.BACKINTIME, true);
-			showPost.restoreRevision(revisionid);
+			showPost.restoreRevision(revisionid, req);
 		}
 		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
@@ -425,6 +427,7 @@ public class QuestionController {
 			if ((utils.isMine(showPost, authUser) && utils.canDelete(showPost, authUser)) || utils.isMod(authUser)) {
 				utils.deleteReportsAfterModAction(showPost);
 				showPost.delete();
+				utils.triggerHookEvent("question.delete", showPost, req);
 				model.addAttribute("deleted", true);
 				return "redirect:" + QUESTIONSLINK + "?success=true&code=16";
 			}
@@ -437,6 +440,7 @@ public class QuestionController {
 				parent.update();
 				utils.deleteReportsAfterModAction(showPost);
 				showPost.delete();
+				utils.triggerHookEvent("answer.delete", showPost, req);
 				model.addAttribute("deleted", true);
 			}
 		}
@@ -453,6 +457,7 @@ public class QuestionController {
 		if (utils.canEdit(showPost, authUser)) {
 			showPost.setDeprecated(!showPost.getDeprecated());
 			showPost.update();
+			utils.triggerHookEvent("question.deprecate", showPost, req);
 		}
 		return "redirect:" + showPost.getPostLinkForRedirect();
 	}
@@ -491,6 +496,7 @@ public class QuestionController {
 			targetPost.update();
 			showPost.delete();
 			utils.deleteReportsAfterModAction(showPost);
+			utils.triggerHookEvent("question.merge", targetPost, req);
 		}
 		return "redirect:" + targetPost.getPostLinkForRedirect();
 	}
@@ -566,7 +572,7 @@ public class QuestionController {
 				rep.setLink(showPost.getPostLink(false, false));
 				rep.setAuthorName(authUser.getName());
 				rep.addProperty(utils.getLang(req).get("spaces.title"), utils.getSpaceName(showPost.getSpace()));
-				rep.create();
+				Report.create(rep, req);
 			}
 		}
 		showPost.setLasteditby(authUser.getId());
@@ -626,10 +632,10 @@ public class QuestionController {
 		}
 	}
 
-	private Map<String, Object> getNewAnswerPayload(Reply answer) {
+	private Map<String, Object> getNewAnswerPayload(Reply answer, HttpServletRequest req) {
 		Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(answer, false));
 		payload.put("author", answer == null ? null : answer.getAuthor());
-		utils.triggerHookEvent("answer.create", payload);
+		utils.triggerHookEvent("answer.create", payload, req);
 		return payload;
 	}
 
@@ -682,7 +688,7 @@ public class QuestionController {
 			headers.put("User-IP", req.getRemoteAddr());
 			payload.put("headers", headers);
 			payload.put("question", question);
-			utils.triggerHookEvent("question.view", payload);
+			utils.triggerHookEvent("question.view", payload, req);
 		}
 	}
 

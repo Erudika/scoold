@@ -258,6 +258,9 @@ public class SigninController {
 				return "redirect:" + SIGNINLINK + "/iforgot?verify=true";
 			} else {
 				boolean error = !resetPassword(email, newpassword, token);
+				if (!error) {
+					utils.triggerHookEvent("user.password_reset", Map.of("email", email), req);
+				}
 				model.addAttribute("path", "signin.vm");
 				model.addAttribute("title", utils.getLang(req).get("iforgot.title"));
 				model.addAttribute("signinSelected", "navbtn-hover");
@@ -330,7 +333,9 @@ public class SigninController {
 	@PostMapping("/signout")
 	public String post(HttpServletRequest req, HttpServletResponse res) {
 		if (utils.isAuthenticated(req)) {
+			Profile authUser = utils.getAuthUser(req);
 			utils.clearSession(req, res);
+			utils.triggerHookEvent("user.signout", authUser, req);
 			return "redirect:" + CONF.signoutUrl();
 		}
 		return "redirect:" + HOMEPAGE;
@@ -345,14 +350,17 @@ public class SigninController {
 			}
 			String email = getEmailFromAccessToken(accessToken);
 			if ("password".equals(provider) && !isEmailRegistered(email)) {
+				utils.triggerHookEvent("user.signin_fail", new User(email), req);
 				return "redirect:" + SIGNINLINK + "?code=3&error=true";
 			}
 			User u = pc.signIn(provider, accessToken, false);
 			if (u == null && isAccountLocked(email)) {
+				utils.triggerHookEvent("user.signin_fail", new User(email), req);
 				return "redirect:" + SIGNINLINK + "?code=6&error=true&email=" + email;
 			}
 			return onAuthSuccess(u, req, res);
 		}
+		utils.triggerHookEvent("user.signin_fail", null, req);
 		return "redirect:" + getBackToUrl(req);
 	}
 
@@ -407,7 +415,10 @@ public class SigninController {
 			Sysprop ident = pc.read(email.toLowerCase());
 			if (ident != null && !StringUtils.isBlank((String) ident.getProperty(Config._EMAIL_TOKEN))) {
 				User u = pc.read(Utils.type(User.class), ident.getCreatorid());
-				return u != null && !u.getActive();
+				if (u != null && !u.getActive()) {
+					logger.info("Account {} is locked (active: false) - email confirmation is pending.", u.getId());
+					return true;
+				}
 			}
 		}
 		return false;
@@ -494,15 +505,14 @@ public class SigninController {
 
 	private void triggerLoginEvent(User u, HttpServletRequest req) {
 		if (req != null && u != null) {
-			Profile authUser = utils.getAuthUser(req);
-			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
+			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(u, false));
 			Map<String, String> headers = new HashMap<>();
 			headers.put(HttpHeaders.REFERER, req.getHeader(HttpHeaders.REFERER));
 			headers.put(HttpHeaders.USER_AGENT, req.getHeader(HttpHeaders.USER_AGENT));
 			headers.put("User-IP", req.getRemoteAddr());
 			payload.put("user", u);
 			payload.put("headers", headers);
-			utils.triggerHookEvent("user.signin", payload);
+			utils.triggerHookEvent("user.signin", payload, req);
 		}
 	}
 }

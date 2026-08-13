@@ -289,7 +289,7 @@ public class QuestionsController {
 					pc.create(addr);
 				}
 				authUser.setLastseen(System.currentTimeMillis());
-				model.addAttribute("newpost", getNewQuestionPayload(q));
+				model.addAttribute("newpost", getNewQuestionPayload(q, req));
 			} else {
 				model.addAttribute("error", error);
 				model.addAttribute("draftQuestion", q);
@@ -529,10 +529,10 @@ public class QuestionsController {
 		} catch (JsonProcessingException ex) { }
 	}
 
-	private Map<String, Object> getNewQuestionPayload(Question q) {
+	private Map<String, Object> getNewQuestionPayload(Question q, HttpServletRequest req) {
 		Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(q, false));
 		payload.put("author", q == null ? null : q.getAuthor());
-		utils.triggerHookEvent("question.create", payload);
+		utils.triggerHookEvent("question.create", payload, req);
 		return payload;
 	}
 

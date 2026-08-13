@@ -46,6 +46,7 @@ import static com.erudika.scoold.core.Profile.Badge.TEACHER;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Report;
 import com.erudika.scoold.core.Revision;
+import static com.erudika.scoold.utils.DashboardService.ACTIVITY_TYPE;
 import static com.erudika.scoold.utils.HttpUtils.getCookieValue;
 import com.erudika.scoold.utils.avatars.AvatarFormat;
 import com.erudika.scoold.utils.avatars.AvatarRepository;
@@ -124,6 +125,7 @@ public final class ScooldUtils {
 	private static final String ANON_UID = "-";
 	private static final Profile API_USER;
 	private static final Set<String> HOOK_EVENTS;
+	private static final Set<String> NON_AUDIT_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
 
@@ -143,20 +145,72 @@ public final class ScooldUtils {
 		API_USER.setTimestamp(Utils.timestamp());
 		API_USER.setGroups(User.Groups.ADMINS.toString());
 
-		HOOK_EVENTS = new HashSet<>(Arrays.asList(
+		HOOK_EVENTS = Set.of(
 				"question.create",
 				"question.close",
 				"question.view",
 				"question.approve",
+				"question.like", // pro
+				"question.delete",
+				"question.pin",
+				"question.deprecate",
+				"question.merge",
+				"question.update",
+				"question.convert",
 				"answer.create",
 				"answer.accept",
 				"answer.approve",
-				"report.create",
 				"comment.create",
+				"comment.delete",
+				"report.create",
+				"report.close",
+				"report.delete",
+				"report.spam",
+				"report.delete_all",
 				"user.signin",
 				"user.signup",
 				"user.search",
-				"revision.restore"));
+				"user.ban", // pro
+				"user.unban", // pro
+				"user.mention", // pro
+				"user.signout",
+				"user.signin_fail",
+				"user.password_reset",
+				"user.password_change",
+				"user.2fa_toggle",
+				"user.role_change",
+				"user.delete",
+				"user.email_change",
+				"revision.restore",
+				"space.create",
+				"space.delete",
+				"space.rename",
+				"webhook.create",
+				"webhook.delete",
+				"webhook.toggle",
+				"webhook.update",
+				"badge.create",
+				"badge.delete",
+				"badge.toggle",
+				"api.token_create",
+				"api.token_revoke",
+				"data.export",
+				"data.import",
+				"data.admin_delete",
+				"search.reindex",
+				"config.change",
+				"theme.set",
+				"slack.connect", // pro
+				"mattermost.connect", // pro
+				"teams.connect" // pro
+		);
+
+		NON_AUDIT_EVENTS = Set.of(
+				"question.view",
+				"user.search",
+				"question.like",
+				"user.mention"
+		);
 
 		WHITELISTED_MACROS = new HashMap<String, String>();
 		WHITELISTED_MACROS.put("spaces", "#spacespage($spaces)");
@@ -414,7 +468,7 @@ public final class ScooldUtils {
 			}
 			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(authUser, false));
 			payload.put("user", u);
-			triggerHookEvent("user.signup", payload);
+			triggerHookEvent("user.signup", payload, req);
 			logger.info("Created new user '{}' with id={}, groups={}, spaces={}.",
 					u.getName(), authUser.getId(), authUser.getGroups(), authUser.getSpaces());
 		}
@@ -767,7 +821,7 @@ public final class ScooldUtils {
 		emails.addAll(getFavTagsSubscribers(question.getTags()));
 		sendEmailsToSubscribersInSpace(emails, question.getSpace(), subject, compileEmailTemplate(model));
 		if (!isMod(postAuthor)) {
-			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
+			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval, req);
 		}
 
 		if (awaitingApproval) {
@@ -780,7 +834,7 @@ public final class ScooldUtils {
 			rep.setLink(question.getPostLink(false, false));
 			rep.setAuthorName(postAuthor.getName());
 			rep.addProperty(lang.get("spaces.title"), getSpaceName(question.getSpace()));
-			rep.create();
+			Report.create(rep, req);
 		}
 	}
 
@@ -834,7 +888,7 @@ public final class ScooldUtils {
 		}
 
 		if (isReplyNotificationAllowed() && !isMod(replyAuthor)) {
-			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval);
+			createReportCopyOfNotificiation(name, postURL, subject, body, awaitingApproval, req);
 		}
 
 		if (awaitingApproval) {
@@ -847,7 +901,7 @@ public final class ScooldUtils {
 			rep.setLink(parentPost.getPostLink(false, false) + "#post-" + reply.getId());
 			rep.setAuthorName(replyAuthor.getName());
 			rep.addProperty(lang.get("spaces.title"), getSpaceName(reply.getSpace()));
-			rep.create();
+			Report.create(rep, req);
 		}
 	}
 
@@ -858,7 +912,7 @@ public final class ScooldUtils {
 			Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(comment, false));
 			payload.put("parent", parentPost);
 			payload.put("author", commentAuthor);
-			triggerHookEvent("comment.create", payload);
+			triggerHookEvent("comment.create", payload, req);
 			// get the last 5-6 commentators who want to be notified - https://github.com/Erudika/scoold/issues/201
 			Pager p = new Pager(1, Config._TIMESTAMP, false, 5);
 			boolean isCommentatorThePostAuthor = Strings.CS.equals(parentPost.getCreatorid(), comment.getCreatorid());
@@ -891,7 +945,7 @@ public final class ScooldUtils {
 						stream().map(author -> ((User) author).getEmail()).collect(Collectors.toList());
 
 				emailer.sendEmail(emails, subject, compileEmailTemplate(model));
-				createReportCopyOfNotificiation(name, postURL, subject, body, false);
+				createReportCopyOfNotificiation(name, postURL, subject, body, false, req);
 			}
 		}
 	}
@@ -908,7 +962,8 @@ public final class ScooldUtils {
 		}
 	}
 
-	private void createReportCopyOfNotificiation(String author, String url, String subject, String template, boolean awaitingApproval) {
+	private void createReportCopyOfNotificiation(String author, String url, String subject, String template,
+			boolean awaitingApproval, HttpServletRequest req) {
 		if (CONF.notificationsAsReportsEnabled() && !awaitingApproval) {
 			Report rep = new Report();
 			rep.setContent(template);
@@ -916,7 +971,7 @@ public final class ScooldUtils {
 			rep.setSubType(Report.ReportType.OTHER);
 			rep.setLink(url);
 			rep.setAuthorName(author);
-			rep.create();
+			Report.create(rep, req);
 		}
 	}
 
@@ -2354,13 +2409,76 @@ public final class ScooldUtils {
 		return API_USER;
 	}
 
-	public void triggerHookEvent(String eventName, Object payload) {
+	public void triggerHookEvent(String eventName, Object payload, HttpServletRequest req) {
 		if (isWebhooksEnabled() && HOOK_EVENTS.contains(eventName)) {
 			Webhook trigger = new Webhook();
 			trigger.setTriggeredEvent(eventName);
 			trigger.setCustomPayload(payload);
 			pc.createAsync(trigger);
 		}
+		if (CONF.activityTrackingEnabled() && HOOK_EVENTS.contains(eventName) && !NON_AUDIT_EVENTS.contains(eventName)) {
+			try {
+				Profile user = extractUserFromPayload(payload, req);
+				Sysprop activity = new Sysprop();
+				activity.setType(ACTIVITY_TYPE);
+				activity.setCreatorid(user == null ? ANON_UID : user.getId());
+				activity.setName(user == null ? "Anonymous" : user.getName());
+				activity.addProperty("action", eventName);
+				activity.addProperty("link", extractResourceLink(payload));
+				activity.addProperty("resource", extractResourceId(payload));
+				activity.addProperty("result", eventName.contains("fail") ? "failure" : "success");
+				if (req != null) {
+					activity.addProperty("ip", HttpUtils.getClientIp(req));
+				}
+				pc.createAsync(activity);
+			} catch (Exception ex) {
+				logger.debug("Unable to record audit event.", ex);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Profile extractUserFromPayload(Object payload, HttpServletRequest req) {
+		Profile user = req != null ? getAuthUser(req) : null;
+		if (user == null && payload instanceof Map) {
+			try {
+				User u = (User) ((Map<String, Object>) payload).get("user");
+				if (u != null) {
+					return Profile.fromUser(u);
+				}
+			} catch (Exception e) {
+				logger.debug("Unable to find user in webhook payload.");
+			}
+			return null;
+		}
+		return user;
+	}
+
+	private String extractResourceId(Object payload) {
+		if (payload instanceof ParaObject p) {
+			return p.getId();
+		} else if (payload instanceof Map<?, ?> m) {
+			Object id = m.get(Config._ID);
+			if (id != null) {
+				return String.valueOf(id);
+			}
+		}
+		return "";
+	}
+
+	private String extractResourceLink(Object payload) {
+		if (payload instanceof Post post) {
+			return post.getPostLink(false, false);
+		} else if (payload instanceof Comment comment) {
+			return CONF.serverContextPath() + QUESTIONLINK + "/" + comment.getParentid() + "#post-" + comment.getId();
+		} else if (payload instanceof Report report) {
+			return StringUtils.defaultString(report.getLink());
+		} else if (payload instanceof Profile profile) {
+			return CONF.serverContextPath() + PROFILELINK + "/" + profile.getCreatorid();
+		} else if (payload instanceof User user) {
+			return CONF.serverContextPath() + PROFILELINK + "/" + user.getId();
+		}
+		return "";
 	}
 
 	public void setSecurityHeaders(String nonce, HttpServletRequest request, HttpServletResponse response) {

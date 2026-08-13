@@ -130,7 +130,7 @@ public class ReportsController {
 				rep.setLink(CONF.serverUrl() + rep.getLink());
 			}
 			if (canCreateReport) {
-				rep.create();
+				Report.create(rep, req);
 				model.addAttribute("newreport", rep);
 				res.setStatus(200);
 				utils.updateNewReportsCount();
@@ -165,7 +165,7 @@ public class ReportsController {
 				body.put("userAgent", req.getHeader("User-Agent") + "");
 				body.put("userHost", req.getRemoteHost() + "");
 			}
-			rep.create();
+			Report.create(rep, req);
 			res.setStatus(200);
 		} else {
 			res.setStatus(403);
@@ -182,6 +182,7 @@ public class ReportsController {
 				report.setClosed(true);
 				report.setSolution(solution);
 				report.update();
+				utils.triggerHookEvent("report.close", report, req);
 			}
 		}
 		if (!utils.isAjaxRequest(req)) {
@@ -228,6 +229,7 @@ public class ReportsController {
 			Report rep = pc.read(id);
 			if (rep != null && utils.isAdmin(authUser)) {
 				rep.delete();
+				utils.triggerHookEvent("report.delete", rep, req);
 				utils.updateNewReportsCount();
 			}
 		}
@@ -253,6 +255,7 @@ public class ReportsController {
 					}
 				}
 				rep.delete();
+				utils.triggerHookEvent("report.spam", rep, req);
 			}
 		}
 		if (!utils.isAjaxRequest(req)) {
@@ -274,6 +277,7 @@ public class ReportsController {
 					return reports;
 				});
 				pc.deleteAll(toDelete);
+				utils.triggerHookEvent("report.delete_all", null, req);
 				utils.updateNewReportsCount();
 			}
 		}

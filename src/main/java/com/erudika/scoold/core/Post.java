@@ -31,6 +31,7 @@ import com.erudika.scoold.ScooldConfig;
 import com.erudika.scoold.ScooldServer;
 import com.erudika.scoold.utils.ScooldUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -565,7 +566,7 @@ public abstract class Post extends Sysprop {
 		return "";
 	}
 
-	public void restoreRevision(String revisionid) {
+	public void restoreRevision(String revisionid, HttpServletRequest req) {
 		Revision rev = client().read(revisionid);
 		if (rev != null) {
 			//copy rev data to post
@@ -576,7 +577,7 @@ public abstract class Post extends Sysprop {
 			setLastactivity(System.currentTimeMillis());
 			//update post without creating a new revision
 			client().update(this);
-			ScooldUtils.getInstance().triggerHookEvent("revision.restore", rev);
+			ScooldUtils.getInstance().triggerHookEvent("revision.restore", rev, req);
 		}
 	}
 

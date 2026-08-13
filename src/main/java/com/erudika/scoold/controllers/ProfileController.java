@@ -169,6 +169,7 @@ public class ProfileController {
 						}
 					}
 					showUser.update();
+					utils.triggerHookEvent("user.role_change", showUser, req);
 				}
 			}
 		}
@@ -227,7 +228,7 @@ public class ProfileController {
 			}
 			if (Utils.isValidEmail(email) && canChangeEmail(showUser.getUser(), email)) {
 				if (utils.isAdmin(authUser) || CONF.allowUnverifiedEmails()) {
-					changeEmail(showUser.getUser(), showUser, email);
+					changeEmail(showUser.getUser(), showUser, email, req);
 				} else {
 					if (!utils.isEmailDomainApproved(email)) {
 						queryString = "?code=9&error=true";
@@ -309,6 +310,7 @@ public class ProfileController {
 			pc.create(b);
 			showUser.addCustomBadge(b);
 			showUser.update();
+			utils.triggerHookEvent("badge.create", b, req);
 		}
 		return "redirect:" + PROFILELINK + (isMyid(authUser, id) ? "" : "/" + id);
 	}
@@ -320,6 +322,7 @@ public class ProfileController {
 			Badge b = pc.read(new Badge(id).getId());
 			if (b != null) {
 				pc.delete(b);
+				utils.triggerHookEvent("badge.delete", b, req);
 				pc.updateAllPartially((toUpdate, pager) -> {
 					List<Profile> profiles = pc.findTagged(Utils.type(Profile.class), new String[]{id}, pager);
 					for (Profile p : profiles) {
@@ -348,6 +351,7 @@ public class ProfileController {
 				showUser.addCustomBadge(pc.read(b.getId()));
 			}
 			showUser.update();
+			utils.triggerHookEvent("badge.toggle", showUser, req);
 		}
 		return ResponseEntity.ok().build();
 	}
@@ -378,14 +382,14 @@ public class ProfileController {
 				s.addProperty(Config._EMAIL_TOKEN, "");
 				pc.update(s);
 				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
-					return changeEmail(u, authUser, authUser.getPendingEmail());
+					return changeEmail(u, authUser, authUser.getPendingEmail(), req);
 				}
 				return "redirect:" + PROFILELINK + "?code=signin.verify.start&success=true";
 			} else if (s != null && Strings.CS.equals(token2, (String) s.getProperty(Config._EMAIL_TOKEN + "2"))) {
 				s.addProperty(Config._EMAIL_TOKEN + "2", "");
 				pc.update(s);
 				if (StringUtils.isBlank((String) s.getProperty(Config._EMAIL_TOKEN))) {
-					return changeEmail(u, authUser, authUser.getPendingEmail());
+					return changeEmail(u, authUser, authUser.getPendingEmail(), req);
 				}
 				return "redirect:" + PROFILELINK + "?code=signin.verify.start&success=true";
 			} else {
@@ -445,7 +449,7 @@ public class ProfileController {
 		return "redirect:" + HttpUtils.getBackToUrl(req, true);
 	}
 
-	private String changeEmail(User u, Profile showUser, String email) {
+	private String changeEmail(User u, Profile showUser, String email, HttpServletRequest req) {
 		boolean approvedDomain = utils.isEmailDomainApproved(email);
 		if (approvedDomain && canChangeEmail(u, email)) {
 			Sysprop s = pc.read(u.getEmail());
@@ -456,6 +460,7 @@ public class ProfileController {
 				u.setEmail(email);
 				showUser.setPendingEmail("");
 				pc.updateAll(List.of(u, showUser));
+				utils.triggerHookEvent("user.email_change", showUser, req);
 				return "redirect:" + PROFILELINK + "?code=signin.verify.changed&success=true";
 			} else {
 				logger.info("Failed to change email for user {} - email {} has already been taken.", u.getId(), email);

@@ -29,7 +29,6 @@ import com.erudika.scoold.core.Comment;
 import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.core.Question;
 import com.erudika.scoold.core.Reply;
-import static com.erudika.scoold.utils.ScooldRequestInterceptor.logger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -72,7 +71,7 @@ public class DashboardService {
 	private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("MMM d");
 	private static final DateTimeFormatter DATE_FULL = DateTimeFormatter.ofPattern("MMM d, yyyy");
 	private static final int CACHE_MINUTES = 2;
-	private static final String ACTIVITY_TYPE = "scooldactivity";
+	public static final String ACTIVITY_TYPE = "scooldactivity";
 	private static final String TRAFFIC_TYPE = "scooldtraffic";
 	private static final String VISIT_COOKIE = "scooldvisit";
 	private static final long FLUSH_MINUTES = 5;
@@ -111,30 +110,6 @@ public class DashboardService {
 
 	public void clearCache() {
 		cache.clear();
-	}
-
-	/**
-	 * Records various events for the security audit log.
-	 * @param handler method handler
-	 * @param request request
-	 */
-	public void trackActivityIfAllowed(Object handler, HttpServletRequest request) {
-		if (CONF.activityTrackingEnabled() && handler instanceof HandlerMethod && isTrackedMethod(request)) {
-			try {
-				Profile user = utils.getAuthUser(request);
-				Sysprop activity = new Sysprop();
-				activity.setType(ACTIVITY_TYPE);
-				activity.setName(user == null ? "Anonymous" : user.getName());
-				activity.setCreatorid(user == null ? "anonymous" : user.getId());
-				activity.addProperty("method", request.getMethod());
-				activity.addProperty("ip", HttpUtils.getClientIp(request));
-				String query = request.getQueryString();
-				activity.addProperty("path", request.getRequestURI() + (StringUtils.isBlank(query) ? "" : "?" + query));
-				utils.getParaClient().createAsync(activity);
-			} catch (Exception ex) {
-				logger.debug("Unable to record dashboard activity.", ex);
-			}
-		}
 	}
 
 	/**
@@ -184,13 +159,6 @@ public class DashboardService {
 
 	public List<ParaObject> getAuditLog(Pager pager) {
 		return pc.findQuery(ACTIVITY_TYPE, "*", pager);
-	}
-
-	private boolean isTrackedMethod(HttpServletRequest request) {
-		return "POST".equalsIgnoreCase(request.getMethod())
-				|| "PUT".equalsIgnoreCase(request.getMethod())
-				|| "PATCH".equalsIgnoreCase(request.getMethod())
-				|| "DELETE".equalsIgnoreCase(request.getMethod());
 	}
 
 	private Map<String, Object> buildDashboard(String period) {
@@ -634,8 +602,8 @@ public class DashboardService {
 						String key = "users_" + entry.getKey();
 						Map<String, Object> stored = new HashMap<>();
 						Object value = traffic.getProperty(key);
-						if (value instanceof Map<?, ?>) {
-							((Map<?, ?>) value).forEach((userId, count) -> {
+						if (value instanceof Map<?, ?> map) {
+							map.forEach((userId, count) -> {
 								if (userId instanceof String && count instanceof Number) {
 									stored.put((String) userId, ((Number) count).longValue());
 								}

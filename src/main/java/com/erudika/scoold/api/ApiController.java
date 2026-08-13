@@ -471,7 +471,7 @@ public class ApiController {
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
 				payload.put("user", createdUser);
-				utils.triggerHookEvent("user.signup", payload);
+				utils.triggerHookEvent("user.signup", payload, req);
 				logger.info("Created new user through API '{}' with id={}, groups={}, spaces={}.",
 						createdUser.getName(), profile.getId(), profile.getGroups(), profile.getSpaces());
 				Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));

@@ -409,7 +409,7 @@ public class SearchController {
 			payload.put("category", type);
 			payload.put("query", query);
 			payload.put("results", results);
-			utils.triggerHookEvent("user.search", payload);
+			utils.triggerHookEvent("user.search", payload, req);
 		}
 	}
 }
