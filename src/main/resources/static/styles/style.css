@@ -964,7 +964,7 @@ textarea.materialize-textarea:focus:not([readonly]), .chips.focus { border-botto
 	border-radius: 999px;
 	font-size: .85rem;
 	font-weight: 500;
-	color: #5f6b7a;
+	color: #8a99b5;
 	transition: background .15s, color .15s;
 }
 .dashboard-period-btn:hover { background: #e3e8ee; color: #1a2533; }
@@ -984,7 +984,7 @@ textarea.materialize-textarea:focus:not([readonly]), .chips.focus { border-botto
 	transition: box-shadow .15s, transform .15s;
 }
 .dashboard-card:hover { box-shadow: 0 4px 16px rgba(16,24,40,.08); transform: translateY(-1px); }
-.dashboard-card-label { color: #6b7280; font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; }
+.dashboard-card-label { color: #8a99b5; font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; }
 .dashboard-card-value {
 	font-size: 1.85rem;
 	font-weight: 600;
@@ -992,8 +992,8 @@ textarea.materialize-textarea:focus:not([readonly]), .chips.focus { border-botto
 	margin: .35rem 0 .1rem;
 }
 .dashboard-card-change { font-size: .8rem; font-weight: 500; }
-.dashboard-card-change.positive { color: #15803d; }
-.dashboard-card-change.negative { color: #b91c1c; }
+.dashboard-card-change.positive { color: #10a648; }
+.dashboard-card-change.negative { color: #fd5353; }
 .dashboard-card-change::before { opacity: .85; }
 .dashboard-card-change.positive::before { content: '\25B2 '; }
 .dashboard-card-change.negative::before { content: '\25BC '; }
@@ -1010,7 +1010,6 @@ textarea.materialize-textarea:focus:not([readonly]), .chips.focus { border-botto
 .dashboard-panel-title {
 	font-size: 1.05rem;
 	font-weight: 600;
-	color: #1f2937;
 	margin: 0 0 1rem;
 	display: flex;
 	align-items: center;
@@ -1027,7 +1026,7 @@ textarea.materialize-textarea:focus:not([readonly]), .chips.focus { border-botto
 .dashboard-panel-heading { display: flex; justify-content: space-between; align-items: center; }
 .dashboard-chart-wrap { position: relative; height: 220px; }
 .dashboard-table { margin: 0; }
-.dashboard-table th { color: #6b7280; font-weight: 600; font-size: .82rem; }
+.dashboard-table th { color: #8a99b5; font-weight: 600; font-size: .82rem; }
 .dashboard-table td { font-size: .9rem; vertical-align: middle; }
 .dashboard-empty { padding: 1.5rem 0; text-align: center; }
 .dashboard-pagination { padding-top: .75rem; border-top: 1px solid #f3f4f6; }
