@@ -715,7 +715,8 @@ public class AdminController {
 			}
 			logger.info("Configuration property '{}' was modified by user {}.", key, authUser.getCreatorid());
 			utils.triggerHookEvent("config.change", Map.of("key", key), req);
-			CONF.overwriteConfig(modifiedConf).store();
+			CONF.overwriteConfig(modifiedConf);
+			CONF.store();
 			if (CONF.getParaAppSettings().containsKey(keyWithoutPrefix)) {
 				pc.addAppSetting(keyWithoutPrefix, value);
 			}

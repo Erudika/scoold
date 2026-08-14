@@ -1240,7 +1240,8 @@ public class ApiController {
 				System.setProperty(CONF.getConfigRootPrefix() + "." + entry.getKey(), entry.getValue().toString());
 			}
 		}
-		CONF.overwriteConfig(modifiedConf).store();
+		CONF.overwriteConfig(modifiedConf);
+		CONF.store();
 		pc.setAppSettings(CONF.getParaAppSettings());
 		triggerConfigUpdateEvent(CONF.getConfigMap());
 		return config(format, req, res);
@@ -1280,7 +1281,8 @@ public class ApiController {
 			modifiedConf = modifiedConf.withoutPath(kee);
 			System.clearProperty(CONF.getConfigRootPrefix() + "." + key);
 		}
-		CONF.overwriteConfig(modifiedConf).store();
+		CONF.overwriteConfig(modifiedConf);
+		CONF.store();
 		if (CONF.getParaAppSettings().containsKey(key)) {
 			pc.addAppSetting(key, value);
 		}
