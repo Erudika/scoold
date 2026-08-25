@@ -225,7 +225,8 @@ public class FeedbackController {
 			return "redirect:" + HOMEPAGE;
 		}
 		Feedback showPost = pc.read(id);
-		if (showPost == null || !utils.canEdit(showPost, utils.getAuthUser(req))) {
+		Profile authUser = utils.getAuthUser(req);
+		if (showPost == null || !(utils.canDelete(showPost, authUser) || utils.isMod(authUser))) {
 			model.addAttribute("post", showPost);
 			return "redirect:" + req.getRequestURI();
 		}

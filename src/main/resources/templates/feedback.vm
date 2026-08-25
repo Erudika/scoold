@@ -141,7 +141,7 @@
 		<div class="chips-container">
 			#set($sortarr = {'votes': "", 'newest': "", 'updated': ""} )
 			#setsortbyselection($sortarr 'newest')
-			<a href="$feedbacklink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon() $!lang.get("newest")</a>
+			<a href="$feedbacklink#sortorderparam('?')" class="chip $sortarr.newest">#sortordericon('') $!lang.get("newest")</a>
 			<a href="$feedbacklink?sortby=votes#sortorderparam('&' 'votes')" class="chip $sortarr.votes">#sortordericon("votes") $!lang.get("votes")</a>
 			<a href="$feedbacklink?sortby=updated#sortorderparam('&' 'updated')" class="chip $sortarr.updated">#sortordericon("updated") $!lang.get("posts.updated")</a>
 		</div>
