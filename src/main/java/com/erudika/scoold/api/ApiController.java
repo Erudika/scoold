@@ -70,7 +70,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -465,17 +464,17 @@ public class ApiController {
 				Profile profile = Profile.fromUser(createdUser);
 				profile.setPicture(newUser.getPicture());
 				profile.getSpaces().addAll(readSpaces(((List<String>) entity.getOrDefault("spaces",
-						Collections.emptyList())).toArray(new String[0])));
+						Collections.emptyList())).toArray(String[]::new)));
 				res.setStatus(HttpStatus.CREATED.value());
 				pc.create(profile);
 
 				Map<String, Object> payload = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
-				payload.put("user", createdUser);
+				embedUserObjectData(payload, createdUser, req);
 				utils.triggerHookEvent("user.signup", payload, req);
 				logger.info("Created new user through API '{}' with id={}, groups={}, spaces={}.",
 						createdUser.getName(), profile.getId(), profile.getGroups(), profile.getSpaces());
 				Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
-				result.put("user", createdUser);
+				embedUserObjectData(result, createdUser, req);
 				return result;
 			}
 		}
@@ -500,7 +499,7 @@ public class ApiController {
 			}
 			for (Profile profile : profiles) {
 				Map<String, Object> u = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(profile, false));
-				u.put("user", usersMap.get(profile.getCreatorid()));
+				embedUserObjectData(u, usersMap.get(profile.getCreatorid()), req);
 				results.add(u);
 			}
 		}
@@ -509,16 +508,15 @@ public class ApiController {
 
 	@GetMapping("/users/{id}")
 	public Map<String, Object> getUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		List<?> usrProfile = pc.readAll(Arrays.asList(StringUtils.substringBefore(id, Para.getConfig().separator()), Profile.id(id)));
-		Iterator<?> it = usrProfile.iterator();
-		User u = it.hasNext() ? (User) it.next() : null;
-		Profile p = it.hasNext() ? (Profile) it.next() : null;
+		Model model = new ExtendedModelMap();
+		profileController.get(id, req, model);
+		Profile p = (Profile) model.getAttribute("showUser");
 		if (p == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
 		}
 		Map<String, Object> result = new LinkedHashMap<>(ParaObjectUtils.getAnnotatedFields(p, false));
-		result.put("user", u);
+		embedUserObjectData(result, pc.read(Utils.type(User.class), p.getCreatorid()), req);
 		return result;
 	}
 
@@ -549,7 +547,7 @@ public class ApiController {
 		boolean update = false;
 		if (entity.containsKey("spaces")) {
 			profile.setSpaces(new HashSet<>(readSpaces(((List<String>) entity.getOrDefault("spaces",
-					Collections.emptyList())).toArray(new String[0]))));
+					Collections.emptyList())).toArray(String[]::new))));
 			update = true;
 		}
 		if (entity.containsKey("replyEmailsEnabled")) {
@@ -591,8 +589,7 @@ public class ApiController {
 	@DeleteMapping("/users/{id}")
 	public void deleteUser(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
 		Profile profile = pc.read(Profile.id(id));
-		Profile authUser = utils.getAuthUser(req);
-		if (profile == null || !utils.isAdmin(authUser) || authUser.getId().equals(profile.getId())) {
+		if (profile == null || !profileController.canEditProfile(utils.getAuthUser(req), id)) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return;
 		}
@@ -1418,10 +1415,32 @@ public class ApiController {
 		}
 	}
 
-	private void badReq(String error) {
-		if (!StringUtils.isBlank(error)) {
-			throw new BadRequestException(error);
+	private void embedUserObjectData(Map<String, Object> payload, User user, HttpServletRequest req) {
+		if (payload == null) {
+			return;
+		}
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser) || user == null) {
+			payload.put("user", user);
+		} else {
+			Map<String, Object> userProps = new HashMap<>();
+			userProps.put(Config._ID, user.getId());
+			userProps.put(Config._NAME, user.getName());
+			userProps.put(Config._TYPE, user.getType());
+			userProps.put(Config._APPID, user.getAppid());
+			userProps.put(Config._GROUPS, user.getGroups());
+			userProps.put(Config._UPDATED, user.getUpdated());
+			userProps.put(Config._TIMESTAMP, user.getTimestamp());
+			userProps.put("picture", user.getPicture());
+			userProps.put("active", user.getActive());
+			payload.put("user", userProps);
 		}
 	}
 
+	private void badReq(String error) {
+		if (StringUtils.isBlank(error)) {
+			error = "Unknown error";
+		}
+		throw new BadRequestException(error);
+	}
 }

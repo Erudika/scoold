@@ -271,14 +271,12 @@
 		</td>
 		<td colspan="7">
 			#set($prefix = "eyJh*******.*******************.*********")
-			#if($value && $value.length() > 10)
-				<code class="api-key #if($keyExpired)red-text#end">$prefix$!value.substring($value.length() - 6)</code>
-			#else
-				<code class="api-key">$prefix</code>
-			#end
+			<code class="api-key #if($keyExpired)red-text#end">${prefix}#if($value)$!value.substring($value.length() - 6)#end</code>
 		</td>
 		<td colspan="2" class="right-align">
-			<a href="#" data-value="$value" class="mhm permalink api-key-copy">$!lang.get('copy')</a>
+			#if(!$value || $value.length() > 10)
+			<a href="#" data-value="$!value" class="mhm permalink api-key-copy">$!lang.get('copy')</a>
+			#end
 			<a href="$formActionBase/revoke-api-key?jti=$!key" class="api-key-revoke red-text">$!lang.get('revoke')</a>
 		</td>
 	</tr>

@@ -535,7 +535,7 @@ public class ProfileController {
 		return authUser != null && (StringUtils.isBlank(id) || authUser.getId().equals(Profile.id(id)));
 	}
 
-	private boolean canEditProfile(Profile authUser, String id) {
+	public boolean canEditProfile(Profile authUser, String id) {
 		return isMyid(authUser, id) || utils.isAdmin(authUser);
 	}
 

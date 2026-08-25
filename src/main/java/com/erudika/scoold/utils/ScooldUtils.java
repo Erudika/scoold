@@ -2144,7 +2144,7 @@ public final class ScooldUtils {
 			if (user == null || !user.getUser().getActive()) {
 				throw new UnauthorizedException("User is " + ((user == null) ? "null." : "banned."));
 			}
-			if (!Strings.CS.equals(jwt, user.getPersonalApiToken())) {
+			if (!Strings.CS.equals(StringUtils.substring(jwt, -6), user.getPersonalApiToken())) {
 				throw new UnauthorizedException("Token has been revoked.");
 			}
 			return user;
@@ -2188,7 +2188,7 @@ public final class ScooldUtils {
 		} catch (JOSEException e) {
 			logger.warn(null, e);
 		} catch (ParseException ex) {
-			logger.warn(null, ex);
+			logger.warn("Got an invalid JWT/API token from client - {}", ex.getMessage());
 		}
 		return null;
 	}
@@ -2344,7 +2344,7 @@ public final class ScooldUtils {
 				String jwtString = jwt.serialize();
 				Date exp = jwt.getJWTClaimsSet().getExpirationTime();
 				if (isPersonal) {
-					authUser.setPersonalApiToken(jwtString);
+					authUser.setPersonalApiToken(StringUtils.substring(jwtString, -6));
 					authUser.update();
 				} else {
 					registerApiKey(jti, jwtString);
@@ -2375,7 +2375,9 @@ public final class ScooldUtils {
 				}
 			}
 		} catch (Exception ex) {
-			logger.error("Failed to parse API key " + jti + " - key doesn't seem to be in JWT format. {}", ex.getMessage());
+			if (jwt.length() > 10) {
+				logger.error("Failed to parse API key " + jti + " - key doesn't seem to be in JWT format. {}", ex.getMessage());
+			}
 		}
 		return 0L;
 	}
