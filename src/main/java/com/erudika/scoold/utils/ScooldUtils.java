@@ -2329,22 +2329,23 @@ public final class ScooldUtils {
 			throws ParseException {
 		if (isAdmin(authUser) || (authUser != null && isPersonal && CONF.apiUserAccessEnabled())) {
 			String jti = UUID.randomUUID().toString();
-			long validity = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
+			long validitySec = TimeUnit.HOURS.toSeconds(Math.abs(validityHours));
 			long personalTokenValidity = Math.abs(CONF.personalTokenExpiresAfterSec());
 			Map<String, Object> claims = new HashMap<>();
 			if (isPersonal) {
 				jti = authUser.getCreatorid();
 				claims.put("sub", jti);
 				claims.put(Config._GROUPS, authUser.getGroups());
-				validity = Math.max(personalTokenValidity, validity); // personal tokens have max lifetime of 1 week
+				validitySec = Math.max(personalTokenValidity, validitySec); // personal tokens have max lifetime of 1 week
 			}
 			claims.put("jti", jti);
-			SignedJWT jwt = generateJWToken(claims, validity);
+			SignedJWT jwt = generateJWToken(claims, validitySec);
 			if (jwt != null) {
 				String jwtString = jwt.serialize();
 				Date exp = jwt.getJWTClaimsSet().getExpirationTime();
 				if (isPersonal) {
 					authUser.setPersonalApiToken(StringUtils.substring(jwtString, -6));
+					authUser.setPersonalApiTokenExpires(Utils.timestamp() + TimeUnit.SECONDS.toMillis(validitySec));
 					authUser.update();
 				} else {
 					registerApiKey(jti, jwtString);

@@ -81,6 +81,7 @@ public class Profile extends Sysprop {
 	@Stored private Boolean editorRoleEnabled;
 	@Stored private String preferredSpace;
 	@Stored private String personalApiToken;
+	@Stored private Long personalApiTokenExpires;
 	@Stored private String newbadges;
 
 	private transient String currentSpace;
@@ -407,6 +408,17 @@ public class Profile extends Sysprop {
 
 	public void setPersonalApiToken(String personalApiToken) {
 		this.personalApiToken = personalApiToken;
+	}
+
+	public Long getPersonalApiTokenExpires() {
+		if (personalApiTokenExpires == null) {
+			personalApiTokenExpires = Utils.timestamp();
+		}
+		return personalApiTokenExpires;
+	}
+
+	public void setPersonalApiTokenExpires(Long personalApiTokenExpires) {
+		this.personalApiTokenExpires = personalApiTokenExpires;
 	}
 
 	public boolean isModInCurrentSpace() {

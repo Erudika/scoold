@@ -94,7 +94,7 @@ public class SettingsController {
 		if (CONF.apiUserAccessEnabled()) {
 			String token = authUser.getPersonalApiToken();
 			model.addAttribute("apiKeys", StringUtils.isBlank(token) ? Map.of() : Map.of(authUser.getCreatorid(), token));
-			model.addAttribute("apiKeysExpirations", Map.of(authUser.getCreatorid(), utils.getApiKeyExpiration(token)));
+			model.addAttribute("apiKeysExpirations", Map.of(authUser.getCreatorid(), authUser.getPersonalApiTokenExpires()));
 		}
 		return "base";
 	}
