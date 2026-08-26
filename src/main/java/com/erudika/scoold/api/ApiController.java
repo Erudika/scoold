@@ -545,7 +545,8 @@ public class ApiController {
 			return null;
 		}
 		boolean update = false;
-		if (entity.containsKey("spaces")) {
+		Profile authUser = utils.getAuthUser(req);
+		if (entity.containsKey("spaces") && utils.isAdmin(authUser)) {
 			profile.setSpaces(new HashSet<>(readSpaces(((List<String>) entity.getOrDefault("spaces",
 					Collections.emptyList())).toArray(String[]::new))));
 			update = true;
