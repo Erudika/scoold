@@ -982,7 +982,8 @@ public class ApiController {
 
 	@PostMapping("/webhooks")
 	public Webhook createWebhook(HttpServletRequest req, HttpServletResponse res) {
-		if (!utils.isWebhooksEnabled()) {
+		Profile authUser = utils.getAuthUser(req);
+		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
 			return null;
 		}
