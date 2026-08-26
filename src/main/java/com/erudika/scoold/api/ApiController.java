@@ -611,7 +611,8 @@ public class ApiController {
 			return null;
 		}
 		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
-		return profileController.getQuestions(utils.getAuthUser(req), p, true, pager);
+		boolean isMine = profileController.canEditProfile(utils.getAuthUser(req), id);
+		return profileController.getQuestions(utils.getAuthUser(req), p, isMine, pager);
 	}
 
 	@GetMapping("/users/{id}/replies")
@@ -628,7 +629,8 @@ public class ApiController {
 			return null;
 		}
 		Pager pager = utils.pagerFromParams(page, sortby, limit, desc, lastKey);
-		return profileController.getAnswers(utils.getAuthUser(req), p, true, pager);
+		boolean isMine = profileController.canEditProfile(utils.getAuthUser(req), id);
+		return profileController.getAnswers(utils.getAuthUser(req), p, isMine, pager);
 	}
 
 	@GetMapping("/users/{id}/favorites")
