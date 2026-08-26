@@ -948,13 +948,23 @@ public class ApiController {
 			@RequestParam(required = false) String sortby,
 			@RequestParam(required = false) String lastKey,
 			HttpServletRequest req, HttpServletResponse res) {
-		Pager pager = utils.pagerFromParams(page, StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby, limit, desc, lastKey);
-		return pc.findQuery("scooldspace", "*", pager);
+		Profile authUser = utils.getAuthUser(req);
+		if (utils.isAdmin(authUser)) {
+			Pager pager = utils.pagerFromParams(page, StringUtils.isBlank(sortby) ? Config._TIMESTAMP : sortby, limit, desc, lastKey);
+			return pc.findQuery("scooldspace", "*", pager);
+		} else if (authUser != null) {
+			return authUser.getAllSpaces().stream().map(s -> utils.buildSpaceObject(s)).toList();
+		}
+		return Collections.emptyList();
 	}
 
 	@GetMapping("/spaces/{id}")
 	public Sysprop getSpace(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Sysprop space = pc.read(utils.getSpaceId(id));
+		Profile authUser = utils.getAuthUser(req);
+		Sysprop space = null;
+		if (utils.isAdmin(authUser) || utils.canAccessSpace(authUser, id)) {
+			space = pc.read(utils.getSpaceId(id));
+		}
 		if (space == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
