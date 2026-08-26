@@ -1395,7 +1395,7 @@ public final class ScooldUtils {
 		return false;
 	}
 
-	public List<Post> getSimilarPosts(Post showPost, Pager pager) {
+	public List<Post> getSimilarPosts(Post showPost, Profile authUser, Pager pager) {
 		List<Post> similarquestions = Collections.emptyList();
 		if (!showPost.isReply()) {
 			String likeTxt = Utils.stripAndTrim((showPost.getTitle() + " " + showPost.getBody()));
@@ -1409,7 +1409,7 @@ public final class ScooldUtils {
 						new String[]{"properties.title", "properties.body", "properties.tags"}, likeTxt, pager);
 			}
 		}
-		return similarquestions;
+		return similarquestions.stream().filter(q -> isMod(authUser) || canAccessSpace(authUser, q.getSpace())).toList();
 	}
 
 	public String getFirstLinkInPost(String postBody) {

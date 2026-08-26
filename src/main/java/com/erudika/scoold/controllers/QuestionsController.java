@@ -160,7 +160,7 @@ public class QuestionsController {
 		q.setTitle(like);
 		q.setBody("");
 		q.setTags(Arrays.asList(""));
-		for (Post similarPost : utils.getSimilarPosts(q, pager)) {
+		for (Post similarPost : utils.getSimilarPosts(q, authUser, pager)) {
 			if (utils.isMod(authUser) || utils.canAccessSpace(authUser, similarPost.getSpace())) {
 				boolean hasAnswer = !StringUtils.isBlank(similarPost.getAnswerid());
 				sb.append("<span class=\"lightborder phm").append(hasAnswer ? " light-green white-text" : "").append("\">");

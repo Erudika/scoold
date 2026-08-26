@@ -139,7 +139,7 @@ public class QuestionController {
 		model.addAttribute("itemcount", itemcount);
 		model.addAttribute("showPost", allPosts.removeFirst());
 		model.addAttribute("answerslist", allPosts);
-		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, new Pager(10)));
+		model.addAttribute("similarquestions", utils.getSimilarPosts(showPost, authUser, new Pager(10)));
 		model.addAttribute("maxCommentLength", CONF.maxCommentLength());
 		model.addAttribute("includeLocatorScripts", utils.isNearMeFeatureEnabled());
 		model.addAttribute("includeEmojiPicker", true);
