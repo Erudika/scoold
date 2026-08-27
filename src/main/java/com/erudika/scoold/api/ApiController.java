@@ -1448,6 +1448,10 @@ public class ApiController {
 			userProps.put("picture", user.getPicture());
 			userProps.put("active", user.getActive());
 			payload.put("user", userProps);
+			// prevent spaces leak when requesting admin/mod profiles
+			Collection<String> spaces = (Collection<String>) payload.getOrDefault("spaces", new HashSet<String>());
+			spaces.retainAll(authUser.getSpaces());
+			payload.put("spaces", spaces);
 		}
 	}
 
