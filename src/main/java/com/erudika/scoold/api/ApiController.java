@@ -1061,6 +1061,7 @@ public class ApiController {
 		Profile authUser = utils.getAuthUser(req);
 		if (!utils.isWebhooksEnabled() || !utils.isAdmin(authUser)) {
 			res.setStatus(HttpStatus.FORBIDDEN.value());
+			return;
 		}
 		Webhook webhook = pc.read(id);
 		if (webhook == null) {
