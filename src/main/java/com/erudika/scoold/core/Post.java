@@ -542,6 +542,16 @@ public abstract class Post extends Sysprop {
 		return this instanceof Feedback;
 	}
 
+	@JsonIgnore
+	public boolean isUnapprovedQuestion() {
+		return this instanceof UnapprovedQuestion;
+	}
+
+	@JsonIgnore
+	public boolean isUnapprovedReply() {
+		return this instanceof UnapprovedReply;
+	}
+
 	public String getPostLinkForRedirect() {
 		return getPostLink(false, false, false);
 	}

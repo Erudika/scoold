@@ -57,6 +57,10 @@ public class RevisionsController {
 		if (!utils.canAccessSpace(authUser, showPost.getSpace())) {
 			return "redirect:" + QUESTIONSLINK;
 		}
+		if ((showPost.isUnapprovedQuestion() || showPost.isUnapprovedReply()) &&
+				!(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+			return "redirect:" + QUESTIONSLINK;
+		}
 		Pager itemcount = utils.getPager("page", req);
 		List<Revision> revisionslist = showPost.getRevisions(itemcount);
 		if (revisionslist.isEmpty()) {
