@@ -75,6 +75,10 @@ public class CommentController {
 		if (parentPost != null && !utils.canAccessSpace(authUser, parentPost.getSpace())) {
 			return "redirect:" + HOMEPAGE;
 		}
+		if (parentPost == null || ((parentPost.isUnapprovedQuestion() || parentPost.isUnapprovedReply()) &&
+				!(utils.isMine(parentPost, authUser) || utils.isMod(authUser)))) {
+			return "redirect:" + HOMEPAGE;
+		}
 		model.addAttribute("path", "comment.vm");
 		model.addAttribute("title", utils.getLang(req).get("comment.title"));
 		model.addAttribute("showComment", showComment);

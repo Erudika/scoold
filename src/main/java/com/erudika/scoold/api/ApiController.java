@@ -833,7 +833,9 @@ public class ApiController {
 
 	@GetMapping("/comments/{id}")
 	public Comment getComment(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
-		Comment comment = pc.read(id);
+		Model model = new ExtendedModelMap();
+		commentController.get(id, req, model);
+		Comment comment = (Comment) model.getAttribute("showComment");
 		if (comment == null) {
 			res.setStatus(HttpStatus.NOT_FOUND.value());
 			return null;
