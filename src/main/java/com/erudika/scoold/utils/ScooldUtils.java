@@ -1337,6 +1337,13 @@ public final class ScooldUtils {
 		if (showPost != null && req.getParameter("commentid") != null) {
 			Comment c = pc.read(req.getParameter("commentid"));
 			if (c != null) {
+				Post parentPost = pc.read(c.getParentid());
+				Profile authUser = getAuthUser(req);
+				if (parentPost == null || !canAccessSpace(authUser, parentPost.getSpace())
+						|| ((parentPost.isUnapprovedQuestion() || parentPost.isUnapprovedReply())
+						&& !(isMine(parentPost, authUser) || isMod(authUser)))) {
+					return;
+				}
 				if (showPost.getComments() == null) {
 					showPost.setComments(List.of(c));
 					showPost.getItemcount().setCount(1);
