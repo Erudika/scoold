@@ -285,9 +285,9 @@ public class SettingsController {
 	private void setFavTags(Profile authUser, String tags) {
 		if (!StringUtils.isBlank(tags)) {
 			Set<String> ts = new LinkedHashSet<String>();
-			for (String tag : tags.split(",")) {
+			for (String tag : tags.split("\\s*,\\s*")) {
 				if (!StringUtils.isBlank(tag) && ts.size() <= CONF.maxFavoriteTags()) {
-					ts.add(tag);
+					ts.add(tag.trim());
 				}
 			}
 			authUser.setFavtags(new LinkedList<String>(ts));

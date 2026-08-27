@@ -727,7 +727,7 @@ public class Profile extends Sysprop {
 		}
 
 		for (String badge : badges.split(",")) {
-			Integer val = badgeMap.get(badge);
+			Integer val = badgeMap.get(badge.trim());
 			int count = (val == null) ? 0 : val.intValue();
 			badgeMap.put(badge, ++count);
 		}

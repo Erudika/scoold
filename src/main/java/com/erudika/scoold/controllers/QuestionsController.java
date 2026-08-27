@@ -245,7 +245,7 @@ public class QuestionsController {
 				draft.setBody(body);
 			}
 			if (!StringUtils.isBlank(tags)) {
-				draft.setTags(Arrays.asList(tags.split(",")));
+				draft.setTags(Arrays.asList(tags.split("\\s*,\\s*")));
 			}
 		}
 		model.addAttribute("draftQuestion", draft);
