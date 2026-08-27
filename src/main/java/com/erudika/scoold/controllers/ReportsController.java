@@ -209,8 +209,9 @@ public class ReportsController {
 
 	@PostMapping("/{id}/approve")
 	public String approveItem(@PathVariable String id, HttpServletRequest req, HttpServletResponse res) {
+		Profile authUser = utils.getAuthUser(req);
 		Report report = pc.read(id);
-		if (report != null) {
+		if (report != null && utils.isMod(authUser)) {
 			questionController.modApprove(report.getParentid(), req);
 			report.setClosed(true);
 			report.setDescription(report.getDescription() + " ");
