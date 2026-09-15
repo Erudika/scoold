@@ -424,7 +424,7 @@ $(function () {
 
 	$(document).on("click", ".api-key-revoke", function () {
 		var elem = $(this);
-		elem.closest("form").find("button[disabled]").removeAttr("disabled");
+		elem.closest("form").find("button[disabled]").removeAttr("disabled").prev("div").removeClass("hide");
 		return areYouSure(function () {
 			elem.closest(".api-key-row").fadeOut("fast", function () {
 				elem.remove();
