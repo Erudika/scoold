@@ -700,6 +700,16 @@ small.badgebox, .custom-badge.small {
 	font-weight: 500;
 }
 
+span.qstatsbox-vote {
+	display: block;
+	margin-bottom: 5px;
+	text-align: center;
+}
+.qstatsbox-vote .votecount {
+	font-size: 0.9em;
+	font-weight: 400;
+}
+
 table.striped>tbody>tr:nth-child(odd) {
     background-color: rgba(242,242,242,0.5);
 }

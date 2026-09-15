@@ -3649,11 +3649,22 @@ public class ScooldConfig extends Config {
 			identifier = "activity_tracking_enabled",
 			value = "true",
 			type = Boolean.class,
-			category = "Dashboard",
+			category = "Miscellaneous",
 			description = "Enable/disable request activity tracking for statistics shown on the admin dashboard. "
 					+ "Also includes tracking security events for the audit log.")
 	public boolean activityTrackingEnabled() {
 		return getConfigBoolean("activity_tracking_enabled", true);
+	}
+
+	@Documented(position = 3180,
+			identifier = "voting_on_homepage_enabled",
+			value = "false",
+			type = Boolean.class,
+			category = "Miscellaneous",
+			description = "Enable/disable voting buttons on the homepage where all questions are listed. "
+					+ "Also includes the fav (like) button, if available.")
+	public boolean votingOnHomepageEnabled() {
+		return getConfigBoolean("voting_on_homepage_enabled", false);
 	}
 
 	/* **********************************************************************************************************/

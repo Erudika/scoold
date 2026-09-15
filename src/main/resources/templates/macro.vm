@@ -704,7 +704,11 @@
 			<div class="col s12">
 				<div class="pvm">
 					<div>
-						<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
+						#if($scooldUtils.config.votingOnHomepageEnabled())
+							#votebox($showpost "mrs lightborder $!{bgclass1}")
+						#else
+							<span class="phs kbd lightborder tooltipped $!{bgclass1}" data-tooltip="$!lang.get('votes')">$!utils.abbreviateInt($!votes, 0)</span>
+						#end
 						<span class="phs kbd lightborder tooltipped $!{bgclass}" data-tooltip="$!lang.get('answers.title')">$utils.abbreviateInt($!answercount, 0)</span>
 						<span class="phs kbd lightborder tooltipped mrm" data-tooltip="$!lang.get('posts.views')">$utils.abbreviateInt($!viewcount, 0)</span>
 						#if($showpost.location && !$showpost.location.isEmpty() && $scooldUtils.isNearMeFeatureEnabled())
@@ -743,7 +747,11 @@
 
 			<div class="col m2 l1 hide-on-med-and-down">
 				<div class="qstatsbox">
-					<div class="lightborder $!{bgclass1}"><strong>$!utils.abbreviateInt($!votes, 0) <small>$!lang.get('votes')</small></strong></div>
+					#if($scooldUtils.config.votingOnHomepageEnabled())
+						#votebox($showpost "qstatsbox-vote lightborder $!{bgclass1}")
+					#else
+						<div class="lightborder $!{bgclass1}"><strong>$!utils.abbreviateInt($!votes, 0) <small>$!lang.get('votes')</small></strong></div>
+					#end
 					<div class="mvs lightborder $!{bgclass}"><strong>$utils.abbreviateInt($!answercount, 0) <small>$!lang.get('answers.title')</small></strong></div>
 					<div class="mvs lightborder"><strong>$utils.abbreviateInt($!viewcount, 0)
 						<small class="hide-on-med-and-down">$!lang.get('posts.views')</small></strong>
@@ -1122,25 +1130,26 @@
 			#end
 			#if($scooldUtils.config.downvotesEnabled())#set($hideDownvoteClass = "")#else#set($hideDownvoteClass = "hide")#end
 			#if($votable.votes && $votable.votes != 0)#set($vvotes = $votable.votes)#else#set($vvotes = 0)#end
+			#set($votesAbbrev = $utils.abbreviateInt($!vvotes, 0))
 			#if (!$authenticated)
 				<a href="${signinlink}?returnto=$!{returnto}">
 					<span class="upvote grey-text" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				</a>
-				<span class="votecount">$!vvotes</span>
+				<span class="votecount" title="$vvotes">$!votesAbbrev</span>
 				<a href="${signinlink}?returnto=$!{returnto}" class="${hideDownvoteClass}">
 					<span class="downvote grey-text" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 				</a>
 			#elseif($authenticated && $votable.creatorid == $authUser.id)
 				<span class="upvote grey-text" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
-				<span class="votecount">$!vvotes</span>
+				<span class="votecount" title="$vvotes">$!votesAbbrev</span>
 				<span class="downvote grey-text ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 			#else
 				<a href="$voteuplink/$!votable.type/$!votable.id" class="upvote votelink" title="$!lang.get('voteup.tooltip')">
 					<span class="upvote ${upvoteCastClass}" title="$!lang.get('voteup.tooltip')">#ico("chevron-up" "")</span>
 				</a>
-				<span class="votecount">$!vvotes</span>
+				<span class="votecount" title="$vvotes">$!votesAbbrev</span>
 				<a href="$votedownlink/$!votable.type/$!votable.id" class="downvote votelink ${hideDownvoteClass}" title="$!lang.get('votedown.tooltip')">
-					<span class="downvote mrm ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
+					<span class="downvote ${downvoteCastClass}" title="$!lang.get('votedown.tooltip')">#ico("chevron-down" "")</span>
 				</a>
 			#end
 		</span>
