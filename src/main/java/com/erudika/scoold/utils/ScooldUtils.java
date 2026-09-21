@@ -1339,7 +1339,7 @@ public final class ScooldUtils {
 			post.getItemcount().setCount(clSize);
 		}
 		if (!forUpdate.isEmpty()) {
-			pc.updateAll(allPosts);
+			pc.updateAll(allPosts.stream().distinct().toList());
 		}
 	}
 

@@ -539,21 +539,27 @@ public class QuestionController {
 		if (showPost == null || showPost.isReply()) {
 			return Collections.emptyList();
 		}
-		List<Reply> answers = new ArrayList<>();
+		Map<String, Reply> answers = new LinkedHashMap<>();
 		Pager p = new Pager(itemcount.getPage(), itemcount.getLimit());
 		if (utils.postsNeedApproval(req) && (utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
-			answers.addAll(showPost.getUnapprovedAnswers(p));
+			for (Reply answer : showPost.getUnapprovedAnswers(p)) {
+				answers.putIfAbsent(answer.getId(), answer);
+			}
 		}
-		answers.addAll(showPost.getAnswers(itemcount));
+		for (Reply answer : showPost.getAnswers(itemcount)) {
+			answers.putIfAbsent(answer.getId(), answer);
+		}
 		itemcount.setCount(itemcount.getCount() + p.getCount());
 		if (utils.postsNeedApproval(req) && authUser != null && !utils.isMod(authUser)) {
 			List<UnapprovedReply> uanswerslist = pc.findQuery(Utils.type(UnapprovedReply.class),
 					Config._PARENTID + ":\"" + showPost.getId() + "\" AND " +
-							Config._CREATORID + ":\"" + authUser.getId() + "\"");
+					Config._CREATORID + ":\"" + authUser.getId() + "\"");
 			itemcount.setCount(itemcount.getCount() + uanswerslist.size());
-			answers.addAll(uanswerslist);
+			for (Reply answer : uanswerslist) {
+				answers.putIfAbsent(answer.getId(), answer);
+			}
 		}
-		return answers;
+		return new ArrayList<>(answers.values());
 	}
 
 	private void updatePost(Post showPost, Profile authUser, HttpServletRequest req) {
