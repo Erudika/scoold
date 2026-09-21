@@ -281,6 +281,10 @@ public final class ScooldUtils {
 		return Boolean.parseBoolean(System.getProperty("scoold.connected", "false"));
 	}
 
+	static void setConnectedToPara(boolean connected) {
+		System.setProperty("scoold.connected", String.valueOf(connected));
+	}
+
 	public static boolean isSetupRequired() {
 		return Boolean.parseBoolean(System.getProperty("scoold.setuprequired", "false"));
 	}
@@ -344,17 +348,21 @@ public final class ScooldUtils {
 
 	private static void retryConnection(Callable<Boolean> callable, int retryCount) {
 		try {
-			if (!callable.call() && !isConnectedToPara()) {
-				System.setProperty("scoold.connected", "false");
+			if (!callable.call()) {
+				setConnectedToPara(false);
 				throw new Exception();
 			} else if (retryCount > 0) {
 				logger.info("Connected to Para backend.");
 			}
-			System.setProperty("scoold.connected", "true");
+			setConnectedToPara(true);
 		} catch (Exception e) {
 			int maxRetries = CONF.paraConnectionRetryAttempts();
 			int retryInterval = CONF.paraConnectionRetryIntervalSec();
 			int count = ++retryCount;
+			if (!Para.getConfig().executorServiceEnabled()) {
+				logger.error("No connection to Para backend. Retries are disabled when the Para executor service is disabled.");
+				return;
+			}
 			logger.error("No connection to Para backend. Retrying connection in {}s (attempt {} of {})...",
 					retryInterval, count, maxRetries);
 			if (maxRetries < 0 || retryCount < maxRetries) {
@@ -362,8 +370,9 @@ public final class ScooldUtils {
 					try {
 						Thread.sleep(retryInterval * 1000L);
 					} catch (InterruptedException ex) {
-						logger.error(null, ex);
+						logger.warn("Interrupted while waiting to retry the Para connection.");
 						Thread.currentThread().interrupt();
+						return;
 					}
 					retryConnection(callable, count);
 				});
@@ -384,6 +393,7 @@ public final class ScooldUtils {
 		} else if (jwt != null && !Strings.CS.endsWithAny(req.getServletPath(),
 				".js", ".css", ".svg", ".png", ".jpg", ".ico", ".gif", ".woff2", ".woff", "people/avatar", "/two-factor")) {
 			User u = pc.me(jwt);
+			setConnectedToPara(true);
 			if (u != null && isEmailDomainApproved(u.getEmail())) {
 				authUser = getOrCreateProfile(u, req);
 				authUser.setUser(u);

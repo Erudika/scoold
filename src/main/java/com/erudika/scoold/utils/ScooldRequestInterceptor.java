@@ -64,6 +64,7 @@ public class ScooldRequestInterceptor implements HandlerInterceptor {
 			request.setAttribute(AUTH_USER_ATTRIBUTE, utils.checkAuth(request, response));
 		} catch (Exception e) {
 			if (e.getCause() instanceof ConnectException || utils.looksLikeNotConnectedToPara(e.getMessage())) {
+				ScooldUtils.setConnectedToPara(false);
 				//response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()); // breaks site
 				logger.error("No connection to Para backend.", e.getMessage());
 			} else if (e instanceof UnauthorizedException && isApiRequest) {
