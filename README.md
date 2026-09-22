@@ -133,8 +133,11 @@ sent to Para to the location `POST /v1/questions`. Here are a few key points abo
 
 Head over to the [documentation](https://scoold.com/documentation/intro/architecture/) for detailed explanation of the Scoold architecture.
 
-## Scoold Pro cloud hosting
+## Cloud hosting
 
+[![Deploy on Scoold Cloud](https://scoold.com/scoold_cloud_btn.svg)](https://cloud.scoold.com/signin)
+
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostg.xyz/aff_c?offer_id=815&aff_id=243576&url_id=6843)
 
 ## Support
 
