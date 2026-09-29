@@ -4558,26 +4558,11 @@
 		},
 		{
 			"type": "org.apache.catalina.connector.RequestFacade",
-			"methods": [
-				{
-					"name": "getParameter",
-					"parameterTypes": [
-						"java.lang.String"
-					]
-				},
-				{
-					"name": "getQueryString",
-					"parameterTypes": []
-				},
-				{
-					"name": "getRequestURI",
-					"parameterTypes": []
-				},
-				{
-					"name": "getServletPath",
-					"parameterTypes": []
-				}
-			]
+			"allDeclaredMethods": true,
+			"allDeclaredFields": true,
+			"allPublicMethods": true,
+			"allPublicFields": true,
+			"allPublicConstructors": true
 		},
 		{
 			"type": "org.apache.catalina.core.ApplicationContextFacade"
