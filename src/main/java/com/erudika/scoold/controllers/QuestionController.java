@@ -113,7 +113,8 @@ public class QuestionController {
 			pc.update(showPost);
 		}
 
-		if (showPost instanceof UnapprovedQuestion && !(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
+		if ((showPost.isUnapprovedQuestion() || showPost.isUnapprovedReply()) &&
+				!(utils.isMine(showPost, authUser) || utils.isMod(authUser))) {
 			return "redirect:" + QUESTIONSLINK;
 		}
 
