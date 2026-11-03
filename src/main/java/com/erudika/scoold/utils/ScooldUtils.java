@@ -295,7 +295,10 @@ public final class ScooldUtils {
 
 	private void checkIfSetupRequired() {
 		boolean isForced = "true".equals(System.getProperty("scoold.onboarding_required", "false")); // force flag
-		setSetupRequired(CONF.onboardingEnabled() && (isForced || !isConnectedToPara() || pc.getCount(Utils.type(User.class)) == 0));
+		boolean looksLikeSetupWasCompleted = !StringUtils.isBlank(CONF.admins()) && CONF.paraSecretKey().length() > 10;
+		setSetupRequired(CONF.onboardingEnabled() &&
+				(isForced || (!looksLikeSetupWasCompleted &&
+						(!isConnectedToPara() || pc.getCount(Utils.type(User.class)) == 0))));
 	}
 
 	public void reconnectParaClient(String endpoint, String accessKey, String secretKey) {

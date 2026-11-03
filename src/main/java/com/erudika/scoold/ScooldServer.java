@@ -228,6 +228,7 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		ParaClient pc = new ParaClient(accessKey, CONF.paraSecretKey());
 		ScooldUtils.setParaEndpointAndApiPath(pc);
 		pc.setChunkSize(CONF.batchRequestSize()); // unlimited batch size
+		pc.throwExceptionOnHTTPError(true);
 
 		printRootAppConnectionNotice();
 		printGoogleMigrationNotice();
@@ -235,10 +236,8 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		printParaConfigChangeNotice();
 
 		ScooldUtils.tryConnectToPara(() -> {
-			pc.throwExceptionOnHTTPError(true);
 			// update the Scoold App settings through the Para App settings API.
 			pc.setAppSettings(CONF.getParaAppSettings());
-			pc.throwExceptionOnHTTPError(false);
 			boolean connected = pc.getTimestamp() > 0; // finally, check if app actually exists
 			if (connected) {
 				logger.info("Connected to Para on {} with credentials for '{}'.", CONF.paraEndpoint(), accessKey);

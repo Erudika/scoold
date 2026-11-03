@@ -33,7 +33,6 @@ import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.getBackToUrl;
 import static com.erudika.scoold.utils.HttpUtils.setAuthCookie;
 import com.erudika.scoold.utils.ScooldUtils;
-import static com.erudika.scoold.utils.ScooldUtils.isConnectedToPara;
 import static com.erudika.scoold.utils.ScooldUtils.isSetupRequired;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -74,7 +73,7 @@ public class SigninController {
 		if (utils.isAuthenticated(req)) {
 			return "redirect:" + (Strings.CI.startsWith(returnto, SIGNINLINK) ? HOMEPAGE : getBackToUrl(req));
 		}
-		if ((CONF.onboardingEnabled() && !isConnectedToPara()) || isSetupRequired()) {
+		if (isSetupRequired()) {
 			return "redirect:" + ONBOARDINGLINK;
 		}
 		if (!HOMEPAGE.equals(returnto) && !Strings.CS.startsWith(returnto, SIGNINLINK)) {

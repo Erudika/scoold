@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" aria-labelledby="title desc" viewBox="0 0 460 460">
+  <desc>
+    Minimal rounded square face with blue circular eyes, a vertical bar in the left eye, a ring in the right eye, and a short neutral mouth.
+  </desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" style="transform-origin:29.1502px 29.1502px" transform="translate(-28.65 -28.65)scale(1.01168)">
+    <rect width="428" height="428" x="42" y="42" stroke="#c5ced6" stroke-width="24" rx="42"/>
+    <path stroke="#279bc9" stroke-width="24" d="M219 235h74"/>
+    <circle cx="145" cy="235" r="73" stroke="#279bc9" stroke-width="24"/>
+    <path stroke="#279bc9" stroke-width="24" d="M145 194v82"/>
+    <circle cx="367" cy="235" r="73" stroke="#279bc9" stroke-width="24"/>
+    <circle cx="367" cy="235" r="34" stroke="#279bc9" stroke-width="20"/>
+    <path stroke="#c5ced6" d="M184.852 390h142.296" style="stroke-width:24px"/>
+  </g>
+</svg>

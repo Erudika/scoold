@@ -39,7 +39,6 @@ import com.erudika.scoold.utils.AntiSpamUtils;
 import com.erudika.scoold.utils.DashboardService;
 import com.erudika.scoold.utils.HttpUtils;
 import com.erudika.scoold.utils.ScooldUtils;
-import static com.erudika.scoold.utils.ScooldUtils.isConnectedToPara;
 import static com.erudika.scoold.utils.ScooldUtils.isSetupRequired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -97,7 +96,7 @@ public class QuestionsController {
 		if (!utils.isDefaultSpacePublic() && !utils.isAuthenticated(req)) {
 			return "redirect:" + SIGNINLINK + "?returnto=" + QUESTIONSLINK;
 		}
-		if ((CONF.onboardingEnabled() && !isConnectedToPara()) || isSetupRequired()) {
+		if (isSetupRequired()) {
 			return "redirect:" + ONBOARDINGLINK;
 		}
 		getQuestions(sortby, null, req, model);
