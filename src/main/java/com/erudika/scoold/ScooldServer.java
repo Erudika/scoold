@@ -82,7 +82,7 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		CoreUtils.registerCoreClasses();
 		System.setProperty("server.port", String.valueOf(CONF.serverPort()));
 		System.setProperty("server.servlet.context-path", CONF.serverContextPath());
-		System.setProperty("server.use-forward-headers", String.valueOf(CONF.inProduction()));
+		System.setProperty("server.forward-headers-strategy", Para.getConfig().inProduction() ? "FRAMEWORK" : "NONE");
 		System.setProperty("para.logs_name", CONF.getConfigRootPrefix());
 		if (CONF.accessLogEnabled()) {
 			System.setProperty("server.jetty.accesslog.append", "true");
@@ -262,8 +262,6 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		velocityProperties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, CONF.inProduction());
 		velocityProperties.put(RuntimeConstants.VM_LIBRARY_AUTORELOAD, !CONF.inProduction());
 		velocityProperties.put(RuntimeConstants.VM_PERM_ALLOW_INLINE_REPLACE_GLOBAL, true);
-		velocityProperties.put(RuntimeConstants.EVENTHANDLER_REFERENCEINSERTION,
-				"org.apache.velocity.app.event.implement.EscapeHtmlReference");
 		velocityProperties.put("eventhandler.escape.html.match", "^((?!_).)+$");
 
 		VelocityConfigurer vc = new VelocityConfigurer();
