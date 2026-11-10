@@ -88,7 +88,9 @@
 							#end
 							<div class="center mtl">
 								#if (!$isConnectedToPara)
-								<button type="button" id="test-para-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-para-connection">
+								<button type="button" id="test-para-btn" class="btn-flat waves-effect"
+												data-url="$onboardinglink/test-para-connection"
+												data-csrf-token="$connectionTestCsrfToken">
 									$!lang.get("onboarding.testconnection")
 								</button>
 								#end
@@ -289,7 +291,9 @@
 							#end
 							<div class="center mtl">
 								#if (!$smtpConfigured)
-								<button type="button" id="test-smtp-btn" class="btn-flat waves-effect" data-url="$onboardinglink/test-smtp-connection">
+								<button type="button" id="test-smtp-btn" class="btn-flat waves-effect"
+												data-url="$onboardinglink/test-smtp-connection"
+												data-csrf-token="$connectionTestCsrfToken">
 									$!lang.get("onboarding.testconnection")
 								</button>
 								#end

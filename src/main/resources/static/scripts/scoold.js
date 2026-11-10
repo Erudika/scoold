@@ -1657,11 +1657,16 @@ $(function () {
 			var result = $("#para-test-result");
 			btn.prop("disabled", true);
 			result.text("...").removeClass("green-text red-text");
-			$.get(btn.attr("data-url"), {
-				paraEndpoint: $("#para-endpoint").val(),
-				paraAccessKey: $("#para-access-key").val(),
-				paraSecretKey: $("#para-secret-key").val()
-			}, function (data) {
+			$.ajax({
+				url: btn.attr("data-url"),
+				method: "POST",
+				data: {
+					paraEndpoint: $("#para-endpoint").val(),
+					paraAccessKey: $("#para-access-key").val(),
+					paraSecretKey: $("#para-secret-key").val()
+				},
+				headers: {"X-Onboarding-CSRF": btn.attr("data-csrf-token")}
+			}).done(function (data) {
 				if (data.connected) {
 					result.text(" ✓ Connected!").addClass("green-text text-darken-3");
 				} else {
@@ -1681,15 +1686,20 @@ $(function () {
 			var result = $("#smtp-test-result");
 			btn.prop("disabled", true);
 			result.text("...").removeClass("green-text red-text");
-			$.get(btn.attr("data-url"), {
-				mailHost: $("#mail-host").val(),
-				mailPort: $("#mail-port").val(),
-				mailUsername: $("#mail-username").val(),
-				mailPassword: $("#mail-password").val(),
-				mailTLS: $("input[name='mailTLS']").is(":checked"),
-				mailSSL: $("input[name='mailSSL']").is(":checked"),
-				testRecipient: $("#admin-email").val() || ""
-			}, function (data) {
+			$.ajax({
+				url: btn.attr("data-url"),
+				method: "POST",
+				data: {
+					mailHost: $("#mail-host").val(),
+					mailPort: $("#mail-port").val(),
+					mailUsername: $("#mail-username").val(),
+					mailPassword: $("#mail-password").val(),
+					mailTLS: $("input[name='mailTLS']").is(":checked"),
+					mailSSL: $("input[name='mailSSL']").is(":checked"),
+					testRecipient: $("#admin-email").val() || ""
+				},
+				headers: {"X-Onboarding-CSRF": btn.attr("data-csrf-token")}
+			}).done(function (data) {
 				if (data.connected) {
 					result.text(" ✓ Connected!").addClass("green-text text-darken-3");
 				} else {

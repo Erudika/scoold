@@ -28,17 +28,41 @@ import com.erudika.scoold.core.Profile;
 import com.erudika.scoold.utils.HttpUtils;
 import static com.erudika.scoold.utils.HttpUtils.setRawCookie;
 import com.erudika.scoold.utils.ScooldUtils;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValueFactory;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -50,6 +74,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -64,6 +89,12 @@ public class OnboardingController {
 	private static final Logger logger = LoggerFactory.getLogger(OnboardingController.class);
 	private static ScooldConfig config = ScooldUtils.getConfig();
 	private static final int TOTAL_STEPS = 4;
+	private static final String ONBOARDING_CSRF_HEADER = "X-Onboarding-CSRF";
+	private static final String CSRF_SESSION_ATTRIBUTE = "scoold.onboarding.csrf_token";
+	private static final int TOKEN_BYTES = 32;
+	private static final int MAX_TOKEN_LENGTH = 128;
+	private final SecureRandom secureRandom = new SecureRandom();
+
 	private final ScooldUtils utils;
 	private final AdminController adminController;
 
@@ -73,15 +104,18 @@ public class OnboardingController {
 	}
 
 	@GetMapping
-	public String get(HttpServletRequest req, Model model) {
-		return get(1, req, model);
+	public String get(HttpServletRequest req, HttpServletResponse res, Model model) {
+		return get(1, req, res, model);
 	}
 
 	@GetMapping("/{step}")
-	public String get(@PathVariable(required = false) Integer step, HttpServletRequest req, Model model) {
+	public String get(@PathVariable(required = false) Integer step,
+			HttpServletRequest req, HttpServletResponse res, Model model) {
 		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
+		res.setHeader("Cache-Control", "no-store");
+		res.setHeader("Pragma", "no-cache");
 		List<Locale> locales = utils.getLangutils().getTranslationProgressMap().entrySet().stream().
 				map(e -> Locale.forLanguageTag(StringUtils.replaceChars(e.getKey(), "_", "-"))).toList();
 		model.addAttribute("path", "onboarding.vm");
@@ -117,6 +151,7 @@ public class OnboardingController {
 		model.addAttribute("isDefaultSpacePublic", config.isDefaultSpacePublic());
 		model.addAttribute("redirectToIdp", config.redirectSigninToIdp());
 		model.addAttribute("passwordAuthEnabled", config.passwordAuthEnabled());
+		model.addAttribute("connectionTestCsrfToken", getOrCreateCsrfToken(req));
 
 		System.setProperty("scoold.csp_header_enabled", "false"); // allow redirects to IDP after POST
 		return "base";
@@ -169,17 +204,20 @@ public class OnboardingController {
 		return "redirect:" + ONBOARDINGLINK + "/3";
 	}
 
-	@GetMapping(path = "/test-para-connection", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/test-para-connection", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Object>> testParaConnection(
 			@RequestParam String paraEndpoint,
 			@RequestParam String paraAccessKey,
-			@RequestParam String paraSecretKey) {
+			@RequestParam String paraSecretKey,
+			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
+			HttpServletRequest req) {
 		Map<String, Object> result = new LinkedHashMap<>();
 		try {
 			result.put("connected", connectedToPara(paraEndpoint, paraAccessKey, paraSecretKey));
 		} catch (Exception e) {
 			result.put("connected", false);
-			result.put("error", e.getMessage());
+			result.put("error", "Connection failed");
+			logger.warn("Para onboarding connection test failed: {}", e.getMessage());
 		}
 		return ResponseEntity.ok(result);
 	}
@@ -252,7 +290,7 @@ public class OnboardingController {
 		return "redirect:" + HOMEPAGE;
 	}
 
-	@GetMapping(path = "/test-smtp-connection",
+	@PostMapping(path = "/test-smtp-connection",
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Object>> testSmtpConnection(
 			@RequestParam String mailHost,
@@ -262,7 +300,9 @@ public class OnboardingController {
 			@RequestParam(defaultValue = "true") Boolean mailTLS,
 			@RequestParam(defaultValue = "false") Boolean mailSSL,
 			@RequestParam(required = false, defaultValue = "")
-			String testRecipient) {
+			String testRecipient,
+			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
+			HttpServletRequest req) {
 		Map<String, Object> result = new LinkedHashMap<>();
 		try {
 			JavaMailSenderImpl sender = new JavaMailSenderImpl();
@@ -292,7 +332,8 @@ public class OnboardingController {
 			result.put("connected", true);
 		} catch (Exception e) {
 			result.put("connected", false);
-			result.put("error", e.getMessage());
+			result.put("error", "Connection failed");
+			logger.warn("SMTP onboarding connection test failed: {}", e.getClass().getSimpleName());
 		}
 		return ResponseEntity.ok(result);
 	}
@@ -378,10 +419,107 @@ public class OnboardingController {
 		return utils.getParaClient();
 	}
 
-	private boolean connectedToPara(String paraEndpoint, String paraAccessKey, String paraSecretKey) {
-		ParaClient testPc = new ParaClient(paraAccessKey, paraSecretKey);
-		testPc.setEndpoint(paraEndpoint);
-		ScooldUtils.setParaEndpointAndApiPath(testPc);
-		return testPc.getTimestamp() > 0;
+	private boolean connectedToPara(String paraEndpoint, String accessKey, String secretKey) {
+		if (StringUtils.isBlank(paraEndpoint)) {
+			return false;
+		}
+		try {
+			URI endpoint = URI.create(paraEndpoint);
+			String endpointOrigin = endpoint.getScheme() + "://" + endpoint.getRawAuthority();
+			String basePath = StringUtils.stripEnd(StringUtils.defaultString(endpoint.getRawPath()), "/");
+			String requestPath = basePath + "/v1/utils/timestamp";
+			URI requestUri = URI.create(endpointOrigin + requestPath);
+			HttpGet request = new HttpGet(requestUri);
+
+			request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + generateJWToken(accessKey, secretKey));
+
+			request.setHeader(HttpHeaders.ACCEPT, "application/json");
+
+			RequestConfig requestConfig = RequestConfig.custom()
+					.setConnectionRequestTimeout(Timeout.ofSeconds(5))
+					.setResponseTimeout(Timeout.ofSeconds(5))
+					.build();
+			ConnectionConfig connectionConfig = ConnectionConfig.custom()
+					.setConnectTimeout(Timeout.ofSeconds(5))
+					.setSocketTimeout(Timeout.ofSeconds(5))
+					.build();
+			var connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+					.setDefaultConnectionConfig(connectionConfig)
+					.build();
+			try (CloseableHttpClient client = HttpClientBuilder.create()
+					.setConnectionManager(connectionManager)
+					.setDefaultRequestConfig(requestConfig)
+					.disableRedirectHandling()
+					.disableAutomaticRetries()
+					.build()) {
+				return client.execute(request, response -> {
+					if (response.getCode() != org.apache.hc.core5.http.HttpStatus.SC_OK || response.getEntity() == null) {
+						return false;
+					}
+					try (InputStream body = response.getEntity().getContent()) {
+						int maxResponseLength = 128;
+						byte[] bytes = body.readNBytes(maxResponseLength + 1);
+						if (bytes.length == 0 || bytes.length > maxResponseLength) {
+							return false;
+						}
+						return Long.parseLong(new String(bytes, StandardCharsets.UTF_8).trim()) > 0;
+					}
+				});
+			}
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public static String generateJWToken(String appid, String secret) {
+		if (!StringUtils.isBlank(appid) && !StringUtils.isBlank(secret)) {
+			try {
+				Date now = new Date();
+				JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder();
+				claimsSet.issueTime(now);
+				claimsSet.expirationTime(new Date(now.getTime() + TimeUnit.SECONDS.toMillis(30)));
+				claimsSet.notBeforeTime(now);
+				claimsSet.claim(com.erudika.para.core.utils.Config._APPID, appid);
+				JWSSigner signer = new MACSigner(secret);
+				SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet.build());
+				signedJWT.sign(signer);
+				return signedJWT.serialize();
+			} catch (JOSEException e) {
+				logger.warn("Unable to sign JWT: {}.", e.getMessage());
+			}
+		}
+		return "";
+	}
+
+	public String getOrCreateCsrfToken(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		synchronized (session) {
+			Object current = session.getAttribute(CSRF_SESSION_ATTRIBUTE);
+			if (current instanceof String token) {
+				return token;
+			}
+			String token = generateSecret();
+			session.setAttribute(CSRF_SESSION_ATTRIBUTE, token);
+			return token;
+		}
+	}
+
+	public boolean isValidCsrfToken(HttpServletRequest request, String submittedToken) {
+		if (StringUtils.isBlank(submittedToken) || submittedToken.length() > MAX_TOKEN_LENGTH) {
+			return false;
+		}
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return false;
+		}
+		Object expected = session.getAttribute(CSRF_SESSION_ATTRIBUTE);
+		return expected instanceof String token && MessageDigest.isEqual(
+				token.getBytes(StandardCharsets.UTF_8), submittedToken.getBytes(StandardCharsets.UTF_8));
+	}
+
+	private String generateSecret() {
+		byte[] bytes = new byte[TOKEN_BYTES];
+		secureRandom.nextBytes(bytes);
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
 	}
 }
