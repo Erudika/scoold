@@ -372,7 +372,11 @@ public class Profile extends Sysprop {
 		if (favtags == null) {
 			favtags = new LinkedList<String>();
 		}
-		return favtags;
+		return favtags.stream().
+				map(ScooldUtils::escapeLuceneQuerySyntax).
+				filter(ScooldUtils::isSafeTag).
+				distinct().
+				toList();
 	}
 
 	public void setFavtags(List<String> favtags) {
@@ -383,7 +387,10 @@ public class Profile extends Sysprop {
 		if (favspaces == null) {
 			favspaces = new LinkedHashSet<String>();
 		}
-		return favspaces;
+		return this.favtags.stream().
+				map(ScooldUtils::escapeLuceneQuerySyntax).
+				filter(ScooldUtils::isSafeTag).
+				collect(Collectors.toSet());
 	}
 
 	public void setFavspaces(Set<String> favspaces) {

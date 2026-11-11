@@ -19,6 +19,7 @@ package com.erudika.scoold.controllers;
 
 import com.erudika.para.client.ParaClient;
 import com.erudika.para.core.Sysprop;
+import com.erudika.para.core.Tag;
 import com.erudika.para.core.User;
 import com.erudika.para.core.utils.Config;
 import com.erudika.para.core.utils.Utils;
@@ -286,8 +287,9 @@ public class SettingsController {
 		if (!StringUtils.isBlank(tags)) {
 			Set<String> ts = new LinkedHashSet<String>();
 			for (String tag : tags.split("\\s*,\\s*")) {
-				if (!StringUtils.isBlank(tag) && ts.size() <= CONF.maxFavoriteTags()) {
-					ts.add(tag.trim());
+				Tag cleanTag = new Tag(tag);
+				if (ScooldUtils.isSafeTag(cleanTag.getTag()) && ts.size() <= CONF.maxFavoriteTags()) {
+					ts.add(cleanTag.getTag());
 				}
 			}
 			authUser.setFavtags(new LinkedList<String>(ts));

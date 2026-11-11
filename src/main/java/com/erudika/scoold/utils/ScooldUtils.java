@@ -128,6 +128,9 @@ public final class ScooldUtils {
 	private static final Set<String> NON_AUDIT_EVENTS;
 	private static final Map<String, String> WHITELISTED_MACROS;
 	private static final Map<String, Object> API_KEYS = new LinkedHashMap<>(); // jti => jwt
+	private static final String[] LUCENE_QUERY_CHARS =
+			List.of("!", "(", ")", ":", "^", "[", "]", "{", "}", "\"", "~", "*", "?", "|", "&", "/").toArray(String[]::new);
+	private static final String[] BLANKS = Arrays.stream(LUCENE_QUERY_CHARS).map(i -> "").toArray(String[]::new);
 
 	private Set<Sysprop> allSpaces;
 	private Set<String> autoAssignedSpacesFromConfig;
@@ -754,6 +757,8 @@ public final class ScooldUtils {
 			pc.readEverything(pager -> {
 				List<Profile> profiles = pc.findQuery(Utils.type(Profile.class),
 						"properties.favtags:(" + tags.stream().
+								filter(t -> !StringUtils.isBlank(t)).
+								map(ScooldUtils::escapeLuceneQuerySyntax).
 								map(t -> "\"".concat(t).concat("\"")).distinct().
 								collect(Collectors.joining(" ")) + ") AND properties.favtagsEmailsEnabled:true", pager);
 				if (!profiles.isEmpty()) {
@@ -2024,6 +2029,14 @@ public final class ScooldUtils {
 			}
 		}
 		return error;
+	}
+
+	public static String escapeLuceneQuerySyntax(String value) {
+		return StringUtils.trimToEmpty(StringUtils.replaceEachRepeatedly(value, LUCENE_QUERY_CHARS, BLANKS));
+	}
+
+	public static boolean isSafeTag(String tag) {
+		return !StringUtils.isBlank(tag) && tag.chars().noneMatch(c -> "\"():*?".indexOf(c) >= 0);
 	}
 
 	public Map<String, String> validateQuestionTags(Question q, Map<String, String> errors, HttpServletRequest req) {

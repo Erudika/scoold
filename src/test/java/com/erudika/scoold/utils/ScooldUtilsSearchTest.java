@@ -351,4 +351,23 @@ public class ScooldUtilsSearchTest {
 		assertTrue("should pass query through: " + qs,
 				qs.contains("properties.space:\"scooldspace:default\" AND (properties.name:foo) AND type:("));
 	}
+
+	@Test
+	public void testEscapeLuceneTagValue() {
+		String input = "x\") OR properties.space:* OR tags:(\"a";
+		assertEquals(ScooldUtils.escapeLuceneQuerySyntax(input), "x OR properties.space OR tagsa");
+		assertEquals(ScooldUtils.escapeLuceneQuerySyntax("tag-my-tag1"), "tag-my-tag1");
+		assertEquals(ScooldUtils.escapeLuceneQuerySyntax(".net"), ".net");
+		assertEquals(ScooldUtils.escapeLuceneQuerySyntax("c++"), "c++");
+	}
+
+	@Test
+	public void testSafeTagRejectsLuceneStructure() {
+		assertTrue(ScooldUtils.isSafeTag("safe-tag"));
+		assertTrue(ScooldUtils.isSafeTag("C++"));
+		assertFalse(ScooldUtils.isSafeTag("x\") OR properties.space:*"));
+		assertFalse(ScooldUtils.isSafeTag("name:tag"));
+		assertFalse(ScooldUtils.isSafeTag("tag?"));
+		assertFalse(ScooldUtils.isSafeTag("tag*"));
+	}
 }

@@ -182,9 +182,13 @@ public final class SearchUtils {
 		if (!StringUtils.isBlank(tag)) {
 			StringBuilder sb = new StringBuilder("*".equals(qs) ? "" : "(".concat(qs).concat(") AND "));
 			if (tag.startsWith("groups:")) {
-				sb.append("properties.").append(tag);
+				sb.append("properties.groups:(\"").
+						append(ScooldUtils.escapeLuceneQuerySyntax(Strings.CS.removeStart(tag, "groups:"))).
+						append("\")");
 			} else {
-				sb.append(Config._TAGS).append(":(\"").append(tag).append("\")");
+				sb.append(Config._TAGS).append(":(\"").
+						append(ScooldUtils.escapeLuceneQuerySyntax(tag)).
+						append("\")");
 			}
 			qs = sb.toString();
 		}

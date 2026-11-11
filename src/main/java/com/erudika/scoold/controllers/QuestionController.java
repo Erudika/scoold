@@ -618,7 +618,8 @@ public class QuestionController {
 
 	private Set<String> updateTags(Post showPost, String tags) {
 		if (!StringUtils.isBlank(tags)) {
-			List<String> newTags = Arrays.asList(StringUtils.split(tags, ","));
+			List<String> newTags = Arrays.asList(StringUtils.split(tags, ",")).stream().
+					filter(t -> ScooldUtils.isSafeTag(StringUtils.trimToEmpty(t))).toList();
 			HashSet<String> addedTags = new HashSet<>(newTags);
 			addedTags.removeAll(new HashSet<>(Optional.ofNullable(showPost.getTags()).orElse(Collections.emptyList())));
 			if (newTags.size() >= CONF.minTagsPerPost()) {

@@ -122,6 +122,7 @@ public class QuestionsController {
 		List<Question> questionslist = Collections.emptyList();
 		String type = Utils.type(Question.class);
 		String qf = utils.getSpaceFilteredQuery(req);
+		tag = new Tag(tag).getTag();
 		if (!qf.isEmpty()) {
 			if (qf.equals("*")) {
 				questionslist = pc.findTagged(type, new String[]{tag}, itemcount);
@@ -442,6 +443,9 @@ public class QuestionsController {
 		if (authUser.hasFavtags()) {
 			String favTagsPart = Config._TAGS + ":\"" + authUser.getFavtags().stream()
 					.collect(Collectors.joining("\" OR " + Config._TAGS + ":\"")) + "\"";
+			if (favTagsPart.isBlank()) {
+				favTagsPart = "\"__no_matching_favtag__\"";
+			}
 			if (!sb.isEmpty() && sb.charAt(0) == '*') {
 				return favTagsPart;
 			} else {
@@ -475,10 +479,16 @@ public class QuestionsController {
 		String tags = StringUtils.trimToEmpty(Strings.CS.removeStart(p.getName(), "with_tags:"));
 		if (Strings.CS.startsWith(p.getName(), "with_tags:") && !StringUtils.isBlank(tags)) {
 			String logicalOperator = tags.startsWith("+") ? " AND " : " OR ";
-			tags = Strings.CS.remove(tags, "+");
+			tags = Strings.CS.removeStart(tags, "+");
+			String tagQuery = Arrays.stream(tags.split(",")).
+					map(t -> ScooldUtils.escapeLuceneQuerySyntax(t)).
+					filter(t -> !StringUtils.isBlank(t)).
+					distinct().collect(Collectors.joining(logicalOperator));
+			if (tagQuery.isBlank()) {
+				tagQuery = "\"__no_matching_tag__\"";
+			}
 			StringBuilder sb = new StringBuilder("*".equals(query) ? "" : query.concat(" AND "));
-			// should we specify the tags property here? like: tags:(tag1 OR tag2)
-			sb.append("tags").append(":(").append(tags.replaceAll(",", logicalOperator)).append(")");
+			sb.append("tags").append(":(").append(tagQuery).append(")");
 			query = sb.toString();
 		}
 		return getQueryWithPossibleExtension(query, req);
