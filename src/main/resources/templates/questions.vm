@@ -66,7 +66,7 @@
 		#macro(questionsTitle)
 			#if ($tag)
 				<small>$!lang.get("posts.tagged")
-					<span class="chip tagchip smallText #if($tagDescription)tooltipped#end" data-tooltip="$!tagDescription">$!tag</span>
+					<span class="chip tagchip #if($tagDescription)tooltipped#end" data-tooltip="$!tagDescription">$!tag</span>
 				</small>
 				#set($tagpath = "/tag/$!tag")
 			#else

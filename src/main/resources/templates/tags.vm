@@ -1,3 +1,6 @@
+#if($currentSpace && !$currentSpace.isEmpty())
+	#spacelabel($currentSpace)
+#end
 <div class="page-wrapper">
 	<h4 class="largeText hide-on-large-only">$!lang.get("tags.title") #showcount($itemcount.count)</h4>
 
