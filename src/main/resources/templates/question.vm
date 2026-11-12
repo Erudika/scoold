@@ -21,7 +21,7 @@
 				/ <strong class="orange-text">$!lang.get('deprecated')</strong>
 			#end
 			</span>
-			<div id="post-title" class="largeText">
+			<h1 id="post-title" class="largeText mvs">
 				#if($showPost.isReply())
 					<a href="$!showPost.getPostLinkForRedirect()" class="tooltipped" data-tooltip="⮪ $!lang.get('backtopost')">
 						<b class="smallText grey-text">&larr;</b> $!{showPost.title}
@@ -29,7 +29,7 @@
 				#else
 					$!{showPost.title}
 				#end
-			</div>
+			</h1>
 			#if(!$showPost.isReply())<hr>#end
 			#ajaxloading(true)
 			<div class="mbl pbl">

@@ -2,7 +2,7 @@
 	#spacelabel($currentSpace)
 #end
 <div class="page-wrapper">
-	<h4 class="hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
+	<h4 class="largeText hide-on-large-only">$!lang.get("people.title") #showcount($itemcount.count)</h4>
 
 	<div class="chips-container">
 		#set($sortarr = {'votes': "", 'newest': "", 'name': "", 'properties.yearlyVotes': "", 'properties.quarterlyVotes': "", 'properties.monthlyVotes': "", 'properties.weeklyVotes': ""} )
@@ -37,7 +37,7 @@
 		#end
 	</div>
 
-	<h2 class="hide-on-med-and-down">$!lang.get("people.title") #showcount($itemcount.count)</h2>
+	<h1 class="largeText hide-on-med-and-down">$!lang.get("people.title") #showcount($itemcount.count)</h1>
 
 	#if($isMod)
 		<form method="get">

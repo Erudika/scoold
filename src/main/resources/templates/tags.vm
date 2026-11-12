@@ -1,5 +1,5 @@
 <div class="page-wrapper">
-	<h4 class="hide-on-large-only">$!lang.get("tags.title") #showcount($itemcount.count)</h4>
+	<h4 class="largeText hide-on-large-only">$!lang.get("tags.title") #showcount($itemcount.count)</h4>
 
 	<div class="chips-container">
 		#set($sortarr = {'popular': "", 'tag': ""} )
@@ -11,7 +11,7 @@
 		#end
 	</div>
 
-	<h2 class="hide-on-med-and-down">$!lang.get("tags.title") #showcount($itemcount.count)</h2>
+	<h1 class="largeText hide-on-med-and-down">$!lang.get("tags.title") #showcount($itemcount.count)</h1>
 
 	<div class="hide mam z-0">
 		<form method="post" id="create-tags-form" action="$tagslink/create">

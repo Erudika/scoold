@@ -922,7 +922,7 @@ main { background-color: white; }
 body, footer.page-footer { background-color: #333; }
 body.onboarding { background-color: transparent; }
 footer a { color: #10b0fe; }
-footer.page-footer { margin: 20px 0; }
+footer.page-footer { margin: 20px 0; padding: 40px 0; }
 .page-footer a { font-weight: 400;}
 .navbar-color { background-color: #333; }
 nav { background-color: inherit; color: inherit; height: 64px; line-height: 64px;}

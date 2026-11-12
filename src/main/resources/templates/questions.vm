@@ -3,7 +3,7 @@
 #end
 <div class="page-wrapper">
 	#if ($askSelected)
-		<h2>$!lang.get("posts.ask")</h2>
+		<h1 class="hugeText">$!lang.get("posts.ask")</h1>
 
 		<div class="pts">
 			<form method="post" id="ask-question-form">
@@ -75,7 +75,7 @@
 			#end
 		#end
 
-		<h4 class="hide-on-large-only">#questionsTitle()</h4>
+		<h4 class="largeText hide-on-large-only">#questionsTitle()</h4>
 		#if($tagDescription)
 			<div class="mbl lightborder pam smallText hide-on-large-only">$!tagDescription</div>
 		#end
@@ -118,7 +118,7 @@
 			</a>
 		</div>
 
-		<h2 class="hide-on-med-and-down">#questionsTitle()</h2>
+		<h1 class="largeText hide-on-med-and-down">#questionsTitle()</h1>
 		<div id="question-filter-drawer" class="lightborder pam hide">
 			<form method="post" action="$questionslink/apply-filter">
 				<input type="hidden" name="tab" value="$!request.getParameter('sortby')">
