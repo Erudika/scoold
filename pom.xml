@@ -413,6 +413,7 @@
 						</executions>
 						<configuration>
 							<buildArgs>
+								<buildArg>-Os</buildArg>
 								<buildArg>-march=${M_ARCH}</buildArg>
 								<buildArg>-R:MaxHeapSize=800m</buildArg>
 								<buildArg>-H:+UnlockExperimentalVMOptions</buildArg>
