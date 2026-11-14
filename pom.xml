@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.erudika</groupId>
 			<artifactId>para-client</artifactId>
-			<version>1.55.3</version>
+			<version>1.57.0</version>
 		</dependency>
 
 		<!-- VELOCITY -->
@@ -128,7 +128,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>10.9.1</version>
+			<version>10.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudinary</groupId>
