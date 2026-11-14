@@ -211,6 +211,9 @@ public class OnboardingController {
 			@RequestParam String paraSecretKey,
 			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
 			HttpServletRequest req) {
+		if (!ScooldUtils.isSetupRequired()) {
+			return ResponseEntity.notFound().build();
+		}
 		Map<String, Object> result = new LinkedHashMap<>();
 		try {
 			result.put("connected", connectedToPara(paraEndpoint, paraAccessKey, paraSecretKey));
@@ -303,6 +306,9 @@ public class OnboardingController {
 			String testRecipient,
 			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
 			HttpServletRequest req) {
+		if (!ScooldUtils.isSetupRequired()) {
+			return ResponseEntity.notFound().build();
+		}
 		Map<String, Object> result = new LinkedHashMap<>();
 		try {
 			JavaMailSenderImpl sender = new JavaMailSenderImpl();
