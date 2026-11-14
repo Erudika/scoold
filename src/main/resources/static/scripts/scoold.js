@@ -1664,8 +1664,7 @@ $(function () {
 					paraEndpoint: $("#para-endpoint").val(),
 					paraAccessKey: $("#para-access-key").val(),
 					paraSecretKey: $("#para-secret-key").val()
-				},
-				headers: {"X-Onboarding-CSRF": btn.attr("data-csrf-token")}
+				}
 			}).done(function (data) {
 				if (data.connected) {
 					result.text(" ✓ Connected!").addClass("green-text text-darken-3");
@@ -1697,8 +1696,7 @@ $(function () {
 					mailTLS: $("input[name='mailTLS']").is(":checked"),
 					mailSSL: $("input[name='mailSSL']").is(":checked"),
 					testRecipient: $("#admin-email").val() || ""
-				},
-				headers: {"X-Onboarding-CSRF": btn.attr("data-csrf-token")}
+				}
 			}).done(function (data) {
 				if (data.connected) {
 					result.text(" ✓ Connected!").addClass("green-text text-darken-3");

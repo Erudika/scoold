@@ -387,10 +387,7 @@ public class Profile extends Sysprop {
 		if (favspaces == null) {
 			favspaces = new LinkedHashSet<String>();
 		}
-		return this.favtags.stream().
-				map(ScooldUtils::escapeLuceneQuerySyntax).
-				filter(ScooldUtils::isSafeTag).
-				collect(Collectors.toSet());
+		return favspaces;
 	}
 
 	public void setFavspaces(Set<String> favspaces) {

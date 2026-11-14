@@ -40,13 +40,13 @@ import com.typesafe.config.ConfigValueFactory;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.InputStream;
+import java.net.IDN;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -74,7 +74,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -89,11 +88,13 @@ public class OnboardingController {
 	private static final Logger logger = LoggerFactory.getLogger(OnboardingController.class);
 	private static ScooldConfig config = ScooldUtils.getConfig();
 	private static final int TOTAL_STEPS = 4;
-	private static final String ONBOARDING_CSRF_HEADER = "X-Onboarding-CSRF";
-	private static final String CSRF_SESSION_ATTRIBUTE = "scoold.onboarding.csrf_token";
-	private static final int TOKEN_BYTES = 32;
-	private static final int MAX_TOKEN_LENGTH = 128;
-	private final SecureRandom secureRandom = new SecureRandom();
+	private static final String[] BLOCKED_IPV4_RANGES = {
+		"0.0.0.0/8", "100.64.0.0/10", "192.0.0.0/24", "192.0.2.0/24", "192.88.99.0/24",
+		"198.18.0.0/15", "198.51.100.0/24", "203.0.113.0/24", "224.0.0.0/4", "240.0.0.0/4"
+	};
+	private static final String[] BLOCKED_IPV6_RANGES = {
+		"2001::/23", "2001:db8::/32", "2002::/16", "3fff::/20"
+	};
 
 	private final ScooldUtils utils;
 	private final AdminController adminController;
@@ -151,7 +152,6 @@ public class OnboardingController {
 		model.addAttribute("isDefaultSpacePublic", config.isDefaultSpacePublic());
 		model.addAttribute("redirectToIdp", config.redirectSigninToIdp());
 		model.addAttribute("passwordAuthEnabled", config.passwordAuthEnabled());
-		model.addAttribute("connectionTestCsrfToken", getOrCreateCsrfToken(req));
 
 		System.setProperty("scoold.csp_header_enabled", "false"); // allow redirects to IDP after POST
 		return "base";
@@ -208,9 +208,7 @@ public class OnboardingController {
 	public ResponseEntity<Map<String, Object>> testParaConnection(
 			@RequestParam String paraEndpoint,
 			@RequestParam String paraAccessKey,
-			@RequestParam String paraSecretKey,
-			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
-			HttpServletRequest req) {
+			@RequestParam String paraSecretKey) {
 		if (!ScooldUtils.isSetupRequired()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -303,13 +301,16 @@ public class OnboardingController {
 			@RequestParam(defaultValue = "true") Boolean mailTLS,
 			@RequestParam(defaultValue = "false") Boolean mailSSL,
 			@RequestParam(required = false, defaultValue = "")
-			String testRecipient,
-			@RequestHeader(value = ONBOARDING_CSRF_HEADER, required = false) String csrfToken,
-			HttpServletRequest req) {
+			String testRecipient) {
 		if (!ScooldUtils.isSetupRequired()) {
 			return ResponseEntity.notFound().build();
 		}
 		Map<String, Object> result = new LinkedHashMap<>();
+		if (!isAllowedSmtpTarget(mailHost, mailPort)) {
+			result.put("connected", false);
+			result.put("error", "Connection failed");
+			return ResponseEntity.badRequest().body(result);
+		}
 		try {
 			JavaMailSenderImpl sender = new JavaMailSenderImpl();
 			sender.setHost(mailHost);
@@ -426,7 +427,8 @@ public class OnboardingController {
 	}
 
 	private boolean connectedToPara(String paraEndpoint, String accessKey, String secretKey) {
-		if (StringUtils.isBlank(paraEndpoint)) {
+		if (!isAllowedParaEndpoint(paraEndpoint)) {
+			logger.warn("Blocked an onboarding connection to a non-public Para target.");
 			return false;
 		}
 		try {
@@ -497,35 +499,108 @@ public class OnboardingController {
 		return "";
 	}
 
-	public String getOrCreateCsrfToken(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
-		synchronized (session) {
-			Object current = session.getAttribute(CSRF_SESSION_ATTRIBUTE);
-			if (current instanceof String token) {
-				return token;
+	private boolean isAllowedParaEndpoint(String endpoint) {
+		if (StringUtils.isBlank(endpoint) || endpoint.length() > 2048) {
+			return false;
+		}
+		try {
+			URI uri = new URI(endpoint.trim());
+			String scheme = uri.getScheme();
+			if (scheme == null || (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))
+					|| StringUtils.isBlank(uri.getHost()) || uri.getUserInfo() != null
+					|| uri.getQuery() != null || uri.getFragment() != null) {
+				return false;
 			}
-			String token = generateSecret();
-			session.setAttribute(CSRF_SESSION_ATTRIBUTE, token);
-			return token;
+			int port = uri.getPort();
+			if (port < 0) {
+				port = "https".equalsIgnoreCase(scheme) ? 443 : 80;
+			}
+			return port > 0 && port <= 65535 && isPublicTargetHost(uri.getHost());
+		} catch (Exception ex) {
+			return false;
 		}
 	}
 
-	public boolean isValidCsrfToken(HttpServletRequest request, String submittedToken) {
-		if (StringUtils.isBlank(submittedToken) || submittedToken.length() > MAX_TOKEN_LENGTH) {
-			return false;
-		}
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			return false;
-		}
-		Object expected = session.getAttribute(CSRF_SESSION_ATTRIBUTE);
-		return expected instanceof String token && MessageDigest.isEqual(
-				token.getBytes(StandardCharsets.UTF_8), submittedToken.getBytes(StandardCharsets.UTF_8));
+	private boolean isAllowedSmtpTarget(String host, int port) {
+		return port > 0 && port <= 65535 && !StringUtils.isBlank(host)
+				&& host.length() <= 253 && isPublicTargetHost(host);
 	}
 
-	private String generateSecret() {
-		byte[] bytes = new byte[TOKEN_BYTES];
-		secureRandom.nextBytes(bytes);
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+	private static boolean isPublicTargetHost(String host) {
+		String targetHost = normalizeHost(host);
+		if (targetHost == null) {
+			return false;
+		}
+		try {
+			InetAddress[] addresses = InetAddress.getAllByName(targetHost);
+			return addresses.length > 0 && Arrays.stream(addresses).allMatch(OnboardingController::isPublicAddress);
+		} catch (UnknownHostException ex) {
+			return false;
+		}
+	}
+
+	private static String normalizeHost(String host) {
+		String value = StringUtils.trimToEmpty(host);
+		if (value.startsWith("[") && value.endsWith("]")) {
+			value = value.substring(1, value.length() - 1);
+		}
+		if (value.isEmpty() || value.contains("%")) {
+			return null;
+		}
+		if (value.indexOf(':') >= 0) {
+			try {
+				return InetAddress.getByName(value).getHostAddress().toLowerCase(Locale.ROOT);
+			} catch (UnknownHostException ex) {
+				return null;
+			}
+		}
+		while (value.endsWith(".")) {
+			value = value.substring(0, value.length() - 1);
+		}
+		try {
+			String ascii = IDN.toASCII(value, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.ROOT);
+			return ascii.length() <= 253 ? ascii : null;
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
+	}
+
+	private static boolean isPublicAddress(InetAddress address) {
+		if (address.isAnyLocalAddress() || address.isLoopbackAddress() || address.isLinkLocalAddress()
+				|| address.isSiteLocalAddress() || address.isMulticastAddress()) {
+			return false;
+		}
+		byte[] bytes = address.getAddress();
+		if (bytes.length == 4) {
+			return Arrays.stream(BLOCKED_IPV4_RANGES).noneMatch(range -> isInRange(address, range));
+		}
+		return bytes.length == 16 && isInRange(address, "2000::/3")
+				&& Arrays.stream(BLOCKED_IPV6_RANGES).noneMatch(range -> isInRange(address, range));
+	}
+
+	private static boolean isInRange(InetAddress address, String cidr) {
+		String[] parts = cidr.split("/");
+		try {
+			byte[] network = InetAddress.getByName(parts[0]).getAddress();
+			byte[] candidate = address.getAddress();
+			if (network.length != candidate.length) {
+				return false;
+			}
+			int prefix = Integer.parseInt(parts[1]);
+			int fullBytes = prefix / 8;
+			int remainingBits = prefix % 8;
+			for (int i = 0; i < fullBytes; i++) {
+				if (network[i] != candidate[i]) {
+					return false;
+				}
+			}
+			if (remainingBits > 0) {
+				int mask = (0xFF << (8 - remainingBits)) & 0xFF;
+				return ((network[fullBytes] & 0xFF) & mask) == ((candidate[fullBytes] & 0xFF) & mask);
+			}
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 }
