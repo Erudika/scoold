@@ -283,12 +283,16 @@ public final class SearchUtils {
 			String boostPhrase = sq.query();
 			String spacePrefix = StringUtils.isBlank(sq.queryFilter()) || "*".equals(sq.queryFilter()) ?
 					null : sq.queryFilter();
-			String boostClause = "(properties.title:" + boostPhrase + "^3"
-					+ " OR properties.body:" + boostPhrase + "^2"
-					+ " OR tags:" + boostPhrase + "^2"
-					+ " OR " + boostPhrase + ")";
+			String boostClause = "";
+			if (!Strings.CI.equals(boostPhrase, "*")) {
+				boostClause = "(properties.title:" + boostPhrase + "^3"
+						+ " OR properties.body:" + boostPhrase + "^2"
+						+ " OR tags:" + boostPhrase + "^2"
+						+ " OR " + boostPhrase + ")";
+			}
+			String and = StringUtils.isBlank(boostClause) ? "" : " AND ";
 			qs = (spacePrefix == null ? boostClause
-					: spacePrefix + " AND " + boostClause) + " AND " + typeFilter;
+					: spacePrefix + and + boostClause) + and + typeFilter;
 		} else {
 			qs = sq.queryString() + " AND " + typeFilter;
 		}
