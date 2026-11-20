@@ -273,7 +273,7 @@ public class OnboardingController {
 			@RequestParam(required = false, defaultValue = "false") Boolean mailSSL,
 			@RequestParam(required = false, defaultValue = "false") Boolean skipSmtp,
 			HttpServletRequest req, HttpServletResponse res) {
-		if (!config.onboardingEnabled()) {
+		if (!ScooldUtils.isSetupRequired()) {
 			return "redirect:" + HOMEPAGE;
 		}
 		if (!skipSmtp && !StringUtils.isBlank(mailHost) &&
