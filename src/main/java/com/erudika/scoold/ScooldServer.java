@@ -262,6 +262,8 @@ public class ScooldServer extends SpringBootServletInitializer implements WebMvc
 		velocityProperties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, CONF.inProduction());
 		velocityProperties.put(RuntimeConstants.VM_LIBRARY_AUTORELOAD, !CONF.inProduction());
 		velocityProperties.put(RuntimeConstants.VM_PERM_ALLOW_INLINE_REPLACE_GLOBAL, true);
+		velocityProperties.put(RuntimeConstants.EVENTHANDLER_REFERENCEINSERTION,
+				"org.apache.velocity.app.event.implement.EscapeHtmlReference");
 		velocityProperties.put("eventhandler.escape.html.match", "^((?!_).)+$");
 
 		VelocityConfigurer vc = new VelocityConfigurer();
