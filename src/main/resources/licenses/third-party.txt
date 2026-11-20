@@ -1,5 +1,5 @@
 
-Lists of 145 third-party dependencies.
+Lists of 143 third-party dependencies.
      (EDL 1.0) Angus Activation Registries (org.eclipse.angus:angus-activation:2.0.3 - https://github.com/eclipse-ee4j/angus-activation/angus-activation)
      (EDL 1.0) (EPL 2.0) (GPL2 w/ CPE) Angus Mail Provider (org.eclipse.angus:angus-mail:2.0.5 - http://eclipse-ee4j.github.io/angus-mail/angus-mail)
      (BSD licence) ANTLR 3 Runtime (org.antlr:antlr-runtime:3.5.3 - http://www.antlr.org)
@@ -35,10 +35,8 @@ Lists of 145 third-party dependencies.
      (BSD 2-Clause License) flexmark-java core (com.vladsch.flexmark:flexmark:0.64.8 - https://github.com/vsch/flexmark-java/flexmark)
      (BSD 2-Clause License) flexmark-java data utilities (com.vladsch.flexmark:flexmark-util-data:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-util-data)
      (BSD 2-Clause License) flexmark-java dependency utilities (com.vladsch.flexmark:flexmark-util-dependency:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-util-dependency)
-     (BSD 2-Clause License) flexmark-java extension for attributes (com.vladsch.flexmark:flexmark-ext-attributes:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-attributes)
      (BSD 2-Clause License) flexmark-java extension for autolinking (com.vladsch.flexmark:flexmark-ext-autolink:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-autolink)
      (BSD 2-Clause License) flexmark-java extension for emoji shortcuts (com.vladsch.flexmark:flexmark-ext-emoji:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-emoji)
-     (BSD 2-Clause License) flexmark-java extension for enumerated reference (com.vladsch.flexmark:flexmark-ext-enumerated-reference:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-enumerated-reference)
      (BSD 2-Clause License) flexmark-java extension for generating GitHub style task list items (com.vladsch.flexmark:flexmark-ext-gfm-tasklist:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-gfm-tasklist)
      (BSD 2-Clause License) flexmark-java extension for GitLab Flavoured Markdown (com.vladsch.flexmark:flexmark-ext-gitlab:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-gitlab)
      (BSD 2-Clause License) flexmark-java extension for HTML5 media tags (com.vladsch.flexmark:flexmark-ext-media-tags:0.64.8 - https://github.com/vsch/flexmark-java/flexmark-ext-media-tags)
@@ -96,8 +94,8 @@ Lists of 145 third-party dependencies.
      (The Apache Software License, Version 2.0) micrometer-observation (io.micrometer:micrometer-observation:1.17.2 - https://github.com/micrometer-metrics/micrometer)
      (The Apache Software License, Version 2.0) Nimbus JOSE+JWT (com.nimbusds:nimbus-jose-jwt:10.10 - https://bitbucket.org/connect2id/nimbus-jose-jwt)
      (Apache License, Version 2.0) Non-Blocking Reactive Foundation for the JVM (io.projectreactor:reactor-core:3.8.8 - https://github.com/reactor/reactor-core)
-     (The Apache Software License, Version 2.0) para-client (com.erudika:para-client:1.57.0 - https://github.com/Erudika/para/tree/master/para-client)
-     (The Apache Software License, Version 2.0) para-core (com.erudika:para-core:1.57.0 - https://github.com/Erudika/para/tree/master/para-core)
+     (The Apache Software License, Version 2.0) para-client (com.erudika:para-client:1.57.1 - https://github.com/Erudika/para/tree/master/para-client)
+     (The Apache Software License, Version 2.0) para-core (com.erudika:para-core:1.57.1 - https://github.com/Erudika/para/tree/master/para-core)
      (2-Clause BSD License) QR4J (net.logicsquad:qr4j:1.1 - https://github.com/logicsquad/qr4j)
      (MIT-0) reactive-streams (org.reactivestreams:reactive-streams:1.0.4 - http://www.reactive-streams.org/)
      (The Apache Software License, Version 2.0) SitemapGen4J (com.github.dfabulich:sitemapgen4j:1.1.2 - https://github.com/dfabulich/sitemapgen4j/)
@@ -138,7 +136,7 @@ Lists of 145 third-party dependencies.
      (Apache License, Version 2.0) spring-boot-tomcat (org.springframework.boot:spring-boot-tomcat:4.1.2 - https://spring.io/projects/spring-boot)
      (Apache License, Version 2.0) spring-boot-web-server (org.springframework.boot:spring-boot-web-server:4.1.2 - https://spring.io/projects/spring-boot)
      (Apache License, Version 2.0) spring-boot-webmvc (org.springframework.boot:spring-boot-webmvc:4.1.2 - https://spring.io/projects/spring-boot)
-     (The BSD 2-Clause License) Stax2 API (org.codehaus.woodstox:stax2-api:4.3.0 - http://github.com/FasterXML/stax2-api)
+     (The BSD 2-Clause License) Stax2 API (org.codehaus.woodstox:stax2-api:4.3.2 - http://github.com/FasterXML/stax2-api)
      (The BSD License) StringTemplate 4 (org.antlr:ST4:4.3.4 - http://nexus.sonatype.org/oss-repository-hosting.html/ST4)
      (Apache License, Version 2.0) Sude (io.github.hakky54:sude:2.0.2 - https://github.com/Hakky54/sude)
      (Apache License 2.0) swagger-annotations-jakarta (io.swagger.core.v3:swagger-annotations-jakarta:2.2.38 - https://github.com/swagger-api/swagger-core/modules/swagger-annotations-jakarta)
