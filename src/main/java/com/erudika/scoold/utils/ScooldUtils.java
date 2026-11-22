@@ -1490,8 +1490,14 @@ public final class ScooldUtils {
 	}
 
 	public boolean isRecognizedAsAdmin(User u) {
-		return u.isAdmin() || ADMINS.contains(u.getIdentifier()) ||
-				ADMINS.stream().filter(s -> s.equalsIgnoreCase(u.getEmail())).findAny().isPresent();
+		if (u == null) {
+			return false;
+		}
+		// Match account-key normalization; equalsIgnoreCase can merge distinct Unicode email addresses.
+		String email = StringUtils.toRootLowerCase(u.getEmail());
+		return u.isAdmin() || ADMINS.contains(u.getIdentifier())
+				|| (email != null && ADMINS.stream().anyMatch(admin
+						-> email.equals(StringUtils.toRootLowerCase(admin))));
 	}
 
 	public boolean canComment(Profile authUser, HttpServletRequest req) {
